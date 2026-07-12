@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/*
+ * MySkills design tokens -- black / white / purple, minimal, mobile-first.
+ * Extend Tailwind's theme via @theme so utilities like bg-brand-600,
+ * text-ink-900, etc. are available everywhere in the app.
+ */
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+
+  --color-ink-50: #f7f7f8;
+  --color-ink-100: #eeeeef;
+  --color-ink-200: #d9d9dc;
+  --color-ink-300: #b3b3b8;
+  --color-ink-400: #83838c;
+  --color-ink-500: #57575f;
+  --color-ink-600: #3a3a41;
+  --color-ink-700: #26262b;
+  --color-ink-800: #17171a;
+  --color-ink-900: #0a0a0c;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink-900);
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
