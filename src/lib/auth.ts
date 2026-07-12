@@ -94,7 +94,13 @@ export async function signIn(params: { email: string; password: string }): Promi
 export async function signInWithGoogle(): Promise<void> {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${window.location.origin}/profile` },
+    options: {
+      redirectTo: `${window.location.origin}/profile`,
+      // Always show Google's account chooser instead of silently reusing the
+      // browser's active Google session. Use 'consent select_account' to also
+      // re-prompt for permissions.
+      queryParams: { prompt: 'select_account' },
+    },
   })
   if (error) throw mapAuthError(error)
 }
