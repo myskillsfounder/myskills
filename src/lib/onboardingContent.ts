@@ -81,7 +81,7 @@ export const careerStageStep = {
 
 export const goalsStep = {
   title: 'Your goals',
-  subtitle: 'Choose what you would like to achieve with MySkillz.',
+  subtitle: 'Choose what you would like to achieve with MySkills.',
   options: [
     { id: 'job-ready', label: 'Build job-ready digital marketing skills' },
     { id: 'interviews', label: 'Prepare for marketing interviews' },

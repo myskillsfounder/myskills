@@ -6,6 +6,7 @@ import {
   useRouterState,
 } from '@tanstack/react-router'
 import { validateSession } from '@/lib/auth'
+import { initAnalytics, trackPageView } from '@/lib/analytics'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -45,6 +46,16 @@ function RootComponent() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // --- Google Analytics 4 ---
+  // Load gtag once, then report a page_view on every SPA navigation.
+  useEffect(() => {
+    initAnalytics()
+  }, [])
+
+  useEffect(() => {
+    trackPageView(pathname + window.location.search)
+  }, [pathname])
 
   return <Outlet />
 }

@@ -114,7 +114,7 @@ export async function saveInitialAssessment(grade: AssessmentGrade): Promise<Ass
 let assessmentCache: { result: AssessmentResult | null } | null = null
 let inFlight: Promise<AssessmentResult | null> | null = null
 
-const DONE_KEY = 'myskillz.assessmentDone'
+const DONE_KEY = 'myskills.assessmentDone'
 
 function readDoneFlag(): boolean | null {
   try {

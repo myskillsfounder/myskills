@@ -43,3 +43,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/*
+ * Mobile: prevent iOS Safari from auto-zooming when a form field is focused.
+ * Safari zooms whenever the focused control's font-size is under 16px, so we
+ * bump inputs/selects/textareas to 16px on small screens only. Pinch-to-zoom
+ * stays enabled (we intentionally do NOT touch the viewport meta).
+ */
+@media (max-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

@@ -46,7 +46,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         </span>
         <div className="min-w-0">
           <p className="text-[15px] font-semibold leading-tight tracking-tight text-ink-900">
-            MySkillz
+            MySkills
           </p>
           <p className="truncate text-xs font-medium text-brand-600">
             Digital marketing academy
@@ -177,7 +177,7 @@ export function AppShell({
             <BarChart3 size={16} />
           </span>
           <span className="text-base font-semibold tracking-tight text-ink-900">
-            MySkillz
+            MySkills
           </span>
         </div>
         <button
