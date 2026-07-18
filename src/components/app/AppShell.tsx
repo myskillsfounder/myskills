@@ -28,6 +28,7 @@ const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/community', label: 'Community', icon: MessageCircle },
 ]
 
+
 function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
@@ -49,7 +50,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             MySkills
           </p>
           <p className="truncate text-xs font-medium text-brand-600">
-            Digital marketing academy
+            Self-learning platform
           </p>
         </div>
       </div>
@@ -194,12 +195,12 @@ export function AppShell({
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 shadow-xl">
+          <aside className="absolute inset-y-0 right-0 w-72 shadow-xl">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="absolute right-2 top-3 z-10 rounded-md p-2 text-ink-500 hover:text-ink-900"
+              className="absolute left-2 top-3 z-10 rounded-md p-2 text-ink-500 hover:text-ink-900"
             >
               <X size={20} />
             </button>
@@ -210,7 +211,7 @@ export function AppShell({
 
       <main className="lg:pl-64">
         <div
-          className={`mx-auto px-4 py-6 sm:px-6 ${wide ? 'max-w-6xl' : 'max-w-4xl'}`}
+          className={`mx-auto px-4 pt-6 pb-28 sm:px-6 lg:pb-6 ${wide ? 'max-w-6xl' : 'max-w-4xl'}`}
         >
           {showNudge && <AssessmentCard />}
           {children}

@@ -71,3 +71,10 @@ body {
 .blog-content pre { background: var(--color-ink-900); color: #f4f4f5; border-radius: .7rem; padding: 1em 1.15em; overflow-x: auto; font-size: .9em; margin: 1.2em 0; }
 .blog-content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .blog-content img { max-width: 100%; height: auto; border-radius: .7rem; margin: 1.2em 0; }
+
+/* ---- Mobile bottom nav: active-icon "pop" for the liquid-glass tab bar ---- */
+@keyframes tab-pop {
+  0%   { transform: scale(0.7); }
+  55%  { transform: scale(1.2); }
+  100% { transform: scale(1.1); }
+}

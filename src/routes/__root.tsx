@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router'
 import { validateSession } from '@/lib/auth'
 import { initAnalytics, trackPageView } from '@/lib/analytics'
+import { MobileBottomNav } from '@/components/app/MobileBottomNav'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -57,5 +58,11 @@ function RootComponent() {
     trackPageView(pathname + window.location.search)
   }, [pathname])
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      {/* Persistent so the active-tab highlight can animate across navigations. */}
+      <MobileBottomNav />
+    </>
+  )
 }
