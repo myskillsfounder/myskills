@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import type { AssessmentGrade } from './initialAssessment'
+import { issueCertificate } from './certificates'
 
 export interface CategoryResult {
   category: string
@@ -97,6 +98,15 @@ export async function saveInitialAssessment(grade: AssessmentGrade): Promise<Ass
       { onConflict: 'profile_id,category' },
     )
   if (categoriesError) throw categoriesError
+
+  // Award the certificate for completing the initial assessment. Best-effort:
+  // never let a certificate hiccup (e.g. table not migrated yet) block the save.
+  try {
+    const name = (user.user_metadata?.name as string) || user.email?.split('@')[0] || 'Member'
+    await issueCertificate(grade.percent, name)
+  } catch {
+    /* ignore — run docs/supabase-certificates.sql to enable certificates */
+  }
 
   return {
     overall: { correct: grade.correct, total: grade.total, percent: grade.percent, completedAt },

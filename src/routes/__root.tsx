@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router'
 import { validateSession } from '@/lib/auth'
 import { initAnalytics, trackPageView } from '@/lib/analytics'
+import { startTimeTracking } from '@/lib/timeTracker'
 import { MobileBottomNav } from '@/components/app/MobileBottomNav'
 
 export const Route = createRootRoute({
@@ -53,6 +54,9 @@ function RootComponent() {
   useEffect(() => {
     initAnalytics()
   }, [])
+
+  // Track active time on the app (device-local) for the dashboard chart.
+  useEffect(() => startTimeTracking(), [])
 
   useEffect(() => {
     trackPageView(pathname + window.location.search)

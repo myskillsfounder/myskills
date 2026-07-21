@@ -6,7 +6,6 @@ import {
   BarChart3,
   ClipboardCheck,
   Dumbbell,
-  FileText,
   Gamepad2,
   LayoutGrid,
   LogOut,
@@ -24,7 +23,6 @@ const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/games', label: 'Games', icon: Gamepad2 },
-  { to: '/tests', label: 'Tests', icon: FileText },
   { to: '/community', label: 'Community', icon: MessageCircle },
 ]
 

@@ -1,13 +1,14 @@
-import type { ComponentType } from 'react'
+import { useEffect, useState, type ComponentType } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { BookOpen, Briefcase, ClipboardCheck, Lock, MapPin, Phone, Sparkles, Target } from 'lucide-react'
+import { Award, BookOpen, Check, Copy, ExternalLink, Lock, MapPin, Phone, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
-import { useInitialAssessment } from '@/lib/assessmentResults'
+import { fetchMyCertificate, type Certificate as Cert } from '@/lib/certificates'
 import type { Profile } from '@/lib/profile'
 import { careerStageStep, goalsStep } from '@/lib/onboardingContent'
 import { AppShell } from '@/components/app/AppShell'
 import { Section } from '@/components/profile/ui'
+import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { AboutSection } from '@/components/profile/AboutSection'
 import { ExperienceSection } from '@/components/profile/ExperienceSection'
@@ -24,107 +25,6 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
 const careerLabel = (id: string) =>
   careerStageStep.options.find((o) => o.id === id)?.title ?? id
-
-function StatTile({
-  icon: Icon,
-  value,
-  label,
-  sub,
-  cardBg,
-  iconClass,
-  labelClass,
-}: {
-  icon: IconType
-  value: string | number
-  label: string
-  sub?: string
-  cardBg: string
-  iconClass: string
-  labelClass: string
-}) {
-  return (
-    <div className={`rounded-2xl p-4 ${cardBg}`}>
-      <span className={`flex h-9 w-9 items-center justify-center rounded-xl bg-white ${iconClass}`}>
-        <Icon size={18} />
-      </span>
-      <p className="mt-3 text-2xl font-semibold tracking-tight text-ink-900">{value}</p>
-      <p className={`text-xs font-semibold ${labelClass}`}>{label}</p>
-      {sub && <p className="text-[11px] text-ink-500">{sub}</p>}
-    </div>
-  )
-}
-
-function LockedAssessmentTile() {
-  return (
-    <Link
-      to="/practice"
-      className="group flex flex-col rounded-2xl border border-ink-200 bg-ink-50/60 p-4 transition-colors hover:border-brand-200 hover:bg-brand-50/50"
-    >
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-ink-400 transition-colors group-hover:text-brand-600">
-        <Lock size={18} />
-      </span>
-      <p className="mt-3 text-sm font-semibold text-ink-700">Assessment</p>
-      <p className="mt-0.5 text-[11px] leading-snug text-ink-500">
-        Complete the initial assessment to see your score.
-      </p>
-    </Link>
-  )
-}
-
-function StatsRow({
-  profile,
-  assessmentPercent,
-  assessmentDone,
-}: {
-  profile: Profile
-  assessmentPercent: number
-  assessmentDone: boolean
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <StatTile
-        icon={BookOpen}
-        value={profile.goals.length}
-        label="Focus areas"
-        sub="from onboarding"
-        cardBg="border border-brand-200 bg-brand-50"
-        iconClass="text-brand-600"
-        labelClass="text-brand-700"
-      />
-      {assessmentDone ? (
-        <StatTile
-          icon={ClipboardCheck}
-          value={`${assessmentPercent}%`}
-          label="Assessment"
-          sub="completed"
-          cardBg="border border-emerald-200 bg-emerald-50"
-          iconClass="text-emerald-600"
-          labelClass="text-emerald-700"
-        />
-      ) : (
-        <LockedAssessmentTile />
-      )}
-      <StatTile
-        icon={Sparkles}
-        value={profile.skills.length}
-        label="Skills"
-        sub="on your profile"
-        cardBg="border border-amber-200 bg-amber-50"
-        iconClass="text-amber-600"
-        labelClass="text-amber-700"
-      />
-      <StatTile
-        icon={Briefcase}
-        value={profile.experience.length}
-        label="Experience"
-        sub="positions"
-        cardBg="border border-sky-200 bg-sky-50"
-        iconClass="text-sky-600"
-        labelClass="text-sky-700"
-      />
-    </div>
-  )
-}
 
 function DetailRow({ icon: Icon, label, value }: { icon: IconType; label: string; value: string }) {
   return (
@@ -179,6 +79,87 @@ function Details({ profile }: { profile: Profile }) {
   )
 }
 
+/** Certificate + badge earned from the initial assessment. */
+function CertificateSection() {
+  const [cert, setCert] = useState<Cert | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
+
+  async function copyId() {
+    if (!cert) return
+    try {
+      await navigator.clipboard.writeText(cert.code)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      /* ignore */
+    }
+  }
+
+  useEffect(() => {
+    fetchMyCertificate()
+      .then(setCert)
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) return null
+
+  return (
+    <Section title="Certificate">
+      {cert ? (
+        <div
+          className={`rounded-xl border p-4 ${
+            cert.kind === 'gold' ? 'border-amber-200 bg-amber-50' : 'border-brand-200 bg-brand-50'
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 text-sm font-semibold ${
+                cert.kind === 'gold' ? 'text-amber-800' : 'text-brand-700'
+              }`}
+            >
+              <Award size={15} />
+              {cert.kind === 'gold' ? 'Gold Certificate' : 'Certificate of Completion'}
+            </span>
+            {cert.kind === 'gold' && <DistinctionBadge />}
+          </div>
+          <p className="mt-2 text-xs text-ink-600">
+            {cert.title} · Initial assessment · {cert.percent}%
+          </p>
+          <div className="mt-0.5 flex items-center gap-1.5">
+            <p className="text-[11px] text-ink-400">ID: {cert.code}</p>
+            <button
+              type="button"
+              onClick={copyId}
+              aria-label="Copy certificate ID"
+              className="text-ink-400 transition-colors hover:text-brand-600"
+            >
+              {copied ? <Check size={12} /> : <Copy size={12} />}
+            </button>
+          </div>
+          <Link
+            to="/certificate"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink-800 shadow-sm transition-colors hover:text-brand-700"
+          >
+            View certificate <ExternalLink size={12} />
+          </Link>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-ink-200 bg-ink-50/60 p-4">
+          <p className="text-sm font-medium text-ink-700">No certificate yet</p>
+          <p className="mt-0.5 text-xs text-ink-500">
+            Complete the initial assessment to earn your certificate.
+          </p>
+          <Link to="/practice" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
+            Go to assessment →
+          </Link>
+        </div>
+      )}
+    </Section>
+  )
+}
+
 /** Locked — track-by-track learning is a future feature. */
 function ActiveLearningLocked() {
   return (
@@ -198,7 +179,6 @@ function ActiveLearningLocked() {
 
 function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
-  const { result: assessment } = useInitialAssessment()
 
   return (
     <AppShell wide>
@@ -219,11 +199,6 @@ function ProfilePage() {
       {profile && (
         <div className="space-y-5">
           <ProfileHeader profile={profile} save={save} upload={upload} />
-          <StatsRow
-            profile={profile}
-            assessmentPercent={assessment?.overall.percent ?? 0}
-            assessmentDone={assessment != null}
-          />
 
           <div className="grid gap-5 lg:grid-cols-3">
             <div className="space-y-5 lg:col-span-2">
@@ -232,6 +207,7 @@ function ProfilePage() {
               <EducationSection profile={profile} save={save} />
             </div>
             <div className="space-y-5">
+              <CertificateSection />
               <Details profile={profile} />
               <ActiveLearningLocked />
               <SkillsSection profile={profile} save={save} />

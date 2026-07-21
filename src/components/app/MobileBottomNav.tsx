@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
-import { Dumbbell, FileText, Gamepad2, LayoutGrid, User } from 'lucide-react'
+import { Dumbbell, Gamepad2, LayoutGrid, User } from 'lucide-react'
 
 const TABS = [
   { to: '/dashboard', label: 'Home', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/games', label: 'Games', icon: Gamepad2 },
-  { to: '/tests', label: 'Tests', icon: FileText },
   { to: '/profile', label: 'Profile', icon: User },
 ] as const
 
 // Sections where the app shell (and thus the bottom bar) should appear.
-const APP_PREFIXES = ['/dashboard', '/practice', '/games', '/tests', '/community', '/profile']
+const APP_PREFIXES = ['/dashboard', '/practice', '/games', '/community', '/profile']
 
 const IND_W = 60 // px indicator (bubble) width
 const IND_H = 42 // px indicator (bubble) height — a touch shorter than the row

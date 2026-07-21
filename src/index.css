@@ -78,3 +78,9 @@ body {
   55%  { transform: scale(1.2); }
   100% { transform: scale(1.1); }
 }
+
+/* ---- Certificate print: hide chrome, keep just the certificate ---- */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #ffffff; }
+}

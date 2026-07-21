@@ -41,10 +41,10 @@ export function PracticeOverview({
   const offset = C * (1 - avg / 100)
 
   return (
-    <section className="rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-6">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+    <section className="rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-4 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
         <div className="flex items-center gap-5">
-          <div className="relative h-[86px] w-[86px] shrink-0">
+          <div className="relative h-[68px] w-[68px] shrink-0 sm:h-[86px] sm:w-[86px]">
             <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
               <circle cx="40" cy="40" r={R} fill="none" stroke="currentColor" strokeWidth="7" className="text-brand-100" />
               <circle
@@ -72,13 +72,13 @@ export function PracticeOverview({
         </div>
 
         <div className="flex gap-3 sm:ml-auto">
-          <div className="min-w-[104px] rounded-xl border border-brand-100 bg-white/70 p-4">
+          <div className="min-w-[96px] flex-1 rounded-xl border border-brand-100 bg-white/70 p-3 sm:min-w-[104px] sm:flex-none sm:p-4">
             <p className="text-xs font-medium text-ink-500">Tracks practiced</p>
             <p className="mt-1 text-xl font-semibold tracking-tight text-ink-900">
               {started.length}<span className="text-sm font-normal text-ink-400">/{skillTracks.length}</span>
             </p>
           </div>
-          <div className="min-w-[104px] rounded-xl border border-brand-100 bg-white/70 p-4">
+          <div className="min-w-[96px] flex-1 rounded-xl border border-brand-100 bg-white/70 p-3 sm:min-w-[104px] sm:flex-none sm:p-4">
             <p className="text-xs font-medium text-ink-500">Total attempts</p>
             <p className="mt-1 text-xl font-semibold tracking-tight text-ink-900">{attempts}</p>
           </div>
@@ -86,7 +86,7 @@ export function PracticeOverview({
       </div>
 
       {started.length > 0 && (
-        <div className="mt-5 grid gap-4 border-t border-brand-100 pt-5 sm:grid-cols-2">
+        <div className="mt-4 grid gap-3 border-t border-brand-100 pt-4 sm:grid-cols-2 sm:gap-4 sm:pt-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Strengths</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
