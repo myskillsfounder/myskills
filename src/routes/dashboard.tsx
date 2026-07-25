@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, ClipboardCheck, Flame, Target } from 'lucide-react'
+import { ArrowRight, ClipboardCheck, Flame, Star, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -114,6 +114,25 @@ function DashboardPage() {
           </h1>
           <p className="mt-1 text-sm text-ink-500">Here’s your progress at a glance.</p>
         </div>
+
+        {/* Review promo — nudge every user to rate + review */}
+        <Link
+          to="/feedback"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 transition-colors hover:bg-amber-100"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-amber-500">
+              <Star size={20} fill="currentColor" />
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-amber-900">Enjoying MySkills?</p>
+              <p className="mt-0.5 text-xs text-amber-700">Rate the app and leave a quick review — it helps us a lot.</p>
+            </div>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-white">
+            Rate &amp; review <ArrowRight size={13} />
+          </span>
+        </Link>
 
         {/* Take the assessment (only until it's completed) */}
         {!assessment && (

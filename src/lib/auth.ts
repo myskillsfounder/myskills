@@ -105,6 +105,19 @@ export async function signInWithGoogle(): Promise<void> {
   if (error) throw mapAuthError(error)
 }
 
+/** Record a sign-in for admin analytics (best-effort; ignores failures). */
+export async function recordLoginEvent(): Promise<void> {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from('login_events').insert({ profile_id: user.id })
+  } catch {
+    /* ignore — run docs/supabase-login-events.sql to enable login tracking */
+  }
+}
+
 export async function signOut(): Promise<void> {
   clearAssessmentCache()
   await supabase.auth.signOut()

@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   MessageCircle,
+  MessageSquare,
   User,
   X,
 } from 'lucide-react'
@@ -24,6 +25,7 @@ const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/games', label: 'Games', icon: Gamepad2 },
   { to: '/community', label: 'Community', icon: MessageCircle },
+  { to: '/feedback', label: 'Feedback', icon: MessageSquare },
 ]
 
 

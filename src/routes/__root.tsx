@@ -5,7 +5,8 @@ import {
   useNavigate,
   useRouterState,
 } from '@tanstack/react-router'
-import { validateSession } from '@/lib/auth'
+import { supabase } from '@/lib/supabase'
+import { recordLoginEvent, validateSession } from '@/lib/auth'
 import { initAnalytics, trackPageView } from '@/lib/analytics'
 import { startTimeTracking } from '@/lib/timeTracker'
 import { MobileBottomNav } from '@/components/app/MobileBottomNav'
@@ -57,6 +58,14 @@ function RootComponent() {
 
   // Track active time on the app (device-local) for the dashboard chart.
   useEffect(() => startTimeTracking(), [])
+
+  // Record a login event whenever the user actually signs in (admin analytics).
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') void recordLoginEvent()
+    })
+    return () => sub.subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     trackPageView(pathname + window.location.search)
