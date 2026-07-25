@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, ClipboardCheck, Target } from 'lucide-react'
+import { ArrowRight, ClipboardCheck, Flame, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -10,7 +10,6 @@ import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
 import { PracticeOverview } from '@/components/practice/PracticeOverview'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
-import { StreakCard } from '@/components/dashboard/StreakCard'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { TodayFocus } from '@/components/dashboard/TodayFocus'
 
@@ -19,29 +18,61 @@ export const Route = createFileRoute('/dashboard')({
   component: DashboardPage,
 })
 
-type IconType = typeof Target
+const dayKey = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 
-function StatTile({
-  icon: Icon,
-  value,
-  label,
-  sub,
-  tint,
-}: {
-  icon: IconType
-  value: string
-  label: string
-  sub?: string
-  tint: string
-}) {
+/** Streak + assessment score in one compact card. */
+function StatsCard({ userKey, assessmentPercent }: { userKey: string; assessmentPercent: string }) {
+  const [streak, setStreak] = useState(0)
+
+  useEffect(() => {
+    const KEY = `myskills.streak.${userKey}`
+    let data: { last: string; count: number }
+    try {
+      data = JSON.parse(localStorage.getItem(KEY) || 'null') || { last: '', count: 0 }
+    } catch {
+      data = { last: '', count: 0 }
+    }
+    const today = dayKey(new Date())
+    const yesterday = dayKey(new Date(Date.now() - 86400000))
+    if (data.last === today) {
+      /* already counted */
+    } else if (data.last === yesterday) {
+      data = { last: today, count: data.count + 1 }
+    } else {
+      data = { last: today, count: 1 }
+    }
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data))
+    } catch {
+      /* ignore */
+    }
+    setStreak(data.count)
+  }, [userKey])
+
   return (
-    <div className={`rounded-2xl border p-3 sm:p-4 ${tint}`}>
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white sm:h-9 sm:w-9 sm:rounded-xl">
-        <Icon size={16} />
-      </span>
-      <p className="mt-2 text-lg font-semibold tracking-tight text-ink-900 sm:mt-3 sm:text-2xl">{value}</p>
-      <p className="text-[11px] font-semibold sm:text-xs">{label}</p>
-      {sub && <p className="hidden text-[11px] text-ink-500 sm:block">{sub}</p>}
+    <div className="grid grid-cols-2 rounded-2xl border border-ink-100 bg-white p-4">
+      <div className="pr-4">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-50 text-orange-500">
+            <Flame size={15} />
+          </span>
+          <span className="text-[11px] font-medium text-ink-500">Daily streak</span>
+        </div>
+        <p className="mt-2 text-xl font-semibold tracking-tight text-ink-900">
+          {streak}
+          <span className="text-xs font-normal text-ink-400"> day{streak === 1 ? '' : 's'}</span>
+        </p>
+      </div>
+      <div className="border-l border-ink-100 pl-4">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <ClipboardCheck size={15} />
+          </span>
+          <span className="text-[11px] font-medium text-ink-500">Assessment</span>
+        </div>
+        <p className="mt-2 text-xl font-semibold tracking-tight text-ink-900">{assessmentPercent}</p>
+      </div>
     </div>
   )
 }
@@ -84,18 +115,6 @@ function DashboardPage() {
           <p className="mt-1 text-sm text-ink-500">Here’s your progress at a glance.</p>
         </div>
 
-        {/* Top stats */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-          <StreakCard userKey={userKey} />
-          <StatTile
-            icon={ClipboardCheck}
-            value={assessment ? `${assessment.overall.percent}%` : '—'}
-            label="Assessment"
-            sub={assessment ? 'baseline score' : 'not taken yet'}
-            tint="border-emerald-200 bg-emerald-50 text-emerald-600"
-          />
-        </div>
-
         {/* Take the assessment (only until it's completed) */}
         {!assessment && (
           <Link
@@ -115,7 +134,7 @@ function DashboardPage() {
         )}
 
         <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
-          {/* Main column */}
+          {/* Main column — Overall skill level leads */}
           <div className="space-y-5 lg:col-span-2">
             {loading ? (
               <div className="rounded-2xl border border-ink-100 bg-white p-6 text-sm text-ink-500">
@@ -173,8 +192,9 @@ function DashboardPage() {
             </section>
           </div>
 
-          {/* Side column: goals, today's focus, time spent — sticky on desktop */}
+          {/* Right column — quick stats + goals + today's focus (sticky on desktop) */}
           <div className="space-y-5 lg:sticky lg:top-6 lg:self-start">
+            <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
             <PrimaryGoal goals={goals} />
             <TodayFocus userKey={userKey} />
             <TimeSpentChart />
