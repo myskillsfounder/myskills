@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, BookOpen, Check, Copy, ExternalLink, Lock, MapPin, Phone, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
-import { fetchMyCertificate, type Certificate as Cert } from '@/lib/certificates'
+import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
 import type { Profile } from '@/lib/profile'
 import { careerStageStep, goalsStep } from '@/lib/onboardingContent'
 import { AppShell } from '@/components/app/AppShell'
@@ -105,22 +105,16 @@ function CertificateSection() {
 
   if (loading) return null
 
+  const tier = cert ? tierForCertificate(cert) : null
+
   return (
     <Section title="Certificate">
-      {cert ? (
-        <div
-          className={`rounded-xl border p-4 ${
-            cert.kind === 'gold' ? 'border-amber-200 bg-amber-50' : 'border-brand-200 bg-brand-50'
-          }`}
-        >
+      {cert && tier ? (
+        <div className={`rounded-xl border p-4 ${tier.ui.border} ${tier.ui.bg}`}>
           <div className="flex items-center justify-between gap-2">
-            <span
-              className={`inline-flex items-center gap-1.5 text-sm font-semibold ${
-                cert.kind === 'gold' ? 'text-amber-800' : 'text-brand-700'
-              }`}
-            >
+            <span className={`inline-flex items-center gap-1.5 text-sm font-semibold ${tier.ui.text}`}>
               <Award size={15} />
-              {cert.kind === 'gold' ? 'Gold Certificate' : 'Certificate of Completion'}
+              {tier.certLabel}
             </span>
             {cert.kind === 'gold' && <DistinctionBadge />}
           </div>

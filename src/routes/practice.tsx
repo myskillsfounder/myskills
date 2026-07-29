@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { requireOnboarded } from '@/lib/guards'
 import { ArrowRight, Award } from 'lucide-react'
 import { useInitialAssessment } from '@/lib/assessmentResults'
-import { GOLD_THRESHOLD } from '@/lib/certificates'
+import { tierForPercent } from '@/lib/certificates'
 import {
   fetchPracticeSummary,
   recordPracticeAttempt,
@@ -39,36 +39,30 @@ function MigrationError({ message }: { message: string }) {
 }
 
 function CertificateEarnedCard({ percent }: { percent: number }) {
-  const gold = percent >= GOLD_THRESHOLD
+  const tier = tierForPercent(percent)
   return (
     <div
-      className={`flex flex-col gap-3 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between ${
-        gold ? 'border-amber-200 bg-amber-50' : 'border-brand-200 bg-brand-50'
-      }`}
+      className={`flex flex-col gap-3 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between ${tier.ui.border} ${tier.ui.bg}`}
     >
       <div className="flex items-center gap-3">
         <span
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white ${
-            gold ? 'text-amber-600' : 'text-brand-600'
-          }`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white ${tier.ui.icon}`}
         >
           <Award size={22} />
         </span>
         <div>
-          <p className={`text-sm font-semibold ${gold ? 'text-amber-900' : 'text-brand-900'}`}>
-            {gold ? 'Gold certificate earned! ' : 'Certificate earned! '}
+          <p className={`text-sm font-semibold ${tier.ui.textStrong}`}>
+            {`${tier.label} certificate earned! `}
             <span className="font-normal">You completed the initial assessment.</span>
           </p>
-          <p className={`mt-0.5 text-xs ${gold ? 'text-amber-700' : 'text-brand-700'}`}>
+          <p className={`mt-0.5 text-xs ${tier.ui.textSoft}`}>
             View, download, and share your certificate.
           </p>
         </div>
       </div>
       <Link
         to="/certificate"
-        className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white transition-colors ${
-          gold ? 'bg-amber-600 hover:bg-amber-700' : 'bg-brand-600 hover:bg-brand-700'
-        }`}
+        className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white transition-colors ${tier.ui.button}`}
       >
         View certificate
         <ArrowRight size={13} />

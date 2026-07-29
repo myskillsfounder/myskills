@@ -1,11 +1,28 @@
 /**
  * Certificates — one per user, awarded on completing the initial assessment.
- * Gold when score >= 75%, otherwise standard. See docs/supabase-certificates.sql.
+ *
+ * Performance bands (single source of truth for the whole app — the SVG
+ * certificate, the profile card and the practice page all read from TIERS):
+ *
+ *   Gold    score >= 90
+ *   Silver  score >= 75  and < 90
+ *   Bronze  everything below 75 (every completed assessment earns a
+ *           certificate; bronze is the floor, not a 50% cut-off)
+ *
+ * Keep TIER_THRESHOLDS in sync with the backfill CASE in
+ * docs/supabase-migration-2026-07-30-certificate-bands.sql and the check
+ * constraint in docs/supabase-schema.sql (section 5).
  */
 import { supabase } from './supabase'
 
-export type CertificateKind = 'standard' | 'gold'
-export const GOLD_THRESHOLD = 75
+export type CertificateKind = 'gold' | 'silver' | 'bronze'
+
+/** Inclusive lower bound of each band, highest first. Order matters. */
+export const TIER_THRESHOLDS: ReadonlyArray<{ kind: CertificateKind; min: number }> = [
+  { kind: 'gold', min: 90 },
+  { kind: 'silver', min: 75 },
+  { kind: 'bronze', min: 0 },
+]
 
 export interface Certificate {
   id: string
@@ -17,8 +34,105 @@ export interface Certificate {
   issued_at: string
 }
 
+/** Everything that varies per band, in one place. */
+export interface TierMeta {
+  kind: CertificateKind
+  /** "Gold" */
+  label: string
+  /** "Gold Certificate" — card headings */
+  certLabel: string
+  /** Certificate headline, e.g. "FOUNDATIONAL EXCELLENCE" */
+  headline: string
+  /** Short badge under the medallion, e.g. "90%+" */
+  bandMin: string
+  /** Inline band phrase used in the certificate body copy */
+  bandWord: string
+  /** Adjective phrase in the body copy, e.g. "an exceptional understanding" */
+  understanding: string
+  /** Tailwind classes for cards/badges outside the SVG */
+  ui: {
+    border: string
+    bg: string
+    text: string
+    textSoft: string
+    textStrong: string
+    icon: string
+    button: string
+  }
+}
+
+export const TIERS: Record<CertificateKind, TierMeta> = {
+  gold: {
+    kind: 'gold',
+    label: 'Gold',
+    certLabel: 'Gold Certificate',
+    headline: 'FOUNDATIONAL EXCELLENCE',
+    bandMin: '90%+',
+    bandWord: 'Gold Performance Band (90% and above)',
+    understanding: 'an exceptional understanding',
+    ui: {
+      border: 'border-amber-200',
+      bg: 'bg-amber-50',
+      text: 'text-amber-800',
+      textSoft: 'text-amber-700',
+      textStrong: 'text-amber-900',
+      icon: 'text-amber-600',
+      button: 'bg-amber-600 hover:bg-amber-700',
+    },
+  },
+  silver: {
+    kind: 'silver',
+    label: 'Silver',
+    certLabel: 'Silver Certificate',
+    headline: 'FOUNDATIONAL ACHIEVEMENT',
+    bandMin: '75%+',
+    bandWord: 'Silver Performance Band (75% to 89%)',
+    understanding: 'a strong understanding',
+    ui: {
+      border: 'border-slate-200',
+      bg: 'bg-slate-50',
+      text: 'text-slate-700',
+      textSoft: 'text-slate-600',
+      textStrong: 'text-slate-900',
+      icon: 'text-slate-500',
+      button: 'bg-slate-600 hover:bg-slate-700',
+    },
+  },
+  bronze: {
+    kind: 'bronze',
+    label: 'Bronze',
+    certLabel: 'Bronze Certificate',
+    headline: 'FOUNDATIONAL COMPETENCE',
+    bandMin: 'COMPLETED',
+    bandWord: 'Bronze Performance Band',
+    understanding: 'a working understanding',
+    ui: {
+      border: 'border-orange-200',
+      bg: 'bg-orange-50',
+      text: 'text-orange-800',
+      textSoft: 'text-orange-700',
+      textStrong: 'text-orange-900',
+      icon: 'text-orange-600',
+      button: 'bg-orange-600 hover:bg-orange-700',
+    },
+  },
+}
+
 export function kindForPercent(percent: number): CertificateKind {
-  return percent >= GOLD_THRESHOLD ? 'gold' : 'standard'
+  return TIER_THRESHOLDS.find((t) => percent >= t.min)?.kind ?? 'bronze'
+}
+
+/** Tier metadata for a score or an issued certificate. */
+export function tierForPercent(percent: number): TierMeta {
+  return TIERS[kindForPercent(percent)]
+}
+
+/**
+ * Tier metadata for an issued certificate. Falls back to the score if the
+ * stored `kind` is missing or is a legacy value ('standard' pre-2026-07-29).
+ */
+export function tierForCertificate(cert: Pick<Certificate, 'kind' | 'percent'>): TierMeta {
+  return TIERS[cert.kind] ?? tierForPercent(cert.percent)
 }
 
 /** Human-readable, unique-enough certificate code, e.g. MSK-8F3K-9Q2A-XZ04. */
