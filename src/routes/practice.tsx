@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Award, ChevronRight } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
-import { ArrowRight, Award } from 'lucide-react'
 import { useInitialAssessment } from '@/lib/assessmentResults'
 import { tierForPercent } from '@/lib/certificates'
 import {
@@ -15,8 +15,9 @@ import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
 import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
 import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummaryCard'
-import { PracticeOverview } from '@/components/practice/PracticeOverview'
-import { TrackPicker } from '@/components/practice/TrackPicker'
+import { PracticeStats } from '@/components/practice/PracticeStats'
+import { NextUpCard } from '@/components/practice/NextUpCard'
+import { TrackList } from '@/components/practice/TrackList'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
 
 export const Route = createFileRoute('/practice')({
@@ -38,36 +39,24 @@ function MigrationError({ message }: { message: string }) {
   )
 }
 
-function CertificateEarnedCard({ percent }: { percent: number }) {
+/**
+ * The certificate used to be a full-width banner at the very top, pushing the
+ * actual practice content below the fold. It's a reward you've already earned,
+ * not a task — so it's now a single quiet row in the page header.
+ */
+function CertificateRow({ percent }: { percent: number }) {
   const tier = tierForPercent(percent)
   return (
-    <div
-      className={`flex flex-col gap-3 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between ${tier.ui.border} ${tier.ui.bg}`}
+    <Link
+      to="/certificate"
+      className={`flex items-center gap-2.5 rounded-full border py-1.5 pl-2.5 pr-2 transition-colors ${tier.ui.border} ${tier.ui.bg}`}
     >
-      <div className="flex items-center gap-3">
-        <span
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white ${tier.ui.icon}`}
-        >
-          <Award size={22} />
-        </span>
-        <div>
-          <p className={`text-sm font-semibold ${tier.ui.textStrong}`}>
-            {`${tier.label} certificate earned! `}
-            <span className="font-normal">You completed the initial assessment.</span>
-          </p>
-          <p className={`mt-0.5 text-xs ${tier.ui.textSoft}`}>
-            View, download, and share your certificate.
-          </p>
-        </div>
-      </div>
-      <Link
-        to="/certificate"
-        className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white transition-colors ${tier.ui.button}`}
-      >
-        View certificate
-        <ArrowRight size={13} />
-      </Link>
-    </div>
+      <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white ${tier.ui.icon}`}>
+        <Award size={13} />
+      </span>
+      <span className={`text-xs font-semibold ${tier.ui.textStrong}`}>{tier.label} certificate</span>
+      <ChevronRight size={14} className={tier.ui.textSoft} />
+    </Link>
   )
 }
 
@@ -142,26 +131,30 @@ function PracticePage() {
         />
       )}
 
-      {/* Combined home: a single progress summary, one unified track list,
-          then the one-time assessment as a quiet secondary card. */}
+      {/* Practice home. Order is deliberate: where you stand, what to do next,
+          then the full list — action before inventory. */}
       {assessment && !error && !selected && (
-        <div className="space-y-8">
-          <CertificateEarnedCard percent={assessment.overall.percent} />
-
-          <div>
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-ink-900">Practice</h1>
-            <p className="mt-1 text-sm text-ink-500">
-              Scenario-based Decision Labs to sharpen each marketing skill. Your best
-              score per track is what counts.
-            </p>
+            <CertificateRow percent={assessment.overall.percent} />
           </div>
 
           {practiceLoading ? (
             <p className="text-sm text-ink-500">Loading practice…</p>
           ) : (
             <>
-              <PracticeOverview practice={practice} onSelect={setSelected} />
-              <TrackPicker practice={practice} onSelect={setSelected} />
+              <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
+                <div className="lg:col-span-2">
+                  <PracticeStats practice={practice} />
+                </div>
+                <div className="lg:col-span-1">
+                  <NextUpCard practice={practice} onSelect={setSelected} />
+                </div>
+              </div>
+
+              <TrackList practice={practice} onSelect={setSelected} />
+
               <AssessmentSummaryCard assessment={assessment} />
             </>
           )}

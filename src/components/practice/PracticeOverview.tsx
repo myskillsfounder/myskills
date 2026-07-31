@@ -1,3 +1,11 @@
+/**
+ * RETIRED 2026-07-31 — superseded by the practice page redesign.
+ *   PracticeOverview -> PracticeStats.tsx  (compact stats, no duplicated chips)
+ *   TrackPicker      -> TrackList.tsx      (filterable rows, not an 8-card grid)
+ *
+ * Nothing imports this any more. Left on disk rather than deleted because the
+ * repo isn't under version control — safe to remove once it is.
+ */
 import { ArrowRight } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'

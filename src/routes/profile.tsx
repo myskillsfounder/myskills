@@ -103,7 +103,16 @@ function CertificateSection() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return null
+  // Renders a placeholder rather than null while loading: it's now the first
+  // block on mobile, so returning null left a stray flex gap at the top of the
+  // page and made everything below jump once the fetch resolved.
+  if (loading) {
+    return (
+      <Section title="Certificate">
+        <div className="h-24 animate-pulse rounded-xl bg-ink-50" />
+      </Section>
+    )
+  }
 
   const tier = cert ? tierForCertificate(cert) : null
 
@@ -194,17 +203,37 @@ function ProfilePage() {
         <div className="space-y-5">
           <ProfileHeader profile={profile} save={save} upload={upload} />
 
-          <div className="grid gap-5 lg:grid-cols-3">
-            <div className="space-y-5 lg:col-span-2">
-              <AboutSection profile={profile} save={save} />
-              <ExperienceSection profile={profile} save={save} />
-              <EducationSection profile={profile} save={save} />
+          {/* Two columns on desktop, one ordered stack on mobile. The column
+              wrappers are `contents` below lg, so their children become direct
+              flex items and `order-*` can interleave across columns — that's
+              what lets the certificate lead on a phone while still sitting in
+              the right-hand rail on desktop. */}
+          <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3">
+            <div className="contents lg:col-span-2 lg:block lg:space-y-5">
+              <div className="order-2 lg:order-none">
+                <AboutSection profile={profile} save={save} />
+              </div>
+              <div className="order-3 lg:order-none">
+                <ExperienceSection profile={profile} save={save} />
+              </div>
+              <div className="order-4 lg:order-none">
+                <EducationSection profile={profile} save={save} />
+              </div>
             </div>
-            <div className="space-y-5">
-              <CertificateSection />
-              <Details profile={profile} />
-              <ActiveLearningLocked />
-              <SkillsSection profile={profile} save={save} />
+
+            <div className="contents lg:block lg:space-y-5">
+              <div className="order-1 lg:order-none">
+                <CertificateSection />
+              </div>
+              <div className="order-5 lg:order-none">
+                <Details profile={profile} />
+              </div>
+              <div className="order-6 lg:order-none">
+                <ActiveLearningLocked />
+              </div>
+              <div className="order-7 lg:order-none">
+                <SkillsSection profile={profile} save={save} />
+              </div>
             </div>
           </div>
         </div>
