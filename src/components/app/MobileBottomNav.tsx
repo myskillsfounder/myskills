@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
-import { Dumbbell, Gamepad2, LayoutGrid, Sparkles, Star, User } from 'lucide-react'
+import { Dumbbell, LayoutGrid, Sparkles, Star, User } from 'lucide-react'
 
 const TABS = [
   { to: '/dashboard', label: 'Home', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/prompt-library', label: 'Prompts', icon: Sparkles },
-  { to: '/games', label: 'Games', icon: Gamepad2 },
   { to: '/feedback', label: 'Review', icon: Star },
   { to: '/profile', label: 'Profile', icon: User },
 ] as const
@@ -24,7 +23,7 @@ const TABS = [
 const HIDE_EXACT = new Set(['/', '/login', '/signup', '/onboarding', '/assessment', '/certificate'])
 const HIDE_PREFIX = ['/blog']
 
-const IND_W = 48 // px indicator (bubble) width
+const IND_W = 56 // px indicator (bubble) width
 const IND_H = 42 // px indicator (bubble) height — a touch shorter than the row
 const ROW_H = 44 // px tab row height
 const TOP = (ROW_H - IND_H) / 2 // vertical-center the bubble in the row

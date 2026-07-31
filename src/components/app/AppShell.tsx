@@ -6,7 +6,6 @@ import {
   BarChart3,
   ClipboardCheck,
   Dumbbell,
-  Gamepad2,
   LayoutGrid,
   LogOut,
   Menu,
@@ -21,11 +20,18 @@ import { useAssessmentDone } from '@/lib/assessmentResults'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
+/**
+ * Sidebar + mobile drawer navigation.
+ *
+ * Games is intentionally absent — it's hidden from every nav (here and in
+ * MobileBottomNav). The /games route still exists and renders if visited
+ * directly; delete routes/games.tsx, or redirect it the way routes/tests.tsx
+ * does, to retire the feature properly.
+ */
 const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/prompt-library', label: 'Prompt Library', icon: Sparkles },
-  { to: '/games', label: 'Games', icon: Gamepad2 },
   { to: '/community', label: 'Community', icon: MessageCircle },
   { to: '/feedback', label: 'Feedback', icon: MessageSquare },
 ]
