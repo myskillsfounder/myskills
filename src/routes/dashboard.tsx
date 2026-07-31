@@ -1,18 +1,14 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, ClipboardCheck, Flame, Star, Target } from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { ArrowRight, ClipboardCheck, Flame, Star } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import { useInitialAssessment } from '@/lib/assessmentResults'
-import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
 import { fetchMyCertificate, type Certificate } from '@/lib/certificates'
-import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
-import { PracticeOverview } from '@/components/practice/PracticeOverview'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
-import { TodayFocus } from '@/components/dashboard/TodayFocus'
 import { PromptLibraryCard } from '@/components/dashboard/PromptLibrary'
 
 export const Route = createFileRoute('/dashboard')({
@@ -80,39 +76,19 @@ function StatsCard({ userKey, assessmentPercent }: { userKey: string; assessment
 }
 
 function DashboardPage() {
-  const navigate = useNavigate()
   const { user } = useAuthUser()
   const name = userDisplayName(user)
   const userKey = user?.id ?? 'guest'
   const { profile } = useProfile()
   const goals = profile?.goals ?? []
   const { result: assessment } = useInitialAssessment()
-  const [practice, setPractice] = useState<PracticeSummary>({})
-  const [loading, setLoading] = useState(true)
   const [cert, setCert] = useState<Certificate | null>(null)
-
-  useEffect(() => {
-    fetchPracticeSummary()
-      .then(setPractice)
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
 
   useEffect(() => {
     fetchMyCertificate()
       .then(setCert)
       .catch(() => {})
   }, [])
-
-  const practiced = skillTracks
-    .map((t) => ({
-      slug: t.slug,
-      name: t.name,
-      percent: practice[t.slug]?.percent ?? 0,
-      started: Boolean(practice[t.slug]),
-    }))
-    .filter((r) => r.started)
-  const toImprove = [...practiced].sort((a, b) => a.percent - b.percent).slice(0, 5)
 
   return (
     <AppShell wide>
@@ -161,72 +137,25 @@ function DashboardPage() {
           </Link>
         )}
 
+        {/* Each card is placed explicitly rather than nested in two column
+            divs, so mobile can stack them in a different order to desktop:
+              mobile   streak -> time spent -> prompt library -> goal
+              desktop  time spent fills cols 1-2; the rest stack in col 3 */}
         <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
-          {/* Main column — Overall skill level leads */}
-          <div className="space-y-5 lg:col-span-2">
-            {loading ? (
-              <div className="rounded-2xl border border-ink-100 bg-white p-6 text-sm text-ink-500">
-                Loading your progress…
-              </div>
-            ) : (
-              <PracticeOverview practice={practice} onSelect={() => navigate({ to: '/practice' })} />
-            )}
-
-            <section>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-base font-semibold text-ink-900">Continue practicing</h2>
-                <Link to="/practice" className="inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700">
-                  All tracks <ArrowRight size={14} />
-                </Link>
-              </div>
-
-              {loading ? (
-                <p className="text-sm text-ink-500">Loading…</p>
-              ) : toImprove.length === 0 ? (
-                <Link
-                  to="/practice"
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-ink-200 bg-white p-5 transition-colors hover:border-brand-300"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-ink-800">No practice yet</p>
-                    <p className="mt-0.5 text-xs text-ink-500">Pick a skill track to start building your scores.</p>
-                  </div>
-                  <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-brand-600">
-                    Start <ArrowRight size={14} />
-                  </span>
-                </Link>
-              ) : (
-                <div className="grid gap-2.5 sm:grid-cols-2">
-                  {toImprove.map((r) => (
-                    <Link
-                      key={r.slug}
-                      to="/practice"
-                      className="group flex items-center gap-3 rounded-xl border border-ink-100 bg-white p-3.5 transition-colors hover:border-brand-200"
-                    >
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                        <Target size={17} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-ink-900">{r.name}</p>
-                        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
-                          <div className="h-full rounded-full bg-brand-500" style={{ width: `${r.percent}%` }} />
-                        </div>
-                      </div>
-                      <span className="shrink-0 text-xs font-medium text-ink-400">{r.percent}%</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </section>
+          <div className="lg:col-start-3 lg:row-start-1">
+            <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
           </div>
 
-          {/* Right column — quick stats + goals + today's focus (sticky on desktop) */}
-          <div className="space-y-5 lg:sticky lg:top-6 lg:self-start">
-            <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
-            <PromptLibraryCard cert={cert} />
-            <PrimaryGoal goals={goals} />
-            <TodayFocus userKey={userKey} />
+          <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
             <TimeSpentChart />
+          </div>
+
+          <div className="lg:col-start-3 lg:row-start-2">
+            <PromptLibraryCard cert={cert} />
+          </div>
+
+          <div className="lg:col-start-3 lg:row-start-3">
+            <PrimaryGoal goals={goals} />
           </div>
         </div>
       </div>
