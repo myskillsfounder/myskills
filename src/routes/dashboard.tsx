@@ -137,25 +137,30 @@ function DashboardPage() {
           </Link>
         )}
 
-        {/* Each card is placed explicitly rather than nested in two column
-            divs, so mobile can stack them in a different order to desktop:
+        {/* Two independent columns on desktop, one ordered stack on mobile.
+            The wrappers are `contents` below lg, so their children become
+            direct flex items and `order-*` can interleave them:
               mobile   streak -> time spent -> prompt library -> goal
-              desktop  time spent fills cols 1-2; the rest stack in col 3 */}
-        <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
-          <div className="lg:col-start-3 lg:row-start-1">
-            <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
+              desktop  time spent in cols 1-2, the rest stacked in col 3
+            (Placing cards in explicit grid rows instead would tie the rail's
+            row heights to the chart's, leaving big gaps between the cards.) */}
+        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:items-start">
+          <div className="contents lg:col-span-2 lg:block">
+            <div className="order-2 lg:order-none">
+              <TimeSpentChart />
+            </div>
           </div>
 
-          <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
-            <TimeSpentChart />
-          </div>
-
-          <div className="lg:col-start-3 lg:row-start-2">
-            <PromptLibraryCard cert={cert} />
-          </div>
-
-          <div className="lg:col-start-3 lg:row-start-3">
-            <PrimaryGoal goals={goals} />
+          <div className="contents lg:block lg:space-y-5">
+            <div className="order-1 lg:order-none">
+              <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
+            </div>
+            <div className="order-3 lg:order-none">
+              <PromptLibraryCard cert={cert} />
+            </div>
+            <div className="order-4 lg:order-none">
+              <PrimaryGoal goals={goals} />
+            </div>
           </div>
         </div>
       </div>

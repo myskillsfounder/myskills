@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'
 
@@ -14,6 +15,12 @@ function levelLabel(avg: number, practiced: number) {
  * a couple of headline numbers, and where they're strong vs. should focus.
  * Deliberately holds NO per-track list — the track cards below are the one
  * and only place tracks are listed, so nothing is shown twice.
+ *
+ * Mobile shape differs from desktop on purpose. Track names like
+ * "Marketing Fundamentals · 86%" are too wide to sit two-per-row on a phone,
+ * so as chips they wrapped one per line and read like an accident. Below `sm`
+ * they render as full-width rows with the score right-aligned (and 44px tap
+ * targets for the tappable "focus next" ones); from `sm` up they're chips.
  */
 export function PracticeOverview({
   practice,
@@ -43,8 +50,8 @@ export function PracticeOverview({
   return (
     <section className="rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-4 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-        <div className="flex items-center gap-5">
-          <div className="relative h-[68px] w-[68px] shrink-0 sm:h-[86px] sm:w-[86px]">
+        <div className="flex items-center gap-4 sm:gap-5">
+          <div className="relative h-[64px] w-[64px] shrink-0 sm:h-[86px] sm:w-[86px]">
             <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
               <circle cx="40" cy="40" r={R} fill="none" stroke="currentColor" strokeWidth="7" className="text-brand-100" />
               <circle
@@ -54,16 +61,20 @@ export function PracticeOverview({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-xl font-semibold tracking-tight text-ink-900">{avg}%</span>
-              <span className="text-[10px] font-medium text-ink-400">avg best</span>
+              <span className="text-lg font-semibold leading-none tracking-tight text-ink-900 sm:text-xl">
+                {avg}%
+              </span>
+              <span className="mt-0.5 text-[9px] font-medium leading-none text-ink-400 sm:text-[10px]">
+                avg best
+              </span>
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-medium text-brand-700">Overall skill level</p>
-            <p className="text-2xl font-semibold tracking-tight text-ink-900">
+            <p className="text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
               {levelLabel(avg, started.length)}
             </p>
-            <p className="mt-0.5 text-sm text-ink-500">
+            <p className="mt-0.5 text-xs text-ink-500 sm:text-sm">
               {started.length === 0
                 ? 'Pick a track below to begin.'
                 : 'Average across your best track scores.'}
@@ -71,29 +82,38 @@ export function PracticeOverview({
           </div>
         </div>
 
-        <div className="flex gap-3 sm:ml-auto">
-          <div className="min-w-[96px] flex-1 rounded-xl border border-brand-100 bg-white/70 p-3 sm:min-w-[104px] sm:flex-none sm:p-4">
-            <p className="text-xs font-medium text-ink-500">Tracks practiced</p>
-            <p className="mt-1 text-xl font-semibold tracking-tight text-ink-900">
-              {started.length}<span className="text-sm font-normal text-ink-400">/{skillTracks.length}</span>
+        {/* One divided card on mobile — two separate boxes wasted vertical space */}
+        <div className="flex items-stretch overflow-hidden rounded-xl border border-brand-100 bg-white/70 sm:ml-auto sm:shrink-0">
+          <div className="flex-1 px-3 py-2.5 sm:min-w-[104px] sm:p-4">
+            <p className="text-[11px] font-medium text-ink-500 sm:text-xs">Tracks practiced</p>
+            <p className="mt-0.5 text-lg font-semibold tracking-tight text-ink-900 sm:mt-1 sm:text-xl">
+              {started.length}
+              <span className="text-sm font-normal text-ink-400">/{skillTracks.length}</span>
             </p>
           </div>
-          <div className="min-w-[96px] flex-1 rounded-xl border border-brand-100 bg-white/70 p-3 sm:min-w-[104px] sm:flex-none sm:p-4">
-            <p className="text-xs font-medium text-ink-500">Total attempts</p>
-            <p className="mt-1 text-xl font-semibold tracking-tight text-ink-900">{attempts}</p>
+          <div className="w-px shrink-0 bg-brand-100" />
+          <div className="flex-1 px-3 py-2.5 sm:min-w-[104px] sm:p-4">
+            <p className="text-[11px] font-medium text-ink-500 sm:text-xs">Total attempts</p>
+            <p className="mt-0.5 text-lg font-semibold tracking-tight text-ink-900 sm:mt-1 sm:text-xl">
+              {attempts}
+            </p>
           </div>
         </div>
       </div>
 
       {started.length > 0 && (
-        <div className="mt-4 grid gap-3 border-t border-brand-100 pt-4 sm:grid-cols-2 sm:gap-4 sm:pt-5">
+        <div className="mt-4 grid gap-4 border-t border-brand-100 pt-4 sm:grid-cols-2 sm:pt-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Strengths</p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
+            <div className="mt-2 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
               {strengths.length ? (
                 strengths.map((r) => (
-                  <span key={r.slug} className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                    {r.name} · {r.percent}%
+                  <span
+                    key={r.slug}
+                    className="flex items-center justify-between gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700 sm:rounded-full sm:px-2.5 sm:py-1"
+                  >
+                    <span className="truncate">{r.name}</span>
+                    <span className="shrink-0 tabular-nums">{r.percent}%</span>
                   </span>
                 ))
               ) : (
@@ -101,18 +121,23 @@ export function PracticeOverview({
               )}
             </div>
           </div>
+
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Focus next</p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
+            <div className="mt-2 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
               {focus.length ? (
                 focus.map((r) => (
                   <button
                     key={r.slug}
                     type="button"
                     onClick={() => onSelect(r.slug)}
-                    className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-100"
+                    className="flex min-h-[44px] items-center justify-between gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 transition-colors active:bg-amber-100 sm:min-h-0 sm:rounded-full sm:px-2.5 sm:py-1 sm:hover:bg-amber-100"
                   >
-                    {r.name}{r.started ? ` · ${r.percent}%` : ''}
+                    <span className="truncate">{r.name}</span>
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      {r.started && <span className="tabular-nums">{r.percent}%</span>}
+                      <ArrowRight size={13} className="sm:hidden" />
+                    </span>
                   </button>
                 ))
               ) : (
