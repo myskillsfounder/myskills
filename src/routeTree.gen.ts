@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as PromptLibraryRouteImport } from './routes/prompt-library'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -41,6 +42,11 @@ const SignupRoute = SignupRouteImport.update({
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromptLibraryRoute = PromptLibraryRouteImport.update({
+  id: '/prompt-library',
+  path: '/prompt-library',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
+  '/prompt-library': typeof PromptLibraryRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
+  '/prompt-library': typeof PromptLibraryRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
+  '/prompt-library': typeof PromptLibraryRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
+    | '/prompt-library'
     | '/resources'
     | '/signup'
     | '/tests'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
+    | '/prompt-library'
     | '/resources'
     | '/signup'
     | '/tests'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
+    | '/prompt-library'
     | '/resources'
     | '/signup'
     | '/tests'
@@ -257,6 +269,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PracticeRoute: typeof PracticeRoute
   ProfileRoute: typeof ProfileRoute
+  PromptLibraryRoute: typeof PromptLibraryRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
   TestsRoute: typeof TestsRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prompt-library': {
+      id: '/prompt-library'
+      path: '/prompt-library'
+      fullPath: '/prompt-library'
+      preLoaderRoute: typeof PromptLibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -409,6 +429,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PracticeRoute: PracticeRoute,
   ProfileRoute: ProfileRoute,
+  PromptLibraryRoute: PromptLibraryRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
   TestsRoute: TestsRoute,

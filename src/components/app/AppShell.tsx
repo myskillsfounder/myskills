@@ -12,6 +12,7 @@ import {
   Menu,
   MessageCircle,
   MessageSquare,
+  Sparkles,
   User,
   X,
 } from 'lucide-react'
@@ -23,6 +24,7 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
+  { to: '/prompt-library', label: 'Prompt Library', icon: Sparkles },
   { to: '/games', label: 'Games', icon: Gamepad2 },
   { to: '/community', label: 'Community', icon: MessageCircle },
   { to: '/feedback', label: 'Feedback', icon: MessageSquare },
@@ -171,7 +173,9 @@ export function AppShell({
         <Sidebar />
       </aside>
 
-      {/* Mobile top bar */}
+      {/* Mobile top bar. Primary navigation lives in the bottom bar
+          (components/app/MobileBottomNav.tsx, mounted in __root); this menu
+          holds the overflow — Community, Feedback, Sign out. */}
       <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-100 bg-white px-4 lg:hidden">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
@@ -185,7 +189,7 @@ export function AppShell({
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Open menu"
-          className="rounded-md p-2 text-ink-600 hover:text-ink-900"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-600 hover:text-ink-900"
         >
           <Menu size={22} />
         </button>

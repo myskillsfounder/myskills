@@ -6,12 +6,14 @@ import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import { useInitialAssessment } from '@/lib/assessmentResults'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
+import { fetchMyCertificate, type Certificate } from '@/lib/certificates'
 import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
 import { PracticeOverview } from '@/components/practice/PracticeOverview'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { TodayFocus } from '@/components/dashboard/TodayFocus'
+import { PromptLibraryCard } from '@/components/dashboard/PromptLibrary'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: requireOnboarded,
@@ -87,12 +89,19 @@ function DashboardPage() {
   const { result: assessment } = useInitialAssessment()
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [loading, setLoading] = useState(true)
+  const [cert, setCert] = useState<Certificate | null>(null)
 
   useEffect(() => {
     fetchPracticeSummary()
       .then(setPractice)
       .catch(() => {})
       .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    fetchMyCertificate()
+      .then(setCert)
+      .catch(() => {})
   }, [])
 
   const practiced = skillTracks
@@ -214,6 +223,7 @@ function DashboardPage() {
           {/* Right column — quick stats + goals + today's focus (sticky on desktop) */}
           <div className="space-y-5 lg:sticky lg:top-6 lg:self-start">
             <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
+            <PromptLibraryCard cert={cert} />
             <PrimaryGoal goals={goals} />
             <TodayFocus userKey={userKey} />
             <TimeSpentChart />
