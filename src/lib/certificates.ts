@@ -176,29 +176,11 @@ export function tierForCertificate(cert: Pick<Certificate, 'kind' | 'percent'>):
   return TIERS[cert.kind] ?? tierForPercent(cert.percent)
 }
 
-/* -- entitlements ---------------------------------------------------------- *
- * Bands are ranked and INHERIT downward: Gold gets everything Silver gets.
- * Use `hasTierAccess` rather than comparing `kind` directly, so adding a perk
- * to a lower band automatically grants it to the higher ones.
- * -------------------------------------------------------------------------- */
-
-const TIER_RANK: Record<CertificateKind, number> = { bronze: 0, silver: 1, gold: 2 }
-
-/** Does this certificate meet or exceed `required`? */
-export function hasTierAccess(
-  cert: Pick<Certificate, 'kind'> | null | undefined,
-  required: CertificateKind,
-): boolean {
-  if (!cert) return false
-  const held = TIER_RANK[cert.kind]
-  if (held === undefined) return false // legacy/unknown value
-  return held >= TIER_RANK[required]
-}
-
-/** Does this certificate unlock Gold-tier perks (e.g. the deep-dive prompts)? */
-export function isGoldCertificate(cert: Pick<Certificate, 'kind'> | null | undefined): boolean {
-  return hasTierAccess(cert, 'gold')
-}
+/* Tier-based entitlements were removed 2026-08-02 — the prompt libraries are
+ * open to everyone now. Certificates still carry a band (gold/silver/bronze);
+ * it's purely a label, nothing gates on it. If perks return, add a ranked
+ * `hasTierAccess(cert, required)` helper here rather than comparing `kind`
+ * inline at each call site. */
 
 /** Human-readable, unique-enough certificate code, e.g. MSK-8F3K-9Q2A-XZ04. */
 function generateCode(): string {

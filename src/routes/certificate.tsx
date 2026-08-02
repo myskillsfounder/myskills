@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Check, Copy, Loader2, Printer } from 'lucide-react'
+import { ArrowLeft, Check, Copy, Download, Loader2, Printer } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { fetchMyCertificate, type Certificate as Cert } from '@/lib/certificates'
+import { saveCertificate } from '@/lib/certificateExport'
 import { Certificate } from '@/components/certificate/Certificate'
 
 export const Route = createFileRoute('/certificate')({
@@ -15,6 +16,10 @@ function CertificatePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
   const [copied, setCopied] = useState(false)
+
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string>()
 
   useEffect(() => {
     fetchMyCertificate()
@@ -34,26 +39,61 @@ function CertificatePage() {
     }
   }
 
+  /** Exports the certificate SVG alone — not a screenshot of the page. */
+  async function download() {
+    if (!cert || !svgRef.current || saving) return
+    setSaving(true)
+    setSaveError(undefined)
+    try {
+      await saveCertificate(svgRef.current, cert.code)
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Could not save the certificate.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#f7f6fc] py-6">
       <div className="mx-auto max-w-4xl px-4">
-        <div className="no-print mb-5 flex items-center justify-between">
+        <div className="no-print mb-5 flex flex-wrap items-center justify-between gap-3">
           <Link
             to="/profile"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900"
           >
             <ArrowLeft size={16} /> Back to profile
           </Link>
+
           {cert && (
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
-            >
-              <Printer size={15} /> Print / Save PDF
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={download}
+                disabled={saving}
+                className="inline-flex h-10 items-center gap-1.5 rounded-full bg-brand-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-70"
+              >
+                {saving ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
+                {saving ? 'Preparing…' : 'Download'}
+              </button>
+
+              {/* Print is a desktop convenience for "save as PDF"; mobile
+                  browsers handle it poorly, so it's hidden there. */}
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="hidden h-10 items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-50 sm:inline-flex"
+              >
+                <Printer size={15} /> Print
+              </button>
+            </div>
           )}
         </div>
+
+        {saveError && (
+          <div className="no-print mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {saveError}
+          </div>
+        )}
 
         {loading && (
           <div className="flex items-center gap-2 py-16 text-sm text-ink-500">
@@ -81,7 +121,7 @@ function CertificatePage() {
           </div>
         )}
 
-        {cert && <Certificate cert={cert} />}
+        {cert && <Certificate cert={cert} svgRef={svgRef} />}
 
         {cert && (
           <div className="no-print mt-5 flex flex-wrap items-center justify-center gap-2">

@@ -249,8 +249,13 @@ function FauxQR({ x, y, size, seed }: { x: number; y: number; size: number; seed
   )
 }
 
-/** Certificate as a single fixed-viewBox SVG. */
-export function Certificate({ cert }: { cert: Cert }) {
+/**
+ * Certificate as a single fixed-viewBox SVG.
+ *
+ * `svgRef` exposes the <svg> element so the page can export just the
+ * certificate (see lib/certificateExport.ts) instead of printing the page.
+ */
+export function Certificate({ cert, svgRef }: { cert: Cert; svgRef?: React.Ref<SVGSVGElement> }) {
   const t = tierForCertificate(cert)
   const p = PALETTES[t.kind]
   const subject = cert.title // e.g. "Digital Marketing"
@@ -284,6 +289,7 @@ export function Certificate({ cert }: { cert: Cert }) {
   return (
     <div className="mx-auto w-full max-w-4xl">
       <svg
+        ref={svgRef}
         viewBox="0 0 1120 790"
         role="img"
         aria-label={`Certificate for ${cert.recipient_name}`}

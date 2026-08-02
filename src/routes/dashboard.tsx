@@ -5,11 +5,11 @@ import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import { useInitialAssessment } from '@/lib/assessmentResults'
-import { fetchMyCertificate, type Certificate } from '@/lib/certificates'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PromptLibraryCard } from '@/components/dashboard/PromptLibrary'
+import { PromptSuggestions } from '@/components/dashboard/PromptSuggestions'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: requireOnboarded,
@@ -82,13 +82,6 @@ function DashboardPage() {
   const { profile } = useProfile()
   const goals = profile?.goals ?? []
   const { result: assessment } = useInitialAssessment()
-  const [cert, setCert] = useState<Certificate | null>(null)
-
-  useEffect(() => {
-    fetchMyCertificate()
-      .then(setCert)
-      .catch(() => {})
-  }, [])
 
   return (
     <AppShell wide>
@@ -137,17 +130,19 @@ function DashboardPage() {
           </Link>
         )}
 
-        {/* Two independent columns on desktop, one ordered stack on mobile.
-            The wrappers are `contents` below lg, so their children become
-            direct flex items and `order-*` can interleave them:
-              mobile   streak -> time spent -> prompt library -> goal
-              desktop  time spent in cols 1-2, the rest stacked in col 3
-            (Placing cards in explicit grid rows instead would tie the rail's
-            row heights to the chart's, leaving big gaps between the cards.) */}
+        {/* Prompt library is the priority surface, so it takes the wide
+            column; the chart and stats sit in the rail. The wrappers are
+            `contents` below lg, so their children become direct flex items
+            and `order-*` can interleave across columns:
+              mobile   streak -> library -> suggestions -> time spent -> goals
+              desktop  library + suggestions in cols 1-2, rest in col 3 */}
         <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:items-start">
-          <div className="contents lg:col-span-2 lg:block">
+          <div className="contents lg:col-span-2 lg:block lg:space-y-5">
             <div className="order-2 lg:order-none">
-              <TimeSpentChart />
+              <PromptLibraryCard />
+            </div>
+            <div className="order-3 lg:order-none">
+              <PromptSuggestions assessment={assessment} userKey={userKey} />
             </div>
           </div>
 
@@ -155,10 +150,10 @@ function DashboardPage() {
             <div className="order-1 lg:order-none">
               <StatsCard userKey={userKey} assessmentPercent={assessment ? `${assessment.overall.percent}%` : '—'} />
             </div>
-            <div className="order-3 lg:order-none">
-              <PromptLibraryCard cert={cert} />
-            </div>
             <div className="order-4 lg:order-none">
+              <TimeSpentChart />
+            </div>
+            <div className="order-5 lg:order-none">
               <PrimaryGoal goals={goals} />
             </div>
           </div>

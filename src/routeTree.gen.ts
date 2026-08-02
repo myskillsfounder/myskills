@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
-import { Route as PromptLibraryRouteImport } from './routes/prompt-library'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -26,7 +25,9 @@ import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PromptLibraryIndexRouteImport } from './routes/prompt-library/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as PromptLibraryLibraryIdRouteImport } from './routes/prompt-library/$libraryId'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 
 const TestsRoute = TestsRouteImport.update({
@@ -42,11 +43,6 @@ const SignupRoute = SignupRouteImport.update({
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PromptLibraryRoute = PromptLibraryRouteImport.update({
-  id: '/prompt-library',
-  path: '/prompt-library',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -114,9 +110,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PromptLibraryIndexRoute = PromptLibraryIndexRouteImport.update({
+  id: '/prompt-library/',
+  path: '/prompt-library/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromptLibraryLibraryIdRoute = PromptLibraryLibraryIdRouteImport.update({
+  id: '/prompt-library/$libraryId',
+  path: '/prompt-library/$libraryId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
@@ -139,12 +145,13 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
-  '/prompt-library': typeof PromptLibraryRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/prompt-library/': typeof PromptLibraryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -160,12 +167,13 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
-  '/prompt-library': typeof PromptLibraryRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog': typeof BlogIndexRoute
+  '/prompt-library': typeof PromptLibraryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -182,12 +190,13 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
-  '/prompt-library': typeof PromptLibraryRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/prompt-library/': typeof PromptLibraryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -205,12 +214,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
-    | '/prompt-library'
     | '/resources'
     | '/signup'
     | '/tests'
     | '/blog/$slug'
+    | '/prompt-library/$libraryId'
     | '/blog/'
+    | '/prompt-library/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -226,12 +236,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
-    | '/prompt-library'
     | '/resources'
     | '/signup'
     | '/tests'
     | '/blog/$slug'
+    | '/prompt-library/$libraryId'
     | '/blog'
+    | '/prompt-library'
   id:
     | '__root__'
     | '/'
@@ -247,12 +258,13 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
-    | '/prompt-library'
     | '/resources'
     | '/signup'
     | '/tests'
     | '/blog/$slug'
+    | '/prompt-library/$libraryId'
     | '/blog/'
+    | '/prompt-library/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -269,12 +281,13 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PracticeRoute: typeof PracticeRoute
   ProfileRoute: typeof ProfileRoute
-  PromptLibraryRoute: typeof PromptLibraryRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
   TestsRoute: typeof TestsRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  PromptLibraryLibraryIdRoute: typeof PromptLibraryLibraryIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  PromptLibraryIndexRoute: typeof PromptLibraryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,13 +311,6 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prompt-library': {
-      id: '/prompt-library'
-      path: '/prompt-library'
-      fullPath: '/prompt-library'
-      preLoaderRoute: typeof PromptLibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -398,11 +404,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prompt-library/': {
+      id: '/prompt-library/'
+      path: '/prompt-library'
+      fullPath: '/prompt-library/'
+      preLoaderRoute: typeof PromptLibraryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prompt-library/$libraryId': {
+      id: '/prompt-library/$libraryId'
+      path: '/prompt-library/$libraryId'
+      fullPath: '/prompt-library/$libraryId'
+      preLoaderRoute: typeof PromptLibraryLibraryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/$slug': {
@@ -429,12 +449,13 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PracticeRoute: PracticeRoute,
   ProfileRoute: ProfileRoute,
-  PromptLibraryRoute: PromptLibraryRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
   TestsRoute: TestsRoute,
   BlogSlugRoute: BlogSlugRoute,
+  PromptLibraryLibraryIdRoute: PromptLibraryLibraryIdRoute,
   BlogIndexRoute: BlogIndexRoute,
+  PromptLibraryIndexRoute: PromptLibraryIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
