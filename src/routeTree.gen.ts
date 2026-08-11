@@ -26,8 +26,10 @@ import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PromptLibraryIndexRouteImport } from './routes/prompt-library/index'
+import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as PromptLibraryLibraryIdRouteImport } from './routes/prompt-library/$libraryId'
+import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 
 const TestsRoute = TestsRouteImport.update({
@@ -115,6 +117,11 @@ const PromptLibraryIndexRoute = PromptLibraryIndexRouteImport.update({
   path: '/prompt-library/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityIndexRoute = CommunityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CommunityRoute,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -124,6 +131,11 @@ const PromptLibraryLibraryIdRoute = PromptLibraryLibraryIdRouteImport.update({
   id: '/prompt-library/$libraryId',
   path: '/prompt-library/$libraryId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityMentorsRoute = CommunityMentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
+  getParentRoute: () => CommunityRoute,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
@@ -135,7 +147,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/certificate': typeof CertificateRoute
-  '/community': typeof CommunityRoute
+  '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
   '/games': typeof GamesRoute
@@ -149,15 +161,16 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/community/mentors': typeof CommunityMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/community/': typeof CommunityIndexRoute
   '/prompt-library/': typeof PromptLibraryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/certificate': typeof CertificateRoute
-  '/community': typeof CommunityRoute
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
   '/games': typeof GamesRoute
@@ -171,8 +184,10 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/community/mentors': typeof CommunityMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog': typeof BlogIndexRoute
+  '/community': typeof CommunityIndexRoute
   '/prompt-library': typeof PromptLibraryIndexRoute
 }
 export interface FileRoutesById {
@@ -180,7 +195,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/certificate': typeof CertificateRoute
-  '/community': typeof CommunityRoute
+  '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
   '/games': typeof GamesRoute
@@ -194,8 +209,10 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/tests': typeof TestsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/community/mentors': typeof CommunityMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/community/': typeof CommunityIndexRoute
   '/prompt-library/': typeof PromptLibraryIndexRoute
 }
 export interface FileRouteTypes {
@@ -218,15 +235,16 @@ export interface FileRouteTypes {
     | '/signup'
     | '/tests'
     | '/blog/$slug'
+    | '/community/mentors'
     | '/prompt-library/$libraryId'
     | '/blog/'
+    | '/community/'
     | '/prompt-library/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/assessment'
     | '/certificate'
-    | '/community'
     | '/dashboard'
     | '/feedback'
     | '/games'
@@ -240,8 +258,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/tests'
     | '/blog/$slug'
+    | '/community/mentors'
     | '/prompt-library/$libraryId'
     | '/blog'
+    | '/community'
     | '/prompt-library'
   id:
     | '__root__'
@@ -262,8 +282,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/tests'
     | '/blog/$slug'
+    | '/community/mentors'
     | '/prompt-library/$libraryId'
     | '/blog/'
+    | '/community/'
     | '/prompt-library/'
   fileRoutesById: FileRoutesById
 }
@@ -271,7 +293,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssessmentRoute: typeof AssessmentRoute
   CertificateRoute: typeof CertificateRoute
-  CommunityRoute: typeof CommunityRoute
+  CommunityRoute: typeof CommunityRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   FeedbackRoute: typeof FeedbackRoute
   GamesRoute: typeof GamesRoute
@@ -411,6 +433,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PromptLibraryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community/': {
+      id: '/community/'
+      path: '/'
+      fullPath: '/community/'
+      preLoaderRoute: typeof CommunityIndexRouteImport
+      parentRoute: typeof CommunityRoute
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -425,6 +454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PromptLibraryLibraryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community/mentors': {
+      id: '/community/mentors'
+      path: '/mentors'
+      fullPath: '/community/mentors'
+      preLoaderRoute: typeof CommunityMentorsRouteImport
+      parentRoute: typeof CommunityRoute
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
@@ -435,11 +471,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CommunityRouteChildren {
+  CommunityMentorsRoute: typeof CommunityMentorsRoute
+  CommunityIndexRoute: typeof CommunityIndexRoute
+}
+
+const CommunityRouteChildren: CommunityRouteChildren = {
+  CommunityMentorsRoute: CommunityMentorsRoute,
+  CommunityIndexRoute: CommunityIndexRoute,
+}
+
+const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
+  CommunityRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssessmentRoute: AssessmentRoute,
   CertificateRoute: CertificateRoute,
-  CommunityRoute: CommunityRoute,
+  CommunityRoute: CommunityRouteWithChildren,
   DashboardRoute: DashboardRoute,
   FeedbackRoute: FeedbackRoute,
   GamesRoute: GamesRoute,

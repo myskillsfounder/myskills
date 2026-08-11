@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useAssessmentDone } from '@/lib/assessmentResults'
+import { AdSlider } from './AdSlider'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -97,13 +98,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       {/* Footer */}
       <div className="mx-4 border-t border-ink-100" />
       <div className="space-y-3 px-4 pb-6 pt-4">
-        <div className="rounded-xl bg-brand-50 p-4">
-          <p className="text-sm font-semibold text-ink-900">Guided weekly rhythm</p>
-          <p className="mt-1 text-xs leading-relaxed text-ink-500">
-            One brief, one audit, one report. Small loops build real marketing
-            judgment.
-          </p>
-        </div>
+        <AdSlider />
 
         <Link
           to="/profile"
