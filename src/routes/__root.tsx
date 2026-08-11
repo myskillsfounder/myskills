@@ -8,6 +8,7 @@ import {
 import { supabase } from '@/lib/supabase'
 import { recordLoginEvent, validateSession } from '@/lib/auth'
 import { initAnalytics, trackPageView } from '@/lib/analytics'
+import { applySeo } from '@/lib/seo'
 import { startTimeTracking } from '@/lib/timeTracker'
 import { MobileBottomNav } from '@/components/app/MobileBottomNav'
 
@@ -69,6 +70,13 @@ function RootComponent() {
 
   useEffect(() => {
     trackPageView(pathname + window.location.search)
+  }, [pathname])
+
+  // The document head persists across SPA navigations, so title/description/
+  // canonical/OG have to be re-applied per route. Blog posts override this with
+  // their own metadata once the post loads (see routes/blog/$slug.tsx).
+  useEffect(() => {
+    applySeo(pathname)
   }, [pathname])
 
   return (

@@ -1,0 +1,86 @@
+# =============================================================================
+# MySkills — Apache config for Hostinger shared hosting.
+#
+# Vite copies everything in public/ to dist/, so this ships with the build.
+# Upload the CONTENTS of dist/ to public_html/ and this file goes with it.
+# =============================================================================
+
+RewriteEngine On
+
+# -----------------------------------------------------------------------------
+# 1) One canonical host. Both myskills.org.in and www.myskills.org.in currently
+#    resolve, which search engines read as two sites with identical content —
+#    splitting ranking signals between them. Everything 301s to the non-www
+#    HTTPS origin, which is what sitemap.xml and the canonical tags declare.
+#
+#    If you'd rather www be canonical, swap this block AND set
+#    VITE_SITE_URL=https://www.myskills.org.in at build time. They must agree.
+# -----------------------------------------------------------------------------
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://myskills.org.in%{REQUEST_URI} [R=301,L]
+
+# -----------------------------------------------------------------------------
+# 2) SPA fallback. Any URL that isn't a real file or directory is handed to
+#    index.html so the router can take over.
+#
+#    The prerendered pages written by scripts/generate-seo.mjs live at
+#    /blog/<slug>/index.html — real directories, so they're served directly and
+#    never reach this rule. That's the point: crawlers get the static HTML.
+# -----------------------------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# -----------------------------------------------------------------------------
+# 3) Compression — Hostinger serves uncompressed by default, which is the
+#    single biggest Core Web Vitals win available here.
+# -----------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# 4) Caching. Vite fingerprints filenames in /assets, so those are immutable.
+#    HTML must never be cached or users get a stale shell pointing at deleted
+#    bundles after a deploy.
+# -----------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                 "access plus 1 year"
+  ExpiresByType application/javascript   "access plus 1 year"
+  ExpiresByType image/png                "access plus 6 months"
+  ExpiresByType image/jpeg               "access plus 6 months"
+  ExpiresByType image/svg+xml            "access plus 6 months"
+  ExpiresByType image/webp               "access plus 6 months"
+  ExpiresByType font/woff2               "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|woff2|png|jpg|jpeg|svg|webp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  # Basic hardening. No CSP here — it needs to be worked out against Supabase,
+  # Google Fonts and GA before it can be switched on without breaking things.
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# 5) Correct content types for the SEO files.
+# -----------------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType application/xml .xml
+  AddType text/plain .txt
+  AddType image/svg+xml .svg
+</IfModule>
+
+ErrorDocument 404 /index.html

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { fetchPostBySlug, formatDate, type BlogPost } from '@/lib/blog'
+import { applySeo } from '@/lib/seo'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 
@@ -27,6 +28,19 @@ function BlogPostPage() {
       .catch((e) => setError(e instanceof Error ? e.message : String(e)))
       .finally(() => setLoading(false))
   }, [slug])
+
+  // Per-post metadata once the post resolves. The prerendered HTML already
+  // carries these tags for crawlers; this keeps them right for client-side
+  // navigation (and for the share sheet on mobile).
+  useEffect(() => {
+    if (!post) return
+    applySeo(`/blog/${post.slug}`, {
+      title: `${post.title} | MySkills`,
+      description: post.description,
+      image: post.thumbnail_url ?? undefined,
+      noindex: false,
+    })
+  }, [post])
 
   return (
     <div className="min-h-screen bg-white">

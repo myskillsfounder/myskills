@@ -3,14 +3,43 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon. Only favicon.svg exists in public/ — the old /favicon.png
+       reference 404'd on every page load. -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+  <meta name="theme-color" content="#7c3aed" />
+
+  <!-- Defaults. scripts/generate-seo.mjs replaces title + description per page
+       at build time, and src/lib/seo.ts keeps them correct during client-side
+       navigation. -->
+  <title>Free Digital Marketing Skill Assessment &amp; Certification | MySkills</title>
   <meta name="description"
-    content="A self-learning platform for digital marketing students to practice real-world skills, measure progress, and earn free certifications." />
+    content="Test your digital marketing skills across SEO, Google Ads, Meta Ads and analytics. Get a free certificate, scenario-based practice and 441 AI study prompts." />
+  <link rel="canonical" href="https://myskills.org.in/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+
+  <meta property="og:site_name" content="MySkills" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:title" content="Free Digital Marketing Skill Assessment &amp; Certification | MySkills" />
+  <meta property="og:description"
+    content="Test your digital marketing skills across SEO, Google Ads, Meta Ads and analytics. Get a free certificate and scenario-based practice." />
+  <meta property="og:url" content="https://myskills.org.in/" />
+  <meta property="og:image" content="https://myskills.org.in/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Digital Marketing Skill Assessment &amp; Certification | MySkills" />
+  <meta name="twitter:description"
+    content="Test your digital marketing skills across SEO, Google Ads, Meta Ads and analytics. Get a free certificate and scenario-based practice." />
+  <meta name="twitter:image" content="https://myskills.org.in/og-image.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <title>Digital Marketing Assessments & Skill Tests | MySkills</title>
 </head>
 
 <body>
