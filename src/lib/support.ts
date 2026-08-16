@@ -388,11 +388,8 @@ export function subscribeSession(sessionId: string, onChange: (s: SupportSession
 export function subscribeQueue(onChange: () => void) {
   const ch = supabase
     .channel('support_queue')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'support_sessions' }, (payload) => {
-      console.log('[support] realtime session change', payload.eventType)
-      onChange()
-    })
-    .subscribe((status) => console.log('[support] queue channel:', status))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'support_sessions' }, () => onChange())
+    .subscribe()
   return () => {
     void supabase.removeChannel(ch)
   }

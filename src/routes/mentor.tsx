@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { Bell, Circle, Clock, Loader2, MessageSquare, Power, RefreshCw } from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Bell, Circle, Clock, Loader2, Lock, MessageSquare, Power, RefreshCw } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import {
@@ -57,7 +57,6 @@ function MentorConsole() {
   async function refresh() {
     try {
       const [q, a] = await Promise.all([fetchQueue(), fetchMyActiveAsMentor()])
-      console.log('[mentor] queue:', q.length, 'active:', a.length)
       void fetchNames([...q, ...a].map((x) => x.user_id)).then((m) =>
         setNames((prev) => ({ ...prev, ...m })),
       )
@@ -79,11 +78,19 @@ function MentorConsole() {
     }
   }
 
+  // Verify mentor access first; only then start polling/subscribing.
   useEffect(() => {
+    let cancelled = false
     void amIMentor().then((r) => {
-      console.log('[mentor] account check →', r)
-      setMentorCheck({ isMentor: r.isMentor, id: r.id })
+      if (!cancelled) setMentorCheck({ isMentor: r.isMentor, id: r.id })
     })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!mentorCheck?.isMentor) return
     void refresh()
     const unsub = subscribeQueue(() => void refresh())
     const poll = window.setInterval(() => void refresh(), 5_000)
@@ -92,7 +99,7 @@ function MentorConsole() {
       window.clearInterval(poll)
       void stopRef.current?.()
     }
-  }, [])
+  }, [mentorCheck?.isMentor])
 
   async function toggleOnline() {
     if (online) {
@@ -131,6 +138,41 @@ function MentorConsole() {
     return m < 1 ? 'just now' : `${m} min`
   }
 
+  // Still verifying access
+  if (!mentorCheck) {
+    return (
+      <AppShell wide>
+        <p className="flex items-center gap-2 py-10 text-sm text-ink-500">
+          <Loader2 size={15} className="animate-spin" /> Loading…
+        </p>
+      </AppShell>
+    )
+  }
+
+  // Not a mentor: show nothing about the queue, the account, or how access works.
+  if (!mentorCheck.isMentor) {
+    return (
+      <AppShell wide>
+        <div className="mx-auto max-w-md rounded-2xl border border-ink-100 bg-white p-10 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink-100 text-ink-400">
+            <Lock size={22} />
+          </div>
+          <h1 className="mt-4 text-lg font-semibold text-ink-900">Mentors only</h1>
+          <p className="mt-1.5 text-sm text-ink-500">
+            This area is for MySkills mentors. If you’d like to talk to one, start a chat from your
+            dashboard.
+          </p>
+          <Link
+            to="/support"
+            className="mt-5 inline-flex items-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+          >
+            Talk to a mentor
+          </Link>
+        </div>
+      </AppShell>
+    )
+  }
+
   return (
     <AppShell wide>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -159,21 +201,6 @@ function MentorConsole() {
         </button>
         </div>
       </div>
-
-      {mentorCheck && !mentorCheck.isMentor && (
-        <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          <p className="font-semibold">This account is not flagged as a mentor.</p>
-          <p className="mt-1">
-            Row-level security only shows the waiting queue to mentors, so it will always look empty.
-          </p>
-          <p className="mt-2 break-all text-xs text-amber-700">
-            Run in Supabase:{' '}
-            <code className="rounded bg-amber-100 px-1">
-              update public.profiles set is_mentor = true where id = '{mentorCheck.id}';
-            </code>
-          </p>
-        </div>
-      )}
 
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
