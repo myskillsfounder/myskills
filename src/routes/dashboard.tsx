@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, ClipboardCheck, Flame, Star } from 'lucide-react'
+import { ArrowRight, ClipboardCheck, Flame, MessagesSquare, Star } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -110,6 +110,25 @@ function DashboardPage() {
           </div>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-white">
             Rate &amp; review <ArrowRight size={13} />
+          </span>
+        </Link>
+
+        {/* Talk to a mentor — live chat support */}
+        <Link
+          to="/support"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-brand-200 bg-brand-50 p-4 transition-colors hover:bg-brand-100"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-brand-600">
+              <MessagesSquare size={20} />
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-brand-900">Talk to a mentor</p>
+              <p className="mt-0.5 text-xs text-brand-700">Stuck on something? Chat live with a mentor.</p>
+            </div>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white">
+            Start chat <ArrowRight size={13} />
           </span>
         </Link>
 
