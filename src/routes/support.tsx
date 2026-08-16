@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Clock, Loader2, MessageSquare, MessagesSquare, X } from 'lucide-react'
+import { ArrowLeft, Clock, Loader2, MessagesSquare, X } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import {
