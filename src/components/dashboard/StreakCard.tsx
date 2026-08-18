@@ -39,10 +39,10 @@ export function StreakCard({ userKey }: { userKey: string }) {
         <Flame size={16} />
       </span>
       <p className="mt-2 text-lg font-semibold tracking-tight text-ink-900 sm:mt-3 sm:text-2xl">
-        {streak} <span className="text-xs font-normal text-ink-400 sm:text-sm">day{streak === 1 ? '' : 's'}</span>
+        {streak} <span className="text-xs font-normal text-ink-500 sm:text-sm">day{streak === 1 ? '' : 's'}</span>
       </p>
       <p className="text-[11px] font-semibold text-orange-700 sm:text-xs">Daily streak</p>
-      <p className="hidden text-[11px] text-ink-500 sm:block">keep it going</p>
+      <p className="hidden text-[11px] text-ink-600 sm:block">keep it going</p>
     </div>
   )
 }

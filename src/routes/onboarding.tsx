@@ -107,11 +107,11 @@ function OnboardingPage() {
     step === 0 ? personalDetailsStep : step === 1 ? careerStageStep : goalsStep
 
   return (
-    <div className="flex min-h-screen flex-col bg-ink-50">
+    <div className="flex min-h-screen flex-col bg-ink-100">
       <div className="mx-auto w-full max-w-lg px-4 py-8 sm:px-6 sm:py-12">
         {/* Progress */}
         <div className="mb-6">
-          <p className="text-xs font-medium uppercase tracking-wide text-ink-400">
+          <p className="text-xs font-medium uppercase tracking-wide text-ink-500">
             Step {step + 1} of {stepLabels.length} · {stepLabels[step]}
           </p>
           <div className="mt-2 flex gap-1.5">
@@ -124,11 +124,11 @@ function OnboardingPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-ink-100 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-12px_rgba(0,0,0,0.12)] sm:p-8">
+        <div className="card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-12px_rgba(0,0,0,0.12)] sm:p-8">
           <h1 className="text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
             {current.title}
           </h1>
-          <p className="mt-1.5 text-sm text-ink-500">{current.subtitle}</p>
+          <p className="mt-1.5 text-sm text-ink-600">{current.subtitle}</p>
 
           <div className="mt-6">
             {step === 0 && (
@@ -149,14 +149,14 @@ function OnboardingPage() {
                   onChange={(e) => setField('dob', e.target.value)}
                 />
                 <div>
-                  <label htmlFor="ob-gender" className="block text-sm font-medium text-ink-700">
+                  <label htmlFor="ob-gender" className="block text-sm font-medium text-ink-800">
                     {f.gender.label}
                   </label>
                   <select
                     id="ob-gender"
                     value={details.gender}
                     onChange={(e) => setField('gender', e.target.value)}
-                    className="mt-1.5 w-full rounded-lg border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+                    className="mt-1.5 w-full rounded-lg border border-ink-300 bg-white px-3 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
                   >
                     <option value="" disabled>
                       {f.gender.placeholder}
@@ -197,7 +197,7 @@ function OnboardingPage() {
                       className={`flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors ${
                         active
                           ? 'border-brand-500 bg-brand-50'
-                          : 'border-ink-200 hover:border-ink-300'
+                          : 'border-ink-300 hover:border-ink-400'
                       }`}
                     >
                       <span
@@ -211,7 +211,7 @@ function OnboardingPage() {
                         <span className="block text-sm font-semibold text-ink-900">
                           {opt.title}
                         </span>
-                        <span className="mt-0.5 block text-sm text-ink-500">
+                        <span className="mt-0.5 block text-sm text-ink-600">
                           {opt.description}
                         </span>
                       </span>
@@ -233,7 +233,7 @@ function OnboardingPage() {
                       className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-colors ${
                         active
                           ? 'border-brand-500 bg-brand-50 text-brand-800'
-                          : 'border-ink-200 text-ink-700 hover:border-ink-300'
+                          : 'border-ink-300 text-ink-800 hover:border-ink-400'
                       }`}
                     >
                       {active && <Check size={14} className="text-brand-600" />}
@@ -255,7 +255,7 @@ function OnboardingPage() {
                   setError(undefined)
                   setStep((s) => s - 1)
                 }}
-                className="rounded-full border border-ink-200 px-5 py-2.5 text-sm font-medium text-ink-900 transition-colors hover:border-ink-300"
+                className="rounded-full border border-ink-300 px-5 py-2.5 text-sm font-medium text-ink-900 transition-colors hover:border-ink-400"
               >
                 Back
               </button>
@@ -263,7 +263,7 @@ function OnboardingPage() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="text-sm font-medium text-ink-500 hover:text-ink-900"
+                className="text-sm font-medium text-ink-600 hover:text-ink-900"
               >
                 Sign out
               </button>
@@ -273,7 +273,7 @@ function OnboardingPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
+              className="press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {step < stepLabels.length - 1 ? 'Continue' : submitting ? 'Finishing…' : 'Finish'}
             </button>

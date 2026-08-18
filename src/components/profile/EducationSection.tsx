@@ -43,17 +43,17 @@ export function EducationSection({
         <ul className="space-y-5">
           {list.map((x) => (
             <li key={x.id} className="flex gap-3">
-              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded bg-ink-100 text-ink-500">
+              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded bg-ink-200 text-ink-600">
                 <GraduationCap size={18} />
               </div>
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-semibold text-ink-900">{x.school}</p>
-                    <p className="text-sm text-ink-700">
+                    <p className="text-sm text-ink-800">
                       {[x.degree, x.field].filter(Boolean).join(', ')}
                     </p>
-                    <p className="text-xs text-ink-400">
+                    <p className="text-xs text-ink-500">
                       {[x.startYear, x.endYear].filter(Boolean).join(' – ')}
                     </p>
                   </div>
@@ -62,7 +62,7 @@ export function EducationSection({
                       type="button"
                       onClick={() => setEditing(x)}
                       aria-label="Edit"
-                      className="rounded-full p-1.5 text-ink-400 hover:bg-ink-50 hover:text-ink-900"
+                      className="rounded-full p-1.5 text-ink-500 hover:bg-ink-100 hover:text-ink-900"
                     >
                       <Pencil size={16} />
                     </button>
@@ -70,7 +70,7 @@ export function EducationSection({
                       type="button"
                       onClick={() => remove(x.id)}
                       aria-label="Delete"
-                      className="rounded-full p-1.5 text-ink-400 hover:bg-red-50 hover:text-red-600"
+                      className="rounded-full p-1.5 text-ink-500 hover:bg-red-50 hover:text-red-600"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -86,7 +86,7 @@ export function EducationSection({
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-ink-400">Add your school, college, or courses.</p>
+        <p className="text-sm text-ink-500">Add your school, college, or courses.</p>
       )}
 
       <Modal

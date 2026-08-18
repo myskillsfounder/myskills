@@ -31,14 +31,20 @@ export function TimeSpentChart() {
   const gridVals = [max, max / 2, 0]
 
   return (
-    <section className="rounded-2xl border border-ink-100 bg-white p-5">
+    <section className="card p-5">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-700">Time spent</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-800">Time spent</h2>
         <span className="text-sm font-semibold text-brand-600">{totalHours.toFixed(1)} hrs</span>
       </div>
 
+      {totalHours === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ink-200 bg-ink-50 py-8 text-center">
+          <p className="text-sm font-medium text-ink-700">No time tracked yet</p>
+          <p className="mt-0.5 text-xs text-ink-500">Your study time appears here as you use the app.</p>
+        </div>
+      ) : (
       <div className="relative w-full text-brand-600">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none" style={{ height: 180 }}>
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none" style={{ height: 132 }}>
           <defs>
             <linearGradient id="ts-fill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="currentColor" stopOpacity="0.16" />
@@ -64,15 +70,17 @@ export function TimeSpentChart() {
         </svg>
 
         {/* y-axis labels */}
-        <div className="pointer-events-none absolute left-1 top-0 flex h-[180px] flex-col justify-between py-2 text-[10px] text-ink-400">
+        <div className="pointer-events-none absolute left-1 top-0 flex h-[132px] flex-col justify-between py-1 text-[10px] text-ink-400">
           {gridVals.map((v, i) => (
             <span key={i}>{v.toFixed(1)}</span>
           ))}
         </div>
       </div>
 
+      )}
+
       {/* x labels */}
-      <div className="mt-1 flex justify-between px-1 text-[11px] font-medium text-ink-400">
+      <div className={`mt-1 flex justify-between px-1 text-[11px] font-medium text-ink-400 ${totalHours === 0 ? "hidden" : ""}`}>
         {labelIdx.map((idx, i) => (
           <span key={i} className={points[idx] && idx === n - 1 ? 'text-brand-600' : ''}>
             {points[idx]?.label ?? ''}
@@ -81,14 +89,14 @@ export function TimeSpentChart() {
       </div>
 
       {/* period toggle */}
-      <div className="mt-4 flex items-center gap-1 rounded-xl bg-ink-50 p-1">
+      <div className="mt-4 flex items-center gap-1 rounded-xl bg-ink-100 p-1">
         {PERIODS.map((p) => (
           <button
             key={p.key}
             type="button"
             onClick={() => setPeriod(p.key)}
             className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              period === p.key ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-500 hover:text-ink-800'
+              period === p.key ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-600 hover:text-ink-900'
             }`}
           >
             {p.label}

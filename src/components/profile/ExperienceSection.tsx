@@ -59,26 +59,26 @@ export function ExperienceSection({
         <ul className="space-y-5">
           {list.map((x) => (
             <li key={x.id} className="flex gap-3">
-              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded bg-ink-100 text-ink-500">
+              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded bg-ink-200 text-ink-600">
                 <Briefcase size={18} />
               </div>
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-semibold text-ink-900">{x.title}</p>
-                    <p className="text-sm text-ink-700">
+                    <p className="text-sm text-ink-800">
                       {x.company}
                       {x.employmentType ? ` · ${x.employmentType}` : ''}
                     </p>
-                    <p className="text-xs text-ink-400">{fmtRange(x)}</p>
-                    {x.location && <p className="text-xs text-ink-400">{x.location}</p>}
+                    <p className="text-xs text-ink-500">{fmtRange(x)}</p>
+                    {x.location && <p className="text-xs text-ink-500">{x.location}</p>}
                   </div>
                   <div className="flex gap-1">
                     <button
                       type="button"
                       onClick={() => setEditing(x)}
                       aria-label="Edit"
-                      className="rounded-full p-1.5 text-ink-400 hover:bg-ink-50 hover:text-ink-900"
+                      className="rounded-full p-1.5 text-ink-500 hover:bg-ink-100 hover:text-ink-900"
                     >
                       <Pencil size={16} />
                     </button>
@@ -86,7 +86,7 @@ export function ExperienceSection({
                       type="button"
                       onClick={() => remove(x.id)}
                       aria-label="Delete"
-                      className="rounded-full p-1.5 text-ink-400 hover:bg-red-50 hover:text-red-600"
+                      className="rounded-full p-1.5 text-ink-500 hover:bg-red-50 hover:text-red-600"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -102,7 +102,7 @@ export function ExperienceSection({
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-ink-400">Add your work or internship experience.</p>
+        <p className="text-sm text-ink-500">Add your work or internship experience.</p>
       )}
 
       <Modal
@@ -152,7 +152,7 @@ export function ExperienceSection({
                 onChange={(e) => setEditing({ ...editing, endDate: e.target.value })}
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-ink-700">
+            <label className="flex items-center gap-2 text-sm text-ink-800">
               <input
                 type="checkbox"
                 checked={!!editing.current}

@@ -86,16 +86,16 @@ export function BotIntake({
   }
 
   return (
-    <div className="flex h-[62vh] flex-col overflow-hidden rounded-2xl border border-ink-100 bg-white">
-      <div className="flex items-center gap-2 border-b border-ink-100 px-4 py-2.5">
+    <div className="flex h-[62vh] flex-col card overflow-hidden">
+      <div className="flex items-center gap-2 border-b border-ink-200 px-4 py-2.5">
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-100 text-brand-700">
           <Bot size={15} />
         </span>
-        <span className="text-sm font-medium text-ink-800">MySkills assistant</span>
-        <span className="text-xs text-ink-400">always online</span>
+        <span className="text-sm font-medium text-ink-900">MySkills assistant</span>
+        <span className="text-xs text-ink-500">always online</span>
       </div>
 
-      <div className="flex-1 space-y-2 overflow-y-auto bg-ink-50/40 p-4">
+      <div className="flex-1 space-y-2 overflow-y-auto bg-ink-100 p-4">
         {bubbles.map((b) => (
           <div key={b.id} className={`flex items-end gap-2 ${b.from === 'me' ? 'justify-end' : 'justify-start'}`}>
             {b.from === 'bot' && (
@@ -105,7 +105,7 @@ export function BotIntake({
             )}
             <div
               className={`max-w-[76%] rounded-2xl px-3.5 py-2 text-sm shadow-sm ${
-                b.from === 'me' ? 'rounded-br-md bg-brand-600 text-white' : 'rounded-bl-md bg-white text-ink-800'
+                b.from === 'me' ? 'rounded-br-md bg-brand-600 text-white' : 'rounded-bl-md bg-white text-ink-900'
               }`}
             >
               {b.text}
@@ -162,7 +162,7 @@ export function BotIntake({
                 setDetails('')
                 say('bot', 'No problem — what would you like help with instead?', 400)
               }}
-              className="ml-2 rounded-full border border-ink-200 px-4 py-2.5 text-xs font-medium text-ink-600 hover:bg-ink-50"
+              className="ml-2 rounded-full border border-ink-300 px-4 py-2.5 text-xs font-medium text-ink-600 hover:bg-ink-100"
             >
               Change topic
             </button>
@@ -171,7 +171,7 @@ export function BotIntake({
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={submitDetails} className="flex items-center gap-2 border-t border-ink-100 p-3">
+      <form onSubmit={submitDetails} className="flex items-center gap-2 border-t border-ink-200 p-3">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -179,7 +179,7 @@ export function BotIntake({
           placeholder={
             step === 'topic' ? 'Pick a topic above…' : step === 'ready' ? 'Ready to connect' : 'Describe your question…'
           }
-          className="min-w-0 flex-1 rounded-full border border-ink-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:bg-ink-50"
+          className="min-w-0 flex-1 rounded-full border border-ink-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:bg-ink-100"
         />
         <button
           type="submit"

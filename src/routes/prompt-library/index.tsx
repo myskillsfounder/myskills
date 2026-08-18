@@ -68,12 +68,12 @@ function PromptLibraryIndex() {
     <AppShell wide>
       <div className="space-y-6">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border border-ink-100 bg-white p-6 sm:p-8">
+        <section className="relative overflow-hidden rounded-2xl card p-6 sm:p-8">
           <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-100/60 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 -left-10 h-56 w-56 rounded-full bg-emerald-100/50 blur-3xl" />
 
           <div className="relative">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1 text-[11px] font-semibold text-ink-600">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-ink-300 bg-white px-3 py-1 text-[11px] font-semibold text-ink-600">
               <Sparkles size={12} className="text-brand-600" />
               Works with ChatGPT, Claude &amp; Gemini
             </span>
@@ -81,7 +81,7 @@ function PromptLibraryIndex() {
             <h1 className="mt-4 max-w-lg text-2xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-3xl">
               Turn any AI assistant into your marketing tutor.
             </h1>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-500 sm:text-base">
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-600 sm:text-base">
               {totalPromptItems} ready-made prompts, written so the AI teaches you properly — asking
               questions, using real companies, and pushing back on your answers.
             </p>
@@ -94,7 +94,7 @@ function PromptLibraryIndex() {
               ].map((s) => (
                 <span
                   key={s}
-                  className="rounded-full bg-ink-50 px-3 py-1.5 text-xs font-medium text-ink-600"
+                  className="rounded-full bg-ink-100 px-3 py-1.5 text-xs font-medium text-ink-600"
                 >
                   {s}
                 </span>
@@ -119,7 +119,7 @@ function PromptLibraryIndex() {
                   key={lib.id}
                   to="/prompt-library/$libraryId"
                   params={{ libraryId: lib.id }}
-                  className={`group relative flex flex-col overflow-hidden rounded-2xl border border-ink-100 bg-gradient-to-br ${a.card} p-5 transition-all ${a.ring} hover:shadow-lg hover:shadow-ink-900/5`}
+                  className={`group relative flex flex-col overflow-hidden rounded-2xl border border-ink-200 bg-gradient-to-br ${a.card} p-5 transition-all ${a.ring} hover:shadow-lg hover:shadow-ink-900/5`}
                 >
                   <div
                     className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full ${a.glow} opacity-40 blur-2xl transition-opacity group-hover:opacity-70`}
@@ -131,11 +131,11 @@ function PromptLibraryIndex() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <h3 className="text-lg font-semibold tracking-tight text-ink-900">{lib.name}</h3>
-                      <p className="text-xs font-medium text-ink-500">{lib.tagline}</p>
+                      <p className="text-xs font-medium text-ink-600">{lib.tagline}</p>
                     </div>
                     <div className="shrink-0 text-right">
                       <p className={`text-xl font-semibold tracking-tight ${a.count}`}>{count}</p>
-                      <p className="text-[10px] font-medium uppercase tracking-wide text-ink-400">
+                      <p className="text-[10px] font-medium uppercase tracking-wide text-ink-500">
                         {lib.itemNoun}s
                       </p>
                     </div>
@@ -147,7 +147,7 @@ function PromptLibraryIndex() {
                   {lib.kind === 'templated' && samples.length > 0 && (
                     <div className="relative mt-3.5 space-y-1.5">
                       {samples.map((s) => (
-                        <p key={s} className="flex items-start gap-2 text-xs text-ink-500">
+                        <p key={s} className="flex items-start gap-2 text-xs text-ink-600">
                           <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-ink-300" />
                           <span className="truncate">{s}</span>
                         </p>
@@ -172,8 +172,8 @@ function PromptLibraryIndex() {
                     ))}
                   </div>
 
-                  <div className="relative mt-4 flex items-center justify-between gap-3 border-t border-ink-100 pt-3.5">
-                    <span className="text-xs text-ink-400">
+                  <div className="relative mt-4 flex items-center justify-between gap-3 border-t border-ink-200 pt-3.5">
+                    <span className="text-xs text-ink-500">
                       {lib.tracks.length > 1
                         ? `${lib.tracks.length} skill tracks`
                         : 'Ready to paste — no setup'}
@@ -190,20 +190,20 @@ function PromptLibraryIndex() {
         </section>
 
         {/* How it works — the flow wasn't obvious on arrival */}
-        <section className="rounded-2xl border border-ink-100 bg-white p-5">
-          <h2 className="text-base font-semibold text-ink-900">How it works</h2>
+        <section className="card p-5">
+          <h2 className="font-display text-lg font-semibold text-ink-900">How it works</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             {STEPS.map((s, i) => (
               <div key={s.title} className="flex gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink-50 text-ink-700">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink-100 text-ink-800">
                   <s.icon size={16} />
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-ink-900">
-                    <span className="text-ink-300">{i + 1}. </span>
+                    <span className="text-ink-400">{i + 1}. </span>
                     {s.title}
                   </p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-ink-500">{s.body}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink-600">{s.body}</p>
                 </div>
               </div>
             ))}

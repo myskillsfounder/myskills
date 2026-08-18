@@ -65,12 +65,14 @@ export function TrackList({
 
   return (
     <section>
-      <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="text-base font-semibold text-ink-900">Skill tracks</h2>
-        <span className="hidden text-xs text-ink-400 sm:block">Best score per track is what counts</span>
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <h2 className="font-display text-xl font-semibold tracking-tight text-ink-900">Skill tracks</h2>
+          <p className="mt-0.5 text-sm text-ink-600">Your best score in each track is what counts.</p>
+        </div>
       </div>
 
-      <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+      <div role="group" aria-label="Filter tracks" className="mb-4 flex gap-2 overflow-x-auto pb-1">
         {FILTERS.map((f) => {
           const n = f.id === 'needs-work' ? counts['needs-work'] + counts['in-progress'] : counts[f.id]
           const active = filter === f.id
@@ -80,23 +82,23 @@ export function TrackList({
               type="button"
               onClick={() => setFilter(f.id)}
               aria-pressed={active}
-              className={`inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-xs font-medium transition-colors ${
+              className={`press inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-xs font-medium transition-colors ${
                 active
-                  ? 'border-ink-900 bg-ink-900 text-white'
-                  : 'border-ink-200 bg-white text-ink-600 active:bg-ink-50'
+                  ? 'border-ink-900 bg-ink-900 text-white shadow-e1'
+                  : 'border-ink-300 bg-white text-ink-600 hover:bg-ink-100'
               }`}
             >
               {f.label}
-              <span className={active ? 'text-white/60' : 'text-ink-400'}>{n}</span>
+              <span className={active ? 'text-white/60' : 'text-ink-500'}>{n}</span>
             </button>
           )
         })}
       </div>
 
       {visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-ink-200 bg-white p-8 text-center">
-          <p className="text-sm font-medium text-ink-700">Nothing here</p>
-          <p className="mt-1 text-sm text-ink-500">No tracks match this filter.</p>
+        <div className="card border-dashed px-6 py-10 text-center">
+          <p className="font-display text-lg font-semibold text-ink-900">Nothing here</p>
+          <p className="mt-1 text-sm text-ink-600">No tracks match this filter.</p>
         </div>
       ) : (
         <ul className="space-y-2">
@@ -107,18 +109,18 @@ export function TrackList({
                 <button
                   type="button"
                   onClick={() => onSelect(t.slug)}
-                  className="flex w-full items-center gap-3 rounded-2xl border border-ink-100 bg-white p-3.5 text-left transition-colors active:bg-ink-50 sm:gap-4 sm:p-4 sm:hover:border-brand-200"
+                  className="group flex w-full items-center gap-3.5 rounded-2xl border border-ink-200 bg-white p-3.5 text-left shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-e2 sm:gap-4 sm:p-4"
                 >
                   {/* score puck — the number people actually compare */}
                   <span
-                    className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl text-sm font-semibold sm:h-14 sm:w-14 ${
-                      t.started ? 'bg-ink-50 text-ink-900' : 'bg-ink-50 text-ink-300'
+                    className={`flex h-13 w-13 shrink-0 flex-col items-center justify-center rounded-2xl font-display text-base font-semibold transition-transform duration-300 group-hover:scale-105 sm:h-15 sm:w-15 ${
+                      t.started ? 'bg-ink-200 text-ink-900' : 'bg-ink-100 text-ink-400'
                     }`}
                   >
                     {t.started ? (
                       <>
                         {t.percent}
-                        <span className="text-[9px] font-medium text-ink-400">%</span>
+                        <span className="text-[9px] font-medium text-ink-500">%</span>
                       </>
                     ) : (
                       <span className="text-lg leading-none">–</span>
@@ -127,7 +129,7 @@ export function TrackList({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <h3 className="text-sm font-semibold text-ink-900">{t.name}</h3>
+                      <h3 className="text-[15px] font-semibold text-ink-900">{t.name}</h3>
                       <span
                         className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${meta.pill}`}
                       >
@@ -135,14 +137,14 @@ export function TrackList({
                       </span>
                     </div>
 
-                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
+                    <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-ink-200/60">
                       <div
                         className={`h-full rounded-full transition-all ${meta.bar}`}
                         style={{ width: t.started ? `${Math.max(t.percent, 4)}%` : '0%' }}
                       />
                     </div>
 
-                    <p className="mt-1.5 flex items-center gap-1.5 truncate text-[11px] text-ink-400">
+                    <p className="mt-1.5 flex items-center gap-1.5 truncate text-[11px] text-ink-500">
                       <span>{t.scenarios} scenarios</span>
                       {t.started && (
                         <>
@@ -156,7 +158,10 @@ export function TrackList({
                     </p>
                   </div>
 
-                  <ChevronRight size={18} className="shrink-0 text-ink-300" />
+                  <ChevronRight
+                    size={18}
+                    className="shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-brand-600"
+                  />
                 </button>
               </li>
             )

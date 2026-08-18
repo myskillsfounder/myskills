@@ -5,7 +5,7 @@ export function SkillTracks() {
     <section id="skill-tracks" className="border-t border-ink-100 bg-ink-50/40 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
             8 skill tracks, one score you can trust
           </h2>
           <p className="mt-3 text-base text-ink-500">

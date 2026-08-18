@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import { questionsForTrack } from '@/lib/decisionLabs'
 import type { PracticeSummary } from '@/lib/practiceResults'
@@ -38,24 +38,34 @@ export function NextUpCard({
     <button
       type="button"
       onClick={() => onSelect(track.slug)}
-      className="flex w-full items-center gap-3.5 rounded-2xl bg-ink-900 p-4 text-left transition-colors active:bg-ink-800 sm:gap-4 sm:p-5 sm:hover:bg-ink-800"
+      className="surface-wood-dark lift rise-in group relative flex h-full w-full flex-col justify-between overflow-hidden rounded-2xl p-5 text-left shadow-md sm:p-6"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white sm:h-12 sm:w-12">
-        <Sparkles size={20} />
+      {/* target rings */}
+      <span aria-hidden className="pointer-events-none absolute -right-8 -top-6 opacity-[0.18]">
+        <svg width="190" height="190" viewBox="0 0 190 190" fill="none" stroke="#f6e3c8" strokeWidth="2">
+          <circle cx="120" cy="70" r="72" />
+          <circle cx="120" cy="70" r="54" />
+          <circle cx="120" cy="70" r="36" />
+          <circle cx="120" cy="70" r="18" />
+          <path d="M60 140 L150 46" strokeWidth="3" />
+          <path d="M150 46 l-14 2 M150 46 l-2 14" strokeWidth="3" />
+        </svg>
       </span>
 
-      <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-white/50">
+      <div className="relative">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
           {fresh ? 'Start here' : 'Recommended next'}
         </p>
-        <p className="mt-0.5 truncate text-[15px] font-semibold text-white">{track.name}</p>
-        <p className="mt-0.5 truncate text-xs text-white/60">
-          {fresh ? `${count} scenarios · not attempted yet` : `${count} scenarios · best ${percent}%`}
+        <p className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
+          {track.name}
+        </p>
+        <p className="mt-1.5 text-xs text-white/70">
+          {count} scenarios · {fresh ? 'not attempted yet' : `best ${percent}%`}
         </p>
       </div>
 
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-ink-900">
-        <ArrowRight size={17} />
+      <span className="relative mt-6 flex h-11 w-11 items-center justify-center self-end rounded-full bg-white text-ink-800 shadow-lg transition-transform duration-300 group-hover:translate-x-1 group-hover:scale-110">
+        <ArrowRight size={20} />
       </span>
     </button>
   )

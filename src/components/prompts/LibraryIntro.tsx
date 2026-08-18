@@ -31,7 +31,7 @@ export function LibraryIntro({
   const a = ACCENT[library.accent]
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-ink-100 bg-white p-5 sm:p-6">
+    <section className="relative card overflow-hidden p-5 sm:p-6">
       <div className={`pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full ${a.glow} opacity-40 blur-3xl`} />
 
       <div className="relative flex items-start gap-3.5">
@@ -42,7 +42,7 @@ export function LibraryIntro({
           <h1 className="text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
             {library.name}
           </h1>
-          <p className="text-xs font-medium text-ink-500">{library.tagline}</p>
+          <p className="text-xs font-medium text-ink-600">{library.tagline}</p>
         </div>
       </div>
 
@@ -51,23 +51,23 @@ export function LibraryIntro({
       </p>
 
       <div className="relative mt-4 flex flex-wrap gap-2">
-        <span className="rounded-full bg-ink-50 px-3 py-1.5 text-xs font-medium text-ink-600">
+        <span className="rounded-full bg-ink-100 px-3 py-1.5 text-xs font-medium text-ink-600">
           {total} {library.itemNoun}s
         </span>
         {library.tracks.length > 1 && (
-          <span className="rounded-full bg-ink-50 px-3 py-1.5 text-xs font-medium text-ink-600">
+          <span className="rounded-full bg-ink-100 px-3 py-1.5 text-xs font-medium text-ink-600">
             {library.tracks.length} tracks
           </span>
         )}
         {library.styles.length > 1 && (
-          <span className="rounded-full bg-ink-50 px-3 py-1.5 text-xs font-medium text-ink-600">
+          <span className="rounded-full bg-ink-100 px-3 py-1.5 text-xs font-medium text-ink-600">
             {library.styles.length} styles
           </span>
         )}
         <button
           type="button"
           onClick={onSurprise}
-          className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3.5 py-1.5 text-xs font-semibold text-white transition-colors active:bg-ink-800 sm:hover:bg-ink-800"
+          className="inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3.5 py-1.5 text-xs font-semibold text-white transition-colors active:bg-ink-900 sm:hover:bg-ink-900"
         >
           <Shuffle size={13} />
           Pick one for me
@@ -76,20 +76,20 @@ export function LibraryIntro({
 
       {/* the framings, up front — only when there's actually a choice */}
       {library.styles.length > 1 && (
-      <div className="relative mt-5 border-t border-ink-100 pt-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+      <div className="relative mt-5 border-t border-ink-200 pt-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
           Every {library.itemNoun} comes in {library.styles.length} styles
         </p>
         <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
           {library.styles.map((s, i) => (
-            <div key={s.id} className="rounded-xl border border-ink-100 bg-ink-50/50 p-3">
+            <div key={s.id} className="rounded-xl border border-ink-200 bg-ink-100 p-3">
               <div className="flex items-center gap-2">
                 <span className={`flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-bold ${a.num}`}>
                   {i + 1}
                 </span>
                 <p className="text-xs font-semibold text-ink-900">{s.name}</p>
               </div>
-              <p className="mt-1.5 text-[11px] leading-relaxed text-ink-500">{s.blurb}</p>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-ink-600">{s.blurb}</p>
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ export function LibraryIntro({
       )}
 
       {library.kind === 'standalone' && (
-        <p className="relative mt-5 rounded-xl border border-ink-100 bg-ink-50/60 p-3.5 text-xs leading-relaxed text-ink-600">
+        <p className="relative mt-5 rounded-xl border border-ink-200 bg-ink-100 p-3.5 text-xs leading-relaxed text-ink-600">
           These prompts write a fresh lesson every time you run them — there's no topic to choose.
           Run the same one tomorrow and you'll get a different principle.
         </p>

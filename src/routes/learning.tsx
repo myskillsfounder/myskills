@@ -19,18 +19,18 @@ const LEVEL_TINT: Record<string, string> = {
 
 function LockedState() {
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-ink-100 bg-white p-10 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-ink-500">
+    <div className="mx-auto max-w-lg card p-10 text-center">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink-200 text-ink-600">
         <Lock size={26} />
       </div>
       <h1 className="mt-4 text-xl font-semibold text-ink-900">Learning is locked</h1>
-      <p className="mt-1.5 text-sm text-ink-500">
+      <p className="mt-1.5 text-sm text-ink-600">
         Complete the initial assessment to unlock your learning tracks. It only
         takes a few minutes.
       </p>
       <Link
         to="/assessment"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+        className="mt-6 inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
       >
         Take the initial assessment
         <ArrowRight size={16} />
@@ -44,12 +44,12 @@ function UnlockedTracks() {
     <div className="space-y-5">
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-ink-900">Learning</h1>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Learning</h1>
           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
             Unlocked
           </span>
         </div>
-        <p className="mt-1 text-sm text-ink-500">
+        <p className="mt-1 text-sm text-ink-600">
           {learningTracks.length} tracks unlocked from your assessment. Work through
           them at your own pace.
         </p>
@@ -59,7 +59,7 @@ function UnlockedTracks() {
         {learningTracks.map((track) => (
           <div
             key={track.slug}
-            className="flex flex-col rounded-2xl border border-ink-100 bg-white p-5"
+            className="card flex flex-col p-5"
           >
             <div className="flex items-start justify-between gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
@@ -72,13 +72,13 @@ function UnlockedTracks() {
               </span>
             </div>
             <h3 className="mt-3 text-sm font-semibold text-ink-900">{track.name}</h3>
-            <p className="mt-1 flex-1 text-sm text-ink-500">{track.description}</p>
+            <p className="mt-1 flex-1 text-sm text-ink-600">{track.description}</p>
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-xs text-ink-400">{track.lessons} lessons</span>
+              <span className="text-xs text-ink-500">{track.lessons} lessons</span>
               <button
                 type="button"
                 disabled
-                className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 px-4 py-2 text-sm font-medium text-ink-400"
+                className="inline-flex items-center gap-1.5 rounded-full border border-ink-300 px-4 py-2 text-sm font-medium text-ink-500"
               >
                 Start (coming soon)
               </button>
@@ -102,7 +102,7 @@ function LearningPage() {
   return (
     <AppShell wide>
       {unlocked === null ? (
-        <p className="text-sm text-ink-500">Loading…</p>
+        <p className="text-sm text-ink-600">Loading…</p>
       ) : unlocked ? (
         <UnlockedTracks />
       ) : (

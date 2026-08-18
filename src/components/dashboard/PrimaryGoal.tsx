@@ -14,14 +14,14 @@ const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.la
  */
 export function PrimaryGoal({ goals }: { goals: string[] }) {
   return (
-    <section className="rounded-2xl border border-ink-100 bg-white p-5">
+    <section className="card p-5">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
           <Target size={16} />
         </span>
         <h2 className="flex-1 text-sm font-semibold text-ink-900">Primary goals</h2>
         {goals.length > 0 && (
-          <span className="rounded-full bg-ink-50 px-2 py-0.5 text-[11px] font-medium text-ink-500">
+          <span className="rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-medium text-ink-600">
             {goals.length}
           </span>
         )}
@@ -35,20 +35,20 @@ export function PrimaryGoal({ goals }: { goals: string[] }) {
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
                   <Check size={11} strokeWidth={3} />
                 </span>
-                <span className="text-sm leading-snug text-ink-700">{goalLabel(id)}</span>
+                <span className="text-sm leading-snug text-ink-800">{goalLabel(id)}</span>
               </li>
             ))}
           </ul>
 
           <Link
             to="/practice"
-            className="mt-4 inline-flex items-center gap-1.5 border-t border-ink-100 pt-3 text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700"
+            className="mt-4 inline-flex items-center gap-1.5 border-t border-ink-200 pt-3 text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700"
           >
             Practice toward these <ArrowRight size={13} />
           </Link>
         </>
       ) : (
-        <p className="mt-3 text-sm leading-relaxed text-ink-500">
+        <p className="mt-3 text-sm leading-relaxed text-ink-600">
           You didn’t pick any focus areas during onboarding.
         </p>
       )}

@@ -26,7 +26,7 @@ export function PromptLibraryCard() {
           </span>
           <div className="min-w-0">
             <p className="text-[15px] font-semibold tracking-tight text-ink-900">Prompt Library</p>
-            <p className="mt-0.5 text-xs text-ink-500">
+            <p className="mt-0.5 text-xs text-ink-600">
               {totalPromptItems} prompts that turn any AI into a marketing tutor.
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">

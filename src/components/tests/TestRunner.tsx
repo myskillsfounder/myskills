@@ -56,7 +56,7 @@ export function TestRunner({
   if (phase === 'result' && grade) {
     return (
       <div className="mx-auto max-w-xl">
-        <div className="rounded-2xl border border-ink-100 bg-white p-8 text-center">
+        <div className="card p-8 text-center">
           <div
             className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${
               grade.passed ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
@@ -67,23 +67,23 @@ export function TestRunner({
           <h1 className="mt-4 text-2xl font-semibold tracking-tight text-ink-900">
             {grade.passed ? 'Passed' : 'Not passed'}
           </h1>
-          <p className="mt-1 text-sm text-ink-500">
+          <p className="mt-1 text-sm text-ink-600">
             {trackName} · {grade.percent}% ({grade.correct}/{grade.total} correct)
           </p>
-          {saving && <p className="mt-2 text-xs text-ink-400">Saving result…</p>}
+          {saving && <p className="mt-2 text-xs text-ink-500">Saving result…</p>}
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
               onClick={retake}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+              className="inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
             >
               <RotateCcw size={16} /> Retake test
             </button>
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex items-center gap-2 rounded-full border border-ink-200 px-6 py-2.5 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-50"
+              className="inline-flex items-center gap-2 rounded-full border border-ink-300 px-6 py-2.5 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-100"
             >
               Back to tests
             </button>
@@ -99,27 +99,27 @@ export function TestRunner({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-800"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
         >
           <ArrowLeft size={15} />
           {trackName}
         </button>
-        <span className="text-xs font-medium text-ink-400">
+        <span className="text-xs font-medium text-ink-500">
           {answered}/{questions.length} answered
         </span>
       </div>
 
-      <div className="mb-2 text-xs text-ink-400">
+      <div className="mb-2 text-xs text-ink-500">
         Question {index + 1} of {questions.length}
       </div>
-      <div className="mb-5 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
+      <div className="mb-5 h-1.5 w-full overflow-hidden rounded-full bg-ink-200">
         <div
           className="h-full rounded-full bg-brand-600 transition-all"
           style={{ width: `${((index + 1) / questions.length) * 100}%` }}
         />
       </div>
 
-      <div className="rounded-2xl border border-ink-100 bg-white p-6">
+      <div className="card p-6">
         <span className="text-xs font-medium text-brand-600">{q.competency}</span>
         <h2 className="mt-1 text-base font-semibold leading-snug text-ink-900">{q.question}</h2>
         <div className="mt-5 space-y-2.5">
@@ -133,7 +133,7 @@ export function TestRunner({
                 className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
                   selected
                     ? 'border-brand-500 bg-brand-50 text-brand-900'
-                    : 'border-ink-200 text-ink-700 hover:border-ink-300 hover:bg-ink-50'
+                    : 'border-ink-300 text-ink-800 hover:border-ink-400 hover:bg-ink-100'
                 }`}
               >
                 <span
@@ -155,7 +155,7 @@ export function TestRunner({
           type="button"
           onClick={() => setIndex((v) => Math.max(0, v - 1))}
           disabled={index === 0}
-          className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center gap-1.5 press h-10 rounded-xl border border-ink-300 bg-white px-4 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ArrowLeft size={16} /> Back
         </button>

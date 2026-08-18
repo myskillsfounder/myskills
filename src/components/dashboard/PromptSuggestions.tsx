@@ -30,11 +30,11 @@ export function PromptSuggestions({
   if (!suggestions.length) return null
 
   return (
-    <section className="rounded-2xl border border-ink-100 bg-white p-4">
+    <section className="card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-sm font-semibold text-ink-900">Suggested for you</h2>
-          <p className="mt-0.5 text-xs leading-relaxed text-ink-500">
+          <p className="mt-0.5 text-xs leading-relaxed text-ink-600">
             {weak
               ? 'Picked from your weakest assessment area.'
               : 'A fresh pick from each library, changing daily.'}
@@ -57,7 +57,7 @@ export function PromptSuggestions({
                 to="/prompt-library/$libraryId"
                 params={{ libraryId: library.id }}
                 search={{ item: item.id }}
-                className="flex items-center gap-3 rounded-xl border border-ink-100 bg-white p-3 transition-colors active:bg-ink-50 sm:hover:border-brand-200"
+                className="flex items-center gap-3 card p-3 transition-colors active:bg-ink-100 sm:hover:border-brand-200"
               >
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
@@ -69,7 +69,7 @@ export function PromptSuggestions({
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-ink-500">
                       {library.name}
                     </span>
                     {reason === 'weak' ? (
@@ -77,7 +77,7 @@ export function PromptSuggestions({
                         {trackName}
                       </span>
                     ) : (
-                      <span className="rounded-full bg-ink-50 px-1.5 py-0.5 text-[10px] font-medium text-ink-500">
+                      <span className="rounded-full bg-ink-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-600">
                         Random pick
                       </span>
                     )}
@@ -85,7 +85,7 @@ export function PromptSuggestions({
                   <p className="mt-0.5 truncate text-sm font-medium text-ink-900">{item.title}</p>
                 </div>
 
-                <ChevronRight size={16} className="shrink-0 text-ink-300" />
+                <ChevronRight size={16} className="shrink-0 text-ink-400" />
               </Link>
             </li>
           )

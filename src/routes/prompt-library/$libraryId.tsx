@@ -24,7 +24,7 @@ export const Route = createFileRoute('/prompt-library/$libraryId')({
   notFoundComponent: () => (
     <AppShell wide>
       <div className="mx-auto max-w-sm py-12 text-center">
-        <p className="text-sm font-medium text-ink-700">Library not found</p>
+        <p className="text-sm font-medium text-ink-800">Library not found</p>
         <Link to="/prompt-library" className="mt-3 inline-flex text-sm font-semibold text-brand-600">
           Back to Prompt Library
         </Link>
@@ -161,7 +161,7 @@ function LibraryBrowser() {
       <div className="space-y-4 pb-14 lg:pb-0">
         <Link
           to="/prompt-library"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
         >
           <ArrowLeft size={16} /> Prompt Library
         </Link>
@@ -171,10 +171,10 @@ function LibraryBrowser() {
         {/* Search — sticky so it survives a long scroll. Pointless on a
             handful of items, so it only appears once a library is big. */}
         {total > 12 && (
-        <div className="sticky top-14 z-20 -mx-4 bg-[#f7f6fc]/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none">
+        <div className="sticky top-14 z-20 -mx-4 surface-paper/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none">
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
               <input
                 ref={searchRef}
                 type="search"
@@ -182,19 +182,19 @@ function LibraryBrowser() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={`Search ${noun}s…`}
                 aria-label={`Search ${noun}s`}
-                className="h-11 w-full rounded-full border border-ink-200 bg-white pl-10 pr-10 text-[15px] text-ink-900 outline-none transition-colors placeholder:text-ink-400 focus:border-brand-400 sm:text-sm"
+                className="h-11 w-full rounded-full border border-ink-300 bg-white pl-10 pr-10 text-[15px] text-ink-900 outline-none transition-colors placeholder:text-ink-500 focus:border-brand-400 sm:text-sm"
               />
               {query ? (
                 <button
                   type="button"
                   onClick={() => setQuery('')}
                   aria-label="Clear search"
-                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-ink-400 hover:text-ink-700"
+                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-ink-500 hover:text-ink-800"
                 >
                   <X size={16} />
                 </button>
               ) : (
-                <kbd className="absolute right-3.5 top-1/2 hidden -translate-y-1/2 rounded border border-ink-200 px-1.5 py-0.5 text-[10px] text-ink-400 lg:block">
+                <kbd className="absolute right-3.5 top-1/2 hidden -translate-y-1/2 rounded border border-ink-300 px-1.5 py-0.5 text-[10px] text-ink-500 lg:block">
                   /
                 </kbd>
               )}
@@ -207,7 +207,7 @@ function LibraryBrowser() {
               className={`hidden h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm font-medium transition-colors lg:inline-flex ${
                 savedOnly
                   ? 'border-amber-300 bg-amber-50 text-amber-800'
-                  : 'border-ink-200 bg-white text-ink-600 hover:bg-ink-50'
+                  : 'border-ink-300 bg-white text-ink-600 hover:bg-ink-100'
               }`}
             >
               <Bookmark size={15} fill={savedOnly ? 'currentColor' : 'none'} />
@@ -248,11 +248,11 @@ function LibraryBrowser() {
                 type="button"
                 onClick={() => setTrack(ALL)}
                 className={`flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm transition-colors ${
-                  track === ALL ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink-600 hover:bg-ink-50'
+                  track === ALL ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink-600 hover:bg-ink-100'
                 }`}
               >
                 All tracks
-                <span className="text-xs text-ink-400">{savedOnly ? saved.length : total}</span>
+                <span className="text-xs text-ink-500">{savedOnly ? saved.length : total}</span>
               </button>
               {filterTracks.map((t) => (
                 <button
@@ -262,11 +262,11 @@ function LibraryBrowser() {
                   className={`flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-left text-sm transition-colors ${
                     track === t.slug
                       ? 'bg-brand-50 font-medium text-brand-700'
-                      : 'text-ink-600 hover:bg-ink-50'
+                      : 'text-ink-600 hover:bg-ink-100'
                   }`}
                 >
                   <span>{t.name}</span>
-                  <span className="text-xs text-ink-400">{t.count}</span>
+                  <span className="text-xs text-ink-500">{t.count}</span>
                 </button>
               ))}
             </div>
@@ -278,18 +278,18 @@ function LibraryBrowser() {
               <h2 className="text-sm font-semibold text-ink-900">
                 {filtering ? 'Results' : `All ${noun}s`}
               </h2>
-              <p className="text-xs text-ink-400">
+              <p className="text-xs text-ink-500">
                 {results.length} {results.length === 1 ? noun : `${noun}s`}
                 {filtering ? ' shown' : ''}
               </p>
             </div>
 
             {results.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-ink-200 bg-white p-8 text-center sm:p-10">
-                <p className="text-sm font-medium text-ink-700">
+              <div className="card border-dashed p-8 text-center sm:p-10">
+                <p className="text-sm font-medium text-ink-800">
                   {savedOnly && !query ? 'Nothing saved yet' : `No ${noun}s match`}
                 </p>
-                <p className="mt-1 text-sm text-ink-500">
+                <p className="mt-1 text-sm text-ink-600">
                   {savedOnly && !query
                     ? 'Tap the bookmark on anything you want to keep here.'
                     : 'Try a different search term or track.'}
@@ -297,7 +297,7 @@ function LibraryBrowser() {
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="mt-4 inline-flex h-10 items-center rounded-full border border-ink-200 px-4 text-xs font-semibold text-ink-700 hover:bg-ink-50"
+                  className="mt-4 inline-flex h-10 items-center rounded-full border border-ink-300 px-4 text-xs font-semibold text-ink-800 hover:bg-ink-100"
                 >
                   Clear filters
                 </button>
@@ -324,7 +324,7 @@ function LibraryBrowser() {
         <button
           type="button"
           onClick={() => setFiltersOpen(true)}
-          className="pointer-events-auto inline-flex h-11 items-center gap-2 rounded-full bg-ink-900 px-5 text-sm font-semibold text-white shadow-lg shadow-ink-900/25 active:bg-ink-800"
+          className="pointer-events-auto inline-flex h-11 items-center gap-2 rounded-full bg-ink-900 px-5 text-sm font-semibold text-white shadow-lg shadow-ink-900/25 active:bg-ink-900"
         >
           <SlidersHorizontal size={16} />
           Filter

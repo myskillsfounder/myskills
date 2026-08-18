@@ -38,7 +38,6 @@ export interface Profile {
   full_name: string
   headline: string
   location: string
-  about: string
   avatar_url: string | null
   banner_url: string | null
   phone: string
@@ -54,7 +53,7 @@ export interface Profile {
 export type ProfilePatch = Partial<Omit<Profile, 'id'>>
 
 const COLUMNS =
-  'id, full_name, headline, location, about, avatar_url, banner_url, phone, country, state, career_stage, goals, skills, experience, education'
+  'id, full_name, headline, location, avatar_url, banner_url, phone, country, state, career_stage, goals, skills, experience, education'
 
 function normalize(row: Record<string, unknown>): Profile {
   return {
@@ -62,7 +61,6 @@ function normalize(row: Record<string, unknown>): Profile {
     full_name: (row.full_name as string) ?? '',
     headline: (row.headline as string) ?? '',
     location: (row.location as string) ?? '',
-    about: (row.about as string) ?? '',
     avatar_url: (row.avatar_url as string) ?? null,
     banner_url: (row.banner_url as string) ?? null,
     phone: (row.phone as string) ?? '',

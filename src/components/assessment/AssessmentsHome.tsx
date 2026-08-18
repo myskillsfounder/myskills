@@ -25,9 +25,9 @@ export function AssessmentsHome({ assessment }: { assessment: AssessmentResult }
           </span>
           <div className="flex-1">
             <p className="text-sm font-medium text-brand-700">Overall progress</p>
-            <p className="text-2xl font-semibold tracking-tight text-ink-900">
+            <p className="font-display text-3xl font-semibold tracking-tight text-ink-900">
               {overall.percent}%
-              <span className="ml-2 text-sm font-normal text-ink-500">
+              <span className="ml-2 text-sm font-normal text-ink-600">
                 {overall.correct}/{overall.total} correct
               </span>
             </p>
@@ -43,8 +43,8 @@ export function AssessmentsHome({ assessment }: { assessment: AssessmentResult }
 
       {/* Per-category assessments */}
       <div>
-        <h2 className="text-base font-semibold text-ink-900">Assessments by category</h2>
-        <p className="mt-0.5 text-sm text-ink-500">
+        <h2 className="font-display text-lg font-semibold text-ink-900">Assessments by category</h2>
+        <p className="mt-0.5 text-sm text-ink-600">
           Your one-time results. Each category is scored from your initial assessment
           and locked in — it can't be retaken.
         </p>
@@ -52,7 +52,7 @@ export function AssessmentsHome({ assessment }: { assessment: AssessmentResult }
           {ordered.map((c) => (
             <div
               key={c.category}
-              className="flex flex-col rounded-2xl border border-ink-100 bg-white p-5"
+              className="card flex flex-col p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
@@ -63,17 +63,17 @@ export function AssessmentsHome({ assessment }: { assessment: AssessmentResult }
                 </span>
               </div>
               <h3 className="mt-3 text-sm font-semibold text-ink-900">{c.category}</h3>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink-200">
                 <div
                   className="h-full rounded-full bg-brand-500"
                   style={{ width: `${c.percent}%` }}
                 />
               </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-xs text-ink-400">
+                <span className="text-xs text-ink-500">
                   {c.correct}/{c.total} correct
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-400">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
                   <Lock size={12} />
                   Final
                 </span>

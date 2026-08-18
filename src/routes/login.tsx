@@ -5,6 +5,7 @@ import { TextField } from '@/components/auth/TextField'
 import { GoogleButton } from '@/components/auth/GoogleButton'
 import { AuthError, signIn, signInWithGoogle } from '@/lib/auth'
 import { requireGuest } from '@/lib/guards'
+import { Button } from '@/components/ui'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: requireGuest,
@@ -68,7 +69,7 @@ function LoginPage() {
       footer={
         <>
           Don’t have an account?{' '}
-          <Link to="/signup" className="font-medium text-brand-600 hover:text-brand-700">
+          <Link to="/signup" className="font-semibold text-brand-700 hover:text-brand-800">
             Sign up
           </Link>
         </>
@@ -76,10 +77,10 @@ function LoginPage() {
     >
       <GoogleButton label="Continue with Google" onClick={handleGoogle} disabled={submitting} />
 
-      <div className="my-5 flex items-center gap-3 text-xs text-ink-400">
-        <span className="h-px flex-1 bg-ink-100" />
+      <div className="my-5 flex items-center gap-3 text-xs text-ink-500">
+        <span className="h-px flex-1 bg-ink-200" />
         or
-        <span className="h-px flex-1 bg-ink-100" />
+        <span className="h-px flex-1 bg-ink-200" />
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -104,13 +105,9 @@ function LoginPage() {
 
         {formError && <p className="text-sm text-red-500">{formError}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {submitting ? 'Signing in…' : 'Sign in'}
-        </button>
+        <Button type="submit" disabled={submitting} size="lg" full>
+            {submitting ? 'Signing in…' : 'Sign in'}
+          </Button>
       </form>
     </AuthShell>
   )

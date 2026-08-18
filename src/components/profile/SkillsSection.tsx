@@ -56,21 +56,21 @@ export function SkillsSection({
           {profile.skills.map((s) => (
             <span
               key={s}
-              className="rounded-full border border-ink-200 bg-ink-50 px-3 py-1 text-sm text-ink-800"
+              className="rounded-full border border-ink-300 bg-ink-100 px-3 py-1 text-sm text-ink-900"
             >
               {s}
             </span>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-ink-400">Add the marketing skills you’re building.</p>
+        <p className="text-sm text-ink-500">Add the marketing skills you’re building.</p>
       )}
 
       <Modal open={open} title="Edit skills" onClose={() => setOpen(false)}>
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {skills.length === 0 && (
-              <p className="text-sm text-ink-400">No skills yet.</p>
+              <p className="text-sm text-ink-500">No skills yet.</p>
             )}
             {skills.map((s) => (
               <span
@@ -101,14 +101,14 @@ export function SkillsSection({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Add a skill"
-              className="flex-1 rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+              className="flex-1 rounded-lg border border-ink-300 px-3 py-2 text-sm text-ink-900 placeholder:text-ink-500 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
             />
             <PrimaryButton type="submit">Add</PrimaryButton>
           </form>
 
           {suggestions.length > 0 && (
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-ink-400">
+              <p className="text-xs font-medium uppercase tracking-wide text-ink-500">
                 Suggestions
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -117,7 +117,7 @@ export function SkillsSection({
                     key={s}
                     type="button"
                     onClick={() => add(s)}
-                    className="rounded-full border border-ink-200 px-3 py-1 text-sm text-ink-700 hover:border-ink-300"
+                    className="rounded-full border border-ink-300 px-3 py-1 text-sm text-ink-800 hover:border-ink-400"
                   >
                     + {s}
                   </button>
@@ -126,7 +126,7 @@ export function SkillsSection({
             </div>
           )}
 
-          <div className="flex justify-end border-t border-ink-100 pt-4">
+          <div className="flex justify-end border-t border-ink-200 pt-4">
             <PrimaryButton type="button" onClick={submit}>
               Save
             </PrimaryButton>

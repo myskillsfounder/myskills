@@ -46,7 +46,7 @@ export function ProfileHeader({
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-ink-100 bg-white">
+    <section className="card overflow-hidden">
       {/* Banner */}
       <div className="relative h-36 sm:h-48">
         {profile.banner_url ? (
@@ -63,7 +63,7 @@ export function ProfileHeader({
           onClick={() => bannerInput.current?.click()}
           disabled={busy === 'banner'}
           aria-label="Change banner"
-          className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium text-ink-800 shadow hover:bg-white disabled:opacity-60"
+          className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium text-ink-900 shadow hover:bg-white disabled:opacity-60"
         >
           <Camera size={14} />
           {busy === 'banner' ? 'Uploading…' : 'Banner'}
@@ -97,7 +97,7 @@ export function ProfileHeader({
               onClick={() => avatarInput.current?.click()}
               disabled={busy === 'avatar'}
               aria-label="Change photo"
-              className="absolute bottom-1 right-1 rounded-full bg-white p-1.5 text-ink-700 shadow ring-1 ring-ink-100 hover:text-ink-900 disabled:opacity-60"
+              className="absolute bottom-1 right-1 rounded-full bg-white p-1.5 text-ink-800 shadow ring-1 ring-ink-100 hover:text-ink-900 disabled:opacity-60"
             >
               <Camera size={16} />
             </button>
@@ -121,7 +121,7 @@ export function ProfileHeader({
               setEditing(true)
             }}
             aria-label="Edit intro"
-            className="rounded-full p-2 text-ink-500 hover:bg-ink-50 hover:text-ink-900"
+            className="rounded-full p-2 text-ink-600 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil size={18} />
           </button>
@@ -131,10 +131,10 @@ export function ProfileHeader({
           {profile.full_name || 'Your name'}
         </h1>
         {profile.headline && (
-          <p className="mt-1 text-sm text-ink-700">{profile.headline}</p>
+          <p className="mt-1 text-sm text-ink-800">{profile.headline}</p>
         )}
         {profile.location && (
-          <p className="mt-1.5 inline-flex items-center gap-1 text-sm text-ink-500">
+          <p className="mt-1.5 inline-flex items-center gap-1 text-sm text-ink-600">
             <MapPin size={14} />
             {profile.location}
           </p>

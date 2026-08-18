@@ -43,7 +43,6 @@ const MENTORS: Mentor[] = [
 interface DbProfile {
   full_name: string | null
   headline: string | null
-  about: string | null
   avatar_url: string | null
   location: string | null
   skills: string[] | null
@@ -52,13 +51,13 @@ interface DbProfile {
 function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
   const name = db?.full_name?.trim() || mentor.name
   const role = db?.headline?.trim() || mentor.role
-  const bio = db?.about?.trim() || mentor.bio
+  const bio = mentor.bio
   const avatar = db?.avatar_url || null
   const location = db?.location?.trim() || mentor.location
   const expertise = db?.skills && db.skills.length ? db.skills : mentor.expertise
 
   return (
-    <div className="rounded-3xl border border-ink-100 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl card p-6 shadow-sm">
       <div className="flex items-start gap-4">
         {avatar ? (
           <img src={avatar} alt={name} className="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-brand-100" />
@@ -69,14 +68,14 @@ function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <h2 className="text-xl font-semibold tracking-tight text-ink-900">{name}</h2>
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900">{name}</h2>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
               <BadgeCheck size={12} /> Verified
             </span>
           </div>
           <p className="mt-0.5 text-sm font-medium text-brand-600">{role}</p>
           {location && (
-            <p className="mt-1 inline-flex items-center gap-1 text-xs text-ink-400">
+            <p className="mt-1 inline-flex items-center gap-1 text-xs text-ink-500">
               <MapPin size={12} /> {location}
             </p>
           )}
@@ -87,7 +86,7 @@ function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
 
       {expertise.length > 0 && (
         <div className="mt-5">
-          <p className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-ink-400">
+          <p className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-ink-500">
             <Sparkles size={13} className="text-brand-500" /> Expertise
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -121,7 +120,7 @@ function MentorsPage() {
     if (ids.length === 0) return
     supabase
       .from('profiles')
-      .select('id, full_name, headline, about, avatar_url, location, skills')
+      .select('id, full_name, headline, avatar_url, location, skills')
       .in('id', ids)
       .then(({ data }) => {
         if (!data) return
@@ -138,19 +137,19 @@ function MentorsPage() {
       <div className="mx-auto max-w-2xl">
         <Link
           to="/community"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900"
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
         >
           <ArrowLeft size={16} /> Back to Community
         </Link>
 
         <div className="mb-5">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-semibold tracking-tight text-ink-900">Mentors</h1>
+            <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Mentors</h1>
             <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-700">
               More coming soon
             </span>
           </div>
-          <p className="mt-1 text-sm text-ink-500">
+          <p className="mt-1 text-sm text-ink-600">
             Learn from people who’ve done it. Full mentorship is on the way — meet our featured mentor.
           </p>
         </div>
@@ -165,7 +164,7 @@ function MentorsPage() {
           </div>
         )}
 
-        <p className="mt-6 text-center text-xs text-ink-400">More mentors are joining MySkills soon.</p>
+        <p className="mt-6 text-center text-xs text-ink-500">More mentors are joining MySkills soon.</p>
       </div>
     </AppShell>
   )

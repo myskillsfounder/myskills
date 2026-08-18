@@ -12,6 +12,7 @@ import {
   signUp,
 } from '@/lib/auth'
 import { requireGuest } from '@/lib/guards'
+import { Button } from '@/components/ui'
 
 export const Route = createFileRoute('/signup')({
   beforeLoad: requireGuest,
@@ -134,7 +135,7 @@ function SignupPage() {
           <button
             type="button"
             onClick={() => setPhase('form')}
-            className="font-medium text-brand-600 hover:text-brand-700"
+            className="font-semibold text-brand-700 hover:text-brand-800"
           >
             Use a different email
           </button>
@@ -154,20 +155,16 @@ function SignupPage() {
 
           {formError && <p className="text-sm text-red-500">{formError}</p>}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
-          >
+          <Button type="submit" disabled={submitting} size="lg" full>
             {submitting ? 'Verifying…' : 'Verify and continue'}
-          </button>
+          </Button>
 
-          <p className="text-center text-sm text-ink-500">
+          <p className="text-center text-sm text-ink-600">
             Didn’t get it?{' '}
             <button
               type="button"
               onClick={handleResend}
-              className="font-medium text-brand-600 hover:text-brand-700"
+              className="font-semibold text-brand-700 hover:text-brand-800"
             >
               Resend code
             </button>
@@ -184,7 +181,7 @@ function SignupPage() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-brand-600 hover:text-brand-700">
+          <Link to="/login" className="font-semibold text-brand-700 hover:text-brand-800">
             Sign in
           </Link>
         </>
@@ -192,10 +189,10 @@ function SignupPage() {
     >
       <GoogleButton label="Sign up with Google" onClick={handleGoogle} disabled={submitting} />
 
-      <div className="my-5 flex items-center gap-3 text-xs text-ink-400">
-        <span className="h-px flex-1 bg-ink-100" />
+      <div className="my-5 flex items-center gap-3 text-xs text-ink-500">
+        <span className="h-px flex-1 bg-ink-200" />
         or
-        <span className="h-px flex-1 bg-ink-100" />
+        <span className="h-px flex-1 bg-ink-200" />
       </div>
 
       <form onSubmit={handleSignUp} noValidate className="space-y-4">
@@ -228,13 +225,9 @@ function SignupPage() {
 
         {formError && <p className="text-sm text-red-500">{formError}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {submitting ? 'Creating account…' : 'Create account'}
-        </button>
+        <Button type="submit" disabled={submitting} size="lg" full>
+            {submitting ? 'Creating account…' : 'Create account'}
+          </Button>
       </form>
     </AuthShell>
   )

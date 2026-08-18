@@ -58,14 +58,14 @@ export function Sheet({
           <span className="h-1 w-10 rounded-full bg-ink-200" />
         </div>
 
-        <div className="flex items-start justify-between gap-3 border-b border-ink-100 px-4 py-3 sm:px-5 sm:py-4">
+        <div className="flex items-start justify-between gap-3 border-b border-ink-200 px-4 py-3 sm:px-5 sm:py-4">
           <div className="min-w-0 flex-1">{title}</div>
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="-mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-500 transition-colors hover:bg-ink-50 hover:text-ink-900"
+            className="-mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900"
           >
             <X size={19} />
           </button>
@@ -75,7 +75,7 @@ export function Sheet({
 
         {footer && (
           <div
-            className="border-t border-ink-100 bg-white px-4 py-3 sm:px-5"
+            className="border-t border-ink-200 bg-white px-4 py-3 sm:px-5"
             style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
           >
             {footer}

@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { motion } from 'framer-motion'
 import { Dumbbell, LayoutGrid, Sparkles, Star, User } from 'lucide-react'
 
 const TABS = [
@@ -23,104 +21,78 @@ const TABS = [
 const HIDE_EXACT = new Set(['/', '/login', '/signup', '/onboarding', '/assessment', '/certificate'])
 const HIDE_PREFIX = ['/blog']
 
-const IND_W = 56 // px indicator (bubble) width
-const IND_H = 42 // px indicator (bubble) height — a touch shorter than the row
-const ROW_H = 44 // px tab row height
-const TOP = (ROW_H - IND_H) / 2 // vertical-center the bubble in the row
-
-const PILL_PAD = 8 // px — the `p-2` around the tab row
-const EDGE = '0.85rem' // bottom offset of the whole bar (or the safe area)
-const GAP = 12 // px — breathing room between the bar and anything above it
+/** Row height in px. Labels + icon, comfortably above the 44px touch minimum. */
+export const BOTTOM_NAV_H = 58
 
 /**
  * How far up a page must push its own bottom-pinned controls so they don't
- * collide with this bar. Derived from the constants above, so if the bar's
- * height changes the clearance follows automatically.
+ * collide with this bar (bar height + the device safe area + a small gap).
  *
  * Usage: `style={{ bottom: BOTTOM_NAV_CLEARANCE }}` on a `fixed` element.
  */
-export const BOTTOM_NAV_CLEARANCE = `calc(${ROW_H + PILL_PAD * 2 + GAP}px + max(${EDGE}, env(safe-area-inset-bottom)))`
+export const BOTTOM_NAV_CLEARANCE = `calc(${BOTTOM_NAV_H + 12}px + env(safe-area-inset-bottom))`
 
 /**
- * Persistent, full-width, rounded floating "liquid glass" mobile bottom bar.
- * Built with CSS backdrop-blur (reliable + full-width on every browser). The
- * active-tab highlight slides between tabs with a springy bounce because this
- * lives in the root layout and survives navigation.
+ * Standard mobile bottom navigation: edge-to-edge, anchored to the bottom,
+ * icon + label, one active state.
+ *
+ * Deliberately CSS-only. The previous version measured tab widths at runtime to
+ * slide a pill between them, which mis-positioned on first paint and on resize;
+ * here each tab owns its own indicator, so alignment is correct at any width.
  */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const rowRef = useRef<HTMLDivElement>(null)
-  const [cell, setCell] = useState(IND_W)
-
-  useEffect(() => {
-    const el = rowRef.current
-    if (!el) return
-    const update = () => setCell(el.clientWidth / TABS.length)
-    update()
-    const ro = new ResizeObserver(update)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
 
   const hidden = HIDE_EXACT.has(pathname) || HIDE_PREFIX.some((p) => pathname.startsWith(p))
   if (hidden) return null
 
-  const activeIndex = TABS.findIndex((t) => pathname === t.to || pathname.startsWith(`${t.to}/`))
-  const x = activeIndex >= 0 ? activeIndex * cell + (cell - IND_W) / 2 : 0
-
   return (
-    <nav className="no-print pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 lg:hidden"
-      style={{ paddingBottom: `max(${EDGE}, env(safe-area-inset-bottom))` }}>
-      <div className="pointer-events-auto relative w-full max-w-lg overflow-hidden rounded-full border border-white/60 bg-white/60 p-2 shadow-[0_12px_40px_rgba(15,15,25,0.22)] backdrop-blur-2xl backdrop-saturate-150">
-        {/* glass sheen */}
-        <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/55 to-transparent" />
-
-        <div ref={rowRef} className="relative flex w-full items-center">
-          {/* sliding liquid indicator */}
-          <motion.span
-            className="pointer-events-none absolute left-0 rounded-full bg-brand-500/18 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7)]"
-            style={{ width: IND_W, height: IND_H, top: TOP }}
-            initial={false}
-            animate={{
-              x,
-              opacity: activeIndex >= 0 ? 1 : 0,
-              scale: activeIndex >= 0 ? [1, 1.18, 1] : 1,
-            }}
-            transition={{
-              x: { type: 'spring', stiffness: 480, damping: 26, mass: 0.9 },
-              scale: { duration: 0.42, ease: 'easeInOut' },
-              opacity: { duration: 0.2 },
-            }}
-          >
-            <span className="absolute inset-0 rounded-full bg-brand-500/25 blur-md" />
-          </motion.span>
-
-          {TABS.map((t, i) => {
-            const active = i === activeIndex
-            const Icon = t.icon
-            return (
+    <nav
+      aria-label="Primary"
+      className="no-print surface-paper fixed inset-x-0 bottom-0 z-40 border-t border-ink-200 shadow-[0_-6px_24px_-12px_rgba(61,40,23,0.25)] backdrop-blur-lg lg:hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
+      <ul className="mx-auto flex max-w-lg items-stretch">
+        {TABS.map(({ to, label, icon: Icon }) => {
+          const active = pathname === to || pathname.startsWith(`${to}/`)
+          return (
+            <li key={to} className="flex-1">
               <Link
-                key={t.to}
-                to={t.to}
-                aria-label={t.label}
-                className="group relative z-10 flex flex-1 items-center justify-center"
-                style={{ height: ROW_H }}
+                to={to}
+                aria-label={label}
+                aria-current={active ? 'page' : undefined}
+                className="relative flex select-none flex-col items-center justify-center gap-0.5 outline-none transition-transform duration-100 active:scale-95"
+                style={{ height: BOTTOM_NAV_H, WebkitTapHighlightColor: 'transparent' }}
               >
-                <motion.span
-                  animate={{ scale: active ? 1.1 : 1 }}
-                  whileTap={{ scale: 0.82 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                  className={`transition-colors duration-300 ${
-                    active ? 'text-brand-600' : 'text-ink-500 group-hover:text-brand-500'
+                {/* active marker on the top edge */}
+                <span
+                  className={`absolute top-0 h-[3px] rounded-b-full bg-brand-600 transition-all duration-300 ${
+                    active ? 'w-9 opacity-100' : 'w-0 opacity-0'
+                  }`}
+                />
+                {/* icon pill */}
+                <span
+                  className={`flex h-7 w-14 items-center justify-center rounded-full transition-all duration-300 ${
+                    active ? 'scale-105 bg-brand-50' : 'bg-transparent'
                   }`}
                 >
-                  <Icon size={22} />
-                </motion.span>
+                  <Icon
+                    size={21}
+                    className={`transition-colors duration-200 ${active ? 'text-brand-700' : 'text-ink-500'}`}
+                  />
+                </span>
+                <span
+                  className={`text-[10px] leading-none tracking-tight transition-colors duration-200 ${
+                    active ? 'font-semibold text-brand-700' : 'font-medium text-ink-500'
+                  }`}
+                >
+                  {label}
+                </span>
               </Link>
-            )
-          })}
-        </div>
-      </div>
+            </li>
+          )
+        })}
+      </ul>
     </nav>
   )
 }

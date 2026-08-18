@@ -142,7 +142,7 @@ function MentorConsole() {
   if (!mentorCheck) {
     return (
       <AppShell wide>
-        <p className="flex items-center gap-2 py-10 text-sm text-ink-500">
+        <p className="flex items-center gap-2 py-10 text-sm text-ink-600">
           <Loader2 size={15} className="animate-spin" /> Loading…
         </p>
       </AppShell>
@@ -153,12 +153,12 @@ function MentorConsole() {
   if (!mentorCheck.isMentor) {
     return (
       <AppShell wide>
-        <div className="mx-auto max-w-md rounded-2xl border border-ink-100 bg-white p-10 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink-100 text-ink-400">
+        <div className="mx-auto max-w-md card p-10 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-ink-200 text-ink-500">
             <Lock size={22} />
           </div>
           <h1 className="mt-4 text-lg font-semibold text-ink-900">Mentors only</h1>
-          <p className="mt-1.5 text-sm text-ink-500">
+          <p className="mt-1.5 text-sm text-ink-600">
             This area is for MySkills mentors. If you’d like to talk to one, start a chat from your
             dashboard.
           </p>
@@ -177,14 +177,14 @@ function MentorConsole() {
     <AppShell wide>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-ink-900">Mentor console</h1>
-          <p className="mt-0.5 text-sm text-ink-500">Go online to receive learner requests.</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Mentor console</h1>
+          <p className="mt-0.5 text-sm text-ink-600">Go online to receive learner requests.</p>
         </div>
         <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => void refresh()}
-          className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3.5 py-2.5 text-sm font-medium text-ink-600 hover:bg-ink-50"
+          className="inline-flex items-center gap-1.5 rounded-full border border-ink-300 bg-white px-3.5 py-2.5 text-sm font-medium text-ink-600 hover:bg-ink-100"
           title="Refresh queue"
         >
           <RefreshCw size={15} /> Refresh
@@ -193,7 +193,7 @@ function MentorConsole() {
           type="button"
           onClick={toggleOnline}
           className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
-            online ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'border border-ink-200 bg-white text-ink-700 hover:bg-ink-50'
+            online ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'border border-ink-300 bg-white text-ink-800 hover:bg-ink-100'
           }`}
         >
           <Power size={15} />
@@ -216,14 +216,14 @@ function MentorConsole() {
 
       {open ? (
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-ink-100 bg-white px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 card px-4 py-3">
             <div>
               <p className="text-sm font-semibold text-ink-900">{nameOf(open)}</p>
               <p className="text-xs font-medium text-brand-600">{open.topic}</p>
-              <p className="text-xs text-ink-500">{open.details}</p>
+              <p className="text-xs text-ink-600">{open.details}</p>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setOpen(null)} className="rounded-full border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-600 hover:bg-ink-50">
+              <button type="button" onClick={() => setOpen(null)} className="rounded-full border border-ink-300 px-3 py-1.5 text-xs font-medium text-ink-600 hover:bg-ink-100">
                 Back to queue
               </button>
               <button type="button" onClick={() => finish(open)} className="rounded-full bg-red-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-600">
@@ -241,15 +241,15 @@ function MentorConsole() {
               <Bell size={16} className="text-brand-600" /> Waiting ({queue.length})
             </h2>
             {loading ? (
-              <p className="flex items-center gap-2 text-sm text-ink-500"><Loader2 size={15} className="animate-spin" /> Loading…</p>
+              <p className="flex items-center gap-2 text-sm text-ink-600"><Loader2 size={15} className="animate-spin" /> Loading…</p>
             ) : queue.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-ink-200 bg-white p-8 text-center text-sm text-ink-500">
+              <div className="card border-dashed p-8 text-center text-sm text-ink-600">
                 No one waiting right now.
               </div>
             ) : (
               <ul className="space-y-2.5">
                 {queue.map((s) => (
-                  <li key={s.id} className="rounded-2xl border border-ink-100 bg-white p-4">
+                  <li key={s.id} className="card p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
@@ -259,8 +259,8 @@ function MentorConsole() {
                           <p className="truncate text-sm font-semibold text-ink-900">{nameOf(s)}</p>
                         </div>
                         <p className="mt-1 text-xs font-medium text-brand-600">{s.topic}</p>
-                        <p className="mt-0.5 line-clamp-2 text-xs text-ink-500">{s.details}</p>
-                        <p className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-ink-400">
+                        <p className="mt-0.5 line-clamp-2 text-xs text-ink-600">{s.details}</p>
+                        <p className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-ink-500">
                           <Clock size={11} /> waiting {waited(s.created_at)}
                         </p>
                       </div>
@@ -284,7 +284,7 @@ function MentorConsole() {
               <MessageSquare size={16} className="text-emerald-600" /> Your chats ({active.length})
             </h2>
             {active.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-ink-200 bg-white p-8 text-center text-sm text-ink-500">
+              <div className="card border-dashed p-8 text-center text-sm text-ink-600">
                 No active chats.
               </div>
             ) : (
@@ -294,11 +294,11 @@ function MentorConsole() {
                     <button
                       type="button"
                       onClick={() => setOpen(s)}
-                      className="flex w-full items-center justify-between gap-3 rounded-2xl border border-ink-100 bg-white p-4 text-left hover:border-brand-200"
+                      className="flex w-full items-center justify-between gap-3 card p-4 text-left hover:border-brand-200"
                     >
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-ink-900">{nameOf(s)}</p>
-                        <p className="mt-0.5 line-clamp-1 text-xs text-ink-500">{s.topic}</p>
+                        <p className="mt-0.5 line-clamp-1 text-xs text-ink-600">{s.topic}</p>
                       </div>
                       <Circle size={9} className="shrink-0 fill-emerald-500 text-emerald-500" />
                     </button>

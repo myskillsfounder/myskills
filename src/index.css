@@ -1,86 +1,263 @@
 @import "tailwindcss";
 
-/*
- * MySkills design tokens -- black / white / purple, minimal, mobile-first.
- * Extend Tailwind's theme via @theme so utilities like bg-brand-600,
- * text-ink-900, etc. are available everywhere in the app.
- */
+/* ============================================================================
+   MYSKILLS DESIGN SYSTEM
+   ----------------------------------------------------------------------------
+   ONE palette. The product previously ran two competing identities (a cool
+   grey/violet set and a warm wood/paper set), which is why screens felt
+   unrelated. Everything below resolves to a single family:
+
+     ink    — warm stone neutrals (text, borders, surfaces)
+     brand  — iris violet (the single accent; actions, focus, progress)
+     gold   — reserved for achievement (certificates, tiers)
+     + semantic success / warning / danger
+
+   `paper-*` and `wood-*` are kept as ALIASES onto the same neutral ramp so the
+   whole codebase renders the new palette without a risky 50-file rename.
+   ==========================================================================*/
+
 @theme {
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
 
-  --color-brand-50: #f5f3ff;
-  --color-brand-100: #ede9fe;
-  --color-brand-200: #ddd6fe;
-  --color-brand-300: #c4b5fd;
-  --color-brand-400: #a78bfa;
-  --color-brand-500: #8b5cf6;
-  --color-brand-600: #7c3aed;
-  --color-brand-700: #6d28d9;
-  --color-brand-800: #5b21b6;
-  --color-brand-900: #4c1d95;
+  /* ---- Neutrals: warm stone ------------------------------------------- */
+  --color-ink-50:  #faf9f7;
+  --color-ink-100: #f3f1ed;
+  --color-ink-200: #e6e2da;
+  --color-ink-300: #d3cdc2;
+  --color-ink-400: #a8a196;
+  --color-ink-500: #7c756a;
+  --color-ink-600: #5b544b;
+  --color-ink-700: #443f38;
+  --color-ink-800: #2d2925;
+  --color-ink-900: #1b1815;
 
-  --color-ink-50: #f7f7f8;
-  --color-ink-100: #eeeeef;
-  --color-ink-200: #d9d9dc;
-  --color-ink-300: #b3b3b8;
-  --color-ink-400: #83838c;
-  --color-ink-500: #57575f;
-  --color-ink-600: #3a3a41;
-  --color-ink-700: #26262b;
-  --color-ink-800: #17171a;
-  --color-ink-900: #0a0a0c;
+  /* ---- Brand: iris violet --------------------------------------------- */
+  --color-brand-50:  #f3f2fe;
+  --color-brand-100: #e8e6fd;
+  --color-brand-200: #d2cefb;
+  --color-brand-300: #b3adf6;
+  --color-brand-400: #8f85ee;
+  --color-brand-500: #6f63e2;
+  --color-brand-600: #5b4bd6;
+  --color-brand-700: #4b3cb4;
+  --color-brand-800: #3d3192;
+  --color-brand-900: #332a75;
+
+  /* ---- Achievement gold ------------------------------------------------ */
+  --color-gold-50:  #fdf8ec;
+  --color-gold-100: #f9eecd;
+  --color-gold-200: #f0da9d;
+  --color-gold-300: #e3c069;
+  --color-gold-400: #d3a441;
+  --color-gold-500: #b8862c;
+  --color-gold-600: #946824;
+  --color-gold-700: #6f4e1d;
+
+  /* ---- Aliases: one palette, legacy class names keep working ----------- */
+  --color-paper-50:  #ffffff;
+  --color-paper-100: #faf9f7;
+  --color-paper-200: #f3f1ed;
+  --color-paper-300: #e6e2da;
+
+  --color-wood-100: #e6e2da;
+  --color-wood-200: #d3cdc2;
+  --color-wood-300: #c3bcb0;
+  --color-wood-400: #a8a196;
+  --color-wood-500: #7c756a;
+  --color-wood-600: #5b544b;
+  --color-wood-700: #443f38;
+  --color-wood-800: #2d2925;
+  --color-wood-900: #1b1815;
+
+  /* ---- Elevation: three steps, warm-tinted ---------------------------- */
+  --shadow-e1: 0 1px 2px rgba(27, 24, 21, 0.05), 0 1px 3px rgba(27, 24, 21, 0.04);
+  --shadow-e2: 0 4px 12px -4px rgba(27, 24, 21, 0.10), 0 2px 6px -2px rgba(27, 24, 21, 0.06);
+  --shadow-e3: 0 20px 44px -20px rgba(27, 24, 21, 0.30);
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
+  background: var(--color-ink-100);
   color: var(--color-ink-900);
-  background: #ffffff;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/*
- * Mobile: prevent iOS Safari from auto-zooming when a form field is focused.
- * Safari zooms whenever the focused control's font-size is under 16px, so we
- * bump inputs/selects/textareas to 16px on small screens only. Pinch-to-zoom
- * stays enabled (we intentionally do NOT touch the viewport meta).
- */
-@media (max-width: 640px) {
-  input:not([type='checkbox']):not([type='radio']),
-  select,
-  textarea {
-    font-size: 16px !important;
+/* Display face for headings; falls back gracefully if Fraunces isn't loaded. */
+.font-display { font-family: var(--font-display); letter-spacing: -0.015em; }
+
+/* ============================================================================
+   SURFACES
+   ==========================================================================*/
+
+.surface-paper {
+  background-color: var(--color-ink-100);
+  background-image: radial-gradient(circle at 15% 0%, rgba(255, 255, 255, 0.9), transparent 55%);
+}
+
+/* Sidebar / rail: quiet, one step off the canvas. */
+.surface-wood {
+  background-color: #ffffff;
+  border-right-color: var(--color-ink-200);
+}
+
+/* Feature surface: deep, warm, used sparingly for the primary action. */
+.surface-wood-dark {
+  background-color: var(--color-ink-900);
+  background-image:
+    radial-gradient(circle at 82% 18%, rgba(143, 133, 238, 0.28), transparent 55%),
+    radial-gradient(circle at 10% 90%, rgba(211, 164, 65, 0.10), transparent 50%);
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-ink-200);
+  background-color: #ffffff;
+  box-shadow: var(--shadow-e1);
+}
+
+/* ============================================================================
+   INTERACTION + STATE
+   ==========================================================================*/
+
+.lift {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-e2); }
+
+.press { transition: transform 0.12s ease; }
+.press:active { transform: scale(0.97); }
+
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* Standard form control — every input in the app inherits this look. */
+.field {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-ink-300);
+  background: #ffffff;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--color-ink-900);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.field::placeholder { color: var(--color-ink-400); }
+.field:hover { border-color: var(--color-ink-400); }
+.field:focus {
+  outline: none;
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 3px rgb(111 99 226 / 0.16);
+}
+.field[aria-invalid="true"] { border-color: #dc2626; }
+.field[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px rgb(220 38 38 / 0.14); }
+.field:disabled { background: var(--color-ink-100); color: var(--color-ink-400); cursor: not-allowed; }
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -3rem;
+  z-index: 100;
+  border-radius: 0.75rem;
+  background: var(--color-ink-900);
+  color: #ffffff;
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 0.75rem; }
+
+/* ============================================================================
+   MOTION
+   ==========================================================================*/
+
+@keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.rise-in { animation: rise-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.fade-in { animation: fade-in 0.3s ease both; }
+
+@keyframes slide-in-right { from { transform: translateX(100%); } to { transform: none; } }
+.slide-in-right { animation: slide-in-right 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.skeleton {
+  background-image: linear-gradient(90deg, var(--color-ink-200) 25%, var(--color-ink-100) 37%, var(--color-ink-200) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 0.75rem;
+}
+
+/* Draws the eye once, then settles — used sparingly for prompts the user
+   would otherwise scroll past (e.g. "leave a review"). */
+@keyframes attention-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(211 164 65 / 0); }
+  50%      { box-shadow: 0 0 0 6px rgb(211 164 65 / 0.16); }
+}
+.attention { animation: attention-glow 2.6s ease-in-out 3; }
+
+@keyframes nudge {
+  0%, 88%, 100% { transform: none; }
+  92%           { transform: rotate(-12deg) scale(1.12); }
+  96%           { transform: rotate(10deg) scale(1.12); }
+}
+.nudge { animation: nudge 4s ease-in-out infinite; transform-origin: center; }
+
+@keyframes live-ping {
+  0%   { transform: scale(1); opacity: 0.7; }
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+.live-ping::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: live-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
+  .lift:hover { transform: none; }
 }
 
-/* ---- Published blog article content (rendered HTML from the editor) ---- */
+/* ============================================================================
+   CONTENT (blog + rich editor output)
+   ==========================================================================*/
+
 .blog-content { color: var(--color-ink-700); font-size: 1.05rem; line-height: 1.75; }
-.blog-content h2 { font-size: 1.6rem; font-weight: 700; margin: 1.6em 0 .5em; letter-spacing: -0.01em; color: var(--color-ink-900); }
-.blog-content h3 { font-size: 1.25rem; font-weight: 700; margin: 1.3em 0 .4em; color: var(--color-ink-900); }
+.blog-content h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; margin: 1.6em 0 .5em; color: var(--color-ink-900); }
+.blog-content h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin: 1.3em 0 .4em; color: var(--color-ink-900); }
 .blog-content p { margin: 1em 0; }
 .blog-content ul { list-style: disc; padding-left: 1.5em; margin: 1em 0; }
 .blog-content ol { list-style: decimal; padding-left: 1.5em; margin: 1em 0; }
 .blog-content li { margin: .35em 0; }
 .blog-content a { color: var(--color-brand-700); text-decoration: underline; }
-.blog-content blockquote { border-left: 3px solid var(--color-brand-200); padding-left: 1.1em; margin: 1.2em 0; color: var(--color-ink-500); font-style: italic; }
-.blog-content pre { background: var(--color-ink-900); color: #f4f4f5; border-radius: .7rem; padding: 1em 1.15em; overflow-x: auto; font-size: .9em; margin: 1.2em 0; }
+.blog-content blockquote { border-left: 3px solid var(--color-brand-200); padding-left: 1.1em; margin: 1.2em 0; color: var(--color-ink-600); font-style: italic; }
+.blog-content pre { background: var(--color-ink-900); color: #f4f4f5; border-radius: .75rem; padding: 1em 1.15em; overflow-x: auto; font-size: .9em; margin: 1.2em 0; }
 .blog-content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-.blog-content img { max-width: 100%; height: auto; border-radius: .7rem; margin: 1.2em 0; }
+.blog-content img { max-width: 100%; height: auto; border-radius: .75rem; margin: 1.2em 0; }
 
-/* ---- Mobile bottom nav: active-icon "pop" for the liquid-glass tab bar ---- */
-@keyframes tab-pop {
-  0%   { transform: scale(0.7); }
-  55%  { transform: scale(1.2); }
-  100% { transform: scale(1.1); }
-}
-
-/* ---- Certificate print: hide chrome, keep just the certificate ---- */
 @media print {
   .no-print { display: none !important; }
   body { background: #ffffff; }
+}
+
+/* Mobile: stop iOS zooming on focused inputs (fields under 16px). */
+@media (max-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']), select, textarea { font-size: 16px !important; }
 }

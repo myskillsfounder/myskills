@@ -48,23 +48,23 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   }
 
   return (
-    <div className="flex h-full flex-col bg-white">
+    <div className="surface-wood flex h-full flex-col">
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 pb-5 pt-6">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-900 text-white shadow-e1">
           <BarChart3 size={20} />
         </span>
         <div className="min-w-0">
-          <p className="text-[15px] font-semibold leading-tight tracking-tight text-ink-900">
+          <p className="font-display text-[17px] font-semibold leading-tight tracking-tight text-ink-900">
             MySkills
           </p>
-          <p className="truncate text-xs font-medium text-brand-600">
+          <p className="truncate text-xs font-medium text-ink-600">
             Self-learning platform
           </p>
         </div>
       </div>
 
-      <div className="mx-4 border-t border-ink-100" />
+      <div className="mx-4 border-t border-ink-200" />
 
       {/* Nav */}
       <nav className="flex-1 space-y-1 px-3 py-5">
@@ -75,19 +75,18 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               key={to}
               to={to}
               onClick={onNavigate}
-              className={`group flex items-center gap-3.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+              aria-current={active ? 'page' : undefined}
+              className={`group flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 ${
                 active
-                  ? 'bg-brand-50 font-medium text-brand-700'
-                  : 'text-ink-400 hover:bg-ink-50 hover:text-ink-800'
+                  ? 'bg-brand-50 font-semibold text-brand-800 ring-1 ring-brand-100'
+                  : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
               }`}
             >
               <Icon
                 size={19}
-                className={
-                  active
-                    ? 'text-brand-600'
-                    : 'text-ink-400 transition-colors group-hover:text-brand-600'
-                }
+                className={`transition-transform duration-300 ${
+                  active ? 'text-brand-700' : 'text-ink-500 group-hover:scale-110 group-hover:text-ink-800'
+                }`}
               />
               {label}
             </Link>
@@ -96,31 +95,31 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* Footer */}
-      <div className="mx-4 border-t border-ink-100" />
+      <div className="mx-4 border-t border-ink-200" />
       <div className="space-y-3 px-4 pb-6 pt-4">
         <AdSlider />
 
         <Link
           to="/profile"
           onClick={onNavigate}
-          className={`group flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors ${
+          className={`group flex items-center gap-3 rounded-2xl border px-3 py-2.5 transition-all duration-300 hover:-translate-y-0.5 ${
             pathname === '/profile'
-              ? 'border-brand-200 bg-brand-50'
-              : 'border-ink-200 hover:border-ink-300 hover:bg-ink-50'
+              ? 'border-ink-400 bg-ink-100 shadow-sm'
+              : 'border-ink-300 bg-white hover:bg-ink-100'
           }`}
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-600">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
             <User size={16} />
           </span>
-          <span className="text-sm font-medium text-ink-800">Profile</span>
+          <span className="text-sm font-medium text-ink-900">Profile</span>
         </Link>
 
         <button
           type="button"
           onClick={handleSignOut}
-          className="group flex w-full items-center gap-2.5 rounded-xl border border-ink-200 px-3.5 py-2.5 text-sm font-medium text-ink-500 transition-colors hover:border-ink-300 hover:bg-ink-50 hover:text-ink-800"
+          className="group flex w-full items-center gap-2.5 rounded-2xl border border-ink-300 bg-white px-3.5 py-2.5 text-sm font-medium text-ink-800 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
         >
-          <LogOut size={17} className="text-ink-400 transition-colors group-hover:text-brand-600" />
+          <LogOut size={17} className="text-ink-600 transition-transform duration-300 group-hover:-translate-x-0.5" />
           Sign Out
         </button>
       </div>
@@ -168,21 +167,21 @@ export function AppShell({
   const showNudge = assessmentDone === false && pathname !== '/practice'
 
   return (
-    <div className="min-h-screen bg-[#f7f6fc]">
+    <div className="surface-paper min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-100 lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-200 lg:block">
         <Sidebar />
       </aside>
 
       {/* Mobile top bar. Primary navigation lives in the bottom bar
           (components/app/MobileBottomNav.tsx, mounted in __root); this menu
           holds the overflow — Community, Feedback, Sign out. */}
-      <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-100 bg-white px-4 lg:hidden">
+      <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-300/50 px-4 backdrop-blur lg:hidden">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink-900 text-white">
             <BarChart3 size={16} />
           </span>
-          <span className="text-base font-semibold tracking-tight text-ink-900">
+          <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
             MySkills
           </span>
         </div>
@@ -198,14 +197,14 @@ export function AppShell({
 
       {/* Mobile drawer */}
       {open && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 right-0 w-72 shadow-xl">
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+          <div className="fade-in absolute inset-0 bg-ink-900/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <aside className="slide-in-right absolute inset-y-0 right-0 w-72 shadow-2xl">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="absolute left-2 top-3 z-10 rounded-md p-2 text-ink-500 hover:text-ink-900"
+              className="press absolute left-2 top-3 z-10 rounded-xl p-2 text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900"
             >
               <X size={20} />
             </button>
@@ -214,9 +213,16 @@ export function AppShell({
         </div>
       )}
 
-      <main className="lg:pl-64">
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
+
+      {/* bottom padding clears the mobile nav bar; desktop has no bar */}
+      <main id="main" className="lg:pl-64">
         <div
-          className={`mx-auto px-4 pt-6 pb-28 sm:px-6 lg:pb-6 ${wide ? 'max-w-6xl' : 'max-w-4xl'}`}
+          className={`mx-auto px-4 pb-[calc(1.5rem+58px+env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 ${
+            wide ? 'max-w-6xl' : 'max-w-4xl'
+          }`}
         >
           {showNudge && <AssessmentCard />}
           {children}
@@ -237,13 +243,13 @@ export function PagePlaceholder({
   icon: IconType
 }) {
   return (
-    <div className="rounded-2xl border border-ink-100 bg-white p-10 text-center">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-600">
-        <Icon size={24} />
+    <div className="card px-6 py-14 text-center">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-ink-500">
+        <Icon size={26} />
       </div>
-      <h1 className="mt-4 text-xl font-semibold text-ink-900">{title}</h1>
-      <p className="mt-1.5 text-sm text-ink-500">{description}</p>
-      <span className="mt-4 inline-block rounded-full bg-ink-100 px-3 py-1 text-xs font-medium text-ink-500">
+      <h1 className="mt-4 font-display text-2xl font-semibold text-ink-900">{title}</h1>
+      <p className="mx-auto mt-1.5 max-w-sm text-sm text-ink-600">{description}</p>
+      <span className="mt-5 inline-block rounded-full border border-ink-300 bg-ink-100 px-3 py-1 text-xs font-medium text-ink-600">
         Coming soon
       </span>
     </div>

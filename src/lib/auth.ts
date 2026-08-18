@@ -9,6 +9,7 @@
 import type { AuthError as SupabaseAuthError, User } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { clearAssessmentCache } from './assessmentResults'
+import { clearFeedbackCache } from './feedback'
 
 /** Error the auth screens can act on: `field` highlights an input, and
  * `needsConfirmation` marks the "verify your email first" case. */
@@ -120,6 +121,7 @@ export async function recordLoginEvent(): Promise<void> {
 
 export async function signOut(): Promise<void> {
   clearAssessmentCache()
+  clearFeedbackCache()
   await supabase.auth.signOut()
 }
 

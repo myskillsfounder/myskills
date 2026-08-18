@@ -54,12 +54,12 @@ function CertificatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f6fc] py-6">
+    <div className="min-h-screen surface-paper py-6">
       <div className="mx-auto max-w-4xl px-4">
         <div className="no-print mb-5 flex flex-wrap items-center justify-between gap-3">
           <Link
             to="/profile"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
           >
             <ArrowLeft size={16} /> Back to profile
           </Link>
@@ -81,7 +81,7 @@ function CertificatePage() {
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="hidden h-10 items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-50 sm:inline-flex"
+                className="hidden h-10 items-center gap-1.5 rounded-full border border-ink-300 bg-white px-4 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-100 sm:inline-flex"
               >
                 <Printer size={15} /> Print
               </button>
@@ -96,7 +96,7 @@ function CertificatePage() {
         )}
 
         {loading && (
-          <div className="flex items-center gap-2 py-16 text-sm text-ink-500">
+          <div className="flex items-center gap-2 py-16 text-sm text-ink-600">
             <Loader2 size={16} className="animate-spin" /> Loading…
           </div>
         )}
@@ -109,9 +109,9 @@ function CertificatePage() {
         )}
 
         {!loading && !cert && !error && (
-          <div className="no-print rounded-2xl border border-dashed border-ink-200 bg-white p-12 text-center">
-            <p className="text-sm font-medium text-ink-700">No certificate yet</p>
-            <p className="mt-1 text-sm text-ink-500">Complete your initial assessment to earn your certificate.</p>
+          <div className="no-print card border-dashed p-12 text-center">
+            <p className="text-sm font-medium text-ink-800">No certificate yet</p>
+            <p className="mt-1 text-sm text-ink-600">Complete your initial assessment to earn your certificate.</p>
             <Link
               to="/practice"
               className="mt-4 inline-flex items-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
@@ -125,13 +125,13 @@ function CertificatePage() {
 
         {cert && (
           <div className="no-print mt-5 flex flex-wrap items-center justify-center gap-2">
-            <span className="rounded-full border border-ink-200 bg-white px-3 py-1.5 text-xs font-medium text-ink-600">
-              Certificate ID: <span className="font-semibold text-ink-800">{cert.code}</span>
+            <span className="rounded-full border border-ink-300 bg-white px-3 py-1.5 text-xs font-medium text-ink-600">
+              Certificate ID: <span className="font-semibold text-ink-900">{cert.code}</span>
             </span>
             <button
               type="button"
               onClick={copyId}
-              className="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink-700 transition-colors hover:bg-ink-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-ink-300 bg-white px-3 py-1.5 text-xs font-semibold text-ink-800 transition-colors hover:bg-ink-100"
             >
               {copied ? (
                 <>

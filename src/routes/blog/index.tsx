@@ -27,13 +27,13 @@ function BlogIndexPage() {
       <main className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
         <header className="mb-10">
           <h1 className="text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">Blog</h1>
-          <p className="mt-2 max-w-2xl text-ink-500">
+          <p className="mt-2 max-w-2xl text-ink-600">
             Guides, playbooks, and insights on digital marketing from the MySkills team.
           </p>
         </header>
 
         {loading && (
-          <div className="flex items-center gap-2 py-16 text-sm text-ink-500">
+          <div className="flex items-center gap-2 py-16 text-sm text-ink-600">
             <Loader2 size={16} className="animate-spin" /> Loading posts…
           </div>
         )}
@@ -45,9 +45,9 @@ function BlogIndexPage() {
         )}
 
         {!loading && !error && posts.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-ink-200 p-12 text-center">
-            <p className="text-sm font-medium text-ink-700">No posts yet</p>
-            <p className="mt-1 text-sm text-ink-500">Check back soon.</p>
+          <div className="rounded-2xl border border-dashed border-ink-300 p-12 text-center">
+            <p className="text-sm font-medium text-ink-800">No posts yet</p>
+            <p className="mt-1 text-sm text-ink-600">Check back soon.</p>
           </div>
         )}
 
@@ -57,9 +57,9 @@ function BlogIndexPage() {
               key={post.id}
               to="/blog/$slug"
               params={{ slug: post.slug }}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-ink-100 bg-white transition-colors hover:border-brand-200"
+              className="group flex flex-col card overflow-hidden transition-colors hover:border-brand-200"
             >
-              <div className="aspect-video w-full overflow-hidden bg-ink-100">
+              <div className="aspect-video w-full overflow-hidden bg-ink-200">
                 {post.thumbnail_url ? (
                   <img
                     src={post.thumbnail_url}
@@ -71,11 +71,11 @@ function BlogIndexPage() {
                 )}
               </div>
               <div className="flex flex-1 flex-col p-5">
-                <p className="text-xs text-ink-400">{formatDate(post.published_at)}</p>
+                <p className="text-xs text-ink-500">{formatDate(post.published_at)}</p>
                 <h2 className="mt-1.5 text-base font-semibold leading-snug text-ink-900">
                   {post.title}
                 </h2>
-                <p className="mt-1.5 line-clamp-3 flex-1 text-sm text-ink-500">{post.description}</p>
+                <p className="mt-1.5 line-clamp-3 flex-1 text-sm text-ink-600">{post.description}</p>
                 <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600">
                   Read more
                   <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />

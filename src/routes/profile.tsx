@@ -10,7 +10,6 @@ import { AppShell } from '@/components/app/AppShell'
 import { Section } from '@/components/profile/ui'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
-import { AboutSection } from '@/components/profile/AboutSection'
 import { ExperienceSection } from '@/components/profile/ExperienceSection'
 import { EducationSection } from '@/components/profile/EducationSection'
 import { SkillsSection } from '@/components/profile/SkillsSection'
@@ -29,11 +28,11 @@ const careerLabel = (id: string) =>
 function DetailRow({ icon: Icon, label, value }: { icon: IconType; label: string; value: string }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink-50 text-ink-500">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink-100 text-ink-600">
         <Icon size={16} />
       </span>
       <div className="min-w-0">
-        <p className="text-xs text-ink-400">{label}</p>
+        <p className="text-xs text-ink-500">{label}</p>
         <p className="truncate text-sm font-medium text-ink-900">{value || '—'}</p>
       </div>
     </div>
@@ -57,7 +56,7 @@ function Details({ profile }: { profile: Profile }) {
             <BookOpen size={16} />
           </span>
           <div className="min-w-0">
-            <p className="text-xs text-ink-400">Focus areas</p>
+            <p className="text-xs text-ink-500">Focus areas</p>
             {profile.goals.length ? (
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {profile.goals.map((id) => (
@@ -109,7 +108,7 @@ function CertificateSection() {
   if (loading) {
     return (
       <Section title="Certificate">
-        <div className="h-24 animate-pulse rounded-xl bg-ink-50" />
+        <div className="h-24 animate-pulse rounded-xl bg-ink-100" />
       </Section>
     )
   }
@@ -131,27 +130,27 @@ function CertificateSection() {
             {cert.title} · Initial assessment · {cert.percent}%
           </p>
           <div className="mt-0.5 flex items-center gap-1.5">
-            <p className="text-[11px] text-ink-400">ID: {cert.code}</p>
+            <p className="text-[11px] text-ink-500">ID: {cert.code}</p>
             <button
               type="button"
               onClick={copyId}
               aria-label="Copy certificate ID"
-              className="text-ink-400 transition-colors hover:text-brand-600"
+              className="text-ink-500 transition-colors hover:text-brand-600"
             >
               {copied ? <Check size={12} /> : <Copy size={12} />}
             </button>
           </div>
           <Link
             to="/certificate"
-            className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink-800 shadow-sm transition-colors hover:text-brand-700"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink-900 shadow-sm transition-colors hover:text-brand-700"
           >
             View certificate <ExternalLink size={12} />
           </Link>
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-ink-200 bg-ink-50/60 p-4">
-          <p className="text-sm font-medium text-ink-700">No certificate yet</p>
-          <p className="mt-0.5 text-xs text-ink-500">
+        <div className="rounded-xl border border-dashed border-ink-300 bg-ink-100 p-4">
+          <p className="text-sm font-medium text-ink-800">No certificate yet</p>
+          <p className="mt-0.5 text-xs text-ink-600">
             Complete the initial assessment to earn your certificate.
           </p>
           <Link to="/practice" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
@@ -167,13 +166,13 @@ function CertificateSection() {
 function ActiveLearningLocked() {
   return (
     <Section title="Active learning">
-      <div className="flex items-center gap-3 rounded-xl border border-dashed border-ink-200 bg-ink-50/60 p-4">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink-100 text-ink-400">
+      <div className="flex items-center gap-3 rounded-xl border border-dashed border-ink-300 bg-ink-100 p-4">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink-200 text-ink-500">
           <Lock size={18} />
         </span>
         <div>
-          <p className="text-sm font-medium text-ink-700">Coming soon</p>
-          <p className="text-xs text-ink-400">Track-by-track learning launches soon.</p>
+          <p className="text-sm font-medium text-ink-800">Coming soon</p>
+          <p className="text-xs text-ink-500">Track-by-track learning launches soon.</p>
         </div>
       </div>
     </Section>
@@ -185,7 +184,7 @@ function ProfilePage() {
 
   return (
     <AppShell wide>
-      {loading && <p className="text-sm text-ink-500">Loading your profile…</p>}
+      {loading && <p className="text-sm text-ink-600">Loading your profile…</p>}
 
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
@@ -211,7 +210,6 @@ function ProfilePage() {
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3">
             <div className="contents lg:col-span-2 lg:block lg:space-y-5">
               <div className="order-2 lg:order-none">
-                <AboutSection profile={profile} save={save} />
               </div>
               <div className="order-3 lg:order-none">
                 <ExperienceSection profile={profile} save={save} />

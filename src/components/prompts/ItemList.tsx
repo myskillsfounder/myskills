@@ -20,7 +20,7 @@ function Group({ name, count, children }: { name: string; count: number; childre
     <section>
       <div className="mb-2 flex items-baseline gap-2">
         <h2 className="text-sm font-semibold text-ink-900">{name}</h2>
-        <span className="text-xs text-ink-400">{count}</span>
+        <span className="text-xs text-ink-500">{count}</span>
       </div>
       {children}
     </section>
@@ -42,18 +42,18 @@ function Row({ hit, saved, onOpen }: { hit: ItemHit; saved: boolean; onOpen: () 
     <button
       type="button"
       onClick={onOpen}
-      className="flex w-full items-center gap-3 rounded-xl border border-ink-100 bg-white p-3.5 text-left transition-colors active:bg-ink-50 sm:hover:border-brand-200"
+      className="flex w-full items-center gap-3 card p-3.5 text-left transition-colors active:bg-ink-100 sm:hover:border-brand-200"
     >
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium leading-snug text-ink-900">{hit.item.title}</p>
         {hit.item.subtitle && (
-          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-ink-500">
+          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-ink-600">
             {hit.item.subtitle}
           </p>
         )}
       </div>
       {saved && <Bookmark size={14} className="shrink-0 text-amber-500" fill="currentColor" />}
-      <ChevronRight size={17} className="shrink-0 text-ink-300" />
+      <ChevronRight size={17} className="shrink-0 text-ink-400" />
     </button>
   )
 }
@@ -63,9 +63,9 @@ function Chip({ hit, saved, onOpen }: { hit: ItemHit; saved: boolean; onOpen: ()
     <button
       type="button"
       onClick={onOpen}
-      className="flex min-h-[52px] items-center justify-between gap-2 rounded-xl border border-ink-100 bg-white px-3.5 py-2.5 text-left transition-colors active:bg-ink-50 sm:hover:border-brand-200"
+      className="flex min-h-[52px] items-center justify-between gap-2 card px-3.5 py-2.5 text-left transition-colors active:bg-ink-100 sm:hover:border-brand-200"
     >
-      <span className="min-w-0 flex-1 text-sm font-medium leading-snug text-ink-800">
+      <span className="min-w-0 flex-1 text-sm font-medium leading-snug text-ink-900">
         {hit.item.title}
       </span>
       {saved && <Bookmark size={13} className="shrink-0 text-amber-500" fill="currentColor" />}

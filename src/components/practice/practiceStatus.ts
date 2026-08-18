@@ -22,7 +22,7 @@ export const STATE_META: Record<
 > = {
   'not-started': {
     label: 'Not started',
-    pill: 'border-ink-200 bg-ink-50 text-ink-500',
+    pill: 'border-ink-300 bg-ink-100 text-ink-600',
     bar: 'bg-ink-300',
     dot: 'bg-ink-300',
   },

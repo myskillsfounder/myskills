@@ -72,7 +72,7 @@ export function PracticeOverview({
               <span className="text-lg font-semibold leading-none tracking-tight text-ink-900 sm:text-xl">
                 {avg}%
               </span>
-              <span className="mt-0.5 text-[9px] font-medium leading-none text-ink-400 sm:text-[10px]">
+              <span className="mt-0.5 text-[9px] font-medium leading-none text-ink-500 sm:text-[10px]">
                 avg best
               </span>
             </div>
@@ -82,7 +82,7 @@ export function PracticeOverview({
             <p className="text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
               {levelLabel(avg, started.length)}
             </p>
-            <p className="mt-0.5 text-xs text-ink-500 sm:text-sm">
+            <p className="mt-0.5 text-xs text-ink-600 sm:text-sm">
               {started.length === 0
                 ? 'Pick a track below to begin.'
                 : 'Average across your best track scores.'}
@@ -93,15 +93,15 @@ export function PracticeOverview({
         {/* One divided card on mobile — two separate boxes wasted vertical space */}
         <div className="flex items-stretch overflow-hidden rounded-xl border border-brand-100 bg-white/70 sm:ml-auto sm:shrink-0">
           <div className="flex-1 px-3 py-2.5 sm:min-w-[104px] sm:p-4">
-            <p className="text-[11px] font-medium text-ink-500 sm:text-xs">Tracks practiced</p>
+            <p className="text-[11px] font-medium text-ink-600 sm:text-xs">Tracks practiced</p>
             <p className="mt-0.5 text-lg font-semibold tracking-tight text-ink-900 sm:mt-1 sm:text-xl">
               {started.length}
-              <span className="text-sm font-normal text-ink-400">/{skillTracks.length}</span>
+              <span className="text-sm font-normal text-ink-500">/{skillTracks.length}</span>
             </p>
           </div>
           <div className="w-px shrink-0 bg-brand-100" />
           <div className="flex-1 px-3 py-2.5 sm:min-w-[104px] sm:p-4">
-            <p className="text-[11px] font-medium text-ink-500 sm:text-xs">Total attempts</p>
+            <p className="text-[11px] font-medium text-ink-600 sm:text-xs">Total attempts</p>
             <p className="mt-0.5 text-lg font-semibold tracking-tight text-ink-900 sm:mt-1 sm:text-xl">
               {attempts}
             </p>
@@ -112,7 +112,7 @@ export function PracticeOverview({
       {started.length > 0 && (
         <div className="mt-4 grid gap-4 border-t border-brand-100 pt-4 sm:grid-cols-2 sm:pt-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Strengths</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Strengths</p>
             <div className="mt-2 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
               {strengths.length ? (
                 strengths.map((r) => (
@@ -125,13 +125,13 @@ export function PracticeOverview({
                   </span>
                 ))
               ) : (
-                <span className="text-xs text-ink-400">Keep practicing to build strengths.</span>
+                <span className="text-xs text-ink-500">Keep practicing to build strengths.</span>
               )}
             </div>
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Focus next</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Focus next</p>
             <div className="mt-2 flex flex-col gap-1.5 sm:flex-row sm:flex-wrap">
               {focus.length ? (
                 focus.map((r) => (
@@ -149,7 +149,7 @@ export function PracticeOverview({
                   </button>
                 ))
               ) : (
-                <span className="text-xs text-ink-400">No weak spots — nice work.</span>
+                <span className="text-xs text-ink-500">No weak spots — nice work.</span>
               )}
             </div>
           </div>

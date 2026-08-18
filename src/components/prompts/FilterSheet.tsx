@@ -60,15 +60,15 @@ export function FilterSheet({
       onClick={onClick}
       className={`flex min-h-[48px] w-full items-center justify-between gap-3 rounded-xl px-3.5 text-left text-sm transition-colors ${
         disabled
-          ? 'cursor-not-allowed text-ink-300'
+          ? 'cursor-not-allowed text-ink-400'
           : active
             ? 'bg-brand-50 font-medium text-brand-700'
-            : 'text-ink-700 active:bg-ink-50'
+            : 'text-ink-800 active:bg-ink-100'
       }`}
     >
       <span>{label}</span>
       <span className="flex items-center gap-2">
-        <span className="text-xs text-ink-400">{count}</span>
+        <span className="text-xs text-ink-500">{count}</span>
         {active && <Check size={16} className="text-brand-600" />}
       </span>
     </button>
@@ -95,18 +95,18 @@ export function FilterSheet({
           onClick={() => setSavedOnly(!savedOnly)}
           aria-pressed={savedOnly}
           className={`flex min-h-[48px] w-full items-center justify-between gap-3 rounded-xl px-3.5 text-left text-sm transition-colors ${
-            savedOnly ? 'bg-amber-50 font-medium text-amber-800' : 'text-ink-700 active:bg-ink-50'
+            savedOnly ? 'bg-amber-50 font-medium text-amber-800' : 'text-ink-800 active:bg-ink-100'
           }`}
         >
           <span className="flex items-center gap-2.5">
             <Bookmark size={16} fill={savedOnly ? 'currentColor' : 'none'} />
             Saved only
           </span>
-          <span className="text-xs text-ink-400">{savedCount}</span>
+          <span className="text-xs text-ink-500">{savedCount}</span>
         </button>
 
-        <div className="my-2 border-t border-ink-100" />
-        <p className="px-3.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Track</p>
+        <div className="my-2 border-t border-ink-200" />
+        <p className="px-3.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Track</p>
 
         <Row
           label="All tracks"

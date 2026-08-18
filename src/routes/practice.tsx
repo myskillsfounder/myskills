@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Award, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Award, ChevronRight, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useInitialAssessment } from '@/lib/assessmentResults'
 import { tierForPercent } from '@/lib/certificates'
@@ -18,6 +18,7 @@ import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummary
 import { PracticeStats } from '@/components/practice/PracticeStats'
 import { NextUpCard } from '@/components/practice/NextUpCard'
 import { TrackList } from '@/components/practice/TrackList'
+import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
 
 export const Route = createFileRoute('/practice')({
@@ -49,13 +50,16 @@ function CertificateRow({ percent }: { percent: number }) {
   return (
     <Link
       to="/certificate"
-      className={`flex items-center gap-2.5 rounded-full border py-1.5 pl-2.5 pr-2 transition-colors ${tier.ui.border} ${tier.ui.bg}`}
+      className={`group rise-in flex items-center gap-2.5 rounded-full border py-2 pl-3 pr-2.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${tier.ui.border} ${tier.ui.bg}`}
     >
-      <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white ${tier.ui.icon}`}>
-        <Award size={13} />
+      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ${tier.ui.icon}`}>
+        <Award size={14} />
       </span>
-      <span className={`text-xs font-semibold ${tier.ui.textStrong}`}>{tier.label} certificate</span>
-      <ChevronRight size={14} className={tier.ui.textSoft} />
+      <span className={`text-sm font-semibold ${tier.ui.textStrong}`}>{tier.label} certificate</span>
+      <ChevronRight
+        size={15}
+        className={`${tier.ui.textSoft} transition-transform duration-300 group-hover:translate-x-0.5`}
+      />
     </Link>
   )
 }
@@ -72,6 +76,7 @@ function PracticePage() {
   const [practiceLoading, setPracticeLoading] = useState(true)
   const [practiceError, setPracticeError] = useState<string>()
   const [selected, setSelected] = useState<string | null>(null)
+  const [mode, setMode] = useState<PracticeMode | null>(null)
 
   useEffect(() => {
     if (assessmentLoading) return
@@ -100,7 +105,7 @@ function PracticePage() {
 
   return (
     <AppShell wide>
-      {assessmentLoading && <p className="text-sm text-ink-500">Loading…</p>}
+      {assessmentLoading && <p className="text-sm text-ink-600">Loading…</p>}
 
       {error && <MigrationError message={error} />}
 
@@ -108,10 +113,10 @@ function PracticePage() {
       {!assessmentLoading && !error && !assessment && (
         <div>
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">
               Initial assessment
             </h1>
-            <p className="mt-1 text-sm text-ink-500">
+            <p className="mt-1 text-sm text-ink-600">
               Answer {initialAssessmentQuestions.length} quick questions to unlock
               scenario practice across all skill tracks. You get one attempt, so take
               your time — there’s no time limit.
@@ -132,19 +137,26 @@ function PracticePage() {
       )}
 
       {/* Practice home. Order is deliberate: where you stand, what to do next,
-          then the full list — action before inventory. */}
-      {assessment && !error && !selected && (
+          then the modes — action before inventory. */}
+      {assessment && !error && !selected && mode === null && (
         <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink-900">Practice</h1>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div className="rise-in">
+              <h1 className="font-display text-4xl font-semibold leading-none tracking-tight text-ink-900">
+                Practice
+              </h1>
+              <p className="mt-2 text-sm text-ink-600">
+                Sharpen your marketing skills with real-world practice.
+              </p>
+            </div>
             <CertificateRow percent={assessment.overall.percent} />
           </div>
 
           {practiceLoading ? (
-            <p className="text-sm text-ink-500">Loading practice…</p>
+            <p className="text-sm text-ink-600">Loading practice…</p>
           ) : (
             <>
-              <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
+              <div className="grid gap-5 lg:grid-cols-3">
                 <div className="lg:col-span-2">
                   <PracticeStats practice={practice} />
                 </div>
@@ -153,10 +165,41 @@ function PracticePage() {
                 </div>
               </div>
 
-              <TrackList practice={practice} onSelect={setSelected} />
+              <ModePicker practice={practice} onSelect={setMode} />
 
               <AssessmentSummaryCard assessment={assessment} />
             </>
+          )}
+        </div>
+      )}
+
+      {/* Scenario mode — the full track list lives here. */}
+      {assessment && !error && !selected && mode === 'scenario' && (
+        <div className="space-y-5">
+          <button
+            type="button"
+            onClick={() => setMode(null)}
+            className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+          >
+            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> All practice modes
+          </button>
+
+          <div className="flex items-start gap-3">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md ring-4 ring-ink-100">
+              <Target size={24} />
+            </span>
+            <div>
+              <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Scenario Based</h1>
+              <p className="mt-1 text-sm text-ink-600">
+                Decision Labs — real business situations, one skill track at a time.
+              </p>
+            </div>
+          </div>
+
+          {practiceLoading ? (
+            <p className="text-sm text-ink-600">Loading practice…</p>
+          ) : (
+            <TrackList practice={practice} onSelect={setSelected} />
           )}
         </div>
       )}

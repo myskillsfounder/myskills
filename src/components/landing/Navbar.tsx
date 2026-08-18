@@ -44,7 +44,7 @@ export function Navbar() {
             (user ? (
               <Link
                 to="/profile"
-                className="rounded-full bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700"
+                className="press inline-flex h-10 items-center rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
               >
                 Go to profile
               </Link>
@@ -58,7 +58,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   to="/signup"
-                  className="rounded-full bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700"
+                  className="press inline-flex h-10 items-center rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
                 >
                   Sign Up
                 </Link>
@@ -105,7 +105,7 @@ export function Navbar() {
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
-                  className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-center text-sm font-medium text-white"
+                  className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                 >
                   Go to profile
                 </Link>
@@ -114,14 +114,14 @@ export function Navbar() {
                   <Link
                     to="/login"
                     onClick={() => setOpen(false)}
-                    className="w-full rounded-full border border-ink-200 px-4 py-2.5 text-center text-sm font-medium text-ink-900"
+                    className="w-full press inline-flex h-11 items-center justify-center rounded-xl border border-ink-300 px-4 text-center text-sm font-semibold text-ink-900"
                   >
                     Sign In
                   </Link>
                   <Link
                     to="/signup"
                     onClick={() => setOpen(false)}
-                    className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-center text-sm font-medium text-white"
+                    className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                   >
                     Sign Up
                   </Link>

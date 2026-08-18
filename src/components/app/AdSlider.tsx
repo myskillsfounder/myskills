@@ -36,7 +36,7 @@ export function AdSlider() {
 
   return (
     <div
-      className="relative overflow-hidden rounded-xl border border-ink-100 bg-white"
+      className="relative card overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
@@ -50,7 +50,7 @@ export function AdSlider() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous ad"
-            className="absolute left-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-ink-700 shadow-sm backdrop-blur transition-colors hover:bg-white hover:text-brand-600"
+            className="absolute left-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-ink-800 shadow-sm backdrop-blur transition-colors hover:bg-white hover:text-brand-600"
           >
             <ChevronLeft size={16} />
           </button>
@@ -58,7 +58,7 @@ export function AdSlider() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next ad"
-            className="absolute right-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-ink-700 shadow-sm backdrop-blur transition-colors hover:bg-white hover:text-brand-600"
+            className="absolute right-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-ink-800 shadow-sm backdrop-blur transition-colors hover:bg-white hover:text-brand-600"
           >
             <ChevronRight size={16} />
           </button>

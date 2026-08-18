@@ -267,26 +267,26 @@ export function ChatWindow({
   let lastDay = ''
 
   return (
-    <div className="flex h-[62vh] flex-col overflow-hidden rounded-2xl border border-ink-100 bg-white">
+    <div className="flex h-[62vh] flex-col card overflow-hidden">
       {/* header */}
-      <div className="flex items-center justify-between border-b border-ink-100 px-4 py-2.5">
+      <div className="flex items-center justify-between border-b border-ink-200 px-4 py-2.5">
         <div className="flex items-center gap-2">
           <span className={`h-2 w-2 rounded-full ${peerOnline ? 'bg-emerald-500' : 'bg-ink-300'}`} />
-          <span className="text-sm font-medium text-ink-800">{peerName}</span>
-          <span className="text-xs text-ink-400">{peerOnline ? 'online' : 'offline'}</span>
+          <span className="text-sm font-medium text-ink-900">{peerName}</span>
+          <span className="text-xs text-ink-500">{peerOnline ? 'online' : 'offline'}</span>
         </div>
         {peerTyping && <span className="text-xs italic text-brand-600">typing…</span>}
       </div>
 
       {/* messages */}
-      <div ref={scrollRef} onScroll={onScroll} className="relative flex-1 space-y-1.5 overflow-y-auto bg-ink-50/40 p-4">
+      <div ref={scrollRef} onScroll={onScroll} className="relative flex-1 space-y-1.5 overflow-y-auto bg-ink-100 p-4">
         {loading && (
-          <p className="flex items-center justify-center gap-2 py-6 text-xs text-ink-400">
+          <p className="flex items-center justify-center gap-2 py-6 text-xs text-ink-500">
             <Loader2 size={13} className="animate-spin" /> Loading conversation…
           </p>
         )}
         {!loading && messages.length === 0 && (
-          <p className="py-8 text-center text-xs text-ink-400">
+          <p className="py-8 text-center text-xs text-ink-500">
             You’re connected with {peerName}. Say hello 👋
           </p>
         )}
@@ -300,7 +300,7 @@ export function ChatWindow({
             <div key={m.id}>
               {showDay && (
                 <div className="my-3 flex justify-center">
-                  <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-medium text-ink-400 shadow-sm">
+                  <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-medium text-ink-500 shadow-sm">
                     {day}
                   </span>
                 </div>
@@ -310,11 +310,11 @@ export function ChatWindow({
                   className={`max-w-[78%] rounded-2xl px-3.5 py-2 text-sm shadow-sm ${
                     mine
                       ? `rounded-br-md bg-brand-600 text-white ${m.pending ? 'opacity-70' : ''}`
-                      : 'rounded-bl-md bg-white text-ink-800'
+                      : 'rounded-bl-md bg-white text-ink-900'
                   }`}
                 >
                   <p className="whitespace-pre-wrap break-words leading-relaxed">{m.body}</p>
-                  <p className={`mt-0.5 flex items-center justify-end gap-1 text-[10px] ${mine ? 'text-white/70' : 'text-ink-400'}`}>
+                  <p className={`mt-0.5 flex items-center justify-end gap-1 text-[10px] ${mine ? 'text-white/70' : 'text-ink-500'}`}>
                     {time(m.created_at)}
                     {mine &&
                       (m.pending ? (
@@ -358,7 +358,7 @@ export function ChatWindow({
       )}
 
       {/* composer */}
-      <form onSubmit={submit} className="flex items-end gap-2 border-t border-ink-100 bg-white p-3">
+      <form onSubmit={submit} className="flex items-end gap-2 border-t border-ink-200 bg-white p-3">
         <textarea
           value={text}
           onChange={(e) => onType(e.target.value)}
@@ -366,7 +366,7 @@ export function ChatWindow({
           disabled={disabled}
           rows={1}
           placeholder={disabled ? 'This chat has ended.' : 'Message… (Enter to send)'}
-          className="max-h-28 min-h-[40px] min-w-0 flex-1 resize-none rounded-2xl border border-ink-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:bg-ink-50"
+          className="max-h-28 min-h-[40px] min-w-0 flex-1 resize-none rounded-2xl border border-ink-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:bg-ink-100"
         />
         <button
           type="submit"

@@ -48,14 +48,14 @@ function BlogPostPage() {
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <Link
           to="/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
         >
           <ArrowLeft size={16} />
           All posts
         </Link>
 
         {loading && (
-          <div className="flex items-center gap-2 py-16 text-sm text-ink-500">
+          <div className="flex items-center gap-2 py-16 text-sm text-ink-600">
             <Loader2 size={16} className="animate-spin" /> Loading…
           </div>
         )}
@@ -67,20 +67,20 @@ function BlogPostPage() {
         )}
 
         {notFound && !loading && (
-          <div className="mt-10 rounded-2xl border border-dashed border-ink-200 p-12 text-center">
-            <p className="text-sm font-medium text-ink-700">Post not found</p>
-            <p className="mt-1 text-sm text-ink-500">It may have been unpublished or removed.</p>
+          <div className="mt-10 rounded-2xl border border-dashed border-ink-300 p-12 text-center">
+            <p className="text-sm font-medium text-ink-800">Post not found</p>
+            <p className="mt-1 text-sm text-ink-600">It may have been unpublished or removed.</p>
           </div>
         )}
 
         {post && (
           <article className="mt-6">
-            <p className="text-sm text-ink-400">{formatDate(post.published_at)}</p>
+            <p className="text-sm text-ink-500">{formatDate(post.published_at)}</p>
             <h1 className="mt-1.5 text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
               {post.title}
             </h1>
             {post.description && (
-              <p className="mt-3 text-lg text-ink-500">{post.description}</p>
+              <p className="mt-3 text-lg text-ink-600">{post.description}</p>
             )}
             {post.thumbnail_url && (
               <img

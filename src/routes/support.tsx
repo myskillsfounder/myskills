@@ -113,7 +113,7 @@ function SupportPage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-2xl">
-        <Link to="/dashboard" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900">
+        <Link to="/dashboard" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
           <ArrowLeft size={16} /> Back to dashboard
         </Link>
 
@@ -122,8 +122,8 @@ function SupportPage() {
             <MessagesSquare size={22} />
           </span>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-ink-900">Talk to a mentor</h1>
-            <p className="text-sm text-ink-500">
+            <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Talk to a mentor</h1>
+            <p className="text-sm text-ink-600">
               {mentorsOnline ? (
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-emerald-500" /> A mentor is online now
@@ -140,7 +140,7 @@ function SupportPage() {
         {error && <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
         {loading && (
-          <p className="flex items-center gap-2 text-sm text-ink-500">
+          <p className="flex items-center gap-2 text-sm text-ink-600">
             <Loader2 size={15} className="animate-spin" /> Loading…
           </p>
         )}
@@ -166,8 +166,8 @@ function SupportPage() {
               <Clock size={12} /> {mentorsOnline ? 'A mentor has been notified.' : 'We’ll connect you as soon as a mentor comes online.'}
             </p>
             <div className="mt-4 rounded-xl bg-white/70 p-3 text-left">
-              <p className="text-xs font-semibold text-ink-700">{session.topic}</p>
-              <p className="mt-0.5 text-xs text-ink-500">{session.details}</p>
+              <p className="text-xs font-semibold text-ink-800">{session.topic}</p>
+              <p className="mt-0.5 text-xs text-ink-600">{session.details}</p>
             </div>
             <button
               type="button"
@@ -195,7 +195,7 @@ function SupportPage() {
               </button>
             </div>
             <ChatWindow sessionId={session.id} meId={user.id} peerName={mentorName} />
-            <p className="text-center text-xs text-ink-400">
+            <p className="text-center text-xs text-ink-500">
               Ending the chat permanently deletes these messages.
             </p>
           </div>
@@ -203,9 +203,9 @@ function SupportPage() {
 
         {/* Ended */}
         {session && (session.status === 'ended' || session.status === 'cancelled') && (
-          <div className="rounded-2xl border border-ink-200 bg-white p-8 text-center">
-            <p className="text-sm font-medium text-ink-800">This session has ended.</p>
-            <p className="mt-1 text-xs text-ink-500">The chat messages were deleted.</p>
+          <div className="rounded-2xl border border-ink-300 bg-white p-8 text-center">
+            <p className="text-sm font-medium text-ink-900">This session has ended.</p>
+            <p className="mt-1 text-xs text-ink-600">The chat messages were deleted.</p>
             <button
               type="button"
               onClick={() => setSession(null)}
