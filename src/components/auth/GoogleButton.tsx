@@ -2,26 +2,35 @@ interface GoogleButtonProps {
   label: string
   onClick: () => void
   disabled?: boolean
+  /**
+   * Gives the button extra visual weight so it reads as the preferred path
+   * (used on sign-up, where we steer people towards federated sign-in).
+   */
+  highlighted?: boolean
 }
 
 /** Outlined button with the Google "G" mark for federated sign-in. */
-export function GoogleButton({ label, onClick, disabled }: GoogleButtonProps) {
+export function GoogleButton({ label, onClick, disabled, highlighted }: GoogleButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="press inline-flex h-11 w-full items-center justify-center gap-2.5 rounded-xl border border-ink-300 bg-white text-sm font-semibold text-ink-800 transition-colors hover:border-ink-400 hover:bg-ink-50 disabled:opacity-50"
+      className={`press inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-white transition-colors disabled:opacity-50 ${
+        highlighted
+          ? 'h-12 border-2 border-brand-500 text-[15px] font-semibold text-ink-900 shadow-e1 hover:border-brand-600 hover:bg-brand-50'
+          : 'h-11 border border-ink-300 text-sm font-semibold text-ink-800 hover:border-ink-400 hover:bg-ink-50'
+      }`}
     >
-      <GoogleMark />
+      <GoogleMark size={highlighted ? 18 : 16} />
       {label}
     </button>
   )
 }
 
-function GoogleMark() {
+function GoogleMark({ size = 16 }: { size?: number }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 18 18" aria-hidden="true">
       <path
         fill="#4285F4"
         d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"

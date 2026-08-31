@@ -41,6 +41,9 @@ export interface Profile {
   avatar_url: string | null
   banner_url: string | null
   phone: string
+  /** ISO date (yyyy-mm-dd) or '' — collected on the profile page, not at sign-up. */
+  date_of_birth: string
+  gender: string
   country: string
   state: string
   career_stage: string
@@ -50,10 +53,13 @@ export interface Profile {
   education: Education[]
 }
 
-export type ProfilePatch = Partial<Omit<Profile, 'id'>>
+/** `date_of_birth` accepts null so clearing it writes SQL NULL, not ''. */
+export type ProfilePatch = Partial<Omit<Profile, 'id' | 'date_of_birth'>> & {
+  date_of_birth?: string | null
+}
 
 const COLUMNS =
-  'id, full_name, headline, location, avatar_url, banner_url, phone, country, state, career_stage, goals, skills, experience, education'
+  'id, full_name, headline, location, avatar_url, banner_url, phone, date_of_birth, gender, country, state, career_stage, goals, skills, experience, education'
 
 function normalize(row: Record<string, unknown>): Profile {
   return {
@@ -64,6 +70,8 @@ function normalize(row: Record<string, unknown>): Profile {
     avatar_url: (row.avatar_url as string) ?? null,
     banner_url: (row.banner_url as string) ?? null,
     phone: (row.phone as string) ?? '',
+    date_of_birth: (row.date_of_birth as string) ?? '',
+    gender: (row.gender as string) ?? '',
     country: (row.country as string) ?? '',
     state: (row.state as string) ?? '',
     career_stage: (row.career_stage as string) ?? '',
@@ -90,7 +98,9 @@ export async function fetchMyProfile(): Promise<Profile> {
   if (error) throw error
   if (data) return normalize(data)
 
-  // Seed from onboarding metadata on first load.
+  // Seed from onboarding metadata on first load. Onboarding only asks for
+  // career stage + goals now; the personal-details keys are still read so
+  // accounts created before that change keep their answers.
   const meta = (user.user_metadata ?? {}) as Record<string, unknown>
   const ob = (meta.profile ?? {}) as Record<string, unknown>
   const location = [ob.state, ob.country].filter(Boolean).join(', ')
@@ -99,6 +109,8 @@ export async function fetchMyProfile(): Promise<Profile> {
     full_name: (meta.name as string) ?? user.email?.split('@')[0] ?? '',
     location: location || null,
     phone: (ob.phone as string) ?? null,
+    date_of_birth: (ob.date_of_birth as string) || null,
+    gender: (ob.gender as string) ?? null,
     country: (ob.country as string) ?? null,
     state: (ob.state as string) ?? null,
     career_stage: (ob.career_stage as string) ?? null,

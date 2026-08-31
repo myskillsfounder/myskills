@@ -132,11 +132,6 @@ export async function getAccessToken(): Promise<string | null> {
 }
 
 export interface OnboardingProfile {
-  phone: string
-  date_of_birth: string
-  gender: string
-  country: string
-  state: string
   career_stage: string
   goals: string[]
 }

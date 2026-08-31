@@ -1,11 +1,9 @@
-import { useEffect, useState, type ComponentType } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Award, BookOpen, Check, Copy, ExternalLink, Lock, MapPin, Phone, Target } from 'lucide-react'
+import { Award, Check, Copy, ExternalLink, Lock } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
-import type { Profile } from '@/lib/profile'
-import { careerStageStep, goalsStep } from '@/lib/onboardingContent'
 import { AppShell } from '@/components/app/AppShell'
 import { Section } from '@/components/profile/ui'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
@@ -13,70 +11,12 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { ExperienceSection } from '@/components/profile/ExperienceSection'
 import { EducationSection } from '@/components/profile/EducationSection'
 import { SkillsSection } from '@/components/profile/SkillsSection'
+import { DetailsSection, ProfileCompletion } from '@/components/profile/DetailsSection'
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: requireOnboarded,
   component: ProfilePage,
 })
-
-type IconType = ComponentType<{ size?: number; className?: string }>
-
-const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
-const careerLabel = (id: string) =>
-  careerStageStep.options.find((o) => o.id === id)?.title ?? id
-
-function DetailRow({ icon: Icon, label, value }: { icon: IconType; label: string; value: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink-100 text-ink-600">
-        <Icon size={16} />
-      </span>
-      <div className="min-w-0">
-        <p className="text-xs text-ink-500">{label}</p>
-        <p className="truncate text-sm font-medium text-ink-900">{value || '—'}</p>
-      </div>
-    </div>
-  )
-}
-
-function Details({ profile }: { profile: Profile }) {
-  const location = [profile.state, profile.country].filter(Boolean).join(', ')
-  return (
-    <Section title="Details">
-      <div className="space-y-4">
-        <DetailRow
-          icon={Target}
-          label="Career stage"
-          value={profile.career_stage ? careerLabel(profile.career_stage) : '—'}
-        />
-        <DetailRow icon={MapPin} label="Location" value={location} />
-        <DetailRow icon={Phone} label="Phone" value={profile.phone} />
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <BookOpen size={16} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-xs text-ink-500">Focus areas</p>
-            {profile.goals.length ? (
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {profile.goals.map((id) => (
-                  <span
-                    key={id}
-                    className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700"
-                  >
-                    {goalLabel(id)}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm font-medium text-ink-900">—</p>
-            )}
-          </div>
-        </div>
-      </div>
-    </Section>
-  )
-}
 
 /** Certificate + badge earned from the initial assessment. */
 function CertificateSection() {
@@ -202,6 +142,9 @@ function ProfilePage() {
         <div className="space-y-5">
           <ProfileHeader profile={profile} save={save} upload={upload} />
 
+          {/* Personal details moved out of onboarding — asked for here instead. */}
+          <ProfileCompletion profile={profile} save={save} />
+
           {/* Two columns on desktop, one ordered stack on mobile. The column
               wrappers are `contents` below lg, so their children become direct
               flex items and `order-*` can interleave across columns — that's
@@ -224,7 +167,7 @@ function ProfilePage() {
                 <CertificateSection />
               </div>
               <div className="order-5 lg:order-none">
-                <Details profile={profile} />
+                <DetailsSection profile={profile} save={save} />
               </div>
               <div className="order-6 lg:order-none">
                 <ActiveLearningLocked />

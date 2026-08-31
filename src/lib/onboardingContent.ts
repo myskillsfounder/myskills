@@ -1,6 +1,11 @@
 /**
  * Onboarding content — edit copy, options, and placeholders here (no JSX changes
- * needed). Kerala + digital-marketing flavored. Consumed by routes/onboarding.tsx.
+ * needed). Kerala + digital-marketing flavored.
+ *
+ * Consumed by routes/onboarding.tsx (career stage + goals) and by the profile
+ * "complete your profile" flow (personal details). Personal details are NOT
+ * asked during onboarding any more — sign-up stays short and people fill them
+ * in later from /profile.
  */
 
 export interface SelectOption {
@@ -20,9 +25,9 @@ export interface GoalOption {
 }
 
 /** Step labels shown in the progress header (order defines the flow). */
-export const stepLabels = ['Personal details', 'Career stage', 'Your goals'] as const
+export const stepLabels = ['Career stage', 'Your goals'] as const
 
-/* ------------------------------------------------------------------ Step 1 */
+/* --------------------------------------------- Personal details (/profile) */
 
 export const genderOptions: SelectOption[] = [
   { value: 'female', label: 'Female' },
@@ -31,7 +36,10 @@ export const genderOptions: SelectOption[] = [
   { value: 'prefer-not-to-say', label: 'Prefer not to say' },
 ]
 
-export const personalDetailsStep = {
+/**
+ * Collected on the profile page (profile completion), not during onboarding.
+ */
+export const personalDetailsForm = {
   title: 'Personal details',
   subtitle: 'Add the basics we need to personalize your profile.',
   fields: {
@@ -43,7 +51,7 @@ export const personalDetailsStep = {
   },
 }
 
-/* ------------------------------------------------------------------ Step 2 */
+/* ------------------------------------------------------------------ Step 1 */
 
 export const careerStageStep = {
   title: 'Career stage',
@@ -77,7 +85,7 @@ export const careerStageStep = {
   ] as OptionCard[],
 }
 
-/* ------------------------------------------------------------------ Step 3 */
+/* ------------------------------------------------------------------ Step 2 */
 
 export const goalsStep = {
   title: 'Your goals',

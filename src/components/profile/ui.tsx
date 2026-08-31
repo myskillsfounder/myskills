@@ -3,6 +3,7 @@ import type {
   ButtonHTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
+  SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react'
 import { Pencil, Plus, X } from 'lucide-react'
@@ -61,6 +62,39 @@ export function Field({ label, ...props }: FieldProps) {
         className="mt-1.5 w-full rounded-lg border border-ink-300 bg-white px-3 py-2.5 text-sm text-ink-900 placeholder:text-ink-500 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
         {...props}
       />
+    </div>
+  )
+}
+
+interface SelectFieldProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'id'> {
+  label: string
+  placeholder?: string
+  options: { value: string; label: string }[]
+}
+
+export function Select({ label, placeholder, options, ...props }: SelectFieldProps) {
+  const id = useId()
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-ink-800">
+        {label}
+      </label>
+      <select
+        id={id}
+        className="mt-1.5 w-full rounded-lg border border-ink-300 bg-white px-3 py-2.5 text-sm text-ink-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+        {...props}
+      >
+        {placeholder && (
+          <option value="" disabled>
+            {placeholder}
+          </option>
+        )}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
     </div>
   )
 }

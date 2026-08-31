@@ -1,10 +1,10 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Dumbbell, LayoutGrid, Sparkles, Star, User } from 'lucide-react'
+import { Dumbbell, LayoutGrid, Star, User, Users } from 'lucide-react'
 
 const TABS = [
   { to: '/dashboard', label: 'Home', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
-  { to: '/prompt-library', label: 'Prompts', icon: Sparkles },
+  { to: '/community', label: 'Community', icon: Users },
   { to: '/feedback', label: 'Review', icon: Star },
   { to: '/profile', label: 'Profile', icon: User },
 ] as const
