@@ -8,7 +8,6 @@ import {
   type ApplicationStatus,
   type MentorApplication,
 } from '@/lib/mentors'
-import { AppShell } from '@/components/app/AppShell'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/mentors')({
@@ -213,7 +212,7 @@ function MentorReviewQueue() {
   }
 
   return (
-    <AppShell wide>
+    <>
       <PageHeader
         eyebrow="Admin"
         title="Mentor applications"
@@ -264,6 +263,6 @@ function MentorReviewQueue() {
           ))}
         </div>
       )}
-    </AppShell>
+    </>
   )
 }

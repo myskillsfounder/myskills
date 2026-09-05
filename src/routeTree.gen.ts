@@ -36,7 +36,11 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PromptLibraryLibraryIdRouteImport } from './routes/prompt-library/$libraryId'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminMentorsRouteImport } from './routes/admin/mentors'
+import { Route as AdminFeedbackRouteImport } from './routes/admin/feedback'
+import { Route as AdminBlogRouteImport } from './routes/admin/blog'
+import { Route as AdminAdsRouteImport } from './routes/admin/ads'
 
 const TestsRoute = TestsRouteImport.update({
   id: '/tests',
@@ -173,9 +177,29 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMentorsRoute = AdminMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogRoute = AdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdsRoute = AdminAdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
   getParentRoute: () => AdminRoute,
 } as any)
 
@@ -200,7 +224,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
+  '/admin/ads': typeof AdminAdsRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/mentors': typeof AdminMentorsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
@@ -228,7 +256,11 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
+  '/admin/ads': typeof AdminAdsRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/mentors': typeof AdminMentorsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
@@ -259,7 +291,11 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/tests': typeof TestsRoute
+  '/admin/ads': typeof AdminAdsRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/mentors': typeof AdminMentorsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
@@ -291,7 +327,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/support'
     | '/tests'
+    | '/admin/ads'
+    | '/admin/blog'
+    | '/admin/feedback'
     | '/admin/mentors'
+    | '/admin/users'
     | '/blog/$slug'
     | '/community/mentors'
     | '/prompt-library/$libraryId'
@@ -319,7 +359,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/support'
     | '/tests'
+    | '/admin/ads'
+    | '/admin/blog'
+    | '/admin/feedback'
     | '/admin/mentors'
+    | '/admin/users'
     | '/blog/$slug'
     | '/community/mentors'
     | '/prompt-library/$libraryId'
@@ -349,7 +393,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/support'
     | '/tests'
+    | '/admin/ads'
+    | '/admin/blog'
+    | '/admin/feedback'
     | '/admin/mentors'
+    | '/admin/users'
     | '/blog/$slug'
     | '/community/mentors'
     | '/prompt-library/$libraryId'
@@ -577,6 +625,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/mentors': {
       id: '/admin/mentors'
       path: '/mentors'
@@ -584,16 +639,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMentorsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/feedback': {
+      id: '/admin/feedback'
+      path: '/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AdminFeedbackRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blog': {
+      id: '/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ads': {
+      id: '/admin/ads'
+      path: '/ads'
+      fullPath: '/admin/ads'
+      preLoaderRoute: typeof AdminAdsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminAdsRoute: typeof AdminAdsRoute
+  AdminBlogRoute: typeof AdminBlogRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
   AdminMentorsRoute: typeof AdminMentorsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdsRoute: AdminAdsRoute,
+  AdminBlogRoute: AdminBlogRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
   AdminMentorsRoute: AdminMentorsRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
