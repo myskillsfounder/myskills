@@ -1,0 +1,59 @@
+-- Security fixes found while auditing the schema dump on 2026-09-05.
+--
+-- Run against BOTH databases: the new project (so it doesn't inherit these)
+-- and the existing one (both issues are live there right now).
+--
+-- Order in a fresh project: supabase-schema.sql -> THIS FILE ->
+-- supabase-mentor-onboarding.sql -> supabase-admin.sql.
+
+-- ---------------------------------------------------------------------------
+-- 1. test_best_scores leaks every user's test results
+-- ---------------------------------------------------------------------------
+-- Views default to security_invoker = off, which runs them with the VIEW
+-- OWNER's privileges and so bypasses RLS on the underlying table. Its twin,
+-- practice_best_scores, was created WITH (security_invoker='on') and is fine —
+-- test_best_scores just never got the flag.
+--
+-- The client filters with .eq('profile_id', user.id), but that is a client-side
+-- filter over an anon-key request: anyone can remove it and read every user's
+-- test attempts. This makes the view honour the RLS already on test_attempts,
+-- where ta_select_own restricts rows to auth.uid() = profile_id.
+alter view public.test_best_scores set (security_invoker = on);
+
+-- ---------------------------------------------------------------------------
+-- 2. blog_posts is world-writable
+-- ---------------------------------------------------------------------------
+-- The existing policy is:
+--
+--   create policy "blog_posts admin all" on public.blog_posts
+--     to anon using (true) with check (true);
+--
+-- No FOR clause means ALL commands, and `anon` is the UNAUTHENTICATED role. The
+-- anon key ships in the browser bundle and is public by design, so anyone can
+-- insert, update or delete posts. Post bodies are rendered with
+-- dangerouslySetInnerHTML (routes/blog/$slug.tsx), so this is a stored-XSS
+-- vector against every blog reader, not just defacement.
+--
+-- Dropped here; supabase-admin.sql replaces it with an authenticated
+-- is_admin() policy. Public reading is unaffected — that comes from the
+-- separate "blog_posts public read published" policy.
+--
+-- NOTE: if the old separate admin app writes posts with the ANON key rather
+-- than through a service-role backend, dropping this will break its publishing
+-- until it is retired in favour of /admin/blog in this repo. Test publishing
+-- after applying. (ads.ts describes a service-role admin-server, which would
+-- be unaffected — service_role bypasses RLS entirely.)
+drop policy if exists "blog_posts admin all" on public.blog_posts;
+
+-- ---------------------------------------------------------------------------
+-- Verify
+-- ---------------------------------------------------------------------------
+-- Expect exactly one blog_posts policy (the public read), and both *_best_scores
+-- views reporting security_invoker=true.
+--
+--   select policyname, cmd, roles::text from pg_policies
+--    where schemaname='public' and tablename='blog_posts';
+--
+--   select c.relname, c.reloptions from pg_class c
+--    join pg_namespace n on n.oid = c.relnamespace
+--   where n.nspname='public' and c.relname in ('practice_best_scores','test_best_scores');
