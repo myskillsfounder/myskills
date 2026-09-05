@@ -62,6 +62,11 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
   },
+  '/community': {
+    title: 'Community | MySkills',
+    description:
+      'Learn alongside people who’ve done it. Meet MySkills mentors, or apply to mentor students building real digital marketing skills.',
+  },
 }
 
 /** Routes that belong in the sitemap, with their crawl hints. */
@@ -69,6 +74,8 @@ export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: strin
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/signup', changefreq: 'monthly', priority: '0.8' },
   { path: '/blog', changefreq: 'daily', priority: '0.9' },
+  { path: '/community', changefreq: 'weekly', priority: '0.7' },
+  { path: '/become-a-mentor', changefreq: 'monthly', priority: '0.6' },
 ]
 
 /** Absolute URL for a path. */

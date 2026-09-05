@@ -1,5 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { Dumbbell, LayoutGrid, Star, User, Users } from 'lucide-react'
+import { useAuthUser } from '@/lib/useAuth'
 
 const TABS = [
   { to: '/dashboard', label: 'Home', icon: LayoutGrid },
@@ -50,8 +51,17 @@ export const BOTTOM_NAV_CLEARANCE = `calc(${BOTTOM_NAV_H + 12}px + env(safe-area
  */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const { user } = useAuthUser()
 
-  const hidden = HIDE_EXACT.has(pathname) || HIDE_PREFIX.some((p) => pathname.startsWith(p))
+  // /community is dual-purpose: a public marketing page for signed-out
+  // visitors and the authenticated hub for onboarded users. The tabs below
+  // are all auth-gated, so a signed-out visitor tapping one would just bounce
+  // to login — hide the bar there unless someone's actually signed in.
+  const onCommunity = pathname === '/community' || pathname.startsWith('/community/')
+  const hidden =
+    HIDE_EXACT.has(pathname) ||
+    HIDE_PREFIX.some((p) => pathname.startsWith(p)) ||
+    (onCommunity && !user)
   if (hidden) return null
 
   return (

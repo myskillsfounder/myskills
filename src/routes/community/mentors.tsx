@@ -3,10 +3,15 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, BadgeCheck, MapPin, Sparkles, UserPlus, Users } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { fetchMentors, type Mentor } from '@/lib/mentors'
+import { requireOnboarded } from '@/lib/guards'
 import { AppShell } from '@/components/app/AppShell'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
+// The parent /community layout allows signed-out visitors through (its index
+// page is a public marketing page), so this leaf needs its own guard to stay
+// authenticated-only — it renders inside AppShell, which assumes a session.
 export const Route = createFileRoute('/community/mentors')({
+  beforeLoad: requireOnboarded,
   component: MentorsPage,
 })
 

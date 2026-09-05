@@ -33,3 +33,18 @@ export async function requireOnboarded(): Promise<void> {
     throw redirect({ to: '/onboarding' })
   }
 }
+
+/**
+ * For routes that are dual-purpose: a public marketing page for signed-out
+ * visitors, and the authenticated in-app experience for onboarded users
+ * (currently just /community — public "become a mentor" content vs. the
+ * signed-in Community hub). Unlike requireOnboarded, a missing session is
+ * allowed through; only a signed-in-but-not-onboarded user gets sent to
+ * finish onboarding, matching what they'd hit anywhere else in the app.
+ */
+export async function requireOnboardedIfSignedIn(): Promise<void> {
+  const session = await currentSession()
+  if (session && session.user.user_metadata?.onboarded !== true) {
+    throw redirect({ to: '/onboarding' })
+  }
+}
