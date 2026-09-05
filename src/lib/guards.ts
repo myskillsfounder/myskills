@@ -15,9 +15,9 @@ async function currentSession() {
   return data.session
 }
 
-/** Guest-only routes (/login, /signup): send signed-in users to their profile. */
+/** Guest-only routes (/login, /signup): send signed-in users to the dashboard. */
 export async function requireGuest(): Promise<void> {
-  if (await currentSession()) throw redirect({ to: '/profile' })
+  if (await currentSession()) throw redirect({ to: '/dashboard' })
 }
 
 /** Signed-in required (/onboarding). */

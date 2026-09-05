@@ -4,6 +4,7 @@ import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import {
   ArrowRight,
   BarChart3,
+  ChevronRight,
   ClipboardCheck,
   Dumbbell,
   LayoutGrid,
@@ -11,12 +12,13 @@ import {
   Menu,
   MessageCircle,
   MessageSquare,
-  Sparkles,
   User,
   X,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useAssessmentDone } from '@/lib/assessmentResults'
+import { useProfile } from '@/lib/useProfile'
+import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
@@ -24,15 +26,14 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 /**
  * Sidebar + mobile drawer navigation.
  *
- * Games is intentionally absent — it's hidden from every nav (here and in
- * MobileBottomNav). The /games route still exists and renders if visited
- * directly; delete routes/games.tsx, or redirect it the way routes/tests.tsx
- * does, to retire the feature properly.
+ * Prompt Library and Games are intentionally absent from nav — Prompt Library
+ * is still reachable from the dashboard's own prompt widgets, and Games only
+ * if visited directly. Delete their routes, or redirect them the way
+ * routes/tests.tsx does, to retire either feature properly.
  */
 const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
-  { to: '/prompt-library', label: 'Prompt Library', icon: Sparkles },
   { to: '/community', label: 'Community', icon: MessageCircle },
   { to: '/feedback', label: 'Feedback', icon: MessageSquare },
 ]
@@ -67,7 +68,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mx-4 border-t border-ink-200" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 px-3 py-5">
+      <nav className="flex-1 space-y-0.5 px-3 py-5">
         {NAV.map(({ to, label, icon: Icon }) => {
           const active = pathname === to
           return (
@@ -76,16 +77,21 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               to={to}
               onClick={onNavigate}
               aria-current={active ? 'page' : undefined}
-              className={`group flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 ${
+              className={`group relative flex items-center gap-3.5 rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
                 active
-                  ? 'bg-brand-50 font-semibold text-brand-800 ring-1 ring-brand-100'
+                  ? 'bg-brand-50 font-semibold text-brand-800'
                   : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
               }`}
             >
+              <span
+                className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-600 transition-all duration-200 ${
+                  active ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
               <Icon
                 size={19}
-                className={`transition-transform duration-300 ${
-                  active ? 'text-brand-700' : 'text-ink-500 group-hover:scale-110 group-hover:text-ink-800'
+                className={`shrink-0 transition-transform duration-200 ${
+                  active ? 'text-brand-700' : 'text-ink-500 group-hover:translate-x-0.5 group-hover:text-ink-800'
                 }`}
               />
               {label}
@@ -99,20 +105,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="space-y-3 px-4 pb-6 pt-4">
         <AdSlider />
 
-        <Link
-          to="/profile"
-          onClick={onNavigate}
-          className={`group flex items-center gap-3 rounded-2xl border px-3 py-2.5 transition-all duration-300 hover:-translate-y-0.5 ${
-            pathname === '/profile'
-              ? 'border-ink-400 bg-ink-100 shadow-sm'
-              : 'border-ink-300 bg-white hover:bg-ink-100'
-          }`}
-        >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
-            <User size={16} />
-          </span>
-          <span className="text-sm font-medium text-ink-900">Profile</span>
-        </Link>
+        <ProfileNavCard onNavigate={onNavigate} active={pathname === '/profile'} />
 
         <button
           type="button"
@@ -124,6 +117,58 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         </button>
       </div>
     </div>
+  )
+}
+
+/**
+ * Profile entry in the sidebar footer. When personal details are still
+ * incomplete, it doubles as a nudge — a slim progress bar and a nagging-but-
+ * not-annoying reminder, right where someone is already looking for their
+ * account. Disappears once the profile is complete.
+ */
+function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; active: boolean }) {
+  const { profile } = useProfile()
+  const missing = profile ? missingDetails(profile) : []
+  const incomplete = missing.length > 0
+  const percent = profile ? Math.round(((DETAIL_ITEMS.length - missing.length) / DETAIL_ITEMS.length) * 100) : null
+
+  return (
+    <Link
+      to="/profile"
+      onClick={onNavigate}
+      className={`group flex flex-col gap-2.5 rounded-2xl border px-3.5 py-3 transition-all duration-300 hover:-translate-y-0.5 ${
+        active ? 'border-ink-400 bg-ink-100 shadow-sm' : 'border-ink-300 bg-white hover:bg-ink-100'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
+          <User size={16} />
+        </span>
+        <span className="min-w-0 flex-1 text-sm font-medium text-ink-900">Profile</span>
+        {incomplete ? (
+          <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+            {percent}%
+          </span>
+        ) : (
+          <ChevronRight size={15} className="shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-0.5" />
+        )}
+      </div>
+
+      {incomplete && (
+        <>
+          <div className="h-1.5 overflow-hidden rounded-full bg-ink-200">
+            <span
+              className="block h-full rounded-full bg-amber-500 transition-[width] duration-300"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <p className="text-xs leading-snug text-ink-600">
+            Add {missing[0].label.toLowerCase()}
+            {missing.length > 1 ? ` +${missing.length - 1} more` : ''} to finish your profile.
+          </p>
+        </>
+      )}
+    </Link>
   )
 }
 

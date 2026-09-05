@@ -45,11 +45,15 @@ export function ChatWindow({
   sessionId,
   meId,
   peerName,
+  peerAvatar,
+  peerHeadline,
   disabled,
 }: {
   sessionId: string
   meId: string
   peerName: string
+  peerAvatar?: string | null
+  peerHeadline?: string | null
   disabled?: boolean
 }) {
   const [messages, setMessages] = useState<UiMessage[]>([])
@@ -270,12 +274,28 @@ export function ChatWindow({
     <div className="flex h-[62vh] flex-col card overflow-hidden">
       {/* header */}
       <div className="flex items-center justify-between border-b border-ink-200 px-4 py-2.5">
-        <div className="flex items-center gap-2">
-          <span className={`h-2 w-2 rounded-full ${peerOnline ? 'bg-emerald-500' : 'bg-ink-300'}`} />
-          <span className="text-sm font-medium text-ink-900">{peerName}</span>
-          <span className="text-xs text-ink-500">{peerOnline ? 'online' : 'offline'}</span>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="relative shrink-0">
+            {peerAvatar ? (
+              <img src={peerAvatar} alt="" className="h-8 w-8 rounded-full object-cover" />
+            ) : (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
+                {peerName.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span
+              className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-white ${
+                peerOnline ? 'bg-emerald-500' : 'bg-ink-300'
+              }`}
+            />
+          </span>
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-sm font-medium text-ink-900">{peerName}</p>
+            <p className="truncate text-xs text-ink-500">
+              {peerTyping ? <span className="italic text-brand-600">typing…</span> : peerHeadline || (peerOnline ? 'online' : 'offline')}
+            </p>
+          </div>
         </div>
-        {peerTyping && <span className="text-xs italic text-brand-600">typing…</span>}
       </div>
 
       {/* messages */}

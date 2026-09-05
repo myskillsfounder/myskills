@@ -37,8 +37,8 @@ function LoginPage() {
     setSubmitting(true)
     try {
       await signIn({ email, password })
-      // /profile redirects to /onboarding if the user hasn't onboarded yet.
-      router.navigate({ to: '/profile' })
+      // /dashboard redirects to /onboarding if the user hasn't onboarded yet.
+      router.navigate({ to: '/dashboard' })
     } catch (err) {
       if (err instanceof AuthError && err.field) {
         setErrors((prev) => ({ ...prev, [err.field!]: err.message }))

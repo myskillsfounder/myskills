@@ -50,7 +50,7 @@ function OnboardingPage() {
     setError(undefined)
     try {
       await completeOnboarding({ career_stage: careerStage, goals })
-      router.navigate({ to: '/profile' })
+      router.navigate({ to: '/dashboard' })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save your profile. Please try again.')
       setSubmitting(false)
