@@ -18,7 +18,15 @@ const TABS = [
  * assessment player (a focused, one-shot flow where a nav bar invites
  * accidental exits) and the certificate page (it's printed).
  */
-const HIDE_EXACT = new Set(['/', '/login', '/signup', '/onboarding', '/assessment', '/certificate'])
+const HIDE_EXACT = new Set([
+  '/',
+  '/login',
+  '/signup',
+  '/onboarding',
+  '/assessment',
+  '/certificate',
+  '/become-a-mentor',
+])
 const HIDE_PREFIX = ['/blog']
 
 /** Row height in px. Labels + icon, comfortably above the 44px touch minimum. */

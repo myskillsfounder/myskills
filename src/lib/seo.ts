@@ -57,6 +57,11 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Create a free MySkills account to take the digital marketing assessment and earn your certificate.',
   },
+  '/become-a-mentor': {
+    title: 'Become a mentor | MySkills',
+    description:
+      'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
+  },
 }
 
 /** Routes that belong in the sitemap, with their crawl hints. */

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, BadgeCheck, MapPin, Sparkles } from 'lucide-react'
+import { ArrowLeft, BadgeCheck, MapPin, Sparkles, UserPlus, Users } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { fetchMentors, type Mentor } from '@/lib/mentors'
 import { AppShell } from '@/components/app/AppShell'
+import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/community/mentors')({
   component: MentorsPage,
@@ -16,30 +18,6 @@ function LinkedInIcon({ size = 16, className }: { size?: number; className?: str
   )
 }
 
-interface Mentor {
-  id: string
-  name: string
-  role: string
-  bio: string
-  initials: string
-  location: string
-  expertise: string[]
-  linkedin: string
-}
-
-const MENTORS: Mentor[] = [
-  {
-    id: 'b15eb398-053b-4fb1-b33a-7f1903bcabf8',
-    name: 'Paul Thomas',
-    role: 'Edupreneur & Professional Development Coach',
-    bio: 'Helping learners turn digital marketing skills into real, job-ready careers through practical coaching and mentorship.',
-    initials: 'PT',
-    location: '',
-    expertise: ['Digital Marketing', 'Career Coaching', 'Professional Development'],
-    linkedin: 'https://www.linkedin.com/in/paul-thomas-edupreneur-professional-development-coach/',
-  },
-]
-
 interface DbProfile {
   full_name: string | null
   headline: string | null
@@ -48,13 +26,24 @@ interface DbProfile {
   skills: string[] | null
 }
 
-function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
-  const name = db?.full_name?.trim() || mentor.name
-  const role = db?.headline?.trim() || mentor.role
-  const bio = mentor.bio
-  const avatar = db?.avatar_url || null
+const initialsOf = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('')
+
+/**
+ * A mentor who is also a platform user keeps their card in sync with their own
+ * profile, so editing it in-app updates the listing without an admin round trip.
+ */
+function MentorCard({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
+  const name = db?.full_name?.trim() || mentor.full_name
+  const role = db?.headline?.trim() || mentor.headline
+  const avatar = db?.avatar_url || mentor.avatar_url
   const location = db?.location?.trim() || mentor.location
-  const expertise = db?.skills && db.skills.length ? db.skills : mentor.expertise
+  const expertise = db?.skills?.length ? db.skills : mentor.expertise
 
   return (
     <div className="rounded-2xl card p-6 shadow-sm">
@@ -63,7 +52,7 @@ function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
           <img src={avatar} alt={name} className="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-brand-100" />
         ) : (
           <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-brand-600 text-2xl font-semibold text-white">
-            {mentor.initials}
+            {initialsOf(name)}
           </span>
         )}
         <div className="min-w-0 flex-1">
@@ -82,7 +71,7 @@ function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
         </div>
       </div>
 
-      <p className="mt-4 text-sm leading-relaxed text-ink-600">{bio}</p>
+      <p className="mt-4 text-sm leading-relaxed text-ink-600">{mentor.bio}</p>
 
       {expertise.length > 0 && (
         <div className="mt-5">
@@ -99,38 +88,56 @@ function FeaturedMentor({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
         </div>
       )}
 
-      <a
-        href={mentor.linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700 sm:w-auto sm:px-8"
-      >
-        <LinkedInIcon size={17} /> Connect on LinkedIn
-      </a>
+      {mentor.linkedin_url && (
+        <a
+          href={mentor.linkedin_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700 sm:w-auto sm:px-8"
+        >
+          <LinkedInIcon size={17} /> Connect on LinkedIn
+        </a>
+      )}
     </div>
   )
 }
 
 function MentorsPage() {
+  const [mentors, setMentors] = useState<Mentor[]>([])
   const [profiles, setProfiles] = useState<Record<string, DbProfile>>({})
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string>()
 
   useEffect(() => {
-    const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    const ids = MENTORS.map((m) => m.id).filter((id) => UUID.test(id))
-    if (ids.length === 0) return
-    supabase
-      .from('profiles')
-      .select('id, full_name, headline, avatar_url, location, skills')
-      .in('id', ids)
-      .then(({ data }) => {
-        if (!data) return
+    let active = true
+
+    fetchMentors()
+      .then(async (list) => {
+        if (!active) return
+        setMentors(list)
+
+        const ids = list.map((m) => m.profile_id).filter((id): id is string => Boolean(id))
+        if (ids.length === 0) return
+
+        const { data } = await supabase
+          .from('profiles')
+          .select('id, full_name, headline, avatar_url, location, skills')
+          .in('id', ids)
+        if (!active || !data) return
+
         const map: Record<string, DbProfile> = {}
         for (const r of data as (DbProfile & { id: string })[]) map[r.id] = r
         setProfiles(map)
       })
+      .catch((e) => active && setError(e instanceof Error ? e.message : String(e)))
+      .finally(() => active && setLoading(false))
+
+    return () => {
+      active = false
+    }
   }, [])
 
-  const [featured, ...rest] = MENTORS
+  const [featured, ...rest] = mentors
 
   return (
     <AppShell>
@@ -143,28 +150,54 @@ function MentorsPage() {
         </Link>
 
         <div className="mb-5">
-          <div className="flex items-center gap-2.5">
-            <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Mentors</h1>
-            <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-700">
-              More coming soon
-            </span>
-          </div>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Mentors</h1>
           <p className="mt-1 text-sm text-ink-600">
-            Learn from people who’ve done it. Full mentorship is on the way — meet our featured mentor.
+            Learn from people who’ve done it — marketers who’ve offered their time to help you
+            get unstuck.
           </p>
         </div>
 
-        <FeaturedMentor mentor={featured} db={profiles[featured.id]} />
-
-        {rest.length > 0 && (
-          <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            {rest.map((m) => (
-              <FeaturedMentor key={m.id} mentor={m} db={profiles[m.id]} />
-            ))}
-          </div>
+        {error && (
+          <Alert tone="danger" title="Couldn’t load mentors">
+            <p>{error}</p>
+          </Alert>
         )}
 
-        <p className="mt-6 text-center text-xs text-ink-500">More mentors are joining MySkills soon.</p>
+        {loading ? (
+          <Skeleton className="h-72 w-full" />
+        ) : mentors.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No mentors yet"
+            description="We’re onboarding the first mentors now. Know someone who’d be great — or is that you?"
+          />
+        ) : (
+          <>
+            <MentorCard mentor={featured} db={featured.profile_id ? profiles[featured.profile_id] : undefined} />
+            {rest.length > 0 && (
+              <div className="mt-5 space-y-5">
+                {rest.map((m) => (
+                  <MentorCard key={m.id} mentor={m} db={m.profile_id ? profiles[m.profile_id] : undefined} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        <Link
+          to="/become-a-mentor"
+          className="lift mt-6 flex items-center justify-between gap-4 rounded-2xl border border-brand-200 bg-brand-50 p-5"
+        >
+          <div className="min-w-0">
+            <p className="font-display text-base font-semibold text-brand-900">Become a mentor</p>
+            <p className="mt-0.5 text-sm text-brand-800/80">
+              Done the work? Share what you know with students starting out.
+            </p>
+          </div>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+            <UserPlus size={18} />
+          </span>
+        </Link>
       </div>
     </AppShell>
   )
