@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, RotateCcw, X } from 'lucide-react'
 import {
   gradeQuestions,
   type AssessmentGrade,
   type AssessmentQuestion,
 } from '@/lib/initialAssessment'
+import { clearDraft, loadDraft, saveDraft } from '@/lib/assessmentDraft'
+import { useAuthUser } from '@/lib/useAuth'
 
 export function AssessmentQuiz({
   questions,
@@ -17,6 +19,41 @@ export function AssessmentQuiz({
   const [answers, setAnswers] = useState<(number | null)[]>(() => questions.map(() => null))
   const [phase, setPhase] = useState<'quiz' | 'result'>('quiz')
   const [submitting, setSubmitting] = useState(false)
+  const [resumed, setResumed] = useState(false)
+
+  const { user } = useAuthUser()
+  const userId = user?.id
+
+  // Restore once, as soon as the session resolves — `useAuthUser` returns null
+  // on first render even though the route guard has already authenticated.
+  const restoreAttempted = useRef(false)
+  const answersRef = useRef(answers)
+  answersRef.current = answers
+
+  useEffect(() => {
+    if (!userId || restoreAttempted.current) return
+    restoreAttempted.current = true
+
+    const draft = loadDraft(userId, questions)
+    // Never overwrite answers already given in this sitting.
+    if (!draft || !answersRef.current.every((a) => a === null)) return
+
+    setAnswers(draft.answers)
+    setIndex(draft.index)
+    setResumed(true)
+  }, [userId, questions])
+
+  useEffect(() => {
+    if (phase !== 'quiz' || answers.every((a) => a === null)) return
+    saveDraft(userId, questions, index, answers)
+  }, [userId, questions, index, answers, phase])
+
+  function startOver() {
+    clearDraft()
+    setAnswers(questions.map(() => null))
+    setIndex(0)
+    setResumed(false)
+  }
 
   const categories = useMemo(() => {
     const order: string[] = []
@@ -59,6 +96,9 @@ export function AssessmentQuiz({
     setSubmitting(true)
     try {
       await onComplete(gradeQuestions(questions, answers))
+      // Only after the attempt is safely persisted — if the save throws, the
+      // draft is the user's sole copy of a one-attempt quiz.
+      clearDraft()
     } finally {
       setSubmitting(false)
     }
@@ -188,6 +228,22 @@ export function AssessmentQuiz({
       )}
 
       <div className="mx-auto max-w-2xl flex-1">
+        {resumed && (
+          <div className="rise-in mb-4 flex flex-col gap-2.5 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-brand-900">
+              Picked up where you left off — {answered} of {questions.length} answered.
+            </p>
+            <button
+              type="button"
+              onClick={startOver}
+              className="press inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-brand-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-brand-800 transition-colors hover:bg-brand-100 sm:self-auto"
+            >
+              <RotateCcw size={13} />
+              Start over
+            </button>
+          </div>
+        )}
+
         <div className="mb-5">
           <div className="flex items-center justify-between text-xs font-medium text-ink-500">
             <span className="uppercase tracking-wide text-brand-600">{q.category}</span>
