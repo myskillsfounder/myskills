@@ -102,33 +102,48 @@ function MentorConsole() {
   }, [mentorCheck?.isMentor])
 
   async function toggleOnline() {
-    if (online) {
-      await stopRef.current?.()
-      stopRef.current = null
-      setOnline(false)
-      return
+    setError(undefined)
+    try {
+      if (online) {
+        await stopRef.current?.()
+        stopRef.current = null
+        setOnline(false)
+        return
+      }
+      if ('Notification' in window && Notification.permission === 'default') {
+        void Notification.requestPermission()
+      }
+      stopRef.current = await goOnline()
+      setOnline(true)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
     }
-    if ('Notification' in window && Notification.permission === 'default') {
-      void Notification.requestPermission()
-    }
-    stopRef.current = await goOnline()
-    setOnline(true)
   }
 
   async function claim(s: SupportSession) {
-    const claimed = await claimSession(s.id)
-    if (claimed) {
-      setOpen(claimed)
-      await refresh()
-    } else {
-      await refresh() // someone else got it
+    setError(undefined)
+    try {
+      const claimed = await claimSession(s.id)
+      if (claimed) {
+        setOpen(claimed)
+        await refresh()
+      } else {
+        await refresh() // someone else got it
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
     }
   }
 
   async function finish(s: SupportSession) {
-    await endSession(s.id)
-    setOpen(null)
-    await refresh()
+    setError(undefined)
+    try {
+      await endSession(s.id)
+      setOpen(null)
+      await refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
   }
 
   const nameOf = (s: SupportSession) => names[s.user_id] ?? 'Learner'

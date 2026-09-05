@@ -96,7 +96,7 @@ export async function signInWithGoogle(): Promise<void> {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/profile`,
+      redirectTo: `${window.location.origin}/dashboard`,
       // Always show Google's account chooser instead of silently reusing the
       // browser's active Google session. Use 'consent select_account' to also
       // re-prompt for permissions.

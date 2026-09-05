@@ -58,6 +58,40 @@ export async function fetchOnlineMentors(): Promise<string[]> {
   return fresh.map((m: { mentor_id: string }) => m.mentor_id)
 }
 
+export interface OnlineMentor {
+  id: string
+  name: string
+  avatar_url: string | null
+  headline: string | null
+}
+
+/**
+ * Same freshness check as fetchOnlineMentors, but with enough to actually show
+ * a person — name, photo, headline — instead of just a count. Waiting for
+ * "a mentor" is abstract; waiting for Priya is concrete.
+ */
+export async function fetchOnlineMentorProfiles(): Promise<OnlineMentor[]> {
+  const { data, error } = await supabase
+    .from('mentor_presence')
+    .select('mentor_id, last_seen, profiles(full_name, avatar_url, headline)')
+    .eq('is_online', true)
+  if (error) return []
+  type Row = {
+    mentor_id: string
+    last_seen: string
+    profiles: { full_name: string | null; avatar_url: string | null; headline: string | null } | null
+  }
+  const fresh = (data as unknown as Row[]).filter(
+    (m) => Date.now() - new Date(m.last_seen).getTime() < 2 * 60_000,
+  )
+  return fresh.map((m) => ({
+    id: m.mentor_id,
+    name: m.profiles?.full_name?.trim() || 'A mentor',
+    avatar_url: m.profiles?.avatar_url ?? null,
+    headline: m.profiles?.headline ?? null,
+  }))
+}
+
 /** Create a help request (goes to the back of the queue). */
 export async function createSession(topic: string, details: string): Promise<SupportSession> {
   const {
@@ -244,6 +278,30 @@ export function greetingFor(topic: string, learnerName: string, mentorName: stri
   }
   const follow = byTopic[topic] ?? byTopic['Something else']
   return `${intro} ${follow}`
+}
+
+export interface ProfileCard {
+  name: string
+  avatar_url: string | null
+  headline: string | null
+}
+
+/** Name + photo + headline for a chat header (RLS: only your session peers,
+ *  or any public mentor profile). */
+export async function fetchProfileCards(ids: string[]): Promise<Record<string, ProfileCard>> {
+  const unique = [...new Set(ids.filter(Boolean))]
+  if (unique.length === 0) return {}
+  const { data } = await supabase.from('profiles').select('id, full_name, avatar_url, headline').in('id', unique)
+  const out: Record<string, ProfileCard> = {}
+  for (const r of (data ?? []) as {
+    id: string
+    full_name: string | null
+    avatar_url: string | null
+    headline: string | null
+  }[]) {
+    out[r.id] = { name: r.full_name?.trim() || 'there', avatar_url: r.avatar_url, headline: r.headline }
+  }
+  return out
 }
 
 /** Display names for chat participants (RLS: only your session peers). */

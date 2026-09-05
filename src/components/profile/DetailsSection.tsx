@@ -41,7 +41,7 @@ export interface DetailItem {
   label: string
 }
 
-const DETAIL_ITEMS: DetailItem[] = [
+export const DETAIL_ITEMS: DetailItem[] = [
   { key: 'phone', label: f.phone.label },
   { key: 'date_of_birth', label: f.dob.label },
   { key: 'gender', label: f.gender.label },

@@ -8,12 +8,14 @@ import {
   createSession,
   endSession,
   fetchMySession,
-  fetchNames,
-  fetchOnlineMentors,
+  fetchOnlineMentorProfiles,
+  fetchProfileCards,
   getSession,
   queuePosition,
   subscribeSession,
   subscribeSessionBroadcast,
+  type OnlineMentor,
+  type ProfileCard,
   type SupportSession,
 } from '@/lib/support'
 import { AppShell } from '@/components/app/AppShell'
@@ -29,15 +31,19 @@ function SupportPage() {
   const { user } = useAuthUser()
   const [session, setSession] = useState<SupportSession | null>(null)
   const [loading, setLoading] = useState(true)
-  const [online, setOnline] = useState<string[]>([])
+  const [online, setOnline] = useState<OnlineMentor[]>([])
   const [position, setPosition] = useState<number | null>(null)
 
-  const [mentorName, setMentorName] = useState('your mentor')
+  const [mentorCard, setMentorCard] = useState<ProfileCard>({
+    name: 'your mentor',
+    avatar_url: null,
+    headline: null,
+  })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string>()
 
   useEffect(() => {
-    Promise.all([fetchMySession(), fetchOnlineMentors()])
+    Promise.all([fetchMySession(), fetchOnlineMentorProfiles()])
       .then(([s, o]) => {
         setSession(s)
         setOnline(o)
@@ -68,12 +74,12 @@ function SupportPage() {
     }
   }, [session?.id])
 
-  // Resolve the mentor's real name for the chat header
+  // Resolve the mentor's name, photo and headline for the chat header
   useEffect(() => {
     if (!session?.mentor_id) return
-    void fetchNames([session.mentor_id]).then((m) => {
-      const n = m[session.mentor_id as string]
-      if (n) setMentorName(n)
+    void fetchProfileCards([session.mentor_id]).then((m) => {
+      const card = m[session.mentor_id as string]
+      if (card) setMentorCard(card)
     })
   }, [session?.mentor_id])
 
@@ -103,12 +109,18 @@ function SupportPage() {
 
   async function leave() {
     if (!session) return
-    if (session.status === 'waiting') await cancelSession(session.id)
-    else await endSession(session.id)
-    setSession(null)
+    setError(undefined)
+    try {
+      if (session.status === 'waiting') await cancelSession(session.id)
+      else await endSession(session.id)
+      setSession(null)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
   }
 
   const mentorsOnline = online.length > 0
+  const firstOnline = online[0]
 
   return (
     <AppShell>
@@ -118,15 +130,28 @@ function SupportPage() {
         </Link>
 
         <div className="mb-5 flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-            <MessagesSquare size={22} />
-          </span>
+          {mentorsOnline && firstOnline ? (
+            firstOnline.avatar_url ? (
+              <img src={firstOnline.avatar_url} alt="" className="h-11 w-11 shrink-0 rounded-xl object-cover" />
+            ) : (
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-base font-semibold text-white">
+                {firstOnline.name.charAt(0).toUpperCase()}
+              </span>
+            )
+          ) : (
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+              <MessagesSquare size={22} />
+            </span>
+          )}
           <div>
             <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Talk to a mentor</h1>
             <p className="text-sm text-ink-600">
               {mentorsOnline ? (
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" /> A mentor is online now
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  {online.length === 1
+                    ? `${firstOnline.name} is online now`
+                    : `${firstOnline.name} +${online.length - 1} more online now`}
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5">
@@ -149,6 +174,7 @@ function SupportPage() {
         {!loading && !session && (
           <BotIntake
             firstName={userDisplayName(user).split(' ')[0]}
+            mentorName={mentorsOnline ? firstOnline.name : null}
             onConnect={(t, d) => void start(t, d)}
             connecting={submitting}
           />
@@ -163,7 +189,10 @@ function SupportPage() {
               {position && position > 1 ? `You’re #${position} in the queue.` : 'You’re next in line.'}
             </p>
             <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-amber-700">
-              <Clock size={12} /> {mentorsOnline ? 'A mentor has been notified.' : 'We’ll connect you as soon as a mentor comes online.'}
+              <Clock size={12} />{' '}
+              {mentorsOnline
+                ? `${online.length === 1 ? firstOnline.name : 'A mentor'} has been notified.`
+                : 'We’ll connect you as soon as a mentor comes online.'}
             </p>
             <div className="mt-4 rounded-xl bg-white/70 p-3 text-left">
               <p className="text-xs font-semibold text-ink-800">{session.topic}</p>
@@ -184,7 +213,7 @@ function SupportPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
               <p className="inline-flex items-center gap-2 text-sm font-medium text-emerald-800">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" /> Connected with {mentorName}
+                <span className="h-2 w-2 rounded-full bg-emerald-500" /> Connected with {mentorCard.name}
               </p>
               <button
                 type="button"
@@ -194,7 +223,13 @@ function SupportPage() {
                 End chat
               </button>
             </div>
-            <ChatWindow sessionId={session.id} meId={user.id} peerName={mentorName} />
+            <ChatWindow
+              sessionId={session.id}
+              meId={user.id}
+              peerName={mentorCard.name}
+              peerAvatar={mentorCard.avatar_url}
+              peerHeadline={mentorCard.headline}
+            />
             <p className="text-center text-xs text-ink-500">
               Ending the chat permanently deletes these messages.
             </p>

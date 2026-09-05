@@ -50,6 +50,11 @@ const secondaryButton =
 
 export function RouteErrorState({ error, reset }: ErrorComponentProps) {
   const router = useRouter()
+  const text = error instanceof Error ? `${error.name}: ${error.message}` : String(error)
+
+  // Always log: without this a production crash leaves no trace anywhere, which
+  // makes a bug report ("it showed an error") impossible to act on.
+  console.error('[route error]', error)
 
   return (
     <CenteredState
@@ -57,13 +62,17 @@ export function RouteErrorState({ error, reset }: ErrorComponentProps) {
       title="Something went wrong"
       description="This page hit an unexpected error. Trying again usually fixes it — if it doesn't, head back home."
       details={
-        // Useful while developing, and noise (or a leak) in production, where
-        // the copy above is all a visitor should see.
-        import.meta.env.DEV ? (
-          <pre className="mt-5 max-h-48 overflow-auto rounded-xl bg-ink-900 px-4 py-3 text-left text-xs leading-relaxed text-ink-100">
-            {error instanceof Error ? `${error.name}: ${error.message}` : String(error)}
+        // Shown in production too, but collapsed: a visitor never reads it by
+        // accident, while anyone reporting the bug can open it and say what
+        // actually broke.
+        <details className="mt-5 text-left">
+          <summary className="cursor-pointer text-xs text-ink-500 hover:text-ink-800">
+            Technical details
+          </summary>
+          <pre className="mt-2 max-h-48 overflow-auto rounded-xl bg-ink-900 px-4 py-3 text-xs leading-relaxed text-ink-100">
+            {text}
           </pre>
-        ) : undefined
+        </details>
       }
     >
       <button
