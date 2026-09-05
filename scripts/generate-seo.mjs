@@ -66,12 +66,37 @@ const STATIC_PAGES = [
     description:
       'Practical guides on SEO, paid ads, analytics and content marketing, written for people building real marketing skills.',
   },
+  {
+    path: '/community',
+    changefreq: 'weekly',
+    priority: '0.7',
+    title: 'Community | MySkills',
+    description:
+      'Learn alongside people who’ve done it. Meet MySkills mentors, or apply to mentor students building real digital marketing skills.',
+  },
+  {
+    path: '/become-a-mentor',
+    changefreq: 'monthly',
+    priority: '0.6',
+    title: 'Become a mentor | MySkills',
+    description:
+      'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
+  },
 ]
 
-/** Signed-in app routes. Listed so the intent is explicit, never emitted. */
+/**
+ * Signed-in app routes. Listed so the intent is explicit, never emitted.
+ *
+ * /community is NOT here even though it's auth-gated for part of its
+ * audience: its index page is a public marketing page for signed-out
+ * visitors (see routes/community/index.tsx), so it belongs in the sitemap
+ * above, not disallowed. /community/mentors — the actually-private sub-page —
+ * has no dedicated meta of its own and is correctly left out of both lists,
+ * same as every other unlisted app route.
+ */
 const PRIVATE_ROUTES = [
   '/dashboard', '/practice', '/profile', '/certificate', '/prompt-library',
-  '/community', '/feedback', '/games', '/learning', '/internships',
+  '/feedback', '/games', '/learning', '/internships',
   '/resources', '/tests', '/onboarding', '/assessment', '/login',
 ]
 

@@ -31,6 +31,12 @@ export function Navbar() {
             </a>
           ))}
           <Link
+            to="/community"
+            className="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
+          >
+            Community
+          </Link>
+          <Link
             to="/blog"
             className="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
           >
@@ -91,6 +97,13 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <Link
+              to="/community"
+              onClick={() => setOpen(false)}
+              className="rounded-md px-2 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
+            >
+              Community
+            </Link>
             <Link
               to="/blog"
               onClick={() => setOpen(false)}
