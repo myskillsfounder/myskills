@@ -33,12 +33,56 @@ import { fileURLToPath } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const DIST = join(ROOT, 'dist')
 
-const SITE_URL = (process.env.VITE_SITE_URL ?? 'https://myskills.org.in').replace(/\/$/, '')
+/**
+ * Minimal .env loader, mirroring Vite's own precedence for this build's mode.
+ *
+ * WHY THIS EXISTS: `vite build` loads .env files into `import.meta.env` for
+ * the bundled app, but that never touches `process.env` for the plain Node
+ * process that runs next as part of `npm run build`. Without this, a value
+ * that's genuinely set in `.env` is invisible here -- which is why the
+ * sitemap silently dropped every blog post even though the running app was
+ * talking to Supabase just fine.
+ *
+ * Precedence, low to high (matches Vite): .env < .env.[mode] < .env.local <
+ * .env.[mode].local < a real, already-exported process.env value.
+ */
+function parseEnvFile(path, into) {
+  if (!existsSync(path)) return
+  for (const line of readFileSync(path, 'utf8').split('\n')) {
+    const t = line.trim()
+    if (!t || t.startsWith('#')) continue
+    const eq = t.indexOf('=')
+    if (eq === -1) continue
+    const key = t.slice(0, eq).trim()
+    let value = t.slice(eq + 1).trim()
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1)
+    }
+    into[key] = value
+  }
+}
+
+function loadEnv(mode) {
+  const fromFiles = {}
+  for (const file of ['.env', `.env.${mode}`, '.env.local', `.env.${mode}.local`]) {
+    parseEnvFile(join(ROOT, file), fromFiles)
+  }
+  // Real environment variables (already exported before this process ran)
+  // always win over anything read from a file, same as Vite.
+  return { ...fromFiles, ...process.env }
+}
+
+const env = loadEnv(process.env.NODE_ENV === 'development' ? 'development' : 'production')
+
+const SITE_URL = (env.VITE_SITE_URL ?? 'https://myskills.org.in').replace(/\/$/, '')
 const SITE_NAME = 'MySkills'
 const OG_IMAGE = `${SITE_URL}/og-image.png`
 
-const SUPABASE_URL = (process.env.VITE_SUPABASE_URL ?? 'https://supabase.myskills.org.in').replace(/\/$/, '')
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY ?? ''
+// No fallback URL here on purpose -- this used to default to the old
+// self-hosted instance, which is retired. A missing value should produce a
+// clear warning and an empty post list, not a silent request to a dead host.
+const SUPABASE_URL = (env.VITE_SUPABASE_URL ?? '').replace(/\/$/, '')
+const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY ?? ''
 
 /* Keep in sync with PAGE_SEO / SITEMAP_ROUTES in src/lib/seo.ts. */
 const STATIC_PAGES = [
@@ -106,8 +150,11 @@ const esc = (s = '') =>
 /* -- data ------------------------------------------------------------------ */
 
 async function fetchPosts() {
-  if (!SUPABASE_ANON_KEY) {
-    console.warn('[seo] VITE_SUPABASE_ANON_KEY not set — sitemap will omit blog posts.')
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    const missing = [!SUPABASE_URL && 'VITE_SUPABASE_URL', !SUPABASE_ANON_KEY && 'VITE_SUPABASE_ANON_KEY']
+      .filter(Boolean)
+      .join(' and ')
+    console.warn(`[seo] ${missing} not set — sitemap will omit blog posts.`)
     return []
   }
   const url =
