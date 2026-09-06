@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Clock, Loader2, MessagesSquare, X } from 'lucide-react'
+import { ArrowLeft, Check, Clock, Loader2, MessagesSquare, ThumbsDown, ThumbsUp, X } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import {
@@ -12,6 +12,7 @@ import {
   fetchProfileCards,
   getSession,
   queuePosition,
+  rateSession,
   subscribeSession,
   subscribeSessionBroadcast,
   type OnlineMentor,
@@ -20,6 +21,7 @@ import {
 } from '@/lib/support'
 import { AppShell } from '@/components/app/AppShell'
 import { ChatWindow } from '@/components/support/ChatWindow'
+import { ChatErrorBoundary } from '@/components/support/ChatErrorBoundary'
 import { BotIntake } from '@/components/support/BotIntake'
 
 export const Route = createFileRoute('/support')({
@@ -111,11 +113,32 @@ function SupportPage() {
     if (!session) return
     setError(undefined)
     try {
-      if (session.status === 'waiting') await cancelSession(session.id)
-      else await endSession(session.id)
-      setSession(null)
+      if (session.status === 'waiting') {
+        await cancelSession(session.id)
+        setSession(null)
+      } else {
+        await endSession(session.id)
+        // Move to 'ended' locally instead of clearing the session outright --
+        // otherwise ending your own chat skips straight past the "was this
+        // helpful?" prompt, which only ever fires when the OTHER side ends it.
+        setSession((cur) => (cur ? { ...cur, status: 'ended' } : cur))
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
+    }
+  }
+
+  const [rating, setRating] = useState(false)
+  async function rate(helpful: boolean) {
+    if (!session) return
+    setRating(true)
+    try {
+      await rateSession(session.id, helpful)
+      setSession((cur) => (cur ? { ...cur, helpful } : cur))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setRating(false)
     }
   }
 
@@ -223,28 +246,74 @@ function SupportPage() {
                 End chat
               </button>
             </div>
-            <ChatWindow
-              sessionId={session.id}
-              meId={user.id}
-              peerName={mentorCard.name}
-              peerAvatar={mentorCard.avatar_url}
-              peerHeadline={mentorCard.headline}
-            />
+            <ChatErrorBoundary key={session.id}>
+              <ChatWindow
+                sessionId={session.id}
+                meId={user.id}
+                peerName={mentorCard.name}
+                peerAvatar={mentorCard.avatar_url}
+                peerHeadline={mentorCard.headline}
+              />
+            </ChatErrorBoundary>
             <p className="text-center text-xs text-ink-500">
               Ending the chat permanently deletes these messages.
             </p>
           </div>
         )}
 
-        {/* Ended */}
-        {session && (session.status === 'ended' || session.status === 'cancelled') && (
+        {/* Cancelled while still waiting — nothing was ever connected, so
+            there's nothing meaningful to rate. */}
+        {session?.status === 'cancelled' && (
           <div className="rounded-2xl border border-ink-300 bg-white p-8 text-center">
-            <p className="text-sm font-medium text-ink-900">This session has ended.</p>
-            <p className="mt-1 text-xs text-ink-600">The chat messages were deleted.</p>
+            <p className="text-sm font-medium text-ink-900">Request cancelled.</p>
             <button
               type="button"
               onClick={() => setSession(null)}
               className="mt-4 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+            >
+              Start a new request
+            </button>
+          </div>
+        )}
+
+        {/* Ended — a real conversation happened, so ask how it went. */}
+        {session?.status === 'ended' && (
+          <div className="rounded-2xl border border-ink-300 bg-white p-8 text-center">
+            <p className="text-sm font-medium text-ink-900">This session has ended.</p>
+            <p className="mt-1 text-xs text-ink-600">The chat messages were deleted.</p>
+
+            {session.helpful == null ? (
+              <div className="mt-5">
+                <p className="text-sm font-medium text-ink-800">Was this helpful?</p>
+                <div className="mt-3 flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => void rate(true)}
+                    disabled={rating}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 disabled:opacity-60"
+                  >
+                    <ThumbsUp size={15} /> Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void rate(false)}
+                    disabled={rating}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-ink-300 bg-white px-4 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-100 disabled:opacity-60"
+                  >
+                    <ThumbsDown size={15} /> Not really
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+                <Check size={15} /> Thanks for the feedback!
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setSession(null)}
+              className="mt-5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
             >
               Start a new request
             </button>
