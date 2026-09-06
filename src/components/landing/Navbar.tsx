@@ -3,9 +3,15 @@ import { Link } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 
+// Absolute paths (not bare '#anchor') on purpose: these sections only exist
+// on the homepage, but this Navbar renders on every public page. A bare
+// '#how-it-works' href resolves relative to whatever page you're already on
+// -- from /community that's /community#how-it-works, which has no matching
+// element, so the link silently does nothing. '/#how-it-works' always
+// targets the homepage's own anchor, whichever page the click happened on.
 const navLinks = [
-  { label: 'How it works', href: '#how-it-works' },
-  { label: 'Skill tracks', href: '#skill-tracks' },
+  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'Skill tracks', href: '/#skill-tracks' },
 ]
 
 export function Navbar() {
