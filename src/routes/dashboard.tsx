@@ -18,11 +18,11 @@ import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResult
 import { fetchOnlineMentors } from '@/lib/support'
 import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
-import { AdSlider } from '@/components/app/AdSlider'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PromptSuggestions } from '@/components/dashboard/PromptSuggestions'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
+import { DashboardAdCard } from '@/components/dashboard/DashboardAdCard'
 import { Badge, ButtonLink, Card, SectionTitle, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -107,7 +107,7 @@ function ProgressCard({
       <div className="flex items-center gap-4">
         <div className="relative h-[76px] w-[76px] shrink-0">
           <svg viewBox="0 0 76 76" className="h-full w-full -rotate-90" aria-hidden>
-            <circle cx="38" cy="38" r={R} fill="none" strokeWidth="7" className="stroke-ink-200" />
+            <circle cx="38" cy="38" r={R} fill="none" strokeWidth="7" className="stroke-brand-100" />
             <circle
               cx="38"
               cy="38"
@@ -143,7 +143,7 @@ function ProgressCard({
         </div>
       </div>
 
-      <div className="mt-4 space-y-2 border-t border-ink-200 pt-4">
+      <div className="mt-4 space-y-2 border-t border-ink-900/[0.06] pt-4">
         {rows.map(({ icon: Icon, label, value, tone }) => (
           <div key={label} className="flex items-center gap-2.5">
             <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${tone}`}>
@@ -340,11 +340,6 @@ function DashboardPage() {
           </Link>
         )}
 
-        {/* Ads — mobile only; desktop shows them in the sidebar */}
-        <div className="lg:hidden">
-          <AdSlider />
-        </div>
-
         <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
           <div className="space-y-6 lg:col-span-2">
             <PathToMastery
@@ -391,6 +386,8 @@ function DashboardPage() {
             </Card>
           </aside>
         </div>
+
+        <DashboardAdCard />
       </div>
     </AppShell>
   )
