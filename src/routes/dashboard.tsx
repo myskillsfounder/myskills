@@ -20,9 +20,9 @@ import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
-import { PromptSuggestions } from '@/components/dashboard/PromptSuggestions'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
-import { Badge, ButtonLink, Card, SectionTitle, Skeleton } from '@/components/ui'
+import { VocabularyCoach } from '@/components/dashboard/VocabularyCoach'
+import { Badge, ButtonLink, Card, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: requireOnboarded,
@@ -376,23 +376,7 @@ function DashboardPage() {
               totalTracks={skillTracks.length}
             />
 
-            <section>
-              <SectionTitle
-                title="Recommended prompts"
-                subtitle="Personalised to your weakest areas."
-                action={
-                  <Link
-                    to="/prompt-library"
-                    className="group inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-                  >
-                    Library
-                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                }
-              />
-              <PromptSuggestions assessment={assessment} userKey={userKey} />
-            </section>
-
+            <VocabularyCoach userKey={userKey} />
           </div>
 
           <aside className="space-y-6 lg:sticky lg:top-8">

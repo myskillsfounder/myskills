@@ -36,10 +36,10 @@ const MODES: ModeDef[] = [
     tagline: 'Know the language',
     description: 'Master the terminology marketers actually use — from CAC to attribution windows.',
     icon: Brain,
-    available: false,
+    available: true,
     accent: {
       tile: 'from-sky-500 to-brand-600',
-      chip: 'border-ink-300 bg-ink-100 text-ink-600',
+      chip: 'border-sky-200 bg-sky-50 text-sky-700',
       bar: 'from-sky-500 to-brand-600',
       label: 'text-sky-800',
     },
@@ -62,13 +62,23 @@ const MODES: ModeDef[] = [
 
 export function ModePicker({
   practice,
+  vocabLearned,
+  vocabTotal,
   onSelect,
 }: {
   practice: PracticeSummary
+  vocabLearned: number
+  vocabTotal: number
   onSelect: (mode: PracticeMode) => void
 }) {
   const started = skillTracks.filter((t) => practice[t.slug]).length
-  const pct = Math.round((started / skillTracks.length) * 100)
+  const scenarioPct = Math.round((started / skillTracks.length) * 100)
+  const vocabPct = vocabTotal ? Math.round((vocabLearned / vocabTotal) * 100) : 0
+
+  const progress: Partial<Record<PracticeMode, { label: string; pct: number }>> = {
+    scenario: { label: `${started} / ${skillTracks.length} tracks started`, pct: scenarioPct },
+    vocabulary: { label: `${vocabLearned} / ${vocabTotal} words learned`, pct: vocabPct },
+  }
 
   return (
     <section>
@@ -126,23 +136,26 @@ export function ModePicker({
               </h3>
               <p className="relative mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{m.description}</p>
 
-              {m.available ? (
+              {m.available && progress[m.key] ? (
                 <div className="relative mt-4">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-brand-700">
-                      {started} / {skillTracks.length} tracks started
+                    <span className={`font-medium ${m.accent.label}`}>{progress[m.key]!.label}</span>
+                    <span className={`font-display font-semibold ${m.accent.label}`}>
+                      {progress[m.key]!.pct}%
                     </span>
-                    <span className="font-display font-semibold text-brand-700">{pct}%</span>
                   </div>
                   <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-ink-200">
                     <div
                       className={`h-full rounded-full bg-gradient-to-r ${m.accent.bar}`}
-                      style={{ width: `${pct}%`, transition: 'width 1s cubic-bezier(0.2,0.8,0.2,1)' }}
+                      style={{
+                        width: `${progress[m.key]!.pct}%`,
+                        transition: 'width 1s cubic-bezier(0.2,0.8,0.2,1)',
+                      }}
                     />
                   </div>
-                  <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-brand-700">
+                  <span className={`mt-3 inline-flex items-center gap-2 text-sm font-semibold ${m.accent.label}`}>
                     Start practicing
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full border border-brand-200 bg-white transition-transform duration-300 group-hover:translate-x-1">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full border border-ink-200 bg-white transition-transform duration-300 group-hover:translate-x-1">
                       <ArrowRight size={14} />
                     </span>
                   </span>
