@@ -31,12 +31,12 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
   const filled = Math.round((shown / 100) * beads)
 
   return (
-    <section className="surface-wood rise-in rounded-2xl border border-ink-300 p-5 shadow-sm sm:p-6">
+    <section className="surface-wood rise-in rounded-2xl border border-ink-900/[0.08] p-5 shadow-e1 sm:p-6">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {/* ring */}
         <div className="relative h-[92px] w-[92px] shrink-0">
           <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
-            <circle cx="40" cy="40" r={R} fill="none" stroke="currentColor" strokeWidth="8" className="text-ink-200" />
+            <circle cx="40" cy="40" r={R} fill="none" stroke="currentColor" strokeWidth="8" className="text-brand-100" />
             <circle
               cx="40" cy="40" r={R} fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round"
               className="text-brand-600"
@@ -71,7 +71,7 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
                 <span
                   key={i}
                   className={`h-2.5 flex-1 rounded-full transition-all duration-500 ${
-                    i < filled ? 'bg-brand-600' : 'bg-ink-200'
+                    i < filled ? 'bg-brand-600' : 'bg-brand-100'
                   }`}
                   style={{ transitionDelay: `${i * 45}ms` }}
                 />
@@ -86,7 +86,7 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
       </div>
 
       {/* stat strip */}
-      <div className="mt-5 grid grid-cols-3 divide-x divide-ink-200 border-t border-ink-200 pt-4 text-center">
+      <div className="mt-5 grid grid-cols-3 divide-x divide-ink-900/[0.06] border-t border-ink-900/[0.06] pt-4 text-center">
         <div>
           <p className="text-[11px] font-medium text-ink-600">Tracks practiced</p>
           <p className="mt-0.5 font-display text-lg font-semibold text-ink-900">

@@ -52,23 +52,23 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     <div className="surface-wood flex h-full flex-col">
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 pb-5 pt-6">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-900 text-white shadow-e1">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-900 text-white shadow-e1">
           <BarChart3 size={20} />
         </span>
         <div className="min-w-0">
           <p className="font-display text-[17px] font-semibold leading-tight tracking-tight text-ink-900">
             MySkills
           </p>
-          <p className="truncate text-xs font-medium text-ink-600">
+          <p className="truncate text-xs font-medium text-ink-500">
             Self-learning platform
           </p>
         </div>
       </div>
 
-      <div className="mx-4 border-t border-ink-200" />
+      <div className="mx-5 border-t border-ink-900/[0.06]" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-0.5 px-3 py-5">
+      <nav className="flex-1 space-y-1 px-3 py-5">
         {NAV.map(({ to, label, icon: Icon }) => {
           const active = pathname === to
           return (
@@ -77,31 +77,29 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               to={to}
               onClick={onNavigate}
               aria-current={active ? 'page' : undefined}
-              className={`group relative flex items-center gap-3.5 rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
+              className={`group relative flex items-center gap-3.5 rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
                 active
-                  ? 'bg-brand-50 font-semibold text-brand-800'
-                  : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
+                  ? 'bg-ink-900 font-semibold text-white shadow-e2'
+                  : 'text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
               }`}
             >
-              <span
-                className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-600 transition-all duration-200 ${
-                  active ? 'opacity-100' : 'opacity-0'
-                }`}
-              />
               <Icon
                 size={19}
                 className={`shrink-0 transition-transform duration-200 ${
-                  active ? 'text-brand-700' : 'text-ink-500 group-hover:translate-x-0.5 group-hover:text-ink-800'
+                  active ? 'text-brand-300' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
                 }`}
               />
               {label}
+              {active && (
+                <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" />
+              )}
             </Link>
           )
         })}
       </nav>
 
       {/* Footer */}
-      <div className="mx-4 border-t border-ink-200" />
+      <div className="mx-5 border-t border-ink-900/[0.06]" />
       <div className="space-y-3 px-4 pb-6 pt-4">
         <AdSlider />
 
@@ -110,7 +108,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <button
           type="button"
           onClick={handleSignOut}
-          className="group flex w-full items-center gap-2.5 rounded-2xl border border-ink-300 bg-white px-3.5 py-2.5 text-sm font-medium text-ink-800 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
+          className="group flex w-full items-center gap-2.5 rounded-2xl border border-ink-900/[0.08] bg-white px-3.5 py-2.5 text-sm font-medium text-ink-800 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
         >
           <LogOut size={17} className="text-ink-600 transition-transform duration-300 group-hover:-translate-x-0.5" />
           Sign Out
@@ -136,8 +134,8 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
     <Link
       to="/profile"
       onClick={onNavigate}
-      className={`group flex flex-col gap-2.5 rounded-2xl border px-3.5 py-3 transition-all duration-300 hover:-translate-y-0.5 ${
-        active ? 'border-ink-400 bg-ink-100 shadow-sm' : 'border-ink-300 bg-white hover:bg-ink-100'
+      className={`group flex flex-col gap-2.5 rounded-2xl border px-3.5 py-3 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 ${
+        active ? 'border-ink-900/[0.12] bg-ink-100' : 'border-ink-900/[0.08] bg-white hover:bg-ink-100'
       }`}
     >
       <div className="flex items-center gap-3">
@@ -214,14 +212,14 @@ export function AppShell({
   return (
     <div className="surface-paper min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-200 lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 shadow-[1px_0_16px_rgba(27,24,21,0.05)] lg:block">
         <Sidebar />
       </aside>
 
       {/* Mobile top bar. Primary navigation lives in the bottom bar
           (components/app/MobileBottomNav.tsx, mounted in __root); this menu
           holds the overflow — Community, Feedback, Sign out. */}
-      <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-300/50 px-4 backdrop-blur lg:hidden">
+      <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] px-4 backdrop-blur lg:hidden">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink-900 text-white">
             <BarChart3 size={16} />

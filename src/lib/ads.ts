@@ -1,8 +1,8 @@
 /**
- * Public reads for the sidebar advertising slider. RLS on `ads` only exposes
- * ACTIVE rows to the anon key, so this is safe to run from the app. Ads are
- * managed in the separate blog-admin panel (writes go through the service-role
- * admin-server — the browser never writes here).
+ * Public reads for the sidebar and dashboard ad sliders. RLS on `ads` only
+ * exposes ACTIVE rows to the anon key, so this is safe to run from the app.
+ * Ads are managed at /admin/ads (see src/lib/admin.ts) — the browser never
+ * writes here directly.
  */
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
