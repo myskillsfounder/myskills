@@ -77,21 +77,27 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               to={to}
               onClick={onNavigate}
               aria-current={active ? 'page' : undefined}
-              className={`group relative flex items-center gap-3.5 rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
+              className={`group relative flex items-center gap-3.5 overflow-hidden rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none backdrop-blur-md transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
                 active
-                  ? 'bg-gradient-to-r from-brand-600 to-brand-700 font-semibold text-white shadow-e2'
+                  ? 'bg-gradient-to-br from-brand-400/85 via-brand-500/80 to-brand-600/85 font-semibold text-white shadow-[0_6px_16px_-4px_rgba(91,75,214,0.4),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_0_0_1px_rgba(255,255,255,0.25)]'
                   : 'text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
               }`}
             >
+              {active && (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent"
+                />
+              )}
               <Icon
                 size={19}
-                className={`shrink-0 transition-transform duration-200 ${
+                className={`relative shrink-0 transition-transform duration-200 ${
                   active ? 'text-white' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
                 }`}
               />
-              {label}
+              <span className="relative">{label}</span>
               {active && (
-                <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
+                <span className="relative ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
               )}
             </Link>
           )
