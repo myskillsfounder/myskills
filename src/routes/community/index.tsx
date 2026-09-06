@@ -242,10 +242,18 @@ function PublicCommunityPage() {
             />
             <PillarCard
               icon={Building2}
-              live={false}
+              live
               title="Institutions"
-              description="Colleges and training partners running MySkills with their students, cohort by cohort."
-              action={<p className="text-sm font-medium text-ink-400">Opening soon</p>}
+              description="INTERVAL, our exclusive offline partner, runs in-person digital marketing training built on the same MySkills tracks."
+              action={
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
+                >
+                  Book a demo
+                  <ArrowRight size={15} />
+                </Link>
+              }
             />
           </div>
         </section>
@@ -296,21 +304,21 @@ function PublicCommunityPage() {
           }
         />
 
-        {/* Institutions — offline learning */}
+        {/* Institutions — offline learning with our exclusive partner */}
         <PillarSection
           icon={Building2}
-          live={false}
-          eyebrow="Coming soon"
-          title="Institutions"
-          description="Colleges and training partners running MySkills with their students — the same assessment and practice tracks, built for a classroom instead of a single learner."
+          live
+          eyebrow="Exclusive offline partner"
+          title="Institutions — offline sessions with INTERVAL"
+          description="INTERVAL is MySkills' exclusive offline training partner — the same skill tracks and assessments you practice here, taught in person for your cohort."
           bullets={[
-            'Run MySkills with a whole cohort, with shared progress tracking',
-            'Campus leaderboards to keep a batch motivated',
-            'Verifiable certificates your placement cell can check',
+            "Instructor-led offline sessions, run by INTERVAL's trainers",
+            'Built on the MySkills tracks your students have already practiced',
+            'A personalised pace, tailored to where each student is starting from',
           ]}
           actions={
-            <Link to="/signup" className={notifyButton}>
-              Create a free account
+            <Link to="/signup" className={primaryButton}>
+              Create a free account to book a demo
               <ArrowRight size={16} />
             </Link>
           }
@@ -429,7 +437,7 @@ function CommunityHub() {
     <AppShell>
       <PageHeader
         title="Community"
-        subtitle="Learn alongside people who've done it — mentors today, internships and institutions soon."
+        subtitle="Learn alongside people who've done it — mentors and offline institutions today, internships soon."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -450,10 +458,11 @@ function CommunityHub() {
         />
         <HubTile
           icon={Building2}
-          live={false}
+          live
           title="Institutions"
-          description="Colleges and training partners running MySkills with their students — cohorts, shared progress, and campus leaderboards."
-          lockedNote="We're building this — check back soon."
+          description="INTERVAL, our exclusive offline partner, runs in-person digital marketing training built on your MySkills progress."
+          to="/community/institutions"
+          ctaLabel="Book a demo"
         />
       </div>
     </AppShell>
