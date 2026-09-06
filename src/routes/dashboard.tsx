@@ -1,28 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  ArrowRight,
-  ClipboardCheck,
-  Flame,
-  MessagesSquare,
-  Sparkles,
-  Star,
-  Target,
-} from 'lucide-react'
+import { ArrowRight, ClipboardCheck, Flame, Sparkles, Star, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import { useInitialAssessment } from '@/lib/assessmentResults'
 import { useHasFeedback } from '@/lib/feedback'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
-import { fetchOnlineMentors } from '@/lib/support'
 import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
 import { VocabularyCoach } from '@/components/dashboard/VocabularyCoach'
-import { Badge, ButtonLink, Card, Skeleton } from '@/components/ui'
+import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
+import { ButtonLink, Card, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: requireOnboarded,
@@ -262,16 +254,12 @@ function DashboardPage() {
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [loading, setLoading] = useState(true)
-  const [mentorOnline, setMentorOnline] = useState(false)
 
   useEffect(() => {
     fetchPracticeSummary()
       .then(setPractice)
       .catch(() => {})
       .finally(() => setLoading(false))
-    fetchOnlineMentors()
-      .then((ids) => setMentorOnline(ids.length > 0))
-      .catch(() => {})
   }, [])
 
   const practicedCount = useMemo(
@@ -312,39 +300,7 @@ function DashboardPage() {
         )}
 
         {/* Talk to a mentor — promoted: a real person, one tap away */}
-        <Link
-          to="/support"
-          className="group card lift flex flex-col gap-4 overflow-hidden p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6"
-        >
-          <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-e2">
-            <MessagesSquare size={26} />
-            {mentorOnline && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center">
-                <span className="live-ping relative h-2.5 w-2.5 rounded-full bg-emerald-500 text-emerald-500 ring-2 ring-white" />
-              </span>
-            )}
-          </span>
-
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-xl font-semibold text-ink-900">Talk to a mentor</h2>
-              {mentorOnline ? (
-                <Badge tone="success">Online now</Badge>
-              ) : (
-                <Badge tone="neutral">Replies soon</Badge>
-              )}
-            </div>
-            <p className="mt-1 text-sm leading-relaxed text-ink-600">
-              Stuck on a concept, a campaign, or your next career step? Start a live chat and get a
-              real answer — not a search result.
-            </p>
-          </div>
-
-          <span className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-transform duration-300 group-hover:translate-x-0.5">
-            Start chat
-            <ArrowRight size={16} />
-          </span>
-        </Link>
+        <MentorPromoCard />
 
         {/* Rate & review — deliberately eye-catching, and only until they leave one */}
         {hasFeedback === false && eligibleForReviewNudge && (
