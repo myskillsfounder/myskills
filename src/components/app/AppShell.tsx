@@ -79,19 +79,19 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               aria-current={active ? 'page' : undefined}
               className={`group relative flex items-center gap-3.5 rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
                 active
-                  ? 'bg-ink-900 font-semibold text-white shadow-e2'
+                  ? 'bg-gradient-to-r from-brand-600 to-brand-700 font-semibold text-white shadow-e2'
                   : 'text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
               }`}
             >
               <Icon
                 size={19}
                 className={`shrink-0 transition-transform duration-200 ${
-                  active ? 'text-brand-300' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
+                  active ? 'text-white' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
                 }`}
               />
               {label}
               {active && (
-                <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" />
+                <span className="ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
               )}
             </Link>
           )
