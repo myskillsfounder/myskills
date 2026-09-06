@@ -24,13 +24,21 @@ export const Route = createFileRoute('/community/')({
 /**
  * /community is dual-purpose: signed-out visitors get this public marketing
  * page (its main job is funneling mentor applicants to /become-a-mentor);
- * onboarded users get the in-app hub below. A brief blank frame while auth
- * resolves beats flashing one layout's chrome and then swapping to the other.
+ * onboarded users get the in-app hub below.
+ *
+ * Defaults to the public page immediately, even while auth is still
+ * resolving, and only swaps to the hub once a session is confirmed. A
+ * blank, nav-less placeholder here used to be the alternative -- but that
+ * meant every single visit to this route had a real window with NO navbar
+ * in the DOM at all (every other public page renders its Navbar
+ * immediately). A click landing in that window, or right as the blank div
+ * got swapped for real content, hit nothing -- which is exactly the
+ * intermittent "clicks don't work" pattern reported on this page. A signed-
+ * in visitor sees a brief flash of the public page before the swap; that's
+ * a much smaller cost than a page with no working navigation.
  */
 function CommunityIndexRoute() {
-  const { user, loading } = useAuthUser()
-
-  if (loading) return <div className="min-h-screen bg-white" />
+  const { user } = useAuthUser()
   return user ? <CommunityHub /> : <PublicCommunityPage />
 }
 
