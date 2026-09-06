@@ -22,7 +22,6 @@ import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PromptSuggestions } from '@/components/dashboard/PromptSuggestions'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
-import { DashboardAdCard } from '@/components/dashboard/DashboardAdCard'
 import { Badge, ButtonLink, Card, SectionTitle, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -386,8 +385,6 @@ function DashboardPage() {
             </Card>
           </aside>
         </div>
-
-        <DashboardAdCard />
       </div>
     </AppShell>
   )

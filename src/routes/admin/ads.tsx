@@ -219,7 +219,7 @@ function AdsAdminPage() {
       <PageHeader
         eyebrow="Admin"
         title="Ads"
-        subtitle="Shown in the sidebar and dashboard sliders. Inactive ads stay saved but hidden."
+        subtitle="Shown in the sidebar slider. Inactive ads stay saved but hidden."
         actions={
           <Button icon={Plus} onClick={() => setEditing({ ...EMPTY })}>
             New ad
