@@ -2,10 +2,10 @@ import type { ComponentType, ReactNode } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
+  Briefcase,
   Building2,
   CheckCircle2,
   GraduationCap,
-  Handshake,
   Lock,
   Users,
 } from 'lucide-react'
@@ -72,12 +72,12 @@ function PillarCard({
   action: ReactNode
 }) {
   return (
-    <div className="card flex flex-col p-6">
+    <div className={`card lift group flex flex-col p-6 ${live ? '' : 'hover:!translate-y-0 hover:!shadow-none'}`}>
       <div className="flex items-start justify-between gap-3">
         <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-e1 ${
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-e1 transition-transform duration-300 ${
             live
-              ? 'bg-gradient-to-br from-brand-500 to-brand-700'
+              ? 'bg-gradient-to-br from-brand-500 to-brand-700 group-hover:scale-105'
               : 'bg-gradient-to-br from-ink-400 to-ink-600 opacity-70 grayscale'
           }`}
         >
@@ -106,6 +106,7 @@ function PillarCard({
 function PillarSection({
   icon: Icon,
   live,
+  reverse = false,
   eyebrow,
   title,
   description,
@@ -114,6 +115,9 @@ function PillarSection({
 }: {
   icon: IconType
   live: boolean
+  /** Alternates which side the text sits on down the page, so three
+   *  back-to-back sections don't read as one repeated block. */
+  reverse?: boolean
   eyebrow: string
   title: string
   description: string
@@ -127,7 +131,7 @@ function PillarSection({
           live ? 'border-brand-100 bg-brand-50/60' : 'border-ink-100 bg-ink-50/60'
         }`}
       >
-        <div>
+        <div className={reverse ? 'lg:order-2' : ''}>
           <div className="flex items-center gap-3">
             <span
               className={`flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-e1 ${
@@ -156,7 +160,7 @@ function PillarSection({
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">{actions}</div>
         </div>
 
-        <ul className="space-y-3.5">
+        <ul className={`space-y-3.5 ${reverse ? 'lg:order-1' : ''}`}>
           {bullets.map((line) => (
             <li key={line} className="flex items-start gap-2.5 text-sm text-ink-700">
               <CheckCircle2
@@ -190,14 +194,14 @@ function PublicCommunityPage() {
               <span className="text-brand-600">who've done it</span>
             </h1>
             <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-500 sm:text-lg">
-              Mentors for feedback, companies for real work, institutions for the
-              classroom — one community around every way to actually get good at
-              marketing.
+              Mentors for feedback, internships for real experience, institutions
+              for the classroom — one community around every way to actually get
+              good at marketing.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink-500">
               <PillarPreview icon={GraduationCap} label="Mentors" />
-              <PillarPreview icon={Handshake} label="Real work experience" />
+              <PillarPreview icon={Briefcase} label="Real work experience" />
               <PillarPreview icon={Building2} label="Offline learning" />
             </div>
           </div>
@@ -222,10 +226,10 @@ function PublicCommunityPage() {
               }
             />
             <PillarCard
-              icon={Handshake}
+              icon={Briefcase}
               live={false}
-              title="Companies"
-              description="Real briefs from partner companies, so your practice turns into work you can actually show."
+              title="Internships"
+              description="Real internships with partner companies, so your practice turns into work experience you can actually show."
               action={<p className="text-sm font-medium text-ink-400">Opening soon</p>}
             />
             <PillarCard
@@ -263,15 +267,16 @@ function PublicCommunityPage() {
           }
         />
 
-        {/* Companies — real work experience */}
+        {/* Internships — real work experience */}
         <PillarSection
-          icon={Handshake}
+          icon={Briefcase}
           live={false}
+          reverse
           eyebrow="Coming soon"
-          title="Real work experience with partner companies"
-          description="Practice scenarios prove you know the theory. This is where you prove you can ship — real marketing briefs from companies, scored and reviewed like the work it is."
+          title="Internships with partner companies"
+          description="Practice scenarios prove you know the theory. This is where you prove you can do the job — real internship briefs from companies, scored and reviewed like the work it is."
           bullets={[
-            'Work real briefs from partner companies, not hypotheticals',
+            'Work real internship briefs, not hypotheticals',
             'Build a portfolio piece you can actually show in interviews',
             "Get matched by the skill tracks you've already proven",
           ]}
@@ -333,68 +338,115 @@ function PublicCommunityPage() {
 
 /** The signed-in, onboarded experience — unchanged from before /community
  *  became dual-purpose. */
+/** One tile in the signed-in hub. Live pillars are the whole-card link
+ *  itself (this is the primary nav surface for the section, unlike the
+ *  public page where the card is just a preview); locked pillars fade to
+ *  grayscale with the same shape, so all three read as one set. */
+function HubTile({
+  icon: Icon,
+  live,
+  title,
+  description,
+  to,
+  ctaLabel,
+  lockedNote,
+}: {
+  icon: IconType
+  live: boolean
+  title: string
+  description: string
+  to?: string
+  ctaLabel?: string
+  lockedNote?: string
+}) {
+  const body = (
+    <>
+      <div className="relative flex items-start justify-between gap-3">
+        <span
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-e1 transition-transform duration-300 ${
+            live
+              ? 'bg-gradient-to-br from-brand-500 to-brand-700 group-hover:scale-105'
+              : 'bg-gradient-to-br from-ink-400 to-ink-600 opacity-70 grayscale'
+          }`}
+        >
+          <Icon size={22} />
+        </span>
+        {live ? (
+          <Badge tone="success">Available</Badge>
+        ) : (
+          <Badge tone="neutral" icon={Lock}>
+            Coming soon
+          </Badge>
+        )}
+      </div>
+
+      <h2 className="relative mt-4 font-display text-xl font-semibold text-ink-900">{title}</h2>
+      <p className="relative mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{description}</p>
+
+      {live ? (
+        <span className="relative mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
+          {ctaLabel}
+          <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
+        </span>
+      ) : (
+        <p className="relative mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
+          <Lock size={12} />
+          {lockedNote}
+        </p>
+      )}
+    </>
+  )
+
+  if (live && to) {
+    return (
+      <Link to={to} className="card lift group flex flex-col p-5">
+        {body}
+      </Link>
+    )
+  }
+
+  return (
+    <div aria-disabled="true" className="card relative flex flex-col overflow-hidden p-5">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-100/90 to-transparent"
+      />
+      {body}
+    </div>
+  )
+}
+
 function CommunityHub() {
   return (
     <AppShell>
       <PageHeader
         title="Community"
-        subtitle="Learn alongside people who've done it — mentors today, institutions soon."
+        subtitle="Learn alongside people who've done it — mentors today, internships and institutions soon."
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* Mentors — live */}
-        <Link
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <HubTile
+          icon={GraduationCap}
+          live
+          title="Mentors"
+          description="Talk to experienced marketers, get feedback on your work, and unblock your next step."
           to="/community/mentors"
-          className="card lift group flex flex-col p-5"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1 transition-transform duration-300 group-hover:scale-105">
-              <GraduationCap size={22} />
-            </span>
-            <Badge tone="success">Available</Badge>
-          </div>
-
-          <h2 className="mt-4 font-display text-xl font-semibold text-ink-900">Mentors</h2>
-          <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">
-            Talk to experienced marketers, get feedback on your work, and unblock your next step.
-          </p>
-
-          <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
-            Meet the mentors
-            <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
-          </span>
-        </Link>
-
-        {/* Institutions — coming soon */}
-        <div
-          aria-disabled="true"
-          className="card relative flex flex-col overflow-hidden p-5"
-        >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-100/90 to-transparent"
-          />
-
-          <div className="relative flex items-start justify-between gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-brand-600 text-white opacity-70 shadow-e1 grayscale">
-              <Building2 size={22} />
-            </span>
-            <Badge tone="neutral" icon={Lock}>
-              Coming soon
-            </Badge>
-          </div>
-
-          <h2 className="relative mt-4 font-display text-xl font-semibold text-ink-900">Institutions</h2>
-          <p className="relative mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">
-            Colleges and training partners running MySkills with their students — cohorts, shared
-            progress, and campus leaderboards.
-          </p>
-
-          <p className="relative mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
-            <Lock size={12} />
-            We're building this — check back soon.
-          </p>
-        </div>
+          ctaLabel="Meet the mentors"
+        />
+        <HubTile
+          icon={Briefcase}
+          live={false}
+          title="Internships"
+          description="Real internships with partner companies, so your practice turns into work experience you can actually show."
+          lockedNote="We're building this — check back soon."
+        />
+        <HubTile
+          icon={Building2}
+          live={false}
+          title="Institutions"
+          description="Colleges and training partners running MySkills with their students — cohorts, shared progress, and campus leaderboards."
+          lockedNote="We're building this — check back soon."
+        />
       </div>
     </AppShell>
   )
