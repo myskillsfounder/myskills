@@ -16,6 +16,7 @@ import {
 } from '@/lib/support'
 import { AppShell } from '@/components/app/AppShell'
 import { ChatWindow } from '@/components/support/ChatWindow'
+import { ChatErrorBoundary } from '@/components/support/ChatErrorBoundary'
 
 export const Route = createFileRoute('/mentor')({
   beforeLoad: requireOnboarded,
@@ -246,7 +247,11 @@ function MentorConsole() {
               </button>
             </div>
           </div>
-          {user && <ChatWindow sessionId={open.id} meId={user.id} peerName={nameOf(open)} />}
+          {user && (
+            <ChatErrorBoundary key={open.id} onReset={() => void refresh()}>
+              <ChatWindow sessionId={open.id} meId={user.id} peerName={nameOf(open)} />
+            </ChatErrorBoundary>
+          )}
         </div>
       ) : (
         <div className="grid gap-5 lg:grid-cols-2">

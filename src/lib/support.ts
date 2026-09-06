@@ -26,6 +26,9 @@ export interface SupportSession {
   /** stamps used for the typing indicator without websockets */
   user_typing_at?: string | null
   mentor_typing_at?: string | null
+  /** the learner's "was this helpful?" rating, set once via rateSession() */
+  helpful?: boolean | null
+  helpful_at?: string | null
 }
 
 export interface SupportMessage {
@@ -114,7 +117,20 @@ export async function createSession(topic: string, details: string): Promise<Sup
     .select('*')
     .single()
   if (error) throw error
-  return data as SupportSession
+  const session = data as SupportSession
+
+  // Post the learner's own intake as a real message, not just metadata on the
+  // session row -- otherwise the mentor only ever sees a paraphrase in the
+  // greeting, never what the learner actually typed.
+  try {
+    await supabase
+      .from('support_messages')
+      .insert({ session_id: session.id, sender_id: user.id, body: details.trim() })
+  } catch {
+    /* the session still works without this; never block on it */
+  }
+
+  return session
 }
 
 export async function fetchMySession(): Promise<SupportSession | null> {
@@ -224,6 +240,13 @@ export async function endSession(id: string): Promise<void> {
   await announceSessionChange(id)
 }
 
+/** Learner rates a just-ended chat. Server-side RPC so a plain row-level
+ *  update grant can't be used to touch other columns on the session. */
+export async function rateSession(id: string, helpful: boolean): Promise<void> {
+  const { error } = await supabase.rpc('rate_support_session', { p_session: id, p_helpful: helpful })
+  if (error) throw error
+}
+
 export async function fetchMessages(sessionId: string): Promise<SupportMessage[]> {
   const { data, error } = await supabase
     .from('support_messages')
@@ -261,23 +284,23 @@ export async function fetchMessagesSince(sessionId: string, since: string): Prom
 }
 
 /** The mentor's opening line, tailored to what the learner asked for. */
+/**
+ * The mentor's opening line. Deliberately short: the learner's own intake
+ * message now appears in the thread itself (see createSession), so this
+ * greeting just needs to say hello and pick up the conversation -- restating
+ * their question back to them a second time would read as redundant.
+ */
 export function greetingFor(topic: string, learnerName: string, mentorName: string): string {
   const who = learnerName && learnerName !== 'Learner' ? learnerName : 'there'
-  const intro = `Hi ${who}, I’m ${mentorName}. Thanks for reaching out!`
   const byTopic: Record<string, string> = {
-    'Career guidance':
-      'I’ve read your note about career guidance. Tell me where you are right now — studying, job hunting, or switching fields — and what you’d like to be doing in the next 6 months.',
-    'Digital marketing help':
-      'I’ve seen your marketing question. Share a little context (the brand, channel, or campaign you’re working on) and I’ll walk you through how I’d approach it.',
-    'Assessment / practice doubt':
-      'I’ve got your doubt from the assessment. Paste the question or tell me which part felt confusing and we’ll work through the reasoning together.',
-    'Portfolio & resume':
-      'Happy to look at your portfolio or resume. Tell me the roles you’re targeting, and share a link or describe what you have so far.',
-    'Something else':
-      'I’ve read your message. Give me a bit more detail and we’ll take it from there.',
+    'Career guidance': 'Thanks for the context — let’s dig into your career guidance question.',
+    'Digital marketing help': 'Got it, thanks for sharing that. Let’s work through it together.',
+    'Assessment / practice doubt': 'Thanks — let’s work through that one together.',
+    'Portfolio & resume': 'Thanks for sharing that. Let’s take a look together.',
+    'Something else': 'Thanks for sharing that — let’s take it from here.',
   }
   const follow = byTopic[topic] ?? byTopic['Something else']
-  return `${intro} ${follow}`
+  return `Hi ${who}, I’m ${mentorName}. ${follow}`
 }
 
 export interface ProfileCard {
