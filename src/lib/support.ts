@@ -209,6 +209,18 @@ export async function claimSession(id: string): Promise<SupportSession | null> {
   const session = data as SupportSession
   // Open the conversation for the learner instead of dropping them into a
   // blank chat — a greeting written around what they asked for.
+  //
+  // Deliberately NOT broadcast via announceMessage() here: that helper opens
+  // its own channel named `chat:${session.id}` -- the exact topic ChatWindow
+  // uses for ITS realtime subscription. Supabase's client returns the same
+  // cached channel object for a given topic, so the moment ChatWindow (about
+  // to mount for the mentor who just claimed this) tried to register its
+  // postgres_changes listeners on that already-subscribed channel, it threw
+  // "cannot add postgres_changes callbacks ... after subscribe()" -- on
+  // every single claim. The greeting still reaches the learner fine via
+  // postgres_changes replication (now enabled on support_messages) or the
+  // 2.5s poll fallback in ChatWindow; this broadcast was only ever a
+  // workaround for self-hosted Supabase not having replication wired up.
   try {
     const names = await fetchNames([session.user_id, user.id])
     const opening = greetingFor(
@@ -216,8 +228,7 @@ export async function claimSession(id: string): Promise<SupportSession | null> {
       names[session.user_id] ?? 'Learner',
       names[user.id] ?? 'your mentor',
     )
-    const saved = await sendMessage(session.id, opening)
-    await announceMessage(session.id, saved)
+    await sendMessage(session.id, opening)
   } catch {
     /* a failed greeting must never block the claim */
   }
@@ -396,26 +407,6 @@ export function subscribeMessages(sessionId: string, onInsert: (m: SupportMessag
     .subscribe()
   return () => {
     void supabase.removeChannel(ch)
-  }
-}
-
-/** Push a message to the peer over broadcast (instant, no replication needed). */
-export async function announceMessage(sessionId: string, message: SupportMessage): Promise<void> {
-  try {
-    const ch = supabase.channel(`chat:${sessionId}`)
-    await new Promise<void>((resolve) => {
-      const t = window.setTimeout(resolve, 1200)
-      ch.subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          window.clearTimeout(t)
-          resolve()
-        }
-      })
-    })
-    await ch.send({ type: 'broadcast', event: 'msg', payload: message })
-    window.setTimeout(() => void supabase.removeChannel(ch), 500)
-  } catch {
-    /* best-effort */
   }
 }
 
