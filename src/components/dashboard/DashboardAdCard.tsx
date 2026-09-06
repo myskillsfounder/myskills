@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { ChevronLeft, ChevronRight, Megaphone, Plus } from 'lucide-react'
 import { useActiveAds, type Ad } from '@/lib/ads'
+import { useIsAdmin } from '@/lib/mentors'
 
 const AUTO_MS = 4000
 
@@ -8,11 +10,15 @@ const AUTO_MS = 4000
  * Wide promotional slider for the bottom of the dashboard — institution
  * offers, internships, and other partner placements. Same `ads` table and
  * /admin/ads editor as the sidebar's AdSlider, just a bigger, slower-paced
- * presentation for the main content column. Renders nothing when there are
- * no active ads.
+ * presentation for the main content column.
+ *
+ * Renders nothing for ordinary users when there are no active ads — but an
+ * admin sees a quiet placeholder instead, so the feature doesn't look
+ * "missing" just because no one has added an ad yet.
  */
 export function DashboardAdCard() {
   const ads = useActiveAds()
+  const isAdmin = useIsAdmin()
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
 
@@ -28,7 +34,29 @@ export function DashboardAdCard() {
     return () => window.clearInterval(t)
   }, [count, paused])
 
-  if (count === 0) return null
+  if (count === 0) {
+    if (!isAdmin) return null
+    return (
+      <Link
+        to="/admin/ads"
+        className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-ink-900/[0.1] p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50/40"
+      >
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-500 transition-colors group-hover:bg-brand-100 group-hover:text-brand-700">
+          <Megaphone size={20} />
+        </span>
+        <div>
+          <p className="text-sm font-semibold text-ink-800">No partner ads running yet</p>
+          <p className="mt-0.5 text-xs text-ink-500">
+            Only you can see this. Add an internship or institution ad to fill this slot for
+            everyone.
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-e1 transition-transform group-hover:translate-x-0.5">
+          <Plus size={13} /> Add an ad
+        </span>
+      </Link>
+    )
+  }
 
   const current = ads[Math.min(index, count - 1)]
   const go = (dir: -1 | 1) => setIndex((i) => (i + dir + count) % count)
