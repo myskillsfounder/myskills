@@ -23,6 +23,7 @@ import { AdSlider } from '@/components/app/AdSlider'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PromptSuggestions } from '@/components/dashboard/PromptSuggestions'
+import { PathToMastery } from '@/components/dashboard/PathToMastery'
 import { Badge, ButtonLink, Card, SectionTitle, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -353,6 +354,12 @@ function DashboardPage() {
 
         <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
           <div className="space-y-6 lg:col-span-2">
+            <PathToMastery
+              assessmentDone={assessment != null}
+              practicedCount={practicedCount}
+              totalTracks={skillTracks.length}
+            />
+
             <section>
               <SectionTitle
                 title="Recommended prompts"
