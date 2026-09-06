@@ -2,6 +2,11 @@ import { useRef, useState } from 'react'
 import { Camera, MapPin, Pencil } from 'lucide-react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import { Field, Modal, PrimaryButton } from './ui'
+import { BannerCropper } from './BannerCropper'
+
+/** width / height -- must match the crop frame the banner is actually
+ *  displayed at below, or a saved crop won't show what the user picked. */
+const BANNER_ASPECT_RATIO = 4
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -20,6 +25,7 @@ export function ProfileHeader({
 }) {
   const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState<'avatar' | 'banner' | null>(null)
+  const [bannerDraft, setBannerDraft] = useState<File | null>(null)
   const [form, setForm] = useState({
     full_name: profile.full_name,
     headline: profile.headline,
@@ -47,8 +53,9 @@ export function ProfileHeader({
 
   return (
     <section className="card overflow-hidden">
-      {/* Banner */}
-      <div className="relative h-36 sm:h-48">
+      {/* Banner -- fixed aspect ratio (not a fixed height) so the same crop
+          looks the same at every viewport width, mobile through desktop. */}
+      <div className="relative" style={{ aspectRatio: String(BANNER_ASPECT_RATIO) }}>
         {profile.banner_url ? (
           <img
             src={profile.banner_url}
@@ -73,9 +80,25 @@ export function ProfileHeader({
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={(e) => handleFile('banner', e.target.files?.[0])}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) setBannerDraft(file)
+            e.target.value = '' // allow re-selecting the same file later
+          }}
         />
       </div>
+
+      {bannerDraft && (
+        <BannerCropper
+          file={bannerDraft}
+          aspectRatio={BANNER_ASPECT_RATIO}
+          onCancel={() => setBannerDraft(null)}
+          onCropped={async (cropped) => {
+            await handleFile('banner', cropped)
+            setBannerDraft(null)
+          }}
+        />
+      )}
 
       {/* Avatar + intro */}
       <div className="px-5 pb-5 sm:px-6 sm:pb-6">

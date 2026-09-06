@@ -36,22 +36,35 @@ const formatDob = (iso: string) => {
 
 /* ----------------------------------------------------------- completeness */
 
+/** Fields tracked by the completion nudge that PersonalDetailsModal can
+ *  actually edit -- used to decide whether "Add details" has anything to do. */
+const MODAL_KEYS = new Set(['phone', 'date_of_birth', 'gender', 'country', 'state'])
+
 export interface DetailItem {
-  key: keyof Pick<Profile, 'phone' | 'date_of_birth' | 'gender' | 'country' | 'state'>
+  key: keyof Pick<
+    Profile,
+    'phone' | 'date_of_birth' | 'gender' | 'country' | 'state' | 'avatar_url' | 'education'
+  >
   label: string
 }
 
 export const DETAIL_ITEMS: DetailItem[] = [
+  { key: 'avatar_url', label: 'Profile picture' },
   { key: 'phone', label: f.phone.label },
   { key: 'date_of_birth', label: f.dob.label },
   { key: 'gender', label: f.gender.label },
   { key: 'country', label: f.country.label },
   { key: 'state', label: f.state.label },
+  { key: 'education', label: 'Education' },
 ]
 
-/** Which personal details are still blank. */
+/** Which personal details are still blank. Handles both plain string fields
+ *  and array fields (education) with the same generic check. */
 export function missingDetails(profile: Profile): DetailItem[] {
-  return DETAIL_ITEMS.filter((i) => !String(profile[i.key] ?? '').trim())
+  return DETAIL_ITEMS.filter((i) => {
+    const value = profile[i.key]
+    return Array.isArray(value) ? value.length === 0 : !String(value ?? '').trim()
+  })
 }
 
 /* ---------------------------------------------------------------- editing */
@@ -202,6 +215,10 @@ export function ProfileCompletion({
 
   const done = DETAIL_ITEMS.length - missing.length
   const percent = Math.round((done / DETAIL_ITEMS.length) * 100)
+  // Profile picture and education live in their own sections on this same
+  // page (the avatar right above, Education further down) -- this button
+  // only ever needs to appear when it has something of ITS OWN to open.
+  const canOpenModal = missing.some((m) => MODAL_KEYS.has(m.key))
 
   return (
     <>
@@ -216,13 +233,15 @@ export function ProfileCompletion({
               personalize your tracks and your certificate.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="press h-11 shrink-0 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
-          >
-            Add details
-          </button>
+          {canOpenModal && (
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="press h-11 shrink-0 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+            >
+              Add details
+            </button>
+          )}
         </div>
 
         <div className="mt-4 flex items-center gap-3">
