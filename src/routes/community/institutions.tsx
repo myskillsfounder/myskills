@@ -125,22 +125,22 @@ function InstitutionsPage() {
       </Link>
 
       <div className="card overflow-hidden">
-        <div className="surface-wood-dark relative p-6 sm:p-8">
-          <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
-            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="2">
+        <div className="relative overflow-hidden bg-gradient-to-br from-brand-700 via-brand-600 to-sky-500 p-6 sm:p-8">
+          <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-20">
+            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="#ffffff" strokeWidth="2">
               <circle cx="130" cy="70" r="76" />
               <circle cx="130" cy="70" r="56" />
               <circle cx="130" cy="70" r="36" />
               <circle cx="130" cy="70" r="16" />
             </svg>
           </span>
-          <p className="relative text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+          <p className="relative text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
             Exclusive offline partner
           </p>
-          <div className="relative mt-3 rounded-2xl bg-white p-5 sm:inline-block sm:p-6">
+          <div className="relative mt-3 rounded-2xl bg-white p-5 shadow-lg sm:inline-block sm:p-6">
             <IntervalWordmark />
           </div>
-          <p className="relative mt-4 max-w-lg text-sm leading-relaxed text-white/75">
+          <p className="relative mt-4 max-w-lg text-sm leading-relaxed text-white/90">
             {institutionPartner.description}
           </p>
         </div>
@@ -150,9 +150,12 @@ function InstitutionsPage() {
             What your students get
           </h2>
           <ul className="mt-4 space-y-3">
-            {institutionPartner.highlights.map((line) => (
+            {institutionPartner.highlights.map((line, i) => (
               <li key={line} className="flex items-start gap-2.5 text-sm text-ink-700">
-                <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-brand-600" />
+                <CheckCircle2
+                  size={18}
+                  className={`mt-0.5 shrink-0 ${i % 2 === 0 ? 'text-brand-600' : 'text-sky-600'}`}
+                />
                 {line}
               </li>
             ))}
@@ -163,7 +166,7 @@ function InstitutionsPage() {
               size="lg"
               icon={CalendarCheck}
               onClick={() => setShowForm(true)}
-              className="mt-6"
+              className="mt-6 bg-gradient-to-r from-brand-600 to-sky-600 hover:from-brand-700 hover:to-sky-700"
             >
               Book a demo
             </Button>
@@ -266,7 +269,13 @@ function InstitutionsPage() {
           )}
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button type="submit" size="lg" icon={Send} disabled={submitting}>
+            <Button
+              type="submit"
+              size="lg"
+              icon={Send}
+              disabled={submitting}
+              className="bg-gradient-to-r from-brand-600 to-sky-600 hover:from-brand-700 hover:to-sky-700"
+            >
               {submitting ? 'Sending…' : 'Request demo'}
             </Button>
             <Button type="button" variant="ghost" size="lg" onClick={() => setShowForm(false)}>
@@ -291,7 +300,7 @@ function InstitutionsPage() {
           <div className="mt-6">
             <Link
               to="/community"
-              className="press inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+              className="press inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand-600 to-sky-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:from-brand-700 hover:to-sky-700"
             >
               <Building2 size={16} />
               Back to Community
