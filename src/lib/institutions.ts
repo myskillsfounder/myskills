@@ -25,6 +25,8 @@ export const institutionPartner: Partner = {
   highlights: [
     'Instructor-led offline sessions, run for your cohort',
     'Personalised pace, built around what you’ve already practiced on MySkills',
+    'Peer mentoring — learn alongside classmates, not alone on a screen',
+    'Fun, hands-on offline activities beyond lectures — workshops, challenges, and team exercises',
     'A guided path from practice scores to real classroom coaching',
   ],
 }
