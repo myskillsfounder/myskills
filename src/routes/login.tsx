@@ -93,15 +93,23 @@ function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
         />
-        <TextField
-          label="Password"
-          passwordToggle
-          autoComplete="current-password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={errors.password}
-        />
+        <div>
+          <TextField
+            label="Password"
+            passwordToggle
+            autoComplete="current-password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password}
+          />
+          <Link
+            to="/forgot-password"
+            className="mt-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+          >
+            Forgot password?
+          </Link>
+        </div>
 
         {formError && <p className="text-sm text-red-500">{formError}</p>}
 

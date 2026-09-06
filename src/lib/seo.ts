@@ -52,6 +52,16 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description: 'Sign in to your MySkills account to continue your assessment and practice.',
     noindex: true,
   },
+  '/forgot-password': {
+    title: 'Reset your password | MySkills',
+    description: 'Request a link to reset your MySkills account password.',
+    noindex: true,
+  },
+  '/reset-password': {
+    title: 'Set a new password | MySkills',
+    description: 'Set a new password for your MySkills account.',
+    noindex: true,
+  },
   '/signup': {
     title: 'Create your free account | MySkills',
     description:

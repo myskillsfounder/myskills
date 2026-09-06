@@ -13,6 +13,7 @@ import { Route as TestsRouteImport } from './routes/tests'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -21,6 +22,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearningRouteImport } from './routes/learning'
 import { Route as InternshipsRouteImport } from './routes/internships'
 import { Route as GamesRouteImport } from './routes/games'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CommunityRouteImport } from './routes/community'
@@ -62,6 +64,11 @@ const ResourcesRoute = ResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -100,6 +107,11 @@ const InternshipsRoute = InternshipsRouteImport.update({
 const GamesRoute = GamesRouteImport.update({
   id: '/games',
   path: '/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedbackRoute = FeedbackRouteImport.update({
@@ -212,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/games': typeof GamesRoute
   '/internships': typeof InternshipsRoute
   '/learning': typeof LearningRoute
@@ -220,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
@@ -244,6 +258,7 @@ export interface FileRoutesByTo {
   '/certificate': typeof CertificateRoute
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/games': typeof GamesRoute
   '/internships': typeof InternshipsRoute
   '/learning': typeof LearningRoute
@@ -252,6 +267,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
@@ -279,6 +295,7 @@ export interface FileRoutesById {
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/games': typeof GamesRoute
   '/internships': typeof InternshipsRoute
   '/learning': typeof LearningRoute
@@ -287,6 +304,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
@@ -315,6 +333,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/dashboard'
     | '/feedback'
+    | '/forgot-password'
     | '/games'
     | '/internships'
     | '/learning'
@@ -323,6 +342,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
+    | '/reset-password'
     | '/resources'
     | '/signup'
     | '/support'
@@ -347,6 +367,7 @@ export interface FileRouteTypes {
     | '/certificate'
     | '/dashboard'
     | '/feedback'
+    | '/forgot-password'
     | '/games'
     | '/internships'
     | '/learning'
@@ -355,6 +376,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
+    | '/reset-password'
     | '/resources'
     | '/signup'
     | '/support'
@@ -381,6 +403,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/dashboard'
     | '/feedback'
+    | '/forgot-password'
     | '/games'
     | '/internships'
     | '/learning'
@@ -389,6 +412,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/practice'
     | '/profile'
+    | '/reset-password'
     | '/resources'
     | '/signup'
     | '/support'
@@ -416,6 +440,7 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   FeedbackRoute: typeof FeedbackRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   GamesRoute: typeof GamesRoute
   InternshipsRoute: typeof InternshipsRoute
   LearningRoute: typeof LearningRoute
@@ -424,6 +449,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PracticeRoute: typeof PracticeRoute
   ProfileRoute: typeof ProfileRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
@@ -462,6 +488,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -518,6 +551,13 @@ declare module '@tanstack/react-router' {
       path: '/games'
       fullPath: '/games'
       preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feedback': {
@@ -706,6 +746,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRouteWithChildren,
   DashboardRoute: DashboardRoute,
   FeedbackRoute: FeedbackRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   GamesRoute: GamesRoute,
   InternshipsRoute: InternshipsRoute,
   LearningRoute: LearningRoute,
@@ -714,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PracticeRoute: PracticeRoute,
   ProfileRoute: ProfileRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,

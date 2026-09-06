@@ -106,6 +106,26 @@ export async function signInWithGoogle(): Promise<void> {
   if (error) throw mapAuthError(error)
 }
 
+/**
+ * Send a password-reset email. Always resolves without revealing whether the
+ * address is actually registered -- GoTrue hides that itself to prevent
+ * account enumeration, so the caller should show a generic "check your
+ * email" message regardless of whether this succeeds.
+ */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  })
+  if (error) throw mapAuthError(error)
+}
+
+/** Set a new password. Requires the active session established by the
+ *  emailed reset link (see routes/reset-password.tsx). */
+export async function updatePassword(password: string): Promise<void> {
+  const { error } = await supabase.auth.updateUser({ password })
+  if (error) throw mapAuthError(error)
+}
+
 /** Record a sign-in for admin analytics (best-effort; ignores failures). */
 export async function recordLoginEvent(): Promise<void> {
   try {
