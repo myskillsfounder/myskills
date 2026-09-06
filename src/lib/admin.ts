@@ -69,12 +69,19 @@ export async function fetchUsers(search?: string): Promise<AdminUser[]> {
 }
 
 /** Grants or revokes support-chat mentor powers (profiles.is_mentor), which is
- *  separate from being listed publicly in Community. */
+ *  separate from being listed publicly in Community.
+ *
+ *  Goes through admin_set_mentor_flag rather than a plain `.update()` —
+ *  is_mentor is locked down at the database level (a trigger reverts it for
+ *  everyone except this security-definer function; see
+ *  docs/supabase-fix-mentor-self-escalation.sql) so a user can't grant
+ *  themselves mentor powers, which also grant access to other users'
+ *  pending support chats. */
 export async function setMentorFlag(profileId: string, isMentor: boolean): Promise<void> {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ is_mentor: isMentor })
-    .eq('id', profileId)
+  const { error } = await supabase.rpc('admin_set_mentor_flag', {
+    target_id: profileId,
+    flag: isMentor,
+  })
   if (error) raise(error)
 }
 
