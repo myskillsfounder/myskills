@@ -58,6 +58,33 @@ function useStreak(userKey: string) {
   return streak
 }
 
+/** Distinct days the dashboard has been opened on this device — a proxy for
+ *  "logins" since sign-in frequency isn't tracked server-side. Used only to
+ *  gate the review nudge so it isn't shown to brand-new users. */
+function useVisitCount(userKey: string) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const KEY = `myskills.visits.${userKey}`
+    let data: { lastDay: string; count: number }
+    try {
+      data = JSON.parse(localStorage.getItem(KEY) || 'null') || { lastDay: '', count: 0 }
+    } catch {
+      data = { lastDay: '', count: 0 }
+    }
+    const today = dayKey(new Date())
+    if (data.lastDay !== today) {
+      data = { lastDay: today, count: data.count + 1 }
+      try {
+        localStorage.setItem(KEY, JSON.stringify(data))
+      } catch {
+        /* ignore */
+      }
+    }
+    setCount(data.count)
+  }, [userKey])
+  return count
+}
+
 function greet() {
   const h = new Date().getHours()
   if (h < 12) return 'Good morning'
@@ -230,6 +257,8 @@ function DashboardPage() {
   const { result: assessment } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
   const streak = useStreak(userKey)
+  const visits = useVisitCount(userKey)
+  const eligibleForReviewNudge = assessment != null || visits >= 5
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [loading, setLoading] = useState(true)
@@ -318,7 +347,7 @@ function DashboardPage() {
         </Link>
 
         {/* Rate & review — deliberately eye-catching, and only until they leave one */}
-        {hasFeedback === false && (
+        {hasFeedback === false && eligibleForReviewNudge && (
           <Link
             to="/feedback"
             className="attention group flex flex-col gap-3 rounded-2xl border border-gold-200 bg-gradient-to-r from-gold-50 via-gold-50 to-white p-4 shadow-e1 transition-colors hover:border-gold-300 sm:flex-row sm:items-center sm:gap-4 sm:p-5"
