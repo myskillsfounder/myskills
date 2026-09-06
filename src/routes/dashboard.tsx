@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  Award,
   ClipboardCheck,
   Flame,
   MessagesSquare,
@@ -254,18 +253,12 @@ function DashboardPage() {
 
   return (
     <AppShell wide>
-      {/* Greeting — personal, low-chrome, no competing CTA */}
+      {/* Greeting — personal, low-chrome, no competing CTA. The certificate
+          lives on /practice (see CertificateRow there), where it sits next to
+          the assessment that earned it, rather than competing with the
+          greeting here. */}
       <header className="rise-in mb-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm font-medium text-ink-600">{greet()},</p>
-          {assessment && (
-            <Link to="/certificate">
-              <Badge tone="warning" icon={Award}>
-                Certificate earned
-              </Badge>
-            </Link>
-          )}
-        </div>
+        <p className="text-sm font-medium text-ink-600">{greet()},</p>
         <h1 className="mt-1 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
           {name}
         </h1>
