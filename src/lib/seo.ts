@@ -77,6 +77,14 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Learn alongside people who’ve done it. Meet MySkills mentors, or apply to mentor students building real digital marketing skills.',
   },
+  '/privacy': {
+    title: 'Privacy Policy | MySkills',
+    description: 'What information MySkills collects, how it’s used, and the choices you have about it.',
+  },
+  '/terms': {
+    title: 'Terms of Service | MySkills',
+    description: 'The terms that cover your use of MySkills.',
+  },
 }
 
 /** Routes that belong in the sitemap, with their crawl hints. */
@@ -86,6 +94,8 @@ export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: strin
   { path: '/blog', changefreq: 'daily', priority: '0.9' },
   { path: '/community', changefreq: 'weekly', priority: '0.7' },
   { path: '/become-a-mentor', changefreq: 'monthly', priority: '0.6' },
+  { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
+  { path: '/terms', changefreq: 'yearly', priority: '0.3' },
 ]
 
 /** Absolute URL for a path. */

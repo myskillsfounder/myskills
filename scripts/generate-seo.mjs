@@ -126,6 +126,20 @@ const STATIC_PAGES = [
     description:
       'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
   },
+  {
+    path: '/privacy',
+    changefreq: 'yearly',
+    priority: '0.3',
+    title: 'Privacy Policy | MySkills',
+    description: 'What information MySkills collects, how it’s used, and the choices you have about it.',
+  },
+  {
+    path: '/terms',
+    changefreq: 'yearly',
+    priority: '0.3',
+    title: 'Terms of Service | MySkills',
+    description: 'The terms that cover your use of MySkills.',
+  },
 ]
 
 /**

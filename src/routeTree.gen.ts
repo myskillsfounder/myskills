@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestsRouteImport } from './routes/tests'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MentorRouteImport } from './routes/mentor'
@@ -49,6 +51,11 @@ const TestsRoute = TestsRouteImport.update({
   path: '/tests',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
@@ -72,6 +79,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PracticeRoute = PracticeRouteImport.update({
@@ -232,11 +244,13 @@ export interface FileRoutesByFullPath {
   '/mentor': typeof MentorRoute
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -266,11 +280,13 @@ export interface FileRoutesByTo {
   '/mentor': typeof MentorRoute
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -303,11 +319,13 @@ export interface FileRoutesById {
   '/mentor': typeof MentorRoute
   '/onboarding': typeof OnboardingRoute
   '/practice': typeof PracticeRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -341,11 +359,13 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/onboarding'
     | '/practice'
+    | '/privacy'
     | '/profile'
     | '/reset-password'
     | '/resources'
     | '/signup'
     | '/support'
+    | '/terms'
     | '/tests'
     | '/admin/ads'
     | '/admin/blog'
@@ -375,11 +395,13 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/onboarding'
     | '/practice'
+    | '/privacy'
     | '/profile'
     | '/reset-password'
     | '/resources'
     | '/signup'
     | '/support'
+    | '/terms'
     | '/tests'
     | '/admin/ads'
     | '/admin/blog'
@@ -411,11 +433,13 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/onboarding'
     | '/practice'
+    | '/privacy'
     | '/profile'
     | '/reset-password'
     | '/resources'
     | '/signup'
     | '/support'
+    | '/terms'
     | '/tests'
     | '/admin/ads'
     | '/admin/blog'
@@ -448,11 +472,13 @@ export interface RootRouteChildren {
   MentorRoute: typeof MentorRoute
   OnboardingRoute: typeof OnboardingRoute
   PracticeRoute: typeof PracticeRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
   TestsRoute: typeof TestsRoute
   BlogSlugRoute: typeof BlogSlugRoute
   PromptLibraryLibraryIdRoute: typeof PromptLibraryLibraryIdRoute
@@ -467,6 +493,13 @@ declare module '@tanstack/react-router' {
       path: '/tests'
       fullPath: '/tests'
       preLoaderRoute: typeof TestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/support': {
@@ -502,6 +535,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/practice': {
@@ -754,11 +794,13 @@ const rootRouteChildren: RootRouteChildren = {
   MentorRoute: MentorRoute,
   OnboardingRoute: OnboardingRoute,
   PracticeRoute: PracticeRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
   TestsRoute: TestsRoute,
   BlogSlugRoute: BlogSlugRoute,
   PromptLibraryLibraryIdRoute: PromptLibraryLibraryIdRoute,
