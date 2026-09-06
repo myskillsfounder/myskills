@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Award, ChevronRight, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
+import { useAuthUser } from '@/lib/useAuth'
 import { useInitialAssessment } from '@/lib/assessmentResults'
 import { tierForPercent } from '@/lib/certificates'
 import {
@@ -12,6 +13,8 @@ import {
 import { initialAssessmentQuestions, type AssessmentGrade } from '@/lib/initialAssessment'
 import { questionsForTrack, type ScenarioGrade } from '@/lib/decisionLabs'
 import { skillTracks } from '@/lib/skillTracks'
+import { vocabularyTerms } from '@/lib/vocabulary'
+import { useVocabProgress } from '@/lib/vocabularyProgress'
 import { AppShell } from '@/components/app/AppShell'
 import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
 import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummaryCard'
@@ -20,6 +23,7 @@ import { NextUpCard } from '@/components/practice/NextUpCard'
 import { TrackList } from '@/components/practice/TrackList'
 import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
+import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -71,6 +75,11 @@ function PracticePage() {
     error: assessmentError,
     save,
   } = useInitialAssessment()
+
+  const { user } = useAuthUser()
+  const { learnedCount: vocabLearned, markLearned: markVocabLearned } = useVocabProgress(
+    user?.id ?? 'guest',
+  )
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [practiceLoading, setPracticeLoading] = useState(true)
@@ -165,7 +174,12 @@ function PracticePage() {
                 </div>
               </div>
 
-              <ModePicker practice={practice} onSelect={setMode} />
+              <ModePicker
+                practice={practice}
+                vocabLearned={vocabLearned}
+                vocabTotal={vocabularyTerms.length}
+                onSelect={setMode}
+              />
 
               <AssessmentSummaryCard assessment={assessment} />
             </>
@@ -202,6 +216,15 @@ function PracticePage() {
             <TrackList practice={practice} onSelect={setSelected} />
           )}
         </div>
+      )}
+
+      {/* Vocabulary Builder — a multiple-choice round through the term bank. */}
+      {assessment && !error && !selected && mode === 'vocabulary' && (
+        <VocabularyQuiz
+          bank={vocabularyTerms}
+          onBack={() => setMode(null)}
+          onTermLearned={markVocabLearned}
+        />
       )}
     </AppShell>
   )
