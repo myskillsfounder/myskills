@@ -142,6 +142,7 @@ const PRIVATE_ROUTES = [
   '/dashboard', '/practice', '/profile', '/certificate', '/prompt-library',
   '/feedback', '/games', '/learning', '/internships',
   '/resources', '/tests', '/onboarding', '/assessment', '/login',
+  '/forgot-password', '/reset-password',
 ]
 
 const esc = (s = '') =>
