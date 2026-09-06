@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-router'
-import { BarChart3, FileText, MessageSquare, Megaphone, ShieldAlert, UserCheck, Users } from 'lucide-react'
+import { BarChart3, Building2, FileText, MessageSquare, Megaphone, ShieldAlert, UserCheck, Users } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useIsAdmin } from '@/lib/mentors'
 import { AppShell } from '@/components/app/AppShell'
@@ -25,6 +25,7 @@ const TABS = [
   { to: '/admin/blog', label: 'Blog', icon: FileText },
   { to: '/admin/ads', label: 'Ads', icon: Megaphone },
   { to: '/admin/mentors', label: 'Mentors', icon: UserCheck },
+  { to: '/admin/institutions', label: 'Institutions', icon: Building2 },
 ]
 
 function AdminNav() {

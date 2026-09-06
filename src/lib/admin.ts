@@ -247,3 +247,46 @@ export async function deleteAd(id: string): Promise<void> {
   const { error } = await supabase.from('ads').delete().eq('id', id)
   if (error) raise(error)
 }
+
+/* ========================================================================== */
+/* INSTITUTION DEMO REQUESTS                                                  */
+/* ========================================================================== */
+
+export type DemoRequestStatus = 'pending' | 'contacted' | 'scheduled' | 'closed'
+
+export interface AdminDemoRequest {
+  id: string
+  created_at: string
+  status: DemoRequestStatus
+  partner: string
+  full_name: string
+  role: string | null
+  institution: string | null
+  city: string | null
+  student_count: number | null
+  email: string
+  phone: string | null
+  message: string | null
+}
+
+export async function fetchDemoRequests(): Promise<AdminDemoRequest[]> {
+  const { data, error } = await supabase
+    .from('institution_demo_requests')
+    .select(
+      'id, created_at, status, partner, full_name, role, institution, city, student_count, email, phone, message',
+    )
+    .order('created_at', { ascending: false })
+  if (error) raise(error)
+  return (data ?? []) as AdminDemoRequest[]
+}
+
+export async function setDemoRequestStatus(id: string, status: DemoRequestStatus): Promise<void> {
+  const patch: Record<string, unknown> = { status }
+  if (status !== 'pending') {
+    patch.contacted_at = new Date().toISOString()
+    const { data: auth } = await supabase.auth.getUser()
+    patch.contacted_by = auth.user?.id ?? null
+  }
+  const { error } = await supabase.from('institution_demo_requests').update(patch).eq('id', id)
+  if (error) raise(error)
+}
