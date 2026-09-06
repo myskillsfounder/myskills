@@ -79,25 +79,25 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               aria-current={active ? 'page' : undefined}
               className={`group relative flex items-center gap-3.5 overflow-hidden rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none backdrop-blur-md transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
                 active
-                  ? 'bg-gradient-to-br from-brand-400/85 via-brand-500/80 to-brand-600/85 font-semibold text-white shadow-[0_6px_16px_-4px_rgba(91,75,214,0.4),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_0_0_1px_rgba(255,255,255,0.25)]'
+                  ? 'bg-brand-50/80 font-semibold text-brand-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_0_0_1px_rgba(111,99,226,0.12)]'
                   : 'text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
               }`}
             >
               {active && (
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/50 to-transparent"
                 />
               )}
               <Icon
                 size={19}
                 className={`relative shrink-0 transition-transform duration-200 ${
-                  active ? 'text-white' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
+                  active ? 'text-brand-600' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
                 }`}
               />
               <span className="relative">{label}</span>
               {active && (
-                <span className="relative ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
+                <span className="relative ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
               )}
             </Link>
           )
