@@ -7,15 +7,13 @@ import {
   CheckCircle2,
   GraduationCap,
   Lock,
-  Quote,
   Users,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
-import { Badge, PageHeader, SectionTitle } from '@/components/ui'
+import { Badge, PageHeader } from '@/components/ui'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
-import { LearningJourney } from '@/components/community/LearningJourney'
 import { IntervalPromoCard } from '@/components/community/IntervalPromoCard'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
@@ -437,59 +435,39 @@ function HubTile({
 
 function CommunityHub() {
   return (
-    <AppShell wide>
+    <AppShell>
       <PageHeader
         title="Community"
-        subtitle="You don't have to learn alone. Here's how mentors, peers, and institutions help you move faster."
+        subtitle="Learn alongside people who've done it — mentors and offline institutions today, internships soon."
       />
 
-      <div className="mb-8 flex items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50/60 p-5">
-        <Quote size={18} className="mt-0.5 shrink-0 text-brand-500" />
-        <p className="text-sm leading-relaxed text-ink-700">
-          You don't have to start with a classroom to learn. But you shouldn't have to learn
-          everything alone — that's the idea behind every section below.
-        </p>
-      </div>
-
-      <SectionTitle
-        title="Your learning journey"
-        subtitle="Self-learning first — mentors, peers, and institutions layer in as your goals grow."
-      />
-      <LearningJourney />
-
-      <div className="mt-10">
-        <SectionTitle
-          title="Where to go next"
-          subtitle="Mentorship and offline learning are live today — here's how to start."
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <HubTile
+          icon={GraduationCap}
+          live
+          title="Mentors"
+          description="Talk to experienced marketers, get feedback on your work, and unblock your next step."
+          to="/community/mentors"
+          ctaLabel="Meet the mentors"
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <HubTile
-            icon={GraduationCap}
-            live
-            title="Mentors"
-            description="Talk to experienced marketers, get feedback on your work, and unblock your next step."
-            to="/community/mentors"
-            ctaLabel="Meet the mentors"
-          />
-          <HubTile
-            icon={Building2}
-            live
-            title="Institutions"
-            description="INTERVAL, our exclusive offline partner, runs in-person digital marketing training built on your MySkills progress."
-            to="/community/institutions"
-            ctaLabel="Book a demo"
-          />
-          <HubTile
-            icon={Briefcase}
-            live={false}
-            title="Internships"
-            description="Real internships with partner companies, so your practice turns into work experience you can actually show."
-            lockedNote="We're building this — check back soon."
-          />
-        </div>
+        <HubTile
+          icon={Building2}
+          live
+          title="Institutions"
+          description="INTERVAL, our exclusive offline partner, runs in-person digital marketing training built on your MySkills progress."
+          to="/community/institutions"
+          ctaLabel="Explore institutions"
+        />
+        <HubTile
+          icon={Briefcase}
+          live={false}
+          title="Internships"
+          description="Real internships with partner companies, so your practice turns into work experience you can actually show."
+          lockedNote="We're building this — check back soon."
+        />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <IntervalPromoCard />
       </div>
     </AppShell>
