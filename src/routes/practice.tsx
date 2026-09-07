@@ -10,7 +10,7 @@ import {
   recordPracticeAttempt,
   type PracticeSummary,
 } from '@/lib/practiceResults'
-import { initialAssessmentQuestions, type AssessmentGrade } from '@/lib/initialAssessment'
+import { fetchInitialAssessmentQuestions, type QuizQuestion } from '@/lib/initialAssessment'
 import { questionsForTrack, type ScenarioGrade } from '@/lib/decisionLabs'
 import { skillTracks } from '@/lib/skillTracks'
 import { vocabularyTerms } from '@/lib/vocabulary'
@@ -73,7 +73,8 @@ function PracticePage() {
     result: assessment,
     loading: assessmentLoading,
     error: assessmentError,
-    save,
+    submit,
+    commit,
   } = useInitialAssessment()
 
   const { user } = useAuthUser()
@@ -87,10 +88,15 @@ function PracticePage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [mode, setMode] = useState<PracticeMode | null>(null)
 
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
+  const [quizQuestionsError, setQuizQuestionsError] = useState<string>()
+
   useEffect(() => {
     if (assessmentLoading) return
     if (!assessment) {
-      setPracticeLoading(false)
+      fetchInitialAssessmentQuestions()
+        .then(setQuizQuestions)
+        .catch((e) => setQuizQuestionsError(e instanceof Error ? e.message : String(e)))
       return
     }
     fetchPracticeSummary()
@@ -99,10 +105,6 @@ function PracticePage() {
       .finally(() => setPracticeLoading(false))
   }, [assessment, assessmentLoading])
 
-  async function completeInitial(grade: AssessmentGrade) {
-    await save(grade)
-  }
-
   async function completeTrack(track: string, grade: ScenarioGrade) {
     await recordPracticeAttempt(track, grade)
     setPractice(await fetchPracticeSummary())
@@ -110,7 +112,7 @@ function PracticePage() {
     setSelected(null)
   }
 
-  const error = assessmentError ?? practiceError
+  const error = assessmentError ?? practiceError ?? quizQuestionsError
 
   return (
     <AppShell wide>
@@ -119,19 +121,22 @@ function PracticePage() {
       {error && <MigrationError message={error} />}
 
       {/* Not taken yet -> the one-time initial assessment gates everything else. */}
-      {!assessmentLoading && !error && !assessment && (
+      {!assessmentLoading && !error && !assessment && quizQuestions.length === 0 && (
+        <p className="text-sm text-ink-600">Loading questions…</p>
+      )}
+      {!assessmentLoading && !error && !assessment && quizQuestions.length > 0 && (
         <div>
           <div className="mb-6">
             <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">
               Initial assessment
             </h1>
             <p className="mt-1 text-sm text-ink-600">
-              Answer {initialAssessmentQuestions.length} quick questions to unlock
-              scenario practice across all skill tracks. You get one attempt, so take
-              your time — there’s no time limit.
+              Answer {quizQuestions.length} quick questions to unlock scenario practice
+              across all skill tracks. You get one attempt, so take your time — there’s
+              no time limit.
             </p>
           </div>
-          <AssessmentQuiz questions={initialAssessmentQuestions} onComplete={completeInitial} />
+          <AssessmentQuiz questions={quizQuestions} onSubmit={submit} onContinue={commit} />
         </div>
       )}
 

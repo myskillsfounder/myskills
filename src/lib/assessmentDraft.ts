@@ -11,7 +11,7 @@
  * and writing partial answers to `assessment_results` would make a half-finished
  * quiz look like a completed one to every query that reads that table.
  */
-import type { AssessmentQuestion } from './initialAssessment'
+import type { QuizQuestion } from './initialAssessment'
 
 const KEY = 'myskills.assessmentDraft'
 
@@ -27,11 +27,11 @@ interface Draft {
   answers: (number | null)[]
 }
 
-const signatureOf = (questions: AssessmentQuestion[]) => questions.map((q) => q.id).join(',')
+const signatureOf = (questions: QuizQuestion[]) => questions.map((q) => q.id).join(',')
 
 export function loadDraft(
   userId: string | undefined,
-  questions: AssessmentQuestion[],
+  questions: QuizQuestion[],
 ): { index: number; answers: (number | null)[] } | null {
   if (!userId) return null
   try {
@@ -54,7 +54,7 @@ export function loadDraft(
 
 export function saveDraft(
   userId: string | undefined,
-  questions: AssessmentQuestion[],
+  questions: QuizQuestion[],
   index: number,
   answers: (number | null)[],
 ) {

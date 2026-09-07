@@ -182,38 +182,13 @@ export function tierForCertificate(cert: Pick<Certificate, 'kind' | 'percent'>):
  * `hasTierAccess(cert, required)` helper here rather than comparing `kind`
  * inline at each call site. */
 
-/** Human-readable, unique-enough certificate code, e.g. MSK-8F3K-9Q2A-XZ04. */
-function generateCode(): string {
-  const raw = (globalThis.crypto?.randomUUID?.() ?? `${Math.random()}${Date.now()}`)
-    .replace(/[^a-z0-9]/gi, '')
-    .toUpperCase()
-  const seg = (i: number) => raw.slice(i, i + 4).padEnd(4, '0')
-  return `MSK-${seg(0)}-${seg(4)}-${seg(8)}`
-}
-
 /**
- * Issue the certificate for the current user if they don't already have one.
- * Best-effort by the caller: safe to call every time the assessment is saved
- * (the unique profile_id makes re-issuing a no-op).
+ * Certificates are issued server-side now, inside grade_initial_assessment()
+ * (see docs/supabase-server-side-grading.sql) — the percent that decides the
+ * band has to come from the same trusted grading, not a client-supplied
+ * argument. There is no client-callable issueCertificate() anymore; the
+ * certificates table has no client-facing INSERT policy at all.
  */
-export async function issueCertificate(percent: number, recipientName: string): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return
-
-  const { error } = await supabase.from('certificates').insert({
-    profile_id: user.id,
-    code: generateCode(),
-    recipient_name: recipientName || user.email?.split('@')[0] || 'Member',
-    kind: kindForPercent(percent),
-    percent,
-    title: 'Digital Marketing',
-  })
-  // Ignore "already issued" (unique violation on profile_id/code).
-  if (error && !/duplicate|unique|conflict/i.test(error.message)) throw error
-}
-
 export async function fetchMyCertificate(): Promise<Certificate | null> {
   const {
     data: { user },

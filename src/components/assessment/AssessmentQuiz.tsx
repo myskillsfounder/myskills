@@ -1,24 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, RotateCcw, X } from 'lucide-react'
-import {
-  gradeQuestions,
-  type AssessmentGrade,
-  type AssessmentQuestion,
-} from '@/lib/initialAssessment'
+import type { QuizQuestion } from '@/lib/initialAssessment'
+import type { QuizGradeResult } from '@/lib/assessmentResults'
 import { clearDraft, loadDraft, saveDraft } from '@/lib/assessmentDraft'
 import { useAuthUser } from '@/lib/useAuth'
 
 export function AssessmentQuiz({
   questions,
-  onComplete,
+  onSubmit,
+  onContinue,
 }: {
-  questions: AssessmentQuestion[]
-  onComplete: (grade: AssessmentGrade) => Promise<void>
+  questions: QuizQuestion[]
+  /** Grades server-side and persists the result — see grade_initial_assessment
+   *  in docs/supabase-server-side-grading.sql. Only reveals correct answers
+   *  (in the returned result) once grading is final and one-time-only. */
+  onSubmit: (answers: Record<string, number>) => Promise<QuizGradeResult>
+  /** Called once the user has seen their result and dismisses it — updates
+   *  the parent's cached assessment state so the app moves on. */
+  onContinue: (result: QuizGradeResult) => void
 }) {
   const [index, setIndex] = useState(0)
   const [answers, setAnswers] = useState<(number | null)[]>(() => questions.map(() => null))
   const [phase, setPhase] = useState<'quiz' | 'result'>('quiz')
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string>()
+  const [result, setResult] = useState<QuizGradeResult | null>(null)
   const [resumed, setResumed] = useState(false)
 
   const { user } = useAuthUser()
@@ -73,11 +79,6 @@ export function AssessmentQuiz({
     })
   }, [questions, answers])
 
-  const grade = useMemo<AssessmentGrade | null>(
-    () => (phase === 'result' ? gradeQuestions(questions, answers) : null),
-    [phase, questions, answers],
-  )
-
   const q = questions[index]
   const answered = answers.filter((a) => a !== null).length
   const progress = Math.round(((index + (answers[index] !== null ? 1 : 0)) / questions.length) * 100)
@@ -92,20 +93,29 @@ export function AssessmentQuiz({
     })
   }
 
-  async function finish() {
+  async function submit() {
     setSubmitting(true)
+    setSubmitError(undefined)
     try {
-      await onComplete(gradeQuestions(questions, answers))
-      // Only after the attempt is safely persisted — if the save throws, the
-      // draft is the user's sole copy of a one-attempt quiz.
+      const byId: Record<string, number> = {}
+      questions.forEach((question, i) => {
+        if (answers[i] !== null) byId[question.id] = answers[i] as number
+      })
+      const graded = await onSubmit(byId)
+      setResult(graded)
+      setPhase('result')
+      // Only after grading is safely persisted — if it throws, the draft is
+      // the user's sole copy of a one-attempt quiz.
       clearDraft()
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : String(err))
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (phase === 'result' && grade) {
-    const passed = grade.percent >= 60
+  if (phase === 'result' && result) {
+    const passed = result.percent >= 60
     return (
       <div className="mx-auto max-w-2xl space-y-5">
         <div className="card p-8 text-center">
@@ -117,13 +127,13 @@ export function AssessmentQuiz({
             <CheckCircle2 size={30} />
           </div>
           <h1 className="mt-4 text-2xl font-semibold tracking-tight text-ink-900">
-            {grade.percent}%
+            {result.percent}%
           </h1>
           <p className="mt-1 text-sm text-ink-600">
-            You answered {grade.correct} of {grade.total} correctly.
+            You answered {result.correct} of {result.total} correctly.
           </p>
           <div className="mt-6 space-y-2 text-left">
-            {grade.byCategory.map((c) => (
+            {result.byCategory.map((c) => (
               <div key={c.category} className="flex items-center gap-3">
                 <span className="w-40 shrink-0 truncate text-xs text-ink-600">{c.category}</span>
                 <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-200">
@@ -140,11 +150,10 @@ export function AssessmentQuiz({
           </div>
           <button
             type="button"
-            onClick={finish}
-            disabled={submitting}
-            className="mt-8 inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700 disabled:opacity-60"
+            onClick={() => onContinue(result)}
+            className="mt-8 inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
           >
-            {submitting ? 'Saving…' : 'Save & continue'}
+            Continue
             <ArrowRight size={16} />
           </button>
         </div>
@@ -153,7 +162,8 @@ export function AssessmentQuiz({
           <h2 className="font-display text-lg font-semibold text-ink-900">Review answers</h2>
           <ul className="mt-4 space-y-4">
             {questions.map((question, i) => {
-              const correct = answers[i] === question.correct
+              const review = result.review[question.id]
+              const correct = answers[i] === review?.correctIndex
               return (
                 <li key={question.id} className="border-b border-ink-200 pb-4 last:border-0">
                   <div className="flex items-start gap-2">
@@ -166,11 +176,15 @@ export function AssessmentQuiz({
                     </span>
                     <div>
                       <p className="text-sm font-medium text-ink-900">{question.question}</p>
-                      <p className="mt-1 text-xs text-ink-600">
-                        Correct: {question.options[question.correct]}
-                      </p>
-                      {question.explanation && (
-                        <p className="mt-0.5 text-xs text-ink-500">{question.explanation}</p>
+                      {review && (
+                        <>
+                          <p className="mt-1 text-xs text-ink-600">
+                            Correct: {question.options[review.correctIndex]}
+                          </p>
+                          {review.explanation && (
+                            <p className="mt-0.5 text-xs text-ink-500">{review.explanation}</p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -289,6 +303,12 @@ export function AssessmentQuiz({
           </div>
         </div>
 
+        {submitError && (
+          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            Couldn't submit your assessment: {submitError}
+          </p>
+        )}
+
         <div className="mt-5 flex items-center justify-between">
           <button
             type="button"
@@ -303,11 +323,15 @@ export function AssessmentQuiz({
           {isLast ? (
             <button
               type="button"
-              onClick={() => setPhase('result')}
-              disabled={answered < questions.length}
+              onClick={submit}
+              disabled={answered < questions.length || submitting}
               className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {answered < questions.length ? `Answer all (${answered}/${questions.length})` : 'Submit'}
+              {submitting
+                ? 'Grading…'
+                : answered < questions.length
+                  ? `Answer all (${answered}/${questions.length})`
+                  : 'Submit'}
             </button>
           ) : (
             <button
