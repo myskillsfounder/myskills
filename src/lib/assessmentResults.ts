@@ -1,24 +1,37 @@
 /**
  * Initial-assessment persistence — normalized tables, NOT a JSONB blob on
- * profiles. See docs/supabase-migration-2026-07-11-normalize-assessment.sql.
+ * profiles. See docs/supabase-migration-2026-07-11-normalize-assessment.sql
+ * for the tables, and docs/supabase-server-side-grading.sql for how they get
+ * written now (grade_initial_assessment, not the client).
  *
  *   initial_assessment_results          — one row per user (overall score)
  *   initial_assessment_category_scores  — one row per user per category
  *
- * The one-time-only rule is enforced structurally: profile_id is the primary
- * key on the results table, and (profile_id, category) is unique on the
- * category-scores table, so there is nowhere for a second attempt to go.
+ * profile_id is the primary key on the results table (and (profile_id,
+ * category) unique on the category-scores table), so there's structurally
+ * nowhere for a second row to go — but the real one-time-only enforcement is
+ * the RPC's own already-graded check, since the client has no write access
+ * to these tables at all anymore.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
-import type { AssessmentGrade } from './initialAssessment'
-import { issueCertificate } from './certificates'
 
 export interface CategoryResult {
   category: string
   correct: number
   total: number
   percent: number
+}
+
+export interface QuizGradeResult {
+  correct: number
+  total: number
+  percent: number
+  byCategory: { category: string; correct: number; total: number }[]
+  /** question id -> the correct option index + why. Only ever populated
+   *  after grading — see grade_initial_assessment in
+   *  docs/supabase-server-side-grading.sql. */
+  review: Record<string, { correctIndex: number; explanation: string }>
 }
 
 export interface AssessmentResult {
@@ -59,59 +72,19 @@ export async function fetchInitialAssessment(): Promise<AssessmentResult | null>
   }
 }
 
-/** Save the graded initial assessment — inserts the overall row + one row per
- * category. Called exactly once per user in practice (the UI never shows the
- * quiz again once this succeeds), but is idempotent via upsert either way. */
-export async function saveInitialAssessment(grade: AssessmentGrade): Promise<AssessmentResult> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error('You are not signed in.')
-
-  const completedAt = new Date().toISOString()
-  const categories: CategoryResult[] = grade.byCategory.map((c) => ({
-    category: c.category,
-    correct: c.correct,
-    total: c.total,
-    percent: c.total ? Math.round((c.correct / c.total) * 100) : 0,
-  }))
-
-  const { error: overallError } = await supabase.from('initial_assessment_results').upsert({
-    profile_id: user.id,
-    correct: grade.correct,
-    total: grade.total,
-    percent: grade.percent,
-    completed_at: completedAt,
-  })
-  if (overallError) throw overallError
-
-  const { error: categoriesError } = await supabase
-    .from('initial_assessment_category_scores')
-    .upsert(
-      categories.map((c) => ({
-        profile_id: user.id,
-        category: c.category,
-        correct: c.correct,
-        total: c.total,
-        percent: c.percent,
-      })),
-      { onConflict: 'profile_id,category' },
-    )
-  if (categoriesError) throw categoriesError
-
-  // Award the certificate for completing the initial assessment. Best-effort:
-  // never let a certificate hiccup (e.g. table not migrated yet) block the save.
-  try {
-    const name = (user.user_metadata?.name as string) || user.email?.split('@')[0] || 'Member'
-    await issueCertificate(grade.percent, name)
-  } catch {
-    /* ignore — run docs/supabase-certificates.sql to enable certificates */
-  }
-
-  return {
-    overall: { correct: grade.correct, total: grade.total, percent: grade.percent, completedAt },
-    categories,
-  }
+/**
+ * Grade the initial assessment. This is the ONLY way scores get written —
+ * grade_initial_assessment (docs/supabase-server-side-grading.sql) grades
+ * server-side against an answer key the client never sees, persists the
+ * result and the certificate atomically, and rejects a second attempt.
+ * There is no client-facing INSERT policy on any of those tables anymore.
+ */
+export async function submitInitialAssessment(
+  answers: Record<string, number>,
+): Promise<QuizGradeResult> {
+  const { data, error } = await supabase.rpc('grade_initial_assessment', { answers })
+  if (error) throw error
+  return data as QuizGradeResult
 }
 
 /**
@@ -185,15 +158,33 @@ export function useInitialAssessment() {
     }
   }, [])
 
-  const save = useCallback(async (grade: AssessmentGrade) => {
-    const updated = await saveInitialAssessment(grade)
+  // Grades + persists server-side. Deliberately does NOT touch the cache —
+  // the caller shows the result/review screen first, and only calls commit()
+  // once the user dismisses it, so the "quiz already done" view doesn't
+  // swap in underneath them before they've seen their score.
+  const submit = useCallback((answers: Record<string, number>) => {
+    return submitInitialAssessment(answers)
+  }, [])
+
+  const commit = useCallback((graded: QuizGradeResult) => {
+    const updated: AssessmentResult = {
+      overall: {
+        correct: graded.correct,
+        total: graded.total,
+        percent: graded.percent,
+        completedAt: new Date().toISOString(),
+      },
+      categories: graded.byCategory.map((c) => ({
+        ...c,
+        percent: c.total ? Math.round((c.correct / c.total) * 100) : 0,
+      })),
+    }
     assessmentCache = { result: updated }
     writeDoneFlag(true)
     setResult(updated)
-    return updated
   }, [])
 
-  return { result, loading, error, save }
+  return { result, loading, error, submit, commit }
 }
 
 /**
