@@ -238,30 +238,40 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
 /* -- prerendered HTML ------------------------------------------------------ */
 
-/** Very small markdown -> HTML, enough for crawlers to read the article. */
-function contentToHtml(md = '') {
-  return md
-    .split(/\n{2,}/)
-    .map((block) => {
-      const t = block.trim()
-      if (!t) return ''
-      const h = t.match(/^(#{1,4})\s+(.*)$/)
-      if (h) {
-        const lvl = Math.min(h[1].length + 1, 6)
-        return `<h${lvl}>${esc(h[2])}</h${lvl}>`
-      }
-      if (/^[-*]\s+/m.test(t)) {
-        const items = t
-          .split('\n')
-          .filter((l) => /^[-*]\s+/.test(l.trim()))
-          .map((l) => `<li>${esc(l.trim().replace(/^[-*]\s+/, ''))}</li>`)
-          .join('')
-        return `<ul>${items}</ul>`
-      }
-      return `<p>${esc(t)}</p>`
-    })
-    .filter(Boolean)
-    .join('\n')
+/**
+ * Post bodies are authored as raw HTML in /admin/blog (src/lib/admin.ts —
+ * "HTML — it's injected directly into the page"), not Markdown. This used to
+ * run content through a Markdown-to-HTML converter, which just HTML-escaped
+ * every real tag into literal, visible text in the prerendered output — a
+ * silent bug that only started to matter once these prerendered pages were
+ * actually reachable (see the nginx fix that made that true).
+ *
+ * Same allowlist-style defense-in-depth as sanitizeBlogHtml in
+ * src/lib/blog.ts, reimplemented with regex here since this runs in plain
+ * Node with no DOMParser — not worth a DOM-emulation dependency for a build
+ * script. Less bullet-proof than a real parser against adversarial markup,
+ * but this is a second layer behind RLS-gated admin-only writes and the
+ * client's own DOMParser-based sanitizer, which is what users actually see
+ * once React mounts and replaces this content.
+ */
+function sanitizeHtmlForPrerender(html = '') {
+  let out = html
+  // Strip dangerous elements, tags and contents alike.
+  out = out.replace(
+    /<(script|style|iframe|object|embed|form|input|button|textarea|select|link|meta|base|svg|math)\b[\s\S]*?<\/\1\s*>/gi,
+    '',
+  )
+  out = out.replace(
+    /<\/?(script|style|iframe|object|embed|form|input|button|textarea|select|link|meta|base|svg|math)\b[^>]*>/gi,
+    '',
+  )
+  // Strip event handler attributes and inline styles.
+  out = out.replace(/\s(on\w+|style)\s*=\s*"[^"]*"/gi, '')
+  out = out.replace(/\s(on\w+|style)\s*=\s*'[^']*'/gi, '')
+  // Neutralize javascript: URLs.
+  out = out.replace(/\s(href|src)\s*=\s*"\s*javascript:[^"]*"/gi, '')
+  out = out.replace(/\s(href|src)\s*=\s*'\s*javascript:[^']*'/gi, '')
+  return out
 }
 
 function head({ title, description, url, image, type = 'website', jsonLd }) {
@@ -403,7 +413,7 @@ async function main() {
             publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
           },
         }),
-        bodyHtml: `<article><h1>${esc(p.title)}</h1><p>${esc(p.description)}</p>${contentToHtml(
+        bodyHtml: `<article><h1>${esc(p.title)}</h1><p>${esc(p.description)}</p>${sanitizeHtmlForPrerender(
           p.content,
         )}</article>`,
       }),
