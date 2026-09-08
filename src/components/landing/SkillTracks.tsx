@@ -6,7 +6,7 @@ export function SkillTracks() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
-            8 skill tracks, one score you can trust
+            8 skill tracks to learn and master, from SEO to Marketing Automation
           </h2>
           <p className="mt-3 text-base text-ink-500">
             Every track is built from real business scenarios, not textbook

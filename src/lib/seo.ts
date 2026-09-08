@@ -38,9 +38,9 @@ export interface PageSeo {
  */
 export const PAGE_SEO: Record<string, PageSeo> = {
   '/': {
-    title: 'Free Digital Marketing Skill Assessment & Certification | MySkills',
+    title: 'Learn Digital Marketing Online — Free Practice & Certification | MySkills',
     description:
-      'Test your digital marketing skills across SEO, Google Ads, Meta Ads and analytics. Get a free certificate, scenario-based practice and 441 AI study prompts.',
+      'Learn digital marketing online with 1:1 expert mentor support. Practice real-world scenarios across SEO, Google Ads, Meta Ads and analytics, then earn a free certificate.',
   },
   '/blog': {
     title: 'Digital Marketing Blog — Guides & Insights | MySkills',

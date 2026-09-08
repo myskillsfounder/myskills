@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '@/components/landing/Navbar'
 import { Hero } from '@/components/landing/Hero'
+import { Pillars } from '@/components/landing/Pillars'
 import { SkillTracks } from '@/components/landing/SkillTracks'
 import { HowItWorks } from '@/components/landing/HowItWorks'
 import { CtaBanner } from '@/components/landing/CtaBanner'
@@ -16,8 +17,9 @@ function LandingPage() {
       <Navbar />
       <main>
         <Hero />
-        <SkillTracks />
         <HowItWorks />
+        <Pillars />
+        <SkillTracks />
         <CtaBanner />
       </main>
       <Footer />
