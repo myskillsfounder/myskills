@@ -17,9 +17,9 @@ function LandingPage() {
       <Navbar />
       <main>
         <Hero />
+        <HowItWorks />
         <Pillars />
         <SkillTracks />
-        <HowItWorks />
         <CtaBanner />
       </main>
       <Footer />
