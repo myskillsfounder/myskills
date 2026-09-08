@@ -60,7 +60,7 @@ const pillars: Pillar[] = [
  */
 export function Pillars() {
   return (
-    <section className="pt-6 pb-16 sm:pt-8 sm:pb-20">
+    <section className="border-t border-ink-100 pt-6 pb-16 sm:pt-8 sm:pb-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
