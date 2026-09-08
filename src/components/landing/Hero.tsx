@@ -12,14 +12,15 @@ export function Hero() {
           </span>
 
           <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-5xl lg:text-6xl">
-            Prove your skills,{' '}
-            <span className="text-brand-600">not just your notes</span>
+            Learn digital marketing online{' '}
+            <span className="text-brand-600">with 1:1 expert mentor support</span>
           </h1>
 
           <p className="mt-5 max-w-lg text-base leading-relaxed text-ink-500 sm:text-lg">
-            Practice real-world digital marketing scenarios, get scored against
-            industry-level difficulty, and track exactly where you stand across
-            8 skill tracks &mdash; from Google Ads to Marketing Automation.
+            Practice real-world scenarios across 8 skill tracks &mdash; SEO,
+            Google Ads, Meta Ads, Analytics and more &mdash; get 1:1 chat
+            sessions with industry mentors when you&rsquo;re stuck, and earn
+            a free certificate that proves what you can do.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -45,7 +46,7 @@ export function Hero() {
             </span>
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle2 size={16} className="text-brand-600" />
-              Scenario-based, not trivia
+              1:1 mentor support
             </span>
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle2 size={16} className="text-brand-600" />
