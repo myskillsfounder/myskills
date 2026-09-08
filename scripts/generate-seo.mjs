@@ -420,9 +420,35 @@ async function main() {
     )
   }
 
+  // Every other public static page (signup, community, become-a-mentor,
+  // privacy, terms) has its own title/description in STATIC_PAGES but never
+  // got its own prerendered file — home and blog were the only two. Without
+  // one, a non-JS crawler requesting any of these URLs falls through to
+  // dist/index.html (the SPA's static-file-serving fallback for unmatched
+  // paths) and sees the HOMEPAGE's title, description and canonical tag —
+  // the same duplicate-content bug the blog prerender fix addressed, just
+  // for these pages instead. Head metadata only, no bodyHtml: unlike blog
+  // posts these are ordinary marketing pages whose real content is better
+  // left to the client render, and duplicating five different page layouts
+  // as hand-templated static HTML here isn't worth the maintenance drift.
+  const otherStaticPages = STATIC_PAGES.filter((p) => p.path !== '/' && p.path !== '/blog')
+  for (const page of otherStaticPages) {
+    write(
+      `${page.path.slice(1)}/index.html`,
+      renderPage(shell, {
+        headHtml: head({
+          title: page.title,
+          description: page.description,
+          url: `${SITE_URL}${page.path}`,
+          image: OG_IMAGE,
+        }),
+      }),
+    )
+  }
+
   console.log(
     `[seo] wrote robots.txt, sitemap.xml (${STATIC_PAGES.length + posts.length} urls), ` +
-      `and ${posts.length + 2} prerendered pages -> ${SITE_URL}`,
+      `and ${posts.length + 2 + otherStaticPages.length} prerendered pages -> ${SITE_URL}`,
   )
 }
 
