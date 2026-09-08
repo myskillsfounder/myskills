@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Check, Clock, Loader2, MessagesSquare, ThumbsDown, ThumbsUp, X } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -50,7 +51,7 @@ function SupportPage() {
         setSession(s)
         setOnline(o)
       })
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => setError(errorMessage(e)))
       .finally(() => setLoading(false))
   }, [])
 
@@ -103,7 +104,7 @@ function SupportPage() {
     try {
       setSession(await createSession(topic, details))
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setSubmitting(false)
     }
@@ -124,7 +125,7 @@ function SupportPage() {
         setSession((cur) => (cur ? { ...cur, status: 'ended' } : cur))
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     }
   }
 
@@ -136,7 +137,7 @@ function SupportPage() {
       await rateSession(session.id, helpful)
       setSession((cur) => (cur ? { ...cur, helpful } : cur))
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setRating(false)
     }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Check, Copy, Download, Loader2, Printer } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -24,7 +25,7 @@ function CertificatePage() {
   useEffect(() => {
     fetchMyCertificate()
       .then(setCert)
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => setError(errorMessage(e)))
       .finally(() => setLoading(false))
   }, [])
 

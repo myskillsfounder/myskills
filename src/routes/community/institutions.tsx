@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Building2, CalendarCheck, CheckCircle2, Send } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -108,7 +109,7 @@ function InstitutionsPage() {
       await submitDemoRequest(user.id, form)
       setDone(true)
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : String(err))
+      setSubmitError(errorMessage(err))
     } finally {
       setSubmitting(false)
     }

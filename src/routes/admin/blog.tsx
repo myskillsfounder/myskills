@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, FileText, Plus, Trash2 } from 'lucide-react'
 import {
@@ -63,7 +64,7 @@ function Editor({
       await savePost({ ...form, status })
       onSaved()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setSaving(false)
     }
@@ -150,7 +151,7 @@ function BlogAdminPage() {
     try {
       setPosts(await fetchAllPosts())
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoading(false)
     }
@@ -166,7 +167,7 @@ function BlogAdminPage() {
       setConfirmDelete(undefined)
       await load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     }
   }
 

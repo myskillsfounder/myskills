@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import {
   fetchMyProfile,
   saveMyProfile,
@@ -15,7 +16,7 @@ export function useProfile() {
   useEffect(() => {
     fetchMyProfile()
       .then(setProfile)
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => setError(errorMessage(e)))
       .finally(() => setLoading(false))
   }, [])
 

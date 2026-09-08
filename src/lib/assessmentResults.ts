@@ -14,6 +14,7 @@
  * to these tables at all anymore.
  */
 import { useCallback, useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { supabase } from './supabase'
 
 export interface CategoryResult {
@@ -151,7 +152,7 @@ export function useInitialAssessment() {
     let active = true
     loadAssessment()
       .then((r) => active && setResult(r))
-      .catch((e) => active && setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => active && setError(errorMessage(e)))
       .finally(() => active && setLoading(false))
     return () => {
       active = false

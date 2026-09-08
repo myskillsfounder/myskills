@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { MessageSquare, Star } from 'lucide-react'
 import { fetchAllFeedback, type AdminFeedback } from '@/lib/admin'
@@ -20,7 +21,7 @@ function FeedbackPage() {
     let active = true
     fetchAllFeedback()
       .then((rows) => active && setItems(rows))
-      .catch((e) => active && setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => active && setError(errorMessage(e)))
       .finally(() => active && setLoading(false))
     return () => {
       active = false

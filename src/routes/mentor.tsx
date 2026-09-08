@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Bell, Circle, Clock, Loader2, Lock, MessageSquare, Power, RefreshCw } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -73,7 +74,7 @@ function MentorConsole() {
       prevQueue.current = q.length
     } catch (e) {
       // Most often: this account isn't flagged is_mentor, so RLS hides the queue.
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoading(false)
     }
@@ -117,7 +118,7 @@ function MentorConsole() {
       stopRef.current = await goOnline()
       setOnline(true)
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     }
   }
 
@@ -132,7 +133,7 @@ function MentorConsole() {
         await refresh() // someone else got it
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     }
   }
 
@@ -143,7 +144,7 @@ function MentorConsole() {
       setOpen(null)
       await refresh()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     }
   }
 

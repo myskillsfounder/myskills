@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, RotateCcw, X } from 'lucide-react'
 import type { QuizQuestion } from '@/lib/initialAssessment'
 import type { QuizGradeResult } from '@/lib/assessmentResults'
@@ -108,7 +109,7 @@ export function AssessmentQuiz({
       // the user's sole copy of a one-attempt quiz.
       clearDraft()
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : String(err))
+      setSubmitError(errorMessage(err))
     } finally {
       setSubmitting(false)
     }
