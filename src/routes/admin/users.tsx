@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { Search, Users as UsersIcon } from 'lucide-react'
 import { fetchUsers, setMentorFlag, type AdminUser } from '@/lib/admin'
@@ -23,7 +24,7 @@ function UsersPage() {
     try {
       setUsers(await fetchUsers(term))
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoading(false)
     }
@@ -44,7 +45,7 @@ function UsersPage() {
         prev.map((u) => (u.id === user.id ? { ...u, is_mentor: !u.is_mentor } : u)),
       )
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setBusyId(undefined)
     }

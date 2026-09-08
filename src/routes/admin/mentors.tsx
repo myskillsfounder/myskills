@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { Check, Inbox, Link2, Mail, MapPin, Phone, X } from 'lucide-react'
 import {
@@ -188,7 +189,7 @@ function MentorReviewQueue() {
     try {
       setApps(await fetchMentorApplications(filter === 'all' ? undefined : filter))
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoading(false)
     }
@@ -205,7 +206,7 @@ function MentorReviewQueue() {
       await run()
       await load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setBusyId(undefined)
     }

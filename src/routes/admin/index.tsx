@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Activity,
@@ -58,7 +59,7 @@ function OverviewPage() {
     let active = true
     fetchOverview()
       .then((s) => active && setStats(s))
-      .catch((e) => active && setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => active && setError(errorMessage(e)))
     return () => {
       active = false
     }

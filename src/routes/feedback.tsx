@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { CheckCircle2, Heart, Loader2, PenLine, Send, Star } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -21,7 +22,7 @@ function FeedbackPage() {
     try {
       setItems(await fetchMyFeedback())
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoadingList(false)
     }
@@ -51,7 +52,7 @@ function FeedbackPage() {
       setReview('')
       await refresh()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setSubmitting(false)
     }

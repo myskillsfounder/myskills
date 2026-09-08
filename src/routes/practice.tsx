@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Award, ChevronRight, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -37,7 +38,7 @@ function MigrationError({ message }: { message: string }) {
       <p className="mt-1">{message}</p>
       <p className="mt-2 text-red-600">
         First run? Apply{' '}
-        <code className="rounded bg-red-100 px-1">docs/supabase-next-migration.sql</code>{' '}
+        <code className="rounded bg-red-100 px-1">docs/supabase-server-side-grading.sql</code>{' '}
         in Supabase (see docs/supabase-schema.sql for the full schema reference).
       </p>
     </div>
@@ -96,12 +97,12 @@ function PracticePage() {
     if (!assessment) {
       fetchInitialAssessmentQuestions()
         .then(setQuizQuestions)
-        .catch((e) => setQuizQuestionsError(e instanceof Error ? e.message : String(e)))
+        .catch((e) => setQuizQuestionsError(errorMessage(e)))
       return
     }
     fetchPracticeSummary()
       .then(setPractice)
-      .catch((e) => setPracticeError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => setPracticeError(errorMessage(e)))
       .finally(() => setPracticeLoading(false))
   }, [assessment, assessmentLoading])
 

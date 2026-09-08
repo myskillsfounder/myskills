@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, BadgeCheck, MapPin, Sparkles, UserPlus, Users } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -134,7 +135,7 @@ function MentorsPage() {
         for (const r of data as (DbProfile & { id: string })[]) map[r.id] = r
         setProfiles(map)
       })
-      .catch((e) => active && setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => active && setError(errorMessage(e)))
       .finally(() => active && setLoading(false))
 
     return () => {

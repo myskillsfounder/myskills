@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { fetchPublishedPosts, formatDate, type BlogPost } from '@/lib/blog'
@@ -17,7 +18,7 @@ function BlogIndexPage() {
   useEffect(() => {
     fetchPublishedPosts()
       .then(setPosts)
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => setError(errorMessage(e)))
       .finally(() => setLoading(false))
   }, [])
 

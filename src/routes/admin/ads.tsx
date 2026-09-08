@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, Megaphone, Plus, Trash2, Upload } from 'lucide-react'
 import {
@@ -46,7 +47,7 @@ function Editor({
       const { url, path } = await uploadAdImage(file)
       setForm((f) => ({ ...f, image_url: url, image_path: path }))
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setUploading(false)
     }
@@ -61,7 +62,7 @@ function Editor({
       await saveAd(form)
       onSaved()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setSaving(false)
     }
@@ -181,7 +182,7 @@ function AdsAdminPage() {
     try {
       setAds(await fetchAllAds())
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoading(false)
     }
@@ -197,7 +198,7 @@ function AdsAdminPage() {
       setConfirmDelete(undefined)
       await load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     }
   }
 

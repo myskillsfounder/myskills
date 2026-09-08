@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { Building2, Mail, MapPin, Phone, Users } from 'lucide-react'
 import {
@@ -129,7 +130,7 @@ function InstitutionsAdminPage() {
     try {
       setRequests(await fetchDemoRequests())
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setLoading(false)
     }
@@ -147,7 +148,7 @@ function InstitutionsAdminPage() {
       await setDemoRequestStatus(req.id, next)
       await load()
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(errorMessage(e))
     } finally {
       setBusyId(undefined)
     }

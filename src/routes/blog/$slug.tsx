@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
 import { ArrowLeft, Loader2 } from 'lucide-react'
-import { fetchPostBySlug, formatDate, type BlogPost } from '@/lib/blog'
+import { fetchPostBySlug, formatDate, sanitizeBlogHtml, type BlogPost } from '@/lib/blog'
 import { applySeo } from '@/lib/seo'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -25,7 +26,7 @@ function BlogPostPage() {
         if (!p) setNotFound(true)
         else setPost(p)
       })
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+      .catch((e) => setError(errorMessage(e)))
       .finally(() => setLoading(false))
   }, [slug])
 
@@ -89,10 +90,11 @@ function BlogPostPage() {
                 className="mt-6 aspect-video w-full rounded-2xl object-cover"
               />
             )}
-            {/* Content is authored in the trusted admin panel. */}
+            {/* Content is authored in the trusted admin panel, but still
+                sanitized before injection — see lib/blog.ts. */}
             <div
               className="blog-content mt-8"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
             />
           </article>
         )}
