@@ -84,10 +84,16 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               }`}
             >
               {active && (
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/50 to-transparent"
-                />
+                <>
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/50 to-transparent"
+                  />
+                  <span
+                    aria-hidden
+                    className="absolute inset-y-2 left-0 w-1 rounded-full bg-brand-500"
+                  />
+                </>
               )}
               <Icon
                 size={19}
@@ -96,9 +102,6 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                 }`}
               />
               <span className="relative">{label}</span>
-              {active && (
-                <span className="relative ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
-              )}
             </Link>
           )
         })}
