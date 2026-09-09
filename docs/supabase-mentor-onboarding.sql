@@ -1,8 +1,8 @@
 -- Mentor onboarding: public applications, admin review, public mentor listing.
 --
--- Run this once against the self-hosted Supabase instance (SQL editor, or
--- psql). It is idempotent enough to re-run, but read it first — it creates an
--- admins table that starts EMPTY, so grant yourself admin at the bottom.
+-- Run this once against Supabase Cloud (SQL editor, or psql). It is
+-- idempotent enough to re-run, but read it first — it creates an admins
+-- table that starts EMPTY, so grant yourself admin at the bottom.
 
 -- ---------------------------------------------------------------------------
 -- Admin role
