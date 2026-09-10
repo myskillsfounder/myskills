@@ -223,6 +223,24 @@ export async function uploadAdImage(file: File): Promise<{ url: string; path: st
   return { url: data.publicUrl, path }
 }
 
+/** Same bucket and per-user-folder convention as uploadAdImage/uploadProfileMedia. */
+export async function uploadBlogThumbnail(file: File): Promise<string> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error('You are not signed in.')
+
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const path = `${user.id}/blog-${Date.now()}.${ext}`
+  const { error } = await supabase.storage
+    .from('profile-media')
+    .upload(path, file, { upsert: true, cacheControl: '3600' })
+  if (error) raise(error)
+
+  const { data } = supabase.storage.from('profile-media').getPublicUrl(path)
+  return data.publicUrl
+}
+
 export interface AdInput {
   id?: string
   title: string
