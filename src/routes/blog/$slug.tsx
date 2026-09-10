@@ -17,10 +17,12 @@ function BlogPostPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState<string>()
+  const [thumbnailBroken, setThumbnailBroken] = useState(false)
 
   useEffect(() => {
     setLoading(true)
     setNotFound(false)
+    setThumbnailBroken(false)
     fetchPostBySlug(slug)
       .then((p) => {
         if (!p) setNotFound(true)
@@ -83,11 +85,12 @@ function BlogPostPage() {
             {post.description && (
               <p className="mt-3 text-lg text-ink-600">{post.description}</p>
             )}
-            {post.thumbnail_url && (
+            {post.thumbnail_url && !thumbnailBroken && (
               <img
                 src={post.thumbnail_url}
                 alt=""
                 className="mt-6 aspect-video w-full rounded-2xl object-cover"
+                onError={() => setThumbnailBroken(true)}
               />
             )}
             {/* Content is authored in the trusted admin panel, but still

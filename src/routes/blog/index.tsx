@@ -14,6 +14,9 @@ function BlogIndexPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
+  // Falls back to the gradient placeholder for a thumbnail URL that 404s or
+  // otherwise fails to load, instead of the browser's broken-image icon.
+  const [brokenThumbnails, setBrokenThumbnails] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchPublishedPosts()
@@ -61,11 +64,14 @@ function BlogIndexPage() {
               className="group flex flex-col card overflow-hidden transition-colors hover:border-brand-200"
             >
               <div className="aspect-video w-full overflow-hidden bg-ink-200">
-                {post.thumbnail_url ? (
+                {post.thumbnail_url && !brokenThumbnails.has(post.id) ? (
                   <img
                     src={post.thumbnail_url}
                     alt=""
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    onError={() =>
+                      setBrokenThumbnails((prev) => new Set(prev).add(post.id))
+                    }
                   />
                 ) : (
                   <div className="h-full w-full bg-gradient-to-br from-brand-50 to-ink-100" />
