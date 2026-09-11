@@ -11,6 +11,7 @@ import {
   type BlogPostInput,
 } from '@/lib/admin'
 import type { BlogPost } from '@/lib/blog'
+import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import {
   Alert,
   Badge,
@@ -179,13 +180,11 @@ function Editor({
       </div>
 
       <div className="card space-y-3 p-6">
-        <Textarea
+        <RichTextEditor
           label="Content"
-          rows={16}
           value={form.content}
-          onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-          hint="HTML — it's injected directly into the page, so only paste markup you trust."
-          className="font-mono text-xs"
+          onChange={(html) => setForm((f) => ({ ...f, content: html }))}
+          hint="Formats as real HTML — sanitized again before it's ever shown to a reader, so pasted content can't sneak in anything unsafe."
         />
       </div>
 
