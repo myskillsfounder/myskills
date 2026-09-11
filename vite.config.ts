@@ -43,6 +43,19 @@ export default defineConfig({
           }
           if (id.includes('@supabase')) return 'vendor-supabase'
           if (id.includes('@tanstack')) return 'vendor-tanstack'
+          // Only /admin/blog uses this (the rich text editor). Without its
+          // own chunk it gets merged into the generic 'vendor' bucket below,
+          // which every page eagerly preloads — a ~200KB regression for
+          // every visitor who never touches the admin panel.
+          if (
+            id.includes('/quill/') ||
+            id.includes('/quill-delta/') ||
+            id.includes('/parchment/') ||
+            id.includes('/eventemitter3/') ||
+            id.includes('/lodash-es/')
+          ) {
+            return 'vendor-quill'
+          }
           return 'vendor'
         },
       },
