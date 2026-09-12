@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { BarChart3, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 
 interface AuthShellProps {
   title: string
@@ -26,9 +26,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
       {/* Brand panel — desktop only, never competes with the form */}
       <aside className="surface-wood-dark relative hidden w-[44%] flex-col justify-between p-10 lg:flex xl:p-14">
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white">
-            <BarChart3 size={18} />
-          </span>
+          <img src="/logo-mark.png" alt="" className="h-9 w-9" />
           <span className="font-display text-lg font-semibold text-white">MySkills</span>
         </Link>
 
@@ -57,9 +55,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
       <main className="surface-paper flex flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6">
         <div className="w-full max-w-[400px]">
           <Link to="/" className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-900 text-white">
-              <BarChart3 size={18} />
-            </span>
+            <img src="/logo-mark.png" alt="" className="h-9 w-9" />
             <span className="font-display text-lg font-semibold text-ink-900">MySkills</span>
           </Link>
 
