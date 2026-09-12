@@ -17,6 +17,38 @@ import { Field } from '@/components/ui'
  * no case here where `value` changes out from under an already-mounted
  * instance for a reason other than this editor's own onChange.
  */
+/**
+ * Quill v2 always exports list items as `<ol><li data-list="bullet|ordered">`
+ * — bullet vs. ordered is a data attribute, not the wrapper tag — rendered
+ * correctly only inside a document that also loads Quill's own CSS (the
+ * `::before` on a child `.ql-ui` span draws the bullet/number). The public
+ * post page doesn't load that stylesheet, and the sanitizer that runs before
+ * publish (sanitizeBlogHtml) drops unrecognized attributes including
+ * data-list — so without this, a "Bulleted list" built in this editor quietly
+ * saves and publishes as a numbered one. Converts back to plain <ul>/<ol> so
+ * the saved HTML means what the toolbar button said it would.
+ */
+function normalizeQuillLists(html: string): string {
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  for (const list of Array.from(doc.querySelectorAll('ol'))) {
+    let run: Element | null = null
+    let runType: string | null = null
+    for (const li of Array.from(list.children)) {
+      li.querySelector('.ql-ui')?.remove()
+      const type = li.getAttribute('data-list') === 'bullet' ? 'ul' : 'ol'
+      li.removeAttribute('data-list')
+      if (type !== runType || !run) {
+        run = doc.createElement(type)
+        list.before(run)
+        runType = type
+      }
+      run.appendChild(li)
+    }
+    list.remove()
+  }
+  return doc.body.innerHTML
+}
+
 export function RichTextEditor({
   value,
   onChange,
@@ -51,8 +83,21 @@ export function RichTextEditor({
         ],
       },
     })
-    quill.root.innerHTML = value
-    quill.on('text-change', () => onChangeRef.current(quill.root.innerHTML))
+    // Same class the public post page renders content with (see index.css),
+    // so the editor is a true WYSIWYG preview instead of showing Quill's
+    // generic default typography — which resets heading/paragraph margins to
+    // 0 — while the live post uses the site's actual heading spacing.
+    quill.root.classList.add('blog-content')
+    // Not quill.root.innerHTML = value: that bypasses Quill's own HTML parser,
+    // so tags it doesn't already recognize as a matching Delta (plain
+    // hand-authored <ul>/<ol> from before this editor existed, in particular)
+    // silently vanish the moment Quill's MutationObserver reconciles the DOM
+    // against its internal model. Routing it through the clipboard parser is
+    // the supported way to hydrate arbitrary saved HTML.
+    quill.clipboard.dangerouslyPasteHTML(value)
+    quill.on('text-change', () =>
+      onChangeRef.current(normalizeQuillLists(quill.root.innerHTML)),
+    )
 
     return () => {
       // Quill inserts its generated toolbar as a sibling of editorEl, not a
@@ -68,7 +113,7 @@ export function RichTextEditor({
   const editor = (
     <div
       ref={wrapperRef}
-      className="[&_.ql-container]:min-h-[320px] [&_.ql-container]:rounded-b-xl [&_.ql-container]:border-ink-200 [&_.ql-container]:text-sm [&_.ql-toolbar]:rounded-t-xl [&_.ql-toolbar]:border-ink-200"
+      className="rte-editor [&_.ql-container]:min-h-[320px] [&_.ql-container]:rounded-b-xl [&_.ql-container]:border-ink-200 [&_.ql-container]:text-sm [&_.ql-toolbar]:rounded-t-xl [&_.ql-toolbar]:border-ink-200"
     />
   )
 
