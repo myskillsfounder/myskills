@@ -5,10 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Favicon. Only favicon.png exists in public/ — the old /favicon.png
-       reference 404'd on every page load. -->
- <link rel="icon" href="/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="/favicon.png">
+  <!-- Favicon. The ?v= query busts browsers' (very sticky, separate from
+       normal disk cache) favicon cache -- bump it whenever this file
+       changes, since public/.htaccess deliberately caches root-level PNGs
+       only briefly now but that fix only helps clients who haven't already
+       cached the old one under the un-versioned URL. -->
+ <link rel="icon" href="/favicon.png?v=2" type="image/png">
+<link rel="apple-touch-icon" href="/favicon.png?v=2">
   <meta name="theme-color" content="#7c3aed" />
 
   <!-- Defaults. scripts/generate-seo.mjs replaces title + description per page
