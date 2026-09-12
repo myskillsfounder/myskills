@@ -239,18 +239,35 @@ body {
    CONTENT (blog + rich editor output)
    ==========================================================================*/
 
-.blog-content { color: var(--color-ink-700); font-size: 1.05rem; line-height: 1.75; }
-.blog-content h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; margin: 1.6em 0 .5em; color: var(--color-ink-900); }
-.blog-content h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin: 1.3em 0 .4em; color: var(--color-ink-900); }
-.blog-content p { margin: 1em 0; }
-.blog-content ul { list-style: disc; padding-left: 1.5em; margin: 1em 0; }
-.blog-content ol { list-style: decimal; padding-left: 1.5em; margin: 1em 0; }
-.blog-content li { margin: .35em 0; }
-.blog-content a { color: var(--color-brand-700); text-decoration: underline; }
-.blog-content blockquote { border-left: 3px solid var(--color-brand-200); padding-left: 1.1em; margin: 1.2em 0; color: var(--color-ink-600); font-style: italic; }
-.blog-content pre { background: var(--color-ink-900); color: #f4f4f5; border-radius: .75rem; padding: 1em 1.15em; overflow-x: auto; font-size: .9em; margin: 1.2em 0; }
-.blog-content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-.blog-content img { max-width: 100%; height: auto; border-radius: .75rem; margin: 1.2em 0; }
+/* Every selector here is duplicated as `.rte-editor .ql-editor.blog-content
+   X` at higher specificity than Quill's own `.ql-editor X` resets (which zero
+   out heading/paragraph/blockquote margins) — otherwise the admin rich text
+   editor stops being a true preview of the published post the moment Quill's
+   stylesheet loads. Keep both variants of each rule in sync. */
+.blog-content,
+.rte-editor .ql-editor.blog-content { color: var(--color-ink-700); font-size: 1.05rem; line-height: 1.75; }
+.blog-content h2,
+.rte-editor .ql-editor.blog-content h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; margin: 1.6em 0 .5em; color: var(--color-ink-900); }
+.blog-content h3,
+.rte-editor .ql-editor.blog-content h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin: 1.3em 0 .4em; color: var(--color-ink-900); }
+.blog-content p,
+.rte-editor .ql-editor.blog-content p { margin: 1em 0; }
+.blog-content ul,
+.rte-editor .ql-editor.blog-content ul { list-style: disc; padding-left: 1.5em; margin: 1em 0; }
+.blog-content ol,
+.rte-editor .ql-editor.blog-content ol { list-style: decimal; padding-left: 1.5em; margin: 1em 0; }
+.blog-content li,
+.rte-editor .ql-editor.blog-content li { margin: .35em 0; }
+.blog-content a,
+.rte-editor .ql-editor.blog-content a { color: var(--color-brand-700); text-decoration: underline; }
+.blog-content blockquote,
+.rte-editor .ql-editor.blog-content blockquote { border-left: 3px solid var(--color-brand-200); padding-left: 1.1em; margin: 1.2em 0; color: var(--color-ink-600); font-style: italic; }
+.blog-content pre,
+.rte-editor .ql-editor.blog-content pre { background: var(--color-ink-900); color: #f4f4f5; border-radius: .75rem; padding: 1em 1.15em; overflow-x: auto; font-size: .9em; margin: 1.2em 0; }
+.blog-content code,
+.rte-editor .ql-editor.blog-content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.blog-content img,
+.rte-editor .ql-editor.blog-content img { max-width: 100%; height: auto; border-radius: .75rem; margin: 1.2em 0; }
 
 @media print {
   .no-print { display: none !important; }
