@@ -67,6 +67,19 @@ RewriteRule . /index.html [L]
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
 
+  # Root-level branding files (favicon, logo mark, app icons) aren't
+  # content-hashed like Vite's /assets output, so the immutable 1-year rule
+  # above -- correct for hashed bundles, where a real change gets a new URL
+  # -- instead means a logo/favicon update never reaches anyone who already
+  # has the old file cached, for up to a year. FilesMatch matches on the
+  # request's basename regardless of directory, and a later `Header set`
+  # for the same header wins over an earlier one, so this narrows those
+  # specific filenames back down to a short, revalidate-friendly cache
+  # without weakening caching for the actual hashed /assets/* files.
+  <FilesMatch "^(favicon\.ico|favicon\.png|logo-mark\.png|icons\.svg)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+
   # Basic hardening. No CSP here — it needs to be worked out against Supabase,
   # Google Fonts and GA before it can be switched on without breaking things.
   Header set X-Content-Type-Options "nosniff"
