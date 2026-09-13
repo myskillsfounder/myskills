@@ -8,6 +8,7 @@
  */
 import { supabase } from './supabase'
 import type { BlogPost } from './blog'
+import type { Certificate } from './certificates'
 
 function raise(error: { message?: string; hint?: string | null } | null): never {
   const message = error?.message?.trim()
@@ -314,4 +315,134 @@ export async function setDemoRequestStatus(id: string, status: DemoRequestStatus
   }
   const { error } = await supabase.from('institution_demo_requests').update(patch).eq('id', id)
   if (error) raise(error)
+}
+
+/* ========================================================================== */
+/* INITIAL ASSESSMENT QUESTIONS                                              */
+/* ========================================================================== */
+
+/**
+ * The question bank and its answer key are separate tables (see
+ * docs/supabase-server-side-grading.sql) so the correct answer never ships to
+ * a test-taker's browser. Admin reads/writes both directly under the
+ * `is_admin()` policies in docs/supabase-admin-assessment-questions.sql —
+ * grading itself still only ever happens through the grade_initial_assessment
+ * RPC, this doesn't touch that path.
+ */
+export interface AdminAssessmentQuestion {
+  id: string
+  category: string
+  question: string
+  options: string[]
+  sort_order: number
+  correct_index: number
+  explanation: string
+}
+
+/** Two plain selects joined client-side, rather than a PostgREST embed —
+ *  the answer key's relationship to the question bank is 1:1 (question_id is
+ *  its primary key), and a manual join is one less thing to get wrong than
+ *  trusting the embed syntax to resolve that cardinality correctly. */
+export async function fetchAllAssessmentQuestions(): Promise<AdminAssessmentQuestion[]> {
+  const [questions, keys] = await Promise.all([
+    supabase
+      .from('initial_assessment_questions')
+      .select('id, category, question, options, sort_order')
+      .order('sort_order', { ascending: true }),
+    supabase.from('initial_assessment_answer_key').select('question_id, correct_index, explanation'),
+  ])
+  if (questions.error) raise(questions.error)
+  if (keys.error) raise(keys.error)
+
+  const keyByQuestionId = new Map((keys.data ?? []).map((k) => [k.question_id, k]))
+  return (questions.data ?? []).map((q) => {
+    const key = keyByQuestionId.get(q.id)
+    return {
+      id: q.id,
+      category: q.category,
+      question: q.question,
+      options: q.options,
+      sort_order: q.sort_order,
+      correct_index: key?.correct_index ?? 0,
+      explanation: key?.explanation ?? '',
+    }
+  })
+}
+
+export interface AssessmentQuestionInput {
+  /** Present when editing; absent for a new question, which gets a
+   *  generated id — the existing bank uses short category-prefixed codes
+   *  (MF001, SEO003, ...) purely as a human-readable convention, not
+   *  anything the grading RPC parses, so a generated id is fine here. */
+  id?: string
+  category: string
+  question: string
+  options: string[]
+  sort_order: number
+  correct_index: number
+  explanation: string
+}
+
+function generateQuestionId(category: string): string {
+  const prefix = category.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase() || 'Q'
+  return `${prefix}-${Date.now().toString(36).toUpperCase()}`
+}
+
+export async function saveAssessmentQuestion(input: AssessmentQuestionInput): Promise<void> {
+  const options = input.options.map((o) => o.trim()).filter(Boolean)
+  if (options.length < 2) throw new Error('At least 2 options are required.')
+  if (input.correct_index < 0 || input.correct_index >= options.length) {
+    throw new Error('Pick which option is correct.')
+  }
+
+  const id = input.id ?? generateQuestionId(input.category)
+  const questionRow = {
+    category: input.category.trim(),
+    question: input.question.trim(),
+    options,
+    sort_order: input.sort_order,
+  }
+
+  if (input.id) {
+    const { error } = await supabase.from('initial_assessment_questions').update(questionRow).eq('id', id)
+    if (error) raise(error)
+  } else {
+    const { error } = await supabase.from('initial_assessment_questions').insert({ id, ...questionRow })
+    if (error) raise(error)
+  }
+
+  // Upsert regardless of new/edit — every question should always have
+  // exactly one answer-key row, and this is the one call that keeps that
+  // true whether or not one already existed.
+  const { error: keyError } = await supabase
+    .from('initial_assessment_answer_key')
+    .upsert({ question_id: id, correct_index: input.correct_index, explanation: input.explanation.trim() })
+  if (keyError) raise(keyError)
+}
+
+/** The answer-key row cascades on delete (see docs/supabase-server-side-grading.sql). */
+export async function deleteAssessmentQuestion(id: string): Promise<void> {
+  const { error } = await supabase.from('initial_assessment_questions').delete().eq('id', id)
+  if (error) raise(error)
+}
+
+/* ========================================================================== */
+/* CERTIFICATES                                                               */
+/* ========================================================================== */
+
+export interface AdminCertificate extends Certificate {
+  profile_id: string
+}
+
+/** Read-only — certificates are issued exclusively by grade_initial_assessment()
+ *  (see docs/supabase-server-side-grading.sql) and have no client-facing
+ *  insert/update policy at all, admin included. This is a view into what's
+ *  already been issued, not a way to mint or alter one. */
+export async function fetchAllCertificates(): Promise<AdminCertificate[]> {
+  const { data, error } = await supabase
+    .from('certificates')
+    .select('id, profile_id, code, recipient_name, kind, percent, title, issued_at')
+    .order('issued_at', { ascending: false })
+  if (error) raise(error)
+  return (data ?? []) as AdminCertificate[]
 }
