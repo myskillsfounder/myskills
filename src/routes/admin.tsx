@@ -5,6 +5,7 @@ import {
   Building2,
   ClipboardList,
   FileText,
+  GraduationCap,
   MessageSquare,
   Megaphone,
   ShieldAlert,
@@ -38,7 +39,8 @@ const TABS = [
   { to: '/admin/certificates', label: 'Certificates', icon: Award },
   { to: '/admin/ads', label: 'Ads', icon: Megaphone },
   { to: '/admin/mentors', label: 'Mentors', icon: UserCheck },
-  { to: '/admin/institutions', label: 'Institutions', icon: Building2 },
+  { to: '/admin/institution-partners', label: 'Partners', icon: GraduationCap },
+  { to: '/admin/institutions', label: 'Demo Requests', icon: Building2 },
 ]
 
 function AdminNav() {
