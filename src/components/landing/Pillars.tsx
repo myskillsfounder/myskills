@@ -37,7 +37,7 @@ const pillars: Pillar[] = [
     icon: Building2,
     title: 'Institutional Support',
     description:
-      "INTERVAL, our exclusive offline partner, runs in-person cohorts for colleges and training institutes, built on the same MySkills tracks.",
+      'Verified training institutes run in-person cohorts built on the same MySkills tracks — with more partners onboarding as they apply.',
     live: true,
   },
   {

@@ -29,6 +29,7 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
+import { Route as BecomeAPartnerInstitutionRouteImport } from './routes/become-a-partner-institution'
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -44,6 +45,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminMentorsRouteImport } from './routes/admin/mentors'
 import { Route as AdminInstitutionsRouteImport } from './routes/admin/institutions'
+import { Route as AdminInstitutionPartnersRouteImport } from './routes/admin/institution-partners'
 import { Route as AdminFeedbackRouteImport } from './routes/admin/feedback'
 import { Route as AdminCertificatesRouteImport } from './routes/admin/certificates'
 import { Route as AdminBlogRouteImport } from './routes/admin/blog'
@@ -150,6 +152,12 @@ const CertificateRoute = CertificateRouteImport.update({
   path: '/certificate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BecomeAPartnerInstitutionRoute =
+  BecomeAPartnerInstitutionRouteImport.update({
+    id: '/become-a-partner-institution',
+    path: '/become-a-partner-institution',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BecomeAMentorRoute = BecomeAMentorRouteImport.update({
   id: '/become-a-mentor',
   path: '/become-a-mentor',
@@ -225,6 +233,12 @@ const AdminInstitutionsRoute = AdminInstitutionsRouteImport.update({
   path: '/institutions',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminInstitutionPartnersRoute =
+  AdminInstitutionPartnersRouteImport.update({
+    id: '/institution-partners',
+    path: '/institution-partners',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
@@ -257,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
+  '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -282,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/institution-partners': typeof AdminInstitutionPartnersRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/mentors': typeof AdminMentorsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -298,6 +314,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
+  '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
   '/certificate': typeof CertificateRoute
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
@@ -322,6 +339,7 @@ export interface FileRoutesByTo {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/institution-partners': typeof AdminInstitutionPartnersRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/mentors': typeof AdminMentorsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -340,6 +358,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
+  '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -365,6 +384,7 @@ export interface FileRoutesById {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/institution-partners': typeof AdminInstitutionPartnersRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/mentors': typeof AdminMentorsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -384,6 +404,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assessment'
     | '/become-a-mentor'
+    | '/become-a-partner-institution'
     | '/certificate'
     | '/community'
     | '/dashboard'
@@ -409,6 +430,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/certificates'
     | '/admin/feedback'
+    | '/admin/institution-partners'
     | '/admin/institutions'
     | '/admin/mentors'
     | '/admin/users'
@@ -425,6 +447,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assessment'
     | '/become-a-mentor'
+    | '/become-a-partner-institution'
     | '/certificate'
     | '/dashboard'
     | '/feedback'
@@ -449,6 +472,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/certificates'
     | '/admin/feedback'
+    | '/admin/institution-partners'
     | '/admin/institutions'
     | '/admin/mentors'
     | '/admin/users'
@@ -466,6 +490,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assessment'
     | '/become-a-mentor'
+    | '/become-a-partner-institution'
     | '/certificate'
     | '/community'
     | '/dashboard'
@@ -491,6 +516,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/certificates'
     | '/admin/feedback'
+    | '/admin/institution-partners'
     | '/admin/institutions'
     | '/admin/mentors'
     | '/admin/users'
@@ -509,6 +535,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AssessmentRoute: typeof AssessmentRoute
   BecomeAMentorRoute: typeof BecomeAMentorRoute
+  BecomeAPartnerInstitutionRoute: typeof BecomeAPartnerInstitutionRoute
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
   DashboardRoute: typeof DashboardRoute
@@ -677,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CertificateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/become-a-partner-institution': {
+      id: '/become-a-partner-institution'
+      path: '/become-a-partner-institution'
+      fullPath: '/become-a-partner-institution'
+      preLoaderRoute: typeof BecomeAPartnerInstitutionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/become-a-mentor': {
       id: '/become-a-mentor'
       path: '/become-a-mentor'
@@ -782,6 +816,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInstitutionsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/institution-partners': {
+      id: '/admin/institution-partners'
+      path: '/institution-partners'
+      fullPath: '/admin/institution-partners'
+      preLoaderRoute: typeof AdminInstitutionPartnersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/feedback': {
       id: '/admin/feedback'
       path: '/feedback'
@@ -826,6 +867,7 @@ interface AdminRouteChildren {
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCertificatesRoute: typeof AdminCertificatesRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
+  AdminInstitutionPartnersRoute: typeof AdminInstitutionPartnersRoute
   AdminInstitutionsRoute: typeof AdminInstitutionsRoute
   AdminMentorsRoute: typeof AdminMentorsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -838,6 +880,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBlogRoute: AdminBlogRoute,
   AdminCertificatesRoute: AdminCertificatesRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
+  AdminInstitutionPartnersRoute: AdminInstitutionPartnersRoute,
   AdminInstitutionsRoute: AdminInstitutionsRoute,
   AdminMentorsRoute: AdminMentorsRoute,
   AdminUsersRoute: AdminUsersRoute,
@@ -867,6 +910,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AssessmentRoute: AssessmentRoute,
   BecomeAMentorRoute: BecomeAMentorRoute,
+  BecomeAPartnerInstitutionRoute: BecomeAPartnerInstitutionRoute,
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,
   DashboardRoute: DashboardRoute,

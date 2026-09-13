@@ -14,7 +14,6 @@ import { AppShell } from '@/components/app/AppShell'
 import { Badge, PageHeader } from '@/components/ui'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
-import { IntervalPromoCard } from '@/components/community/IntervalPromoCard'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -245,13 +244,13 @@ function PublicCommunityPage() {
               icon={Building2}
               live
               title="Institutions"
-              description="INTERVAL, our exclusive offline partner, runs in-person digital marketing training built on the same MySkills tracks."
+              description="Training institutions verified as MySkills partners for offline learning — or apply if that's you."
               action={
                 <Link
-                  to="/signup"
+                  to="/become-a-partner-institution"
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
                 >
-                  Book a demo
+                  Apply to partner
                   <ArrowRight size={15} />
                 </Link>
               }
@@ -305,23 +304,28 @@ function PublicCommunityPage() {
           }
         />
 
-        {/* Institutions — offline learning with our exclusive partner */}
+        {/* Institutions — open partner program */}
         <PillarSection
           icon={Building2}
           live
-          eyebrow="Exclusive offline partner"
-          title="Institutions — offline sessions with INTERVAL"
-          description="INTERVAL is MySkills' exclusive offline training partner — the same skill tracks and assessments you practice here, taught in person for your cohort."
+          eyebrow="Open to institutions"
+          title="Partner with MySkills"
+          description="Run digital marketing courses or training programs? Get listed as a verified MySkills partner institution so our students know who to trust for offline or classroom learning."
           bullets={[
-            "Instructor-led offline sessions, run by INTERVAL's trainers",
-            'Built on the MySkills tracks your students have already practiced',
-            'A personalised pace, tailored to where each student is starting from',
+            'A verified listing your prospective students can find and trust',
+            'Built on the same MySkills tracks your students can already practice',
+            'A guided path from practice scores to real classroom coaching',
           ]}
           actions={
-            <Link to="/signup" className={primaryButton}>
-              Create a free account to book a demo
-              <ArrowRight size={16} />
-            </Link>
+            <>
+              <Link to="/become-a-partner-institution" className={primaryButton}>
+                Apply to partner
+                <ArrowRight size={16} />
+              </Link>
+              <Link to="/community/institutions" className={secondaryButton}>
+                See partner institutions
+              </Link>
+            </>
           }
         />
 
@@ -454,7 +458,7 @@ function CommunityHub() {
           icon={Building2}
           live
           title="Institutions"
-          description="INTERVAL, our exclusive offline partner, runs in-person digital marketing training built on your MySkills progress."
+          description="Training institutions verified as MySkills partners, plus a way for yours to apply to be listed."
           to="/community/institutions"
           ctaLabel="Explore institutions"
         />
@@ -465,10 +469,6 @@ function CommunityHub() {
           description="Real internships with partner companies, so your practice turns into work experience you can actually show."
           lockedNote="We're building this — check back soon."
         />
-      </div>
-
-      <div className="mt-6">
-        <IntervalPromoCard />
       </div>
     </AppShell>
   )
