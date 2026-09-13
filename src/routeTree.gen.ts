@@ -45,7 +45,9 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminMentorsRouteImport } from './routes/admin/mentors'
 import { Route as AdminInstitutionsRouteImport } from './routes/admin/institutions'
 import { Route as AdminFeedbackRouteImport } from './routes/admin/feedback'
+import { Route as AdminCertificatesRouteImport } from './routes/admin/certificates'
 import { Route as AdminBlogRouteImport } from './routes/admin/blog'
+import { Route as AdminAssessmentQuestionsRouteImport } from './routes/admin/assessment-questions'
 import { Route as AdminAdsRouteImport } from './routes/admin/ads'
 
 const TestsRoute = TestsRouteImport.update({
@@ -228,11 +230,22 @@ const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
   path: '/feedback',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCertificatesRoute = AdminCertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminBlogRoute = AdminBlogRouteImport.update({
   id: '/blog',
   path: '/blog',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAssessmentQuestionsRoute =
+  AdminAssessmentQuestionsRouteImport.update({
+    id: '/assessment-questions',
+    path: '/assessment-questions',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminAdsRoute = AdminAdsRouteImport.update({
   id: '/ads',
   path: '/ads',
@@ -265,7 +278,9 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
   '/admin/ads': typeof AdminAdsRoute
+  '/admin/assessment-questions': typeof AdminAssessmentQuestionsRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -303,7 +318,9 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
   '/admin/ads': typeof AdminAdsRoute
+  '/admin/assessment-questions': typeof AdminAssessmentQuestionsRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -344,7 +361,9 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
   '/admin/ads': typeof AdminAdsRoute
+  '/admin/assessment-questions': typeof AdminAssessmentQuestionsRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/institutions': typeof AdminInstitutionsRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -386,7 +405,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tests'
     | '/admin/ads'
+    | '/admin/assessment-questions'
     | '/admin/blog'
+    | '/admin/certificates'
     | '/admin/feedback'
     | '/admin/institutions'
     | '/admin/mentors'
@@ -424,7 +445,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tests'
     | '/admin/ads'
+    | '/admin/assessment-questions'
     | '/admin/blog'
+    | '/admin/certificates'
     | '/admin/feedback'
     | '/admin/institutions'
     | '/admin/mentors'
@@ -464,7 +487,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tests'
     | '/admin/ads'
+    | '/admin/assessment-questions'
     | '/admin/blog'
+    | '/admin/certificates'
     | '/admin/feedback'
     | '/admin/institutions'
     | '/admin/mentors'
@@ -764,11 +789,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFeedbackRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/certificates': {
+      id: '/admin/certificates'
+      path: '/certificates'
+      fullPath: '/admin/certificates'
+      preLoaderRoute: typeof AdminCertificatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/blog': {
       id: '/admin/blog'
       path: '/blog'
       fullPath: '/admin/blog'
       preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/assessment-questions': {
+      id: '/admin/assessment-questions'
+      path: '/assessment-questions'
+      fullPath: '/admin/assessment-questions'
+      preLoaderRoute: typeof AdminAssessmentQuestionsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/ads': {
@@ -783,7 +822,9 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdsRoute: typeof AdminAdsRoute
+  AdminAssessmentQuestionsRoute: typeof AdminAssessmentQuestionsRoute
   AdminBlogRoute: typeof AdminBlogRoute
+  AdminCertificatesRoute: typeof AdminCertificatesRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
   AdminInstitutionsRoute: typeof AdminInstitutionsRoute
   AdminMentorsRoute: typeof AdminMentorsRoute
@@ -793,7 +834,9 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdsRoute: AdminAdsRoute,
+  AdminAssessmentQuestionsRoute: AdminAssessmentQuestionsRoute,
   AdminBlogRoute: AdminBlogRoute,
+  AdminCertificatesRoute: AdminCertificatesRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
   AdminInstitutionsRoute: AdminInstitutionsRoute,
   AdminMentorsRoute: AdminMentorsRoute,
