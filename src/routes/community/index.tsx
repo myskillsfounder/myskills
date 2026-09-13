@@ -234,13 +234,6 @@ function PublicCommunityPage() {
               }
             />
             <PillarCard
-              icon={Briefcase}
-              live={false}
-              title="Internships"
-              description="Real internships with partner companies, so your practice turns into work experience you can actually show."
-              action={<p className="text-sm font-medium text-ink-400">Opening soon</p>}
-            />
-            <PillarCard
               icon={Building2}
               live
               title="Institutions"
@@ -254,6 +247,13 @@ function PublicCommunityPage() {
                   <ArrowRight size={15} />
                 </Link>
               }
+            />
+            <PillarCard
+              icon={Briefcase}
+              live={false}
+              title="Internships"
+              description="Real internships with partner companies, so your practice turns into work experience you can actually show."
+              action={<p className="text-sm font-medium text-ink-400">Opening soon</p>}
             />
           </div>
         </section>
@@ -283,31 +283,11 @@ function PublicCommunityPage() {
           }
         />
 
-        {/* Internships — real work experience */}
-        <PillarSection
-          icon={Briefcase}
-          live={false}
-          reverse
-          eyebrow="Coming soon"
-          title="Internships with partner companies"
-          description="Practice scenarios prove you know the theory. This is where you prove you can do the job — real internship briefs from companies, scored and reviewed like the work it is."
-          bullets={[
-            'Work real internship briefs, not hypotheticals',
-            'Build a portfolio piece you can actually show in interviews',
-            "Get matched by the skill tracks you've already proven",
-          ]}
-          actions={
-            <Link to="/signup" className={notifyButton}>
-              Create a free account
-              <ArrowRight size={16} />
-            </Link>
-          }
-        />
-
         {/* Institutions — open partner program */}
         <PillarSection
           icon={Building2}
           live
+          reverse
           eyebrow="Open to institutions"
           title="Partner with MySkills"
           description="Run digital marketing courses or training programs? Get listed as a verified MySkills partner institution so our students know who to trust for offline or classroom learning."
@@ -326,6 +306,26 @@ function PublicCommunityPage() {
                 See partner institutions
               </Link>
             </>
+          }
+        />
+
+        {/* Internships — real work experience, scheduled for later so it goes last */}
+        <PillarSection
+          icon={Briefcase}
+          live={false}
+          eyebrow="Coming soon"
+          title="Internships with partner companies"
+          description="Practice scenarios prove you know the theory. This is where you prove you can do the job — real internship briefs from companies, scored and reviewed like the work it is."
+          bullets={[
+            'Work real internship briefs, not hypotheticals',
+            'Build a portfolio piece you can actually show in interviews',
+            "Get matched by the skill tracks you've already proven",
+          ]}
+          actions={
+            <Link to="/signup" className={notifyButton}>
+              Create a free account
+              <ArrowRight size={16} />
+            </Link>
           }
         />
 
