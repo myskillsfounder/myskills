@@ -427,6 +427,134 @@ export async function deleteAssessmentQuestion(id: string): Promise<void> {
 }
 
 /* ========================================================================== */
+/* PRACTICE QUESTION SETS                                                    */
+/* ========================================================================== */
+
+/**
+ * Admin-authored MCQ sets, separate from initial_assessment_questions on
+ * purpose — see docs/supabase-practice-question-sets.sql. grade_initial_assessment()
+ * grades every row in that table as one 35-question exam, so a second quiz's
+ * questions can never live there without corrupting that score. This is a
+ * fresh bank an admin can create as many of, one set per named quiz.
+ */
+export interface PracticeQuestionSet {
+  id: string
+  name: string
+  description: string
+  sort_order: number
+  created_at: string
+  question_count: number
+}
+
+export async function fetchPracticeQuestionSets(): Promise<PracticeQuestionSet[]> {
+  const [sets, questions] = await Promise.all([
+    supabase
+      .from('practice_question_sets')
+      .select('id, name, description, sort_order, created_at')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true }),
+    supabase.from('practice_set_questions').select('set_id'),
+  ])
+  if (sets.error) raise(sets.error)
+  if (questions.error) raise(questions.error)
+
+  const countBySetId = new Map<string, number>()
+  for (const q of questions.data ?? []) {
+    countBySetId.set(q.set_id, (countBySetId.get(q.set_id) ?? 0) + 1)
+  }
+  return (sets.data ?? []).map((s) => ({ ...s, question_count: countBySetId.get(s.id) ?? 0 }))
+}
+
+export interface PracticeQuestionSetInput {
+  id?: string
+  name: string
+  description: string
+  sort_order: number
+}
+
+export async function savePracticeQuestionSet(input: PracticeQuestionSetInput): Promise<string> {
+  const row = {
+    name: input.name.trim(),
+    description: input.description.trim(),
+    sort_order: input.sort_order,
+  }
+  if (input.id) {
+    const { error } = await supabase.from('practice_question_sets').update(row).eq('id', input.id)
+    if (error) raise(error)
+    return input.id
+  }
+  const { data, error } = await supabase.from('practice_question_sets').insert(row).select('id').single()
+  if (error) raise(error)
+  return data.id
+}
+
+/** Its questions cascade on delete (practice_set_questions.set_id has ON DELETE CASCADE). */
+export async function deletePracticeQuestionSet(id: string): Promise<void> {
+  const { error } = await supabase.from('practice_question_sets').delete().eq('id', id)
+  if (error) raise(error)
+}
+
+export interface PracticeSetQuestion {
+  id: string
+  set_id: string
+  category: string
+  question: string
+  options: string[]
+  sort_order: number
+  correct_index: number
+  explanation: string
+}
+
+export async function fetchPracticeSetQuestions(setId: string): Promise<PracticeSetQuestion[]> {
+  const { data, error } = await supabase
+    .from('practice_set_questions')
+    .select('id, set_id, category, question, options, sort_order, correct_index, explanation')
+    .eq('set_id', setId)
+    .order('sort_order', { ascending: true })
+  if (error) raise(error)
+  return (data ?? []) as PracticeSetQuestion[]
+}
+
+export interface PracticeSetQuestionInput {
+  id?: string
+  set_id: string
+  category: string
+  question: string
+  options: string[]
+  sort_order: number
+  correct_index: number
+  explanation: string
+}
+
+export async function savePracticeSetQuestion(input: PracticeSetQuestionInput): Promise<void> {
+  const options = input.options.map((o) => o.trim()).filter(Boolean)
+  if (options.length < 2) throw new Error('At least 2 options are required.')
+  if (input.correct_index < 0 || input.correct_index >= options.length) {
+    throw new Error('Pick which option is correct.')
+  }
+
+  const row = {
+    set_id: input.set_id,
+    category: input.category.trim(),
+    question: input.question.trim(),
+    options,
+    sort_order: input.sort_order,
+    correct_index: input.correct_index,
+    explanation: input.explanation.trim(),
+  }
+
+  const { error } = input.id
+    ? await supabase.from('practice_set_questions').update(row).eq('id', input.id)
+    : await supabase.from('practice_set_questions').insert(row)
+  if (error) raise(error)
+}
+
+export async function deletePracticeSetQuestion(id: string): Promise<void> {
+  const { error } = await supabase.from('practice_set_questions').delete().eq('id', id)
+  if (error) raise(error)
+}
+
+/* ========================================================================== */
 /* CERTIFICATES                                                               */
 /* ========================================================================== */
 
