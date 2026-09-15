@@ -11,7 +11,7 @@ import {
 } from '@/lib/mentors'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
-export const Route = createFileRoute('/partnerships/mentors')({
+export const Route = createFileRoute('/partnerships/_layout/mentors')({
   component: MentorReviewQueue,
 })
 
