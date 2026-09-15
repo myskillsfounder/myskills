@@ -1,8 +1,9 @@
-import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-router'
-import { Building2, GraduationCap, ShieldAlert, UserCheck } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { createFileRoute, Link, Outlet, useRouter, useRouterState } from '@tanstack/react-router'
+import { Building2, GraduationCap, LogOut, ShieldAlert, UserCheck } from 'lucide-react'
+import { signOut } from '@/lib/auth'
 import { requirePartnershipsSession } from '@/lib/guards'
 import { useHasPartnershipsAccess } from '@/lib/partnerships'
-import { AppShell } from '@/components/app/AppShell'
 import { EmptyState, Skeleton } from '@/components/ui'
 
 /**
@@ -70,32 +71,72 @@ function PartnershipsNav() {
   )
 }
 
+/**
+ * Its own minimal shell, deliberately NOT the shared AppShell — this is a
+ * staff tool for the internal team handling onboarding/demos, not a student
+ * surface, so it drops the Dashboard/Practice/Community/Feedback sidebar,
+ * the ad slider, and the profile-completion nudge entirely. Just a logo, a
+ * sign-out button, and the content.
+ */
+function PartnershipsShell({ children }: { children: ReactNode }) {
+  const router = useRouter()
+
+  async function handleSignOut() {
+    await signOut()
+    router.navigate({ to: '/partnerships/login' })
+  }
+
+  return (
+    <div className="surface-paper min-h-screen">
+      <header className="surface-paper sticky top-0 z-30 border-b border-ink-900/[0.06] backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2.5">
+            <img src="/logo-mark.png" alt="" className="h-8 w-8 shrink-0" />
+            <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
+              MySkills <span className="text-ink-400">·</span> Partnerships
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => void handleSignOut()}
+            className="group flex items-center gap-2 rounded-xl border border-ink-900/[0.08] bg-white px-3.5 py-2 text-sm font-medium text-ink-700 shadow-e1 transition-colors hover:bg-ink-100"
+          >
+            <LogOut size={15} className="text-ink-500 transition-transform duration-300 group-hover:-translate-x-0.5" />
+            Sign out
+          </button>
+        </div>
+      </header>
+      <main className="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-8">{children}</main>
+    </div>
+  )
+}
+
 function PartnershipsLayout() {
   const access = useHasPartnershipsAccess()
 
   if (access === null) {
     return (
-      <AppShell wide>
+      <PartnershipsShell>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="mt-4 h-40 w-full" />
-      </AppShell>
+      </PartnershipsShell>
     )
   }
 
   if (!access) {
     return (
-      <AppShell wide>
+      <PartnershipsShell>
         <EmptyState
           icon={ShieldAlert}
           title="Not available"
           description="This area is limited to MySkills partnerships managers."
         />
-      </AppShell>
+      </PartnershipsShell>
     )
   }
 
   return (
-    <AppShell wide>
+    <PartnershipsShell>
       <div className="mb-5">
         <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">Partnerships</p>
         <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">
@@ -107,6 +148,6 @@ function PartnershipsLayout() {
       </div>
       <PartnershipsNav />
       <Outlet />
-    </AppShell>
+    </PartnershipsShell>
   )
 }
