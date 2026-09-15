@@ -1,11 +1,25 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Award, Building2, ExternalLink, GraduationCap, MapPin, Star } from 'lucide-react'
+import {
+  ArrowLeft,
+  Award,
+  Building2,
+  CheckCircle2,
+  ExternalLink,
+  GraduationCap,
+  MapPin,
+  Send,
+  Sparkles,
+  Star,
+} from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
+import { useAuthUser } from '@/lib/useAuth'
+import { useProfile } from '@/lib/useProfile'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
+import { submitInstitutionLead, type InstitutionLeadInput } from '@/lib/institutionDemoRequests'
 import { AppShell } from '@/components/app/AppShell'
-import { Alert, EmptyState, Skeleton } from '@/components/ui'
+import { Alert, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
 
 // The parent /community layout allows signed-out visitors through (its index
 // page is a public marketing page), so this leaf needs its own guard to stay
@@ -15,6 +29,193 @@ export const Route = createFileRoute('/community/institutions')({
   beforeLoad: requireOnboarded,
   component: InstitutionsPage,
 })
+
+const EMPTY_LEAD: InstitutionLeadInput = {
+  full_name: '',
+  email: '',
+  phone: '',
+  city: '',
+  message: '',
+}
+
+/**
+ * Featured promo for our founding/exclusive partner — the "sponsored slot"
+ * this section had before, brought back with an admission-lead form instead
+ * of a demo-booking one. Writes into the same institution_demo_requests
+ * table that flow always used (see src/lib/institutionDemoRequests.ts);
+ * that table and its admin review queue never went away, only the page that
+ * fed it did.
+ */
+function IntervalPromoCard() {
+  const { user } = useAuthUser()
+  const { profile } = useProfile()
+
+  const [expanded, setExpanded] = useState(false)
+  const [form, setForm] = useState<InstitutionLeadInput>(EMPTY_LEAD)
+  const [errors, setErrors] = useState<Partial<Record<keyof InstitutionLeadInput, string>>>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string>()
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    setForm((f) => ({
+      ...f,
+      full_name: f.full_name || profile?.full_name || '',
+      email: f.email || user?.email || '',
+    }))
+  }, [profile?.full_name, user?.email])
+
+  const set = (key: keyof InstitutionLeadInput) => (e: { target: { value: string } }) => {
+    setForm((f) => ({ ...f, [key]: e.target.value }))
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev))
+  }
+
+  function validate(): Partial<Record<keyof InstitutionLeadInput, string>> {
+    const found: Partial<Record<keyof InstitutionLeadInput, string>> = {}
+    if (form.full_name.trim().length < 2) found.full_name = 'Please enter your full name.'
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) {
+      found.email = 'Enter a valid email address.'
+    }
+    return found
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setSubmitError(undefined)
+
+    const found = validate()
+    if (Object.keys(found).length > 0) {
+      setErrors(found)
+      return
+    }
+    if (!user) return
+
+    setSubmitting(true)
+    try {
+      await submitInstitutionLead(user.id, 'INTERVAL', form)
+      setDone(true)
+    } catch (err) {
+      setSubmitError(errorMessage(err))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-sky-500 shadow-e2">
+      <div className="relative p-5 sm:p-6">
+        <span aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
+        <span className="relative inline-flex items-center rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/80">
+          Founding partner
+        </span>
+
+        <div className="relative mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-600 shadow-e1">
+            <Sparkles size={22} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-display text-lg font-semibold text-white">
+              Get the digital marketing course with INTERVAL
+            </h3>
+            <p className="mt-1 text-sm leading-relaxed text-white/85">
+              MySkills' exclusive offline partner — the same tracks and assessments you practice
+              here, taught in person. Special pricing for MySkills students.
+            </p>
+          </div>
+
+          {!expanded && !done && (
+            <Button
+              size="lg"
+              icon={Send}
+              onClick={() => setExpanded(true)}
+              className="shrink-0 self-start bg-white text-brand-700 hover:bg-white/90 sm:self-auto"
+            >
+              Get discounted pricing
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {expanded && !done && (
+        <form onSubmit={handleSubmit} noValidate className="space-y-4 bg-white p-5 sm:p-6">
+          <p className="text-sm text-ink-600">
+            Share your details and INTERVAL's admissions team will reach out with pricing and
+            batch timings.
+          </p>
+
+          <Input
+            label="Your name"
+            value={form.full_name}
+            onChange={set('full_name')}
+            error={errors.full_name}
+            autoComplete="name"
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label="Email"
+              value={form.email}
+              onChange={set('email')}
+              error={errors.email}
+              type="email"
+              autoComplete="email"
+            />
+            <Input
+              label="Phone"
+              value={form.phone}
+              onChange={set('phone')}
+              error={errors.phone}
+              required={false}
+              type="tel"
+              autoComplete="tel"
+            />
+          </div>
+          <Input
+            label="City"
+            value={form.city}
+            onChange={set('city')}
+            error={errors.city}
+            required={false}
+          />
+          <Textarea
+            label="Anything else?"
+            value={form.message}
+            onChange={set('message')}
+            error={errors.message}
+            required={false}
+            rows={2}
+            placeholder="Preferred batch timing, course you're interested in…"
+          />
+
+          {submitError && (
+            <Alert tone="danger" title="Couldn't send your details">
+              <p>{submitError}</p>
+            </Alert>
+          )}
+
+          <div className="flex gap-2">
+            <Button type="submit" icon={Send} disabled={submitting}>
+              {submitting ? 'Sending…' : 'Send my details'}
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => setExpanded(false)} disabled={submitting}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {done && (
+        <div className="flex items-center gap-3 bg-white p-5 sm:p-6">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <CheckCircle2 size={18} />
+          </span>
+          <p className="text-sm text-ink-700">
+            Thanks! INTERVAL's team will reach out by email or phone with pricing and next steps.
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
 
 function PartnerCard({ partner }: { partner: InstitutionPartner }) {
   return (
@@ -130,6 +331,8 @@ function InstitutionsPage() {
             assessments you practice here, offered offline or in a classroom.
           </p>
         </div>
+
+        <IntervalPromoCard />
 
         {error && (
           <Alert tone="danger" title="Couldn’t load institutions">
