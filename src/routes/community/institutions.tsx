@@ -4,8 +4,10 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowLeft,
   Award,
+  BookOpen,
   Building2,
   CheckCircle2,
+  Clock,
   ExternalLink,
   GraduationCap,
   MapPin,
@@ -16,10 +18,12 @@ import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import {
+  fetchInstitutionCourses,
   fetchInstitutionPartners,
   fetchInstitutionRatings,
   rateInstitutionPartner,
   type InstitutionPartner,
+  type InstitutionPartnerCourse,
   type InstitutionPartnerRating,
 } from '@/lib/institutionPartners'
 import { submitInstitutionLead, type InstitutionLeadInput } from '@/lib/institutionDemoRequests'
@@ -187,11 +191,13 @@ function LeadForm({ partnerName, onDone }: { partnerName: string; onDone: () => 
 
 function PartnerCard({
   partner,
+  courses,
   stats,
   onRate,
   ratingBusy,
 }: {
   partner: InstitutionPartner
+  courses: InstitutionPartnerCourse[]
   stats: RatingStats
   onRate: (rating: number) => void
   ratingBusy: boolean
@@ -237,17 +243,35 @@ function PartnerCard({
         </div>
       </div>
 
-      {partner.courses_offered.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {partner.courses_offered.map((c) => (
-            <span
-              key={c}
-              className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700"
-            >
-              {c}
-            </span>
+      {courses.length > 0 ? (
+        <ul className="mt-4 divide-y divide-ink-100 rounded-xl border border-ink-100">
+          {courses.map((c) => (
+            <li key={c.id} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
+              <span className="inline-flex items-center gap-2 font-medium text-ink-800">
+                <BookOpen size={14} className="shrink-0 text-brand-600" />
+                {c.name}
+              </span>
+              {c.duration && (
+                <span className="inline-flex shrink-0 items-center gap-1 text-xs text-ink-500">
+                  <Clock size={12} /> {c.duration}
+                </span>
+              )}
+            </li>
           ))}
-        </div>
+        </ul>
+      ) : (
+        partner.courses_offered.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {partner.courses_offered.map((c) => (
+              <span
+                key={c}
+                className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+        )
       )}
 
       <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-ink-200 pt-4 text-sm">
@@ -296,6 +320,7 @@ function InstitutionsPage() {
   const { user } = useAuthUser()
   const [partners, setPartners] = useState<InstitutionPartner[]>([])
   const [ratings, setRatings] = useState<InstitutionPartnerRating[]>([])
+  const [courses, setCourses] = useState<InstitutionPartnerCourse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
   const [ratingBusyId, setRatingBusyId] = useState<string>()
@@ -307,8 +332,12 @@ function InstitutionsPage() {
         if (!active) return
         setPartners(list)
         if (list.length > 0) {
-          const r = await fetchInstitutionRatings(list.map((p) => p.id))
-          if (active) setRatings(r)
+          const ids = list.map((p) => p.id)
+          const [r, c] = await Promise.all([fetchInstitutionRatings(ids), fetchInstitutionCourses(ids)])
+          if (active) {
+            setRatings(r)
+            setCourses(c)
+          }
         }
       })
       .catch((e) => active && setError(errorMessage(e)))
@@ -317,6 +346,16 @@ function InstitutionsPage() {
       active = false
     }
   }, [])
+
+  const coursesByInstitution = useMemo(() => {
+    const map = new Map<string, InstitutionPartnerCourse[]>()
+    for (const c of courses) {
+      const list = map.get(c.institution_id)
+      if (list) list.push(c)
+      else map.set(c.institution_id, [c])
+    }
+    return map
+  }, [courses])
 
   const statsByInstitution = useMemo(() => {
     const map = new Map<string, RatingStats>()
@@ -391,6 +430,7 @@ function InstitutionsPage() {
               <PartnerCard
                 key={p.id}
                 partner={p}
+                courses={coursesByInstitution.get(p.id) ?? []}
                 stats={statsByInstitution.get(p.id) ?? { average: 0, count: 0, mine: null }}
                 onRate={(rating) => void handleRate(p.id, rating)}
                 ratingBusy={ratingBusyId === p.id}

@@ -146,6 +146,36 @@ export async function rejectInstitutionPartnerApplication(id: string, note?: str
 }
 
 /* ========================================================================== */
+/* COURSES                                                                    */
+/* ========================================================================== */
+
+/** Per-course detail (name + duration) for a listing — separate from the
+ *  flat courses_offered names on InstitutionPartner, which come straight
+ *  from an application and don't carry duration. Populated per-institution
+ *  by an admin curating that listing (see docs/supabase-institution-partner-courses.sql).
+ *  A partner with no rows here just has no detailed course list yet. */
+export interface InstitutionPartnerCourse {
+  id: string
+  institution_id: string
+  name: string
+  duration: string | null
+  sort_order: number
+}
+
+export async function fetchInstitutionCourses(
+  institutionIds: string[],
+): Promise<InstitutionPartnerCourse[]> {
+  if (institutionIds.length === 0) return []
+  const { data, error } = await supabase
+    .from('institution_partner_courses')
+    .select('id, institution_id, name, duration, sort_order')
+    .in('institution_id', institutionIds)
+    .order('sort_order', { ascending: true })
+  if (error) raise(error)
+  return (data ?? []) as InstitutionPartnerCourse[]
+}
+
+/* ========================================================================== */
 /* RATINGS                                                                    */
 /* ========================================================================== */
 
