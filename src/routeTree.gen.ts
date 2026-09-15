@@ -18,6 +18,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PracticeRouteImport } from './routes/practice'
+import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MentorRouteImport } from './routes/mentor'
 import { Route as LoginRouteImport } from './routes/login'
@@ -35,17 +36,18 @@ import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PromptLibraryIndexRouteImport } from './routes/prompt-library/index'
+import { Route as PartnershipsIndexRouteImport } from './routes/partnerships/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PromptLibraryLibraryIdRouteImport } from './routes/prompt-library/$libraryId'
+import { Route as PartnershipsMentorsRouteImport } from './routes/partnerships/mentors'
+import { Route as PartnershipsInstitutionPartnersRouteImport } from './routes/partnerships/institution-partners'
+import { Route as PartnershipsDemoRequestsRouteImport } from './routes/partnerships/demo-requests'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
-import { Route as AdminMentorsRouteImport } from './routes/admin/mentors'
-import { Route as AdminInstitutionsRouteImport } from './routes/admin/institutions'
-import { Route as AdminInstitutionPartnersRouteImport } from './routes/admin/institution-partners'
 import { Route as AdminFeedbackRouteImport } from './routes/admin/feedback'
 import { Route as AdminCertificatesRouteImport } from './routes/admin/certificates'
 import { Route as AdminBlogRouteImport } from './routes/admin/blog'
@@ -95,6 +97,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PracticeRoute = PracticeRouteImport.update({
   id: '/practice',
   path: '/practice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnershipsRoute = PartnershipsRouteImport.update({
+  id: '/partnerships',
+  path: '/partnerships',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -183,6 +190,11 @@ const PromptLibraryIndexRoute = PromptLibraryIndexRouteImport.update({
   path: '/prompt-library/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartnershipsIndexRoute = PartnershipsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PartnershipsRoute,
+} as any)
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -203,6 +215,23 @@ const PromptLibraryLibraryIdRoute = PromptLibraryLibraryIdRouteImport.update({
   path: '/prompt-library/$libraryId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartnershipsMentorsRoute = PartnershipsMentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
+  getParentRoute: () => PartnershipsRoute,
+} as any)
+const PartnershipsInstitutionPartnersRoute =
+  PartnershipsInstitutionPartnersRouteImport.update({
+    id: '/institution-partners',
+    path: '/institution-partners',
+    getParentRoute: () => PartnershipsRoute,
+  } as any)
+const PartnershipsDemoRequestsRoute =
+  PartnershipsDemoRequestsRouteImport.update({
+    id: '/demo-requests',
+    path: '/demo-requests',
+    getParentRoute: () => PartnershipsRoute,
+  } as any)
 const CommunityMentorsRoute = CommunityMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
@@ -223,22 +252,6 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminMentorsRoute = AdminMentorsRouteImport.update({
-  id: '/mentors',
-  path: '/mentors',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminInstitutionsRoute = AdminInstitutionsRouteImport.update({
-  id: '/institutions',
-  path: '/institutions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminInstitutionPartnersRoute =
-  AdminInstitutionPartnersRouteImport.update({
-    id: '/institution-partners',
-    path: '/institution-partners',
-    getParentRoute: () => AdminRoute,
-  } as any)
 const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
@@ -283,6 +296,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
   '/onboarding': typeof OnboardingRoute
+  '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -297,17 +311,18 @@ export interface FileRoutesByFullPath {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
-  '/admin/institution-partners': typeof AdminInstitutionPartnersRoute
-  '/admin/institutions': typeof AdminInstitutionsRoute
-  '/admin/mentors': typeof AdminMentorsRoute
   '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
+  '/partnerships/demo-requests': typeof PartnershipsDemoRequestsRoute
+  '/partnerships/institution-partners': typeof PartnershipsInstitutionPartnersRoute
+  '/partnerships/mentors': typeof PartnershipsMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/partnerships/': typeof PartnershipsIndexRoute
   '/prompt-library/': typeof PromptLibraryIndexRoute
 }
 export interface FileRoutesByTo {
@@ -339,17 +354,18 @@ export interface FileRoutesByTo {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
-  '/admin/institution-partners': typeof AdminInstitutionPartnersRoute
-  '/admin/institutions': typeof AdminInstitutionsRoute
-  '/admin/mentors': typeof AdminMentorsRoute
   '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
+  '/partnerships/demo-requests': typeof PartnershipsDemoRequestsRoute
+  '/partnerships/institution-partners': typeof PartnershipsInstitutionPartnersRoute
+  '/partnerships/mentors': typeof PartnershipsMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
+  '/partnerships': typeof PartnershipsIndexRoute
   '/prompt-library': typeof PromptLibraryIndexRoute
 }
 export interface FileRoutesById {
@@ -370,6 +386,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
   '/onboarding': typeof OnboardingRoute
+  '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -384,17 +401,18 @@ export interface FileRoutesById {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/feedback': typeof AdminFeedbackRoute
-  '/admin/institution-partners': typeof AdminInstitutionPartnersRoute
-  '/admin/institutions': typeof AdminInstitutionsRoute
-  '/admin/mentors': typeof AdminMentorsRoute
   '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
+  '/partnerships/demo-requests': typeof PartnershipsDemoRequestsRoute
+  '/partnerships/institution-partners': typeof PartnershipsInstitutionPartnersRoute
+  '/partnerships/mentors': typeof PartnershipsMentorsRoute
   '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/partnerships/': typeof PartnershipsIndexRoute
   '/prompt-library/': typeof PromptLibraryIndexRoute
 }
 export interface FileRouteTypes {
@@ -416,6 +434,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mentor'
     | '/onboarding'
+    | '/partnerships'
     | '/practice'
     | '/privacy'
     | '/profile'
@@ -430,17 +449,18 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/certificates'
     | '/admin/feedback'
-    | '/admin/institution-partners'
-    | '/admin/institutions'
-    | '/admin/mentors'
     | '/admin/users'
     | '/blog/$slug'
     | '/community/institutions'
     | '/community/mentors'
+    | '/partnerships/demo-requests'
+    | '/partnerships/institution-partners'
+    | '/partnerships/mentors'
     | '/prompt-library/$libraryId'
     | '/admin/'
     | '/blog/'
     | '/community/'
+    | '/partnerships/'
     | '/prompt-library/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -472,17 +492,18 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/certificates'
     | '/admin/feedback'
-    | '/admin/institution-partners'
-    | '/admin/institutions'
-    | '/admin/mentors'
     | '/admin/users'
     | '/blog/$slug'
     | '/community/institutions'
     | '/community/mentors'
+    | '/partnerships/demo-requests'
+    | '/partnerships/institution-partners'
+    | '/partnerships/mentors'
     | '/prompt-library/$libraryId'
     | '/admin'
     | '/blog'
     | '/community'
+    | '/partnerships'
     | '/prompt-library'
   id:
     | '__root__'
@@ -502,6 +523,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mentor'
     | '/onboarding'
+    | '/partnerships'
     | '/practice'
     | '/privacy'
     | '/profile'
@@ -516,17 +538,18 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/certificates'
     | '/admin/feedback'
-    | '/admin/institution-partners'
-    | '/admin/institutions'
-    | '/admin/mentors'
     | '/admin/users'
     | '/blog/$slug'
     | '/community/institutions'
     | '/community/mentors'
+    | '/partnerships/demo-requests'
+    | '/partnerships/institution-partners'
+    | '/partnerships/mentors'
     | '/prompt-library/$libraryId'
     | '/admin/'
     | '/blog/'
     | '/community/'
+    | '/partnerships/'
     | '/prompt-library/'
   fileRoutesById: FileRoutesById
 }
@@ -547,6 +570,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MentorRoute: typeof MentorRoute
   OnboardingRoute: typeof OnboardingRoute
+  PartnershipsRoute: typeof PartnershipsRouteWithChildren
   PracticeRoute: typeof PracticeRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
@@ -625,6 +649,13 @@ declare module '@tanstack/react-router' {
       path: '/practice'
       fullPath: '/practice'
       preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partnerships': {
+      id: '/partnerships'
+      path: '/partnerships'
+      fullPath: '/partnerships'
+      preLoaderRoute: typeof PartnershipsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -746,6 +777,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PromptLibraryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partnerships/': {
+      id: '/partnerships/'
+      path: '/'
+      fullPath: '/partnerships/'
+      preLoaderRoute: typeof PartnershipsIndexRouteImport
+      parentRoute: typeof PartnershipsRoute
+    }
     '/community/': {
       id: '/community/'
       path: '/'
@@ -774,6 +812,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PromptLibraryLibraryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partnerships/mentors': {
+      id: '/partnerships/mentors'
+      path: '/mentors'
+      fullPath: '/partnerships/mentors'
+      preLoaderRoute: typeof PartnershipsMentorsRouteImport
+      parentRoute: typeof PartnershipsRoute
+    }
+    '/partnerships/institution-partners': {
+      id: '/partnerships/institution-partners'
+      path: '/institution-partners'
+      fullPath: '/partnerships/institution-partners'
+      preLoaderRoute: typeof PartnershipsInstitutionPartnersRouteImport
+      parentRoute: typeof PartnershipsRoute
+    }
+    '/partnerships/demo-requests': {
+      id: '/partnerships/demo-requests'
+      path: '/demo-requests'
+      fullPath: '/partnerships/demo-requests'
+      preLoaderRoute: typeof PartnershipsDemoRequestsRouteImport
+      parentRoute: typeof PartnershipsRoute
+    }
     '/community/mentors': {
       id: '/community/mentors'
       path: '/mentors'
@@ -800,27 +859,6 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/mentors': {
-      id: '/admin/mentors'
-      path: '/mentors'
-      fullPath: '/admin/mentors'
-      preLoaderRoute: typeof AdminMentorsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/institutions': {
-      id: '/admin/institutions'
-      path: '/institutions'
-      fullPath: '/admin/institutions'
-      preLoaderRoute: typeof AdminInstitutionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/institution-partners': {
-      id: '/admin/institution-partners'
-      path: '/institution-partners'
-      fullPath: '/admin/institution-partners'
-      preLoaderRoute: typeof AdminInstitutionPartnersRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/feedback': {
@@ -867,9 +905,6 @@ interface AdminRouteChildren {
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCertificatesRoute: typeof AdminCertificatesRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
-  AdminInstitutionPartnersRoute: typeof AdminInstitutionPartnersRoute
-  AdminInstitutionsRoute: typeof AdminInstitutionsRoute
-  AdminMentorsRoute: typeof AdminMentorsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -880,9 +915,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBlogRoute: AdminBlogRoute,
   AdminCertificatesRoute: AdminCertificatesRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
-  AdminInstitutionPartnersRoute: AdminInstitutionPartnersRoute,
-  AdminInstitutionsRoute: AdminInstitutionsRoute,
-  AdminMentorsRoute: AdminMentorsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -905,6 +937,24 @@ const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
   CommunityRouteChildren,
 )
 
+interface PartnershipsRouteChildren {
+  PartnershipsDemoRequestsRoute: typeof PartnershipsDemoRequestsRoute
+  PartnershipsInstitutionPartnersRoute: typeof PartnershipsInstitutionPartnersRoute
+  PartnershipsMentorsRoute: typeof PartnershipsMentorsRoute
+  PartnershipsIndexRoute: typeof PartnershipsIndexRoute
+}
+
+const PartnershipsRouteChildren: PartnershipsRouteChildren = {
+  PartnershipsDemoRequestsRoute: PartnershipsDemoRequestsRoute,
+  PartnershipsInstitutionPartnersRoute: PartnershipsInstitutionPartnersRoute,
+  PartnershipsMentorsRoute: PartnershipsMentorsRoute,
+  PartnershipsIndexRoute: PartnershipsIndexRoute,
+}
+
+const PartnershipsRouteWithChildren = PartnershipsRoute._addFileChildren(
+  PartnershipsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -922,6 +972,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MentorRoute: MentorRoute,
   OnboardingRoute: OnboardingRoute,
+  PartnershipsRoute: PartnershipsRouteWithChildren,
   PracticeRoute: PracticeRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,

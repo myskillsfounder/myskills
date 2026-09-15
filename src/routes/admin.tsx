@@ -2,14 +2,12 @@ import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-r
 import {
   Award,
   BarChart3,
-  Building2,
   ClipboardList,
   FileText,
-  GraduationCap,
+  Handshake,
   MessageSquare,
   Megaphone,
   ShieldAlert,
-  UserCheck,
   Users,
 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -32,20 +30,19 @@ export const Route = createFileRoute('/admin')({
 
 // Ordered by how often an admin actually reaches for it, not alphabetically —
 // the daily-use sections (analytics, users, grading, certificates) come
-// first; the ones opened occasionally (blog, ads) or nearly never
-// (institution_demo_requests is superseded by the partner-application flow,
-// kept only as historical data) trail at the end.
+// first; the ones opened rarely (blog, ads) trail at the end. Mentor,
+// institution-partner and demo-request review moved out entirely — that's
+// now the separate /partnerships portal (docs/supabase-partnerships-portal.sql),
+// reachable by admins from here too via the Partnerships card.
 const TABS = [
   { to: '/admin', label: 'Overview', icon: BarChart3, exact: true },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/assessment-questions', label: 'Assessment', icon: ClipboardList },
   { to: '/admin/certificates', label: 'Certificates', icon: Award },
   { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
-  { to: '/admin/mentors', label: 'Mentors', icon: UserCheck },
-  { to: '/admin/institution-partners', label: 'Partners', icon: GraduationCap },
+  { to: '/partnerships', label: 'Partnerships', icon: Handshake },
   { to: '/admin/blog', label: 'Blog', icon: FileText },
   { to: '/admin/ads', label: 'Ads', icon: Megaphone },
-  { to: '/admin/institutions', label: 'Demo Requests', icon: Building2 },
 ]
 
 function AdminNav() {

@@ -114,7 +114,7 @@ function OverviewPage() {
 
           {stats.mentor_applications_pending > 0 && (
             <Link
-              to="/admin/mentors"
+              to="/partnerships/mentors"
               className="lift mt-5 flex items-center justify-between gap-4 rounded-2xl border border-brand-200 bg-brand-50 p-5"
             >
               <div>

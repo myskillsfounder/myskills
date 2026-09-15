@@ -11,7 +11,7 @@ import {
 } from '@/lib/mentors'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/mentors')({
+export const Route = createFileRoute('/partnerships/mentors')({
   component: MentorReviewQueue,
 })
 
@@ -215,7 +215,7 @@ function MentorReviewQueue() {
   return (
     <>
       <PageHeader
-        eyebrow="Admin"
+        eyebrow="Partnerships"
         title="Mentor applications"
         subtitle="Approve an application to publish that mentor in the Community."
       />

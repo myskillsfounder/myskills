@@ -10,8 +10,8 @@ import {
 } from '@/lib/admin'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/institutions')({
-  component: InstitutionsAdminPage,
+export const Route = createFileRoute('/partnerships/demo-requests')({
+  component: DemoRequestsPage,
 })
 
 const FILTERS: { label: string; value: DemoRequestStatus | 'all' }[] = [
@@ -117,7 +117,7 @@ function RequestCard({
   )
 }
 
-function InstitutionsAdminPage() {
+function DemoRequestsPage() {
   const [requests, setRequests] = useState<AdminDemoRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
@@ -159,9 +159,9 @@ function InstitutionsAdminPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Admin"
-        title="Institutions"
-        subtitle="Demo requests from the Community > Institutions “Book a demo” form."
+        eyebrow="Partnerships"
+        title="Demo requests"
+        subtitle="Leads from the Community > Institutions “Get pricing” form."
       />
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -198,7 +198,7 @@ function InstitutionsAdminPage() {
         <EmptyState
           icon={Building2}
           title="No requests here"
-          description="Demo bookings from Community > Institutions will show up here."
+          description="Leads from Community > Institutions will show up here."
         />
       ) : (
         <div className="space-y-4">

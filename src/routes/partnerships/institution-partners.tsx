@@ -11,7 +11,7 @@ import {
 } from '@/lib/institutionPartners'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/institution-partners')({
+export const Route = createFileRoute('/partnerships/institution-partners')({
   component: InstitutionPartnerReviewQueue,
 })
 
@@ -240,7 +240,7 @@ function InstitutionPartnerReviewQueue() {
   return (
     <>
       <PageHeader
-        eyebrow="Admin"
+        eyebrow="Partnerships"
         title="Institution partner applications"
         subtitle="Approve an application to publish that institution in the Community."
       />
