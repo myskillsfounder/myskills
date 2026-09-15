@@ -30,16 +30,21 @@ export const Route = createFileRoute('/admin')({
   component: AdminLayout,
 })
 
+// Ordered by how often an admin actually reaches for it, not alphabetically —
+// the daily-use sections (analytics, users, grading, certificates) come
+// first; the ones opened occasionally (blog, ads) or nearly never
+// (institution_demo_requests is superseded by the partner-application flow,
+// kept only as historical data) trail at the end.
 const TABS = [
   { to: '/admin', label: 'Overview', icon: BarChart3, exact: true },
   { to: '/admin/users', label: 'Users', icon: Users },
-  { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
-  { to: '/admin/blog', label: 'Blog', icon: FileText },
   { to: '/admin/assessment-questions', label: 'Assessment', icon: ClipboardList },
   { to: '/admin/certificates', label: 'Certificates', icon: Award },
-  { to: '/admin/ads', label: 'Ads', icon: Megaphone },
+  { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
   { to: '/admin/mentors', label: 'Mentors', icon: UserCheck },
   { to: '/admin/institution-partners', label: 'Partners', icon: GraduationCap },
+  { to: '/admin/blog', label: 'Blog', icon: FileText },
+  { to: '/admin/ads', label: 'Ads', icon: Megaphone },
   { to: '/admin/institutions', label: 'Demo Requests', icon: Building2 },
 ]
 
@@ -47,8 +52,8 @@ function AdminNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
 
   return (
-    <nav aria-label="Admin sections" className="mb-6 -mx-1 overflow-x-auto pb-1">
-      <ul className="flex min-w-max gap-1 px-1">
+    <nav aria-label="Admin sections" className="mb-6">
+      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
         {TABS.map(({ to, label, icon: Icon, exact }) => {
           // Prefix matching so a sub-page keeps its tab lit; the overview tab
           // has to be exact or it would match every child route.
@@ -58,13 +63,19 @@ function AdminNav() {
               <Link
                 to={to}
                 aria-current={active ? 'page' : undefined}
-                className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors ${
+                className={`lift flex flex-col items-center gap-1.5 rounded-2xl border px-3 py-3.5 text-center text-sm font-medium transition-colors ${
                   active
-                    ? 'bg-brand-50 text-brand-800 ring-1 ring-brand-100'
-                    : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
+                    ? 'border-brand-200 bg-brand-50 text-brand-800'
+                    : 'border-ink-100 bg-white text-ink-600 hover:border-ink-200 hover:text-ink-900'
                 }`}
               >
-                <Icon size={16} className={active ? 'text-brand-700' : 'text-ink-500'} />
+                <span
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl ${
+                    active ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-500'
+                  }`}
+                >
+                  <Icon size={17} />
+                </span>
                 {label}
               </Link>
             </li>
