@@ -48,3 +48,20 @@ export async function requireOnboardedIfSignedIn(): Promise<void> {
     throw redirect({ to: '/onboarding' })
   }
 }
+
+/**
+ * Signed-in required for /partnerships specifically — redirects to its own
+ * login page, not the main site's /login, and doesn't require the student
+ * onboarding flag the way requireOnboarded does. A partnerships-only account
+ * (internal team, not a student) never touches /login or /onboarding at all.
+ */
+export async function requirePartnershipsSession(): Promise<void> {
+  if (!(await currentSession())) throw redirect({ to: '/partnerships/login' })
+}
+
+/** Guest-only for /partnerships/login: someone already signed in (an admin
+ *  or a partnership manager) skips straight to the portal — the portal
+ *  itself decides whether they actually have access. */
+export async function requireGuestForPartnerships(): Promise<void> {
+  if (await currentSession()) throw redirect({ to: '/partnerships' })
+}

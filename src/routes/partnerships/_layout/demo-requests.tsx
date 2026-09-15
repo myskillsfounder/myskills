@@ -10,7 +10,7 @@ import {
 } from '@/lib/admin'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/partnerships/demo-requests')({
+export const Route = createFileRoute('/partnerships/_layout/demo-requests')({
   component: DemoRequestsPage,
 })
 

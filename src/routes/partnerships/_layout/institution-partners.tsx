@@ -11,7 +11,7 @@ import {
 } from '@/lib/institutionPartners'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
-export const Route = createFileRoute('/partnerships/institution-partners')({
+export const Route = createFileRoute('/partnerships/_layout/institution-partners')({
   component: InstitutionPartnerReviewQueue,
 })
 

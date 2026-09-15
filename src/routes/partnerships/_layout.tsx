@@ -1,23 +1,30 @@
 import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Building2, GraduationCap, ShieldAlert, UserCheck } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
+import { requirePartnershipsSession } from '@/lib/guards'
 import { useHasPartnershipsAccess } from '@/lib/partnerships'
 import { AppShell } from '@/components/app/AppShell'
 import { EmptyState, Skeleton } from '@/components/ui'
 
 /**
- * Layout for /partnerships and its children — a second, narrower door into
- * the same review queues /admin's Mentors, Partners and Demo Requests cards
- * used to open, for someone who runs partnerships but shouldn't have the
- * rest of /admin (Users, Assessment grading, Ads). See
- * docs/supabase-partnerships-portal.sql.
+ * Pathless layout for every /partnerships page EXCEPT /partnerships/login —
+ * the leading underscore means this segment contributes nothing to the URL,
+ * it only groups index/mentors/institution-partners/demo-requests under one
+ * guard + shell. login.tsx is a sibling of this file (not inside _layout/),
+ * so it never goes through requirePartnershipsSession or renders inside
+ * AppShell — it IS the place an unauthenticated visitor lands, so it can't
+ * be behind the same gate it's redirecting them to.
+ *
+ * A second, narrower door into the same review queues /admin's Mentors,
+ * Partners and Demo Requests cards used to open, for someone who runs
+ * partnerships but shouldn't have the rest of /admin (Users, Assessment
+ * grading, Ads). See docs/supabase-partnerships-portal.sql.
  *
  * beforeLoad only keeps signed-out users away; the access check below
  * decides what renders, same split as AdminLayout — neither is a security
  * boundary, RLS is.
  */
-export const Route = createFileRoute('/partnerships')({
-  beforeLoad: requireOnboarded,
+export const Route = createFileRoute('/partnerships/_layout')({
+  beforeLoad: requirePartnershipsSession,
   component: PartnershipsLayout,
 })
 
