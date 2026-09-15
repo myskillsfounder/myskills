@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {
   Activity,
   Award,
@@ -8,21 +8,69 @@ import {
   FileText,
   LogIn,
   MessageSquare,
+  ShieldAlert,
   Star,
   UserCheck,
   UserPlus,
   Users,
 } from 'lucide-react'
 import { fetchOverview, type AdminOverview } from '@/lib/admin'
-import { RequireAdmin } from '@/components/admin/AdminSectionGate'
-import { Alert, PageHeader, Skeleton } from '@/components/ui'
+import { STAFF_SECTIONS, useStaffAccessContext, type StaffSection } from '@/lib/staffAccess'
+import { Alert, EmptyState, PageHeader, Skeleton } from '@/components/ui'
+
+// Overview is admin-only (it aggregates every section's stats in one call),
+// but a non-admin staff member with real section access shouldn't land here
+// and just see a wall — send them straight to their first granted section
+// instead. Only truly access-less accounts (unreachable in practice, the
+// parent layout already blocks those before this ever renders) see "Not
+// available" here.
+const SECTION_PATH: Record<StaffSection, string> = {
+  users: '/admin/users',
+  assessment: '/admin/assessment-questions',
+  certificates: '/admin/certificates',
+  feedback: '/admin/feedback',
+  mentors: '/admin/mentors',
+  'institution-partners': '/admin/institution-partners',
+  'demo-requests': '/admin/demo-requests',
+  blog: '/admin/blog',
+  ads: '/admin/ads',
+}
+
+function OverviewGate() {
+  const router = useRouter()
+  const { isAdmin, sections } = useStaffAccessContext()
+  const firstSection = sections ? STAFF_SECTIONS.find((s) => sections.includes(s)) : undefined
+
+  useEffect(() => {
+    if (isAdmin === false && firstSection) {
+      router.navigate({ to: SECTION_PATH[firstSection] })
+    }
+  }, [isAdmin, firstSection, router])
+
+  if (isAdmin === null || sections === null || (isAdmin === false && firstSection)) {
+    return (
+      <>
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="mt-4 h-40 w-full" />
+      </>
+    )
+  }
+
+  if (!isAdmin) {
+    return (
+      <EmptyState
+        icon={ShieldAlert}
+        title="Not available"
+        description="You don't have access to this section."
+      />
+    )
+  }
+
+  return <OverviewPage />
+}
 
 export const Route = createFileRoute('/admin/_layout/')({
-  component: () => (
-    <RequireAdmin>
-      <OverviewPage />
-    </RequireAdmin>
-  ),
+  component: OverviewGate,
 })
 
 type IconType = typeof Users
