@@ -144,3 +144,49 @@ export async function rejectInstitutionPartnerApplication(id: string, note?: str
   })
   if (error) raise(error)
 }
+
+/* ========================================================================== */
+/* RATINGS                                                                    */
+/* ========================================================================== */
+
+/** One student's rating of one institution. Raw rows rather than a
+ *  pre-aggregated stats call — the caller (a card showing several
+ *  institutions at once) needs both the per-institution average AND
+ *  whether the current viewer already rated it, and both are cheap to
+ *  derive client-side from the same small row set. */
+export interface InstitutionPartnerRating {
+  institution_id: string
+  profile_id: string
+  rating: number
+}
+
+export async function fetchInstitutionRatings(
+  institutionIds: string[],
+): Promise<InstitutionPartnerRating[]> {
+  if (institutionIds.length === 0) return []
+  const { data, error } = await supabase
+    .from('institution_partner_ratings')
+    .select('institution_id, profile_id, rating')
+    .in('institution_id', institutionIds)
+  if (error) raise(error)
+  return (data ?? []) as InstitutionPartnerRating[]
+}
+
+/** Upsert — rating again updates the student's existing row (RLS only lets
+ *  them touch their own) rather than adding a second one. */
+export async function rateInstitutionPartner(
+  institutionId: string,
+  userId: string,
+  rating: number,
+): Promise<void> {
+  const { error } = await supabase.from('institution_partner_ratings').upsert(
+    {
+      institution_id: institutionId,
+      profile_id: userId,
+      rating,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'institution_id,profile_id' },
+  )
+  if (error) raise(error)
+}
