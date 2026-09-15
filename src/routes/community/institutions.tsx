@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
@@ -10,13 +10,18 @@ import {
   GraduationCap,
   MapPin,
   Send,
-  Sparkles,
   Star,
 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
-import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
+import {
+  fetchInstitutionPartners,
+  fetchInstitutionRatings,
+  rateInstitutionPartner,
+  type InstitutionPartner,
+  type InstitutionPartnerRating,
+} from '@/lib/institutionPartners'
 import { submitInstitutionLead, type InstitutionLeadInput } from '@/lib/institutionDemoRequests'
 import { AppShell } from '@/components/app/AppShell'
 import { Alert, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
@@ -38,24 +43,67 @@ const EMPTY_LEAD: InstitutionLeadInput = {
   message: '',
 }
 
-/**
- * Featured promo for our founding/exclusive partner — the "sponsored slot"
- * this section had before, brought back with an admission-lead form instead
- * of a demo-booking one. Writes into the same institution_demo_requests
- * table that flow always used (see src/lib/institutionDemoRequests.ts);
- * that table and its admin review queue never went away, only the page that
- * fed it did.
- */
-function IntervalPromoCard() {
+interface RatingStats {
+  average: number
+  count: number
+  mine: number | null
+}
+
+/** Clickable 1-5 stars. Every viewer of this page is signed in (the route
+ *  guard requires it), so there's no read-only mode to design for — clicking
+ *  always rates. Shows the viewer's own rating once they've set one (so they
+ *  see their choice persisted), the rounded average before that. */
+function RatingStars({
+  stats,
+  onRate,
+  busy,
+}: {
+  stats: RatingStats
+  onRate: (rating: number) => void
+  busy: boolean
+}) {
+  const [hover, setHover] = useState<number | null>(null)
+  const display = hover ?? stats.mine ?? Math.round(stats.average)
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="flex items-center" onMouseLeave={() => setHover(null)}>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <button
+            key={i}
+            type="button"
+            disabled={busy}
+            onMouseEnter={() => setHover(i)}
+            onClick={() => onRate(i)}
+            aria-label={`Rate ${i} star${i === 1 ? '' : 's'}`}
+            className="p-0.5 text-ink-300 disabled:cursor-wait"
+          >
+            <Star size={16} className={i <= display ? 'fill-amber-500 text-amber-500' : ''} />
+          </button>
+        ))}
+      </div>
+      <span className="text-xs text-ink-500">
+        {stats.count > 0
+          ? `${stats.average.toFixed(1)} (${stats.count} ${stats.count === 1 ? 'rating' : 'ratings'})`
+          : 'Be the first to rate'}
+      </span>
+    </div>
+  )
+}
+
+/** Inline "get pricing" lead form, shared by every partner card. Writes into
+ *  institution_demo_requests (docs/supabase-institution-demo-requests.sql)
+ *  with `partner` set to this specific institution's name — that table
+ *  predates the partner-directory rework and was never institution-specific
+ *  on its own, just fed by a single hardcoded page before. */
+function LeadForm({ partnerName, onDone }: { partnerName: string; onDone: () => void }) {
   const { user } = useAuthUser()
   const { profile } = useProfile()
 
-  const [expanded, setExpanded] = useState(false)
   const [form, setForm] = useState<InstitutionLeadInput>(EMPTY_LEAD)
   const [errors, setErrors] = useState<Partial<Record<keyof InstitutionLeadInput, string>>>({})
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string>()
-  const [done, setDone] = useState(false)
 
   useEffect(() => {
     setForm((f) => ({
@@ -92,8 +140,8 @@ function IntervalPromoCard() {
 
     setSubmitting(true)
     try {
-      await submitInstitutionLead(user.id, 'INTERVAL', form)
-      setDone(true)
+      await submitInstitutionLead(user.id, partnerName, form)
+      onDone()
     } catch (err) {
       setSubmitError(errorMessage(err))
     } finally {
@@ -102,122 +150,55 @@ function IntervalPromoCard() {
   }
 
   return (
-    <div className="mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-sky-500 shadow-e2">
-      <div className="relative p-5 sm:p-6">
-        <span aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
-        <span className="relative inline-flex items-center rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/80">
-          Founding partner
-        </span>
+    <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-4 border-t border-ink-200 pt-4">
+      <p className="text-sm text-ink-600">
+        Share your details and {partnerName}'s admissions team will reach out with pricing and
+        batch timings.
+      </p>
 
-        <div className="relative mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-600 shadow-e1">
-            <Sparkles size={22} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-display text-lg font-semibold text-white">
-              Get the digital marketing course with INTERVAL
-            </h3>
-            <p className="mt-1 text-sm leading-relaxed text-white/85">
-              MySkills' exclusive offline partner — the same tracks and assessments you practice
-              here, taught in person. Special pricing for MySkills students.
-            </p>
-          </div>
-
-          {!expanded && !done && (
-            <Button
-              size="lg"
-              icon={Send}
-              onClick={() => setExpanded(true)}
-              className="shrink-0 self-start bg-white text-brand-700 hover:bg-white/90 sm:self-auto"
-            >
-              Get discounted pricing
-            </Button>
-          )}
-        </div>
+      <Input label="Your name" value={form.full_name} onChange={set('full_name')} error={errors.full_name} autoComplete="name" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input label="Email" value={form.email} onChange={set('email')} error={errors.email} type="email" autoComplete="email" />
+        <Input label="Phone" value={form.phone} onChange={set('phone')} error={errors.phone} required={false} type="tel" autoComplete="tel" />
       </div>
+      <Input label="City" value={form.city} onChange={set('city')} error={errors.city} required={false} />
+      <Textarea
+        label="Anything else?"
+        value={form.message}
+        onChange={set('message')}
+        error={errors.message}
+        required={false}
+        rows={2}
+        placeholder="Preferred batch timing, course you're interested in…"
+      />
 
-      {expanded && !done && (
-        <form onSubmit={handleSubmit} noValidate className="space-y-4 bg-white p-5 sm:p-6">
-          <p className="text-sm text-ink-600">
-            Share your details and INTERVAL's admissions team will reach out with pricing and
-            batch timings.
-          </p>
-
-          <Input
-            label="Your name"
-            value={form.full_name}
-            onChange={set('full_name')}
-            error={errors.full_name}
-            autoComplete="name"
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Input
-              label="Email"
-              value={form.email}
-              onChange={set('email')}
-              error={errors.email}
-              type="email"
-              autoComplete="email"
-            />
-            <Input
-              label="Phone"
-              value={form.phone}
-              onChange={set('phone')}
-              error={errors.phone}
-              required={false}
-              type="tel"
-              autoComplete="tel"
-            />
-          </div>
-          <Input
-            label="City"
-            value={form.city}
-            onChange={set('city')}
-            error={errors.city}
-            required={false}
-          />
-          <Textarea
-            label="Anything else?"
-            value={form.message}
-            onChange={set('message')}
-            error={errors.message}
-            required={false}
-            rows={2}
-            placeholder="Preferred batch timing, course you're interested in…"
-          />
-
-          {submitError && (
-            <Alert tone="danger" title="Couldn't send your details">
-              <p>{submitError}</p>
-            </Alert>
-          )}
-
-          <div className="flex gap-2">
-            <Button type="submit" icon={Send} disabled={submitting}>
-              {submitting ? 'Sending…' : 'Send my details'}
-            </Button>
-            <Button type="button" variant="ghost" onClick={() => setExpanded(false)} disabled={submitting}>
-              Cancel
-            </Button>
-          </div>
-        </form>
+      {submitError && (
+        <Alert tone="danger" title="Couldn't send your details">
+          <p>{submitError}</p>
+        </Alert>
       )}
 
-      {done && (
-        <div className="flex items-center gap-3 bg-white p-5 sm:p-6">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-            <CheckCircle2 size={18} />
-          </span>
-          <p className="text-sm text-ink-700">
-            Thanks! INTERVAL's team will reach out by email or phone with pricing and next steps.
-          </p>
-        </div>
-      )}
-    </div>
+      <Button type="submit" size="sm" icon={Send} disabled={submitting}>
+        {submitting ? 'Sending…' : 'Send my details'}
+      </Button>
+    </form>
   )
 }
 
-function PartnerCard({ partner }: { partner: InstitutionPartner }) {
+function PartnerCard({
+  partner,
+  stats,
+  onRate,
+  ratingBusy,
+}: {
+  partner: InstitutionPartner
+  stats: RatingStats
+  onRate: (rating: number) => void
+  ratingBusy: boolean
+}) {
+  const [showForm, setShowForm] = useState(false)
+  const [done, setDone] = useState(false)
+
   return (
     <div className="card p-6 shadow-sm">
       <div className="flex items-start gap-4">
@@ -247,10 +228,11 @@ function PartnerCard({ partner }: { partner: InstitutionPartner }) {
               education
             </span>
             {partner.google_rating != null && (
-              <span className="inline-flex items-center gap-1 font-medium text-amber-700">
-                <Star size={13} className="fill-amber-500 text-amber-500" /> {partner.google_rating.toFixed(1)}
-              </span>
+              <span className="text-ink-400">Google {partner.google_rating.toFixed(1)}</span>
             )}
+          </div>
+          <div className="mt-2">
+            <RatingStars stats={stats} onRate={onRate} busy={ratingBusy} />
           </div>
         </div>
       </div>
@@ -268,28 +250,42 @@ function PartnerCard({ partner }: { partner: InstitutionPartner }) {
         </div>
       )}
 
-      {(partner.website_url || partner.google_profile_url) && (
-        <div className="mt-4 flex flex-wrap gap-4 border-t border-ink-200 pt-4 text-sm">
-          {partner.website_url && (
-            <a
-              href={partner.website_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-ink-600 hover:text-brand-700"
-            >
-              <ExternalLink size={14} /> Website
-            </a>
-          )}
-          {partner.google_profile_url && (
-            <a
-              href={partner.google_profile_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-ink-600 hover:text-brand-700"
-            >
-              <ExternalLink size={14} /> Google profile
-            </a>
-          )}
+      <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-ink-200 pt-4 text-sm">
+        {partner.website_url && (
+          <a
+            href={partner.website_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-ink-600 hover:text-brand-700"
+          >
+            <ExternalLink size={14} /> Website
+          </a>
+        )}
+        {partner.google_profile_url && (
+          <a
+            href={partner.google_profile_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-ink-600 hover:text-brand-700"
+          >
+            <ExternalLink size={14} /> Google profile
+          </a>
+        )}
+        {!done && !showForm && (
+          <Button size="sm" variant="secondary" onClick={() => setShowForm(true)} className="ml-auto">
+            Get pricing
+          </Button>
+        )}
+      </div>
+
+      {showForm && !done && <LeadForm partnerName={partner.legal_name} onDone={() => setDone(true)} />}
+
+      {done && (
+        <div className="mt-4 flex items-center gap-3 rounded-xl bg-emerald-50 p-4">
+          <CheckCircle2 size={18} className="shrink-0 text-emerald-600" />
+          <p className="text-sm text-emerald-800">
+            Thanks! {partner.legal_name}'s team will reach out with pricing and next steps.
+          </p>
         </div>
       )}
     </div>
@@ -297,20 +293,60 @@ function PartnerCard({ partner }: { partner: InstitutionPartner }) {
 }
 
 function InstitutionsPage() {
+  const { user } = useAuthUser()
   const [partners, setPartners] = useState<InstitutionPartner[]>([])
+  const [ratings, setRatings] = useState<InstitutionPartnerRating[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
+  const [ratingBusyId, setRatingBusyId] = useState<string>()
 
   useEffect(() => {
     let active = true
     fetchInstitutionPartners()
-      .then((list) => active && setPartners(list))
+      .then(async (list) => {
+        if (!active) return
+        setPartners(list)
+        if (list.length > 0) {
+          const r = await fetchInstitutionRatings(list.map((p) => p.id))
+          if (active) setRatings(r)
+        }
+      })
       .catch((e) => active && setError(errorMessage(e)))
       .finally(() => active && setLoading(false))
     return () => {
       active = false
     }
   }, [])
+
+  const statsByInstitution = useMemo(() => {
+    const map = new Map<string, RatingStats>()
+    for (const p of partners) map.set(p.id, { average: 0, count: 0, mine: null })
+    for (const r of ratings) {
+      const s = map.get(r.institution_id)
+      if (!s) continue
+      s.average = (s.average * s.count + r.rating) / (s.count + 1)
+      s.count += 1
+      if (r.profile_id === user?.id) s.mine = r.rating
+    }
+    return map
+  }, [partners, ratings, user?.id])
+
+  async function handleRate(institutionId: string, rating: number) {
+    if (!user) return
+    setRatingBusyId(institutionId)
+    setError(undefined)
+    try {
+      await rateInstitutionPartner(institutionId, user.id, rating)
+      setRatings((prev) => {
+        const others = prev.filter((r) => !(r.institution_id === institutionId && r.profile_id === user.id))
+        return [...others, { institution_id: institutionId, profile_id: user.id, rating }]
+      })
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setRatingBusyId(undefined)
+    }
+  }
 
   return (
     <AppShell>
@@ -328,16 +364,17 @@ function InstitutionsPage() {
           </h1>
           <p className="mt-1 text-sm text-ink-600">
             Training institutions verified as MySkills partners — the same skill tracks and
-            assessments you practice here, offered offline or in a classroom.
+            assessments you practice here, offered offline or in a classroom. Rate the ones
+            you've experienced.
           </p>
         </div>
 
-        <IntervalPromoCard />
-
         {error && (
-          <Alert tone="danger" title="Couldn’t load institutions">
-            <p>{error}</p>
-          </Alert>
+          <div className="mb-5">
+            <Alert tone="danger" title="Couldn’t load institutions">
+              <p>{error}</p>
+            </Alert>
+          </div>
         )}
 
         {loading ? (
@@ -351,7 +388,13 @@ function InstitutionsPage() {
         ) : (
           <div className="space-y-5">
             {partners.map((p) => (
-              <PartnerCard key={p.id} partner={p} />
+              <PartnerCard
+                key={p.id}
+                partner={p}
+                stats={statsByInstitution.get(p.id) ?? { average: 0, count: 0, mine: null }}
+                onRate={(rating) => void handleRate(p.id, rating)}
+                ratingBusy={ratingBusyId === p.id}
+              />
             ))}
           </div>
         )}
