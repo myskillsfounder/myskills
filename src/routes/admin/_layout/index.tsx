@@ -14,10 +14,15 @@ import {
   Users,
 } from 'lucide-react'
 import { fetchOverview, type AdminOverview } from '@/lib/admin'
+import { RequireAdmin } from '@/components/admin/AdminSectionGate'
 import { Alert, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/')({
-  component: OverviewPage,
+export const Route = createFileRoute('/admin/_layout/')({
+  component: () => (
+    <RequireAdmin>
+      <OverviewPage />
+    </RequireAdmin>
+  ),
 })
 
 type IconType = typeof Users
@@ -114,7 +119,7 @@ function OverviewPage() {
 
           {stats.mentor_applications_pending > 0 && (
             <Link
-              to="/partnerships/mentors"
+              to="/admin/mentors"
               className="lift mt-5 flex items-center justify-between gap-4 rounded-2xl border border-brand-200 bg-brand-50 p-5"
             >
               <div>

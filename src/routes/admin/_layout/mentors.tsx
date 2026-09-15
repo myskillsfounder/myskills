@@ -1,28 +1,33 @@
 import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
-import { Award, Check, ExternalLink, Inbox, Mail, MapPin, Phone, Star, X } from 'lucide-react'
+import { Check, Inbox, Link2, Mail, MapPin, Phone, X } from 'lucide-react'
 import {
-  approveInstitutionPartnerApplication,
-  fetchInstitutionPartnerApplications,
-  rejectInstitutionPartnerApplication,
-  type InstitutionApplicationStatus,
-  type InstitutionPartnerApplication,
-} from '@/lib/institutionPartners'
+  approveMentorApplication,
+  fetchMentorApplications,
+  rejectMentorApplication,
+  type ApplicationStatus,
+  type MentorApplication,
+} from '@/lib/mentors'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
-export const Route = createFileRoute('/partnerships/_layout/institution-partners')({
-  component: InstitutionPartnerReviewQueue,
+export const Route = createFileRoute('/admin/_layout/mentors')({
+  component: () => (
+    <RequireSection section="mentors">
+      <MentorReviewQueue />
+    </RequireSection>
+  ),
 })
 
-const FILTERS: { label: string; value: InstitutionApplicationStatus | 'all' }[] = [
+const FILTERS: { label: string; value: ApplicationStatus | 'all' }[] = [
   { label: 'Pending', value: 'pending' },
   { label: 'Approved', value: 'approved' },
   { label: 'Rejected', value: 'rejected' },
   { label: 'All', value: 'all' },
 ]
 
-const TONE: Record<InstitutionApplicationStatus, 'warning' | 'success' | 'danger'> = {
+const TONE: Record<ApplicationStatus, 'warning' | 'success' | 'danger'> = {
   pending: 'warning',
   approved: 'success',
   rejected: 'danger',
@@ -34,7 +39,7 @@ function ApplicationCard({
   onReject,
   busy,
 }: {
-  app: InstitutionPartnerApplication
+  app: MentorApplication
   onApprove: () => void
   onReject: (note: string) => void
   busy: boolean
@@ -46,35 +51,22 @@ function ApplicationCard({
     <article className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="font-display text-xl font-semibold text-ink-900">{app.legal_name}</h2>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-600">
-            {app.city && (
-              <span className="inline-flex items-center gap-1">
-                <MapPin size={13} className="text-ink-400" /> {app.city}
-              </span>
-            )}
-            <span className="inline-flex items-center gap-1">
-              <Award size={13} className="text-ink-400" />
-              {app.years_in_education} {app.years_in_education === 1 ? 'year' : 'years'} in education
-            </span>
-            {app.google_rating != null && (
-              <span className="inline-flex items-center gap-1 font-medium text-amber-700">
-                <Star size={13} className="fill-amber-500 text-amber-500" /> {app.google_rating.toFixed(1)}
-              </span>
-            )}
-          </div>
+          <h2 className="font-display text-xl font-semibold text-ink-900">{app.full_name}</h2>
+          <p className="mt-0.5 text-sm font-medium text-brand-600">{app.headline}</p>
         </div>
         <Badge tone={TONE[app.status]}>{app.status}</Badge>
       </div>
 
-      {app.courses_offered.length > 0 && (
+      <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink-600">{app.bio}</p>
+
+      {app.expertise.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {app.courses_offered.map((c) => (
+          {app.expertise.map((e) => (
             <span
-              key={c}
+              key={e}
               className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700"
             >
-              {c}
+              {e}
             </span>
           ))}
         </div>
@@ -93,44 +85,32 @@ function ApplicationCard({
             {app.phone}
           </div>
         )}
-        {app.website_url && (
+        {app.location && (
           <div className="flex items-center gap-2 text-ink-700">
-            <ExternalLink size={14} className="shrink-0 text-ink-400" />
-            <a href={app.website_url} target="_blank" rel="noopener noreferrer" className="truncate hover:text-brand-700">
-              Website
-            </a>
+            <MapPin size={14} className="shrink-0 text-ink-400" />
+            {app.location}
           </div>
         )}
-        {app.google_profile_url && (
+        {app.linkedin_url && (
           <div className="flex items-center gap-2 text-ink-700">
-            <ExternalLink size={14} className="shrink-0 text-ink-400" />
+            <Link2 size={14} className="shrink-0 text-ink-400" />
             <a
-              href={app.google_profile_url}
+              href={app.linkedin_url}
               target="_blank"
               rel="noopener noreferrer"
               className="truncate hover:text-brand-700"
             >
-              Google profile
+              {app.linkedin_url.replace(/^https:\/\/(www\.)?linkedin\.com\//, '')}
             </a>
           </div>
         )}
       </dl>
 
-      <div className="mt-4 rounded-xl bg-ink-100 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Contact</p>
-        <p className="mt-1.5 text-sm text-ink-700">
-          {app.contact_name}
-          {app.contact_role ? ` — ${app.contact_role}` : ''}
-        </p>
-      </div>
-
-      {app.additional_info && (
+      {app.motivation && (
         <div className="mt-4 rounded-xl bg-ink-100 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-            Why they'd be a good partner
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">Motivation</p>
           <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink-700">
-            {app.additional_info}
+            {app.motivation}
           </p>
         </div>
       )}
@@ -176,7 +156,7 @@ function ApplicationCard({
             rows={2}
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Couldn't verify years of operation…"
+            placeholder="Not enough hands-on experience yet…"
           />
           <div className="flex gap-2">
             <Button
@@ -201,9 +181,9 @@ function ApplicationCard({
   )
 }
 
-function InstitutionPartnerReviewQueue() {
-  const [filter, setFilter] = useState<InstitutionApplicationStatus | 'all'>('pending')
-  const [apps, setApps] = useState<InstitutionPartnerApplication[]>([])
+function MentorReviewQueue() {
+  const [filter, setFilter] = useState<ApplicationStatus | 'all'>('pending')
+  const [apps, setApps] = useState<MentorApplication[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
   const [busyId, setBusyId] = useState<string>()
@@ -212,7 +192,7 @@ function InstitutionPartnerReviewQueue() {
     setLoading(true)
     setError(undefined)
     try {
-      setApps(await fetchInstitutionPartnerApplications(filter === 'all' ? undefined : filter))
+      setApps(await fetchMentorApplications(filter === 'all' ? undefined : filter))
     } catch (e) {
       setError(errorMessage(e))
     } finally {
@@ -240,9 +220,9 @@ function InstitutionPartnerReviewQueue() {
   return (
     <>
       <PageHeader
-        eyebrow="Partnerships"
-        title="Institution partner applications"
-        subtitle="Approve an application to publish that institution in the Community."
+        eyebrow="Admin"
+        title="Mentor applications"
+        subtitle="Approve an application to publish that mentor in the Community."
       />
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -272,7 +252,7 @@ function InstitutionPartnerReviewQueue() {
           title={filter === 'pending' ? 'Nothing to review' : 'No applications here'}
           description={
             filter === 'pending'
-              ? 'New institution partner applications will appear here as they come in.'
+              ? 'New mentor applications will appear here as they come in.'
               : 'Try a different filter.'
           }
         />
@@ -283,8 +263,8 @@ function InstitutionPartnerReviewQueue() {
               key={app.id}
               app={app}
               busy={busyId === app.id}
-              onApprove={() => act(app.id, () => approveInstitutionPartnerApplication(app.id))}
-              onReject={(note) => act(app.id, () => rejectInstitutionPartnerApplication(app.id, note))}
+              onApprove={() => act(app.id, () => approveMentorApplication(app.id))}
+              onReject={(note) => act(app.id, () => rejectMentorApplication(app.id, note))}
             />
           ))}
         </div>

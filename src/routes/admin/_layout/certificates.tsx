@@ -4,10 +4,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Award, Search } from 'lucide-react'
 import { fetchAllCertificates, type AdminCertificate } from '@/lib/admin'
 import type { CertificateKind } from '@/lib/certificates'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/certificates')({
-  component: CertificatesPage,
+export const Route = createFileRoute('/admin/_layout/certificates')({
+  component: () => (
+    <RequireSection section="certificates">
+      <CertificatesPage />
+    </RequireSection>
+  ),
 })
 
 const KIND_TONE: Record<CertificateKind, 'gold' | 'neutral' | 'warning'> = {
