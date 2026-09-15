@@ -3,10 +3,15 @@ import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { MessageSquare, Star } from 'lucide-react'
 import { fetchAllFeedback, type AdminFeedback } from '@/lib/admin'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/feedback')({
-  component: FeedbackPage,
+export const Route = createFileRoute('/admin/_layout/feedback')({
+  component: () => (
+    <RequireSection section="feedback">
+      <FeedbackPage />
+    </RequireSection>
+  ),
 })
 
 const toneFor = (rating: number | null) =>

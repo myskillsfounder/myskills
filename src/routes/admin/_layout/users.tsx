@@ -3,10 +3,15 @@ import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { Search, Users as UsersIcon } from 'lucide-react'
 import { fetchUsers, setMentorFlag, type AdminUser } from '@/lib/admin'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Avatar, Badge, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/users')({
-  component: UsersPage,
+export const Route = createFileRoute('/admin/_layout/users')({
+  component: () => (
+    <RequireSection section="users">
+      <UsersPage />
+    </RequireSection>
+  ),
 })
 
 const fmtDate = (v: string | null) => (v ? new Date(v).toLocaleDateString() : '—')

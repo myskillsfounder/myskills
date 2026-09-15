@@ -10,10 +10,15 @@ import {
   type AdInput,
   type AdminAd,
 } from '@/lib/admin'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/ads')({
-  component: AdsAdminPage,
+export const Route = createFileRoute('/admin/_layout/ads')({
+  component: () => (
+    <RequireSection section="ads">
+      <AdsAdminPage />
+    </RequireSection>
+  ),
 })
 
 const EMPTY: AdInput = {

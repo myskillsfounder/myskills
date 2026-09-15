@@ -12,6 +12,7 @@ import {
 } from '@/lib/admin'
 import type { BlogPost } from '@/lib/blog'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import {
   Alert,
   Badge,
@@ -23,8 +24,12 @@ import {
   Textarea,
 } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/blog')({
-  component: BlogAdminPage,
+export const Route = createFileRoute('/admin/_layout/blog')({
+  component: () => (
+    <RequireSection section="blog">
+      <BlogAdminPage />
+    </RequireSection>
+  ),
 })
 
 const EMPTY: BlogPostInput = {

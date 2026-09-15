@@ -17,9 +17,9 @@ const TABS = [
  *
  * Hidden on: public/marketing pages, the auth + onboarding funnel, the
  * assessment player (a focused, one-shot flow where a nav bar invites
- * accidental exits), the certificate page (it's printed), and the
- * partnerships portal (its own staff-only shell, not a student surface —
- * these tabs are all student destinations).
+ * accidental exits), the certificate page (it's printed), and /admin (its
+ * own staff-only shell, not a student surface — these tabs are all student
+ * destinations).
  */
 const HIDE_EXACT = new Set([
   '/',
@@ -30,7 +30,7 @@ const HIDE_EXACT = new Set([
   '/certificate',
   '/become-a-mentor',
 ])
-const HIDE_PREFIX = ['/blog', '/partnerships']
+const HIDE_PREFIX = ['/blog', '/admin']
 
 /** Row height in px. Labels + icon, comfortably above the 44px touch minimum. */
 export const BOTTOM_NAV_H = 58

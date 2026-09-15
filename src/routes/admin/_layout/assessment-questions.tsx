@@ -17,10 +17,15 @@ import {
   type PracticeSetQuestion,
 } from '@/lib/admin'
 import { assessmentCategories } from '@/lib/initialAssessment'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Button, EmptyState, Input, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
-export const Route = createFileRoute('/admin/assessment-questions')({
-  component: AssessmentQuestionsPage,
+export const Route = createFileRoute('/admin/_layout/assessment-questions')({
+  component: () => (
+    <RequireSection section="assessment">
+      <AssessmentQuestionsPage />
+    </RequireSection>
+  ),
 })
 
 /** Shared shape between an initial-assessment question and a practice-set

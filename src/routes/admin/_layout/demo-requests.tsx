@@ -8,10 +8,15 @@ import {
   type AdminDemoRequest,
   type DemoRequestStatus,
 } from '@/lib/admin'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/partnerships/_layout/demo-requests')({
-  component: DemoRequestsPage,
+export const Route = createFileRoute('/admin/_layout/demo-requests')({
+  component: () => (
+    <RequireSection section="demo-requests">
+      <DemoRequestsPage />
+    </RequireSection>
+  ),
 })
 
 const FILTERS: { label: string; value: DemoRequestStatus | 'all' }[] = [
@@ -159,7 +164,7 @@ function DemoRequestsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Partnerships"
+        eyebrow="Admin"
         title="Demo requests"
         subtitle="Leads from the Community > Institutions “Get pricing” form."
       />
