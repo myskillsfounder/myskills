@@ -12,8 +12,14 @@ function shuffled<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5)
 }
 
-function buildRound(bank: VocabTerm[], size: number): VocabQuestion[] {
-  return shuffled(bank)
+/** Unlearned terms first, learned ones as filler once those run out — a
+ *  round used to shuffle the whole bank flat, so once you knew a handful of
+ *  terms you'd keep getting quizzed on them again while ones you'd never
+ *  seen sat unpicked, and progress felt stuck even while you kept playing. */
+function buildRound(bank: VocabTerm[], size: number, learnedIds: Set<string>): VocabQuestion[] {
+  const unlearned = shuffled(bank.filter((t) => !learnedIds.has(t.id)))
+  const learned = shuffled(bank.filter((t) => learnedIds.has(t.id)))
+  return [...unlearned, ...learned]
     .slice(0, size)
     .map((term) => {
       const distractors = shuffled(bank.filter((t) => t.id !== term.id)).slice(0, 3)
@@ -31,15 +37,19 @@ const ROUND_SIZE = 10
  */
 export function VocabularyQuiz({
   bank,
+  learnedIds,
+  backLabel,
   onBack,
   onTermLearned,
 }: {
   bank: VocabTerm[]
+  learnedIds: Set<string>
+  backLabel: string
   onBack: () => void
   onTermLearned: (id: string) => void
 }) {
   const size = Math.min(ROUND_SIZE, bank.length)
-  const [round, setRound] = useState(() => buildRound(bank, size))
+  const [round, setRound] = useState(() => buildRound(bank, size, learnedIds))
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [score, setScore] = useState(0)
@@ -67,7 +77,7 @@ export function VocabularyQuiz({
   }
 
   function restart() {
-    setRound(buildRound(bank, size))
+    setRound(buildRound(bank, size, learnedIds))
     setIndex(0)
     setSelected(null)
     setScore(0)
@@ -122,7 +132,7 @@ export function VocabularyQuiz({
           className="group inline-flex items-center gap-1.5 text-ink-600 transition-colors hover:text-ink-900"
         >
           <ArrowLeft size={15} className="transition-transform duration-300 group-hover:-translate-x-1" />
-          All practice modes
+          {backLabel}
         </button>
         <span>
           {index + 1} / {round.length}

@@ -16,7 +16,8 @@ function pickTerm(excludeId?: string) {
  * just linking out to a prompt library.
  */
 export function VocabularyCoach({ userKey }: { userKey: string }) {
-  const { learnedCount, markLearned } = useVocabProgress(userKey)
+  const { markLearned, countLearned } = useVocabProgress(userKey)
+  const learnedCount = countLearned(vocabularyTerms)
   const [term, setTerm] = useState(() => pickTerm())
   const [revealed, setRevealed] = useState(false)
 
