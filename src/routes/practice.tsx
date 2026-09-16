@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Award, ChevronRight, Target } from 'lucide-react'
+import { ArrowLeft, Award, Brain, ChevronRight, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useInitialAssessment } from '@/lib/assessmentResults'
@@ -14,7 +14,7 @@ import {
 import { fetchInitialAssessmentQuestions, type QuizQuestion } from '@/lib/initialAssessment'
 import { questionsForTrack, type ScenarioGrade } from '@/lib/decisionLabs'
 import { skillTracks } from '@/lib/skillTracks'
-import { vocabularyTerms } from '@/lib/vocabulary'
+import { vocabularyTerms, type VocabLevel } from '@/lib/vocabulary'
 import { useVocabProgress } from '@/lib/vocabularyProgress'
 import { AppShell } from '@/components/app/AppShell'
 import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
@@ -25,6 +25,7 @@ import { TrackList } from '@/components/practice/TrackList'
 import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
 import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
+import { VocabLevelPicker } from '@/components/practice/VocabLevelPicker'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -79,15 +80,16 @@ function PracticePage() {
   } = useInitialAssessment()
 
   const { user } = useAuthUser()
-  const { learnedCount: vocabLearned, markLearned: markVocabLearned } = useVocabProgress(
-    user?.id ?? 'guest',
-  )
+  const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
+    useVocabProgress(user?.id ?? 'guest')
+  const vocabLearned = countVocabLearned(vocabularyTerms)
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [practiceLoading, setPracticeLoading] = useState(true)
   const [practiceError, setPracticeError] = useState<string>()
   const [selected, setSelected] = useState<string | null>(null)
   const [mode, setMode] = useState<PracticeMode | null>(null)
+  const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
 
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [quizQuestionsError, setQuizQuestionsError] = useState<string>()
@@ -224,11 +226,56 @@ function PracticePage() {
         </div>
       )}
 
-      {/* Vocabulary Builder — a multiple-choice round through the term bank. */}
-      {assessment && !error && !selected && mode === 'vocabulary' && (
+      {/* Vocabulary Builder — pick a level, then a multiple-choice round
+          through that level's terms. */}
+      {assessment && !error && !selected && mode === 'vocabulary' && vocabLevel === null && (
+        <div className="space-y-5">
+          <button
+            type="button"
+            onClick={() => setMode(null)}
+            className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+          >
+            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> All practice modes
+          </button>
+
+          <div className="flex items-start gap-3">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-brand-600 text-white shadow-md ring-4 ring-ink-100">
+              <Brain size={24} />
+            </span>
+            <div>
+              <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Vocabulary Builder</h1>
+              <p className="mt-1 text-sm text-ink-600">Choose a level to practice.</p>
+            </div>
+          </div>
+
+          <VocabLevelPicker
+            rows={[
+              {
+                level: 'beginner',
+                label: 'Beginner',
+                description: 'The terms you run into first — CTR, SEO, KPI, and the rest of the basics.',
+                learned: countVocabLearned(vocabularyTerms.filter((t) => t.level === 'beginner')),
+                total: vocabularyTerms.filter((t) => t.level === 'beginner').length,
+              },
+              {
+                level: 'advanced',
+                label: 'Advanced',
+                description: 'The nuanced ones — attribution windows, churn rate, domain authority.',
+                learned: countVocabLearned(vocabularyTerms.filter((t) => t.level === 'advanced')),
+                total: vocabularyTerms.filter((t) => t.level === 'advanced').length,
+              },
+            ]}
+            onSelect={setVocabLevel}
+          />
+        </div>
+      )}
+
+      {assessment && !error && !selected && mode === 'vocabulary' && vocabLevel !== null && (
         <VocabularyQuiz
-          bank={vocabularyTerms}
-          onBack={() => setMode(null)}
+          bank={vocabularyTerms.filter((t) => t.level === vocabLevel)}
+          learnedIds={vocabLearnedIds}
+          backLabel={vocabLevel === 'beginner' ? 'Beginner' : 'Advanced'}
+          onBack={() => setVocabLevel(null)}
           onTermLearned={markVocabLearned}
         />
       )}
