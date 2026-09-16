@@ -38,17 +38,29 @@ export interface StaffAccess {
  *  /admin page load — kept separate on purpose: `my_staff_sections()`
  *  returns every slug for an admin, but Overview isn't a grantable section
  *  at all (admin-only by design), so "granted all 9" must never be read as
- *  "is admin, show Overview" — that's a real distinction, not a shortcut. */
+ *  "is admin, show Overview" — that's a real distinction, not a shortcut.
+ *
+ * Re-checks on every auth state change, not just on mount: signing in at
+ * /admin/login immediately navigates to /admin, and this layout can mount
+ * before the Supabase client's session has fully settled — a check fired
+ * only once on mount can win that race and land on stale/empty results with
+ * no way to recover short of a manual reload. Subscribing to
+ * onAuthStateChange re-runs the check once SIGNED_IN actually lands. */
 export function useStaffAccess(): StaffAccess {
   const [admin, setAdmin] = useState<boolean | null>(null)
   const [sections, setSections] = useState<StaffSection[] | null>(null)
 
   useEffect(() => {
     let active = true
-    void isAdmin().then((a) => active && setAdmin(a))
-    void myStaffSections().then((s) => active && setSections(s))
+    const load = () => {
+      void isAdmin().then((a) => active && setAdmin(a))
+      void myStaffSections().then((s) => active && setSections(s))
+    }
+    load()
+    const { data: sub } = supabase.auth.onAuthStateChange(() => load())
     return () => {
       active = false
+      sub.subscription.unsubscribe()
     }
   }, [])
 
