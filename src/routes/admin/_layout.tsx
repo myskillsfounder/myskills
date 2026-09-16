@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { createFileRoute, Link, Outlet, useRouter, useRouterState } from '@tanstack/react-router'
 import {
-  ArrowLeft,
   Award,
   BarChart3,
   Building2,
@@ -101,8 +100,8 @@ function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSect
  * Its own minimal shell, deliberately NOT the shared AppShell — this is a
  * staff tool, not a student surface, so it drops the Dashboard/Practice/
  * Community/Feedback sidebar, the ad slider, and the profile-completion
- * nudge entirely. Just a logo, a way back to the main app, a sign-out
- * button, and the content.
+ * nudge entirely. No link back to the main app either — admin/staff users
+ * shouldn't need it. Just a logo, a sign-out button, and the content.
  */
 function StaffShell({ children }: { children: ReactNode }) {
   const router = useRouter()
@@ -116,19 +115,11 @@ function StaffShell({ children }: { children: ReactNode }) {
     <div className="surface-paper min-h-screen">
       <header className="surface-paper sticky top-0 z-30 border-b border-ink-900/[0.06] backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2.5">
-              <img src="/logo-mark.png" alt="" className="h-8 w-8 shrink-0" />
-              <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
-                MySkills <span className="text-ink-400">·</span> Admin
-              </span>
-            </div>
-            <Link
-              to="/dashboard"
-              className="hidden items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-800 sm:flex"
-            >
-              <ArrowLeft size={14} /> MySkills app
-            </Link>
+          <div className="flex items-center gap-2.5">
+            <img src="/logo-mark.png" alt="" className="h-8 w-8 shrink-0" />
+            <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
+              MySkills <span className="text-ink-400">·</span> Admin
+            </span>
           </div>
           <button
             type="button"
