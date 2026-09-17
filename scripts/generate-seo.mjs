@@ -153,7 +153,7 @@ const STATIC_PAGES = [
  * same as every other unlisted app route.
  */
 const PRIVATE_ROUTES = [
-  '/dashboard', '/practice', '/profile', '/certificate', '/prompt-library',
+  '/dashboard', '/practice', '/profile', '/certificate', '/wellness',
   '/feedback', '/games', '/learning', '/internships',
   '/resources', '/tests', '/onboarding', '/assessment', '/login',
   '/forgot-password', '/reset-password',
