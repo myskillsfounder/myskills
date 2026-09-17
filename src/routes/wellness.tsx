@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Compass,
-  HeartHandshake,
-  Phone,
-  Send,
-  ShieldAlert,
-} from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Compass, HeartHandshake, Send, Sparkles } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -21,7 +13,7 @@ import {
   type WellnessRequestType,
 } from '@/lib/wellness'
 import { AppShell } from '@/components/app/AppShell'
-import { Alert, Badge, Button, Input, Skeleton, Textarea } from '@/components/ui'
+import { Alert, Button, Input, Skeleton, Textarea } from '@/components/ui'
 
 export const Route = createFileRoute('/wellness')({
   beforeLoad: requireOnboarded,
@@ -29,28 +21,6 @@ export const Route = createFileRoute('/wellness')({
 })
 
 const EMPTY_INPUT: WellnessRequestInput = { full_name: '', email: '', phone: '', message: '' }
-
-// India-wide, free or toll-free, and not tied to any one city — the three
-// most commonly cited in campus mental-health resource lists. Always shown,
-// whether or not a mentor has picked up a request yet, because a crisis
-// doesn't wait for staffing.
-const HELPLINES = [
-  {
-    name: 'KIRAN Mental Health Helpline',
-    detail: 'Govt of India · 24/7 · multilingual',
-    phone: '1800-599-0019',
-  },
-  {
-    name: 'iCall (TISS)',
-    detail: 'Mon–Sat, 8am–10pm',
-    phone: '9152987821',
-  },
-  {
-    name: 'Vandrevala Foundation',
-    detail: '24/7',
-    phone: '1860-2662-345',
-  },
-]
 
 const COPY: Record<
   WellnessRequestType,
@@ -245,48 +215,24 @@ function WellnessPage() {
           <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">
             Wellness &amp; Guidance
           </h1>
-          <p className="mt-1 text-sm text-ink-600">
-            Doing well starts with feeling well. Confidential support for your mind and your
-            career, whenever you need it.
+          <p className="mt-1.5 text-sm leading-relaxed text-ink-600">
+            We know student life isn't just about grades and job-readiness — it's exams,
+            deadlines, uncertainty about the future, and a lot of pressure that doesn't always
+            show. Your wellbeing matters to us as much as your skills do, and we built this space
+            so asking for support is as easy as asking for a mentor.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-600">
+            Whatever you're carrying — stress, self-doubt, or just not knowing what's next — you
+            don't have to figure it out alone. Reach out below, privately and without judgment.
           </p>
         </div>
 
-        {/* Crisis resources — always visible, independent of whether a mentor
-            has picked anything up yet. A student in crisis shouldn't have to
-            wait on a request queue to find a number to call. */}
-        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-          <div className="flex items-center gap-2">
-            <ShieldAlert size={17} className="shrink-0 text-amber-700" />
-            <p className="text-sm font-semibold text-amber-900">In immediate distress?</p>
-          </div>
-          <p className="mt-1.5 text-sm leading-relaxed text-amber-800">
-            If you or someone you know is in immediate danger, please call{' '}
-            <strong>112</strong> (India's emergency number) or go to the nearest hospital. These
-            helplines are free, confidential, and staffed by trained counsellors — not a
-            substitute for emergency care, but a good place to start.
-          </p>
-          <ul className="mt-4 space-y-2.5">
-            {HELPLINES.map((h) => (
-              <li key={h.name} className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                <div className="min-w-0">
-                  <p className="font-medium text-amber-900">{h.name}</p>
-                  <p className="text-xs text-amber-700">{h.detail}</p>
-                </div>
-                <a
-                  href={`tel:${h.phone.replace(/[^0-9+]/g, '')}`}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-100"
-                >
-                  <Phone size={12} /> {h.phone}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mb-3 flex items-center gap-2">
-          <Badge tone="brand">New</Badge>
-          <p className="text-xs font-medium text-ink-500">
-            We're onboarding counsellors and mentors — requests are reviewed by the MySkills team.
+        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50 p-4">
+          <Sparkles size={17} className="mt-0.5 shrink-0 text-brand-700" />
+          <p className="text-sm leading-relaxed text-brand-900">
+            <span className="font-semibold">We're onboarding counsellors and mentors</span> so
+            these conversations are handled by real people who care. Until then, every request
+            below is read personally by the MySkills team, and we'll get back to you.
           </p>
         </div>
 
