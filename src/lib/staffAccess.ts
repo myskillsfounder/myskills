@@ -17,6 +17,7 @@ export const STAFF_SECTIONS = [
   'demo-requests',
   'blog',
   'ads',
+  'wellness',
 ] as const
 
 export type StaffSection = (typeof STAFF_SECTIONS)[number]

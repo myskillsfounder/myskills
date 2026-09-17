@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WellnessRouteImport } from './routes/wellness'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
@@ -45,6 +46,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
+import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
 import { Route as AdminLayoutUsersRouteImport } from './routes/admin/_layout/users'
 import { Route as AdminLayoutMentorsRouteImport } from './routes/admin/_layout/mentors'
 import { Route as AdminLayoutInstitutionPartnersRouteImport } from './routes/admin/_layout/institution-partners'
@@ -55,6 +57,11 @@ import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
 
+const WellnessRoute = WellnessRouteImport.update({
+  id: '/wellness',
+  path: '/wellness',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestsRoute = TestsRouteImport.update({
   id: '/tests',
   path: '/tests',
@@ -236,6 +243,11 @@ const AdminLayoutIndexRoute = AdminLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutWellnessRoute = AdminLayoutWellnessRouteImport.update({
+  id: '/wellness',
+  path: '/wellness',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutUsersRoute = AdminLayoutUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -310,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
+  '/wellness': typeof WellnessRoute
   '/admin': typeof AdminLayoutRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -329,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
   '/admin/users': typeof AdminLayoutUsersRoute
+  '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin/': typeof AdminLayoutIndexRoute
 }
 export interface FileRoutesByTo {
@@ -356,6 +370,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
+  '/wellness': typeof WellnessRoute
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
@@ -374,6 +389,7 @@ export interface FileRoutesByTo {
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
   '/admin/users': typeof AdminLayoutUsersRoute
+  '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin': typeof AdminLayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -403,6 +419,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
+  '/wellness': typeof WellnessRoute
   '/admin/_layout': typeof AdminLayoutRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -422,6 +439,7 @@ export interface FileRoutesById {
   '/admin/_layout/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/_layout/mentors': typeof AdminLayoutMentorsRoute
   '/admin/_layout/users': typeof AdminLayoutUsersRoute
+  '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -452,6 +470,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/tests'
+    | '/wellness'
     | '/admin'
     | '/admin/login'
     | '/blog/$slug'
@@ -471,6 +490,7 @@ export interface FileRouteTypes {
     | '/admin/institution-partners'
     | '/admin/mentors'
     | '/admin/users'
+    | '/admin/wellness'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -498,6 +518,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/tests'
+    | '/wellness'
     | '/admin/login'
     | '/blog/$slug'
     | '/community/institutions'
@@ -516,6 +537,7 @@ export interface FileRouteTypes {
     | '/admin/institution-partners'
     | '/admin/mentors'
     | '/admin/users'
+    | '/admin/wellness'
     | '/admin'
   id:
     | '__root__'
@@ -544,6 +566,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/tests'
+    | '/wellness'
     | '/admin/_layout'
     | '/admin/login'
     | '/blog/$slug'
@@ -563,6 +586,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/institution-partners'
     | '/admin/_layout/mentors'
     | '/admin/_layout/users'
+    | '/admin/_layout/wellness'
     | '/admin/_layout/'
   fileRoutesById: FileRoutesById
 }
@@ -592,6 +616,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   TestsRoute: typeof TestsRoute
+  WellnessRoute: typeof WellnessRoute
   AdminLayoutRoute: typeof AdminLayoutRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -602,6 +627,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wellness': {
+      id: '/wellness'
+      path: '/wellness'
+      fullPath: '/wellness'
+      preLoaderRoute: typeof WellnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tests': {
       id: '/tests'
       path: '/tests'
@@ -854,6 +886,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/wellness': {
+      id: '/admin/_layout/wellness'
+      path: '/wellness'
+      fullPath: '/admin/wellness'
+      preLoaderRoute: typeof AdminLayoutWellnessRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/users': {
       id: '/admin/_layout/users'
       path: '/users'
@@ -958,6 +997,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutInstitutionPartnersRoute: typeof AdminLayoutInstitutionPartnersRoute
   AdminLayoutMentorsRoute: typeof AdminLayoutMentorsRoute
   AdminLayoutUsersRoute: typeof AdminLayoutUsersRoute
+  AdminLayoutWellnessRoute: typeof AdminLayoutWellnessRoute
   AdminLayoutIndexRoute: typeof AdminLayoutIndexRoute
 }
 
@@ -971,6 +1011,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutInstitutionPartnersRoute: AdminLayoutInstitutionPartnersRoute,
   AdminLayoutMentorsRoute: AdminLayoutMentorsRoute,
   AdminLayoutUsersRoute: AdminLayoutUsersRoute,
+  AdminLayoutWellnessRoute: AdminLayoutWellnessRoute,
   AdminLayoutIndexRoute: AdminLayoutIndexRoute,
 }
 
@@ -1004,6 +1045,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   TestsRoute: TestsRoute,
+  WellnessRoute: WellnessRoute,
   AdminLayoutRoute: AdminLayoutRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   BlogSlugRoute: BlogSlugRoute,

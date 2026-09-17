@@ -11,6 +11,7 @@ import {
   Menu,
   MessageCircle,
   MessageSquare,
+  Sparkles,
   User,
   X,
 } from 'lucide-react'
@@ -25,15 +26,18 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 /**
  * Sidebar + mobile drawer navigation.
  *
- * Prompt Library and Games are intentionally absent from nav — Prompt Library
- * is still reachable from the dashboard's own prompt widgets, and Games only
- * if visited directly. Delete their routes, or redirect them the way
- * routes/tests.tsx does, to retire either feature properly.
+ * Prompt Library moved here from a dashboard aside card (now Wellness
+ * Support, see WellnessSupportCard) — that card was its only entry point in
+ * the whole app, so it needed a new one rather than losing reachability
+ * entirely. Games is still intentionally absent — only reachable if visited
+ * directly. Delete its route, or redirect it the way routes/tests.tsx does,
+ * to retire it properly.
  */
 const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/community', label: 'Community', icon: MessageCircle },
+  { to: '/prompt-library', label: 'Prompt Library', icon: Sparkles },
   { to: '/feedback', label: 'Feedback', icon: MessageSquare },
 ]
 
