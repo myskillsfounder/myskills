@@ -6,6 +6,7 @@ import {
   Building2,
   CheckCircle2,
   GraduationCap,
+  HeartHandshake,
   Lock,
   Users,
 } from 'lucide-react'
@@ -437,14 +438,63 @@ function HubTile({
   )
 }
 
+/**
+ * Leads the hub, above the practical tiles — the moment someone lands here
+ * overwhelmed or unsure what's next, this should be the first thing they see,
+ * not the third card in a grid. Mirrors MentorPromoCard's shape (dashboard's
+ * own featured banner) so the "one real person, one tap away" pattern feels
+ * consistent wherever it shows up.
+ */
+function WellnessBanner() {
+  return (
+    <Link
+      to="/wellness"
+      className="group relative mb-6 flex flex-col gap-5 overflow-hidden rounded-2xl border border-ink-900/[0.08] bg-gradient-to-br from-brand-50 via-white to-white p-5 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-e2 sm:flex-row sm:items-center sm:gap-6 sm:p-6"
+    >
+      <span aria-hidden className="pointer-events-none absolute -right-12 -top-12 opacity-[0.07]">
+        <svg width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="#5b4bd6" strokeWidth="2">
+          <circle cx="120" cy="80" r="76" />
+          <circle cx="120" cy="80" r="56" />
+          <circle cx="120" cy="80" r="36" />
+        </svg>
+      </span>
+
+      <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e2">
+        <HeartHandshake size={26} />
+      </span>
+
+      <div className="relative min-w-0 flex-1">
+        <h2 className="font-display text-xl font-semibold text-ink-900">
+          Feeling stuck, or just need someone to talk to?
+        </h2>
+        <p className="mt-1 text-sm leading-relaxed text-ink-600">
+          Counsellors and career mentors are here for the moments practice alone can't fix —
+          overwhelm, self-doubt, or not knowing what's next.
+        </p>
+      </div>
+
+      <span className="press relative inline-flex h-12 shrink-0 items-center gap-2 self-start rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 px-6 text-sm font-semibold text-white shadow-e2 transition-transform duration-300 group-hover:translate-x-0.5 sm:self-auto">
+        Reach out
+        <ArrowRight size={16} />
+      </span>
+    </Link>
+  )
+}
+
 function CommunityHub() {
   return (
     <AppShell>
       <PageHeader
+        eyebrow="You're not doing this alone"
         title="Community"
-        subtitle="Learn alongside people who've done it — mentors and offline institutions today, internships soon."
+        subtitle="Real people, not just practice — mentors, counsellors, and career experts who've been where you are."
       />
 
+      <WellnessBanner />
+
+      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+        Build your career
+      </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <HubTile
           icon={GraduationCap}
