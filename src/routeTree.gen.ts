@@ -35,10 +35,8 @@ import { Route as BecomeAPartnerInstitutionRouteImport } from './routes/become-a
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PromptLibraryIndexRouteImport } from './routes/prompt-library/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
-import { Route as PromptLibraryLibraryIdRouteImport } from './routes/prompt-library/$libraryId'
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
@@ -188,11 +186,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PromptLibraryIndexRoute = PromptLibraryIndexRouteImport.update({
-  id: '/prompt-library/',
-  path: '/prompt-library/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -201,11 +194,6 @@ const CommunityIndexRoute = CommunityIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PromptLibraryLibraryIdRoute = PromptLibraryLibraryIdRouteImport.update({
-  id: '/prompt-library/$libraryId',
-  path: '/prompt-library/$libraryId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnershipsLoginRoute = PartnershipsLoginRouteImport.update({
@@ -329,10 +317,8 @@ export interface FileRoutesByFullPath {
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
-  '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
-  '/prompt-library/': typeof PromptLibraryIndexRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
@@ -376,10 +362,8 @@ export interface FileRoutesByTo {
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
-  '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
-  '/prompt-library': typeof PromptLibraryIndexRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
@@ -426,10 +410,8 @@ export interface FileRoutesById {
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
-  '/prompt-library/$libraryId': typeof PromptLibraryLibraryIdRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
-  '/prompt-library/': typeof PromptLibraryIndexRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
   '/admin/_layout/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/_layout/blog': typeof AdminLayoutBlogRoute
@@ -477,10 +459,8 @@ export interface FileRouteTypes {
     | '/community/institutions'
     | '/community/mentors'
     | '/partnerships/login'
-    | '/prompt-library/$libraryId'
     | '/blog/'
     | '/community/'
-    | '/prompt-library/'
     | '/admin/ads'
     | '/admin/assessment-questions'
     | '/admin/blog'
@@ -524,10 +504,8 @@ export interface FileRouteTypes {
     | '/community/institutions'
     | '/community/mentors'
     | '/partnerships/login'
-    | '/prompt-library/$libraryId'
     | '/blog'
     | '/community'
-    | '/prompt-library'
     | '/admin/ads'
     | '/admin/assessment-questions'
     | '/admin/blog'
@@ -573,10 +551,8 @@ export interface FileRouteTypes {
     | '/community/institutions'
     | '/community/mentors'
     | '/partnerships/login'
-    | '/prompt-library/$libraryId'
     | '/blog/'
     | '/community/'
-    | '/prompt-library/'
     | '/admin/_layout/ads'
     | '/admin/_layout/assessment-questions'
     | '/admin/_layout/blog'
@@ -620,9 +596,7 @@ export interface RootRouteChildren {
   AdminLayoutRoute: typeof AdminLayoutRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   BlogSlugRoute: typeof BlogSlugRoute
-  PromptLibraryLibraryIdRoute: typeof PromptLibraryLibraryIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
-  PromptLibraryIndexRoute: typeof PromptLibraryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -809,13 +783,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/prompt-library/': {
-      id: '/prompt-library/'
-      path: '/prompt-library'
-      fullPath: '/prompt-library/'
-      preLoaderRoute: typeof PromptLibraryIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/community/': {
       id: '/community/'
       path: '/'
@@ -828,13 +795,6 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prompt-library/$libraryId': {
-      id: '/prompt-library/$libraryId'
-      path: '/prompt-library/$libraryId'
-      fullPath: '/prompt-library/$libraryId'
-      preLoaderRoute: typeof PromptLibraryLibraryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partnerships/login': {
@@ -1049,9 +1009,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLayoutRoute: AdminLayoutRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   BlogSlugRoute: BlogSlugRoute,
-  PromptLibraryLibraryIdRoute: PromptLibraryLibraryIdRoute,
   BlogIndexRoute: BlogIndexRoute,
-  PromptLibraryIndexRoute: PromptLibraryIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
