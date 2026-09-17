@@ -32,6 +32,12 @@ export const Route = createFileRoute('/practice')({
   component: PracticePage,
 })
 
+/** How much of Beginner has to be learned before Advanced opens up. A real
+ *  lock, not just a visual nudge — the two levels used to sit as equal,
+ *  independent cards with nothing steering anyone through the basics
+ *  first. */
+const ADVANCED_UNLOCK_PERCENT = 70
+
 function MigrationError({ message }: { message: string }) {
   return (
     <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
@@ -83,6 +89,15 @@ function PracticePage() {
   const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
     useVocabProgress(user?.id ?? 'guest')
   const vocabLearned = countVocabLearned(vocabularyTerms)
+
+  const beginnerTerms = vocabularyTerms.filter((t) => t.level === 'beginner')
+  const advancedTerms = vocabularyTerms.filter((t) => t.level === 'advanced')
+  const beginnerLearned = countVocabLearned(beginnerTerms)
+  const advancedLearned = countVocabLearned(advancedTerms)
+  const beginnerPercent = beginnerTerms.length
+    ? Math.round((beginnerLearned / beginnerTerms.length) * 100)
+    : 0
+  const advancedLocked = beginnerPercent < ADVANCED_UNLOCK_PERCENT
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [practiceLoading, setPracticeLoading] = useState(true)
@@ -254,15 +269,17 @@ function PracticePage() {
                 level: 'beginner',
                 label: 'Beginner',
                 description: 'The terms you run into first — CTR, SEO, KPI, and the rest of the basics.',
-                learned: countVocabLearned(vocabularyTerms.filter((t) => t.level === 'beginner')),
-                total: vocabularyTerms.filter((t) => t.level === 'beginner').length,
+                learned: beginnerLearned,
+                total: beginnerTerms.length,
               },
               {
                 level: 'advanced',
                 label: 'Advanced',
                 description: 'The nuanced ones — attribution windows, churn rate, domain authority.',
-                learned: countVocabLearned(vocabularyTerms.filter((t) => t.level === 'advanced')),
-                total: vocabularyTerms.filter((t) => t.level === 'advanced').length,
+                learned: advancedLearned,
+                total: advancedTerms.length,
+                locked: advancedLocked,
+                lockedHint: `Reach ${ADVANCED_UNLOCK_PERCENT}% in Beginner to unlock`,
               },
             ]}
             onSelect={setVocabLevel}
