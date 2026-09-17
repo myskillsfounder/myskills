@@ -318,6 +318,44 @@ export async function setDemoRequestStatus(id: string, status: DemoRequestStatus
 }
 
 /* ========================================================================== */
+/* WELLNESS REQUESTS                                                          */
+/* ========================================================================== */
+
+export type WellnessRequestStatus = 'pending' | 'contacted' | 'closed'
+export type WellnessRequestType = 'psychologist' | 'career_mentor'
+
+export interface AdminWellnessRequest {
+  id: string
+  created_at: string
+  status: WellnessRequestStatus
+  type: WellnessRequestType
+  full_name: string
+  email: string
+  phone: string | null
+  message: string | null
+}
+
+export async function fetchWellnessRequests(): Promise<AdminWellnessRequest[]> {
+  const { data, error } = await supabase
+    .from('wellness_requests')
+    .select('id, created_at, status, type, full_name, email, phone, message')
+    .order('created_at', { ascending: false })
+  if (error) raise(error)
+  return (data ?? []) as AdminWellnessRequest[]
+}
+
+export async function setWellnessRequestStatus(id: string, status: WellnessRequestStatus): Promise<void> {
+  const patch: Record<string, unknown> = { status }
+  if (status !== 'pending') {
+    patch.contacted_at = new Date().toISOString()
+    const { data: auth } = await supabase.auth.getUser()
+    patch.contacted_by = auth.user?.id ?? null
+  }
+  const { error } = await supabase.from('wellness_requests').update(patch).eq('id', id)
+  if (error) raise(error)
+}
+
+/* ========================================================================== */
 /* INITIAL ASSESSMENT QUESTIONS                                              */
 /* ========================================================================== */
 

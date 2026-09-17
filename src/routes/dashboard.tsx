@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, ClipboardCheck, Flame, Sparkles, Star, Target } from 'lucide-react'
+import { ArrowRight, ClipboardCheck, Flame, Star, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -14,7 +14,8 @@ import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
 import { VocabularyCoach } from '@/components/dashboard/VocabularyCoach'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
-import { ButtonLink, Card, Skeleton } from '@/components/ui'
+import { WellnessSupportCard } from '@/components/dashboard/WellnessSupportCard'
+import { Card, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: requireOnboarded,
@@ -340,18 +341,7 @@ function DashboardPage() {
 
             <TimeSpentChart />
 
-            <Card className="p-5">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-ink-100 text-ink-600">
-                <Sparkles size={18} />
-              </span>
-              <p className="mt-3 font-display text-lg font-semibold text-ink-900">Prompt Library</p>
-              <p className="mt-1 text-sm leading-relaxed text-ink-600">
-                Expert prompts that turn any AI into your marketing tutor.
-              </p>
-              <ButtonLink to="/prompt-library" variant="secondary" size="sm" className="mt-3" iconRight={ArrowRight}>
-                Explore
-              </ButtonLink>
-            </Card>
+            <WellnessSupportCard />
           </aside>
         </div>
       </div>
