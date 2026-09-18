@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Check } from 'lucide-react'
+import { trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { requireSession } from '@/lib/guards'
 import { careerStageStep, goalsStep, stepLabels } from '@/lib/onboardingContent'
@@ -49,7 +50,8 @@ function OnboardingPage() {
     setSubmitting(true)
     setError(undefined)
     try {
-      await completeOnboarding({ career_stage: careerStage, goals })
+      const method = await completeOnboarding({ career_stage: careerStage, goals })
+      trackSignUp(method)
       router.navigate({ to: '/dashboard' })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save your profile. Please try again.')

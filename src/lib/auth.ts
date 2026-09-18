@@ -157,12 +157,14 @@ export interface OnboardingProfile {
 }
 
 /** Persist the onboarding profile and mark the user onboarded (stored in
- * Supabase user metadata for now — move to a `profiles` table later). */
-export async function completeOnboarding(profile: OnboardingProfile): Promise<void> {
-  const { error } = await supabase.auth.updateUser({
+ * Supabase user metadata for now — move to a `profiles` table later).
+ * Resolves to the auth provider ('email', 'google') for signup analytics. */
+export async function completeOnboarding(profile: OnboardingProfile): Promise<string> {
+  const { data, error } = await supabase.auth.updateUser({
     data: { onboarded: true, profile },
   })
   if (error) throw mapAuthError(error)
+  return data.user?.app_metadata?.provider ?? 'email'
 }
 
 
