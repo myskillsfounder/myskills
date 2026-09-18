@@ -78,6 +78,12 @@ export function trackAssessmentComplete(percent: number) {
   trackEvent('assessment_complete', { score: percent, passed: percent >= 60 })
 }
 
+/** The certificate was saved, shared from the phone share sheet, or sent to
+ * print. Print fires on click -- the browser never says whether it finished. */
+export function trackCertificateDownload(method: 'download' | 'share' | 'print') {
+  trackEvent('certificate_download', { method })
+}
+
 /** A mentor or partner-institution application was accepted by the server. */
 export function trackLead(leadType: 'mentor' | 'institution_partner') {
   trackEvent('generate_lead', { lead_type: leadType })

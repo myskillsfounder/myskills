@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Copy, Download, Loader2, Printer } from 'lucide-react
 import { requireOnboarded } from '@/lib/guards'
 import { fetchMyCertificate, type Certificate as Cert } from '@/lib/certificates'
 import { saveCertificate } from '@/lib/certificateExport'
+import { trackCertificateDownload } from '@/lib/analytics'
 import { Certificate } from '@/components/certificate/Certificate'
 
 export const Route = createFileRoute('/certificate')({
@@ -46,7 +47,8 @@ function CertificatePage() {
     setSaving(true)
     setSaveError(undefined)
     try {
-      await saveCertificate(svgRef.current, cert.code)
+      const outcome = await saveCertificate(svgRef.current, cert.code)
+      if (outcome !== 'cancelled') trackCertificateDownload(outcome)
     } catch (e) {
       setSaveError(e instanceof Error ? e.message : 'Could not save the certificate.')
     } finally {
@@ -81,7 +83,10 @@ function CertificatePage() {
                   browsers handle it poorly, so it's hidden there. */}
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => {
+                  trackCertificateDownload('print')
+                  window.print()
+                }}
                 className="hidden h-10 items-center gap-1.5 rounded-full border border-ink-300 bg-white px-4 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-100 sm:inline-flex"
               >
                 <Printer size={15} /> Print
