@@ -35,8 +35,36 @@ export function recordActiveSeconds(sec: number) {
   write(b)
 }
 
+const HOURLY_DAYS = 7
+
+/**
+ * Hourly buckets are only needed for the "day" view (today), but one is added
+ * per active hour forever, and the whole map is re-parsed and re-written every
+ * tick. Older days are collapsed into a single "YYYY-MM-DD" bucket rather than
+ * deleted: the month/year/max views read the full history, and they only ever
+ * match old data by day/month prefix, so their totals come out identical.
+ */
+function compactOldBuckets() {
+  const b = read()
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - HOURLY_DAYS)
+  const cutoffDay = dayKey(cutoff)
+
+  let changed = false
+  for (const k of Object.keys(b)) {
+    if (k.length <= 10) continue
+    const day = k.slice(0, 10)
+    if (day >= cutoffDay) continue
+    b[day] = (b[day] || 0) + b[k]
+    delete b[k]
+    changed = true
+  }
+  if (changed) write(b)
+}
+
 /** Start ticking while the tab is visible. Call once at app root. */
 export function startTimeTracking(): () => void {
+  compactOldBuckets()
   const id = window.setInterval(() => {
     if (document.visibilityState === 'visible') recordActiveSeconds(TICK_SECONDS)
   }, TICK_SECONDS * 1000)

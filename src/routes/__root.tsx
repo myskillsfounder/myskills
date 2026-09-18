@@ -38,9 +38,17 @@ function RootComponent() {
         }
       })
 
+    // Refocus checks are throttled: tab-switching between a tutorial and the
+    // app used to hit Supabase on every single switch. Five minutes still
+    // catches a deleted account quickly; init always checks.
+    const REFOCUS_CHECK_MS = 5 * 60 * 1000
+    let lastCheck = Date.now()
     check()
     const onVisible = () => {
-      if (document.visibilityState === 'visible') check()
+      if (document.visibilityState !== 'visible') return
+      if (Date.now() - lastCheck < REFOCUS_CHECK_MS) return
+      lastCheck = Date.now()
+      check()
     }
     document.addEventListener('visibilitychange', onVisible)
 
