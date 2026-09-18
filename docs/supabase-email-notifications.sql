@@ -38,11 +38,10 @@ create extension if not exists pg_net;
 -- Where mail comes from and goes to. Two one-line functions rather than
 -- constants buried in the sender, so changing either is a single obvious edit.
 --
--- FROM: 'onboarding@resend.dev' is Resend's shared test sender — it works with
--- zero DNS setup but ONLY delivers to the email that owns the Resend account.
--- That's fine here (the recipient IS the account owner). Once you've verified
--- myskills.org.in in Resend's dashboard and added its DNS records at Hostinger,
--- swap this for 'MySkills <noreply@myskills.org.in>'.
+-- FROM: myskills.org.in is verified in Resend (DNS at GoDaddy), so mail goes
+-- out from our own domain and can reach any recipient. If that verification is
+-- ever lost, Resend's shared 'onboarding@resend.dev' still works as a fallback,
+-- but only delivers to the email that owns the Resend account.
 -- ---------------------------------------------------------------------------
 create or replace function public.notify_email_to()
 returns text language sql immutable as $$
@@ -51,7 +50,7 @@ $$;
 
 create or replace function public.notify_email_from()
 returns text language sql immutable as $$
-  select 'MySkills <onboarding@resend.dev>'::text
+  select 'MySkills <noreply@myskills.org.in>'::text
 $$;
 
 -- ---------------------------------------------------------------------------
