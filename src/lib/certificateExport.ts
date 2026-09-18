@@ -89,7 +89,9 @@ export async function certificateToPng(
  * image in a tab instead of saving it. Where sharing files isn't supported we
  * fall back to the download link, which is fine on desktop and Android.
  */
-export async function saveCertificate(svg: SVGSVGElement, code: string): Promise<void> {
+export type SaveOutcome = 'share' | 'download' | 'cancelled'
+
+export async function saveCertificate(svg: SVGSVGElement, code: string): Promise<SaveOutcome> {
   const blob = await certificateToPng(svg)
   const filename = `MySkills-Certificate-${code}.png`
   const file = new File([blob], filename, { type: 'image/png' })
@@ -102,10 +104,10 @@ export async function saveCertificate(svg: SVGSVGElement, code: string): Promise
   if (nav.canShare?.({ files: [file] }) && nav.share) {
     try {
       await nav.share({ files: [file], title: 'MySkills Certificate' })
-      return
+      return 'share'
     } catch (err) {
       // User dismissed the sheet — not an error worth surfacing.
-      if (err instanceof DOMException && err.name === 'AbortError') return
+      if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled'
       // Anything else: fall through to the download link.
     }
   }
@@ -120,4 +122,5 @@ export async function saveCertificate(svg: SVGSVGElement, code: string): Promise
   a.remove()
   // Revoke on the next tick so Safari has time to start the download.
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000)
+  return 'download'
 }
