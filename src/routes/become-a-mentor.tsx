@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { errorMessage } from '@/lib/errors'
+import { trackLead } from '@/lib/analytics'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, CheckCircle2, Send } from 'lucide-react'
 import { submitMentorApplication } from '@/lib/mentors'
@@ -109,6 +110,7 @@ function BecomeAMentorPage() {
     setSubmitting(true)
     try {
       await submitMentorApplication({ ...form, expertise: parseExpertise(form.expertise) })
+      trackLead('mentor')
       setDone(true)
     } catch (err) {
       setSubmitError(errorMessage(err))

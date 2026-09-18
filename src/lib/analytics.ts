@@ -58,3 +58,27 @@ export function trackEvent(name: string, params?: Record<string, unknown>) {
   if (!MEASUREMENT_ID || typeof window === 'undefined' || !window.gtag) return
   window.gtag('event', name, params ?? {})
 }
+
+/*
+ * Conversion events. These are what Google Ads optimises toward once they're
+ * marked as key events in GA4 and imported, so each one fires only after the
+ * server has confirmed the action -- never on a click or a failed request.
+ * `sign_up` and `generate_lead` are GA4 recommended event names, which GA4
+ * reports on out of the box.
+ */
+
+/** A new account finished onboarding -- the one step every signup path
+ * (email and Google) passes through exactly once. */
+export function trackSignUp(method: string) {
+  trackEvent('sign_up', { method })
+}
+
+/** The one-attempt initial assessment was graded and saved. */
+export function trackAssessmentComplete(percent: number) {
+  trackEvent('assessment_complete', { score: percent, passed: percent >= 60 })
+}
+
+/** A mentor or partner-institution application was accepted by the server. */
+export function trackLead(leadType: 'mentor' | 'institution_partner') {
+  trackEvent('generate_lead', { lead_type: leadType })
+}

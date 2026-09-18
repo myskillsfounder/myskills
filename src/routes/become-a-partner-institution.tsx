@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { errorMessage } from '@/lib/errors'
+import { trackLead } from '@/lib/analytics'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, CheckCircle2, Send } from 'lucide-react'
 import { submitInstitutionPartnerApplication } from '@/lib/institutionPartners'
@@ -140,6 +141,7 @@ function BecomeAPartnerInstitutionPage() {
         phone: form.phone,
         additional_info: form.additional_info,
       })
+      trackLead('institution_partner')
       setDone(true)
     } catch (err) {
       setSubmitError(errorMessage(err))
