@@ -1,8 +1,8 @@
 -- Email notifications for inbound community activity.
 --
 -- Sends Paul an email the moment someone submits a wellness request, applies
--- to mentor, applies to partner, asks for a demo, or starts a live support
--- chat — so nothing sits unseen in /admin waiting to be noticed.
+-- to mentor, applies to partner, asks for a demo, starts a live support chat,
+-- or leaves feedback — so nothing sits unseen in /admin waiting to be noticed.
 --
 -- Run this once against Supabase Cloud (SQL editor), THEN set the API key
 -- (step 1 below). Safe to re-run: every object is create-or-replace / drop-if-
@@ -359,3 +359,46 @@ create trigger support_sessions_notify
   after insert on public.support_sessions
   for each row when (new.status = 'waiting')
   execute function public.notify_new_support_session();
+
+-- ---------------------------------------------------------------------------
+-- Feedback — the in-app "Rate & review" form (src/lib/feedback.ts)
+--
+-- Rating is 1–10 and leads the subject line, so a low score stands out in the
+-- inbox without opening anything.
+-- ---------------------------------------------------------------------------
+create or replace function public.notify_new_feedback()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_name  text;
+  v_email text;
+begin
+  select p.full_name into v_name from public.profiles p where p.id = new.profile_id;
+  select u.email into v_email from auth.users u where u.id = new.profile_id;
+
+  perform public.notify_email(
+    format('[MySkills · Feedback] %s from %s',
+           coalesce(new.rating::text || '/10', 'No rating'),
+           coalesce(nullif(btrim(v_name), ''), 'a learner')),
+    public.notify_layout(
+      'New feedback',
+      public.notify_row('From', coalesce(v_name, 'A learner'))
+      || public.notify_row('Email', v_email)
+      || public.notify_row('Rating', new.rating::text || ' / 10')
+      || public.notify_row('Review', new.review)
+      || public.notify_row('Suggestion', new.suggestion),
+      'Open feedback',
+      'https://myskills.org.in/admin/feedback'
+    )
+  );
+  return null;
+end;
+$$;
+
+drop trigger if exists feedback_notify on public.feedback;
+create trigger feedback_notify
+  after insert on public.feedback
+  for each row execute function public.notify_new_feedback();
