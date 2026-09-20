@@ -72,6 +72,11 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
   },
+  '/become-a-partner-institution': {
+    title: 'Partner your institution with MySkills',
+    description:
+      'Run digital marketing courses or training programs? Apply to be a verified MySkills partner institution and reach students looking for classroom learning.',
+  },
   '/community': {
     title: 'Community | MySkills',
     description:
@@ -94,6 +99,7 @@ export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: strin
   { path: '/blog', changefreq: 'daily', priority: '0.9' },
   { path: '/community', changefreq: 'weekly', priority: '0.7' },
   { path: '/become-a-mentor', changefreq: 'monthly', priority: '0.6' },
+  { path: '/become-a-partner-institution', changefreq: 'monthly', priority: '0.6' },
   { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
   { path: '/terms', changefreq: 'yearly', priority: '0.3' },
 ]
