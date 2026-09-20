@@ -127,6 +127,14 @@ const STATIC_PAGES = [
       'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
   },
   {
+    path: '/become-a-partner-institution',
+    changefreq: 'monthly',
+    priority: '0.6',
+    title: 'Partner your institution with MySkills',
+    description:
+      'Run digital marketing courses or training programs? Apply to be a verified MySkills partner institution and reach students looking for classroom learning.',
+  },
+  {
     path: '/privacy',
     changefreq: 'yearly',
     priority: '0.3',
