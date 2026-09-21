@@ -1,45 +1,23 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Bot, Compass, FileText, Lock, Mic } from 'lucide-react'
-import { CAREER_READINESS } from '@/lib/programmes'
+import { ArrowRight, Bot, Lock } from 'lucide-react'
+import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 
 /**
- * The Career Readiness Programme's practice modes, previewed on /practice
- * beside Digital Marketing's. They're the programme's personal-development
- * modules, and they don't exist until it opens — so they're drawn locked
- * with the way in, not as buttons that do nothing. Copy mirrors the MODULES
- * on /career-readiness so the two pages promise the same thing.
+ * The Career Readiness Programme's personal-development modules, previewed
+ * on /practice beside Digital Marketing's. They don't exist until the
+ * programme opens, so they're drawn locked with the way in, not as buttons
+ * that do nothing. The list is shared with /career-readiness.
  */
-const MODES = [
-  {
-    icon: Mic,
-    tagline: 'Interview practice',
-    title: 'AI Mock Interviews',
-    description: 'Rehearse the questions marketing interviewers actually ask — then take the hard ones to a real mentor.',
-  },
-  {
-    icon: FileText,
-    tagline: 'Present yourself',
-    title: 'Resume & LinkedIn with AI',
-    description: 'Tailor your profile to the roles you want, without it sounding like everyone else’s.',
-  },
-  {
-    icon: Compass,
-    tagline: 'Plan your path',
-    title: 'Career Plan',
-    description: 'Map your strengths to real roles with AI, then pressure-test the plan with a career mentor.',
-  },
-]
-
 export function CareerReadinessPractice() {
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {MODES.map((m, i) => {
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => {
         const Icon = m.icon
         return (
           <div
             key={m.title}
             className="rise-in relative flex flex-col overflow-hidden rounded-2xl border border-ink-200 bg-white p-5 shadow-sm"
-            style={{ animationDelay: `${i * 90}ms` }}
+            style={{ animationDelay: `${i * 70}ms` }}
           >
             <span
               aria-hidden
@@ -55,12 +33,16 @@ export function CareerReadinessPractice() {
             </div>
 
             <p className="relative mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">
-              {m.tagline}
+              Module {i + 1}
             </p>
             <h3 className="relative mt-1 font-display text-xl font-semibold tracking-tight text-ink-900">
               {m.title}
             </h3>
-            <p className="relative mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{m.description}</p>
+            <p className="relative mt-1.5 text-sm leading-relaxed text-ink-600">{m.body}</p>
+            <p className="relative mt-3 flex flex-1 items-start gap-2 text-xs leading-relaxed text-ink-500">
+              <Bot size={13} className="mt-0.5 shrink-0" />
+              {m.ai}
+            </p>
 
             <div className="relative mt-4 flex flex-wrap items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 text-xs text-ink-600">

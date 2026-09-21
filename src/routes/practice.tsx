@@ -233,7 +233,7 @@ function PracticePage() {
                 <ProgrammeHeading
                   name={CAREER_READINESS.name}
                   title="Personal development with AI"
-                  subtitle="The skills around the job — interviews, how you present yourself, and where you’re headed. AI is your practice partner; people give the feedback."
+                  subtitle="Five modules — goal setting, communication, leadership, agile methodology and a growth mindset. AI is your practice partner; people give the feedback."
                 />
               </div>
               <CareerReadinessPractice />
