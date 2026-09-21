@@ -1,9 +1,9 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Dumbbell, LayoutGrid, Star, User, Users } from 'lucide-react'
+import { Dumbbell, Rocket, Star, User, Users } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 
 const TABS = [
-  { to: '/dashboard', label: 'Home', icon: LayoutGrid },
+  { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/community', label: 'Community', icon: Users },
   { to: '/feedback', label: 'Review', icon: Star },
@@ -59,11 +59,14 @@ export function MobileBottomNav() {
   // visitors and the authenticated hub for onboarded users. The tabs below
   // are all auth-gated, so a signed-out visitor tapping one would just bounce
   // to login — hide the bar there unless someone's actually signed in.
+  // /career-readiness is the same: public landing page, but also where
+  // signed-in students land from the dashboard card.
   const onCommunity = pathname === '/community' || pathname.startsWith('/community/')
+  const onPublicForSignedOut = onCommunity || pathname === '/career-readiness'
   const hidden =
     HIDE_EXACT.has(pathname) ||
     HIDE_PREFIX.some((p) => pathname.startsWith(p)) ||
-    (onCommunity && !user)
+    (onPublicForSignedOut && !user)
   if (hidden) return null
 
   return (

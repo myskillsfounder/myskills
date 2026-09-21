@@ -23,14 +23,27 @@ export interface Experience {
   description?: string
 }
 
+export type EducationLevel = 'class-10' | 'class-12' | 'diploma' | 'bachelors' | 'masters' | 'doctorate'
+
 export interface Education {
   id: string
   school: string
+  /** Structured level, scored by the Career Readiness Score. Older entries
+   *  lack it; lib/careerProfile.ts infers one from `degree` for those. */
+  level?: EducationLevel
   degree?: string
   field?: string
   startYear?: string
   endYear?: string
   description?: string
+}
+
+export interface Project {
+  id: string
+  title: string
+  description?: string
+  link?: string
+  year?: string
 }
 
 export interface Profile {
@@ -51,6 +64,7 @@ export interface Profile {
   skills: string[]
   experience: Experience[]
   education: Education[]
+  projects: Project[]
 }
 
 /** `date_of_birth` accepts null so clearing it writes SQL NULL, not ''. */
@@ -61,7 +75,19 @@ export type ProfilePatch = Partial<Omit<Profile, 'id' | 'date_of_birth'>> & {
 const COLUMNS =
   'id, full_name, headline, location, avatar_url, banner_url, phone, date_of_birth, gender, country, state, career_stage, goals, skills, experience, education'
 
-function normalize(row: Record<string, unknown>): Profile {
+/**
+ * `projects` is read in its own query, not in COLUMNS: selecting a column that
+ * doesn't exist fails the whole query, so if the page shipped before
+ * docs/supabase-profile-projects.sql ran, every profile would stop loading.
+ * This way a missing column costs only the projects list.
+ */
+async function fetchProjects(userId: string): Promise<Project[]> {
+  const { data, error } = await supabase.from('profiles').select('projects').eq('id', userId).maybeSingle()
+  if (error) return []
+  return ((data as { projects?: Project[] } | null)?.projects as Project[]) ?? []
+}
+
+function normalize(row: Record<string, unknown>, projects: Project[] = []): Profile {
   return {
     id: String(row.id ?? ''),
     full_name: (row.full_name as string) ?? '',
@@ -79,6 +105,7 @@ function normalize(row: Record<string, unknown>): Profile {
     skills: (row.skills as string[]) ?? [],
     experience: (row.experience as Experience[]) ?? [],
     education: (row.education as Education[]) ?? [],
+    projects,
   }
 }
 
@@ -96,7 +123,7 @@ export async function fetchMyProfile(): Promise<Profile> {
     .eq('id', user.id)
     .maybeSingle()
   if (error) throw error
-  if (data) return normalize(data)
+  if (data) return normalize(data, await fetchProjects(user.id))
 
   // Seed from onboarding metadata on first load. Onboarding only asks for
   // career stage + goals now; the personal-details keys are still read so
@@ -137,8 +164,13 @@ export async function saveMyProfile(patch: ProfilePatch): Promise<Profile> {
     .eq('id', user.id)
     .select(COLUMNS)
     .single()
-  if (error) throw error
-  return normalize(data)
+  if (error) {
+    if (patch.projects && /projects/.test(error.message ?? '')) {
+      throw new Error('Projects aren’t available yet — ask an admin to run the profile projects update.')
+    }
+    throw error
+  }
+  return normalize(data, patch.projects ?? (await fetchProjects(user.id)))
 }
 
 /** Upload an avatar/banner image to storage and return its public URL. */

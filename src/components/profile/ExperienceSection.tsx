@@ -1,7 +1,15 @@
 import { useState } from 'react'
 import { Briefcase, Pencil, Trash2 } from 'lucide-react'
 import { newId, type Experience, type Profile, type ProfilePatch } from '@/lib/profile'
-import { Field, Modal, PrimaryButton, Section, Textarea } from './ui'
+import { EMPLOYMENT_TYPES } from '@/lib/careerProfile'
+import { Field, Modal, PrimaryButton, Section, Select, Textarea } from './ui'
+
+/** Standard types, plus whatever free text an older entry already holds, so
+ *  editing one never silently blanks its type. */
+function employmentOptions(current?: string) {
+  const types = current && !EMPLOYMENT_TYPES.includes(current) ? [current, ...EMPLOYMENT_TYPES] : EMPLOYMENT_TYPES
+  return types.map((t) => ({ value: t, label: t }))
+}
 
 function fmtMonth(v?: string): string {
   if (!v) return ''
@@ -102,7 +110,9 @@ export function ExperienceSection({
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-ink-500">Add your work or internship experience.</p>
+        <p className="text-sm text-ink-500">
+          Add your work or internship experience — both count toward your Career Readiness Score.
+        </p>
       )}
 
       <Modal
@@ -125,9 +135,10 @@ export function ExperienceSection({
               onChange={(e) => setEditing({ ...editing, company: e.target.value })}
             />
             <div className="grid grid-cols-2 gap-4">
-              <Field
+              <Select
                 label="Employment type"
-                placeholder="Full-time, Internship…"
+                placeholder="Select a type"
+                options={employmentOptions(editing.employmentType)}
                 value={editing.employmentType ?? ''}
                 onChange={(e) => setEditing({ ...editing, employmentType: e.target.value })}
               />

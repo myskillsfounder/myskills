@@ -10,6 +10,7 @@ import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { ExperienceSection } from '@/components/profile/ExperienceSection'
 import { EducationSection } from '@/components/profile/EducationSection'
+import { ProjectsSection } from '@/components/profile/ProjectsSection'
 import { SkillsSection } from '@/components/profile/SkillsSection'
 import { DetailsSection, ProfileCompletion } from '@/components/profile/DetailsSection'
 
@@ -159,6 +160,11 @@ function ProfilePage() {
               </div>
               <div className="order-4 lg:order-none">
                 <EducationSection profile={profile} save={save} />
+              </div>
+              {/* Same order as Education — ties fall back to DOM order, so on a
+                  phone it lands right after it, before Details. */}
+              <div className="order-4 lg:order-none">
+                <ProjectsSection profile={profile} save={save} />
               </div>
             </div>
 

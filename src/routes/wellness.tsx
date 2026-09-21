@@ -208,7 +208,7 @@ function WellnessPage() {
           to="/dashboard"
           className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
         >
-          <ArrowLeft size={16} /> Back to Dashboard
+          <ArrowLeft size={16} /> Back to LaunchPad
         </Link>
 
         <div className="mb-6">

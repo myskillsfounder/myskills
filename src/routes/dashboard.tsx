@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, ClipboardCheck, Flame, Star, Target } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -8,14 +8,17 @@ import { useInitialAssessment } from '@/lib/assessmentResults'
 import { useHasFeedback } from '@/lib/feedback'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
 import { skillTracks } from '@/lib/skillTracks'
+import { computeReadiness } from '@/lib/readinessScore'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
-import { PrimaryGoal } from '@/components/dashboard/PrimaryGoal'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
 import { VocabularyCoach } from '@/components/dashboard/VocabularyCoach'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { WellnessSupportCard } from '@/components/dashboard/WellnessSupportCard'
-import { Card, Skeleton } from '@/components/ui'
+import { ProgrammePromoCard } from '@/components/dashboard/ProgrammePromoCard'
+import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
+import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
+import { Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: requireOnboarded,
@@ -85,167 +88,12 @@ function greet() {
   return 'Good evening'
 }
 
-/** Progress at a glance: a ring for track coverage + the key numbers. */
-function ProgressCard({
-  streak,
-  assessment,
-  practicedCount,
-}: {
-  streak: number
-  assessment: number | null
-  practicedCount: number
-}) {
-  const total = skillTracks.length
-  const pct = Math.round((practicedCount / total) * 100)
-  const R = 30
-  const C = 2 * Math.PI * R
-
-  const rows = [
-    {
-      icon: Flame,
-      label: 'Day streak',
-      value: `${streak} day${streak === 1 ? '' : 's'}`,
-      tone: 'bg-orange-50 text-orange-500',
-    },
-    {
-      icon: ClipboardCheck,
-      label: 'Assessment',
-      value: assessment != null ? `${assessment}%` : 'Not taken',
-      tone: 'bg-emerald-50 text-emerald-600',
-    },
-    {
-      icon: Target,
-      label: 'Tracks practiced',
-      value: `${practicedCount}/${total}`,
-      tone: 'bg-brand-50 text-brand-600',
-    },
-  ]
-
-  return (
-    <Card className="flex h-full flex-col p-5">
-      <div className="flex items-center gap-4">
-        <div className="relative h-[76px] w-[76px] shrink-0">
-          <svg viewBox="0 0 76 76" className="h-full w-full -rotate-90" aria-hidden>
-            <circle cx="38" cy="38" r={R} fill="none" strokeWidth="7" className="stroke-brand-100" />
-            <circle
-              cx="38"
-              cy="38"
-              r={R}
-              fill="none"
-              strokeWidth="7"
-              strokeLinecap="round"
-              className="stroke-brand-600"
-              strokeDasharray={C}
-              strokeDashoffset={C * (1 - pct / 100)}
-              style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.2,0.8,0.2,1)' }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-display text-lg font-semibold leading-none text-ink-900">
-              {practicedCount}
-              <span className="text-ink-400">/{total}</span>
-            </span>
-            <span className="mt-0.5 text-[9px] font-medium text-ink-500">tracks</span>
-          </div>
-        </div>
-
-        <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-700">
-            Your progress
-          </p>
-          <p className="mt-1 font-display text-xl font-semibold leading-tight text-ink-900">
-            {practicedCount === 0 ? 'Just getting started' : `${pct}% covered`}
-          </p>
-          <p className="mt-0.5 text-xs leading-relaxed text-ink-600">
-            {practicedCount === 0 ? 'Practice a track to begin.' : 'Consistency compounds.'}
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-2 border-t border-ink-900/[0.06] pt-4">
-        {rows.map(({ icon: Icon, label, value, tone }) => (
-          <div key={label} className="flex items-center gap-2.5">
-            <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${tone}`}>
-              <Icon size={14} />
-            </span>
-            <span className="flex-1 text-xs font-medium text-ink-600">{label}</span>
-            <span className="text-sm font-semibold text-ink-900">{value}</span>
-          </div>
-        ))}
-      </div>
-    </Card>
-  )
-}
-
-/** One clear next action, chosen from the user's actual state. */
-function NextStep({
-  assessmentDone,
-  practicedCount,
-}: {
-  assessmentDone: boolean
-  practicedCount: number
-}) {
-  const step = !assessmentDone
-    ? {
-        eyebrow: 'Start here',
-        title: 'Take your initial assessment',
-        body: 'A one-time assessment unlocks your skill tracks, your certificate, and personalised practice.',
-        to: '/practice',
-        cta: 'Begin assessment',
-      }
-    : practicedCount === 0
-      ? {
-          eyebrow: 'Next up',
-          title: 'Run your first Decision Lab',
-          body: 'Real business scenarios that build the judgment employers actually test for.',
-          to: '/practice',
-          cta: 'Start practicing',
-        }
-      : {
-          eyebrow: 'Keep going',
-          title: 'Continue where you left off',
-          body: 'Practice one more track today — small, regular reps beat long sessions.',
-          to: '/practice',
-          cta: 'Open practice',
-        }
-
-  return (
-    <Link
-      to={step.to}
-      className="surface-wood-dark lift group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl p-6 text-left shadow-e2 sm:p-7"
-    >
-      <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
-        <svg width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="2">
-          <circle cx="130" cy="70" r="76" />
-          <circle cx="130" cy="70" r="56" />
-          <circle cx="130" cy="70" r="36" />
-          <circle cx="130" cy="70" r="16" />
-        </svg>
-      </span>
-      <div className="relative flex items-center gap-2">
-        <span className="flex h-2 w-2 rounded-full bg-brand-400" />
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
-          {step.eyebrow}
-        </p>
-      </div>
-      <h2 className="relative mt-3 font-display text-[1.75rem] font-semibold leading-[1.15] text-white sm:text-[2rem]">
-        {step.title}
-      </h2>
-      <p className="relative mt-2 max-w-md text-sm leading-relaxed text-white/75">{step.body}</p>
-      <span className="relative mt-5 inline-flex items-center gap-2 self-start rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-transform duration-300 group-hover:translate-x-1">
-        {step.cta}
-        <ArrowRight size={16} />
-      </span>
-    </Link>
-  )
-}
-
 function DashboardPage() {
   const { user } = useAuthUser()
   const raw = userDisplayName(user).split(' ')[0]
   const name = raw.charAt(0).toUpperCase() + raw.slice(1)
   const userKey = user?.id ?? 'guest'
-  const { profile } = useProfile()
+  const { profile, loading: profileLoading } = useProfile()
   const goals = profile?.goals ?? []
   const { result: assessment } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
@@ -254,15 +102,16 @@ function DashboardPage() {
   const eligibleForReviewNudge = assessment != null || visits >= 5
 
   const [practice, setPractice] = useState<PracticeSummary>({})
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchPracticeSummary()
       .then(setPractice)
       .catch(() => {})
-      .finally(() => setLoading(false))
   }, [])
 
+  // The score comes from the profile alone (see lib/readinessScore.ts);
+  // practice results still drive the path-to-mastery checklist below.
+  const readiness = useMemo(() => (profile ? computeReadiness(profile) : null), [profile])
   const practicedCount = useMemo(
     () => skillTracks.filter((t) => practice[t.slug]).length,
     [practice],
@@ -270,35 +119,35 @@ function DashboardPage() {
 
   return (
     <AppShell wide>
-      {/* Greeting — personal, low-chrome, no competing CTA. The certificate
-          lives on /practice (see CertificateRow there), where it sits next to
-          the assessment that earned it, rather than competing with the
-          greeting here. */}
+      {/* "LaunchPad" is the page; the greeting stays, but as the subtitle —
+          the page is now about where the student stands, not who they are.
+          The certificate lives on /practice (see CertificateRow there), next
+          to the assessment that earned it. */}
       <header className="rise-in mb-6">
-        <p className="text-sm font-medium text-ink-600">{greet()},</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">LaunchPad</p>
         <h1 className="mt-1 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
-          {name}
+          {greet()}, {name}
         </h1>
       </header>
 
       <div className="space-y-6">
-        {loading ? (
+        {/* Order is deliberate: the score (where you stand), then the
+            programme (the structured way to raise it), then everything else. */}
+        {profileLoading || !readiness ? (
           <div className="grid gap-5 lg:grid-cols-3">
-            <Skeleton className="h-28 lg:col-span-2" />
-            <Skeleton className="h-28" />
+            <Skeleton className="h-80 lg:col-span-2" />
+            <Skeleton className="h-80" />
           </div>
         ) : (
           <div className="grid items-stretch gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <NextStep assessmentDone={assessment != null} practicedCount={practicedCount} />
+              <ReadinessScoreCard readiness={readiness} />
             </div>
-            <ProgressCard
-              streak={streak}
-              assessment={assessment?.overall.percent ?? null}
-              practicedCount={practicedCount}
-            />
+            <KeyMeasures goals={goals} streak={streak} />
           </div>
         )}
+
+        <ProgrammePromoCard />
 
         {/* Talk to a mentor — promoted: a real person, one tap away */}
         <MentorPromoCard />
@@ -337,8 +186,6 @@ function DashboardPage() {
           </div>
 
           <aside className="space-y-6 lg:sticky lg:top-8">
-            <PrimaryGoal goals={goals} />
-
             <TimeSpentChart />
 
             <WellnessSupportCard />
