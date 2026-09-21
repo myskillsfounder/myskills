@@ -5,7 +5,9 @@ import {
   ArrowRight,
   Bot,
   Briefcase,
+  CalendarCheck,
   CheckCircle2,
+  ClipboardCheck,
   FileText,
   HeartHandshake,
   Rocket,
@@ -233,6 +235,7 @@ function WorkflowCard() {
 
 function CareerReadinessPage() {
   const { state, error, register } = useInterest()
+  const { user } = useAuthUser()
 
   return (
     <div className="min-h-screen bg-white">
@@ -268,14 +271,26 @@ function CareerReadinessPage() {
                 human’s honest feedback before an interviewer gives you theirs.
               </p>
 
+              {/* Two ways to start today: find out where you stand, or talk it
+                  through with a person. Joining the waitlist stays in the
+                  closing section. */}
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <InterestCta state={state} error={error} onRegister={register} dark />
-                <a
-                  href="#inside"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
+                <Link
+                  to={user ? '/practice' : '/signup'}
+                  className="press inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
                 >
-                  See what’s inside
-                </a>
+                  <ClipboardCheck size={16} />
+                  Take the initial assessment
+                  <ArrowRight size={16} />
+                </Link>
+                <Link
+                  to="/wellness"
+                  hash="career-guidance"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
+                >
+                  <CalendarCheck size={16} />
+                  Book a career consultation
+                </Link>
               </div>
             </div>
 
