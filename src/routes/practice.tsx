@@ -26,7 +26,8 @@ import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
 import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
 import { VocabLevelPicker } from '@/components/practice/VocabLevelPicker'
-import { DIGITAL_MARKETING } from '@/lib/programmes'
+import { CAREER_READINESS, DIGITAL_MARKETING } from '@/lib/programmes'
+import { CareerReadinessPractice } from '@/components/practice/CareerReadinessPractice'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -74,6 +75,17 @@ function CertificateRow({ percent }: { percent: number }) {
         className={`${tier.ui.textSoft} transition-transform duration-300 group-hover:translate-x-0.5`}
       />
     </Link>
+  )
+}
+
+/** Labels which programme the section below belongs to. */
+function ProgrammeHeading({ name, title, subtitle }: { name: string; title: string; subtitle: string }) {
+  return (
+    <div className="border-t border-ink-900/[0.06] pt-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">{name}</p>
+      <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">{title}</h2>
+      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-600">{subtitle}</p>
+    </div>
   )
 }
 
@@ -175,16 +187,12 @@ function PracticePage() {
         <div className="space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="rise-in">
-              {/* Practice is the Digital Marketing Programme's home: the
-                  assessment, all 8 tracks, vocabulary and the certificate. */}
-              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                {DIGITAL_MARKETING.name}
-              </p>
               <h1 className="font-display text-4xl font-semibold leading-none tracking-tight text-ink-900">
                 Practice
               </h1>
               <p className="mt-2 text-sm text-ink-600">
-                Sharpen your marketing skills with real-world practice.
+                Two programmes, one place to practise: your digital marketing skills, and personal
+                development with AI.
               </p>
             </div>
             <CertificateRow percent={assessment.overall.percent} />
@@ -194,6 +202,15 @@ function PracticePage() {
             <p className="text-sm text-ink-600">Loading practice…</p>
           ) : (
             <>
+              {/* Everything above the Career Readiness heading is the Digital
+                  Marketing Programme: the assessment, all 8 tracks, vocabulary
+                  and the certificate. */}
+              <ProgrammeHeading
+                name={DIGITAL_MARKETING.name}
+                title="Your digital marketing skills"
+                subtitle="Real scenarios, the language marketers use, and the numbers behind every campaign."
+              />
+
               <div className="grid gap-5 lg:grid-cols-3">
                 <div className="lg:col-span-2">
                   <PracticeStats practice={practice} />
@@ -211,6 +228,15 @@ function PracticePage() {
               />
 
               <AssessmentSummaryCard assessment={assessment} />
+
+              <div className="pt-4">
+                <ProgrammeHeading
+                  name={CAREER_READINESS.name}
+                  title="Personal development with AI"
+                  subtitle="The skills around the job — interviews, how you present yourself, and where you’re headed. AI is your practice partner; people give the feedback."
+                />
+              </div>
+              <CareerReadinessPractice />
             </>
           )}
         </div>
