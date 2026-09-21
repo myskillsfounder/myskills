@@ -84,7 +84,7 @@ export function ModePicker({
     <section>
       <div className="mb-4">
         <h2 className="font-display text-xl font-semibold text-ink-900">Choose a practice mode</h2>
-        <p className="mt-0.5 text-sm text-ink-600">Three ways to sharpen your skills.</p>
+        <p className="mt-0.5 text-sm text-ink-600">Three ways to sharpen your marketing skills.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

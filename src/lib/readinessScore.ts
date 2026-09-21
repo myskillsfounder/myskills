@@ -215,7 +215,7 @@ export function computeReadiness(
       points: personalPts,
       max: PERSONAL_MAX,
       locked: true,
-      detail: 'Earned through the Career Readiness Programme.',
+      detail: 'Earned by completing the Career Readiness Programme — practice, a mentor review and an internship through MySkills.',
     },
     professional: {
       points: round1(t.professional),

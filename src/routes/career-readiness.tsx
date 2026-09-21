@@ -6,10 +6,8 @@ import {
   Bot,
   Briefcase,
   CheckCircle2,
-  Compass,
   FileText,
   HeartHandshake,
-  Mic,
   Rocket,
   Sparkles,
   Target,
@@ -20,6 +18,7 @@ import { useAuthUser } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import {
   CAREER_READINESS,
+  PERSONAL_DEVELOPMENT_MODULES,
   fetchMyProgrammeInterest,
   registerProgrammeInterest,
 } from '@/lib/programmes'
@@ -55,40 +54,7 @@ const WHY: { icon: IconType; title: string; body: string }[] = [
   {
     icon: FileText,
     title: 'Proof beats promises',
-    body: 'A resume line that says “familiar with AI tools” means little. A portfolio of real briefs you worked through with AI — and can explain — means a lot.',
-  },
-]
-
-const MODULES: { icon: IconType; title: string; body: string; ai: string }[] = [
-  {
-    icon: Sparkles,
-    title: 'AI-powered skill sprints',
-    body: 'Work through MySkills’ eight tracks — SEO, Google Ads, Meta Ads, analytics, content and more — with AI as your practice partner.',
-    ai: 'Use AI to generate practice variations, then check your reasoning against Decision Lab scoring.',
-  },
-  {
-    icon: Rocket,
-    title: 'Build a portfolio with AI',
-    body: 'Turn real-style campaign briefs into finished work you can show in an interview.',
-    ai: 'Draft with AI, then edit, critique and defend every decision in your own words.',
-  },
-  {
-    icon: FileText,
-    title: 'Resume & LinkedIn, rebuilt',
-    body: 'Present your skills the way recruiters scan for them, not the way a college template lays them out.',
-    ai: 'Use AI to tailor your profile to specific roles — without it sounding like everyone else’s.',
-  },
-  {
-    icon: Mic,
-    title: 'Interview practice',
-    body: 'Rehearse the questions marketing interviewers actually ask, including the case-style ones.',
-    ai: 'Run mock interviews with AI as often as you like, then take the hard ones to a real mentor.',
-  },
-  {
-    icon: Compass,
-    title: 'Your career plan',
-    body: 'Leave with a clear next step: which roles to target, which gaps to close, and in what order.',
-    ai: 'Map your skill scores against roles with AI, then pressure-test the plan with a career mentor.',
+    body: 'A resume line that says “good communicator” or “team player” means little. Goals you set and hit, a project you led and feedback you acted on — that means a lot.',
   },
 ]
 
@@ -106,11 +72,12 @@ const HUMANS: { icon: IconType; title: string; body: string }[] = [
 ]
 
 const OUTCOMES = [
-  'A portfolio of AI-assisted work you can explain line by line',
-  'Practical fluency with AI across real marketing tasks',
-  'A resume and LinkedIn profile built for the roles you want',
-  'Mentor feedback on your work, not just automated scores',
-  'A clear, written plan for your next career step',
+  'Clear, measurable career goals — and a plan to reach them',
+  'Confident communication in writing, presentations and interviews',
+  'Leadership experience you can point to, not just describe',
+  'Hands-on fluency with agile ways of working',
+  'A growth mindset backed by habits, not slogans',
+  'Mentor feedback on your progress, not just automated scores',
 ]
 
 /* -- interest CTA --------------------------------------------------------- */
@@ -215,16 +182,16 @@ function InterestCta({
 
 /* -- page ----------------------------------------------------------------- */
 
-/** The "you + AI" loop, drawn rather than described: AI does the draft, the
- *  student does the judging, a human signs off. It's the programme's whole
+/** The "you + AI" loop, drawn rather than described: AI coaches, the student
+ *  reflects and acts, a human gives feedback. It's the programme's whole
  *  thesis in one card. */
 function WorkflowCard() {
   const steps = [
-    { icon: FileText, label: 'Real campaign brief', who: 'You receive' },
-    { icon: Bot, label: 'AI drafts options', who: 'AI' },
-    { icon: Target, label: 'You judge, edit and decide', who: 'You' },
-    { icon: Users, label: 'Mentor reviews it', who: 'Human' },
-    { icon: Rocket, label: 'Portfolio piece', who: 'Yours to keep' },
+    { icon: FileText, label: 'A real situation to handle', who: 'You receive' },
+    { icon: Bot, label: 'AI coaches you through it', who: 'AI' },
+    { icon: Target, label: 'You reflect, decide and act', who: 'You' },
+    { icon: Users, label: 'A mentor gives feedback', who: 'Human' },
+    { icon: Rocket, label: 'Proof of your growth', who: 'Yours to keep' },
   ]
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur sm:p-6">
@@ -258,7 +225,7 @@ function WorkflowCard() {
         ))}
       </ol>
       <p className="mt-4 text-xs leading-relaxed text-white/55">
-        The AI does the heavy lifting. The judgment — the part employers pay for — stays yours.
+        AI does the coaching. The growth — the part employers notice — stays yours.
       </p>
     </div>
   )
@@ -296,9 +263,9 @@ function CareerReadinessPage() {
                 Use AI the way employers now expect you to.
               </p>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                A programme built around one idea: AI won’t take the job of someone who knows how to
-                direct it. Practise real marketing work with AI at your side, build a portfolio that
-                proves it, and get a human’s honest feedback before an interviewer gives you theirs.
+                Skills get you shortlisted; how you set goals, communicate, lead, adapt and keep
+                growing gets you hired. Practise all five with AI as your coach — and get a
+                human’s honest feedback before an interviewer gives you theirs.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -356,7 +323,7 @@ function CareerReadinessPage() {
             </div>
 
             <ol className="mt-10 space-y-3">
-              {MODULES.map((m, i) => (
+              {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => (
                 <li key={m.title} className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:p-6">
                   <div className="flex items-center gap-4 sm:w-64 sm:shrink-0">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
