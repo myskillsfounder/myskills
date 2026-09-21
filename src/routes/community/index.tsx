@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react'
+import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
@@ -8,13 +8,33 @@ import {
   GraduationCap,
   HeartHandshake,
   Lock,
+  UserPlus,
   Users,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
-import { Badge, PageHeader } from '@/components/ui'
+import { Badge, Skeleton } from '@/components/ui'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { supabase } from '@/lib/supabase'
+import { fetchMentors } from '@/lib/mentors'
+import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
+import {
+  CategoryBar,
+  INTERNSHIP_TRACKS,
+  InstitutionListingCard,
+  InternshipCard,
+  JoinCard,
+  MarketplaceHero,
+  MarketSection,
+  marketGrid,
+  MentorListingCard,
+  SERVICES,
+  ServiceCard,
+  toMentorListing,
+  type Category,
+  type MentorListing,
+} from '@/components/community/Marketplace'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -358,167 +378,230 @@ function PublicCommunityPage() {
   )
 }
 
-/** The signed-in, onboarded experience — unchanged from before /community
- *  became dual-purpose. */
-/** One tile in the signed-in hub. Live pillars are the whole-card link
- *  itself (this is the primary nav surface for the section, unlike the
- *  public page where the card is just a preview); locked pillars fade to
- *  grayscale with the same shape, so all three read as one set. */
-function HubTile({
-  icon: Icon,
-  live,
-  title,
-  description,
-  to,
-  ctaLabel,
-  lockedNote,
-}: {
-  icon: IconType
-  live: boolean
-  title: string
-  description: string
-  to?: string
-  ctaLabel?: string
-  lockedNote?: string
-}) {
-  const body = (
-    <>
-      <div className="relative flex items-start justify-between gap-3">
-        <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-e1 transition-transform duration-300 ${
-            live
-              ? 'bg-gradient-to-br from-brand-500 to-brand-700 group-hover:scale-105'
-              : 'bg-gradient-to-br from-ink-400 to-ink-600 opacity-70 grayscale'
-          }`}
-        >
-          <Icon size={22} />
-        </span>
-        {live ? (
-          <Badge tone="success">Available</Badge>
-        ) : (
-          <Badge tone="neutral" icon={Lock}>
-            Coming soon
-          </Badge>
-        )}
-      </div>
+/**
+ * The signed-in Community, laid out as a marketplace: one search and one set
+ * of category chips over every kind of support — wellness, career guidance,
+ * mentors, internships and partner institutions. Mentors and institutions
+ * are real listings; wellness and guidance are requests read by the team;
+ * internships show the roles they'll open in, never invented companies.
+ */
+type MentorProfileRow = NonNullable<Parameters<typeof toMentorListing>[1]> & { id: string }
 
-      <h2 className="relative mt-4 font-display text-xl font-semibold text-ink-900">{title}</h2>
-      <p className="relative mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{description}</p>
+function useMarketplaceData() {
+  const [mentors, setMentors] = useState<MentorListing[]>([])
+  const [institutions, setInstitutions] = useState<InstitutionPartner[]>([])
+  const [loading, setLoading] = useState(true)
 
-      {live ? (
-        <span className="relative mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
-          {ctaLabel}
-          <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
-        </span>
-      ) : (
-        <p className="relative mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
-          <Lock size={12} />
-          {lockedNote}
-        </p>
-      )}
-    </>
-  )
+  useEffect(() => {
+    let active = true
+    const loadMentors = fetchMentors().then(async (list) => {
+      const ids = list.map((m) => m.profile_id).filter((id): id is string => Boolean(id))
+      const byId: Record<string, MentorProfileRow> = {}
+      if (ids.length) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('id, full_name, headline, avatar_url, location, skills')
+          .in('id', ids)
+        for (const r of (data ?? []) as MentorProfileRow[]) byId[r.id] = r
+      }
+      if (active) setMentors(list.map((m) => toMentorListing(m, m.profile_id ? byId[m.profile_id] : undefined)))
+    })
+    const loadInstitutions = fetchInstitutionPartners().then((list) => {
+      if (active) setInstitutions(list)
+    })
+    // A failed list just shows as empty — the rest of the marketplace still works.
+    Promise.allSettled([loadMentors, loadInstitutions]).then(() => {
+      if (active) setLoading(false)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
 
-  if (live && to) {
-    return (
-      <Link to={to} className="card lift group flex flex-col p-5">
-        {body}
-      </Link>
-    )
-  }
+  return { mentors, institutions, loading }
+}
 
+const matches = (q: string, ...fields: (string | null | undefined | string[])[]) =>
+  !q || fields.some((f) => (Array.isArray(f) ? f.join(' ') : (f ?? '')).toLowerCase().includes(q))
+
+function ListingSkeletons() {
   return (
-    <div aria-disabled="true" className="card relative flex flex-col overflow-hidden p-5">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-100/90 to-transparent"
-      />
-      {body}
+    <div className={marketGrid}>
+      {[0, 1, 2].map((i) => (
+        <Skeleton key={i} className="h-44 w-full rounded-2xl" />
+      ))}
     </div>
   )
 }
 
-/**
- * Leads the hub, above the practical tiles — the moment someone lands here
- * overwhelmed or unsure what's next, this should be the first thing they see,
- * not the third card in a grid. Mirrors MentorPromoCard's shape (dashboard's
- * own featured banner) so the "one real person, one tap away" pattern feels
- * consistent wherever it shows up.
- */
-function WellnessBanner() {
+function HowSupportWorks() {
+  const steps = [
+    'Send a private request — only the MySkills team can see it.',
+    'A real person reads it, never a bot.',
+    'We reach out by email or phone, at your pace.',
+  ]
   return (
-    <Link
-      to="/wellness"
-      className="group relative mb-6 flex flex-col gap-5 overflow-hidden rounded-2xl border border-ink-900/[0.08] bg-gradient-to-br from-brand-50 via-white to-white p-5 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-e2 sm:flex-row sm:items-center sm:gap-6 sm:p-6"
-    >
-      <span aria-hidden className="pointer-events-none absolute -right-12 -top-12 opacity-[0.07]">
-        <svg width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="#5b4bd6" strokeWidth="2">
-          <circle cx="120" cy="80" r="76" />
-          <circle cx="120" cy="80" r="56" />
-          <circle cx="120" cy="80" r="36" />
-        </svg>
-      </span>
-
-      <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e2">
-        <HeartHandshake size={26} />
-      </span>
-
-      <div className="relative min-w-0 flex-1">
-        <h2 className="font-display text-xl font-semibold text-ink-900">
-          Feeling stuck, or just need someone to talk to?
-        </h2>
-        <p className="mt-1 text-sm leading-relaxed text-ink-600">
-          Counsellors and career mentors are here for the moments practice alone can't fix —
-          overwhelm, self-doubt, or not knowing what's next.
-        </p>
-      </div>
-
-      <span className="press relative inline-flex h-12 shrink-0 items-center gap-2 self-start rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 px-6 text-sm font-semibold text-white shadow-e2 transition-transform duration-300 group-hover:translate-x-0.5 sm:self-auto">
-        Reach out
-        <ArrowRight size={16} />
-      </span>
-    </Link>
+    <div className="flex flex-col justify-center rounded-2xl bg-ink-900/[0.03] p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">How it works</p>
+      <ol className="mt-3 space-y-3">
+        {steps.map((s, i) => (
+          <li key={s} className="flex items-start gap-3 text-sm leading-relaxed text-ink-700">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-ink-900 ring-1 ring-ink-900/[0.08]">
+              {i + 1}
+            </span>
+            {s}
+          </li>
+        ))}
+      </ol>
+    </div>
   )
 }
 
 function CommunityHub() {
+  const { mentors, institutions, loading } = useMarketplaceData()
+  const [query, setQuery] = useState('')
+  const [category, setCategory] = useState<Category>('all')
+  const q = query.trim().toLowerCase()
+
+  const services = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags))
+  const wellness = services.filter((s) => s.category === 'wellness')
+  const guidance = services.filter((s) => s.category === 'guidance')
+  const mentorHits = mentors.filter((m) => matches(q, m.name, m.role, m.location, m.expertise))
+  const internshipHits = INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
+  const institutionHits = institutions.filter((p) => matches(q, p.legal_name, p.city, p.courses_offered))
+
+  const counts: Partial<Record<Category, number>> = {
+    wellness: wellness.length,
+    guidance: guidance.length,
+    mentors: mentorHits.length,
+    internships: internshipHits.length,
+    institutions: institutionHits.length,
+  }
+  counts.all = Object.values(counts).reduce((a, b) => a + (b ?? 0), 0)
+
+  const show = (c: Category) => category === 'all' || category === c
+  // While searching, a section with nothing to show gets out of the way;
+  // without a search it stays, so an empty list reads as "none yet".
+  const visible = (c: Category, n: number) => show(c) && (!q || n > 0)
+  const supportServices = [...(show('wellness') ? wellness : []), ...(show('guidance') ? guidance : [])]
+  const nothing =
+    Boolean(q) && !loading && (category === 'all' ? counts.all === 0 : (counts[category] ?? 0) === 0)
+
   return (
-    <AppShell>
-      <PageHeader
-        eyebrow="You're not doing this alone"
-        title="Community"
-        subtitle="Real people, not just practice — mentors, counsellors, and career experts who've been where you are."
-      />
+    <AppShell wide>
+      <div className="space-y-8">
+        <MarketplaceHero
+          query={query}
+          onQuery={setQuery}
+          stats={[
+            { label: 'Verified mentors', value: loading ? '—' : String(mentors.length) },
+            { label: 'Partner institutions', value: loading ? '—' : String(institutions.length) },
+            { label: 'Counsellors & career guides', value: 'Free' },
+            { label: 'Internships', value: 'Opening soon' },
+          ]}
+        />
 
-      <WellnessBanner />
+        <CategoryBar active={category} onChange={setCategory} counts={loading ? {} : counts} />
 
-      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
-        Build your career
-      </p>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <HubTile
-          icon={GraduationCap}
-          live
-          title="Mentors"
-          description="Talk to experienced marketers, get feedback on your work, and unblock your next step."
-          to="/community/mentors"
-          ctaLabel="Meet the mentors"
-        />
-        <HubTile
-          icon={Building2}
-          live
-          title="Institutions"
-          description="Training institutions verified as MySkills partners, plus a way for yours to apply to be listed."
-          to="/community/institutions"
-          ctaLabel="Explore institutions"
-        />
-        <HubTile
-          icon={Briefcase}
-          live={false}
-          title="Internships"
-          description="Real internships with partner companies, so your practice turns into work experience you can actually show."
-          lockedNote="We're building this — check back soon."
-        />
+        {nothing && (
+          <div className="card p-8 text-center">
+            <p className="font-display text-lg font-semibold text-ink-900">Nothing matches “{query.trim()}”</p>
+            <p className="mt-1 text-sm text-ink-600">Try a skill like “SEO”, a city, or a broader word.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('')
+                setCategory('all')
+              }}
+              className="mt-4 text-sm font-semibold text-brand-700 hover:text-brand-800"
+            >
+              Clear search
+            </button>
+          </div>
+        )}
+
+        {supportServices.length > 0 && (
+          <MarketSection
+            icon={HeartHandshake}
+            title="Wellness & career guidance"
+            subtitle="For the moments practice alone can’t fix — overwhelm, self-doubt, or not knowing what’s next."
+          >
+            <div className={marketGrid}>
+              {supportServices.map((s) => (
+                <ServiceCard key={s.id} service={s} />
+              ))}
+              <HowSupportWorks />
+            </div>
+          </MarketSection>
+        )}
+
+        {visible('mentors', mentorHits.length) && (
+          <MarketSection
+            icon={GraduationCap}
+            title="Mentors"
+            subtitle="Marketers who’ve done the work — get feedback on yours and unblock your next step."
+            seeAll={mentors.length ? { to: '/community/mentors', label: 'All mentors' } : undefined}
+          >
+            {loading ? (
+              <ListingSkeletons />
+            ) : (
+              <div className={marketGrid}>
+                {mentorHits.map((m) => (
+                  <MentorListingCard key={m.id} mentor={m} />
+                ))}
+                {!q && (
+                  <JoinCard
+                    icon={UserPlus}
+                    title={mentors.length ? 'Become a mentor' : 'Be our first mentor'}
+                    body="Done the work? Share what you know with students starting out."
+                    to="/become-a-mentor"
+                  />
+                )}
+              </div>
+            )}
+          </MarketSection>
+        )}
+
+        {visible('internships', internshipHits.length) && (
+          <MarketSection
+            icon={Briefcase}
+            title="Upcoming internships"
+            subtitle="Real work with partner companies — the step that turns practice into experience you can show."
+          >
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {internshipHits.map((t) => (
+                <InternshipCard key={t.title} track={t} />
+              ))}
+            </div>
+          </MarketSection>
+        )}
+
+        {visible('institutions', institutionHits.length) && (
+          <MarketSection
+            icon={Building2}
+            title="Partner institutions"
+            subtitle="Verified training institutions for classroom and offline learning."
+            seeAll={institutions.length ? { to: '/community/institutions', label: 'All institutions' } : undefined}
+          >
+            {loading ? (
+              <ListingSkeletons />
+            ) : (
+              <div className={marketGrid}>
+                {institutionHits.map((p) => (
+                  <InstitutionListingCard key={p.id} partner={p} />
+                ))}
+                {!q && (
+                  <JoinCard
+                    icon={Building2}
+                    title="List your institution"
+                    body="Run digital marketing courses? Apply to become a verified partner."
+                    to="/become-a-partner-institution"
+                  />
+                )}
+              </div>
+            )}
+          </MarketSection>
+        )}
       </div>
     </AppShell>
   )
