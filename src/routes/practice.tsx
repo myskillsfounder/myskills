@@ -26,9 +26,15 @@ import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
 import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
 import { VocabLevelPicker } from '@/components/practice/VocabLevelPicker'
-import { CAREER_READINESS, DIGITAL_MARKETING } from '@/lib/programmes'
+import {
+  CAREER_READINESS,
+  completionStages,
+  DIGITAL_MARKETING,
+  PERSONAL_DEVELOPMENT_MODULES,
+} from '@/lib/programmes'
 import { CareerReadinessPractice } from '@/components/practice/CareerReadinessPractice'
 import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOverview'
+import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -177,6 +183,29 @@ function PracticePage() {
 
   const error = assessmentError ?? practiceError ?? quizQuestionsError
 
+  // Mentor review and platform internships aren't built yet, so both are
+  // false for everyone and neither programme can show Complete.
+  const practisedTracks = skillTracks.filter((t) => practice[t.slug])
+  const practiceAvg = practisedTracks.length
+    ? Math.round(practisedTracks.reduce((sum, t) => sum + practice[t.slug].percent, 0) / practisedTracks.length)
+    : 0
+  const dmStages = completionStages({
+    practiceDone: practisedTracks.length === skillTracks.length,
+    practiceStarted: practisedTracks.length > 0,
+    practiceDetail: practisedTracks.length
+      ? `${practisedTracks.length} of ${skillTracks.length} tracks practised · ${practiceAvg}% average`
+      : `Practise all ${skillTracks.length} skill tracks`,
+    mentorReviewed: false,
+    internshipDone: false,
+  })
+  const crStages = completionStages({
+    practiceDone: false,
+    practiceStarted: false,
+    practiceDetail: `All ${PERSONAL_DEVELOPMENT_MODULES.length} modules — opens with the programme`,
+    mentorReviewed: false,
+    internshipDone: false,
+  })
+
   return (
     <AppShell wide>
       {assessmentLoading && <p className="text-sm text-ink-600">Loading…</p>}
@@ -255,6 +284,8 @@ function PracticePage() {
                 </div>
               </div>
 
+              <ProgrammeCompletion stages={dmStages} />
+
               <ModePicker
                 practice={practice}
                 vocabLearned={vocabLearned}
@@ -275,6 +306,7 @@ function PracticePage() {
                 />
               </div>
               <CareerReadinessOverview />
+              <ProgrammeCompletion stages={crStages} />
               <CareerReadinessPractice />
             </>
           )}
