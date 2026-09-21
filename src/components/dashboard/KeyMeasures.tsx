@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Clock, Flame, Target } from 'lucide-react'
+import { ArrowRight, BookOpen, Clock, Flame, Target } from 'lucide-react'
+import type { CourseProgress } from '@/lib/programmes'
 import { goalsStep } from '@/lib/onboardingContent'
 import { timeSeries } from '@/lib/timeTracker'
 
@@ -11,7 +12,16 @@ const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.la
  * and how much time they're putting in. Neither feeds the score (hours are
  * device-local), but both are what give the number meaning.
  */
-export function KeyMeasures({ goals, streak }: { goals: string[]; streak: number }) {
+export function KeyMeasures({
+  goals,
+  streak,
+  courses,
+}: {
+  goals: string[]
+  streak: number
+  /** The programmes working toward the objective, e.g. Digital Marketing. */
+  courses: CourseProgress[]
+}) {
   const hours = useMemo(() => timeSeries('month').totalHours, [])
   const [primary, ...rest] = goals
 
@@ -37,17 +47,54 @@ export function KeyMeasures({ goals, streak }: { goals: string[]; streak: number
                 Also: {rest.map(goalLabel).join(' · ')}
               </p>
             )}
-            <Link
-              to="/practice"
-              className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700"
-            >
-              Practice toward it <ArrowRight size={13} />
-            </Link>
           </>
         ) : (
           <p className="mt-3 text-sm leading-relaxed text-ink-600">
             You didn’t pick an objective during onboarding.
           </p>
+        )}
+
+        {courses.length > 0 && (
+          <div className="mt-4 border-t border-ink-900/[0.06] pt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+              Courses in progress
+            </p>
+            <ul className="mt-2.5 space-y-2.5">
+              {courses.map((c) => (
+                <li key={c.name}>
+                  <Link
+                    to={c.path}
+                    className="group block rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white">
+                        <BookOpen size={15} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-ink-900">{c.name}</p>
+                        <p className="text-[11px] leading-snug text-ink-500">{c.detail}</p>
+                      </div>
+                      <ArrowRight
+                        size={15}
+                        className="shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brand-600"
+                      />
+                    </div>
+                    <div className="mt-2.5 flex items-center gap-2">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-100">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700"
+                          style={{ width: c.percent > 0 ? `${Math.max(c.percent, 4)}%` : '0%' }}
+                        />
+                      </div>
+                      <span className="shrink-0 text-[11px] font-semibold tabular-nums text-brand-700">
+                        {c.status === 'Not started' ? c.status : `${c.percent}%`}
+                      </span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </section>
 

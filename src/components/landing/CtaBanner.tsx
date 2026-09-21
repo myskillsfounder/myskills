@@ -10,7 +10,7 @@ export function CtaBanner() {
             Ready to find your skill gaps?
           </h2>
           <p className="mt-2 max-w-md text-sm text-ink-300 sm:text-base">
-            Take the free initial assessment and unlock every practice track
+            Take the free Digital Marketing Initial Assessment and unlock every practice track
             today.
           </p>
         </div>

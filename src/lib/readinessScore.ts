@@ -18,7 +18,8 @@
  * Every rule is a named constant below so the method can be published and
  * adjusted without hunting through logic.
  */
-import type { Profile } from './profile'
+import type { Education, Experience, Profile, Project } from './profile'
+import { NO_VERIFICATION, type VerificationView } from './verification'
 import {
   educationLevelOf,
   isEducationComplete,
@@ -83,6 +84,8 @@ export interface NextAction {
 export interface Readiness {
   score: number
   band: ReadinessBand
+  /** Points already on the profile that verification would unlock. */
+  pendingPoints: number
   personal: ReadinessComponent & { locked: boolean }
   professional: ReadinessComponent
   experience: ReadinessComponent
@@ -93,8 +96,25 @@ const levelLabel = (l: EducationLevel) => EDUCATION_LEVELS.find((x) => x.value =
 const round1 = (n: number) => Math.round(n * 10) / 10
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 
-export function computeReadiness(profile: Profile): Readiness {
-  // -- Professional: best education entry + skills
+interface Tally {
+  professional: number
+  experience: number
+  bestEduLabel: string
+  unleveledEducation: boolean
+  internships: number
+  workMonths: number
+  projects: number
+  internshipPts: number
+  projectPts: number
+  skillsPts: number
+  bestEdu: number
+}
+
+/** Score whatever subset of the profile the caller says may count. */
+function tally(
+  profile: Profile,
+  counts: (type: 'education' | 'experience' | 'project', entry: Education | Experience | Project) => boolean,
+): Tally {
   let bestEdu = 0
   let bestEduLabel = ''
   let unleveledEducation = false
@@ -104,6 +124,7 @@ export function computeReadiness(profile: Profile): Readiness {
       unleveledEducation = true
       continue
     }
+    if (!counts('education', e)) continue
     const complete = isEducationComplete(e)
     const pts = EDUCATION_POINTS[level] * (complete ? 1 : IN_PROGRESS_SHARE)
     if (pts > bestEdu) {
@@ -111,41 +132,76 @@ export function computeReadiness(profile: Profile): Readiness {
       bestEduLabel = `${levelLabel(level)}${complete ? '' : ' (in progress)'}`
     }
   }
+  // Skills are self-declared — there's nothing to show on a call for them.
   const skillsPts = Math.min(profile.skills.length * POINTS_PER_SKILL, SKILLS_MAX)
-  const professionalPts = Math.min(bestEdu + skillsPts, PROFESSIONAL_MAX)
+  const professional = Math.min(bestEdu + skillsPts, PROFESSIONAL_MAX)
 
-  // -- Experience: internships, paid/other work by months, projects
-  const internships = profile.experience.filter(isInternship)
-  const work = profile.experience.filter((x) => !isInternship(x))
-  const workMonths = work.reduce((s, x) => s + monthsInRole(x), 0)
+  const exp = profile.experience.filter((x) => counts('experience', x))
+  const internships = exp.filter(isInternship)
+  const workMonths = exp.filter((x) => !isInternship(x)).reduce((s, x) => s + monthsInRole(x), 0)
+  const projects = profile.projects.filter((p) => counts('project', p)).length
   const internshipPts = Math.min(internships.length * POINTS_PER_INTERNSHIP, INTERNSHIPS_MAX)
   const workPts = Math.min(workMonths * POINTS_PER_WORK_MONTH, WORK_MAX)
-  const projectPts = Math.min(profile.projects.length * POINTS_PER_PROJECT, PROJECTS_MAX)
-  const experiencePts = internshipPts + workPts + projectPts
+  const projectPts = Math.min(projects * POINTS_PER_PROJECT, PROJECTS_MAX)
+
+  return {
+    professional,
+    experience: internshipPts + workPts + projectPts,
+    bestEduLabel,
+    unleveledEducation,
+    internships: internships.length,
+    workMonths,
+    projects,
+    internshipPts,
+    projectPts,
+    skillsPts,
+    bestEdu,
+  }
+}
+
+/**
+ * Education, experience and projects count only once the MySkills team has
+ * verified them on a video call (lib/verification.ts) — and only while
+ * identity is verified too, since a credential proves nothing about a person
+ * whose identity wasn't checked. Skills are self-declared and always count.
+ */
+export function computeReadiness(
+  profile: Profile,
+  verification: VerificationView = NO_VERIFICATION,
+  hasOpenRequest = false,
+): Readiness {
+  const counts = (type: 'education' | 'experience' | 'project', entry: Education | Experience | Project) =>
+    verification.identity === 'verified' && verification.status(type, entry) === 'verified'
+
+  const t = tally(profile, counts)
+  const potential = tally(profile, () => true)
 
   const personalPts = 0 // programme not live — see header
-
-  const score = Math.round(personalPts + professionalPts + experiencePts)
+  const score = Math.round(personalPts + t.professional + t.experience)
+  const pendingPoints = round1(potential.professional + potential.experience - (t.professional + t.experience))
 
   // -- The single biggest gain the student can act on right now. Personal
   // development is excluded: it can't be earned until the programme runs,
   // and it has its own call to action on the card.
   const candidates: NextAction[] = []
+  if (pendingPoints >= 0.5 && !hasOpenRequest) {
+    candidates.push({ label: 'Get your profile verified', upTo: pendingPoints, to: '/profile' })
+  }
   if (profile.education.length === 0) {
-    candidates.push({ label: 'Add your education', upTo: EDUCATION_MAX, to: '/profile' })
-  } else if (unleveledEducation && bestEdu === 0) {
+    candidates.push({ label: 'Add and verify your education', upTo: EDUCATION_MAX, to: '/profile' })
+  } else if (potential.unleveledEducation && potential.bestEdu === 0) {
     candidates.push({ label: 'Set your education level', upTo: EDUCATION_MAX, to: '/profile' })
   }
-  if (internshipPts < INTERNSHIPS_MAX) {
-    candidates.push({ label: 'Add an internship', upTo: POINTS_PER_INTERNSHIP, to: '/profile' })
+  if (potential.internshipPts < INTERNSHIPS_MAX) {
+    candidates.push({ label: 'Add and verify an internship', upTo: POINTS_PER_INTERNSHIP, to: '/profile' })
   }
-  if (projectPts < PROJECTS_MAX) {
-    candidates.push({ label: 'Add a project you’ve built', upTo: POINTS_PER_PROJECT, to: '/profile' })
+  if (potential.projectPts < PROJECTS_MAX) {
+    candidates.push({ label: 'Add and verify a project', upTo: POINTS_PER_PROJECT, to: '/profile' })
   }
-  if (skillsPts < SKILLS_MAX) {
+  if (t.skillsPts < SKILLS_MAX) {
     candidates.push({
       label: 'Add your skills',
-      upTo: Math.min(SKILLS_MAX - skillsPts, PROFESSIONAL_MAX - professionalPts),
+      upTo: Math.min(SKILLS_MAX - t.skillsPts, PROFESSIONAL_MAX - t.professional),
       to: '/profile',
     })
   }
@@ -154,26 +210,29 @@ export function computeReadiness(profile: Profile): Readiness {
   return {
     score,
     band: BANDS.find((b) => score >= b.min)!.band,
+    pendingPoints,
     personal: {
       points: personalPts,
       max: PERSONAL_MAX,
       locked: true,
-      detail: 'Earned through the Career Readiness Programme.',
+      detail: 'Earned by completing the Career Readiness Programme — practice, a mentor review and an internship through MySkills.',
     },
     professional: {
-      points: round1(professionalPts),
+      points: round1(t.professional),
       max: PROFESSIONAL_MAX,
-      detail:
-        [bestEduLabel || (profile.education.length ? 'Education level not set' : 'No education added'), plural(profile.skills.length, 'skill')].join(' · '),
+      detail: [
+        t.bestEduLabel || (profile.education.length ? 'No verified education yet' : 'No education added'),
+        plural(profile.skills.length, 'skill'),
+      ].join(' · '),
     },
     experience: {
-      points: round1(experiencePts),
+      points: round1(t.experience),
       max: EXPERIENCE_MAX,
       detail: [
-        plural(internships.length, 'internship'),
-        `${plural(workMonths, 'month')} of work`,
-        plural(profile.projects.length, 'project'),
-      ].join(' · '),
+        `${plural(t.internships, 'internship')}`,
+        `${plural(t.workMonths, 'month')} of work`,
+        plural(t.projects, 'project'),
+      ].join(' · ') + ' verified',
     },
     nextAction,
   }

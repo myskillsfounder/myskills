@@ -142,8 +142,8 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       )}
 
       <p className="mt-4 text-[11px] leading-relaxed text-ink-400">
-        Based on your profile — education, skills and experience. Your MySkills assessment and
-        practice scores aren’t part of it.
+        Based on your verified profile — education, experience and projects count once the MySkills
+        team verifies them. Your MySkills assessment and practice scores aren’t part of it.
       </p>
     </section>
   )

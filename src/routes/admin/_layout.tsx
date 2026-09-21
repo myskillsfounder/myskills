@@ -12,6 +12,7 @@ import {
   MessageSquare,
   Megaphone,
   ShieldAlert,
+  ShieldCheck,
   UserCheck,
   Users,
 } from 'lucide-react'
@@ -52,6 +53,7 @@ const TABS: { to: string; label: string; icon: typeof BarChart3; exact?: boolean
   { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
   { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
   { to: '/admin/wellness', label: 'Wellness', icon: HeartHandshake, section: 'wellness' },
+  { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
   { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
   { to: '/admin/institution-partners', label: 'Institution Partners', icon: GraduationCap, section: 'institution-partners' },
   { to: '/admin/demo-requests', label: 'Demo Requests', icon: Building2, section: 'demo-requests' },

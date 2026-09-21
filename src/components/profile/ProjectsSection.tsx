@@ -3,6 +3,8 @@ import { ExternalLink, FolderKanban, Pencil, Trash2 } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { newId, type Profile, type ProfilePatch, type Project } from '@/lib/profile'
 import { Field, Modal, PrimaryButton, Section, Textarea } from './ui'
+import { VerificationBadge } from './VerificationSection'
+import type { VerificationView } from '@/lib/verification'
 
 const EMPTY: Project = { id: '', title: '', description: '', link: '', year: '' }
 
@@ -16,9 +18,12 @@ function safeLink(url?: string): string | null {
 export function ProjectsSection({
   profile,
   save,
+  verification,
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
+  /** Omit to hide verification badges. */
+  verification?: VerificationView
 }) {
   const list = profile.projects
   const [editing, setEditing] = useState<Project | null>(null)
@@ -62,7 +67,10 @@ export function ProjectsSection({
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-ink-900">{x.title}</p>
+                      <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-900">
+                        {x.title}
+                        {verification && <VerificationBadge status={verification.status('project', x)} />}
+                      </p>
                       {x.year && <p className="text-xs text-ink-500">{x.year}</p>}
                       {href && (
                         <a

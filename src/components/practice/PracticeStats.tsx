@@ -58,7 +58,7 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="font-display text-xl font-semibold leading-none text-white">{avg}%</span>
-            <span className="mt-1 text-[9px] font-medium leading-none text-white/60">Avg. score</span>
+            <span className="mt-1 text-[9px] font-medium leading-none text-white/60">Skill score</span>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
           <div className="flex items-center gap-2">
             <span className="flex h-2 w-2 rounded-full bg-brand-400" />
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
-              Overall skill level
+              Digital Marketing Skill Score
             </p>
           </div>
           <p className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
@@ -75,7 +75,7 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
           <p className="mt-1 text-xs leading-relaxed text-white/70">
             {started.length === 0
               ? 'Practice a track to start building your score.'
-              : 'Average across your best score in each track.'}
+              : `Average of your best score across the ${started.length} of ${skillTracks.length} tracks you’ve practised.`}
           </p>
         </div>
 

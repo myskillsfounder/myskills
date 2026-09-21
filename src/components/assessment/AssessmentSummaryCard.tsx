@@ -33,7 +33,7 @@ export function AssessmentSummaryCard({ assessment }: { assessment: AssessmentRe
       >
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-ink-800">Initial assessment</h2>
+            <h2 className="text-sm font-semibold text-ink-800">Digital Marketing Initial Assessment</h2>
             <span className="inline-flex items-center gap-1 rounded-full border border-ink-300 bg-white px-2 py-0.5 text-[10px] font-medium text-ink-500">
               <Lock size={9} /> One-time
             </span>

@@ -34,7 +34,7 @@ interface StepDef {
 const steps: StepDef[] = [
   {
     icon: ClipboardCheck,
-    title: 'Take your initial assessment',
+    title: 'Take the Digital Marketing Initial Assessment',
     description:
       'A one-time, 8-track benchmark. It tells you — and the app — exactly where you’re strong and where to focus first.',
     cta: 'Start assessment',

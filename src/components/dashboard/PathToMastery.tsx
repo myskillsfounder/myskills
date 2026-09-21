@@ -41,7 +41,7 @@ export function PathToMastery({
   const steps: StepDef[] = [
     {
       icon: ClipboardCheck,
-      title: 'Complete your initial assessment',
+      title: 'Complete your Digital Marketing Initial Assessment',
       description:
         'A one-time benchmark across all 8 skill tracks, so you know exactly where to start and what to work on first.',
       to: '/practice',

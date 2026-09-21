@@ -45,7 +45,7 @@ export function AssessmentsHome({ assessment }: { assessment: AssessmentResult }
       <div>
         <h2 className="font-display text-lg font-semibold text-ink-900">Assessments by category</h2>
         <p className="mt-0.5 text-sm text-ink-600">
-          Your one-time results. Each category is scored from your initial assessment
+          Your one-time results. Each category is scored from your Digital Marketing Initial Assessment
           and locked in — it can't be retaken.
         </p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">

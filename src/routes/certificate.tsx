@@ -117,7 +117,7 @@ function CertificatePage() {
         {!loading && !cert && !error && (
           <div className="no-print card border-dashed p-12 text-center">
             <p className="text-sm font-medium text-ink-800">No certificate yet</p>
-            <p className="mt-1 text-sm text-ink-600">Complete your initial assessment to earn your certificate.</p>
+            <p className="mt-1 text-sm text-ink-600">Complete your Digital Marketing Initial Assessment to earn your certificate.</p>
             <Link
               to="/practice"
               className="mt-4 inline-flex items-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"

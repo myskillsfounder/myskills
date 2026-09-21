@@ -32,7 +32,7 @@ export function Hero() {
               to="/signup"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
             >
-              Start the initial assessment
+              Start the Digital Marketing Assessment
               <ArrowRight size={16} />
             </Link>
             <a
