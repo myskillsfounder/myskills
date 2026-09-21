@@ -112,13 +112,15 @@ export interface CompletionInput {
   /** Has any practice started? */
   practiceStarted: boolean
   practiceDetail: string
-  mentorReviewed: boolean
+  /** Where the programme's mentor review stands (src/lib/mentorReview.ts). */
+  mentorReview: 'none' | 'requested' | 'approved' | 'changes_requested'
   internshipDone: boolean
 }
 
 export function completionStages(c: CompletionInput): ProgrammeStage[] {
   // Stages open in order: a mentor reviews finished practice, and the
   // internship comes after the review.
+  const reviewed = c.mentorReview === 'approved'
   return [
     {
       key: 'practice',
@@ -129,19 +131,23 @@ export function completionStages(c: CompletionInput): ProgrammeStage[] {
     {
       key: 'mentor-review',
       title: 'Mentor review',
-      detail: c.mentorReviewed
+      detail: reviewed
         ? 'Signed off by a mentor'
-        : c.practiceDone
-          ? 'Coming soon — a mentor reviews your work and signs it off'
-          : 'Opens once practice is finished',
-      state: c.mentorReviewed ? 'done' : 'locked',
+        : !c.practiceDone
+          ? 'Opens once practice is finished'
+          : c.mentorReview === 'requested'
+            ? 'Requested — a mentor is reviewing your work'
+            : c.mentorReview === 'changes_requested'
+              ? 'Your mentor left notes — work on them, then ask again'
+              : 'Ready — ask a mentor to review your work',
+      state: reviewed ? 'done' : c.practiceDone ? 'active' : 'locked',
     },
     {
       key: 'internship',
       title: 'Internship through MySkills',
       detail: c.internshipDone
         ? 'Completed and verified'
-        : c.mentorReviewed
+        : reviewed
           ? 'Coming soon — real briefs with partner companies'
           : 'Opens after your mentor review',
       state: c.internshipDone ? 'done' : 'locked',

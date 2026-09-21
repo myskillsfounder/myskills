@@ -31,6 +31,7 @@ const SECTION_PATH: Record<StaffSection, string> = {
   feedback: '/admin/feedback',
   wellness: '/admin/wellness',
   verification: '/admin/verification',
+  'mentor-reviews': '/admin/mentor-reviews',
   mentors: '/admin/mentors',
   'institution-partners': '/admin/institution-partners',
   'demo-requests': '/admin/demo-requests',

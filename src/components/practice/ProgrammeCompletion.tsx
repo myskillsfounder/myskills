@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { CheckCircle2, Lock } from 'lucide-react'
 import { isProgrammeComplete, type ProgrammeStage, type StageState } from '@/lib/programmes'
 
@@ -21,7 +22,7 @@ const STATE_LABEL: Record<StageState, string> = {
  * programmes' score cards, so it's clear a high practice score is a start,
  * not a finish.
  */
-export function ProgrammeCompletion({ stages }: { stages: ProgrammeStage[] }) {
+export function ProgrammeCompletion({ stages, children }: { stages: ProgrammeStage[]; children?: ReactNode }) {
   const complete = isProgrammeComplete(stages)
   const left = stages.filter((s) => s.state !== 'done').length
 
@@ -60,6 +61,7 @@ export function ProgrammeCompletion({ stages }: { stages: ProgrammeStage[] }) {
           </li>
         ))}
       </ol>
+      {children}
     </section>
   )
 }
