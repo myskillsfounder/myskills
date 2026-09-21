@@ -14,7 +14,7 @@ import { digitalMarketingProgress } from '@/lib/programmes'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
-import { VocabularyCoach } from '@/components/dashboard/VocabularyCoach'
+import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { WellnessSupportCard } from '@/components/dashboard/WellnessSupportCard'
 import { ProgrammePromoCard } from '@/components/dashboard/ProgrammePromoCard'
@@ -191,8 +191,6 @@ function DashboardPage() {
               practicedCount={practicedCount}
               totalTracks={skillTracks.length}
             />
-
-            <VocabularyCoach userKey={userKey} />
           </div>
 
           <aside className="space-y-6 lg:sticky lg:top-8">
@@ -201,6 +199,8 @@ function DashboardPage() {
             <WellnessSupportCard />
           </aside>
         </div>
+
+        <AiSkillsShowcase />
       </div>
     </AppShell>
   )

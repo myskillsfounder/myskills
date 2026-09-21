@@ -1,7 +1,8 @@
 import type { ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Briefcase, ClipboardCheck, Dumbbell, GraduationCap, Lock } from 'lucide-react'
+import { ArrowRight, Briefcase, ClipboardCheck, Dumbbell, GraduationCap, Lock, Sprout } from 'lucide-react'
 import { Badge } from '@/components/ui'
+import { CAREER_READINESS } from '@/lib/programmes'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 type Tone = 'success' | 'brand' | 'neutral'
@@ -24,7 +25,7 @@ interface StepDef {
 /**
  * A short, sequential guide to how the app is meant to be used, shown above
  * Recommended prompts. Without this, a new user has to discover the
- * assessment -> practice -> mentors -> internships path themselves by
+ * assessment -> practice -> personal skills -> mentors -> internships path themselves by
  * clicking around. Steps 3 and 4 lean on features that aren't fully live yet
  * (institutions, internships), so they're labelled honestly rather than
  * promising something the app can't deliver today.
@@ -61,19 +62,28 @@ export function PathToMastery({
       },
     },
     {
-      icon: GraduationCap,
-      title: 'Get feedback from mentors',
+      icon: Sprout,
+      title: 'Build your personal skills with AI',
       description:
-        'Real marketers review your work and answer questions in live chat. Institutions and cohort learning are coming soon.',
+        'Goal setting, communication, leadership, agile working and a growth mindset — practised with AI as your partner in the Career Readiness Programme.',
+      to: CAREER_READINESS.path,
+      cta: 'See the programme',
+      badge: { label: 'Opens soon', tone: 'neutral', icon: Lock },
+    },
+    {
+      icon: GraduationCap,
+      title: 'Get reviewed by a mentor',
+      description:
+        'Mentors answer your questions in live chat today. Formal mentor reviews — the sign-off that completes a programme — are coming next.',
       to: '/community/mentors',
       cta: 'Meet the mentors',
-      badge: { label: 'Mentors live', tone: 'success' },
+      badge: { label: 'Chat live', tone: 'success' },
     },
     {
       icon: Briefcase,
-      title: 'Find an internship',
+      title: 'Complete an internship through MySkills',
       description:
-        'Real briefs from partner companies, so what you practice here becomes real work experience on your resume.',
+        'Real briefs from partner companies. Finishing one is the final step to completing a programme — and real work for your resume.',
       to: '/community',
       cta: 'See what’s coming',
       badge: { label: 'Coming soon', tone: 'neutral', icon: Lock },
@@ -85,7 +95,7 @@ export function PathToMastery({
       <div className="border-b border-ink-100 px-5 py-4 sm:px-6">
         <h2 className="font-display text-lg font-semibold text-ink-900">Your path to mastery</h2>
         <p className="mt-0.5 text-sm text-ink-600">
-          Four steps from &ldquo;I think I know this&rdquo; to &ldquo;I can prove it.&rdquo;
+          Five steps from &ldquo;I think I know this&rdquo; to &ldquo;I can prove it.&rdquo;
         </p>
       </div>
 
