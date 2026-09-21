@@ -15,6 +15,7 @@ import { PathToMastery } from '@/components/dashboard/PathToMastery'
 import { VocabularyCoach } from '@/components/dashboard/VocabularyCoach'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { WellnessSupportCard } from '@/components/dashboard/WellnessSupportCard'
+import { LaunchpadPromoCard } from '@/components/dashboard/LaunchpadPromoCard'
 import { Card, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -324,6 +325,8 @@ function DashboardPage() {
             </span>
           </Link>
         )}
+
+        <LaunchpadPromoCard />
 
         <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
           <div className="space-y-6 lg:col-span-2">

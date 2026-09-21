@@ -31,6 +31,7 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
+import { Route as CareerLaunchpadRouteImport } from './routes/career-launchpad'
 import { Route as BecomeAPartnerInstitutionRouteImport } from './routes/become-a-partner-institution'
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
@@ -165,6 +166,11 @@ const CertificateRoute = CertificateRouteImport.update({
   path: '/certificate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareerLaunchpadRoute = CareerLaunchpadRouteImport.update({
+  id: '/career-launchpad',
+  path: '/career-launchpad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BecomeAPartnerInstitutionRoute =
   BecomeAPartnerInstitutionRouteImport.update({
     id: '/become-a-partner-institution',
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
+  '/career-launchpad': typeof CareerLaunchpadRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -336,6 +343,7 @@ export interface FileRoutesByTo {
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
+  '/career-launchpad': typeof CareerLaunchpadRoute
   '/certificate': typeof CertificateRoute
   '/dashboard': typeof DashboardRoute
   '/feedback': typeof FeedbackRoute
@@ -382,6 +390,7 @@ export interface FileRoutesById {
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
+  '/career-launchpad': typeof CareerLaunchpadRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
+    | '/career-launchpad'
     | '/certificate'
     | '/community'
     | '/dashboard'
@@ -478,6 +488,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
+    | '/career-launchpad'
     | '/certificate'
     | '/dashboard'
     | '/feedback'
@@ -523,6 +534,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
+    | '/career-launchpad'
     | '/certificate'
     | '/community'
     | '/dashboard'
@@ -571,6 +583,7 @@ export interface RootRouteChildren {
   AssessmentRoute: typeof AssessmentRoute
   BecomeAMentorRoute: typeof BecomeAMentorRoute
   BecomeAPartnerInstitutionRoute: typeof BecomeAPartnerInstitutionRoute
+  CareerLaunchpadRoute: typeof CareerLaunchpadRoute
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
   DashboardRoute: typeof DashboardRoute
@@ -753,6 +766,13 @@ declare module '@tanstack/react-router' {
       path: '/certificate'
       fullPath: '/certificate'
       preLoaderRoute: typeof CertificateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/career-launchpad': {
+      id: '/career-launchpad'
+      path: '/career-launchpad'
+      fullPath: '/career-launchpad'
+      preLoaderRoute: typeof CareerLaunchpadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/become-a-partner-institution': {
@@ -984,6 +1004,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentRoute: AssessmentRoute,
   BecomeAMentorRoute: BecomeAMentorRoute,
   BecomeAPartnerInstitutionRoute: BecomeAPartnerInstitutionRoute,
+  CareerLaunchpadRoute: CareerLaunchpadRoute,
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,
   DashboardRoute: DashboardRoute,
