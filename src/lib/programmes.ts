@@ -18,6 +18,42 @@ export const CAREER_READINESS = {
   path: '/career-readiness',
 } as const
 
+/**
+ * The Digital Marketing Programme is everything MySkills already had before
+ * programmes existed — the Digital Marketing Initial Assessment, the 8 skill
+ * tracks and their Decision Labs, the Vocabulary Builder and the certificate.
+ * It's live, so there's no interest list: progress comes from real results.
+ */
+export const DIGITAL_MARKETING = {
+  name: 'Digital Marketing Programme',
+  path: '/practice',
+} as const
+
+export interface CourseProgress {
+  name: string
+  path: string
+  /** 0–100 */
+  percent: number
+  status: 'Not started' | 'In progress' | 'Complete'
+  detail: string
+}
+
+/** One step for the assessment plus one per skill track practised. */
+export function digitalMarketingProgress(assessmentDone: boolean, practicedTracks: number, totalTracks: number): CourseProgress {
+  const steps = 1 + totalTracks
+  const done = (assessmentDone ? 1 : 0) + practicedTracks
+  const percent = Math.round((done / steps) * 100)
+  return {
+    name: DIGITAL_MARKETING.name,
+    path: DIGITAL_MARKETING.path,
+    percent,
+    status: done === 0 ? 'Not started' : done >= steps ? 'Complete' : 'In progress',
+    detail: assessmentDone
+      ? `Assessment done · ${practicedTracks} of ${totalTracks} tracks practised`
+      : 'Start with the Digital Marketing Initial Assessment',
+  }
+}
+
 export interface ProgrammeInterest {
   id: string
   created_at: string

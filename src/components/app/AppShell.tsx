@@ -187,7 +187,7 @@ function AssessmentCard() {
           <ClipboardCheck size={20} />
         </span>
         <div>
-          <p className="text-sm font-semibold text-amber-900">Complete your initial assessment</p>
+          <p className="text-sm font-semibold text-amber-900">Complete your Digital Marketing Initial Assessment</p>
           <p className="mt-0.5 text-xs leading-relaxed text-amber-700">
             Take the one-time assessment to unlock your skill tracks and start tracking progress.
           </p>

@@ -9,6 +9,7 @@ import { useHasFeedback } from '@/lib/feedback'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
 import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
+import { digitalMarketingProgress } from '@/lib/programmes'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
@@ -143,7 +144,11 @@ function DashboardPage() {
             <div className="lg:col-span-2">
               <ReadinessScoreCard readiness={readiness} />
             </div>
-            <KeyMeasures goals={goals} streak={streak} />
+            <KeyMeasures
+              goals={goals}
+              streak={streak}
+              courses={[digitalMarketingProgress(assessment != null, practicedCount, skillTracks.length)]}
+            />
           </div>
         )}
 

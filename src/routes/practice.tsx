@@ -26,6 +26,7 @@ import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
 import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
 import { VocabLevelPicker } from '@/components/practice/VocabLevelPicker'
+import { DIGITAL_MARKETING } from '@/lib/programmes'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -146,7 +147,7 @@ function PracticePage() {
         <div>
           <div className="mb-6">
             <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">
-              Initial assessment
+              Digital Marketing Initial Assessment
             </h1>
             <p className="mt-1 text-sm text-ink-600">
               Answer {quizQuestions.length} quick questions to unlock scenario practice
@@ -174,6 +175,11 @@ function PracticePage() {
         <div className="space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="rise-in">
+              {/* Practice is the Digital Marketing Programme's home: the
+                  assessment, all 8 tracks, vocabulary and the certificate. */}
+              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+                {DIGITAL_MARKETING.name}
+              </p>
               <h1 className="font-display text-4xl font-semibold leading-none tracking-tight text-ink-900">
                 Practice
               </h1>
