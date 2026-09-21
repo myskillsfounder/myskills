@@ -1,17 +1,21 @@
 /**
- * Programmes — structured courses, starting with Career LaunchPad. Interest
- * is captured as a row in programme_interest (docs/supabase-programme-
- * interest.sql) rather than an enrolment: there's no price, schedule or
- * cohort yet, so the landing page collects intent instead of promising
- * either.
+ * Programmes — structured courses, starting with the Career Readiness
+ * Programme. Interest is captured as a row in programme_interest (docs/
+ * supabase-programme-interest.sql) rather than an enrolment: there's no
+ * price, schedule or cohort yet, so the landing page collects intent instead
+ * of promising either.
  */
 import { supabase } from './supabase'
 
-export const CAREER_LAUNCHPAD = {
+export const CAREER_READINESS = {
+  // Stored value in programme_interest.programme — kept from the working
+  // name "Career LaunchPad" (the dashboard took that name instead), since
+  // the table's check constraint may already be live. Display name and URL
+  // are free to change; this isn't.
   slug: 'career-launchpad',
-  name: 'Career LaunchPad',
-  subtitle: 'The AI Career Readiness Programme',
-  path: '/career-launchpad',
+  name: 'Career Readiness Programme',
+  subtitle: 'Powered by AI · Reviewed by people',
+  path: '/career-readiness',
 } as const
 
 export interface ProgrammeInterest {

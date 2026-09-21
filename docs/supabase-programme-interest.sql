@@ -1,5 +1,5 @@
 -- Programme interest — the "Register your interest" button on
--- /career-launchpad (src/routes/career-launchpad.tsx).
+-- /career-readiness (src/routes/career-readiness.tsx).
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
 -- Depends on public.is_admin() (docs/supabase-mentor-onboarding.sql) and the
@@ -8,6 +8,10 @@
 -- An interest list, not an enrolment: there's no price, schedule or cohort
 -- yet. One row per (learner, programme) — the unique constraint makes a
 -- second click a no-op, which the frontend treats as success.
+--
+-- The stored slug is 'career-launchpad' (the programme's working name) even
+-- though it's now the Career Readiness Programme — changing it would mean
+-- migrating the check constraint for no user-visible gain.
 
 create table if not exists public.programme_interest (
   id         uuid primary key default gen_random_uuid(),
@@ -55,16 +59,16 @@ begin
   select count(*) into v_total from public.programme_interest where programme = new.programme;
 
   perform public.notify_email(
-    format('[MySkills · Programme] %s joined the Career LaunchPad list (%s total)',
+    format('[MySkills · Programme] %s joined the Career Readiness Programme list (%s total)',
            new.full_name, v_total),
     public.notify_layout(
       'New programme interest',
-      public.notify_row('Programme', 'Career LaunchPad')
+      public.notify_row('Programme', 'Career Readiness Programme')
       || public.notify_row('Name', new.full_name)
       || public.notify_row('Email', new.email)
       || public.notify_row('Total on list', v_total::text),
       'Open MySkills',
-      'https://myskills.org.in/career-launchpad'
+      'https://myskills.org.in/career-readiness'
     )
   );
   return null;

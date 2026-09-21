@@ -6,7 +6,7 @@ import {
   ChevronRight,
   ClipboardCheck,
   Dumbbell,
-  LayoutGrid,
+  Rocket,
   LogOut,
   Menu,
   MessageCircle,
@@ -32,7 +32,7 @@ type IconType = ComponentType<{ size?: number; className?: string }>
  * it properly.
  */
 const NAV: { to: string; label: string; icon: IconType }[] = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
+  { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/community', label: 'Community', icon: MessageCircle },
   { to: '/feedback', label: 'Feedback', icon: MessageSquare },

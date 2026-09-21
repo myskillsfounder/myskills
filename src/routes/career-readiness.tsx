@@ -19,7 +19,7 @@ import { errorMessage } from '@/lib/errors'
 import { useAuthUser } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
 import {
-  CAREER_LAUNCHPAD,
+  CAREER_READINESS,
   fetchMyProgrammeInterest,
   registerProgrammeInterest,
 } from '@/lib/programmes'
@@ -31,8 +31,8 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 // Public, but deliberately absent from PAGE_SEO (src/lib/seo.ts), so it's
 // served noindex until the programme's details are final. Add it there, to
 // SITEMAP_ROUTES and to scripts/generate-seo.mjs when it's ready to rank.
-export const Route = createFileRoute('/career-launchpad')({
-  component: CareerLaunchpadPage,
+export const Route = createFileRoute('/career-readiness')({
+  component: CareerReadinessPage,
 })
 
 /* -- content --------------------------------------------------------------
@@ -129,7 +129,7 @@ function useInterest() {
       return
     }
     let active = true
-    fetchMyProgrammeInterest(CAREER_LAUNCHPAD.slug).then((row) => {
+    fetchMyProgrammeInterest(CAREER_READINESS.slug).then((row) => {
       if (active) setState(row ? 'registered' : 'ready')
     })
     return () => {
@@ -142,7 +142,7 @@ function useInterest() {
     setState('saving')
     setError(undefined)
     try {
-      await registerProgrammeInterest(CAREER_LAUNCHPAD.slug, {
+      await registerProgrammeInterest(CAREER_READINESS.slug, {
         full_name: profile?.full_name ?? '',
         email: user.email ?? '',
       })
@@ -264,7 +264,7 @@ function WorkflowCard() {
   )
 }
 
-function CareerLaunchpadPage() {
+function CareerReadinessPage() {
   const { state, error, register } = useInterest()
 
   return (
@@ -287,10 +287,10 @@ function CareerLaunchpadPage() {
             <div className="rise-in">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85">
                 <Sparkles size={13} />
-                {CAREER_LAUNCHPAD.subtitle}
+                {CAREER_READINESS.subtitle}
               </span>
               <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                {CAREER_LAUNCHPAD.name}
+                {CAREER_READINESS.name}
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">
                 Use AI the way employers now expect you to.
@@ -446,7 +446,7 @@ function CareerLaunchpadPage() {
                 Be first in when it opens.
               </h2>
               <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-                Register your interest and we’ll email you the moment {CAREER_LAUNCHPAD.name} is
+                Register your interest and we’ll email you the moment the {CAREER_READINESS.name} is
                 ready — no commitment.
               </p>
             </div>

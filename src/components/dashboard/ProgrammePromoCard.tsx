@@ -1,17 +1,17 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, Sparkles } from 'lucide-react'
-import { CAREER_LAUNCHPAD } from '@/lib/programmes'
+import { CAREER_READINESS } from '@/lib/programmes'
 
 /**
- * Dashboard doorway to the Career LaunchPad landing page. Dark, like the
+ * Dashboard doorway to the Career Readiness Programme landing page. Dark, like the
  * NextStep hero, so it reads as a flagship programme rather than one more
  * feature tile — but compact, since it sits above the student's own
  * progress and shouldn't compete with it.
  */
-export function LaunchpadPromoCard() {
+export function ProgrammePromoCard() {
   return (
     <Link
-      to={CAREER_LAUNCHPAD.path}
+      to={CAREER_READINESS.path}
       className="surface-wood-dark lift group relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:gap-6 sm:p-6"
     >
       <span aria-hidden className="pointer-events-none absolute -right-10 -top-12 opacity-[0.14]">
@@ -32,11 +32,11 @@ export function LaunchpadPromoCard() {
             New programme
           </span>
           <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-white/50">
-            {CAREER_LAUNCHPAD.subtitle}
+            {CAREER_READINESS.subtitle}
           </span>
         </div>
         <h2 className="mt-1.5 font-display text-xl font-semibold text-white sm:text-2xl">
-          {CAREER_LAUNCHPAD.name}
+          {CAREER_READINESS.name}
         </h2>
         <p className="mt-1 text-sm leading-relaxed text-white/70">
           Learn to use AI the way employers now expect — and leave with a portfolio that proves it.
