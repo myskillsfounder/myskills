@@ -28,6 +28,7 @@ import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
 import { VocabLevelPicker } from '@/components/practice/VocabLevelPicker'
 import { CAREER_READINESS, DIGITAL_MARKETING } from '@/lib/programmes'
 import { CareerReadinessPractice } from '@/components/practice/CareerReadinessPractice'
+import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOverview'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -78,13 +79,44 @@ function CertificateRow({ percent }: { percent: number }) {
   )
 }
 
-/** Labels which programme the section below belongs to. */
-function ProgrammeHeading({ name, title, subtitle }: { name: string; title: string; subtitle: string }) {
+/** Labels which programme the section below belongs to. Both programmes use
+ *  the same heading, score row and grid, so the page reads as two parallel
+ *  sections rather than one long list. */
+function ProgrammeHeading({
+  step,
+  name,
+  title,
+  subtitle,
+  status,
+  live,
+}: {
+  step: number
+  name: string
+  title: string
+  subtitle: string
+  status: string
+  live: boolean
+}) {
   return (
-    <div className="border-t border-ink-900/[0.06] pt-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">{name}</p>
-      <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">{title}</h2>
-      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-600">{subtitle}</p>
+    <div className="flex items-start gap-3.5 border-t border-ink-900/[0.06] pt-6">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-900 font-display text-sm font-semibold text-white">
+        {step}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">{name}</p>
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+              live ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
+            }`}
+          >
+            <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-emerald-500' : 'bg-ink-400'}`} />
+            {status}
+          </span>
+        </div>
+        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">{title}</h2>
+        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-600">{subtitle}</p>
+      </div>
     </div>
   )
 }
@@ -206,7 +238,10 @@ function PracticePage() {
                   Marketing Programme: the assessment, all 8 tracks, vocabulary
                   and the certificate. */}
               <ProgrammeHeading
+                step={1}
                 name={DIGITAL_MARKETING.name}
+                status="In progress"
+                live
                 title="Your digital marketing skills"
                 subtitle="Real scenarios, the language marketers use, and the numbers behind every campaign."
               />
@@ -231,11 +266,15 @@ function PracticePage() {
 
               <div className="pt-4">
                 <ProgrammeHeading
+                  step={2}
                   name={CAREER_READINESS.name}
+                  status="Opens soon"
+                  live={false}
                   title="Personal development with AI"
                   subtitle="Five modules — goal setting, communication, leadership, agile methodology and a growth mindset. AI is your practice partner; people give the feedback."
                 />
               </div>
+              <CareerReadinessOverview />
               <CareerReadinessPractice />
             </>
           )}
