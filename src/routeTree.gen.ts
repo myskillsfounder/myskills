@@ -46,6 +46,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
+import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
 import { Route as AdminLayoutUsersRouteImport } from './routes/admin/_layout/users'
 import { Route as AdminLayoutMentorsRouteImport } from './routes/admin/_layout/mentors'
 import { Route as AdminLayoutInstitutionPartnersRouteImport } from './routes/admin/_layout/institution-partners'
@@ -242,6 +243,11 @@ const AdminLayoutWellnessRoute = AdminLayoutWellnessRouteImport.update({
   path: '/wellness',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutVerificationRoute = AdminLayoutVerificationRouteImport.update({
+  id: '/verification',
+  path: '/verification',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutUsersRoute = AdminLayoutUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
   '/admin/users': typeof AdminLayoutUsersRoute
+  '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin/': typeof AdminLayoutIndexRoute
 }
@@ -381,6 +388,7 @@ export interface FileRoutesByTo {
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
   '/admin/users': typeof AdminLayoutUsersRoute
+  '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin': typeof AdminLayoutIndexRoute
 }
@@ -430,6 +438,7 @@ export interface FileRoutesById {
   '/admin/_layout/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/_layout/mentors': typeof AdminLayoutMentorsRoute
   '/admin/_layout/users': typeof AdminLayoutUsersRoute
+  '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
 }
@@ -480,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/institution-partners'
     | '/admin/mentors'
     | '/admin/users'
+    | '/admin/verification'
     | '/admin/wellness'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -526,6 +536,7 @@ export interface FileRouteTypes {
     | '/admin/institution-partners'
     | '/admin/mentors'
     | '/admin/users'
+    | '/admin/verification'
     | '/admin/wellness'
     | '/admin'
   id:
@@ -574,6 +585,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/institution-partners'
     | '/admin/_layout/mentors'
     | '/admin/_layout/users'
+    | '/admin/_layout/verification'
     | '/admin/_layout/wellness'
     | '/admin/_layout/'
   fileRoutesById: FileRoutesById
@@ -873,6 +885,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutWellnessRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/verification': {
+      id: '/admin/_layout/verification'
+      path: '/verification'
+      fullPath: '/admin/verification'
+      preLoaderRoute: typeof AdminLayoutVerificationRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/users': {
       id: '/admin/_layout/users'
       path: '/users'
@@ -977,6 +996,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutInstitutionPartnersRoute: typeof AdminLayoutInstitutionPartnersRoute
   AdminLayoutMentorsRoute: typeof AdminLayoutMentorsRoute
   AdminLayoutUsersRoute: typeof AdminLayoutUsersRoute
+  AdminLayoutVerificationRoute: typeof AdminLayoutVerificationRoute
   AdminLayoutWellnessRoute: typeof AdminLayoutWellnessRoute
   AdminLayoutIndexRoute: typeof AdminLayoutIndexRoute
 }
@@ -991,6 +1011,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutInstitutionPartnersRoute: AdminLayoutInstitutionPartnersRoute,
   AdminLayoutMentorsRoute: AdminLayoutMentorsRoute,
   AdminLayoutUsersRoute: AdminLayoutUsersRoute,
+  AdminLayoutVerificationRoute: AdminLayoutVerificationRoute,
   AdminLayoutWellnessRoute: AdminLayoutWellnessRoute,
   AdminLayoutIndexRoute: AdminLayoutIndexRoute,
 }

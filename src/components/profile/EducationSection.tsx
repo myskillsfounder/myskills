@@ -3,6 +3,8 @@ import { GraduationCap, Pencil, Trash2 } from 'lucide-react'
 import { newId, type Education, type EducationLevel, type Profile, type ProfilePatch } from '@/lib/profile'
 import { EDUCATION_LEVELS, educationLevelOf } from '@/lib/careerProfile'
 import { Field, Modal, PrimaryButton, Section, Select, Textarea } from './ui'
+import { VerificationBadge } from './VerificationSection'
+import type { VerificationView } from '@/lib/verification'
 
 const levelLabel = (l: EducationLevel | null) => EDUCATION_LEVELS.find((x) => x.value === l)?.label
 
@@ -19,9 +21,12 @@ const EMPTY: Education = {
 export function EducationSection({
   profile,
   save,
+  verification,
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
+  /** Omit to hide verification badges. */
+  verification?: VerificationView
 }) {
   const list = profile.education
   const [editing, setEditing] = useState<Education | null>(null)
@@ -55,7 +60,10 @@ export function EducationSection({
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-ink-900">{x.school}</p>
+                    <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-900">
+                      {x.school}
+                      {verification && <VerificationBadge status={verification.status('education', x)} />}
+                    </p>
                     <p className="text-sm text-ink-800">
                       {[levelLabel(educationLevelOf(x)), x.degree, x.field].filter(Boolean).join(' · ')}
                     </p>

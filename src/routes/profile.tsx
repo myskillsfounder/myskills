@@ -11,6 +11,9 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { ExperienceSection } from '@/components/profile/ExperienceSection'
 import { EducationSection } from '@/components/profile/EducationSection'
 import { ProjectsSection } from '@/components/profile/ProjectsSection'
+import { VerificationSection } from '@/components/profile/VerificationSection'
+import { useVerification } from '@/lib/useVerification'
+import { computeReadiness } from '@/lib/readinessScore'
 import { SkillsSection } from '@/components/profile/SkillsSection'
 import { DetailsSection, ProfileCompletion } from '@/components/profile/DetailsSection'
 
@@ -122,6 +125,10 @@ function ActiveLearningLocked() {
 
 function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
+  const verification = useVerification(profile)
+  const pendingPoints = profile
+    ? computeReadiness(profile, verification.view, verification.hasOpenRequest).pendingPoints
+    : 0
 
   return (
     <AppShell wide>
@@ -146,6 +153,17 @@ function ProfilePage() {
           {/* Personal details moved out of onboarding — asked for here instead. */}
           <ProfileCompletion profile={profile} save={save} />
 
+          {/* KYC: nothing below counts toward the score until it's verified. */}
+          {!verification.loading && (
+            <VerificationSection
+              profile={profile}
+              view={verification.view}
+              request={verification.request}
+              pendingPoints={pendingPoints}
+              onChange={() => void verification.reload()}
+            />
+          )}
+
           {/* Two columns on desktop, one ordered stack on mobile. The column
               wrappers are `contents` below lg, so their children become direct
               flex items and `order-*` can interleave across columns — that's
@@ -156,15 +174,15 @@ function ProfilePage() {
               <div className="order-2 lg:order-none">
               </div>
               <div className="order-3 lg:order-none">
-                <ExperienceSection profile={profile} save={save} />
+                <ExperienceSection profile={profile} save={save} verification={verification.view} />
               </div>
               <div className="order-4 lg:order-none">
-                <EducationSection profile={profile} save={save} />
+                <EducationSection profile={profile} save={save} verification={verification.view} />
               </div>
               {/* Same order as Education — ties fall back to DOM order, so on a
                   phone it lands right after it, before Details. */}
               <div className="order-4 lg:order-none">
-                <ProjectsSection profile={profile} save={save} />
+                <ProjectsSection profile={profile} save={save} verification={verification.view} />
               </div>
             </div>
 

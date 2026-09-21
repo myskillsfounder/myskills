@@ -3,6 +3,8 @@ import { Briefcase, Pencil, Trash2 } from 'lucide-react'
 import { newId, type Experience, type Profile, type ProfilePatch } from '@/lib/profile'
 import { EMPLOYMENT_TYPES } from '@/lib/careerProfile'
 import { Field, Modal, PrimaryButton, Section, Select, Textarea } from './ui'
+import { VerificationBadge } from './VerificationSection'
+import type { VerificationView } from '@/lib/verification'
 
 /** Standard types, plus whatever free text an older entry already holds, so
  *  editing one never silently blanks its type. */
@@ -39,9 +41,12 @@ const EMPTY: Experience = {
 export function ExperienceSection({
   profile,
   save,
+  verification,
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
+  /** Omit to hide verification badges. */
+  verification?: VerificationView
 }) {
   const list = profile.experience
   const [editing, setEditing] = useState<Experience | null>(null)
@@ -73,7 +78,10 @@ export function ExperienceSection({
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-ink-900">{x.title}</p>
+                    <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-900">
+                      {x.title}
+                      {verification && <VerificationBadge status={verification.status('experience', x)} />}
+                    </p>
                     <p className="text-sm text-ink-800">
                       {x.company}
                       {x.employmentType ? ` · ${x.employmentType}` : ''}

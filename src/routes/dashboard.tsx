@@ -9,6 +9,7 @@ import { useHasFeedback } from '@/lib/feedback'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
 import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
+import { useVerification } from '@/lib/useVerification'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
@@ -94,6 +95,7 @@ function DashboardPage() {
   const name = raw.charAt(0).toUpperCase() + raw.slice(1)
   const userKey = user?.id ?? 'guest'
   const { profile, loading: profileLoading } = useProfile()
+  const verification = useVerification(profile)
   const goals = profile?.goals ?? []
   const { result: assessment } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
@@ -111,7 +113,10 @@ function DashboardPage() {
 
   // The score comes from the profile alone (see lib/readinessScore.ts);
   // practice results still drive the path-to-mastery checklist below.
-  const readiness = useMemo(() => (profile ? computeReadiness(profile) : null), [profile])
+  const readiness = useMemo(
+    () => (profile ? computeReadiness(profile, verification.view, verification.hasOpenRequest) : null),
+    [profile, verification.view, verification.hasOpenRequest],
+  )
   const practicedCount = useMemo(
     () => skillTracks.filter((t) => practice[t.slug]).length,
     [practice],
@@ -133,7 +138,7 @@ function DashboardPage() {
       <div className="space-y-6">
         {/* Order is deliberate: the score (where you stand), then the
             programme (the structured way to raise it), then everything else. */}
-        {profileLoading || !readiness ? (
+        {profileLoading || verification.loading || !readiness ? (
           <div className="grid gap-5 lg:grid-cols-3">
             <Skeleton className="h-80 lg:col-span-2" />
             <Skeleton className="h-80" />
