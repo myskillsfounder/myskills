@@ -163,7 +163,7 @@ function SupportSection({ type }: { type: WellnessRequestType }) {
   }, [type])
 
   return (
-    <div className="card p-6 shadow-sm">
+    <div id={type === 'career_mentor' ? 'career-guidance' : 'counselling'} className="card scroll-mt-24 p-6 shadow-sm">
       <div className="flex items-start gap-4">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md">
           <Icon size={22} />
