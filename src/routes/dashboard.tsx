@@ -93,7 +93,7 @@ function DashboardPage() {
   const raw = userDisplayName(user).split(' ')[0]
   const name = raw.charAt(0).toUpperCase() + raw.slice(1)
   const userKey = user?.id ?? 'guest'
-  const { profile } = useProfile()
+  const { profile, loading: profileLoading } = useProfile()
   const goals = profile?.goals ?? []
   const { result: assessment } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
@@ -102,18 +102,19 @@ function DashboardPage() {
   const eligibleForReviewNudge = assessment != null || visits >= 5
 
   const [practice, setPractice] = useState<PracticeSummary>({})
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchPracticeSummary()
       .then(setPractice)
       .catch(() => {})
-      .finally(() => setLoading(false))
   }, [])
 
-  const readiness = useMemo(
-    () => computeReadiness(assessment?.overall.percent ?? null, practice, skillTracks),
-    [assessment, practice],
+  // The score comes from the profile alone (see lib/readinessScore.ts);
+  // practice results still drive the path-to-mastery checklist below.
+  const readiness = useMemo(() => (profile ? computeReadiness(profile) : null), [profile])
+  const practicedCount = useMemo(
+    () => skillTracks.filter((t) => practice[t.slug]).length,
+    [practice],
   )
 
   return (
@@ -132,7 +133,7 @@ function DashboardPage() {
       <div className="space-y-6">
         {/* Order is deliberate: the score (where you stand), then the
             programme (the structured way to raise it), then everything else. */}
-        {loading ? (
+        {profileLoading || !readiness ? (
           <div className="grid gap-5 lg:grid-cols-3">
             <Skeleton className="h-80 lg:col-span-2" />
             <Skeleton className="h-80" />
@@ -140,7 +141,7 @@ function DashboardPage() {
         ) : (
           <div className="grid items-stretch gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <ReadinessScoreCard readiness={readiness} totalTracks={skillTracks.length} />
+              <ReadinessScoreCard readiness={readiness} />
             </div>
             <KeyMeasures goals={goals} streak={streak} />
           </div>
@@ -177,7 +178,7 @@ function DashboardPage() {
           <div className="space-y-6 lg:col-span-2">
             <PathToMastery
               assessmentDone={assessment != null}
-              practicedCount={readiness.practicedTracks}
+              practicedCount={practicedCount}
               totalTracks={skillTracks.length}
             />
 

@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { GraduationCap, Pencil, Trash2 } from 'lucide-react'
-import { newId, type Education, type Profile, type ProfilePatch } from '@/lib/profile'
-import { Field, Modal, PrimaryButton, Section, Textarea } from './ui'
+import { newId, type Education, type EducationLevel, type Profile, type ProfilePatch } from '@/lib/profile'
+import { EDUCATION_LEVELS, educationLevelOf } from '@/lib/careerProfile'
+import { Field, Modal, PrimaryButton, Section, Select, Textarea } from './ui'
+
+const levelLabel = (l: EducationLevel | null) => EDUCATION_LEVELS.find((x) => x.value === l)?.label
 
 const EMPTY: Education = {
   id: '',
@@ -27,9 +30,12 @@ export function EducationSection({
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     if (!editing) return
+    // Persist the shown level even if the student never touched the select —
+    // it may be the inferred one, which should stick once they've seen it.
+    const entry = { ...editing, level: editing.level ?? educationLevelOf(editing) ?? undefined }
     const next = isEdit
-      ? list.map((x) => (x.id === editing.id ? editing : x))
-      : [...list, { ...editing, id: editing.id || newId() }]
+      ? list.map((x) => (x.id === entry.id ? entry : x))
+      : [...list, { ...entry, id: entry.id || newId() }]
     await save({ education: next })
     setEditing(null)
   }
@@ -51,7 +57,7 @@ export function EducationSection({
                   <div>
                     <p className="text-sm font-semibold text-ink-900">{x.school}</p>
                     <p className="text-sm text-ink-800">
-                      {[x.degree, x.field].filter(Boolean).join(', ')}
+                      {[levelLabel(educationLevelOf(x)), x.degree, x.field].filter(Boolean).join(' · ')}
                     </p>
                     <p className="text-xs text-ink-500">
                       {[x.startYear, x.endYear].filter(Boolean).join(' – ')}
@@ -101,6 +107,16 @@ export function EducationSection({
               required
               value={editing.school}
               onChange={(e) => setEditing({ ...editing, school: e.target.value })}
+            />
+            {/* Scored by the Career Readiness Score. Pre-filled from the free-text
+                degree for older entries, so re-saving one locks the guess in. */}
+            <Select
+              label="Level"
+              required
+              placeholder="Select a level"
+              options={EDUCATION_LEVELS}
+              value={editing.level ?? educationLevelOf(editing) ?? ''}
+              onChange={(e) => setEditing({ ...editing, level: e.target.value as EducationLevel })}
             />
             <div className="grid grid-cols-2 gap-4">
               <Field

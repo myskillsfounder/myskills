@@ -1,37 +1,54 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, TrendingUp } from 'lucide-react'
-import { ASSESSMENT_WEIGHT, PRACTICE_WEIGHT, type Readiness } from '@/lib/readinessScore'
+import { ArrowRight, Lock, TrendingUp } from 'lucide-react'
+import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
+import { CAREER_READINESS } from '@/lib/programmes'
 
-function Breakdown({
-  label,
-  detail,
-  points,
-  max,
-}: {
-  label: string
-  detail: string
-  points: number
-  max: number
-}) {
-  const pct = max ? (points / max) * 100 : 0
+function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
+  const pct = c.max ? (c.points / c.max) * 100 : 0
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3 text-sm">
         <span className="font-medium text-ink-800">{label}</span>
         <span className="shrink-0 tabular-nums text-ink-500">
-          <span className="font-semibold text-ink-900">{Math.round(points)}</span> / {max}
+          <span className="font-semibold text-ink-900">{Math.round(c.points)}</span> / {c.max}
         </span>
       </div>
       <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-ink-100">
         <div
           className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700"
           style={{
-            width: points > 0 ? `${Math.max(pct, 3)}%` : '0%',
+            width: c.points > 0 ? `${Math.max(pct, 3)}%` : '0%',
             transition: 'width 1s cubic-bezier(0.2,0.8,0.2,1)',
           }}
         />
       </div>
-      <p className="mt-1 text-xs text-ink-500">{detail}</p>
+      <p className="mt-1 text-xs text-ink-500">{c.detail}</p>
+    </div>
+  )
+}
+
+/** Personal development can't be earned yet — it's the programme's job — so
+ *  it's drawn as a locked slot with the way in, not an empty bar that reads
+ *  like the student is failing at something. */
+function LockedBreakdown({ label, c }: { label: string; c: ReadinessComponent }) {
+  return (
+    <div className="rounded-xl border border-dashed border-ink-300 bg-ink-50/70 p-3">
+      <div className="flex items-center justify-between gap-3 text-sm">
+        <span className="inline-flex items-center gap-1.5 font-medium text-ink-700">
+          <Lock size={13} className="text-ink-400" />
+          {label}
+        </span>
+        <span className="shrink-0 tabular-nums text-ink-400">— / {c.max}</span>
+      </div>
+      <p className="mt-1 text-xs text-ink-500">
+        {c.detail}{' '}
+        <Link
+          to={CAREER_READINESS.path}
+          className="font-semibold text-brand-700 underline-offset-2 hover:underline"
+        >
+          Join the programme
+        </Link>
+      </p>
     </div>
   )
 }
@@ -41,14 +58,8 @@ function Breakdown({
  * answers "why that number?", and the next action answers "what do I do about
  * it?" — a score with no lever attached is just a grade.
  */
-export function ReadinessScoreCard({
-  readiness,
-  totalTracks,
-}: {
-  readiness: Readiness
-  totalTracks: number
-}) {
-  const { score, band, assessmentPoints, practicePoints, practicedTracks, nextAction } = readiness
+export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
+  const { score, band, personal, professional, experience, nextAction } = readiness
   const R = 54
   const C = 2 * Math.PI * R
 
@@ -99,18 +110,9 @@ export function ReadinessScoreCard({
           <p className="mt-1 text-sm leading-relaxed text-ink-600">{band.note}</p>
 
           <div className="mt-5 space-y-4">
-            <Breakdown
-              label="Skill assessment"
-              detail={assessmentPoints > 0 ? 'Your initial benchmark across all tracks.' : 'Not taken yet.'}
-              points={assessmentPoints}
-              max={ASSESSMENT_WEIGHT}
-            />
-            <Breakdown
-              label="Practice mastery"
-              detail={`${practicedTracks} of ${totalTracks} tracks practised — your best score in each counts.`}
-              points={practicePoints}
-              max={PRACTICE_WEIGHT}
-            />
+            <LockedBreakdown label="Personal development" c={personal} />
+            <Breakdown label="Professional development" c={professional} />
+            <Breakdown label="Experience" c={experience} />
           </div>
         </div>
       </div>
@@ -138,6 +140,11 @@ export function ReadinessScoreCard({
           />
         </Link>
       )}
+
+      <p className="mt-4 text-[11px] leading-relaxed text-ink-400">
+        Based on your profile — education, skills and experience. Your MySkills assessment and
+        practice scores aren’t part of it.
+      </p>
     </section>
   )
 }
