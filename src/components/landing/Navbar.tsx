@@ -3,9 +3,11 @@ import { Link } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 
-// One link per programme page. "How it works" and "Skill tracks" used to be
-// two homepage anchors here; both now live on /digital-marketing.
+// Home (the Personal & Professional Development page) leads, followed by
+// the two programme pages. "How it works" and "Skill tracks" used to be two
+// homepage anchors here; both now live on /digital-marketing.
 const navLinks = [
+  { label: 'Home', href: '/', exact: true },
   { label: 'Digital Marketing', href: '/digital-marketing' },
   { label: 'Career Readiness', href: '/career-readiness' },
 ]
@@ -27,6 +29,7 @@ export function Navbar() {
             <Link
               key={link.href}
               to={link.href}
+              activeOptions={{ exact: link.exact }}
               className="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
               activeProps={{ className: 'text-ink-900' }}
             >

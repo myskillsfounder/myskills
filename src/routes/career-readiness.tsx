@@ -3,6 +3,7 @@ import type { ComponentType } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
+  BadgeCheck,
   Bot,
   Briefcase,
   CalendarCheck,
@@ -274,10 +275,10 @@ function CareerReadinessPage() {
               {/* Two ways to start today: find out where you stand, or talk it
                   through with a person. Joining the waitlist stays in the
                   closing section. */}
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link
                   to={user ? '/practice' : '/signup'}
-                  className="press inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
+                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
                 >
                   <ClipboardCheck size={16} />
                   Take the initial assessment
@@ -286,12 +287,42 @@ function CareerReadinessPage() {
                 <Link
                   to="/wellness"
                   hash="career-guidance"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
                 >
                   <CalendarCheck size={16} />
                   Book a career consultation
                 </Link>
               </div>
+
+              {/* A returning registered visitor gets confirmation right away,
+                  instead of only discovering it by scrolling to the closing
+                  CTA. "See what's inside" restores a quick way to the module
+                  list now that the hero's second button points at Wellness
+                  instead of #inside. */}
+              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                {state === 'registered' && (
+                  <p className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-200">
+                    <CheckCircle2 size={15} />
+                    You’re on the waitlist
+                  </p>
+                )}
+                <a
+                  href="#inside"
+                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
+                >
+                  See what’s inside
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                </a>
+              </div>
+
+              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
+                {['Free to join the waitlist', 'AI-guided practice', 'Mentor feedback, not just scores'].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-1.5">
+                    <BadgeCheck size={15} className="text-brand-200" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <WorkflowCard />
