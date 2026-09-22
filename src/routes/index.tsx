@@ -261,7 +261,7 @@ function HomePage() {
                 Powered by AI · Reviewed by people
               </span>
               <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Personal &amp; professional development
+                Personal &amp; Professional Development
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
