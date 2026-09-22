@@ -85,6 +85,6 @@ export function trackCertificateDownload(method: 'download' | 'share' | 'print')
 }
 
 /** A mentor or partner-institution application was accepted by the server. */
-export function trackLead(leadType: 'mentor' | 'institution_partner') {
+export function trackLead(leadType: 'mentor' | 'institution_partner' | 'internship_partner') {
   trackEvent('generate_lead', { lead_type: leadType })
 }

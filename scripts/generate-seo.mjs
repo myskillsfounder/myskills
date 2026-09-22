@@ -121,9 +121,9 @@ const STATIC_PAGES = [
     path: '/community',
     changefreq: 'weekly',
     priority: '0.7',
-    title: 'Community | MySkills',
+    title: 'Partner with MySkills | Community',
     description:
-      'Learn alongside people who’ve done it. Meet MySkills mentors, or apply to mentor students building real digital marketing skills.',
+      'Mentor a student, host an intern, or bring your institution on board. Every way to partner with MySkills — apply in a few minutes.',
   },
   {
     path: '/become-a-mentor',
@@ -140,6 +140,14 @@ const STATIC_PAGES = [
     title: 'Partner your institution with MySkills',
     description:
       'Run digital marketing courses or training programs? Apply to be a verified MySkills partner institution and reach students looking for classroom learning.',
+  },
+  {
+    path: '/become-an-internship-partner',
+    changefreq: 'monthly',
+    priority: '0.6',
+    title: 'Offer internships through MySkills',
+    description:
+      'Hire from a pipeline of students who’ve already practised real scenarios and earned a score. Tell us what internship roles your company is offering.',
   },
   {
     path: '/privacy',
