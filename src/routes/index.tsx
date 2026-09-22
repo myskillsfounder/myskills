@@ -18,7 +18,7 @@ import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
-import { SkillsOrbit } from '@/components/landing/SkillsOrbit'
+import { AiCoachPreview } from '@/components/landing/AiCoachPreview'
 import { GridBackdrop } from '@/components/landing/GridBackdrop'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
@@ -230,7 +230,7 @@ function HomePage() {
               </ul>
             </div>
 
-            <SkillsOrbit />
+            <AiCoachPreview />
           </div>
         </section>
 
