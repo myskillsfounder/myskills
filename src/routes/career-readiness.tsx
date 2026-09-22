@@ -274,10 +274,10 @@ function CareerReadinessPage() {
                 human’s honest feedback before an interviewer gives you theirs.
               </p>
 
-              {/* Two ways to start today: find out where you stand, or talk it
-                  through with a person. Joining the waitlist stays in the
-                  closing section. */}
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              {/* One CTA. Joining the waitlist stays in the closing
+                  section; "Book a career consultation" moved to
+                  /wellness, reachable from the trust row below. */}
+              <div className="mt-8">
                 <Link
                   to={user ? '/practice' : '/signup'}
                   className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
@@ -286,21 +286,14 @@ function CareerReadinessPage() {
                   Take the initial assessment
                   <ArrowRight size={16} />
                 </Link>
-                <Link
-                  to="/wellness"
-                  hash="career-guidance"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
-                >
-                  <CalendarCheck size={16} />
-                  Book a career consultation
-                </Link>
               </div>
 
               {/* A returning registered visitor gets confirmation right away,
                   instead of only discovering it by scrolling to the closing
-                  CTA. "See what's inside" restores a quick way to the module
-                  list now that the hero's second button points at Wellness
-                  instead of #inside. */}
+                  CTA. Two lightweight text links, not buttons, keep the
+                  hero to a single real CTA: a quick way to the module list,
+                  and where "Book a career consultation" moved to once it
+                  stopped being the hero's second button. */}
               <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
                 {state === 'registered' && (
                   <p className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-200">
@@ -315,6 +308,14 @@ function CareerReadinessPage() {
                   See what’s inside
                   <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                 </a>
+                <Link
+                  to="/wellness"
+                  hash="career-guidance"
+                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
+                >
+                  <CalendarCheck size={13} />
+                  Book a career consultation
+                </Link>
               </div>
 
               <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">

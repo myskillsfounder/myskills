@@ -9,9 +9,7 @@ import {
   GraduationCap,
   HeartHandshake,
   Lock,
-  Megaphone,
   Sparkles,
-  Sprout,
   Target,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
@@ -20,6 +18,7 @@ import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
+import { AiCoachPreview } from '@/components/landing/AiCoachPreview'
 import { GridBackdrop } from '@/components/landing/GridBackdrop'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
@@ -101,86 +100,25 @@ const CONCEPTS: {
     to: '/community',
     cta: 'See what’s coming',
   },
-  {
-    icon: HeartHandshake,
-    title: 'Wellness support, built in',
-    body: 'Exams, deadlines, and the pressure to have it all figured out take a toll. Confidential counselling and career guidance are part of the experience, not an afterthought.',
-    tag: 'Free',
-    live: true,
-    to: '/wellness',
-    cta: 'Get support',
-  },
 ]
 
-/** Hero side card: the two programmes, drawn as the two halves of one path. */
-function ProgrammesCard() {
-  const rows = [
-    {
-      icon: Megaphone,
-      kind: 'Professional skills',
-      name: 'Digital Marketing Programme',
-      detail: `${skillTracks.length} skill tracks`,
-      live: true,
-      to: '/digital-marketing',
-    },
-    {
-      icon: Sprout,
-      kind: 'Personal skills',
-      name: CAREER_READINESS.name,
-      detail: `${PERSONAL_DEVELOPMENT_MODULES.length} modules with AI`,
-      live: false,
-      to: CAREER_READINESS.path,
-    },
-  ]
+/** The shared finish line, under both programme cards: whichever you pick,
+ *  it ends the same way. */
+function CompletionPath() {
   return (
-    <div className="glow-edge rounded-xl bg-white/[0.06] p-5 backdrop-blur sm:p-6">
-      <Eyebrow dark>Two programmes, one path</Eyebrow>
-      <ul className="mt-4 space-y-2.5">
-        {rows.map((r) => (
-          <li key={r.name}>
-            <Link
-              to={r.to}
-              className="group flex items-center gap-3 rounded-lg bg-white/[0.06] px-3 py-3 text-white transition-colors hover:bg-white/[0.12]"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                <r.icon size={18} />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[11px] font-semibold uppercase tracking-wide text-white/50">{r.kind}</span>
-                <span className="block text-sm font-semibold">{r.name}</span>
-                <span className="block text-xs text-white/60">{r.detail}</span>
-              </span>
-              <span
-                className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                  r.live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
-                }`}
-              >
-                {r.live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
-                {r.live ? 'Live' : 'Opens soon'}
-              </span>
-            </Link>
+    <div className="card-glass-dark mt-6 p-4 sm:p-5">
+      <Eyebrow dark>Every programme finishes the same way</Eyebrow>
+      <ol className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm font-medium text-white">
+        {['Practice', 'Mentor review', 'Internship'].map((s, i, all) => (
+          <li key={s} className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white">
+              {i + 1}
+            </span>
+            {s}
+            {i < all.length - 1 && <ArrowRight size={14} className="text-white/30" />}
           </li>
         ))}
-      </ul>
-
-      <div className="mt-4 rounded-lg bg-white p-4 text-ink-900">
-        <Eyebrow>Every programme finishes the same way</Eyebrow>
-        <ol className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm font-medium">
-          {['Practice', 'Mentor review', 'Internship'].map((s, i, all) => (
-            <li key={s} className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-                {i + 1}
-              </span>
-              {s}
-              {i < all.length - 1 && <ArrowRight size={14} className="text-ink-300" />}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <p className="mt-4 text-xs leading-relaxed text-white/55">
-        Professional skills get you shortlisted. Personal skills get you hired. Build both, and
-        nothing is impossible.
-      </p>
+      </ol>
     </div>
   )
 }
@@ -267,37 +205,55 @@ function HomePage() {
                 Personal &amp; Professional Development
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
+
+              {/* No CTA here — the hero's job is the idea, not the click.
+                  "Take the initial assessment" is the final CTA further
+                  down. The "Two kinds of skill" statement now closes the
+                  hero as its own centred line, below both columns. */}
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
                 Personal skills and professional skills, built together — practising with AI so you move
                 fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
                 for it. Free to start.
               </p>
 
-              <div className="mt-8">
-                <Link
-                  to={assessmentTo}
-                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-                >
-                  <ClipboardCheck size={16} />
-                  Take the initial assessment
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
-
-              {/* The three things students actually ask for, right up front
-                  — not buried at the bottom of the page. */}
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
-                {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
-                    <BadgeCheck size={15} className="text-brand-200" />
-                    {t}
-                  </li>
-                ))}
-              </ul>
             </div>
 
-            <ProgrammesCard />
+            <AiCoachPreview />
           </div>
+
+          {/* The three trust points moved out of the left column to sit
+              here instead — one compact row, center-aligned, directly above
+              the closing statement, so the two read as a single beat at the
+              bottom of the hero rather than split across the layout. Same
+              "always one line" requirement as the statement below: a fluid,
+              viewport-scaled font size instead of fixed steps, shrinking
+              enough that three phrases plus icons still fit at 375px. */}
+          <ul
+            className="relative mx-auto flex max-w-6xl items-center justify-center whitespace-nowrap px-4 pt-2 text-white/70 sm:px-6 lg:px-8"
+            style={{ fontSize: 'clamp(0.4rem, 2.15vw, 0.875rem)' }}
+          >
+            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t, i, all) => (
+              <li key={t} className="flex items-center gap-1">
+                <BadgeCheck size={12} className="shrink-0 text-brand-200" />
+                {t}
+                {i < all.length - 1 && (
+                  <span aria-hidden className="mx-2 h-3 w-px bg-white/15 sm:mx-5" />
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {/* A fluid, viewport-scaled size instead of fixed breakpoint
+              steps — "one line, always" is a hard requirement here, and a
+              vw-based size keeps the line's width proportional to the
+              viewport at any point in between, not just at the
+              breakpoints a step scale happens to cover. */}
+          <p
+            className="relative mx-auto max-w-6xl px-4 pt-4 pb-10 text-center font-display font-semibold whitespace-nowrap text-white sm:pt-5 sm:pb-14 sm:px-6 lg:px-8"
+            style={{ fontSize: 'clamp(0.75rem, 3.4vw, 1.5rem)' }}
+          >
+            Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
+          </p>
         </section>
 
         {/* Two kinds of skill */}
@@ -334,6 +290,7 @@ function HomePage() {
                 cta="See the programme"
               />
             </div>
+            <CompletionPath />
           </div>
         </section>
 
@@ -344,7 +301,7 @@ function HomePage() {
             <div className="max-w-2xl">
               <Eyebrow dark>How it works</Eyebrow>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                From “I think I know this” to “I can prove it.”
+                Four steps. One system.
               </h2>
             </div>
             <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -367,25 +324,25 @@ function HomePage() {
           </div>
         </section>
 
-        {/* You're not doing this alone — the three things beyond the skill
-            tracks themselves, each a real card with real status, not a
-            decorative footnote. */}
+        {/* Real people, real experience — mentors and internships. Wellness
+            gets its own section next: mental health isn't a feature bullet
+            next to "internships", it deserves the room on its own. */}
         <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
           <GridBackdrop mask="ellipse 55% 45% at 90% 100%" />
           <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
               <Eyebrow dark>You’re not doing this alone</Eyebrow>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                AI does the coaching. People are still the point.
+                Real people, at every step.
               </h2>
               <p className="mt-3 text-base leading-relaxed text-white/70">
                 AI is tireless and instant — perfect for practice. It’s also confidently wrong sometimes,
-                which is why real mentors, real internships and real support are part of the experience,
-                not an afterthought.
+                which is why real mentors and real internships are part of the experience, not an
+                afterthought.
               </p>
             </div>
 
-            <ul className="mt-10 grid gap-5 lg:grid-cols-3">
+            <ul className="mt-10 grid gap-5 sm:grid-cols-2">
               {CONCEPTS.map((c) => (
                 <li key={c.title}>
                   <Link to={c.to} className="card-glass-dark lift group flex h-full flex-col p-6 sm:p-7">
@@ -414,6 +371,50 @@ function HomePage() {
                 </li>
               ))}
             </ul>
+          </div>
+        </section>
+
+        {/* Wellness — its own main section, not a card sharing space with
+            mentors and internships. Same treatment as the final CTA panel
+            below: the gradient/glow "vibe" that's the site's signature. */}
+        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start gap-8 overflow-hidden rounded-xl p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
+            <GridBackdrop mask="ellipse 65% 70% at 15% 30%" />
+            <div className="relative max-w-lg">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e2">
+                <HeartHandshake size={26} />
+              </span>
+              <div className="mt-4">
+                <Eyebrow dark>Wellness support</Eyebrow>
+              </div>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                Your mental health matters as much as your skills.
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-white/70">
+                Exams, deadlines, and the pressure to have it all figured out take a real toll.
+                Confidential counselling and career guidance are built into MySkills — free, private,
+                and one message away — not an afterthought bolted onto a skills app.
+              </p>
+              <Link
+                to="/wellness"
+                className="press relative mt-7 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+              >
+                Get support
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+            <div className="card-glass-gradient-dark relative w-full p-5 sm:p-6 lg:w-auto">
+              <ul className="grid gap-3 sm:grid-cols-2 lg:max-w-xs">
+                {['Confidential, always', 'No diagnosis, just support', 'Free for every student', 'A real person replies'].map(
+                  (t) => (
+                    <li key={t} className="flex items-center gap-2 text-sm text-white/80">
+                      <BadgeCheck size={16} className="shrink-0 text-brand-200" />
+                      {t}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
           </div>
         </section>
 

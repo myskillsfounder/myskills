@@ -78,7 +78,7 @@ export function HowItWorks() {
             Your path to mastery
           </h2>
           <p className="mt-3 text-base text-white/70">
-            Four steps from &ldquo;I think I know this&rdquo; to &ldquo;I can prove it.&rdquo;
+            Four steps, each one proof — not just practice.
           </p>
         </div>
 
