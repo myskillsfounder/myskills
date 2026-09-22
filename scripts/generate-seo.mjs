@@ -90,6 +90,13 @@ const STATIC_PAGES = [
     path: '/',
     changefreq: 'weekly',
     priority: '1.0',
+    title: 'MySkills — Personal & Professional Development, Powered by AI',
+    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free initial assessment.',
+  },
+  {
+    path: '/digital-marketing',
+    changefreq: 'weekly',
+    priority: '0.9',
     title: 'Learn Digital Marketing Online — Free Practice & Certification | MySkills',
     description:
       'Learn digital marketing online with 1:1 expert mentor support. Practice real-world scenarios across SEO, Google Ads, Meta Ads and analytics, then earn a free certificate.',
@@ -356,7 +363,7 @@ async function main() {
   write('sitemap.xml', buildSitemap(posts))
 
   // Landing page: metadata + Organization/WebSite structured data.
-  const home = STATIC_PAGES[0]
+  const home = STATIC_PAGES.find((p) => p.path === '/')
   write(
     'index.html',
     renderPage(shell, {
@@ -377,7 +384,7 @@ async function main() {
     }),
   )
 
-  const blog = STATIC_PAGES[2]
+  const blog = STATIC_PAGES.find((p) => p.path === '/blog')
   write(
     'blog/index.html',
     renderPage(shell, {

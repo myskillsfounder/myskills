@@ -28,6 +28,7 @@ import { Route as InternshipsRouteImport } from './routes/internships'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as DigitalMarketingRouteImport } from './routes/digital-marketing'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
@@ -150,6 +151,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DigitalMarketingRoute = DigitalMarketingRouteImport.update({
+  id: '/digital-marketing',
+  path: '/digital-marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/digital-marketing': typeof DigitalMarketingRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/games': typeof GamesRoute
@@ -353,6 +360,7 @@ export interface FileRoutesByTo {
   '/career-readiness': typeof CareerReadinessRoute
   '/certificate': typeof CertificateRoute
   '/dashboard': typeof DashboardRoute
+  '/digital-marketing': typeof DigitalMarketingRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/games': typeof GamesRoute
@@ -402,6 +410,7 @@ export interface FileRoutesById {
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/digital-marketing': typeof DigitalMarketingRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/games': typeof GamesRoute
@@ -453,6 +462,7 @@ export interface FileRouteTypes {
     | '/certificate'
     | '/community'
     | '/dashboard'
+    | '/digital-marketing'
     | '/feedback'
     | '/forgot-password'
     | '/games'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/career-readiness'
     | '/certificate'
     | '/dashboard'
+    | '/digital-marketing'
     | '/feedback'
     | '/forgot-password'
     | '/games'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/certificate'
     | '/community'
     | '/dashboard'
+    | '/digital-marketing'
     | '/feedback'
     | '/forgot-password'
     | '/games'
@@ -599,6 +611,7 @@ export interface RootRouteChildren {
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
   DashboardRoute: typeof DashboardRoute
+  DigitalMarketingRoute: typeof DigitalMarketingRoute
   FeedbackRoute: typeof FeedbackRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GamesRoute: typeof GamesRoute
@@ -757,6 +770,13 @@ declare module '@tanstack/react-router' {
       path: '/feedback'
       fullPath: '/feedback'
       preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/digital-marketing': {
+      id: '/digital-marketing'
+      path: '/digital-marketing'
+      fullPath: '/digital-marketing'
+      preLoaderRoute: typeof DigitalMarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -1029,6 +1049,7 @@ const rootRouteChildren: RootRouteChildren = {
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,
   DashboardRoute: DashboardRoute,
+  DigitalMarketingRoute: DigitalMarketingRoute,
   FeedbackRoute: FeedbackRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GamesRoute: GamesRoute,

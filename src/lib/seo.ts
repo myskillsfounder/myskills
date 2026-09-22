@@ -38,6 +38,10 @@ export interface PageSeo {
  */
 export const PAGE_SEO: Record<string, PageSeo> = {
   '/': {
+    title: 'MySkills — Personal & Professional Development, Powered by AI',
+    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free initial assessment.',
+  },
+  '/digital-marketing': {
     title: 'Learn Digital Marketing Online — Free Practice & Certification | MySkills',
     description:
       'Learn digital marketing online with 1:1 expert mentor support. Practice real-world scenarios across SEO, Google Ads, Meta Ads and analytics, then earn a free certificate.',
@@ -95,6 +99,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 /** Routes that belong in the sitemap, with their crawl hints. */
 export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: string }[] = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
+  { path: '/digital-marketing', changefreq: 'weekly', priority: '0.9' },
   { path: '/signup', changefreq: 'monthly', priority: '0.8' },
   { path: '/blog', changefreq: 'daily', priority: '0.9' },
   { path: '/community', changefreq: 'weekly', priority: '0.7' },
