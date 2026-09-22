@@ -11,6 +11,7 @@ import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
 import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
+import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { PathToMastery } from '@/components/dashboard/PathToMastery'
@@ -105,6 +106,7 @@ function DashboardPage() {
   const eligibleForReviewNudge = assessment != null || visits >= 5
 
   const [practice, setPractice] = useState<PracticeSummary>({})
+  const dmReview = useMentorReview('digital-marketing')
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -152,7 +154,12 @@ function DashboardPage() {
             <KeyMeasures
               goals={goals}
               streak={streak}
-              courses={[digitalMarketingProgress(assessment != null, practicedCount, skillTracks.length)]}
+              courses={[digitalMarketingProgress(
+                  assessment != null,
+                  practicedCount,
+                  skillTracks.length,
+                  dmReview.state === 'approved',
+                )]}
             />
           </div>
         )}

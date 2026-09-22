@@ -35,6 +35,8 @@ import {
 import { CareerReadinessPractice } from '@/components/practice/CareerReadinessPractice'
 import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOverview'
 import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
+import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
+import { useMentorReview } from '@/lib/mentorReview'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -182,9 +184,10 @@ function PracticePage() {
   }
 
   const error = assessmentError ?? practiceError ?? quizQuestionsError
+  const dmReview = useMentorReview('digital-marketing')
 
-  // Mentor review and platform internships aren't built yet, so both are
-  // false for everyone and neither programme can show Complete.
+  // Platform internships aren't built yet, so no programme can show
+  // Complete; the mentor review is real for Digital Marketing.
   const practisedTracks = skillTracks.filter((t) => practice[t.slug])
   const practiceAvg = practisedTracks.length
     ? Math.round(practisedTracks.reduce((sum, t) => sum + practice[t.slug].percent, 0) / practisedTracks.length)
@@ -195,14 +198,14 @@ function PracticePage() {
     practiceDetail: practisedTracks.length
       ? `${practisedTracks.length} of ${skillTracks.length} tracks practised · ${practiceAvg}% average`
       : `Practise all ${skillTracks.length} skill tracks`,
-    mentorReviewed: false,
+    mentorReview: dmReview.state,
     internshipDone: false,
   })
   const crStages = completionStages({
     practiceDone: false,
     practiceStarted: false,
     practiceDetail: `All ${PERSONAL_DEVELOPMENT_MODULES.length} modules — opens with the programme`,
-    mentorReviewed: false,
+    mentorReview: 'none',
     internshipDone: false,
   })
 
@@ -284,7 +287,15 @@ function PracticePage() {
                 </div>
               </div>
 
-              <ProgrammeCompletion stages={dmStages} />
+              <ProgrammeCompletion stages={dmStages}>
+                <MentorReviewPanel
+                  programme="digital-marketing"
+                  practiceDone={practisedTracks.length === skillTracks.length}
+                  review={dmReview.review}
+                  state={dmReview.state}
+                  onChange={() => void dmReview.reload()}
+                />
+              </ProgrammeCompletion>
 
               <ModePicker
                 practice={practice}
