@@ -18,8 +18,8 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   /* ---- Neutrals: warm stone ------------------------------------------- */
   --color-ink-50:  #faf9f7;
@@ -88,10 +88,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Display face for headings — a geometric grotesk, deliberately: the product
- * is an AI-practice platform, not a magazine, and the type should say so.
- * Falls back gracefully if Space Grotesk isn't loaded. */
-.font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+/* Display face for headings — a smooth, rounded geometric sans, deliberately:
+ * the product is an AI-practice platform, not a magazine, and the type
+ * should feel modern without reading as harsh or blocky. Falls back
+ * gracefully if Plus Jakarta Sans isn't loaded. */
+.font-display { font-family: var(--font-display); letter-spacing: -0.015em; }
 
 /* Mono accent for labels, status, stats and anything that reads like a
  * readout — eyebrows, badges, module numbers. Used sparingly: it's a tell,
@@ -122,7 +123,7 @@ body {
 }
 
 .card {
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 1px solid rgba(27, 24, 21, 0.07);
   background-color: #ffffff;
   box-shadow: var(--shadow-e1);
@@ -135,13 +136,24 @@ body {
   box-shadow: 0 0 0 1px rgba(143, 133, 238, 0.08), 0 0 32px -12px rgba(143, 133, 238, 0.55);
 }
 
+/* Translucent glass card for a DARK textured section — brand-tinted white
+ * text, faint light border, barely-there white wash so the grid/glow behind
+ * it still reads through. Pair with .surface-wood-dark + a grid backdrop. */
+.card-glass-dark {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
 /* Translucent card — a glass panel over a textured section instead of a
  * flat surface. Only ever use this where the section behind it actually has
  * something to show through (a grid, a glow); over a plain flat background
  * it just looks washed out, so it's a deliberate pairing, not a swap-in
  * replacement for .card. */
 .card-glass {
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 1px solid rgba(111, 99, 226, 0.14);
   background-color: rgba(255, 255, 255, 0.66);
   backdrop-filter: blur(10px);

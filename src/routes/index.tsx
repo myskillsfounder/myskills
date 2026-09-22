@@ -22,6 +22,7 @@ import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
+import { GridBackdrop } from '@/components/landing/GridBackdrop'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -212,30 +213,30 @@ function PillarCard({
   cta: string
 }) {
   return (
-    <div className="card flex flex-col p-6 sm:p-8">
+    <div className="card-glass-dark flex flex-col p-6 sm:p-8">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">{kind}</p>
+        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-brand-200">{kind}</p>
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            live ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
+            live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
           }`}
         >
-          {live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> : <Lock size={10} />}
+          {live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
           {live ? 'Live now' : 'Opens soon'}
         </span>
       </div>
-      <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink-900">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-ink-600">{body}</p>
+      <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p>
       <div className="mt-5 flex flex-1 flex-wrap content-start gap-2">
         {items.map((i) => (
-          <span key={i} className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800">
+          <span key={i} className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-white/80">
             {i}
           </span>
         ))}
       </div>
       <Link
         to={to}
-        className="group mt-6 inline-flex items-center gap-1.5 self-start text-sm font-semibold text-brand-700 hover:text-brand-800"
+        className="group mt-6 inline-flex items-center gap-1.5 self-start text-sm font-semibold text-brand-200 hover:text-white"
       >
         {cta}
         <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
@@ -249,25 +250,13 @@ function HomePage() {
   const assessmentTo = user ? '/practice' : '/signup'
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-900">
       <Navbar />
 
       <main>
         {/* Hero */}
         <section className="surface-wood-dark relative overflow-hidden">
-          {/* A faint grid, not just a decorative circle — the "this is a
-              system, not a brochure" tell, matching /career-readiness. */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
-              backgroundSize: '44px 44px',
-              maskImage: 'radial-gradient(ellipse 75% 65% at 30% 20%, black 0%, transparent 75%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 30% 20%, black 0%, transparent 75%)',
-            }}
-          />
+          <GridBackdrop mask="ellipse 75% 65% at 30% 20%" />
           <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 opacity-[0.12]">
             <svg width="420" height="420" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.2">
               <circle cx="100" cy="100" r="96" />
@@ -345,60 +334,66 @@ function HomePage() {
         </section>
 
         {/* Two kinds of skill */}
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <Eyebrow>Two programmes, one goal</Eyebrow>
-            <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
-              Whatever your goal, these two skill sets get you there.
-            </h2>
-            <p className="mt-3 text-base leading-relaxed text-ink-600">
-              Professional skills get you shortlisted. Personal skills get you hired, and help you grow once
-              you’re in. Build both with AI, and there’s nothing standing between you and your goal.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-5 lg:grid-cols-2">
-            <PillarCard
-              kind="Professional skills"
-              title="Digital Marketing Programme"
-              body="Scenario-based practice across the skills marketing teams hire for — including AI-assisted marketing and answer-engine SEO — with a free certificate."
-              items={skillTracks.map((t) => t.name)}
-              live
-              to="/digital-marketing"
-              cta="Explore Digital Marketing"
-            />
-            <PillarCard
-              kind="Personal skills"
-              title={CAREER_READINESS.name}
-              body="Five modules on the skills that decide careers, each practised with AI as your coach and reviewed by a mentor."
-              items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
-              live={false}
-              to={CAREER_READINESS.path}
-              cta="See the programme"
-            />
+        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 55% 50% at 95% 0%" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+            <div className="max-w-2xl">
+              <Eyebrow dark>Two programmes, one goal</Eyebrow>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                Whatever your goal, these two skill sets get you there.
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-white/70">
+                Professional skills get you shortlisted. Personal skills get you hired, and help you grow
+                once you’re in. Build both with AI, and there’s nothing standing between you and your goal.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-5 lg:grid-cols-2">
+              <PillarCard
+                kind="Professional skills"
+                title="Digital Marketing Programme"
+                body="Scenario-based practice across the skills marketing teams hire for — including AI-assisted marketing and answer-engine SEO — with a free certificate."
+                items={skillTracks.map((t) => t.name)}
+                live
+                to="/digital-marketing"
+                cta="Explore Digital Marketing"
+              />
+              <PillarCard
+                kind="Personal skills"
+                title={CAREER_READINESS.name}
+                body="Five modules on the skills that decide careers, each practised with AI as your coach and reviewed by a mentor."
+                items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
+                live={false}
+                to={CAREER_READINESS.path}
+                cta="See the programme"
+              />
+            </div>
           </div>
         </section>
 
         {/* How it works */}
-        <section id="how-it-works" className="border-t border-ink-100 bg-ink-50/60">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <section id="how-it-works" className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 60% 50% at 5% 100%" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
-              <Eyebrow>How it works</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
+              <Eyebrow dark>How it works</Eyebrow>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 From “I think I know this” to “I can prove it.”
               </h2>
             </div>
             <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {STEPS.map((s, i) => (
-                <li key={s.title} className="card flex flex-col p-6">
+                <li key={s.title} className="card-glass-dark flex flex-col p-6">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
                       <s.icon size={20} />
                     </span>
-                    <span className="rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-600">{s.tag}</span>
+                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">{s.tag}</span>
                   </div>
-                  <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-brand-600">Step {i + 1}</p>
-                  <h3 className="mt-1 text-lg font-semibold text-ink-900">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{s.body}</p>
+                  <p className="mt-4 font-mono text-[11px] font-bold uppercase tracking-wide text-brand-200">
+                    Step_{String(i + 1).padStart(2, '0')}
+                  </p>
+                  <h3 className="mt-1 text-lg font-semibold text-white">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/70">{s.body}</p>
                 </li>
               ))}
             </ol>
@@ -408,14 +403,15 @@ function HomePage() {
         {/* You're not doing this alone — the three things beyond the skill
             tracks themselves, each a real card with real status, not a
             decorative footnote. */}
-        <section className="border-t border-ink-100 bg-ink-50/60">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 55% 45% at 90% 100%" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
-              <Eyebrow>You’re not doing this alone</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
+              <Eyebrow dark>You’re not doing this alone</Eyebrow>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 AI does the coaching. People are still the point.
               </h2>
-              <p className="mt-3 text-base leading-relaxed text-ink-600">
+              <p className="mt-3 text-base leading-relaxed text-white/70">
                 AI is tireless and instant — perfect for practice. It’s also confidently wrong sometimes,
                 which is why real mentors, real internships and real support are part of the experience,
                 not an afterthought.
@@ -425,25 +421,25 @@ function HomePage() {
             <ul className="mt-10 grid gap-5 lg:grid-cols-3">
               {CONCEPTS.map((c) => (
                 <li key={c.title}>
-                  <Link to={c.to} className="card lift group flex h-full flex-col p-6 sm:p-7">
+                  <Link to={c.to} className="card-glass-dark lift group flex h-full flex-col p-6 sm:p-7">
                     <div className="flex items-start justify-between gap-2">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
                         <c.icon size={22} />
                       </span>
                       <span
                         className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                          c.live ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
+                          c.live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
                         }`}
                       >
-                        {c.live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> : <Lock size={10} />}
+                        {c.live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
                         {c.tag}
                       </span>
                     </div>
-                    <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-ink-900">
+                    <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-white">
                       {c.title}
                     </h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-600">{c.body}</p>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-white/70">{c.body}</p>
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200">
                       {c.cta}
                       <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
                     </span>
@@ -455,9 +451,10 @@ function HomePage() {
         </section>
 
         {/* Final CTA */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="surface-wood-dark flex flex-col items-start justify-between gap-6 rounded-2xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
-            <div>
+        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
+          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
+            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
+            <div className="relative">
               <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 Nothing is impossible. Start with where you stand.
               </h2>
@@ -467,7 +464,7 @@ function HomePage() {
             </div>
             <Link
               to={assessmentTo}
-              className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+              className="press relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
             >
               <Target size={16} />
               Take the initial assessment

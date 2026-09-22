@@ -28,6 +28,7 @@ import {
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
+import { GridBackdrop, GlowOrb } from '@/components/landing/GridBackdrop'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -238,25 +239,13 @@ function CareerReadinessPage() {
   const { user } = useAuthUser()
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-900">
       <Navbar />
 
       <main>
         {/* Hero */}
         <section className="surface-wood-dark relative overflow-hidden">
-          {/* A faint grid, not a decorative circle — the "this is a system,
-              not a brochure" tell. Masked so it fades before the edges. */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
-              backgroundSize: '44px 44px',
-              maskImage: 'radial-gradient(ellipse 75% 65% at 30% 20%, black 0%, transparent 75%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 30% 20%, black 0%, transparent 75%)',
-            }}
-          />
+          <GridBackdrop mask="ellipse 75% 65% at 30% 20%" />
           <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 opacity-[0.12]">
             <svg width="420" height="420" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.2">
               <circle cx="100" cy="100" r="96" />
@@ -343,50 +332,44 @@ function CareerReadinessPage() {
         </section>
 
         {/* Why */}
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <Eyebrow>Why AI, why now</Eyebrow>
-            <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
-              Being “job-ready” doesn’t mean what it did five years ago.
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {WHY.map((w, i) => (
-              <div key={w.title} className="card p-6">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-                    <w.icon size={20} />
-                  </span>
-                  <span className="font-mono text-[11px] font-bold text-ink-300">{String(i + 1).padStart(2, '0')}</span>
+        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 55% 50% at 90% 10%" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+            <div className="max-w-2xl">
+              <Eyebrow dark>Why AI, why now</Eyebrow>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                Being “job-ready” doesn’t mean what it did five years ago.
+              </h2>
+            </div>
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              {WHY.map((w, i) => (
+                <div key={w.title} className="card-glass-dark p-6">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 text-brand-200">
+                      <w.icon size={20} />
+                    </span>
+                    <span className="font-mono text-[11px] font-bold text-white/35">{String(i + 1).padStart(2, '0')}</span>
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-white">{w.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/65">{w.body}</p>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-ink-900">{w.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-600">{w.body}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
         {/* Modules */}
-        <section id="inside" className="relative overflow-hidden border-t border-ink-100 bg-ink-50/60">
-          {/* The backdrop the glass module cards below actually need — a
-              faint grid plus two soft brand-colour glows. Over a flat
-              background, a translucent card just looks washed out. */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                'radial-gradient(ellipse 55% 45% at 10% 0%, rgba(111,99,226,0.12), transparent 60%), radial-gradient(ellipse 45% 40% at 100% 100%, rgba(111,99,226,0.10), transparent 60%), linear-gradient(rgba(27,24,21,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(27,24,21,0.04) 1px, transparent 1px)',
-              backgroundSize: 'auto, auto, 44px 44px, 44px 44px',
-            }}
-          />
+        <section id="inside" className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 55% 45% at 10% 0%" />
+          <GlowOrb className="-left-16 top-0 h-72 w-72" color="rgba(143,133,238,0.16)" />
+          <GlowOrb className="-right-16 bottom-0 h-72 w-72" color="rgba(211,164,65,0.10)" />
           <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
-              <Eyebrow>What’s inside</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
+              <Eyebrow dark>What’s inside</Eyebrow>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 Five modules. AI in every one of them.
               </h2>
-              <p className="mt-3 text-base leading-relaxed text-ink-600">
+              <p className="mt-3 text-base leading-relaxed text-white/70">
                 Each module pairs a real career skill with a specific way of using AI to do it better —
                 never as a shortcut around learning it.
               </p>
@@ -394,24 +377,24 @@ function CareerReadinessPage() {
 
             <ol className="mt-10 space-y-3">
               {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => (
-                <li key={m.title} className="card-glass flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:p-6">
+                <li key={m.title} className="card-glass-dark flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:p-6">
                   <div className="flex items-center gap-4 sm:w-64 sm:shrink-0">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
                       <m.icon size={21} />
                     </span>
                     <div>
-                      <p className="font-mono text-[11px] font-bold uppercase tracking-wide text-brand-600">
+                      <p className="font-mono text-[11px] font-bold uppercase tracking-wide text-brand-200">
                         Module_{String(i + 1).padStart(2, '0')}
                       </p>
-                      <h3 className="text-base font-semibold leading-snug text-ink-900">{m.title}</h3>
+                      <h3 className="text-base font-semibold leading-snug text-white">{m.title}</h3>
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm leading-relaxed text-ink-700">{m.body}</p>
-                    <p className="mt-3 flex items-start gap-2 rounded-lg bg-brand-50/80 px-3.5 py-2.5 text-sm leading-relaxed text-brand-900">
-                      <Bot size={16} className="mt-0.5 shrink-0 text-brand-600" />
+                    <p className="text-sm leading-relaxed text-white/75">{m.body}</p>
+                    <p className="mt-3 flex items-start gap-2 rounded-lg bg-white/[0.07] px-3.5 py-2.5 text-sm leading-relaxed text-white/85">
+                      <Bot size={16} className="mt-0.5 shrink-0 text-brand-200" />
                       <span>
-                        <span className="font-mono text-xs font-bold tracking-wide">AI_ASSIST — </span>
+                        <span className="font-mono text-xs font-bold tracking-wide text-brand-200">AI_ASSIST — </span>
                         {m.ai}
                       </span>
                     </p>
@@ -423,46 +406,50 @@ function CareerReadinessPage() {
         </section>
 
         {/* Human + AI */}
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-2">
-            <div>
-              <Eyebrow>AI-first, never AI-only</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
-                The practice is powered by AI. The feedback comes from people.
-              </h2>
-              <p className="mt-3 max-w-md text-base leading-relaxed text-ink-600">
-                AI is tireless and instant, which makes it perfect for repetition. It’s also confidently
-                wrong sometimes, which is why every important piece of work gets a human’s eyes too.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {HUMANS.map((h) => (
-                <div key={h.title} className="card p-6">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
-                    <h.icon size={20} />
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold text-ink-900">{h.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{h.body}</p>
-                </div>
-              ))}
+        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 50% 60% at 100% 50%" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+            <div className="grid items-center gap-10 lg:grid-cols-2">
+              <div>
+                <Eyebrow dark>AI-first, never AI-only</Eyebrow>
+                <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                  The practice is powered by AI. The feedback comes from people.
+                </h2>
+                <p className="mt-3 max-w-md text-base leading-relaxed text-white/70">
+                  AI is tireless and instant, which makes it perfect for repetition. It’s also confidently
+                  wrong sometimes, which is why every important piece of work gets a human’s eyes too.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {HUMANS.map((h) => (
+                  <div key={h.title} className="card-glass-dark p-6">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
+                      <h.icon size={20} />
+                    </span>
+                    <h3 className="mt-4 text-lg font-semibold text-white">{h.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/70">{h.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
         {/* Outcomes */}
-        <section className="border-t border-ink-100">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
+          <GridBackdrop mask="ellipse 60% 50% at 15% 100%" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-2">
               <div>
-                <Eyebrow>What you leave with</Eyebrow>
-                <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
+                <Eyebrow dark>What you leave with</Eyebrow>
+                <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                   Not a certificate of attendance. Evidence.
                 </h2>
               </div>
               <ul className="space-y-3.5">
                 {OUTCOMES.map((o) => (
-                  <li key={o} className="flex items-start gap-3 text-[15px] text-ink-700">
-                    <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-600" />
+                  <li key={o} className="flex items-start gap-3 text-[15px] text-white/80">
+                    <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-200" />
                     {o}
                   </li>
                 ))}
@@ -472,19 +459,9 @@ function CareerReadinessPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="surface-wood-dark relative flex flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
-            <span
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                backgroundImage:
-                  'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
-                backgroundSize: '44px 44px',
-                maskImage: 'radial-gradient(ellipse 70% 90% at 90% 50%, black 0%, transparent 75%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 70% 90% at 90% 50%, black 0%, transparent 75%)',
-              }}
-            />
+        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
+          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
+            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
             <div className="relative">
               <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 Be first in when it opens.
