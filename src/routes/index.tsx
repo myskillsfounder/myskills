@@ -205,25 +205,29 @@ function HomePage() {
                 Personal &amp; Professional Development
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+
+              {/* The punchy line leads; the explainer backs it up. No CTA
+                  here — the hero's job is the idea, not the click. "Take
+                  the initial assessment" is the final CTA further down. */}
+              <p className="mt-6 max-w-xl font-display text-xl font-semibold leading-snug text-white sm:text-2xl">
+                Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
+              </p>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
                 Personal skills and professional skills, built together — practising with AI so you move
                 fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
                 for it. Free to start.
               </p>
 
-              {/* No CTA here — the hero's job is the idea, not the click.
-                  "Take the initial assessment" is the final CTA further
-                  down the page, once the case has been made. */}
-              <p className="mt-8 max-w-xl font-display text-xl font-semibold leading-snug text-white sm:text-2xl">
-                Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
-              </p>
-
               {/* The three things students actually ask for, right up front
-                  — not buried at the bottom of the page. */}
-              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
+                  — not buried at the bottom of the page. A plain vertical
+                  stack: a 3-across row either orphans one item on its own
+                  line (flex-wrap) or squeezes phrases into a mid-word wrap
+                  (a fixed grid) — a single column has neither failure
+                  mode at any width. */}
+              <ul className="mt-8 space-y-2.5 text-sm text-white/70">
                 {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
-                    <BadgeCheck size={15} className="text-brand-200" />
+                  <li key={t} className="flex items-center gap-2">
+                    <BadgeCheck size={16} className="shrink-0 text-brand-200" />
                     {t}
                   </li>
                 ))}
