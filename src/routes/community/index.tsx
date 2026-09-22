@@ -45,9 +45,10 @@ export const Route = createFileRoute('/community/')({
 })
 
 /**
- * /community is dual-purpose: signed-out visitors get this public marketing
- * page (its main job is funneling mentor applicants to /become-a-mentor);
- * onboarded users get the in-app hub below.
+ * /community is dual-purpose: signed-out visitors get this public B2B
+ * onboarding page below (its whole job is funnelling mentors, institutions
+ * and companies to one of the three partner-application forms — there is no
+ * student-facing content here); onboarded users get the in-app hub below.
  *
  * Defaults to the public page immediately, even while auth is still
  * resolving, and only swaps to the hub once a session is confirmed. A
@@ -67,11 +68,6 @@ function CommunityIndexRoute() {
 
 const primaryButton =
   'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
-
-const secondaryButton =
-  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40'
-
-const notifyButton = secondaryButton
 
 /** Three-pillar "at a glance" preview row, under the hero copy. Mirrors the
  *  checkmark row on the homepage Hero, but foreshadows the sections below
@@ -222,19 +218,19 @@ function PublicCommunityPage() {
                 Community
               </span>
               <h1 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-                Learn alongside people{' '}
-                <span className="text-brand-200">who've done it</span>
+                Partner with the students{' '}
+                <span className="text-brand-200">who'll do the work</span>
               </h1>
               <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                Mentors for feedback, internships for real experience, institutions
-                for the classroom — one community around every way to actually get
-                good at marketing.
+                Mentor a student, host an intern, or bring your institution on board.
+                Every way to partner with MySkills starts with a two-minute form below —
+                a real person reads every one.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/65">
-                <PillarPreview icon={GraduationCap} label="Mentors" />
-                <PillarPreview icon={Briefcase} label="Real work experience" />
-                <PillarPreview icon={Building2} label="Offline learning" />
+                <PillarPreview icon={GraduationCap} label="Become a mentor" />
+                <PillarPreview icon={Briefcase} label="Offer internships" />
+                <PillarPreview icon={Building2} label="Partner your institution" />
               </div>
             </div>
           </div>
@@ -248,13 +244,13 @@ function PublicCommunityPage() {
                 icon={GraduationCap}
                 live
                 title="Mentors"
-                description="Marketers who've done the work, answering questions and reviewing yours in live chat."
+                description="Working marketers reviewing student work in live chat — apply in a few minutes, no learner account needed."
                 action={
                   <Link
-                    to="/community/mentors"
+                    to="/become-a-mentor"
                     className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
                   >
-                    Meet the mentors
+                    Apply to mentor
                     <ArrowRight size={15} />
                   </Link>
                 }
@@ -263,7 +259,7 @@ function PublicCommunityPage() {
                 icon={Building2}
                 live
                 title="Institutions"
-                description="Training institutions verified as MySkills partners for offline learning — or apply if that's you."
+                description="Training institutions verified as MySkills partners for offline learning — apply to get listed."
                 action={
                   <Link
                     to="/become-a-partner-institution"
@@ -276,10 +272,18 @@ function PublicCommunityPage() {
               />
               <PillarCard
                 icon={Briefcase}
-                live={false}
+                live
                 title="Internships"
-                description="Real internships with partner companies, so your practice turns into work experience you can actually show."
-                action={<p className="text-sm font-medium text-white/50">Opening soon</p>}
+                description="Real internship roles for students who've already proven their skills — tell us what you're hiring for."
+                action={
+                  <Link
+                    to="/become-an-internship-partner"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
+                  >
+                    Offer internships
+                    <ArrowRight size={15} />
+                  </Link>
+                }
               />
             </div>
           </div>
@@ -299,15 +303,10 @@ function PublicCommunityPage() {
             'Shape what a career in digital marketing actually looks like',
           ]}
           actions={
-            <>
-              <Link to="/become-a-mentor" className={primaryButton}>
-                Apply to mentor
-                <ArrowRight size={16} />
-              </Link>
-              <Link to="/community/mentors" className={secondaryButton}>
-                Meet current mentors
-              </Link>
-            </>
+            <Link to="/become-a-mentor" className={primaryButton}>
+              Apply to mentor
+              <ArrowRight size={16} />
+            </Link>
           }
         />
 
@@ -326,59 +325,63 @@ function PublicCommunityPage() {
             'A guided path from practice scores to real classroom coaching',
           ]}
           actions={
-            <>
+            <Link to="/become-a-partner-institution" className={primaryButton}>
+              Apply to partner
+              <ArrowRight size={16} />
+            </Link>
+          }
+        />
+
+        {/* Internships — companies, not students: the audience for this whole
+            page is who supplies the internship, not who does it. */}
+        <PillarSection
+          icon={Briefcase}
+          live
+          reverse
+          eyebrow="Open to companies"
+          title="Offer internships through MySkills"
+          gridMask="ellipse 55% 60% at 10% 20%"
+          description="Every student comes to you having already practised real scenarios and earned a score — so hiring from MySkills starts from proof, not just a resume. Tell us what roles you're hiring for."
+          bullets={[
+            'A pipeline of students already scored on the skills you need',
+            'No cost to list a role — we handle the matching',
+            "A screened shortlist, not an open inbox of applications",
+          ]}
+          actions={
+            <Link to="/become-an-internship-partner" className={primaryButton}>
+              Offer internships
+              <ArrowRight size={16} />
+            </Link>
+          }
+        />
+
+        {/* Closing CTA — a recap, not a new pitch: every path on this page
+            is one of these three forms, so the close just makes picking
+            one easy instead of introducing a fourth (student signup) that
+            belongs on the homepage, not here. */}
+        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
+          <div className="surface-wood-dark glow-edge relative mx-auto max-w-6xl overflow-hidden rounded-xl px-6 py-10 text-center sm:px-10">
+            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
+            <h2 className="relative font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              Ready to partner with MySkills?
+            </h2>
+            <p className="relative mx-auto mt-2 max-w-md text-sm text-white/70 sm:text-base">
+              Pick the one that fits — every form goes straight to a real person on the team.
+            </p>
+            <div className="relative mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link to="/become-a-mentor" className={primaryButton}>
+                Apply to mentor
+                <ArrowRight size={16} />
+              </Link>
               <Link to="/become-a-partner-institution" className={primaryButton}>
                 Apply to partner
                 <ArrowRight size={16} />
               </Link>
-              <Link to="/community/institutions" className={secondaryButton}>
-                See partner institutions
+              <Link to="/become-an-internship-partner" className={primaryButton}>
+                Offer internships
+                <ArrowRight size={16} />
               </Link>
-            </>
-          }
-        />
-
-        {/* Internships — real work experience, scheduled for later so it goes last */}
-        <PillarSection
-          icon={Briefcase}
-          live={false}
-          eyebrow="Coming soon"
-          title="Internships with partner companies"
-          gridMask="ellipse 55% 60% at 10% 20%"
-          description="Practice scenarios prove you know the theory. This is where you prove you can do the job — real internship briefs from companies, scored and reviewed like the work it is."
-          bullets={[
-            'Work real internship briefs, not hypotheticals',
-            'Build a portfolio piece you can actually show in interviews',
-            "Get matched by the skill tracks you've already proven",
-          ]}
-          actions={
-            <Link to="/signup" className={notifyButton}>
-              Create a free account
-              <ArrowRight size={16} />
-            </Link>
-          }
-        />
-
-        {/* CTA */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
-            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
-            <div className="relative">
-              <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Not mentoring yet? Start as a student.
-              </h2>
-              <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-                Create a free account to take the assessment and talk to mentors
-                yourself.
-              </p>
             </div>
-            <Link
-              to="/signup"
-              className="press relative inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 sm:w-auto"
-            >
-              Get started free
-              <ArrowRight size={16} />
-            </Link>
           </div>
         </section>
       </main>

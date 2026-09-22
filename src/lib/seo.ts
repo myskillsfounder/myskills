@@ -81,10 +81,15 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Run digital marketing courses or training programs? Apply to be a verified MySkills partner institution and reach students looking for classroom learning.',
   },
-  '/community': {
-    title: 'Community | MySkills',
+  '/become-an-internship-partner': {
+    title: 'Offer internships through MySkills',
     description:
-      'Learn alongside people who’ve done it. Meet MySkills mentors, or apply to mentor students building real digital marketing skills.',
+      'Hire from a pipeline of students who’ve already practised real scenarios and earned a score. Tell us what internship roles your company is offering.',
+  },
+  '/community': {
+    title: 'Partner with MySkills | Community',
+    description:
+      'Mentor a student, host an intern, or bring your institution on board. Every way to partner with MySkills — apply in a few minutes.',
   },
   '/privacy': {
     title: 'Privacy Policy | MySkills',
@@ -105,6 +110,7 @@ export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: strin
   { path: '/community', changefreq: 'weekly', priority: '0.7' },
   { path: '/become-a-mentor', changefreq: 'monthly', priority: '0.6' },
   { path: '/become-a-partner-institution', changefreq: 'monthly', priority: '0.6' },
+  { path: '/become-an-internship-partner', changefreq: 'monthly', priority: '0.6' },
   { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
   { path: '/terms', changefreq: 'yearly', priority: '0.3' },
 ]

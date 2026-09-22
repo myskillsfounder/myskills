@@ -33,6 +33,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as CareerReadinessRouteImport } from './routes/career-readiness'
+import { Route as BecomeAnInternshipPartnerRouteImport } from './routes/become-an-internship-partner'
 import { Route as BecomeAPartnerInstitutionRouteImport } from './routes/become-a-partner-institution'
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
@@ -179,6 +180,12 @@ const CareerReadinessRoute = CareerReadinessRouteImport.update({
   path: '/career-readiness',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BecomeAnInternshipPartnerRoute =
+  BecomeAnInternshipPartnerRouteImport.update({
+    id: '/become-an-internship-partner',
+    path: '/become-an-internship-partner',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BecomeAPartnerInstitutionRoute =
   BecomeAPartnerInstitutionRouteImport.update({
     id: '/become-a-partner-institution',
@@ -314,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
+  '/become-an-internship-partner': typeof BecomeAnInternshipPartnerRoute
   '/career-readiness': typeof CareerReadinessRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
@@ -365,6 +373,7 @@ export interface FileRoutesByTo {
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
+  '/become-an-internship-partner': typeof BecomeAnInternshipPartnerRoute
   '/career-readiness': typeof CareerReadinessRoute
   '/certificate': typeof CertificateRoute
   '/dashboard': typeof DashboardRoute
@@ -415,6 +424,7 @@ export interface FileRoutesById {
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
+  '/become-an-internship-partner': typeof BecomeAnInternshipPartnerRoute
   '/career-readiness': typeof CareerReadinessRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
+    | '/become-an-internship-partner'
     | '/career-readiness'
     | '/certificate'
     | '/community'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
+    | '/become-an-internship-partner'
     | '/career-readiness'
     | '/certificate'
     | '/dashboard'
@@ -568,6 +580,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
+    | '/become-an-internship-partner'
     | '/career-readiness'
     | '/certificate'
     | '/community'
@@ -620,6 +633,7 @@ export interface RootRouteChildren {
   AssessmentRoute: typeof AssessmentRoute
   BecomeAMentorRoute: typeof BecomeAMentorRoute
   BecomeAPartnerInstitutionRoute: typeof BecomeAPartnerInstitutionRoute
+  BecomeAnInternshipPartnerRoute: typeof BecomeAnInternshipPartnerRoute
   CareerReadinessRoute: typeof CareerReadinessRoute
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
@@ -818,6 +832,13 @@ declare module '@tanstack/react-router' {
       path: '/career-readiness'
       fullPath: '/career-readiness'
       preLoaderRoute: typeof CareerReadinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-an-internship-partner': {
+      id: '/become-an-internship-partner'
+      path: '/become-an-internship-partner'
+      fullPath: '/become-an-internship-partner'
+      preLoaderRoute: typeof BecomeAnInternshipPartnerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/become-a-partner-institution': {
@@ -1067,6 +1088,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentRoute: AssessmentRoute,
   BecomeAMentorRoute: BecomeAMentorRoute,
   BecomeAPartnerInstitutionRoute: BecomeAPartnerInstitutionRoute,
+  BecomeAnInternshipPartnerRoute: BecomeAnInternshipPartnerRoute,
   CareerReadinessRoute: CareerReadinessRoute,
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,
