@@ -387,8 +387,20 @@ function CareerReadinessPage() {
         </section>
 
         {/* Modules */}
-        <section id="inside" className="border-t border-ink-100 bg-ink-50/60">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <section id="inside" className="relative overflow-hidden border-t border-ink-100 bg-ink-50/60">
+          {/* The backdrop the glass module cards below actually need — a
+              faint grid plus two soft brand-colour glows. Over a flat
+              background, a translucent card just looks washed out. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                'radial-gradient(ellipse 55% 45% at 10% 0%, rgba(111,99,226,0.12), transparent 60%), radial-gradient(ellipse 45% 40% at 100% 100%, rgba(111,99,226,0.10), transparent 60%), linear-gradient(rgba(27,24,21,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(27,24,21,0.04) 1px, transparent 1px)',
+              backgroundSize: 'auto, auto, 44px 44px, 44px 44px',
+            }}
+          />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
               <Eyebrow>What’s inside</Eyebrow>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
@@ -402,7 +414,7 @@ function CareerReadinessPage() {
 
             <ol className="mt-10 space-y-3">
               {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => (
-                <li key={m.title} className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:p-6">
+                <li key={m.title} className="card-glass flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:p-6">
                   <div className="flex items-center gap-4 sm:w-64 sm:shrink-0">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
                       <m.icon size={21} />
@@ -416,7 +428,7 @@ function CareerReadinessPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm leading-relaxed text-ink-700">{m.body}</p>
-                    <p className="mt-3 flex items-start gap-2 rounded-lg bg-brand-50 px-3.5 py-2.5 text-sm leading-relaxed text-brand-900">
+                    <p className="mt-3 flex items-start gap-2 rounded-lg bg-brand-50/80 px-3.5 py-2.5 text-sm leading-relaxed text-brand-900">
                       <Bot size={16} className="mt-0.5 shrink-0 text-brand-600" />
                       <span>
                         <span className="font-mono text-xs font-bold tracking-wide">AI_ASSIST — </span>
