@@ -234,3 +234,34 @@ export async function registerProgrammeInterest(
     throw new Error(error.message?.trim() || 'Something went wrong.')
   }
 }
+
+export interface CareerReadinessLead {
+  full_name: string
+  phone: string
+  city: string
+}
+
+/**
+ * The Career Readiness hero's lead form — name, phone and city, no account
+ * needed. Distinct from registerProgrammeInterest above: that one is the
+ * signed-in waitlist join further down the page, tied to the learner's
+ * account and reachable by email. This is the above-the-fold form for a
+ * visitor who hasn't signed up (or may never), captured by phone since
+ * that's how the follow-up call actually happens. Table:
+ * docs/supabase-career-readiness-leads.sql.
+ */
+export async function submitCareerReadinessLead(lead: CareerReadinessLead): Promise<void> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { error } = await supabase.from('career_readiness_leads').insert({
+    user_id: user?.id ?? null,
+    full_name: lead.full_name.trim(),
+    phone: lead.phone.trim(),
+    city: lead.city.trim(),
+  })
+  if (error) {
+    throw new Error(error.message?.trim() || 'Something went wrong.')
+  }
+}
