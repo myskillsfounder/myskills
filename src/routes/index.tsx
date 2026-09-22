@@ -5,7 +5,6 @@ import {
   BadgeCheck,
   Bot,
   Briefcase,
-  CalendarCheck,
   ClipboardCheck,
   GraduationCap,
   HeartHandshake,
@@ -274,7 +273,7 @@ function HomePage() {
                 for it. Free to start.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="mt-8">
                 <Link
                   to={assessmentTo}
                   className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
@@ -282,14 +281,6 @@ function HomePage() {
                   <ClipboardCheck size={16} />
                   Take the initial assessment
                   <ArrowRight size={16} />
-                </Link>
-                <Link
-                  to="/wellness"
-                  hash="career-guidance"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
-                >
-                  <CalendarCheck size={16} />
-                  Book a career consultation
                 </Link>
               </div>
 
