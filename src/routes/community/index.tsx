@@ -13,9 +13,11 @@ import {
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
-import { Badge, Skeleton } from '@/components/ui'
+import { Skeleton } from '@/components/ui'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { Eyebrow } from '@/components/landing/Eyebrow'
+import { GridBackdrop } from '@/components/landing/GridBackdrop'
 import { supabase } from '@/lib/supabase'
 import { fetchMentors } from '@/lib/mentors'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
@@ -64,13 +66,12 @@ function CommunityIndexRoute() {
 }
 
 const primaryButton =
-  'press inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700'
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
 
 const secondaryButton =
-  'press inline-flex items-center justify-center gap-2 rounded-full border border-ink-200 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:border-ink-300'
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40'
 
-const notifyButton =
-  'press inline-flex items-center justify-center gap-2 rounded-full border border-ink-200 bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:border-ink-300'
+const notifyButton = secondaryButton
 
 /** Three-pillar "at a glance" preview row, under the hero copy. Mirrors the
  *  checkmark row on the homepage Hero, but foreshadows the sections below
@@ -78,7 +79,7 @@ const notifyButton =
 function PillarPreview({ icon: Icon, label }: { icon: IconType; label: string }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <Icon size={16} className="text-brand-600" />
+      <Icon size={16} className="text-brand-200" />
       {label}
     </span>
   )
@@ -101,28 +102,31 @@ function PillarCard({
   action: ReactNode
 }) {
   return (
-    <div className={`card lift group flex flex-col p-6 ${live ? '' : 'hover:!translate-y-0 hover:!shadow-none'}`}>
+    <div className={`card-glass-dark lift group flex flex-col p-6 ${live ? '' : 'hover:!translate-y-0 hover:!shadow-none'}`}>
       <div className="flex items-start justify-between gap-3">
         <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-e1 transition-transform duration-300 ${
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-white shadow-e1 transition-transform duration-300 ${
             live
               ? 'bg-gradient-to-br from-brand-500 to-brand-700 group-hover:scale-105'
-              : 'bg-gradient-to-br from-ink-400 to-ink-600 opacity-70 grayscale'
+              : 'bg-white/10 opacity-70 grayscale'
           }`}
         >
           <Icon size={22} />
         </span>
         {live ? (
-          <Badge tone="success">Available</Badge>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">
+            Available
+          </span>
         ) : (
-          <Badge tone="neutral" icon={Lock}>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/60">
+            <Lock size={10} />
             Coming soon
-          </Badge>
+          </span>
         )}
       </div>
 
-      <h3 className="mt-4 font-display text-lg font-semibold text-ink-900">{title}</h3>
-      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{description}</p>
+      <h3 className="mt-4 font-display text-lg font-semibold text-white">{title}</h3>
+      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-white/70">{description}</p>
 
       <div className="mt-4">{action}</div>
     </div>
@@ -141,6 +145,7 @@ function PillarSection({
   description,
   bullets,
   actions,
+  gridMask,
 }: {
   icon: IconType
   live: boolean
@@ -152,49 +157,44 @@ function PillarSection({
   description: string
   bullets: string[]
   actions: ReactNode
+  gridMask: string
 }) {
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 lg:px-8">
-      <div
-        className={`grid items-center gap-10 rounded-2xl border p-8 lg:grid-cols-2 lg:p-12 ${
-          live ? 'border-brand-100 bg-brand-50/60' : 'border-ink-100 bg-ink-50/60'
-        }`}
-      >
-        <div className={reverse ? 'lg:order-2' : ''}>
+    <section className="relative overflow-hidden border-t border-white/[0.06] px-4 py-10 sm:px-6 lg:px-8">
+      <div className="card-glass-dark relative mx-auto grid max-w-6xl items-center gap-10 overflow-hidden p-8 lg:grid-cols-2 lg:p-12">
+        <GridBackdrop mask={gridMask} />
+        <div className={`relative ${reverse ? 'lg:order-2' : ''}`}>
           <div className="flex items-center gap-3">
             <span
-              className={`flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-e1 ${
-                live
-                  ? 'bg-gradient-to-br from-brand-500 to-brand-700'
-                  : 'bg-gradient-to-br from-ink-400 to-ink-600 opacity-70 grayscale'
+              className={`flex h-12 w-12 items-center justify-center rounded-lg text-white shadow-e1 ${
+                live ? 'bg-gradient-to-br from-brand-500 to-brand-700' : 'bg-white/10 opacity-70 grayscale'
               }`}
             >
               <Icon size={22} />
             </span>
             {!live && (
-              <Badge tone="neutral" icon={Lock}>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/60">
+                <Lock size={10} />
                 Coming soon
-              </Badge>
+              </span>
             )}
           </div>
 
-          <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-            {eyebrow}
-          </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+          <Eyebrow dark>{eyebrow}</Eyebrow>
+          <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
             {title}
           </h2>
-          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink-600">{description}</p>
+          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/70">{description}</p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">{actions}</div>
         </div>
 
-        <ul className={`space-y-3.5 ${reverse ? 'lg:order-1' : ''}`}>
+        <ul className={`relative space-y-3.5 ${reverse ? 'lg:order-1' : ''}`}>
           {bullets.map((line) => (
-            <li key={line} className="flex items-start gap-2.5 text-sm text-ink-700">
+            <li key={line} className="flex items-start gap-2.5 text-sm text-white/80">
               <CheckCircle2
                 size={18}
-                className={`mt-0.5 shrink-0 ${live ? 'text-brand-600' : 'text-ink-400'}`}
+                className={`mt-0.5 shrink-0 ${live ? 'text-brand-200' : 'text-white/30'}`}
               />
               {line}
             </li>
@@ -207,75 +207,81 @@ function PillarSection({
 
 function PublicCommunityPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-900">
       <Navbar />
 
       <main>
         {/* Hero */}
-        <section className="mx-auto max-w-6xl px-4 pt-10 pb-10 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
-              <Users size={13} />
-              Community
-            </span>
-            <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-5xl">
-              Learn alongside people{' '}
-              <span className="text-brand-600">who've done it</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-500 sm:text-lg">
-              Mentors for feedback, internships for real experience, institutions
-              for the classroom — one community around every way to actually get
-              good at marketing.
-            </p>
+        <section className="surface-wood-dark relative overflow-hidden">
+          <GridBackdrop mask="ellipse 75% 65% at 50% 0%" />
+          <div className="relative mx-auto max-w-6xl px-4 pt-10 pb-10 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
+            <div className="rise-in mx-auto max-w-2xl text-center">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
+                <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
+                <Users size={13} />
+                Community
+              </span>
+              <h1 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
+                Learn alongside people{' '}
+                <span className="text-brand-200">who've done it</span>
+              </h1>
+              <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
+                Mentors for feedback, internships for real experience, institutions
+                for the classroom — one community around every way to actually get
+                good at marketing.
+              </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink-500">
-              <PillarPreview icon={GraduationCap} label="Mentors" />
-              <PillarPreview icon={Briefcase} label="Real work experience" />
-              <PillarPreview icon={Building2} label="Offline learning" />
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/65">
+                <PillarPreview icon={GraduationCap} label="Mentors" />
+                <PillarPreview icon={Briefcase} label="Real work experience" />
+                <PillarPreview icon={Building2} label="Offline learning" />
+              </div>
             </div>
           </div>
         </section>
 
         {/* Three pillars, at a glance */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <PillarCard
-              icon={GraduationCap}
-              live
-              title="Mentors"
-              description="Marketers who've done the work, answering questions and reviewing yours in live chat."
-              action={
-                <Link
-                  to="/community/mentors"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
-                >
-                  Meet the mentors
-                  <ArrowRight size={15} />
-                </Link>
-              }
-            />
-            <PillarCard
-              icon={Building2}
-              live
-              title="Institutions"
-              description="Training institutions verified as MySkills partners for offline learning — or apply if that's you."
-              action={
-                <Link
-                  to="/become-a-partner-institution"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
-                >
-                  Apply to partner
-                  <ArrowRight size={15} />
-                </Link>
-              }
-            />
-            <PillarCard
-              icon={Briefcase}
-              live={false}
-              title="Internships"
-              description="Real internships with partner companies, so your practice turns into work experience you can actually show."
-              action={<p className="text-sm font-medium text-ink-400">Opening soon</p>}
-            />
+        <section className="relative overflow-hidden border-t border-white/[0.06] bg-ink-900">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <PillarCard
+                icon={GraduationCap}
+                live
+                title="Mentors"
+                description="Marketers who've done the work, answering questions and reviewing yours in live chat."
+                action={
+                  <Link
+                    to="/community/mentors"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
+                  >
+                    Meet the mentors
+                    <ArrowRight size={15} />
+                  </Link>
+                }
+              />
+              <PillarCard
+                icon={Building2}
+                live
+                title="Institutions"
+                description="Training institutions verified as MySkills partners for offline learning — or apply if that's you."
+                action={
+                  <Link
+                    to="/become-a-partner-institution"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
+                  >
+                    Apply to partner
+                    <ArrowRight size={15} />
+                  </Link>
+                }
+              />
+              <PillarCard
+                icon={Briefcase}
+                live={false}
+                title="Internships"
+                description="Real internships with partner companies, so your practice turns into work experience you can actually show."
+                action={<p className="text-sm font-medium text-white/50">Opening soon</p>}
+              />
+            </div>
           </div>
         </section>
 
@@ -285,6 +291,7 @@ function PublicCommunityPage() {
           live
           eyebrow="Available now"
           title="Become a mentor"
+          gridMask="ellipse 55% 60% at 10% 20%"
           description="Students across India use MySkills to build real digital marketing skills. If you've done the work, a little of your time goes a long way — no learner account needed, just a few minutes to apply."
           bullets={[
             'Answer questions and unblock students in live support chat',
@@ -311,6 +318,7 @@ function PublicCommunityPage() {
           reverse
           eyebrow="Open to institutions"
           title="Partner with MySkills"
+          gridMask="ellipse 55% 60% at 90% 80%"
           description="Run digital marketing courses or training programs? Get listed as a verified MySkills partner institution so our students know who to trust for offline or classroom learning."
           bullets={[
             'A verified listing your prospective students can find and trust',
@@ -336,6 +344,7 @@ function PublicCommunityPage() {
           live={false}
           eyebrow="Coming soon"
           title="Internships with partner companies"
+          gridMask="ellipse 55% 60% at 10% 20%"
           description="Practice scenarios prove you know the theory. This is where you prove you can do the job — real internship briefs from companies, scored and reviewed like the work it is."
           bullets={[
             'Work real internship briefs, not hypotheticals',
@@ -351,20 +360,21 @@ function PublicCommunityPage() {
         />
 
         {/* CTA */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="flex flex-col items-start justify-between gap-6 rounded-2xl bg-ink-900 px-6 py-10 sm:flex-row sm:items-center sm:px-10">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
+          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
+            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
+            <div className="relative">
+              <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 Not mentoring yet? Start as a student.
               </h2>
-              <p className="mt-2 max-w-md text-sm text-ink-300 sm:text-base">
+              <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
                 Create a free account to take the assessment and talk to mentors
                 yourself.
               </p>
             </div>
             <Link
               to="/signup"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-500 sm:w-auto"
+              className="press relative inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 sm:w-auto"
             >
               Get started free
               <ArrowRight size={16} />
