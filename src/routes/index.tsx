@@ -14,12 +14,14 @@ import {
   Sparkles,
   Sprout,
   Target,
+  Zap,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { skillTracks } from '@/lib/skillTracks'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { Eyebrow } from '@/components/landing/Eyebrow'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -38,6 +40,14 @@ export const Route = createFileRoute('/')({
  * Nothing here names a price, a date or a guaranteed outcome — "nothing is
  * impossible" is a rallying line, not a claim about any specific result.
  */
+
+/** What the hero's "powered by AI" badge actually means, made concrete —
+ *  three things AI does, not just a claim it does something. */
+const AI_CAPABILITIES: { icon: IconType; label: string; body: string }[] = [
+  { icon: Sparkles, label: 'AI_GENERATES', body: 'a real scenario for your skill' },
+  { icon: Zap, label: 'AI_SCORES', body: 'your answer, instantly' },
+  { icon: Bot, label: 'AI_COACHES', body: 'you through what to fix' },
+]
 
 const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
   {
@@ -132,14 +142,14 @@ function ProgrammesCard() {
     },
   ]
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur sm:p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">Two programmes, one path</p>
+    <div className="glow-edge rounded-xl bg-white/[0.06] p-5 backdrop-blur sm:p-6">
+      <Eyebrow dark>Two programmes, one path</Eyebrow>
       <ul className="mt-4 space-y-2.5">
         {rows.map((r) => (
           <li key={r.name}>
             <Link
               to={r.to}
-              className="group flex items-center gap-3 rounded-xl bg-white/[0.06] px-3 py-3 text-white transition-colors hover:bg-white/[0.12]"
+              className="group flex items-center gap-3 rounded-lg bg-white/[0.06] px-3 py-3 text-white transition-colors hover:bg-white/[0.12]"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10">
                 <r.icon size={18} />
@@ -162,8 +172,8 @@ function ProgrammesCard() {
         ))}
       </ul>
 
-      <div className="mt-4 rounded-xl bg-white p-4 text-ink-900">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">Every programme finishes the same way</p>
+      <div className="mt-4 rounded-lg bg-white p-4 text-ink-900">
+        <Eyebrow>Every programme finishes the same way</Eyebrow>
         <ol className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm font-medium">
           {['Practice', 'Mentor review', 'Internship'].map((s, i, all) => (
             <li key={s} className="flex items-center gap-2">
@@ -245,6 +255,19 @@ function HomePage() {
       <main>
         {/* Hero */}
         <section className="surface-wood-dark relative overflow-hidden">
+          {/* A faint grid, not just a decorative circle — the "this is a
+              system, not a brochure" tell, matching /career-readiness. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+              backgroundSize: '44px 44px',
+              maskImage: 'radial-gradient(ellipse 75% 65% at 30% 20%, black 0%, transparent 75%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 30% 20%, black 0%, transparent 75%)',
+            }}
+          />
           <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 opacity-[0.12]">
             <svg width="420" height="420" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.2">
               <circle cx="100" cy="100" r="96" />
@@ -256,7 +279,8 @@ function HomePage() {
 
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:px-8">
             <div className="rise-in">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
+                <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
                 <Sparkles size={13} />
                 Powered by AI · Reviewed by people
               </span>
@@ -270,7 +294,22 @@ function HomePage() {
                 for it. Free to start.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              {/* What "powered by AI" actually does, made concrete — not
+                  just a claim in the badge above. */}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {AI_CAPABILITIES.map((c) => (
+                  <div
+                    key={c.label}
+                    className="glow-edge flex items-center gap-2 rounded-lg bg-white/[0.04] px-3 py-2"
+                  >
+                    <c.icon size={14} className="shrink-0 text-brand-200" />
+                    <span className="font-mono text-[11px] font-bold text-white">{c.label}</span>
+                    <span className="text-xs text-white/60">{c.body}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link
                   to={assessmentTo}
                   className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
@@ -308,7 +347,7 @@ function HomePage() {
         {/* Two kinds of skill */}
         <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Two programmes, one goal</p>
+            <Eyebrow>Two programmes, one goal</Eyebrow>
             <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
               Whatever your goal, these two skill sets get you there.
             </h2>
@@ -343,7 +382,7 @@ function HomePage() {
         <section id="how-it-works" className="border-t border-ink-100 bg-ink-50/60">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">How it works</p>
+              <Eyebrow>How it works</Eyebrow>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
                 From “I think I know this” to “I can prove it.”
               </h2>
@@ -372,9 +411,7 @@ function HomePage() {
         <section className="border-t border-ink-100 bg-ink-50/60">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                You’re not doing this alone
-              </p>
+              <Eyebrow>You’re not doing this alone</Eyebrow>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
                 AI does the coaching. People are still the point.
               </h2>

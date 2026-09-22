@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
@@ -27,29 +27,9 @@ import {
 } from '@/lib/programmes'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { Eyebrow } from '@/components/landing/Eyebrow'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
-
-/** A section label styled like a system readout — monospace, bracketed —
- *  instead of the tracked-caps sans used elsewhere on the site. This page
- *  is the AI-powered programme; its type should say so. */
-function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
-  return (
-    <p
-      className={`font-mono text-[11px] font-bold uppercase tracking-[0.12em] ${
-        dark ? 'text-brand-200' : 'text-brand-700'
-      }`}
-    >
-      <span aria-hidden className={dark ? 'text-white/30' : 'text-ink-300'}>
-        [{' '}
-      </span>
-      {children}
-      <span aria-hidden className={dark ? 'text-white/30' : 'text-ink-300'}>
-        {' '}]
-      </span>
-    </p>
-  )
-}
 
 // Public, but deliberately absent from PAGE_SEO (src/lib/seo.ts), so it's
 // served noindex until the programme's details are final. Add it there, to
