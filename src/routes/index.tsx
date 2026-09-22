@@ -206,36 +206,54 @@ function HomePage() {
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
 
-              {/* The punchy line leads; the explainer backs it up. No CTA
-                  here — the hero's job is the idea, not the click. "Take
-                  the initial assessment" is the final CTA further down. */}
-              <p className="mt-6 max-w-xl font-display text-xl font-semibold leading-snug text-white sm:text-2xl">
-                Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
-              </p>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+              {/* No CTA here — the hero's job is the idea, not the click.
+                  "Take the initial assessment" is the final CTA further
+                  down. The "Two kinds of skill" statement now closes the
+                  hero as its own centred line, below both columns. */}
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
                 Personal skills and professional skills, built together — practising with AI so you move
                 fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
                 for it. Free to start.
               </p>
 
-              {/* The three things students actually ask for, right up front
-                  — not buried at the bottom of the page. A plain vertical
-                  stack: a 3-across row either orphans one item on its own
-                  line (flex-wrap) or squeezes phrases into a mid-word wrap
-                  (a fixed grid) — a single column has neither failure
-                  mode at any width. */}
-              <ul className="mt-8 space-y-2.5 text-sm text-white/70">
-                {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
-                  <li key={t} className="flex items-center gap-2">
-                    <BadgeCheck size={16} className="shrink-0 text-brand-200" />
-                    {t}
-                  </li>
-                ))}
-              </ul>
             </div>
 
             <AiCoachPreview />
           </div>
+
+          {/* The three trust points moved out of the left column to sit
+              here instead — one compact row, center-aligned, directly above
+              the closing statement, so the two read as a single beat at the
+              bottom of the hero rather than split across the layout. Same
+              "always one line" requirement as the statement below: a fluid,
+              viewport-scaled font size instead of fixed steps, shrinking
+              enough that three phrases plus icons still fit at 375px. */}
+          <ul
+            className="relative mx-auto flex max-w-6xl items-center justify-center whitespace-nowrap px-4 pt-2 text-white/70 sm:px-6 lg:px-8"
+            style={{ fontSize: 'clamp(0.4rem, 2.15vw, 0.875rem)' }}
+          >
+            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t, i, all) => (
+              <li key={t} className="flex items-center gap-1">
+                <BadgeCheck size={12} className="shrink-0 text-brand-200" />
+                {t}
+                {i < all.length - 1 && (
+                  <span aria-hidden className="mx-2 h-3 w-px bg-white/15 sm:mx-5" />
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {/* A fluid, viewport-scaled size instead of fixed breakpoint
+              steps — "one line, always" is a hard requirement here, and a
+              vw-based size keeps the line's width proportional to the
+              viewport at any point in between, not just at the
+              breakpoints a step scale happens to cover. */}
+          <p
+            className="relative mx-auto max-w-6xl px-4 pt-4 pb-10 text-center font-display font-semibold whitespace-nowrap text-white sm:pt-5 sm:pb-14 sm:px-6 lg:px-8"
+            style={{ fontSize: 'clamp(0.75rem, 3.4vw, 1.5rem)' }}
+          >
+            Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
+          </p>
         </section>
 
         {/* Two kinds of skill */}

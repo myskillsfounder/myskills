@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
-import { Bot, Sparkles, UserCheck } from 'lucide-react'
+import { ArrowRight, Bot, Sparkles, UserCheck } from 'lucide-react'
 
 type Beat =
   | { kind: 'message'; from: 'ai' | 'you' | 'mentor'; text: string }
@@ -178,10 +179,22 @@ export function AiCoachPreview() {
         {typing && <TypingDots />}
       </div>
 
-      <p className="mt-4 flex items-start gap-2 border-t border-white/10 pt-4 text-xs leading-relaxed text-white/55">
-        <Sparkles size={13} className="mt-0.5 shrink-0 text-brand-200" />
-        AI coaches you through it, live. A mentor connects to review what you decide.
-      </p>
+      <div className="mt-4 border-t border-white/10 pt-4">
+        <p className="flex items-start gap-2 text-xs leading-relaxed text-white/55">
+          <Sparkles size={13} className="mt-0.5 shrink-0 text-brand-200" />
+          AI coaches you through it, live. A mentor connects to review what you decide.
+        </p>
+        {/* Not just a demonstration of the idea — a real, working way in,
+            regardless of where the loop above happens to be. */}
+        <Link
+          to="/community/mentors"
+          className="group mt-3 flex items-center justify-center gap-2 rounded-lg bg-white/[0.08] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/[0.14]"
+        >
+          <UserCheck size={15} className="text-emerald-300" />
+          Connect with a real mentor
+          <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      </div>
     </div>
   )
 }
