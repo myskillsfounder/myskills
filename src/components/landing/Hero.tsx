@@ -30,7 +30,9 @@ export function Hero() {
             a free certificate that proves what you can do.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          {/* One CTA button. "See how it works" is a lightweight text
+              link, not a second button — it just jumps down the page. */}
+          <div className="mt-8">
             <Link
               to="/signup"
               className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
@@ -38,13 +40,15 @@ export function Hero() {
               Start the Digital Marketing Assessment
               <ArrowRight size={16} />
             </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40"
-            >
-              See how it works
-            </a>
           </div>
+
+          <a
+            href="#how-it-works"
+            className="group mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
+          >
+            See how it works
+            <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+          </a>
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
             {['8 skill tracks', '1:1 mentor support', 'Free to start'].map((t) => (

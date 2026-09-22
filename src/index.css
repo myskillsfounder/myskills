@@ -266,6 +266,14 @@ body {
   animation: live-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* A single element traces a circle: rotate out, push out by the radius,
+ * rotate back — so the element's own content stays upright while its
+ * position orbits. Used by SkillsOrbit; --orbit-radius is set per element. */
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
