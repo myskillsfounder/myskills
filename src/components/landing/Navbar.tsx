@@ -3,15 +3,11 @@ import { Link } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 
-// Absolute paths (not bare '#anchor') on purpose: these sections only exist
-// on the homepage, but this Navbar renders on every public page. A bare
-// '#how-it-works' href resolves relative to whatever page you're already on
-// -- from /community that's /community#how-it-works, which has no matching
-// element, so the link silently does nothing. '/#how-it-works' always
-// targets the homepage's own anchor, whichever page the click happened on.
+// One link per programme page. "How it works" and "Skill tracks" used to be
+// two homepage anchors here; both now live on /digital-marketing.
 const navLinks = [
-  { label: 'How it works', href: '/#how-it-works' },
-  { label: 'Skill tracks', href: '/#skill-tracks' },
+  { label: 'Digital Marketing', href: '/digital-marketing' },
+  { label: 'Career Readiness', href: '/career-readiness' },
 ]
 
 export function Navbar() {
@@ -28,13 +24,14 @@ export function Navbar() {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
+              to={link.href}
               className="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
+              activeProps={{ className: 'text-ink-900' }}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <Link
             to="/community"
@@ -94,14 +91,14 @@ export function Navbar() {
         <div className="border-t border-ink-100 px-4 pb-4 md:hidden">
           <nav className="flex flex-col gap-1 pt-2">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
-                href={link.href}
+                to={link.href}
                 onClick={() => setOpen(false)}
                 className="rounded-md px-2 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             <Link
               to="/community"

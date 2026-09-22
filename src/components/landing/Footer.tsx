@@ -2,10 +2,11 @@ const year = new Date().getFullYear()
 
 const columns = [
   {
-    title: 'Product',
+    title: 'Programmes',
     links: [
-      { label: 'How it works', href: '#how-it-works' },
-      { label: 'Skill tracks', href: '#skill-tracks' },
+      { label: 'Digital Marketing', href: '/digital-marketing' },
+      { label: 'Career Readiness', href: '/career-readiness' },
+      { label: 'Community', href: '/community' },
     ],
   },
   {
@@ -27,7 +28,7 @@ export function Footer() {
               MySkills
             </p>
             <p className="mt-2 max-w-xs text-sm text-ink-500">
-              Scenario-based skill assessments for digital marketing students.
+              Personal and professional development, powered by AI and reviewed by people.
             </p>
           </div>
 

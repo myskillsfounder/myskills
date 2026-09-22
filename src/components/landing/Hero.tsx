@@ -8,7 +8,7 @@ export function Hero() {
         {/* Copy */}
         <div>
           <span className="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
-            Built for digital marketing students
+            Digital Marketing Programme · Professional skills
           </span>
 
           <h1 className="mt-5 font-semibold leading-tight tracking-tight text-ink-900">
