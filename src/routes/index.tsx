@@ -211,20 +211,16 @@ function HomePage() {
                 for it. Free to start.
               </p>
 
-              <div className="mt-8">
-                <Link
-                  to={assessmentTo}
-                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-                >
-                  <ClipboardCheck size={16} />
-                  Take the initial assessment
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
+              {/* No CTA here — the hero's job is the idea, not the click.
+                  "Take the initial assessment" is the final CTA further
+                  down the page, once the case has been made. */}
+              <p className="mt-8 max-w-xl font-display text-xl font-semibold leading-snug text-white sm:text-2xl">
+                Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
+              </p>
 
               {/* The three things students actually ask for, right up front
                   — not buried at the bottom of the page. */}
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
+              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
                 {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <BadgeCheck size={15} className="text-brand-200" />
