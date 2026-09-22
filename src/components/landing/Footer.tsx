@@ -4,6 +4,7 @@ const columns = [
   {
     title: 'Programmes',
     links: [
+      { label: 'Home', href: '/' },
       { label: 'Digital Marketing', href: '/digital-marketing' },
       { label: 'Career Readiness', href: '/career-readiness' },
       { label: 'Community', href: '/community' },
