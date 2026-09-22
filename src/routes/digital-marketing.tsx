@@ -19,7 +19,7 @@ export const Route = createFileRoute('/digital-marketing')({
 
 function DigitalMarketingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-900">
       <Navbar />
       <main>
         <Hero />
