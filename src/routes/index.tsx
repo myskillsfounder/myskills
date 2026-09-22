@@ -14,7 +14,6 @@ import {
   Sparkles,
   Sprout,
   Target,
-  Zap,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { skillTracks } from '@/lib/skillTracks'
@@ -41,14 +40,6 @@ export const Route = createFileRoute('/')({
  * Nothing here names a price, a date or a guaranteed outcome — "nothing is
  * impossible" is a rallying line, not a claim about any specific result.
  */
-
-/** What the hero's "powered by AI" badge actually means, made concrete —
- *  three things AI does, not just a claim it does something. */
-const AI_CAPABILITIES: { icon: IconType; label: string; body: string }[] = [
-  { icon: Sparkles, label: 'AI_GENERATES', body: 'a real scenario for your skill' },
-  { icon: Zap, label: 'AI_SCORES', body: 'your answer, instantly' },
-  { icon: Bot, label: 'AI_COACHES', body: 'you through what to fix' },
-]
 
 const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
   {
@@ -283,22 +274,7 @@ function HomePage() {
                 for it. Free to start.
               </p>
 
-              {/* What "powered by AI" actually does, made concrete — not
-                  just a claim in the badge above. */}
-              <div className="mt-5 flex flex-wrap gap-2">
-                {AI_CAPABILITIES.map((c) => (
-                  <div
-                    key={c.label}
-                    className="glow-edge flex items-center gap-2 rounded-lg bg-white/[0.04] px-3 py-2"
-                  >
-                    <c.icon size={14} className="shrink-0 text-brand-200" />
-                    <span className="font-mono text-[11px] font-bold text-white">{c.label}</span>
-                    <span className="text-xs text-white/60">{c.body}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link
                   to={assessmentTo}
                   className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
