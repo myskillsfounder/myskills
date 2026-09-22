@@ -7,7 +7,6 @@ import {
   Briefcase,
   CalendarCheck,
   ClipboardCheck,
-  Compass,
   GraduationCap,
   HeartHandshake,
   Lock,
@@ -29,11 +28,15 @@ export const Route = createFileRoute('/')({
 })
 
 /*
- * The homepage is MySkills as a whole: personal and professional development,
- * powered by AI and reviewed by people. It shares the Career Readiness page's
- * dark theme. Each programme has its own page — /digital-marketing (live)
- * and /career-readiness (opening soon) — and this page routes to both.
- * Nothing here names a price, a date or a guaranteed outcome.
+ * The homepage is MySkills as a whole: personal and professional skills,
+ * built together with AI, so nothing is impossible for a student who's
+ * ready to work for it. It shares the Career Readiness page's dark theme.
+ * Each programme has its own page — /digital-marketing (live) and
+ * /career-readiness (opening soon) — and this page routes to both, then
+ * makes room for the three things beyond the skill tracks: mentors,
+ * internships, and wellness support.
+ * Nothing here names a price, a date or a guaranteed outcome — "nothing is
+ * impossible" is a rallying line, not a claim about any specific result.
  */
 
 const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
@@ -46,7 +49,7 @@ const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
   {
     icon: Bot,
     title: 'Practise with AI',
-    body: 'Real scenarios and AI coaching — as many attempts as you need, with instant feedback.',
+    body: 'Real scenarios and AI coaching, on demand — so you improve fast, with instant feedback instead of waiting for it.',
     tag: 'You + AI',
   },
   {
@@ -63,26 +66,48 @@ const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
   },
 ]
 
-const SUPPORT: { icon: IconType; title: string; body: string }[] = [
+/**
+ * The three things students said they actually needed, beyond the skill
+ * tracks themselves — each a real card with its own status and CTA, not a
+ * decorative footnote. Counsellors and career guidance used to be two
+ * separate tiles; they're one Wellness card now, since both are the same
+ * request form on /wellness.
+ */
+const CONCEPTS: {
+  icon: IconType
+  title: string
+  body: string
+  tag: string
+  live: boolean
+  to: string
+  cta: string
+}[] = [
   {
     icon: GraduationCap,
-    title: 'Mentors',
-    body: 'Working marketers who answer your questions and review your work.',
-  },
-  {
-    icon: HeartHandshake,
-    title: 'Counsellors',
-    body: 'Private, judgment-free support when studying and job-hunting get heavy.',
-  },
-  {
-    icon: Compass,
-    title: 'Career guidance',
-    body: 'Talk through which path to take and what to do next, one to one.',
+    title: 'Expert career mentors',
+    body: 'Working marketers and career professionals review your work, answer your questions in live chat, and tell you what a score alone can’t.',
+    tag: 'Live',
+    live: true,
+    to: '/community/mentors',
+    cta: 'Meet the mentors',
   },
   {
     icon: Briefcase,
-    title: 'Internships',
-    body: 'Real work with partner companies, so practice turns into experience.',
+    title: 'Land your first internship',
+    body: 'Most students never get real, hands-on experience before their first job. We’re building direct paths to internships with partner companies — proof that turns practice into a resume.',
+    tag: 'Opening soon',
+    live: false,
+    to: '/community',
+    cta: 'See what’s coming',
+  },
+  {
+    icon: HeartHandshake,
+    title: 'Wellness support, built in',
+    body: 'Exams, deadlines, and the pressure to have it all figured out take a toll. Confidential counselling and career guidance are part of the experience, not an afterthought.',
+    tag: 'Free',
+    live: true,
+    to: '/wellness',
+    cta: 'Get support',
   },
 ]
 
@@ -152,7 +177,8 @@ function ProgrammesCard() {
         </ol>
       </div>
       <p className="mt-4 text-xs leading-relaxed text-white/55">
-        AI does the coaching. People check the work. The growth stays yours.
+        Professional skills get you shortlisted. Personal skills get you hired. Build both, and
+        nothing is impossible.
       </p>
     </div>
   )
@@ -235,18 +261,19 @@ function HomePage() {
                 Powered by AI · Reviewed by people
               </span>
               <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Personal &amp; professional development
+                Nothing is impossible for a student
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
-              <p className="mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                Build the skills employers hire for and the habits that get you hired — practising with AI,
-                reviewed by mentors, and proven through real internships. Free to start.
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+                Personal skills and professional skills, built together — practising with AI so you move
+                fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
+                for it. Free to start.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link
                   to={assessmentTo}
-                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
+                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
                 >
                   <ClipboardCheck size={16} />
                   Take the initial assessment
@@ -262,8 +289,10 @@ function HomePage() {
                 </Link>
               </div>
 
+              {/* The three things students actually ask for, right up front
+                  — not buried at the bottom of the page. */}
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
-                {['Free initial assessment', '1:1 mentor support', 'Wellness support'].map((t) => (
+                {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <BadgeCheck size={15} className="text-brand-200" />
                     {t}
@@ -279,13 +308,13 @@ function HomePage() {
         {/* Two kinds of skill */}
         <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Two programmes</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Two programmes, one goal</p>
             <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
-              Employers hire for what you can do — and how you work.
+              Whatever your goal, these two skill sets get you there.
             </h2>
             <p className="mt-3 text-base leading-relaxed text-ink-600">
-              MySkills builds both. Professional skills get you shortlisted; personal skills get you hired
-              and help you grow once you’re in.
+              Professional skills get you shortlisted. Personal skills get you hired, and help you grow once
+              you’re in. Build both with AI, and there’s nothing standing between you and your goal.
             </p>
           </div>
           <div className="mt-10 grid gap-5 lg:grid-cols-2">
@@ -337,37 +366,54 @@ function HomePage() {
           </div>
         </section>
 
-        {/* People */}
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="grid items-start gap-10 lg:grid-cols-5">
-            <div className="lg:col-span-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">AI-first, never AI-only</p>
+        {/* You're not doing this alone — the three things beyond the skill
+            tracks themselves, each a real card with real status, not a
+            decorative footnote. */}
+        <section className="border-t border-ink-100 bg-ink-50/60">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+                You’re not doing this alone
+              </p>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
-                Real people, every step of the way.
+                AI does the coaching. People are still the point.
               </h2>
               <p className="mt-3 text-base leading-relaxed text-ink-600">
-                AI is tireless and instant — perfect for practice. It’s also confidently wrong sometimes, so the
-                work that matters gets a human’s eyes, and so do you.
+                AI is tireless and instant — perfect for practice. It’s also confidently wrong sometimes,
+                which is why real mentors, real internships and real support are part of the experience,
+                not an afterthought.
               </p>
-              <Link
-                to="/community"
-                className="group mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800"
-              >
-                Visit the community
-                <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-              </Link>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:col-span-3">
-              {SUPPORT.map((s) => (
-                <div key={s.title} className="card p-6">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-700">
-                    <s.icon size={20} />
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold text-ink-900">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{s.body}</p>
-                </div>
+
+            <ul className="mt-10 grid gap-5 lg:grid-cols-3">
+              {CONCEPTS.map((c) => (
+                <li key={c.title}>
+                  <Link to={c.to} className="card lift group flex h-full flex-col p-6 sm:p-7">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
+                        <c.icon size={22} />
+                      </span>
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                          c.live ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
+                        }`}
+                      >
+                        {c.live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> : <Lock size={10} />}
+                        {c.tag}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-ink-900">
+                      {c.title}
+                    </h3>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-600">{c.body}</p>
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
+                      {c.cta}
+                      <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
 
@@ -376,7 +422,7 @@ function HomePage() {
           <div className="surface-wood-dark flex flex-col items-start justify-between gap-6 rounded-2xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
             <div>
               <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Start with where you stand.
+                Nothing is impossible. Start with where you stand.
               </h2>
               <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
                 The initial assessment is free, with no time limit. Everything else builds from it.
@@ -384,7 +430,7 @@ function HomePage() {
             </div>
             <Link
               to={assessmentTo}
-              className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
+              className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
             >
               <Target size={16} />
               Take the initial assessment
