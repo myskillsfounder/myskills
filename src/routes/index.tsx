@@ -403,16 +403,18 @@ function HomePage() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-            <ul className="relative grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:max-w-xs">
-              {['Confidential, always', 'No diagnosis, just support', 'Free for every student', 'A real person replies'].map(
-                (t) => (
-                  <li key={t} className="flex items-center gap-2 text-sm text-white/80">
-                    <BadgeCheck size={16} className="shrink-0 text-brand-200" />
-                    {t}
-                  </li>
-                ),
-              )}
-            </ul>
+            <div className="card-glass-gradient-dark relative w-full p-5 sm:p-6 lg:w-auto">
+              <ul className="grid gap-3 sm:grid-cols-2 lg:max-w-xs">
+                {['Confidential, always', 'No diagnosis, just support', 'Free for every student', 'A real person replies'].map(
+                  (t) => (
+                    <li key={t} className="flex items-center gap-2 text-sm text-white/80">
+                      <BadgeCheck size={16} className="shrink-0 text-brand-200" />
+                      {t}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
           </div>
         </section>
 

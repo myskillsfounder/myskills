@@ -147,6 +147,23 @@ body {
   -webkit-backdrop-filter: blur(14px);
 }
 
+/* Same idea as .card-glass-dark, but tinted with the surface's own
+ * purple → gold gradient instead of a flat white wash — a "slide" that
+ * reads as part of the background it sits on, not a card floating over it.
+ * Pair with .surface-wood-dark, same as .card-glass-dark. */
+.card-glass-gradient-dark {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-image: linear-gradient(
+    135deg,
+    rgba(143, 133, 238, 0.16),
+    rgba(211, 164, 65, 0.08) 55%,
+    rgba(255, 255, 255, 0.02)
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
 /* Translucent card — a glass panel over a textured section instead of a
  * flat surface. Only ever use this where the section behind it actually has
  * something to show through (a grid, a glow); over a plain flat background
