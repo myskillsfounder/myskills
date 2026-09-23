@@ -129,14 +129,14 @@ const SUPPORT: { icon: IconType; title: string; body: string; to: string; tag: s
     title: 'Wellness support',
     body: 'Private conversations with counsellors, whenever the pressure builds up.',
     to: '/wellness',
-    tag: 'Free',
+    tag: 'Live',
   },
   {
     icon: Compass,
     title: 'Career guidance',
     body: 'Talk through which track to focus on and what to do next.',
     to: '/wellness',
-    tag: 'Free',
+    tag: 'Live',
   },
   {
     icon: Briefcase,

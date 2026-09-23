@@ -218,7 +218,7 @@ export const SERVICES: Service[] = [
     title: 'Psychologists & counsellors',
     who: 'Wellness support',
     body: 'Exam pressure, stress, self-doubt, or something you can’t name yet — talk it through privately with someone who listens without judging.',
-    tags: ['Private', 'Free', 'At your pace'],
+    tags: ['Private', 'At your pace'],
     cta: 'Talk to a counsellor',
     tint: 'from-rose-100 via-brand-50 to-white',
   },
@@ -229,7 +229,7 @@ export const SERVICES: Service[] = [
     title: 'Career guidance professionals',
     who: 'Career guidance',
     body: 'Which track to focus on, how to read a job description, what to do after your certificate — plan your next step with a career guide.',
-    tags: ['1:1', 'Free', 'Any stage'],
+    tags: ['1:1', 'Any stage'],
     cta: 'Get career guidance',
     tint: 'from-amber-100 via-brand-50 to-white',
   },
@@ -319,7 +319,7 @@ export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
 
       <div className="flex-1" />
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
-        <span className="text-xs font-medium text-ink-500">Free · live chat</span>
+        <span className="text-xs font-medium text-ink-500">Live chat</span>
         <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
           View profile
           <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
