@@ -6,7 +6,6 @@ import {
   BadgeCheck,
   Bot,
   Briefcase,
-  CalendarCheck,
   CheckCircle2,
   FileText,
   HeartHandshake,
@@ -272,10 +271,14 @@ function CareerReadinessPage() {
                 human’s honest feedback before an interviewer gives you theirs.
               </p>
 
-              {/* One CTA button, not an inline form — clicking through to a
+              {/* One CTA button, no competing links — clicking through to a
                   proper page keeps the hero uncluttered and gives the
                   waitlist form room for its own success state (a real
-                  "you're on the list" page, not a cramped inline message). */}
+                  "you're on the list" page, not a cramped inline message).
+                  A plain vertical stack for the trust points below, same
+                  fix as the homepage hero: a wrapped horizontal row either
+                  orphans a phrase on its own line or reads as a cluster —
+                  one column has neither problem at any width. */}
               <div className="mt-8">
                 <Link
                   to="/career-readiness-waitlist"
@@ -286,32 +289,10 @@ function CareerReadinessPage() {
                 </Link>
               </div>
 
-              {/* Two lightweight text links, not buttons, so the hero still
-                  reads as one real CTA (the button above): a quick way to
-                  the module list, and where "Book a career consultation"
-                  moved to once it stopped being the hero's second button. */}
-              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-                <a
-                  href="#inside"
-                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
-                >
-                  See what’s inside
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-                </a>
-                <Link
-                  to="/wellness"
-                  hash="career-guidance"
-                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
-                >
-                  <CalendarCheck size={13} />
-                  Book a career consultation
-                </Link>
-              </div>
-
-              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
+              <ul className="mt-6 space-y-2.5 text-sm text-white/70">
                 {['Free to join the waitlist', 'AI-guided practice', 'Mentor feedback, not just scores'].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
-                    <BadgeCheck size={15} className="text-brand-200" />
+                  <li key={t} className="flex items-center gap-2">
+                    <BadgeCheck size={16} className="shrink-0 text-brand-200" />
                     {t}
                   </li>
                 ))}
