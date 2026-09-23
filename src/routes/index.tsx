@@ -392,7 +392,7 @@ function HomePage() {
               </h2>
               <p className="mt-3 text-base leading-relaxed text-white/70">
                 Exams, deadlines, and the pressure to have it all figured out take a real toll.
-                Confidential counselling and career guidance are built into MySkills — free, private,
+                Confidential counselling and career guidance are built into MySkills — private
                 and one message away — not an afterthought bolted onto a skills app.
               </p>
               <Link
@@ -405,7 +405,7 @@ function HomePage() {
             </div>
             <div className="card-glass-gradient-dark relative w-full p-5 sm:p-6 lg:w-auto">
               <ul className="grid gap-3 sm:grid-cols-2 lg:max-w-xs">
-                {['Confidential, always', 'No diagnosis, just support', 'Free for every student', 'A real person replies'].map(
+                {['Confidential, always', 'No diagnosis, just support', 'No appointment needed', 'A real person replies'].map(
                   (t) => (
                     <li key={t} className="flex items-center gap-2 text-sm text-white/80">
                       <BadgeCheck size={16} className="shrink-0 text-brand-200" />

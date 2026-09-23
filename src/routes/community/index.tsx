@@ -509,7 +509,7 @@ function CommunityHub() {
           stats={[
             { label: 'Verified mentors', value: loading ? '—' : String(mentors.length) },
             { label: 'Partner institutions', value: loading ? '—' : String(institutions.length) },
-            { label: 'Counsellors & career guides', value: 'Free' },
+            { label: 'Counsellors & career guides', value: 'Live' },
             { label: 'Internships', value: 'Opening soon' },
           ]}
         />
