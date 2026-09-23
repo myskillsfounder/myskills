@@ -1,21 +1,17 @@
 import { useEffect, useState } from 'react'
-import type { ComponentType, FormEvent } from 'react'
+import type { ComponentType } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
   BadgeCheck,
   Bot,
   Briefcase,
-  CalendarCheck,
   CheckCircle2,
   FileText,
   HeartHandshake,
-  MapPin,
-  Phone,
   Rocket,
   Sparkles,
   Target,
-  User,
   Users,
 } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
@@ -26,7 +22,6 @@ import {
   PERSONAL_DEVELOPMENT_MODULES,
   fetchMyProgrammeInterest,
   registerProgrammeInterest,
-  submitCareerReadinessLead,
 } from '@/lib/programmes'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -188,105 +183,6 @@ function InterestCta({
   )
 }
 
-/* -- hero lead form --------------------------------------------------------
- * The hero's CTA is a direct lead form, not a link out to a generic
- * assessment — the programme itself isn't live yet, so a click-through has
- * nowhere real to land. Name + phone + city, no account required
- * (submitCareerReadinessLead), gets someone from the team on the phone
- * instead, which is how this actually converts. Separate from the waitlist
- * further down (useInterest/InterestCta): that one is email-based and needs
- * an account; this is the above-the-fold, sign-up-optional version.
- * -------------------------------------------------------------------------- */
-
-type LeadFormState = 'idle' | 'saving' | 'done'
-
-const inputClass =
-  'w-full rounded-lg border border-white/15 bg-white/[0.06] py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-white/40 transition-colors focus:border-brand-300 focus:bg-white/[0.09] focus:outline-none'
-
-function LeadForm() {
-  const [values, setValues] = useState({ full_name: '', phone: '', city: '' })
-  const [state, setState] = useState<LeadFormState>('idle')
-  const [error, setError] = useState<string>()
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    setState('saving')
-    setError(undefined)
-    try {
-      await submitCareerReadinessLead(values)
-      setState('done')
-    } catch (err) {
-      setError(errorMessage(err))
-      setState('idle')
-    }
-  }
-
-  if (state === 'done') {
-    return (
-      <p className="card-glass-dark mt-8 inline-flex max-w-lg items-center gap-2.5 p-5 text-sm font-semibold text-white sm:p-6">
-        <CheckCircle2 size={19} className="shrink-0 text-emerald-300" />
-        Thanks, {values.full_name.split(' ')[0]} — we’ll call you as soon as the programme opens.
-      </p>
-    )
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="card-glass-dark mt-8 max-w-lg p-5 sm:p-6">
-      <p className="font-mono text-[11px] font-bold uppercase tracking-wide text-brand-200">
-        Join the waitlist — we’ll call you when it opens
-      </p>
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        <div className="relative">
-          <User size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-          <input
-            required
-            name="full_name"
-            autoComplete="name"
-            value={values.full_name}
-            onChange={(e) => setValues((v) => ({ ...v, full_name: e.target.value }))}
-            placeholder="Full name"
-            className={inputClass}
-          />
-        </div>
-        <div className="relative">
-          <Phone size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-          <input
-            required
-            type="tel"
-            name="phone"
-            autoComplete="tel"
-            value={values.phone}
-            onChange={(e) => setValues((v) => ({ ...v, phone: e.target.value }))}
-            placeholder="Phone number"
-            className={inputClass}
-          />
-        </div>
-        <div className="relative">
-          <MapPin size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-          <input
-            required
-            name="city"
-            autoComplete="address-level2"
-            value={values.city}
-            onChange={(e) => setValues((v) => ({ ...v, city: e.target.value }))}
-            placeholder="City"
-            className={inputClass}
-          />
-        </div>
-      </div>
-      <button
-        type="submit"
-        disabled={state === 'saving'}
-        className="press mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 disabled:opacity-60 sm:w-auto"
-      >
-        {state === 'saving' ? 'Submitting…' : 'Join the waitlist'}
-        <ArrowRight size={16} />
-      </button>
-      {error && <p className="mt-2 text-sm text-red-200">{error}</p>}
-    </form>
-  )
-}
-
 /* -- page ----------------------------------------------------------------- */
 
 /** The "you + AI" loop, drawn rather than described: AI coaches, the student
@@ -375,34 +271,28 @@ function CareerReadinessPage() {
                 human’s honest feedback before an interviewer gives you theirs.
               </p>
 
-              <LeadForm />
-
-              {/* Two lightweight text links, not buttons, so the hero still
-                  reads as one real CTA (the form above): a quick way to the
-                  module list, and where "Book a career consultation" moved
-                  to once it stopped being the hero's second button. */}
-              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-                <a
-                  href="#inside"
-                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
-                >
-                  See what’s inside
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-                </a>
+              {/* One CTA button, no competing links — clicking through to a
+                  proper page keeps the hero uncluttered and gives the
+                  waitlist form room for its own success state (a real
+                  "you're on the list" page, not a cramped inline message).
+                  A plain vertical stack for the trust points below, same
+                  fix as the homepage hero: a wrapped horizontal row either
+                  orphans a phrase on its own line or reads as a cluster —
+                  one column has neither problem at any width. */}
+              <div className="mt-8">
                 <Link
-                  to="/wellness"
-                  hash="career-guidance"
-                  className="group inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
+                  to="/career-readiness-waitlist"
+                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
                 >
-                  <CalendarCheck size={13} />
-                  Book a career consultation
+                  Join the waitlist
+                  <ArrowRight size={16} />
                 </Link>
               </div>
 
-              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
+              <ul className="mt-6 space-y-2.5 text-sm text-white/70">
                 {['Free to join the waitlist', 'AI-guided practice', 'Mentor feedback, not just scores'].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
-                    <BadgeCheck size={15} className="text-brand-200" />
+                  <li key={t} className="flex items-center gap-2">
+                    <BadgeCheck size={16} className="shrink-0 text-brand-200" />
                     {t}
                   </li>
                 ))}
