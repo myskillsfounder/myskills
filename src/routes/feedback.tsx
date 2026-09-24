@@ -6,6 +6,7 @@ import { requireOnboarded } from '@/lib/guards'
 import { fetchMyFeedback, submitFeedback, type Feedback } from '@/lib/feedback'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
+import { SectionHeader } from '@/components/app/SectionHeader'
 
 function FeedbackPage() {
   const [rating, setRating] = useState(0)
@@ -95,12 +96,27 @@ function FeedbackPage() {
         )}
 
         {(loadingList || items.length === 0 || showForm) && (
-        <form onSubmit={handleSubmit} className="space-y-5 card p-5">
+        <form onSubmit={handleSubmit} className="space-y-6 card p-6 sm:p-7">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+              <PenLine size={16} />
+            </span>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">
+              Share your feedback
+            </h2>
+          </div>
+
           {/* Rating 1-10 */}
           <div>
-            <label className="block text-sm font-medium text-ink-800">
-              How would you rate this app?
-            </label>
+            <div className="flex items-end justify-between gap-3">
+              <label className="block text-sm font-semibold text-ink-900">
+                How would you rate this app?
+              </label>
+              <p className="flex items-baseline gap-1 font-display tabular-nums text-ink-900">
+                <span className="text-4xl font-semibold leading-none">{rating > 0 ? rating : '–'}</span>
+                <span className="text-sm font-medium text-ink-500">/ 10</span>
+              </p>
+            </div>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                 <button
@@ -119,14 +135,13 @@ function FeedbackPage() {
             </div>
             <div className="mt-1 flex justify-between text-[11px] text-ink-500">
               <span>Poor</span>
-              <span>{rating > 0 ? `${rating}/10` : ''}</span>
               <span>Excellent</span>
             </div>
           </div>
 
           {/* Suggestion */}
           <div>
-            <label className="block text-sm font-medium text-ink-800">What are your suggestions?</label>
+            <label className="block text-sm font-semibold text-ink-900">What are your suggestions?</label>
             <textarea
               value={suggestion}
               onChange={(e) => setSuggestion(e.target.value)}
@@ -138,7 +153,7 @@ function FeedbackPage() {
 
           {/* Review */}
           <div>
-            <label className="block text-sm font-medium text-ink-800">Leave us a review</label>
+            <label className="block text-sm font-semibold text-ink-900">Leave us a review</label>
             <textarea
               value={review}
               onChange={(e) => setReview(e.target.value)}
@@ -168,7 +183,7 @@ function FeedbackPage() {
 
         {/* Past submissions */}
         <section>
-          <h2 className="mb-3 font-display text-lg font-semibold text-ink-900">Your submissions</h2>
+          <SectionHeader eyebrow="History" title="Your submissions" />
           {loadingList ? (
             <p className="text-sm text-ink-600">Loading…</p>
           ) : items.length === 0 ? (
@@ -178,13 +193,18 @@ function FeedbackPage() {
           ) : (
             <ul className="space-y-3">
               {items.map((it) => (
-                <li key={it.id} className="card p-4">
+                <li key={it.id} className="card p-5">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-900">
-                      <Star size={14} className="text-amber-400" fill="currentColor" />
-                      {it.rating ?? '—'}/10
+                    <span className="inline-flex items-center gap-1.5">
+                      <Star size={15} className="text-amber-400" fill="currentColor" />
+                      <span className="font-display text-2xl font-semibold leading-none tabular-nums text-ink-900">
+                        {it.rating ?? '—'}
+                      </span>
+                      <span className="text-sm font-medium text-ink-500">/ 10</span>
                     </span>
-                    <span className="text-xs text-ink-500">{new Date(it.created_at).toLocaleDateString()}</span>
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+                      {new Date(it.created_at).toLocaleDateString()}
+                    </span>
                   </div>
                   {it.suggestion && (
                     <p className="mt-2 text-sm text-ink-600">

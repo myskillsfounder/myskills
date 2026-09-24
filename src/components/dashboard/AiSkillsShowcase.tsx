@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import { CAREER_READINESS, DIGITAL_MARKETING, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import { SectionHeader } from '@/components/app/SectionHeader'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -164,16 +165,12 @@ export function AiSkillsShowcase() {
 
   return (
     <section className="space-y-5">
-      <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Skills in the age of AI</p>
-        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">
-          Everything you need to get hired
-        </h2>
-        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-600">
-          Employers look for two things: what you can do, and how you work. MySkills builds both — with AI
-          alongside you, and people to check your work.
-        </p>
-      </div>
+      <SectionHeader
+        className="mb-0"
+        eyebrow="Skills in the age of AI"
+        title="Everything you need to get hired"
+        description="Employers look for two things: what you can do, and how you work. MySkills builds both — with AI alongside you, and people to check your work."
+      />
 
       <div className="grid gap-5 lg:grid-cols-2">
         <SkillPillar

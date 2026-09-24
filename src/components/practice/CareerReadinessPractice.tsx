@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, Bot, Lock } from 'lucide-react'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import { SectionHeader } from '@/components/app/SectionHeader'
 
 /**
  * The Career Readiness Programme's personal-development modules, previewed
@@ -11,10 +12,11 @@ import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes
 export function CareerReadinessPractice() {
   return (
     <section>
-      <div className="mb-4">
-        <h2 className="font-display text-xl font-semibold text-ink-900">The five modules</h2>
-        <p className="mt-0.5 text-sm text-ink-600">Each one practised with AI and reviewed by a mentor.</p>
-      </div>
+      <SectionHeader
+        eyebrow="Career Readiness"
+        title="The five modules"
+        description="Each one practised with AI and reviewed by a mentor."
+      />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => {
           const Icon = m.icon

@@ -1,6 +1,7 @@
 import { ArrowRight, Brain, Calculator, Lock, Sparkles, Target } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'
+import { SectionHeader } from '@/components/app/SectionHeader'
 
 export type PracticeMode = 'scenario' | 'vocabulary' | 'numerals'
 
@@ -82,10 +83,11 @@ export function ModePicker({
 
   return (
     <section>
-      <div className="mb-4">
-        <h2 className="font-display text-xl font-semibold text-ink-900">Choose a practice mode</h2>
-        <p className="mt-0.5 text-sm text-ink-600">Three ways to sharpen your marketing skills.</p>
-      </div>
+      <SectionHeader
+        eyebrow="Practice"
+        title="Choose a practice mode"
+        description="Three ways to sharpen your marketing skills."
+      />
 
       <div className="grid gap-4 md:grid-cols-3">
         {MODES.map((m, i) => {
