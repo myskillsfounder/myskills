@@ -13,10 +13,8 @@ import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
-import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
 import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
-import { WellnessSupportCard } from '@/components/dashboard/WellnessSupportCard'
 import { ProgrammePromoCard } from '@/components/dashboard/ProgrammePromoCard'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
@@ -189,11 +187,6 @@ function DashboardPage() {
             </span>
           </Link>
         )}
-
-        <div className="grid gap-6 md:grid-cols-2 md:items-start">
-          <TimeSpentChart />
-          <WellnessSupportCard />
-        </div>
 
         <AiSkillsShowcase />
       </div>
