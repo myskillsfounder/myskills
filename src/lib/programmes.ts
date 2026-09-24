@@ -238,11 +238,11 @@ export async function registerProgrammeInterest(
 export interface CareerReadinessLead {
   full_name: string
   phone: string
-  city: string
+  email: string
 }
 
 /**
- * The Career Readiness hero's lead form — name, phone and city, no account
+ * The Career Readiness waitlist form — name, phone and email, no account
  * needed. Distinct from registerProgrammeInterest above: that one is the
  * signed-in waitlist join further down the page, tied to the learner's
  * account and reachable by email. This is the above-the-fold form for a
@@ -259,7 +259,7 @@ export async function submitCareerReadinessLead(lead: CareerReadinessLead): Prom
     user_id: user?.id ?? null,
     full_name: lead.full_name.trim(),
     phone: lead.phone.trim(),
-    city: lead.city.trim(),
+    email: lead.email.trim(),
   })
   if (error) {
     throw new Error(error.message?.trim() || 'Something went wrong.')
