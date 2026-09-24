@@ -13,6 +13,7 @@ import {
   type WellnessRequestType,
 } from '@/lib/wellness'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { Alert, Button, Input, Skeleton, Textarea } from '@/components/ui'
 
 export const Route = createFileRoute('/wellness')({
@@ -211,21 +212,24 @@ function WellnessPage() {
           <ArrowLeft size={16} /> Back to LaunchPad
         </Link>
 
-        <div className="mb-6">
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">
-            Wellness &amp; Guidance
-          </h1>
-          <p className="mt-1.5 text-sm leading-relaxed text-ink-600">
-            We know student life isn't just about grades and job-readiness — it's exams,
-            deadlines, uncertainty about the future, and a lot of pressure that doesn't always
-            show. Your wellbeing matters to us as much as your skills do, and we built this space
-            so asking for support is as easy as asking for a mentor.
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-ink-600">
-            Whatever you're carrying — stress, self-doubt, or just not knowing what's next — you
-            don't have to figure it out alone. Reach out below, privately and without judgment.
-          </p>
-        </div>
+        <PageHeader
+          eyebrow="Wellness"
+          title={<>Wellness &amp; Guidance</>}
+          description={
+            <>
+              <p>
+                We know student life isn't just about grades and job-readiness — it's exams,
+                deadlines, uncertainty about the future, and a lot of pressure that doesn't always
+                show. Your wellbeing matters to us as much as your skills do, and we built this space
+                so asking for support is as easy as asking for a mentor.
+              </p>
+              <p className="mt-2">
+                Whatever you're carrying — stress, self-doubt, or just not knowing what's next — you
+                don't have to figure it out alone. Reach out below, privately and without judgment.
+              </p>
+            </>
+          }
+        />
 
         <div className="mb-6 flex items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50 p-4">
           <Sparkles size={17} className="mt-0.5 shrink-0 text-brand-700" />

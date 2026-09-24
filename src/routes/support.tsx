@@ -22,6 +22,7 @@ import {
   type SupportSession,
 } from '@/lib/support'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { ChatWindow } from '@/components/support/ChatWindow'
 import { ChatErrorBoundary } from '@/components/support/ChatErrorBoundary'
 import { BotIntake } from '@/components/support/BotIntake'
@@ -154,38 +155,39 @@ function SupportPage() {
           <ArrowLeft size={16} /> Back to dashboard
         </Link>
 
-        <div className="mb-5 flex items-center gap-3">
-          {mentorsOnline && firstOnline ? (
-            firstOnline.avatar_url ? (
-              <img src={firstOnline.avatar_url} alt="" className="h-11 w-11 shrink-0 rounded-xl object-cover" />
+        <PageHeader
+          eyebrow="Live chat"
+          title="Talk to a mentor"
+          leading={
+            mentorsOnline && firstOnline ? (
+              firstOnline.avatar_url ? (
+                <img src={firstOnline.avatar_url} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+              ) : (
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-base font-semibold text-white">
+                  {firstOnline.name.charAt(0).toUpperCase()}
+                </span>
+              )
             ) : (
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-base font-semibold text-white">
-                {firstOnline.name.charAt(0).toUpperCase()}
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                <MessagesSquare size={22} />
               </span>
             )
-          ) : (
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-              <MessagesSquare size={22} />
-            </span>
-          )}
-          <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Talk to a mentor</h1>
-            <p className="text-sm text-ink-600">
-              {mentorsOnline ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  {online.length === 1
-                    ? `${firstOnline.name} is online now`
-                    : `${firstOnline.name} +${online.length - 1} more online now`}
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-ink-300" /> No mentor online — you’ll be queued
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
+          }
+          description={
+            mentorsOnline ? (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                {online.length === 1
+                  ? `${firstOnline.name} is online now`
+                  : `${firstOnline.name} +${online.length - 1} more online now`}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-ink-300" /> No mentor online — you’ll be queued
+              </span>
+            )
+          }
+        />
 
         {error && <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 

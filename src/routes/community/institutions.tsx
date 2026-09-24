@@ -28,6 +28,7 @@ import {
 } from '@/lib/institutionPartners'
 import { submitInstitutionLead, type InstitutionLeadInput } from '@/lib/institutionDemoRequests'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { Alert, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
 
 // The parent /community layout allows signed-out visitors through (its index
@@ -397,16 +398,11 @@ function InstitutionsPage() {
           <ArrowLeft size={16} /> Back to Community
         </Link>
 
-        <div className="mb-5">
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">
-            Institutions
-          </h1>
-          <p className="mt-1 text-sm text-ink-600">
-            Training institutions verified as MySkills partners — the same skill tracks and
-            assessments you practice here, offered offline or in a classroom. Rate the ones
-            you've experienced.
-          </p>
-        </div>
+        <PageHeader
+          eyebrow="Community"
+          title="Institutions"
+          description="Training institutions verified as MySkills partners — the same skill tracks and assessments you practice here, offered offline or in a classroom. Rate the ones you've experienced."
+        />
 
         {error && (
           <div className="mb-5">

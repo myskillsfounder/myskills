@@ -16,6 +16,7 @@ import {
   type SupportSession,
 } from '@/lib/support'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { ChatWindow } from '@/components/support/ChatWindow'
 import { ChatErrorBoundary } from '@/components/support/ChatErrorBoundary'
 
@@ -192,11 +193,11 @@ function MentorConsole() {
 
   return (
     <AppShell wide>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Mentor console</h1>
-          <p className="mt-0.5 text-sm text-ink-600">Go online to receive learner requests.</p>
-        </div>
+      <PageHeader
+        eyebrow="Mentors"
+        title="Mentor console"
+        description="Go online to receive learner requests."
+        actions={
         <div className="flex items-center gap-2">
         <button
           type="button"
@@ -217,7 +218,8 @@ function MentorConsole() {
           {online ? 'Online — accepting chats' : 'Go online'}
         </button>
         </div>
-      </div>
+        }
+      />
 
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">

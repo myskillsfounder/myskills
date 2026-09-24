@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Lock } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { fetchInitialAssessment as fetchAssessment } from '@/lib/assessmentResults'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { learningTracks } from '@/lib/learningTracks'
 
 export const Route = createFileRoute('/learning')({
@@ -42,18 +43,22 @@ function LockedState() {
 function UnlockedTracks() {
   return (
     <div className="space-y-5">
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Learning</h1>
+      <PageHeader
+        className="mb-1"
+        eyebrow="Skill tracks"
+        title="Learning"
+        badge={
           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
             Unlocked
           </span>
-        </div>
-        <p className="mt-1 text-sm text-ink-600">
-          {learningTracks.length} tracks unlocked from your assessment. Work through
-          them at your own pace.
-        </p>
-      </div>
+        }
+        description={
+          <>
+            {learningTracks.length} tracks unlocked from your assessment. Work through
+            them at your own pace.
+          </>
+        }
+      />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {learningTracks.map((track) => (

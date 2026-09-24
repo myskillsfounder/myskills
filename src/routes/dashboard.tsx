@@ -13,6 +13,7 @@ import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { ProgrammePromoCard } from '@/components/dashboard/ProgrammePromoCard'
@@ -128,12 +129,7 @@ function DashboardPage() {
           the page is now about where the student stands, not who they are.
           The certificate lives on /practice (see CertificateRow there), next
           to the assessment that earned it. */}
-      <header className="rise-in mb-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">LaunchPad</p>
-        <h1 className="mt-1 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
-          {greet()}, {name}
-        </h1>
-      </header>
+      <PageHeader eyebrow="LaunchPad" title={<>{greet()}, {name}</>} />
 
       <div className="space-y-6">
         {/* Order is deliberate: the score (where you stand), then the

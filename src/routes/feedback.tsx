@@ -5,6 +5,7 @@ import { CheckCircle2, Heart, Loader2, PenLine, Send, Star } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { fetchMyFeedback, submitFeedback, type Feedback } from '@/lib/feedback'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 
 function FeedbackPage() {
   const [rating, setRating] = useState(0)
@@ -61,12 +62,12 @@ function FeedbackPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Feedback</h1>
-          <p className="mt-1 text-sm text-ink-600">
-            Help us improve MySkills — rate the app, suggest ideas, and leave a review.
-          </p>
-        </div>
+        <PageHeader
+          className="mb-0"
+          eyebrow="Rate & review"
+          title="Feedback"
+          description="Help us improve MySkills — rate the app, suggest ideas, and leave a review."
+        />
 
         {/* Already reviewed? Say thanks instead of asking again. */}
         {!loadingList && items.length > 0 && !showForm && (
