@@ -22,10 +22,8 @@ interface StepDef {
 }
 
 /**
- * Public counterpart to components/dashboard/PathToMastery.tsx — same four
- * steps, rebuilt as a card grid to match Pillars/SkillTracks above it rather
- * than the dashboard's connected-list style, which reads more like an
- * in-app checklist than a first-time explainer. Badges are static (no
+ * The four-step path to mastery, as a card grid to match Pillars/SkillTracks
+ * above it — a first-time explainer rather than an in-app checklist. Badges are static (no
  * per-user progress pre-signup); every CTA goes to /signup rather than
  * deep-linking into practice/mentors — those routes require an account, and
  * requireOnboarded has no return-to path, so a deep link would strand a
