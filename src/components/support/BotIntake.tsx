@@ -8,12 +8,12 @@ interface Bubble {
   text: string
 }
 
-type Step = 'topic' | 'details' | 'contact-name' | 'contact-phone' | 'contact-city' | 'ready'
+type Step = 'topic' | 'details' | 'contact-name' | 'contact-phone' | 'contact-email' | 'ready'
 
 /** Prompt + input placeholder for each contact step, asked only when no
  *  mentor is online — queueing means nobody may see this for a while, so
  *  there needs to be a way to call the learner back. */
-const CONTACT: Record<'contact-name' | 'contact-phone' | 'contact-city', { ask: string; placeholder: string }> = {
+const CONTACT: Record<'contact-name' | 'contact-phone' | 'contact-email', { ask: string; placeholder: string }> = {
   'contact-name': {
     ask: 'No mentor is online right now, so I’ll queue this — what’s your full name, so a mentor knows who they’re about to talk to?',
     placeholder: 'Full name',
@@ -22,9 +22,9 @@ const CONTACT: Record<'contact-name' | 'contact-phone' | 'contact-city', { ask: 
     ask: 'Thanks. And a phone number, in case the team wants to follow up directly?',
     placeholder: 'Phone number',
   },
-  'contact-city': {
-    ask: 'Last one — which city are you in?',
-    placeholder: 'City',
+  'contact-email': {
+    ask: 'Last one — what’s the best email to reach you on?',
+    placeholder: 'you@example.com',
   },
 }
 
@@ -81,7 +81,7 @@ export function BotIntake({
   const [details, setDetails] = useState('')
   const [contactName, setContactName] = useState('')
   const [phone, setPhone] = useState('')
-  const [city, setCity] = useState('')
+  const [email, setEmail] = useState('')
   const [text, setText] = useState('')
   const [typing, setTyping] = useState(true)
   const endRef = useRef<HTMLDivElement>(null)
@@ -132,7 +132,7 @@ export function BotIntake({
 
 // Every step where the composer collects free text, in order — used both
   // to focus it automatically and to drive the shared submit handler below.
-  const TEXT_STEPS: Step[] = ['details', 'contact-name', 'contact-phone', 'contact-city']
+  const TEXT_STEPS: Step[] = ['details', 'contact-name', 'contact-phone', 'contact-email']
 
   // Focus the composer the moment it becomes usable, so the student can just type.
   useEffect(() => {
@@ -185,12 +185,12 @@ export function BotIntake({
     setPhone(v)
     setText('')
     say('me', v)
-    setStep('contact-city')
-    say('bot', CONTACT['contact-city'].ask, 600)
+    setStep('contact-email')
+    say('bot', CONTACT['contact-email'].ask, 600)
   }
 
-  function commitCity(v: string) {
-    setCity(v)
+  function commitEmail(v: string) {
+    setEmail(v)
     setText('')
     say('me', v)
     readyToConnect()
@@ -203,7 +203,15 @@ export function BotIntake({
     if (step === 'details') commitDetails(v)
     else if (step === 'contact-name') commitContactName(v)
     else if (step === 'contact-phone') commitPhone(v)
-    else if (step === 'contact-city') commitCity(v)
+    else if (step === 'contact-email') {
+      // The one field the team can't follow up without, so a typo is worth
+      // a second ask here rather than a dead-end address in the queue.
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) {
+        say('bot', 'That doesn’t look like a valid email address — could you check it?', 400)
+        return
+      }
+      commitEmail(v)
+    }
   }
 
   function editDetails() {
@@ -310,7 +318,7 @@ export function BotIntake({
                     Contact details
                   </p>
                   <p className="mt-0.5 text-sm text-ink-800">
-                    {contactName} · {phone} · {city}
+                    {contactName} · {phone} · {email}
                   </p>
                 </>
               )}
@@ -328,7 +336,7 @@ export function BotIntake({
               <button
                 type="button"
                 onClick={() =>
-                  onConnect(topic, details, mentorName ? undefined : { name: contactName, phone, city })
+                  onConnect(topic, details, mentorName ? undefined : { name: contactName, phone, email })
                 }
                 disabled={connecting}
                 className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 disabled:opacity-60"
@@ -343,7 +351,7 @@ export function BotIntake({
                   setDetails('')
                   setContactName('')
                   setPhone('')
-                  setCity('')
+                  setEmail('')
                   setText('')
                   say('bot', 'No problem — what would you like help with instead?', 400)
                 }}
@@ -363,20 +371,20 @@ export function BotIntake({
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={submitDetails} className="flex items-center gap-2 border-t border-ink-200 p-3">
+      <form onSubmit={submitDetails} noValidate className="flex items-center gap-2 border-t border-ink-200 p-3">
         <input
           ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           disabled={!TEXT_STEPS.includes(step)}
-          type={step === 'contact-phone' ? 'tel' : 'text'}
+          type={step === 'contact-phone' ? 'tel' : step === 'contact-email' ? 'email' : 'text'}
           autoComplete={
             step === 'contact-name'
               ? 'name'
               : step === 'contact-phone'
                 ? 'tel'
-                : step === 'contact-city'
-                  ? 'address-level2'
+                : step === 'contact-email'
+                  ? 'email'
                   : 'off'
           }
           placeholder={

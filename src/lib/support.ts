@@ -34,14 +34,14 @@ export interface SupportSession {
    *  back. Null on a session that connected straight away. */
   contact_name?: string | null
   phone?: string | null
-  city?: string | null
+  email?: string | null
 }
 
 /** Collected by BotIntake only when no mentor is online, before queueing. */
 export interface SupportContact {
   name: string
   phone: string
-  city: string
+  email: string
 }
 
 export interface SupportMessage {
@@ -140,7 +140,7 @@ export async function createSession(
       details,
       contact_name: contact?.name.trim() || null,
       phone: contact?.phone.trim() || null,
-      city: contact?.city.trim() || null,
+      email: contact?.email.trim() || null,
     })
     .select('*')
     .single()
