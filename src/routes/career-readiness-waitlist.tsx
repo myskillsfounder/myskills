@@ -18,10 +18,10 @@ export const Route = createFileRoute('/career-readiness-waitlist')({
 interface FormState {
   full_name: string
   phone: string
-  city: string
+  email: string
 }
 
-const EMPTY: FormState = { full_name: '', phone: '', city: '' }
+const EMPTY: FormState = { full_name: '', phone: '', email: '' }
 
 /** Mirrors the CHECK constraints in docs/supabase-career-readiness-leads.sql,
  *  so a bad value is caught here with a useful message instead of as a
@@ -36,8 +36,8 @@ function validate(form: FormState): Partial<Record<keyof FormState, string>> {
   if (len(form.phone) < 6 || len(form.phone) > 20) {
     errors.phone = 'Enter a valid phone number.'
   }
-  if (len(form.city) < 2 || len(form.city) > 80) {
-    errors.city = 'Please enter your city.'
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim()) || len(form.email) > 254) {
+    errors.email = 'Enter a valid email address.'
   }
   return errors
 }
@@ -107,7 +107,7 @@ function CareerReadinessWaitlistPage() {
                 You're on the list
               </h1>
               <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ink-600">
-                Thanks, {form.full_name.split(' ')[0]} — we'll call you as soon as the Career
+                Thanks, {form.full_name.split(' ')[0]} — we'll be in touch as soon as the Career
                 Readiness Programme opens.
               </p>
               <div className="mt-6">
@@ -129,8 +129,8 @@ function CareerReadinessWaitlistPage() {
                   Join the waitlist
                 </h1>
                 <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-                  The programme isn't open yet — leave your name, phone and city and we'll call
-                  you the moment it is. No account needed.
+                  The programme isn't open yet — leave your name, phone and email and we'll get
+                  in touch the moment it is. No account needed.
                 </p>
               </header>
 
@@ -153,12 +153,13 @@ function CareerReadinessWaitlistPage() {
                 />
 
                 <Input
-                  label="City"
-                  value={form.city}
-                  onChange={set('city')}
-                  error={errors.city}
-                  autoComplete="address-level2"
-                  placeholder="Bengaluru, India"
+                  label="Email"
+                  value={form.email}
+                  onChange={set('email')}
+                  error={errors.email}
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
                 />
 
                 {/* Honeypot. Hidden from people, not from bots. */}
@@ -186,7 +187,7 @@ function CareerReadinessWaitlistPage() {
                 </Button>
 
                 <p className="text-center text-xs text-ink-500">
-                  We'll only use this to call you when the programme opens. Never shown publicly.
+                  We'll only use this to contact you when the programme opens. Never shown publicly.
                 </p>
               </form>
             </>
