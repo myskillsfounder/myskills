@@ -29,6 +29,19 @@ export interface SupportSession {
   /** the learner's "was this helpful?" rating, set once via rateSession() */
   helpful?: boolean | null
   helpful_at?: string | null
+  /** Only ever set when the request was queued with no mentor online —
+   *  BotIntake asks for these before queueing, so there's someone to call
+   *  back. Null on a session that connected straight away. */
+  contact_name?: string | null
+  phone?: string | null
+  city?: string | null
+}
+
+/** Collected by BotIntake only when no mentor is online, before queueing. */
+export interface SupportContact {
+  name: string
+  phone: string
+  city: string
 }
 
 export interface SupportMessage {
@@ -95,8 +108,16 @@ export async function fetchOnlineMentorProfiles(): Promise<OnlineMentor[]> {
   }))
 }
 
-/** Create a help request (goes to the back of the queue). */
-export async function createSession(topic: string, details: string): Promise<SupportSession> {
+/**
+ * Create a help request. `contact` is only passed when BotIntake queued the
+ * request with no mentor online — a session that connects straight away
+ * never collects it.
+ */
+export async function createSession(
+  topic: string,
+  details: string,
+  contact?: SupportContact,
+): Promise<SupportSession> {
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -113,7 +134,14 @@ export async function createSession(topic: string, details: string): Promise<Sup
 
   const { data, error } = await supabase
     .from('support_sessions')
-    .insert({ user_id: user.id, topic, details })
+    .insert({
+      user_id: user.id,
+      topic,
+      details,
+      contact_name: contact?.name.trim() || null,
+      phone: contact?.phone.trim() || null,
+      city: contact?.city.trim() || null,
+    })
     .select('*')
     .single()
   if (error) throw error

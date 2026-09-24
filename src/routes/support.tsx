@@ -18,6 +18,7 @@ import {
   subscribeSessionBroadcast,
   type OnlineMentor,
   type ProfileCard,
+  type SupportContact,
   type SupportSession,
 } from '@/lib/support'
 import { AppShell } from '@/components/app/AppShell'
@@ -98,11 +99,11 @@ function SupportPage() {
     return () => window.clearInterval(id)
   }, [session?.id, session?.status])
 
-  async function start(topic: string, details: string) {
+  async function start(topic: string, details: string, contact?: SupportContact) {
     setError(undefined)
     setSubmitting(true)
     try {
-      setSession(await createSession(topic, details))
+      setSession(await createSession(topic, details, contact))
     } catch (e) {
       setError(errorMessage(e))
     } finally {
@@ -199,7 +200,7 @@ function SupportPage() {
           <BotIntake
             firstName={userDisplayName(user).split(' ')[0]}
             mentorName={mentorsOnline ? firstOnline.name : null}
-            onConnect={(t, d) => void start(t, d)}
+            onConnect={(t, d, contact) => void start(t, d, contact)}
             connecting={submitting}
           />
         )}

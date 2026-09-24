@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Bot, Loader2, Pencil, Send, Sparkles, UserRound } from 'lucide-react'
-import { SUPPORT_TOPICS } from '@/lib/support'
+import { SUPPORT_TOPICS, type SupportContact } from '@/lib/support'
 
 interface Bubble {
   id: number
@@ -8,7 +8,25 @@ interface Bubble {
   text: string
 }
 
-type Step = 'topic' | 'details' | 'ready'
+type Step = 'topic' | 'details' | 'contact-name' | 'contact-phone' | 'contact-city' | 'ready'
+
+/** Prompt + input placeholder for each contact step, asked only when no
+ *  mentor is online — queueing means nobody may see this for a while, so
+ *  there needs to be a way to call the learner back. */
+const CONTACT: Record<'contact-name' | 'contact-phone' | 'contact-city', { ask: string; placeholder: string }> = {
+  'contact-name': {
+    ask: 'No mentor is online right now, so I’ll queue this — what’s your full name, so a mentor knows who they’re about to talk to?',
+    placeholder: 'Full name',
+  },
+  'contact-phone': {
+    ask: 'Thanks. And a phone number, in case the team wants to follow up directly?',
+    placeholder: 'Phone number',
+  },
+  'contact-city': {
+    ask: 'Last one — which city are you in?',
+    placeholder: 'City',
+  },
+}
 
 /** What a good answer looks like, per topic. Students often stall at "tell me
  *  more" because they don't know how much to write — an example unblocks that. */
@@ -54,13 +72,16 @@ export function BotIntake({
   /** First name of a currently-online mentor, if any — used to make the
    *  handoff feel like meeting a person, not a queue. */
   mentorName?: string | null
-  onConnect: (topic: string, details: string) => void
+  onConnect: (topic: string, details: string, contact?: SupportContact) => void
   connecting: boolean
 }) {
   const [bubbles, setBubbles] = useState<Bubble[]>([])
   const [step, setStep] = useState<Step>('topic')
   const [topic, setTopic] = useState('')
   const [details, setDetails] = useState('')
+  const [contactName, setContactName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [city, setCity] = useState('')
   const [text, setText] = useState('')
   const [typing, setTyping] = useState(true)
   const endRef = useRef<HTMLDivElement>(null)
@@ -109,9 +130,13 @@ export function BotIntake({
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [bubbles, typing, step])
 
+// Every step where the composer collects free text, in order — used both
+  // to focus it automatically and to drive the shared submit handler below.
+  const TEXT_STEPS: Step[] = ['details', 'contact-name', 'contact-phone', 'contact-city']
+
   // Focus the composer the moment it becomes usable, so the student can just type.
   useEffect(() => {
-    if (step === 'details' && !typing) inputRef.current?.focus()
+    if (TEXT_STEPS.includes(step) && !typing) inputRef.current?.focus()
   }, [step, typing])
 
   function pickTopic(t: string) {
@@ -121,25 +146,64 @@ export function BotIntake({
     say('bot', HINTS[t]?.ask ?? HINTS['Something else'].ask, 700)
   }
 
-  function commitDetails(v: string) {
-    setDetails(v)
-    setText('')
-    say('me', v)
+  function readyToConnect() {
     setStep('ready')
     say(
       'bot',
       mentorName
         ? `Perfect — ${mentorName} is online right now. Here’s what I’ll send them:`
-        : 'Perfect. Here’s what I’ll send to the first available mentor:',
+        : 'Got it. Here’s what I’ll send to the first available mentor:',
       700,
     )
+  }
+
+  function commitDetails(v: string) {
+    setDetails(v)
+    setText('')
+    say('me', v)
+    // A mentor online means an instant connect, so asking for contact
+    // details would only add friction. No mentor online means the request
+    // sits in a queue nobody may see for a while — worth a phone number to
+    // call back on, the same reasoning as the other lead forms on the site.
+    if (mentorName) {
+      readyToConnect()
+    } else {
+      setStep('contact-name')
+      say('bot', CONTACT['contact-name'].ask, 700)
+    }
+  }
+
+  function commitContactName(v: string) {
+    setContactName(v)
+    setText('')
+    say('me', v)
+    setStep('contact-phone')
+    say('bot', CONTACT['contact-phone'].ask, 600)
+  }
+
+  function commitPhone(v: string) {
+    setPhone(v)
+    setText('')
+    say('me', v)
+    setStep('contact-city')
+    say('bot', CONTACT['contact-city'].ask, 600)
+  }
+
+  function commitCity(v: string) {
+    setCity(v)
+    setText('')
+    say('me', v)
+    readyToConnect()
   }
 
   function submitDetails(e: React.FormEvent) {
     e.preventDefault()
     const v = text.trim()
     if (!v) return
-    commitDetails(v)
+    if (step === 'details') commitDetails(v)
+    else if (step === 'contact-name') commitContactName(v)
+    else if (step === 'contact-phone') commitPhone(v)
+    else if (step === 'contact-city') commitCity(v)
   }
 
   function editDetails() {
@@ -237,6 +301,20 @@ export function BotIntake({
                 Your question
               </p>
               <p className="mt-0.5 whitespace-pre-wrap break-words text-sm text-ink-800">{details}</p>
+
+              {/* Only present when the request is being queued, not connected
+                  straight away — see commitDetails. */}
+              {!mentorName && (
+                <>
+                  <p className="mt-2.5 text-[11px] font-semibold uppercase tracking-wide text-ink-500">
+                    Contact details
+                  </p>
+                  <p className="mt-0.5 text-sm text-ink-800">
+                    {contactName} · {phone} · {city}
+                  </p>
+                </>
+              )}
+
               <button
                 type="button"
                 onClick={editDetails}
@@ -249,18 +327,23 @@ export function BotIntake({
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => onConnect(topic, details)}
+                onClick={() =>
+                  onConnect(topic, details, mentorName ? undefined : { name: contactName, phone, city })
+                }
                 disabled={connecting}
                 className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 disabled:opacity-60"
               >
                 {connecting ? <Loader2 size={15} className="animate-spin" /> : <UserRound size={15} />}
-                {connecting ? 'Connecting…' : mentorName ? `Connect me with ${mentorName}` : 'Connect me with a mentor'}
+                {connecting ? 'Connecting…' : mentorName ? `Connect me with ${mentorName}` : 'Join the queue'}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setStep('topic')
                   setDetails('')
+                  setContactName('')
+                  setPhone('')
+                  setCity('')
                   setText('')
                   say('bot', 'No problem — what would you like help with instead?', 400)
                 }}
@@ -285,15 +368,31 @@ export function BotIntake({
           ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          disabled={step !== 'details'}
+          disabled={!TEXT_STEPS.includes(step)}
+          type={step === 'contact-phone' ? 'tel' : 'text'}
+          autoComplete={
+            step === 'contact-name'
+              ? 'name'
+              : step === 'contact-phone'
+                ? 'tel'
+                : step === 'contact-city'
+                  ? 'address-level2'
+                  : 'off'
+          }
           placeholder={
-            step === 'topic' ? 'Pick a topic above…' : step === 'ready' ? 'Ready to connect' : hint.placeholder
+            step === 'topic'
+              ? 'Pick a topic above…'
+              : step === 'ready'
+                ? 'Ready to connect'
+                : step === 'details'
+                  ? hint.placeholder
+                  : CONTACT[step].placeholder
           }
           className="min-w-0 flex-1 rounded-full border border-ink-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:bg-ink-100"
         />
         <button
           type="submit"
-          disabled={step !== 'details' || !text.trim()}
+          disabled={!TEXT_STEPS.includes(step) || !text.trim()}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white transition-colors hover:bg-brand-700 disabled:opacity-40"
           aria-label="Send"
         >
