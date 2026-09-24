@@ -14,7 +14,6 @@ import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
 import { TimeSpentChart } from '@/components/dashboard/TimeSpentChart'
-import { PathToMastery } from '@/components/dashboard/PathToMastery'
 import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { WellnessSupportCard } from '@/components/dashboard/WellnessSupportCard'
@@ -115,7 +114,7 @@ function DashboardPage() {
   }, [])
 
   // The score comes from the profile alone (see lib/readinessScore.ts);
-  // practice results still drive the path-to-mastery checklist below.
+  // practice results still feed the course progress in KeyMeasures.
   const readiness = useMemo(
     () => (profile ? computeReadiness(profile, verification.view, verification.hasOpenRequest) : null),
     [profile, verification.view, verification.hasOpenRequest],
@@ -191,20 +190,9 @@ function DashboardPage() {
           </Link>
         )}
 
-        <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
-          <div className="space-y-6 lg:col-span-2">
-            <PathToMastery
-              assessmentDone={assessment != null}
-              practicedCount={practicedCount}
-              totalTracks={skillTracks.length}
-            />
-          </div>
-
-          <aside className="space-y-6 lg:sticky lg:top-8">
-            <TimeSpentChart />
-
-            <WellnessSupportCard />
-          </aside>
+        <div className="grid gap-6 md:grid-cols-2 md:items-start">
+          <TimeSpentChart />
+          <WellnessSupportCard />
         </div>
 
         <AiSkillsShowcase />
