@@ -4,6 +4,7 @@ import { skillTracks } from '@/lib/skillTracks'
 import { questionsForTrack } from '@/lib/decisionLabs'
 import type { PracticeSummary } from '@/lib/practiceResults'
 import { STATE_META, trackState, type TrackState } from './practiceStatus'
+import { SectionHeader } from '@/components/app/SectionHeader'
 
 /**
  * All eight tracks as one scannable list rather than a grid of large cards.
@@ -65,12 +66,11 @@ export function TrackList({
 
   return (
     <section>
-      <div className="mb-4 flex items-end justify-between gap-3">
-        <div>
-          <h2 className="font-display text-xl font-semibold tracking-tight text-ink-900">Skill tracks</h2>
-          <p className="mt-0.5 text-sm text-ink-600">Your best score in each track is what counts.</p>
-        </div>
-      </div>
+      <SectionHeader
+        eyebrow="Digital Marketing"
+        title="Skill tracks"
+        description="Your best score in each track is what counts."
+      />
 
       <div role="group" aria-label="Filter tracks" className="mb-4 flex gap-2 overflow-x-auto pb-1">
         {FILTERS.map((f) => {
