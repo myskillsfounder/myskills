@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { fetchMentors, type Mentor } from '@/lib/mentors'
 import { requireOnboarded } from '@/lib/guards'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
 // The parent /community layout allows signed-out visitors through (its index
@@ -155,13 +156,11 @@ function MentorsPage() {
           <ArrowLeft size={16} /> Back to Community
         </Link>
 
-        <div className="mb-5">
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900">Mentors</h1>
-          <p className="mt-1 text-sm text-ink-600">
-            Learn from people who’ve done it — marketers who’ve offered their time to help you
-            get unstuck.
-          </p>
-        </div>
+        <PageHeader
+          eyebrow="Community"
+          title="Mentors"
+          description="Learn from people who’ve done it — marketers who’ve offered their time to help you get unstuck."
+        />
 
         {error && (
           <Alert tone="danger" title="Couldn’t load mentors">

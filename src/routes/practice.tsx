@@ -17,6 +17,7 @@ import { skillTracks } from '@/lib/skillTracks'
 import { vocabularyTerms, type VocabLevel } from '@/lib/vocabulary'
 import { useVocabProgress } from '@/lib/vocabularyProgress'
 import { AppShell } from '@/components/app/AppShell'
+import { PageHeader } from '@/components/app/PageHeader'
 import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
 import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummaryCard'
 import { PracticeStats } from '@/components/practice/PracticeStats'
@@ -221,16 +222,17 @@ function PracticePage() {
       )}
       {!assessmentLoading && !error && !assessment && quizQuestions.length > 0 && (
         <div>
-          <div className="mb-6">
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">
-              Digital Marketing Initial Assessment
-            </h1>
-            <p className="mt-1 text-sm text-ink-600">
-              Answer {quizQuestions.length} quick questions to unlock scenario practice
-              across all skill tracks. You get one attempt, so take your time — there’s
-              no time limit.
-            </p>
-          </div>
+          <PageHeader
+            eyebrow="Practice"
+            title="Digital Marketing Initial Assessment"
+            description={
+              <>
+                Answer {quizQuestions.length} quick questions to unlock scenario practice
+                across all skill tracks. You get one attempt, so take your time — there’s
+                no time limit.
+              </>
+            }
+          />
           <AssessmentQuiz questions={quizQuestions} onSubmit={submit} onContinue={commit} />
         </div>
       )}
@@ -249,18 +251,13 @@ function PracticePage() {
           then the modes — action before inventory. */}
       {assessment && !error && !selected && mode === null && (
         <div className="space-y-5">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="rise-in">
-              <h1 className="font-display text-4xl font-semibold leading-none tracking-tight text-ink-900">
-                Practice
-              </h1>
-              <p className="mt-2 text-sm text-ink-600">
-                Two programmes, one place to practise: your digital marketing skills, and personal
-                development with AI.
-              </p>
-            </div>
-            <CertificateRow percent={assessment.overall.percent} />
-          </div>
+          <PageHeader
+            className="mb-1"
+            eyebrow="Programmes"
+            title="Practice"
+            description="Two programmes, one place to practise: your digital marketing skills, and personal development with AI."
+            actions={<CertificateRow percent={assessment.overall.percent} />}
+          />
 
           {practiceLoading ? (
             <p className="text-sm text-ink-600">Loading practice…</p>
@@ -335,17 +332,17 @@ function PracticePage() {
             <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> All practice modes
           </button>
 
-          <div className="flex items-start gap-3">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md ring-4 ring-ink-100">
-              <Target size={24} />
-            </span>
-            <div>
-              <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Scenario Based</h1>
-              <p className="mt-1 text-sm text-ink-600">
-                Decision Labs — real business situations, one skill track at a time.
-              </p>
-            </div>
-          </div>
+          <PageHeader
+            className="mb-1"
+            eyebrow="Practice"
+            title="Scenario Based"
+            description="Decision Labs — real business situations, one skill track at a time."
+            leading={
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md ring-4 ring-ink-100">
+                <Target size={24} />
+              </span>
+            }
+          />
 
           {practiceLoading ? (
             <p className="text-sm text-ink-600">Loading practice…</p>
@@ -367,15 +364,17 @@ function PracticePage() {
             <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> All practice modes
           </button>
 
-          <div className="flex items-start gap-3">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-brand-600 text-white shadow-md ring-4 ring-ink-100">
-              <Brain size={24} />
-            </span>
-            <div>
-              <h1 className="font-display text-3xl font-semibold tracking-tight text-ink-900">Vocabulary Builder</h1>
-              <p className="mt-1 text-sm text-ink-600">Choose a level to practice.</p>
-            </div>
-          </div>
+          <PageHeader
+            className="mb-1"
+            eyebrow="Practice"
+            title="Vocabulary Builder"
+            description="Choose a level to practice."
+            leading={
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-brand-600 text-white shadow-md ring-4 ring-ink-100">
+                <Brain size={24} />
+              </span>
+            }
+          />
 
           <VocabLevelPicker
             rows={[
