@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ClipboardCheck, Mail } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { skillTracks } from '@/lib/skillTracks'
+import { LEVEL_TONE, SKILL_MAX, orderedSkills } from '@/lib/careerReadinessAssessment'
 import {
   decideMentorReview,
   fetchMentorReviewQueue,
@@ -74,24 +75,66 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
         <Badge tone={status.tone}>{status.label}</Badge>
       </div>
 
-      <div className="mt-4 border-t border-ink-200 pt-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-          Results · assessment {review.assessment_percent != null ? `${review.assessment_percent}%` : '—'}
-        </p>
-        <ul className="mt-2 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
-          {skillTracks.map((t) => {
-            const r = best.get(t.slug)
-            return (
-              <li key={t.slug} className="flex items-center justify-between gap-3">
-                <span className="truncate text-ink-700">{t.name}</span>
-                <span className={`shrink-0 tabular-nums font-semibold ${r ? (r.percent >= 70 ? 'text-emerald-700' : 'text-amber-700') : 'text-ink-400'}`}>
-                  {r ? `${r.percent}% · ${r.attempts}×` : 'not practised'}
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+      {review.programme === 'career-readiness' ? (
+        // A Career Readiness review is about the personal skills, so show the
+        // learner's self-awareness baseline, not their Digital Marketing scores.
+        <div className="mt-4 border-t border-ink-200 pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            Career Readiness assessment · baseline
+          </p>
+          {review.career_readiness ? (
+            <>
+              <ul className="mt-2 space-y-1.5 text-sm">
+                {orderedSkills(review.career_readiness.scores).map((s) => (
+                  <li key={s.key} className="flex items-center justify-between gap-3">
+                    <span className="truncate text-ink-700">{s.name}</span>
+                    <span className="flex shrink-0 items-center gap-2">
+                      <span className="tabular-nums font-semibold text-ink-900">
+                        {s.score}
+                        <span className="font-normal text-ink-400"> / {SKILL_MAX}</span>
+                      </span>
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${LEVEL_TONE[s.level]}`}>
+                        {s.level}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {review.career_readiness.reflection && (
+                <div className="mt-3 rounded-xl bg-ink-100 p-3.5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+                    Skill they most want to improve
+                  </p>
+                  <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink-700">
+                    {review.career_readiness.reflection}
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="mt-2 text-sm text-ink-500">This learner hasn’t taken the assessment yet.</p>
+          )}
+        </div>
+      ) : (
+        <div className="mt-4 border-t border-ink-200 pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            Results · assessment {review.assessment_percent != null ? `${review.assessment_percent}%` : '—'}
+          </p>
+          <ul className="mt-2 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
+            {skillTracks.map((t) => {
+              const r = best.get(t.slug)
+              return (
+                <li key={t.slug} className="flex items-center justify-between gap-3">
+                  <span className="truncate text-ink-700">{t.name}</span>
+                  <span className={`shrink-0 tabular-nums font-semibold ${r ? (r.percent >= 70 ? 'text-emerald-700' : 'text-amber-700') : 'text-ink-400'}`}>
+                    {r ? `${r.percent}% · ${r.attempts}×` : 'not practised'}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       {review.student_note && (
         <div className="mt-4 rounded-xl bg-ink-100 p-4">

@@ -18,6 +18,7 @@ import { vocabularyTerms, type VocabLevel } from '@/lib/vocabulary'
 import { useVocabProgress } from '@/lib/vocabularyProgress'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
+import { AssessmentCard } from '@/components/career-readiness/AssessmentCard'
 import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
 import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummaryCard'
 import { PracticeStats } from '@/components/practice/PracticeStats'
@@ -313,6 +314,7 @@ function PracticePage() {
                   subtitle="Five modules — goal setting, communication, leadership, agile methodology and a growth mindset. AI is your practice partner; people give the feedback."
                 />
               </div>
+              <AssessmentCard />
               <CareerReadinessOverview />
               <ProgrammeCompletion stages={crStages} />
               <CareerReadinessPractice />
