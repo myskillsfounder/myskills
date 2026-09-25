@@ -54,12 +54,19 @@ import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
 import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
+import { Route as AdminLayoutPracticeRouteImport } from './routes/admin/_layout/practice'
+import { Route as AdminLayoutModulesRouteImport } from './routes/admin/_layout/modules'
 import { Route as AdminLayoutMentorsRouteImport } from './routes/admin/_layout/mentors'
 import { Route as AdminLayoutMentorReviewsRouteImport } from './routes/admin/_layout/mentor-reviews'
 import { Route as AdminLayoutLiveSessionsRouteImport } from './routes/admin/_layout/live-sessions'
+import { Route as AdminLayoutInternshipPartnersRouteImport } from './routes/admin/_layout/internship-partners'
 import { Route as AdminLayoutInstitutionPartnersRouteImport } from './routes/admin/_layout/institution-partners'
+import { Route as AdminLayoutFoundationRouteImport } from './routes/admin/_layout/foundation'
 import { Route as AdminLayoutFeedbackRouteImport } from './routes/admin/_layout/feedback'
+import { Route as AdminLayoutDmAptitudeRouteImport } from './routes/admin/_layout/dm-aptitude'
 import { Route as AdminLayoutDemoRequestsRouteImport } from './routes/admin/_layout/demo-requests'
+import { Route as AdminLayoutCrLeadsRouteImport } from './routes/admin/_layout/cr-leads'
+import { Route as AdminLayoutCrAptitudeRouteImport } from './routes/admin/_layout/cr-aptitude'
 import { Route as AdminLayoutCertificatesRouteImport } from './routes/admin/_layout/certificates'
 import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog'
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
@@ -295,6 +302,16 @@ const AdminLayoutVerificationRoute = AdminLayoutVerificationRouteImport.update({
   path: '/verification',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutPracticeRoute = AdminLayoutPracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutModulesRoute = AdminLayoutModulesRouteImport.update({
+  id: '/modules',
+  path: '/modules',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutMentorsRoute = AdminLayoutMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
@@ -311,20 +328,46 @@ const AdminLayoutLiveSessionsRoute = AdminLayoutLiveSessionsRouteImport.update({
   path: '/live-sessions',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutInternshipPartnersRoute =
+  AdminLayoutInternshipPartnersRouteImport.update({
+    id: '/internship-partners',
+    path: '/internship-partners',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
 const AdminLayoutInstitutionPartnersRoute =
   AdminLayoutInstitutionPartnersRouteImport.update({
     id: '/institution-partners',
     path: '/institution-partners',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
+const AdminLayoutFoundationRoute = AdminLayoutFoundationRouteImport.update({
+  id: '/foundation',
+  path: '/foundation',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutFeedbackRoute = AdminLayoutFeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutDmAptitudeRoute = AdminLayoutDmAptitudeRouteImport.update({
+  id: '/dm-aptitude',
+  path: '/dm-aptitude',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutDemoRequestsRoute = AdminLayoutDemoRequestsRouteImport.update({
   id: '/demo-requests',
   path: '/demo-requests',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutCrLeadsRoute = AdminLayoutCrLeadsRouteImport.update({
+  id: '/cr-leads',
+  path: '/cr-leads',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutCrAptitudeRoute = AdminLayoutCrAptitudeRouteImport.update({
+  id: '/cr-aptitude',
+  path: '/cr-aptitude',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
 const AdminLayoutCertificatesRoute = AdminLayoutCertificatesRouteImport.update({
@@ -406,12 +449,19 @@ export interface FileRoutesByFullPath {
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
   '/admin/certificates': typeof AdminLayoutCertificatesRoute
+  '/admin/cr-aptitude': typeof AdminLayoutCrAptitudeRoute
+  '/admin/cr-leads': typeof AdminLayoutCrLeadsRoute
   '/admin/demo-requests': typeof AdminLayoutDemoRequestsRoute
+  '/admin/dm-aptitude': typeof AdminLayoutDmAptitudeRoute
   '/admin/feedback': typeof AdminLayoutFeedbackRoute
+  '/admin/foundation': typeof AdminLayoutFoundationRoute
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
+  '/admin/internship-partners': typeof AdminLayoutInternshipPartnersRoute
   '/admin/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
+  '/admin/modules': typeof AdminLayoutModulesRoute
+  '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin/': typeof AdminLayoutIndexRoute
@@ -463,12 +513,19 @@ export interface FileRoutesByTo {
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
   '/admin/certificates': typeof AdminLayoutCertificatesRoute
+  '/admin/cr-aptitude': typeof AdminLayoutCrAptitudeRoute
+  '/admin/cr-leads': typeof AdminLayoutCrLeadsRoute
   '/admin/demo-requests': typeof AdminLayoutDemoRequestsRoute
+  '/admin/dm-aptitude': typeof AdminLayoutDmAptitudeRoute
   '/admin/feedback': typeof AdminLayoutFeedbackRoute
+  '/admin/foundation': typeof AdminLayoutFoundationRoute
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
+  '/admin/internship-partners': typeof AdminLayoutInternshipPartnersRoute
   '/admin/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
+  '/admin/modules': typeof AdminLayoutModulesRoute
+  '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin': typeof AdminLayoutIndexRoute
@@ -523,12 +580,19 @@ export interface FileRoutesById {
   '/admin/_layout/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/_layout/blog': typeof AdminLayoutBlogRoute
   '/admin/_layout/certificates': typeof AdminLayoutCertificatesRoute
+  '/admin/_layout/cr-aptitude': typeof AdminLayoutCrAptitudeRoute
+  '/admin/_layout/cr-leads': typeof AdminLayoutCrLeadsRoute
   '/admin/_layout/demo-requests': typeof AdminLayoutDemoRequestsRoute
+  '/admin/_layout/dm-aptitude': typeof AdminLayoutDmAptitudeRoute
   '/admin/_layout/feedback': typeof AdminLayoutFeedbackRoute
+  '/admin/_layout/foundation': typeof AdminLayoutFoundationRoute
   '/admin/_layout/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
+  '/admin/_layout/internship-partners': typeof AdminLayoutInternshipPartnersRoute
   '/admin/_layout/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/_layout/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/_layout/mentors': typeof AdminLayoutMentorsRoute
+  '/admin/_layout/modules': typeof AdminLayoutModulesRoute
+  '/admin/_layout/practice': typeof AdminLayoutPracticeRoute
   '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
@@ -584,12 +648,19 @@ export interface FileRouteTypes {
     | '/admin/assessment-questions'
     | '/admin/blog'
     | '/admin/certificates'
+    | '/admin/cr-aptitude'
+    | '/admin/cr-leads'
     | '/admin/demo-requests'
+    | '/admin/dm-aptitude'
     | '/admin/feedback'
+    | '/admin/foundation'
     | '/admin/institution-partners'
+    | '/admin/internship-partners'
     | '/admin/live-sessions'
     | '/admin/mentor-reviews'
     | '/admin/mentors'
+    | '/admin/modules'
+    | '/admin/practice'
     | '/admin/verification'
     | '/admin/wellness'
     | '/admin/'
@@ -641,12 +712,19 @@ export interface FileRouteTypes {
     | '/admin/assessment-questions'
     | '/admin/blog'
     | '/admin/certificates'
+    | '/admin/cr-aptitude'
+    | '/admin/cr-leads'
     | '/admin/demo-requests'
+    | '/admin/dm-aptitude'
     | '/admin/feedback'
+    | '/admin/foundation'
     | '/admin/institution-partners'
+    | '/admin/internship-partners'
     | '/admin/live-sessions'
     | '/admin/mentor-reviews'
     | '/admin/mentors'
+    | '/admin/modules'
+    | '/admin/practice'
     | '/admin/verification'
     | '/admin/wellness'
     | '/admin'
@@ -700,12 +778,19 @@ export interface FileRouteTypes {
     | '/admin/_layout/assessment-questions'
     | '/admin/_layout/blog'
     | '/admin/_layout/certificates'
+    | '/admin/_layout/cr-aptitude'
+    | '/admin/_layout/cr-leads'
     | '/admin/_layout/demo-requests'
+    | '/admin/_layout/dm-aptitude'
     | '/admin/_layout/feedback'
+    | '/admin/_layout/foundation'
     | '/admin/_layout/institution-partners'
+    | '/admin/_layout/internship-partners'
     | '/admin/_layout/live-sessions'
     | '/admin/_layout/mentor-reviews'
     | '/admin/_layout/mentors'
+    | '/admin/_layout/modules'
+    | '/admin/_layout/practice'
     | '/admin/_layout/verification'
     | '/admin/_layout/wellness'
     | '/admin/_layout/'
@@ -1071,6 +1156,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutVerificationRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/practice': {
+      id: '/admin/_layout/practice'
+      path: '/practice'
+      fullPath: '/admin/practice'
+      preLoaderRoute: typeof AdminLayoutPracticeRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/modules': {
+      id: '/admin/_layout/modules'
+      path: '/modules'
+      fullPath: '/admin/modules'
+      preLoaderRoute: typeof AdminLayoutModulesRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/mentors': {
       id: '/admin/_layout/mentors'
       path: '/mentors'
@@ -1092,11 +1191,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutLiveSessionsRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/internship-partners': {
+      id: '/admin/_layout/internship-partners'
+      path: '/internship-partners'
+      fullPath: '/admin/internship-partners'
+      preLoaderRoute: typeof AdminLayoutInternshipPartnersRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/institution-partners': {
       id: '/admin/_layout/institution-partners'
       path: '/institution-partners'
       fullPath: '/admin/institution-partners'
       preLoaderRoute: typeof AdminLayoutInstitutionPartnersRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/foundation': {
+      id: '/admin/_layout/foundation'
+      path: '/foundation'
+      fullPath: '/admin/foundation'
+      preLoaderRoute: typeof AdminLayoutFoundationRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
     '/admin/_layout/feedback': {
@@ -1106,11 +1219,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutFeedbackRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/dm-aptitude': {
+      id: '/admin/_layout/dm-aptitude'
+      path: '/dm-aptitude'
+      fullPath: '/admin/dm-aptitude'
+      preLoaderRoute: typeof AdminLayoutDmAptitudeRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/demo-requests': {
       id: '/admin/_layout/demo-requests'
       path: '/demo-requests'
       fullPath: '/admin/demo-requests'
       preLoaderRoute: typeof AdminLayoutDemoRequestsRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/cr-leads': {
+      id: '/admin/_layout/cr-leads'
+      path: '/cr-leads'
+      fullPath: '/admin/cr-leads'
+      preLoaderRoute: typeof AdminLayoutCrLeadsRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/cr-aptitude': {
+      id: '/admin/_layout/cr-aptitude'
+      path: '/cr-aptitude'
+      fullPath: '/admin/cr-aptitude'
+      preLoaderRoute: typeof AdminLayoutCrAptitudeRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
     '/admin/_layout/certificates': {
@@ -1191,12 +1325,19 @@ interface AdminLayoutRouteChildren {
   AdminLayoutAssessmentQuestionsRoute: typeof AdminLayoutAssessmentQuestionsRoute
   AdminLayoutBlogRoute: typeof AdminLayoutBlogRoute
   AdminLayoutCertificatesRoute: typeof AdminLayoutCertificatesRoute
+  AdminLayoutCrAptitudeRoute: typeof AdminLayoutCrAptitudeRoute
+  AdminLayoutCrLeadsRoute: typeof AdminLayoutCrLeadsRoute
   AdminLayoutDemoRequestsRoute: typeof AdminLayoutDemoRequestsRoute
+  AdminLayoutDmAptitudeRoute: typeof AdminLayoutDmAptitudeRoute
   AdminLayoutFeedbackRoute: typeof AdminLayoutFeedbackRoute
+  AdminLayoutFoundationRoute: typeof AdminLayoutFoundationRoute
   AdminLayoutInstitutionPartnersRoute: typeof AdminLayoutInstitutionPartnersRoute
+  AdminLayoutInternshipPartnersRoute: typeof AdminLayoutInternshipPartnersRoute
   AdminLayoutLiveSessionsRoute: typeof AdminLayoutLiveSessionsRoute
   AdminLayoutMentorReviewsRoute: typeof AdminLayoutMentorReviewsRoute
   AdminLayoutMentorsRoute: typeof AdminLayoutMentorsRoute
+  AdminLayoutModulesRoute: typeof AdminLayoutModulesRoute
+  AdminLayoutPracticeRoute: typeof AdminLayoutPracticeRoute
   AdminLayoutVerificationRoute: typeof AdminLayoutVerificationRoute
   AdminLayoutWellnessRoute: typeof AdminLayoutWellnessRoute
   AdminLayoutIndexRoute: typeof AdminLayoutIndexRoute
@@ -1209,12 +1350,19 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutAssessmentQuestionsRoute: AdminLayoutAssessmentQuestionsRoute,
   AdminLayoutBlogRoute: AdminLayoutBlogRoute,
   AdminLayoutCertificatesRoute: AdminLayoutCertificatesRoute,
+  AdminLayoutCrAptitudeRoute: AdminLayoutCrAptitudeRoute,
+  AdminLayoutCrLeadsRoute: AdminLayoutCrLeadsRoute,
   AdminLayoutDemoRequestsRoute: AdminLayoutDemoRequestsRoute,
+  AdminLayoutDmAptitudeRoute: AdminLayoutDmAptitudeRoute,
   AdminLayoutFeedbackRoute: AdminLayoutFeedbackRoute,
+  AdminLayoutFoundationRoute: AdminLayoutFoundationRoute,
   AdminLayoutInstitutionPartnersRoute: AdminLayoutInstitutionPartnersRoute,
+  AdminLayoutInternshipPartnersRoute: AdminLayoutInternshipPartnersRoute,
   AdminLayoutLiveSessionsRoute: AdminLayoutLiveSessionsRoute,
   AdminLayoutMentorReviewsRoute: AdminLayoutMentorReviewsRoute,
   AdminLayoutMentorsRoute: AdminLayoutMentorsRoute,
+  AdminLayoutModulesRoute: AdminLayoutModulesRoute,
+  AdminLayoutPracticeRoute: AdminLayoutPracticeRoute,
   AdminLayoutVerificationRoute: AdminLayoutVerificationRoute,
   AdminLayoutWellnessRoute: AdminLayoutWellnessRoute,
   AdminLayoutIndexRoute: AdminLayoutIndexRoute,
