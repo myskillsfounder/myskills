@@ -12,6 +12,7 @@ dist
 releases
 .dist.next
 .swaptest
+.dryrun
 .deploy.lock
 dist-ssr
 *.local
