@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Award, Brain, ChevronRight, Target } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { ArrowLeft, Brain, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useInitialAssessment } from '@/lib/assessmentResults'
-import { tierForPercent } from '@/lib/certificates'
 import {
   fetchPracticeSummary,
   recordPracticeAttempt,
@@ -57,30 +56,6 @@ function MigrationError({ message }: { message: string }) {
         in Supabase (see docs/supabase-schema.sql for the full schema reference).
       </p>
     </div>
-  )
-}
-
-/**
- * The certificate used to be a full-width banner at the very top, pushing the
- * actual practice content below the fold. It's a reward you've already earned,
- * not a task — so it's now a single quiet row in the page header.
- */
-function CertificateRow({ percent }: { percent: number }) {
-  const tier = tierForPercent(percent)
-  return (
-    <Link
-      to="/certificate"
-      className={`group rise-in flex items-center gap-2.5 rounded-full border py-2 pl-3 pr-2.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${tier.ui.border} ${tier.ui.bg}`}
-    >
-      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ${tier.ui.icon}`}>
-        <Award size={14} />
-      </span>
-      <span className={`text-sm font-semibold ${tier.ui.textStrong}`}>{tier.label} certificate</span>
-      <ChevronRight
-        size={15}
-        className={`${tier.ui.textSoft} transition-transform duration-300 group-hover:translate-x-0.5`}
-      />
-    </Link>
   )
 }
 
@@ -252,7 +227,6 @@ function PracticePage() {
             eyebrow="Programmes"
             title="Practice"
             description="Two programmes, one place to practise: your digital marketing skills, and personal development with AI."
-            actions={assessment ? <CertificateRow percent={assessment.overall.percent} /> : undefined}
           />
 
           {practiceLoading ? (
@@ -260,8 +234,8 @@ function PracticePage() {
           ) : (
             <>
               {/* Everything above the Career Readiness heading is the Digital
-                  Marketing Programme: the assessment, all 8 tracks, vocabulary
-                  and the certificate. */}
+                  Marketing Programme: the aptitude and Foundation assessments, all
+                  8 tracks and vocabulary. */}
               <ProgrammeHeading
                 step={1}
                 name={DIGITAL_MARKETING.name}

@@ -54,15 +54,15 @@ export function FoundationResult({ assessment }: { assessment: AssessmentResult 
               Foundational Progress in Digital Marketing
             </p>
             <p className="mt-2 max-w-md text-sm leading-relaxed text-white/70">
-              Awarded for completing the Foundation assessment. Download it or share it from your certificate
-              page.
+              Awarded for completing the Foundation assessment. You’ll find it, with its ID and a download, in
+              your profile.
             </p>
           </div>
           <Link
-            to="/certificate"
+            to="/profile"
             className="press relative mt-6 inline-flex w-fit items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
           >
-            View your certificate
+            See it in your profile
             <ArrowRight size={16} />
           </Link>
         </section>

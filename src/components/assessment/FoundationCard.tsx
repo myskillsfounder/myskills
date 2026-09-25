@@ -46,7 +46,7 @@ export function FoundationCard({
             {assessment.overall.percent}% · Foundational progress earned
           </h3>
           <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-white/70 sm:text-sm">
-            {assessment.overall.correct} of {assessment.overall.total} correct. Your certificate is ready.
+            {assessment.overall.correct} of {assessment.overall.total} correct. Your certificate is in your profile.
           </p>
         </div>
         <Link to="/foundation-assessment" className={cta}>

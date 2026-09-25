@@ -39,11 +39,11 @@ export function AssessmentCard() {
         <div className="relative min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Start here</p>
           <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-            Career Readiness initial assessment
+            Personal aptitude assessment
           </h3>
           <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-white/70 sm:text-sm">
-            20 quick statements, about 5 minutes. A starting point for the five skills — not a test, and open
-            now while the programme is on its way.
+            20 quick statements, about 5 minutes. A look at your goal setting, communication, leadership, agile
+            working and growth mindset — not a test, and open now while the programme is on its way.
           </p>
         </div>
         <Link to="/career-readiness-assessment" className={`relative ${cta}`}>
@@ -62,7 +62,7 @@ export function AssessmentCard() {
       <Rings />
       <div className="relative flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Your starting point</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Personal aptitude assessment</p>
           <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
             Start with {start.module}
           </h3>

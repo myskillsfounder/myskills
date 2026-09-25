@@ -127,8 +127,7 @@ function DashboardPage() {
     <AppShell wide>
       {/* "LaunchPad" is the page; the greeting stays, but as the subtitle —
           the page is now about where the student stands, not who they are.
-          The certificate lives on /practice (see CertificateRow there), next
-          to the assessment that earned it. */}
+          Certificates live in the profile. */}
       <PageHeader eyebrow="LaunchPad" title={<>{greet()}, {name}</>} />
 
       <div className="space-y-6">
