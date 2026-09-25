@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'
 import { digitalMarketingProgress } from '@/lib/programmes'
-import { DM_SIGNOFF_POINTS } from '@/lib/readinessScore'
+import { DM_SIGNOFF_POINTS, PROFESSIONAL_MAX } from '@/lib/readinessScore'
 
 const R = 34
 const C = 2 * Math.PI * R
@@ -12,6 +12,11 @@ const C = 2 * Math.PI * R
  * Readiness card beside it (CareerReadinessOverview): the ring is how far
  * through the programme you are, the headline is the Career Readiness points
  * the programme has earned you, and one bead per track shows coverage.
+ *
+ * The headline is the whole Professional Development part of the score (out
+ * of 20): verified education (up to 10) and this programme's mentor sign-off
+ * (10). `educationPoints` comes from the server-issued score; until that has
+ * loaded it's 0, so the number can only go up, never flash too high.
  *
  * No practice percentage here on purpose: an average of the tracks you
  * happen to have tried reads as "82% · Advanced" after a single track. Each
@@ -25,16 +30,19 @@ export function PracticeStats({
   practice,
   foundationDone,
   mentorApproved,
+  educationPoints,
 }: {
   practice: PracticeSummary
   foundationDone: boolean
   mentorApproved: boolean
+  /** Verified education points, from the server-issued Career Readiness Score. */
+  educationPoints: number
 }) {
   const rows = skillTracks.map((t) => ({ slug: t.slug, name: t.name, result: practice[t.slug] }))
   const practised = rows.filter((r) => r.result).length
   const attempts = rows.reduce((s, r) => s + (r.result?.attempts ?? 0), 0)
   const { percent } = digitalMarketingProgress(foundationDone, practised, skillTracks.length, mentorApproved)
-  const points = mentorApproved ? DM_SIGNOFF_POINTS : 0
+  const points = Math.round(educationPoints + (mentorApproved ? DM_SIGNOFF_POINTS : 0))
 
   // animate the ring from 0 on mount
   const [shown, setShown] = useState(0)
@@ -85,11 +93,11 @@ export function PracticeStats({
           </p>
           <p className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
             {points}
-            <span className="text-base font-normal text-white/50"> / {DM_SIGNOFF_POINTS} points</span>
+            <span className="text-base font-normal text-white/50"> / {PROFESSIONAL_MAX} points</span>
           </p>
           <p className="mt-1 text-xs leading-relaxed text-white/70">
-            Practise all {skillTracks.length} tracks, then a mentor’s sign-off adds {DM_SIGNOFF_POINTS} points to your
-            Career Readiness Score.
+            Verified education adds up to 10. Practise all {skillTracks.length} tracks and a mentor’s sign-off adds{' '}
+            {DM_SIGNOFF_POINTS} more.
           </p>
         </div>
 
@@ -128,7 +136,7 @@ export function PracticeStats({
           <p className="text-[11px] font-medium text-white/60">Readiness points</p>
           <p className="mt-0.5 font-display text-lg font-semibold text-white">
             {points}
-            <span className="text-sm font-normal text-white/50">/{DM_SIGNOFF_POINTS}</span>
+            <span className="text-sm font-normal text-white/50">/{PROFESSIONAL_MAX}</span>
           </p>
         </div>
       </div>
