@@ -241,7 +241,11 @@ function PracticePage() {
 
                   <div className="grid gap-5 lg:grid-cols-3">
                     <div className="lg:col-span-2">
-                      <PracticeStats practice={practice} />
+                      <PracticeStats
+                        practice={practice}
+                        foundationDone={assessment != null}
+                        mentorApproved={dmReview.state === 'approved'}
+                      />
                     </div>
                     <div className="lg:col-span-1">
                       <NextUpCard practice={practice} onSelect={setSelected} />
