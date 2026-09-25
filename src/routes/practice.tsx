@@ -59,44 +59,64 @@ function MigrationError({ message }: { message: string }) {
   )
 }
 
-/** Labels which programme the section below belongs to. Both programmes use
- *  the same heading, score row and grid, so the page reads as two parallel
- *  sections rather than one long list. */
-function ProgrammeHeading({
-  step,
-  name,
-  title,
-  subtitle,
-  status,
-  live,
-}: {
-  step: number
-  name: string
-  title: string
-  subtitle: string
-  status: string
-  live: boolean
-}) {
+type Programme = 1 | 2
+
+const PROGRAMME_KEY = 'practice-programme'
+
+/** The programme last open, so coming back to Practice lands where you left. */
+function savedProgramme(): Programme {
+  try {
+    return localStorage.getItem(PROGRAMME_KEY) === '2' ? 2 : 1
+  } catch {
+    return 1
+  }
+}
+
+/** The two programmes, side by side: one tap switches between them. Only the
+ *  chosen programme's content is on the page, so neither buries the other. */
+function ProgrammeTabs({ active, onChange }: { active: Programme; onChange: (p: Programme) => void }) {
+  const items: { step: Programme; name: string; status: string; live: boolean }[] = [
+    { step: 1, name: DIGITAL_MARKETING.name, status: 'In progress', live: true },
+    { step: 2, name: CAREER_READINESS.name, status: 'Opens soon', live: false },
+  ]
   return (
-    <div className="flex items-start gap-3.5 border-t border-ink-900/[0.06] pt-6">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-900 font-display text-sm font-semibold text-white">
-        {step}
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">{name}</p>
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-              live ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-600'
+    <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-3">
+      {items.map((it) => {
+        const on = it.step === active
+        return (
+          <button
+            key={it.step}
+            type="button"
+            role="tab"
+            aria-selected={on}
+            onClick={() => onChange(it.step)}
+            className={`press flex min-w-0 items-center gap-3 rounded-2xl border p-3.5 text-left transition-colors sm:p-4 ${
+              on
+                ? 'border-ink-900 bg-ink-900 text-white shadow-e2'
+                : 'border-ink-900/10 bg-white text-ink-900 hover:border-ink-900/25'
             }`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-emerald-500' : 'bg-ink-400'}`} />
-            {status}
-          </span>
-        </div>
-        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">{title}</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-600">{subtitle}</p>
-      </div>
+            <span
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold ${
+                on ? 'bg-white text-ink-900' : 'bg-ink-900 text-white'
+              }`}
+            >
+              {it.step}
+            </span>
+            <span className="min-w-0">
+              <span className="block font-display text-sm font-semibold leading-snug sm:text-base">{it.name}</span>
+              <span
+                className={`mt-1 inline-flex items-center gap-1.5 text-[11px] font-semibold ${
+                  on ? 'text-white/70' : 'text-ink-500'
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${it.live ? 'bg-emerald-500' : 'bg-ink-400'}`} />
+                {it.status}
+              </span>
+            </span>
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -144,6 +164,16 @@ function PracticePage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [mode, setMode] = useState<PracticeMode | null>(null)
   const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
+  const [programme, setProgramme] = useState<Programme>(savedProgramme)
+
+  function chooseProgramme(p: Programme) {
+    setProgramme(p)
+    try {
+      localStorage.setItem(PROGRAMME_KEY, String(p))
+    } catch {
+      /* the choice just won't be remembered */
+    }
+  }
 
 
   // Practice data loads as soon as Practice is unlocked, not only once the
@@ -198,12 +228,6 @@ function PracticePage() {
       {/* Practice is locked until the aptitude assessment is taken. */}
       {!gateLoading && !error && !unlocked && (
         <div className="space-y-5">
-          <PageHeader
-            className="mb-1"
-            eyebrow="Programmes"
-            title="Practice"
-            description="Digital marketing and personal development, in one place."
-          />
           <AptitudeCard result={null} gate />
         </div>
       )}
@@ -222,77 +246,60 @@ function PracticePage() {
           then the modes — action before inventory. */}
       {unlocked && !error && !selected && mode === null && (
         <div className="space-y-5">
-          <PageHeader
-            className="mb-1"
-            eyebrow="Programmes"
-            title="Practice"
-            description="Digital marketing and personal development, in one place."
-          />
-
           {practiceLoading ? (
             <p className="text-sm text-ink-600">Loading practice…</p>
           ) : (
             <>
-              {/* Everything above the Career Readiness heading is the Digital
-                  Marketing Programme: the aptitude and Foundation assessments, all
-                  8 tracks and vocabulary. */}
-              <ProgrammeHeading
-                step={1}
-                name={DIGITAL_MARKETING.name}
-                status="In progress"
-                live
-                title="Your digital marketing skills"
-                subtitle="Real scenarios, marketing language and campaign numbers."
-              />
+              <ProgrammeTabs active={programme} onChange={chooseProgramme} />
 
-              <AptitudeCard result={aptitude} />
+              {/* Programme 1 is everything from the aptitude assessment through the
+                  Foundation assessment, all 8 tracks and vocabulary. */}
+              {programme === 1 && (
+                <>
+                  <AptitudeCard result={aptitude} />
 
-              <div className="grid gap-5 lg:grid-cols-3">
-                <div className="lg:col-span-2">
-                  <PracticeStats practice={practice} />
-                </div>
-                <div className="lg:col-span-1">
-                  <NextUpCard practice={practice} onSelect={setSelected} />
-                </div>
-              </div>
+                  <div className="grid gap-5 lg:grid-cols-3">
+                    <div className="lg:col-span-2">
+                      <PracticeStats practice={practice} />
+                    </div>
+                    <div className="lg:col-span-1">
+                      <NextUpCard practice={practice} onSelect={setSelected} />
+                    </div>
+                  </div>
 
-              <ProgrammeCompletion stages={dmStages}>
-                <MentorReviewPanel
-                  programme="digital-marketing"
-                  practiceDone={practisedTracks.length === skillTracks.length}
-                  review={dmReview.review}
-                  state={dmReview.state}
-                  onChange={() => void dmReview.reload()}
-                />
-              </ProgrammeCompletion>
+                  <ProgrammeCompletion stages={dmStages}>
+                    <MentorReviewPanel
+                      programme="digital-marketing"
+                      practiceDone={practisedTracks.length === skillTracks.length}
+                      review={dmReview.review}
+                      state={dmReview.state}
+                      onChange={() => void dmReview.reload()}
+                    />
+                  </ProgrammeCompletion>
 
-              <ModePicker
-                practice={practice}
-                vocabLearned={vocabLearned}
-                vocabTotal={vocabularyTerms.length}
-                onSelect={setMode}
-              />
+                  <ModePicker
+                    practice={practice}
+                    vocabLearned={vocabLearned}
+                    vocabTotal={vocabularyTerms.length}
+                    onSelect={setMode}
+                  />
 
-              <FoundationCard
-                assessment={assessment}
-                unlock={foundationUnlock}
-                onOpenVocabulary={() => setMode('vocabulary')}
-              />
+                  <FoundationCard
+                    assessment={assessment}
+                    unlock={foundationUnlock}
+                    onOpenVocabulary={() => setMode('vocabulary')}
+                  />
+                </>
+              )}
 
-              <div className="pt-4">
-                <ProgrammeHeading
-                  step={2}
-                  name={CAREER_READINESS.name}
-                  status="Opens soon"
-                  live={false}
-                  title="Personal development with AI"
-                  subtitle="Five modules, with AI as your practice partner."
-                />
-              </div>
-              <AssessmentCard />
-              <CareerReadinessOverview />
-              <ProgrammeCompletion stages={crStages} />
-              <CareerReadinessPractice />
+              {programme === 2 && (
+                <>
+                  <AssessmentCard />
+                  <CareerReadinessOverview />
+                  <ProgrammeCompletion stages={crStages} />
+                  <CareerReadinessPractice />
+                </>
+              )}
             </>
           )}
         </div>
