@@ -3,11 +3,14 @@ import { createFileRoute, Link, Outlet, useRouter, useRouterState } from '@tanst
 import {
   Award,
   BarChart3,
+  BookOpen,
+  Briefcase,
   Building2,
   CalendarCheck,
   ChevronDown,
   ClipboardCheck,
   ClipboardList,
+  Dumbbell,
   FileText,
   GraduationCap,
   HeartHandshake,
@@ -17,10 +20,12 @@ import {
   Megaphone,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   UserCheck,
   Users,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
+import type { ReviewProgramme } from '@/lib/mentorReview'
 import { requireStaffSession } from '@/lib/guards'
 import { StaffAccessContext, useStaffAccess, type StaffSection } from '@/lib/staffAccess'
 import { EmptyState, Skeleton } from '@/components/ui'
@@ -46,7 +51,16 @@ export const Route = createFileRoute('/admin/_layout')({
   component: AdminLayout,
 })
 
-type NavItem = { to: string; label: string; icon: typeof BarChart3; exact?: boolean; section: StaffSection | null }
+type NavItem = {
+  to: string
+  /** For a page that serves several items (mentor reviews, one per programme). */
+  search?: { programme?: ReviewProgramme }
+  label: string
+  icon: typeof BarChart3
+  exact?: boolean
+  /** null = full admins only (Overview, and the lead lists, whose tables only admins can read). */
+  section: StaffSection | null
+}
 
 // Grouped the way the work is: the students and their score, the two
 // programmes, the people and organisations MySkills works with, and the site
@@ -66,11 +80,34 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     ],
   },
   {
-    label: 'Programmes',
+    label: 'Digital Marketing',
     items: [
-      { to: '/admin/mentor-reviews', label: 'Mentor reviews', icon: ClipboardCheck, section: 'mentor-reviews' },
+      { to: '/admin/dm-aptitude', label: 'Aptitude results', icon: Sparkles, section: 'users' },
+      { to: '/admin/practice', label: 'Practice', icon: Dumbbell, section: 'users' },
+      { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
       { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
       { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
+      {
+        to: '/admin/mentor-reviews',
+        search: { programme: 'digital-marketing' },
+        label: 'Mentor reviews',
+        icon: UserCheck,
+        section: 'mentor-reviews',
+      },
+    ],
+  },
+  {
+    label: 'Career Readiness',
+    items: [
+      { to: '/admin/cr-aptitude', label: 'Personal aptitude', icon: Sparkles, section: 'users' },
+      { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
+      {
+        to: '/admin/mentor-reviews',
+        search: { programme: 'career-readiness' },
+        label: 'Mentor reviews',
+        icon: UserCheck,
+        section: 'mentor-reviews',
+      },
     ],
   },
   {
@@ -78,7 +115,9 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     items: [
       { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
       { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
+      { to: '/admin/internship-partners', label: 'Internship partners', icon: Briefcase, section: null },
       { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
+      { to: '/admin/cr-leads', label: 'Career Readiness leads', icon: Users, section: null },
     ],
   },
   {
@@ -99,22 +138,37 @@ function visibleGroups(isAdmin: boolean, sections: StaffSection[]) {
   })).filter((g) => g.items.length > 0)
 }
 
-function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: StaffSection[]; onPick?: () => void }) {
+function isActive(t: NavItem, pathname: string, programme: string | undefined) {
+  if (t.search) return pathname === t.to && programme === t.search.programme
+  return t.exact ? pathname === t.to : pathname === t.to || pathname.startsWith(`${t.to}/`)
+}
+
+function useLocationParts() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const programme = useRouterState({
+    select: (s) => (s.location.search as { programme?: string } | undefined)?.programme,
+  })
+  return { pathname, programme }
+}
+
+function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: StaffSection[]; onPick?: () => void }) {
+  const { pathname, programme } = useLocationParts()
   return (
     <div className="space-y-5">
       {visibleGroups(isAdmin, sections).map((g) => (
         <div key={g.label}>
           <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-400">{g.label}</p>
           <ul className="mt-1.5 space-y-0.5">
-            {g.items.map(({ to, label, icon: Icon, exact }) => {
+            {g.items.map((t) => {
+              const { to, search, label, icon: Icon } = t
               // Prefix matching so a sub-page keeps its item lit; Overview has
               // to be exact or it would match every child route.
-              const active = exact ? pathname === to : pathname === to || pathname.startsWith(`${to}/`)
+              const active = isActive(t, pathname, programme)
               return (
-                <li key={to}>
+                <li key={`${to}-${search?.programme ?? ''}`}>
                   <Link
                     to={to}
+                    search={search}
                     onClick={onPick}
                     aria-current={active ? 'page' : undefined}
                     className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
@@ -137,11 +191,8 @@ function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: S
 /** A fixed sidebar on wide screens; a collapsible menu above the page on phones. */
 function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSection[] }) {
   const [open, setOpen] = useState(false)
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const current =
-    GROUPS.flatMap((g) => g.items).find((t) =>
-      t.exact ? pathname === t.to : pathname === t.to || pathname.startsWith(`${t.to}/`),
-    )?.label ?? 'Menu'
+  const { pathname, programme } = useLocationParts()
+  const current = GROUPS.flatMap((g) => g.items).find((t) => isActive(t, pathname, programme))?.label ?? 'Menu'
   return (
     <>
       <nav aria-label="Admin sections" className="hidden w-56 shrink-0 lg:block">

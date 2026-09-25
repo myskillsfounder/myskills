@@ -9,12 +9,19 @@ import {
   fetchMentorReviewQueue,
   type AdminMentorReview,
   type MentorReviewStatus,
+  type ReviewProgramme,
 } from '@/lib/mentorReview'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { CareerReadinessResponses } from '@/components/admin/CareerReadinessResponses'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
+// ?programme=digital-marketing|career-readiness narrows the queue to one
+// programme; the sidebar links each programme's own reviews this way.
 export const Route = createFileRoute('/admin/_layout/mentor-reviews')({
+  validateSearch: (s: Record<string, unknown>): { programme?: ReviewProgramme } => ({
+    programme:
+      s.programme === 'digital-marketing' || s.programme === 'career-readiness' ? s.programme : undefined,
+  }),
   component: () => (
     <RequireSection section="mentor-reviews">
       <MentorReviewsPage />
@@ -207,12 +214,15 @@ function MentorReviewsPage() {
     void load()
   }, [])
 
-  const visible = reviews.filter((r) => filter === 'all' || r.status === filter)
+  const { programme } = Route.useSearch()
+  const visible = reviews.filter(
+    (r) => (filter === 'all' || r.status === filter) && (!programme || r.programme === programme),
+  )
 
   return (
     <>
       <PageHeader
-        eyebrow="Admin"
+        eyebrow={programme ? PROGRAMME[programme] : 'Both programmes'}
         title="Mentor reviews"
         subtitle="Students who finished practice and asked for a sign-off. Signing off unlocks the internship stage."
       />

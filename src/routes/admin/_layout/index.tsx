@@ -101,8 +101,8 @@ function NeedsAction({ n }: { n: AdminOverviewV2['needs_action'] }) {
     { label: 'Institution applications', count: n.institution_applications, to: '/admin/institution-partners' },
     { label: 'Demo requests', count: n.demo_requests, to: '/admin/demo-requests' },
     { label: 'Wellness requests', count: n.wellness, to: '/admin/wellness' },
-    { label: 'Internship partner leads', count: n.internship_leads },
-    { label: 'Career Readiness leads', count: n.career_readiness_leads },
+    { label: 'Internship partner leads', count: n.internship_leads, to: '/admin/internship-partners' },
+    { label: 'Career Readiness leads', count: n.career_readiness_leads, to: '/admin/cr-leads' },
   ].sort((x, y) => y.count - x.count)
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
