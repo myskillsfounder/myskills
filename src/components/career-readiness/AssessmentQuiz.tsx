@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight, Loader2, Send } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ListChecks, Loader2, Lock, Send, Sparkles } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { useAuthUser } from '@/lib/useAuth'
 import { FREQUENCY, type AssessmentQuestion } from '@/lib/careerReadinessAssessment'
-import { Alert, Button, Textarea } from '@/components/ui'
+import { Eyebrow } from '@/components/landing/Eyebrow'
 
 type Phase = 'intro' | 'questions' | 'reflection'
 
@@ -20,7 +20,7 @@ function loadDraft(userId: string, questions: AssessmentQuestion[]): Draft | nul
     if (!raw) return null
     const d = JSON.parse(raw) as Draft
     // Only keep answers to questions that still exist, so a changed question
-    // bank can't leave a stale answer counting.
+    // bank (it was cut from 25 to 20) can't leave a stale answer counting.
     const ids = new Set(questions.map((q) => q.id))
     const answers = Object.fromEntries(Object.entries(d.answers ?? {}).filter(([id]) => ids.has(id)))
     if (Object.keys(answers).length === 0) return null
@@ -46,11 +46,18 @@ function clearDraft(userId: string) {
   }
 }
 
+const primaryButton =
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 disabled:opacity-60'
+const secondaryButton =
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/40 disabled:opacity-60'
+
+const panel = 'card-glass-dark glow-edge relative overflow-hidden rounded-xl p-6 sm:p-9'
+
 /**
- * The Career Readiness self-awareness assessment: one statement per screen,
- * rated Never / Sometimes / Often / Always, then an optional closing
- * question. Scoring happens on the server (see onSubmit), so nothing here
- * knows which statements are reverse-scored.
+ * The Career Readiness self-awareness assessment, on the site's dark theme:
+ * one statement per screen, rated Never / Sometimes / Often / Always, then an
+ * optional closing question. Scoring happens on the server (see onSubmit), so
+ * nothing here knows which statements are reverse-scored.
  */
 export function AssessmentQuiz({
   questions,
@@ -74,6 +81,8 @@ export function AssessmentQuiz({
   const total = questions.length
   const answeredCount = Object.keys(answers).length
   const current = questions[index]
+  // Roughly 15 seconds a statement (it's a quick gut-check, not a think-hard test).
+  const minutes = Math.max(1, Math.round((total * 15) / 60))
 
   // Offer to resume once the session resolves (useAuthUser is null on first render).
   const checked = useRef(false)
@@ -103,7 +112,7 @@ export function AssessmentQuiz({
     advance.current = window.setTimeout(() => {
       if (index < total - 1) setIndex((i) => i + 1)
       else setPhase('reflection')
-    }, 220)
+    }, 260)
   }
 
   // 1-4 on the keyboard picks Never…Always.
@@ -131,20 +140,33 @@ export function AssessmentQuiz({
 
   if (phase === 'intro') {
     return (
-      <div className="card p-6 sm:p-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Before you start</p>
-        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">
-          {total} statements, about 8 minutes
+      <div className={panel}>
+        <Eyebrow dark>Before you start</Eyebrow>
+        <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-white">
+          {total} statements. About {minutes} minutes.
         </h2>
-        <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-ink-600">
-          <li>Rate how often each one is true for you: Never, Sometimes, Often or Always.</li>
-          <li>There are no right answers. It’s a starting point, not a test, so answer as you really are.</li>
-          <li>It doesn’t change your Career Readiness Score, and you get one attempt.</li>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/70">
+          You’ll see one statement at a time. Say how often it’s true for you — it’s a starting point, not a
+          test, so answer as you really are. It doesn’t change your Career Readiness Score.
+        </p>
+
+        <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[
+            { icon: ListChecks, text: 'Never, Sometimes, Often or Always' },
+            { icon: Sparkles, text: 'No right or wrong answers' },
+            { icon: Lock, text: 'One attempt, saved to your profile' },
+          ].map(({ icon: Icon, text }) => (
+            <li key={text} className="flex items-start gap-3 rounded-lg bg-white/[0.06] p-3.5 text-sm text-white/80">
+              <Icon size={17} className="mt-0.5 shrink-0 text-brand-200" />
+              {text}
+            </li>
+          ))}
         </ul>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button
-            size="lg"
-            iconRight={ArrowRight}
+
+        <div className="mt-7 flex flex-wrap gap-3">
+          <button
+            type="button"
+            className={primaryButton}
             onClick={() => {
               // Resume at the first statement still unanswered.
               const open = questions.findIndex((q) => answers[q.id] == null)
@@ -153,11 +175,12 @@ export function AssessmentQuiz({
             }}
           >
             {resumable ? `Continue (${answeredCount} of ${total} done)` : 'Start'}
-          </Button>
+            <ArrowRight size={16} />
+          </button>
           {resumable && (
-            <Button
-              size="lg"
-              variant="secondary"
+            <button
+              type="button"
+              className={secondaryButton}
               onClick={() => {
                 if (userId) clearDraft(userId)
                 setAnswers({})
@@ -167,7 +190,7 @@ export function AssessmentQuiz({
               }}
             >
               Start over
-            </Button>
+            </button>
           )}
         </div>
       </div>
@@ -176,48 +199,48 @@ export function AssessmentQuiz({
 
   if (phase === 'reflection') {
     return (
-      <div className="card p-6 sm:p-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">One last thing</p>
-        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900">
+      <div className={panel}>
+        <Eyebrow dark>One last thing</Eyebrow>
+        <h2 className="mt-3 font-display text-2xl font-semibold leading-snug tracking-tight text-white sm:text-3xl">
           Which one skill would you most like to get better at?
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-ink-600">
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
           In your own words. It’s optional and isn’t scored — a mentor will see it when they review your
           progress.
         </p>
-        <div className="mt-4">
-          <Textarea
-            value={reflection}
-            onChange={(e) => setReflection(e.target.value)}
-            required={false}
-            rows={4}
-            maxLength={500}
-            placeholder="e.g. Speaking up in meetings without freezing…"
-            aria-label="The skill you most want to improve"
-          />
-        </div>
+        <textarea
+          value={reflection}
+          onChange={(e) => setReflection(e.target.value)}
+          rows={4}
+          maxLength={500}
+          placeholder="e.g. Speaking up in meetings without freezing…"
+          aria-label="The skill you most want to improve"
+          className="mt-5 w-full resize-y rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/40 transition-colors focus:border-brand-300 focus:bg-white/[0.09] focus:outline-none"
+        />
+        <p className="mt-1.5 text-right font-mono text-[11px] text-white/40">{reflection.length} / 500</p>
+
         {error && (
-          <div className="mt-4">
-            <Alert tone="danger" title="Couldn’t save your answers">
-              <p>{error}</p>
-            </Alert>
-          </div>
+          <p role="alert" className="mt-3 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <span className="font-semibold">Couldn’t save your answers.</span> {error}
+          </p>
         )}
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Button
-            variant="secondary"
-            icon={ArrowLeft}
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            type="button"
+            className={secondaryButton}
             disabled={submitting}
             onClick={() => {
               setIndex(total - 1)
               setPhase('questions')
             }}
           >
-            Back
-          </Button>
-          <Button size="lg" icon={submitting ? Loader2 : Send} disabled={submitting} onClick={() => void submit()}>
+            <ArrowLeft size={16} /> Back
+          </button>
+          <button type="button" className={primaryButton} disabled={submitting} onClick={() => void submit()}>
+            {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
             {submitting ? 'Saving…' : 'See my results'}
-          </Button>
+          </button>
         </div>
       </div>
     )
@@ -226,33 +249,42 @@ export function AssessmentQuiz({
   const chosen = current ? answers[current.id] : undefined
 
   return (
-    <div className="card p-6 sm:p-8">
+    <div className={panel}>
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-          Statement {index + 1} of {total}
-        </p>
-        <p className="font-display text-sm font-semibold tabular-nums text-ink-500">
+        <Eyebrow dark>
+          Statement {index + 1} / {total}
+        </Eyebrow>
+        <p className="font-mono text-[11px] font-bold tabular-nums text-white/50">
           {Math.round((answeredCount / total) * 100)}%
         </p>
       </div>
+
+      {/* One segment per statement: answered fill, the current one glows. */}
       <div
-        className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink-100"
+        className="mt-4 flex gap-1"
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={total}
         aria-valuenow={answeredCount}
       >
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700 transition-all duration-300"
-          style={{ width: `${(answeredCount / total) * 100}%` }}
-        />
+        {questions.map((q, i) => (
+          <span
+            key={q.id}
+            className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+              answers[q.id] != null ? 'bg-brand-300' : i === index ? 'bg-white/60' : 'bg-white/10'
+            }`}
+          />
+        ))}
       </div>
 
-      <h2 className="mt-7 min-h-[4.5rem] font-display text-xl font-semibold leading-snug tracking-tight text-ink-900 sm:text-2xl">
+      <h2
+        key={current?.id}
+        className="rise-in mt-8 min-h-[6.5rem] font-display text-2xl font-semibold leading-snug tracking-tight text-white sm:min-h-[5.5rem] sm:text-3xl"
+      >
         {current?.statement}
       </h2>
 
-      <div role="radiogroup" aria-label="How often is this true for you?" className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <div role="radiogroup" aria-label="How often is this true for you?" className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {FREQUENCY.map((f) => {
           const active = chosen === f.value
           return (
@@ -262,29 +294,34 @@ export function AssessmentQuiz({
               role="radio"
               aria-checked={active}
               onClick={() => choose(f.value)}
-              className={`press flex h-14 flex-col items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
+              className={`press relative flex h-16 items-center justify-center rounded-xl border text-sm font-semibold transition-all duration-200 ${
                 active
-                  ? 'border-brand-600 bg-brand-600 text-white'
-                  : 'border-ink-300 bg-white text-ink-800 hover:border-brand-300 hover:bg-brand-50'
+                  ? 'border-brand-300 bg-brand-500/30 text-white shadow-[0_0_28px_-8px_rgba(143,133,238,0.85)]'
+                  : 'border-white/15 bg-white/[0.06] text-white/85 hover:border-white/30 hover:bg-white/[0.12]'
               }`}
             >
+              <span
+                aria-hidden
+                className={`absolute left-2.5 top-2 font-mono text-[10px] font-bold ${active ? 'text-white/70' : 'text-white/30'}`}
+              >
+                {f.value}
+              </span>
               {f.label}
-              <span className={`text-[10px] font-medium ${active ? 'text-white/70' : 'text-ink-400'}`}>{f.value}</span>
             </button>
           )
         })}
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
+      <div className="mt-7 flex items-center justify-between">
         <button
           type="button"
           onClick={() => setIndex((i) => Math.max(0, i - 1))}
           disabled={index === 0}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900 disabled:opacity-40"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white disabled:opacity-30"
         >
           <ArrowLeft size={15} /> Back
         </button>
-        <p className="hidden text-xs text-ink-400 sm:block">Tip: press 1–4 on your keyboard</p>
+        <p className="hidden font-mono text-[11px] text-white/35 sm:block">Press 1–4 on your keyboard</p>
       </div>
     </div>
   )

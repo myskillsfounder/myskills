@@ -119,7 +119,7 @@ function CareerReadinessWaitlistPage() {
                 <p className="text-sm font-semibold text-ink-900">While you wait, see where you stand</p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-600">
                   A quick, honest look at goal setting, communication, leadership, agile working and a growth
-                  mindset — about 8 minutes.
+                  mindset — about 5 minutes.
                 </p>
                 <Link
                   to={user ? '/career-readiness-assessment' : '/signup'}

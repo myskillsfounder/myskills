@@ -2,10 +2,10 @@
  * Career Readiness initial assessment — a self-awareness baseline for the five
  * programme modules. See docs/supabase-career-readiness-assessment.sql.
  *
- * Not a test: 25 statements, each rated Never / Sometimes / Often / Always
+ * Not a test: 20 statements, each rated Never / Sometimes / Often / Always
  * (1-4). One statement per skill is worded negatively and scored in reverse.
  * Scoring happens in Postgres (submit_career_readiness_assessment), so the
- * client only ever reads results back. A skill scores 5-20 and maps to a
+ * client only ever reads results back. A skill scores 4-16 and maps to a
  * level below. It is NOT part of the 30-point Personal Development score,
  * which is earned through the programme.
  */
@@ -24,9 +24,9 @@ export const SKILLS: { key: SkillKey; name: string; module: string }[] = [
   { key: 'agile', name: 'Agile working', module: 'Agile Methodology' },
 ]
 
-/** Five statements per skill, 1-4 each. */
-export const SKILL_MIN = 5
-export const SKILL_MAX = 20
+/** Four statements per skill, 1-4 each. */
+export const SKILL_MIN = 4
+export const SKILL_MAX = 16
 
 export const FREQUENCY = [
   { value: 1, label: 'Never' },
@@ -52,13 +52,21 @@ export type Level = 'Emerging' | 'Developing' | 'Established' | 'Standout'
 export const LEVELS: Level[] = ['Emerging', 'Developing', 'Established', 'Standout']
 
 export function levelFor(score: number): Level {
-  if (score >= 18) return 'Standout'
-  if (score >= 14) return 'Established'
-  if (score >= 10) return 'Developing'
+  if (score >= 14) return 'Standout'
+  if (score >= 11) return 'Established'
+  if (score >= 8) return 'Developing'
   return 'Emerging'
 }
 
-/** Pill colours for each level, on a light surface. */
+/** Pill colours for each level, on a dark surface. */
+export const LEVEL_TONE_DARK: Record<Level, string> = {
+  Emerging: 'bg-white/10 text-white/70',
+  Developing: 'bg-amber-400/15 text-amber-200',
+  Established: 'bg-brand-400/20 text-brand-100',
+  Standout: 'bg-emerald-400/15 text-emerald-300',
+}
+
+/** Pill colours for each level, on a light surface (the mentor review card). */
 export const LEVEL_TONE: Record<Level, string> = {
   Emerging: 'bg-ink-100 text-ink-700',
   Developing: 'bg-amber-50 text-amber-700',
@@ -129,7 +137,7 @@ function fail(error: { message?: string }): never {
   throw new Error(error.message?.trim() || 'Something went wrong.')
 }
 
-/** The 25 statements, in the order they're asked. */
+/** The 20 statements, in the order they're asked. */
 export async function fetchAssessmentQuestions(): Promise<AssessmentQuestion[]> {
   const { data, error } = await supabase
     .from('career_readiness_assessment_questions')
