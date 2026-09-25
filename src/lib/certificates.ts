@@ -1,5 +1,7 @@
 /**
- * Certificates — one per user, awarded on completing the initial assessment.
+ * Certificates — one per user, awarded on completing the Foundation assessment
+ * (the old initial assessment) and titled "Foundational Progress in Digital
+ * Marketing".
  *
  * Performance bands (single source of truth for the whole app — the SVG
  * certificate, the profile card, the practice page and the prompt library all
@@ -52,7 +54,8 @@ export interface TierMeta {
   label: string
   /** "Gold Certificate" — card headings */
   certLabel: string
-  /** Certificate headline, e.g. "FOUNDATIONAL EXCELLENCE" */
+  /** Certificate headline. The same for every band: the band is the score, and
+   *  the certificate recognises foundational progress either way. */
   headline: string
   /** Plain-English quality label, e.g. "Excellent" */
   meaning: string
@@ -86,7 +89,7 @@ const TIER_BASE: Record<
     kind: 'gold',
     label: 'Gold',
     certLabel: 'Gold Certificate',
-    headline: 'FOUNDATIONAL EXCELLENCE',
+    headline: 'FOUNDATIONAL PROGRESS',
     meaning: 'Excellent',
     understanding: 'an exceptional understanding',
     ui: {
@@ -103,7 +106,7 @@ const TIER_BASE: Record<
     kind: 'silver',
     label: 'Silver',
     certLabel: 'Silver Certificate',
-    headline: 'FOUNDATIONAL ACHIEVEMENT',
+    headline: 'FOUNDATIONAL PROGRESS',
     meaning: 'Good',
     understanding: 'a strong understanding',
     ui: {
@@ -120,7 +123,7 @@ const TIER_BASE: Record<
     kind: 'bronze',
     label: 'Bronze',
     certLabel: 'Bronze Certificate',
-    headline: 'FOUNDATIONAL COMPETENCE',
+    headline: 'FOUNDATIONAL PROGRESS',
     meaning: 'Developing',
     understanding: 'a working understanding',
     ui: {

@@ -355,7 +355,7 @@ export function Certificate({ cert, svgRef }: { cert: Cert; svgRef?: React.Ref<S
         <HDiv cx={LX + 212} y={193} hw={52} color={p.frame} paper={p.paper} />
 
         <text x={LX} y={248} textAnchor="middle" fontSize={15} fontWeight={700} letterSpacing={2} fill={p.ink}>
-          {`INITIAL ${subject.toUpperCase()} SKILLS ASSESSMENT`}
+          {`IN ${subject.toUpperCase()}`}
         </text>
 
         <g fill={p.frame}>
@@ -390,7 +390,7 @@ export function Certificate({ cert, svgRef }: { cert: Cert; svgRef?: React.Ref<S
           <tspan fontWeight={700} fill={p.accent}>
             {t.bandWord}
           </tspan>
-          {' in the MySkills Initial'}
+          {' in the MySkills Foundation'}
         </text>
         <text x={LX} y={by + 72} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
           Assessment.
@@ -401,7 +401,7 @@ export function Certificate({ cert, svgRef }: { cert: Cert; svgRef?: React.Ref<S
         <text x={LX} y={ry} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
           This certificate recognizes demonstrated{' '}
           <tspan fontWeight={700} fill={p.accent}>
-            foundational competency
+            foundational progress
           </tspan>
         </text>
         <text x={LX} y={ry + 22} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
@@ -412,7 +412,7 @@ export function Certificate({ cert, svgRef }: { cert: Cert; svgRef?: React.Ref<S
         <line x1={LX - HALF} y1={646} x2={LX + HALF} y2={646} stroke={p.frame} strokeWidth={0.9} opacity={0.55} />
         <MetaCell name="calendar" x={col(0)} label="ISSUE DATE" value={date} p={p} />
         <MetaCell name="shield" x={col(1)} label="CERTIFICATE ID" value={cert.code} p={p} />
-        <MetaCell name="clipboard" x={col(2)} label="ASSESSMENT" value={subject} p={p} />
+        <MetaCell name="clipboard" x={col(2)} label="ASSESSMENT" value="Foundation" p={p} />
         <MetaCell name="landmark" x={col(3)} label="ISSUED BY" value="MySkills" p={p} />
 
         {/* ---------- RIGHT COLUMN ---------- */}

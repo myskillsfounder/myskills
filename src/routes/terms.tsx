@@ -36,8 +36,8 @@ function TermsPage() {
         <Section title="What MySkills is">
           <p>
             MySkills is a free platform for practicing and assessing digital marketing
-            skills — scenario-based practice, an initial skills assessment with a
-            certificate, and a community of mentors and (soon) partner companies and
+            skills — scenario-based practice, an aptitude assessment, a foundation
+            skills assessment with a certificate, and a community of mentors and (soon) partner companies and
             institutions.
           </p>
         </Section>

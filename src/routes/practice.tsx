@@ -11,18 +11,17 @@ import {
   recordPracticeAttempt,
   type PracticeSummary,
 } from '@/lib/practiceResults'
-import { fetchInitialAssessmentQuestions, type QuizQuestion } from '@/lib/initialAssessment'
 import { questionsForTrack, type ScenarioGrade } from '@/lib/decisionLabs'
 import { skillTracks } from '@/lib/skillTracks'
 import { vocabularyTerms, type VocabLevel } from '@/lib/vocabulary'
-import { useVocabProgress } from '@/lib/vocabularyProgress'
+import { VOCAB_UNLOCK_PERCENT, useVocabProgress } from '@/lib/vocabularyProgress'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { AssessmentCard } from '@/components/career-readiness/AssessmentCard'
-import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
 import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
 import { useMyAptitudeResult } from '@/lib/dmAptitude'
-import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummaryCard'
+import type { FoundationUnlock } from '@/lib/foundation'
+import { FoundationCard } from '@/components/assessment/FoundationCard'
 import { PracticeStats } from '@/components/practice/PracticeStats'
 import { NextUpCard } from '@/components/practice/NextUpCard'
 import { TrackList } from '@/components/practice/TrackList'
@@ -46,12 +45,6 @@ export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
   component: PracticePage,
 })
-
-/** How much of Beginner has to be learned before Advanced opens up. A real
- *  lock, not just a visual nudge — the two levels used to sit as equal,
- *  independent cards with nothing steering anyone through the basics
- *  first. */
-const ADVANCED_UNLOCK_PERCENT = 70
 
 function MigrationError({ message }: { message: string }) {
   return (
@@ -138,8 +131,6 @@ function PracticePage() {
     result: assessment,
     loading: assessmentLoading,
     error: assessmentError,
-    submit,
-    commit,
   } = useInitialAssessment()
 
   // The aptitude assessment is step 1 and unlocks Practice. Anyone who already
@@ -148,7 +139,6 @@ function PracticePage() {
   const { result: aptitude, loading: aptitudeLoading } = useMyAptitudeResult()
   const unlocked = aptitude != null || assessment != null
   const gateLoading = assessmentLoading || aptitudeLoading
-  const [showFoundation, setShowFoundation] = useState(false)
 
   const { user } = useAuthUser()
   const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
@@ -162,7 +152,16 @@ function PracticePage() {
   const beginnerPercent = beginnerTerms.length
     ? Math.round((beginnerLearned / beginnerTerms.length) * 100)
     : 0
-  const advancedLocked = beginnerPercent < ADVANCED_UNLOCK_PERCENT
+  const advancedLocked = beginnerPercent < VOCAB_UNLOCK_PERCENT
+  // The Foundation assessment opens on the same mark, using the live numbers
+  // this page already tracks as the learner works through vocabulary.
+  const foundationUnlock: FoundationUnlock = {
+    learned: beginnerLearned,
+    total: beginnerTerms.length,
+    percent: beginnerPercent,
+    required: VOCAB_UNLOCK_PERCENT,
+    unlocked: !advancedLocked,
+  }
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const [practiceLoading, setPracticeLoading] = useState(true)
@@ -171,8 +170,6 @@ function PracticePage() {
   const [mode, setMode] = useState<PracticeMode | null>(null)
   const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
 
-  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
-  const [quizQuestionsError, setQuizQuestionsError] = useState<string>()
 
   // Practice data loads as soon as Practice is unlocked, not only once the
   // Foundation assessment is done.
@@ -184,14 +181,6 @@ function PracticePage() {
       .finally(() => setPracticeLoading(false))
   }, [unlocked])
 
-  // The Foundation questions are only needed once someone opens that quiz.
-  useEffect(() => {
-    if (!showFoundation || assessment || quizQuestions.length > 0) return
-    fetchInitialAssessmentQuestions()
-      .then(setQuizQuestions)
-      .catch((e) => setQuizQuestionsError(errorMessage(e)))
-  }, [showFoundation, assessment, quizQuestions.length])
-
   async function completeTrack(track: string, grade: ScenarioGrade) {
     await recordPracticeAttempt(track, grade)
     setPractice(await fetchPracticeSummary())
@@ -199,7 +188,7 @@ function PracticePage() {
     setSelected(null)
   }
 
-  const error = assessmentError ?? practiceError ?? quizQuestionsError
+  const error = assessmentError ?? practiceError
   const dmReview = useMentorReview('digital-marketing')
 
   // Platform internships aren't built yet, so no programme can show
@@ -244,41 +233,6 @@ function PracticePage() {
         </div>
       )}
 
-      {/* The Foundation assessment (the old initial assessment), opened from
-          the card on the practice home. */}
-      {unlocked && !error && !assessment && showFoundation && quizQuestions.length === 0 && (
-        <p className="text-sm text-ink-600">Loading questions…</p>
-      )}
-      {unlocked && !error && !assessment && showFoundation && quizQuestions.length > 0 && (
-        <div>
-          <button
-            type="button"
-            onClick={() => setShowFoundation(false)}
-            className="group mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
-          >
-            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to Practice
-          </button>
-          <PageHeader
-            eyebrow="Practice"
-            title="Foundation assessment"
-            description={
-              <>
-                Answer {quizQuestions.length} quick questions on the fundamentals across all skill
-                tracks. You get one attempt, so take your time — there’s no time limit.
-              </>
-            }
-          />
-          <AssessmentQuiz
-            questions={quizQuestions}
-            onSubmit={submit}
-            onContinue={(r) => {
-              commit(r)
-              setShowFoundation(false)
-            }}
-          />
-        </div>
-      )}
-
       {/* A practice track is open -> run its Decision Lab. */}
       {unlocked && !error && selected && (
         <ScenarioQuiz
@@ -291,7 +245,7 @@ function PracticePage() {
 
       {/* Practice home. Order is deliberate: where you stand, what to do next,
           then the modes — action before inventory. */}
-      {unlocked && !error && !selected && mode === null && !showFoundation && (
+      {unlocked && !error && !selected && mode === null && (
         <div className="space-y-5">
           <PageHeader
             className="mb-1"
@@ -345,28 +299,11 @@ function PracticePage() {
                 onSelect={setMode}
               />
 
-              {assessment ? (
-                <AssessmentSummaryCard assessment={assessment} />
-              ) : (
-                <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Foundation assessment</p>
-                    <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-                      Test what you know
-                    </h3>
-                    <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-white/70 sm:text-sm">
-                      One attempt across all skill tracks, and the certificate for your foundational progress.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowFoundation(true)}
-                    className="press inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-                  >
-                    Take the assessment
-                  </button>
-                </section>
-              )}
+              <FoundationCard
+                assessment={assessment}
+                unlock={foundationUnlock}
+                onOpenVocabulary={() => setMode('vocabulary')}
+              />
 
               <div className="pt-4">
                 <ProgrammeHeading
@@ -458,7 +395,7 @@ function PracticePage() {
                 learned: advancedLearned,
                 total: advancedTerms.length,
                 locked: advancedLocked,
-                lockedHint: `Reach ${ADVANCED_UNLOCK_PERCENT}% in Beginner to unlock`,
+                lockedHint: `Reach ${VOCAB_UNLOCK_PERCENT}% in Beginner to unlock`,
               },
             ]}
             onSelect={setVocabLevel}

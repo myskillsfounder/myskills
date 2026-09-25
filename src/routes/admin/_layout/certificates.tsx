@@ -56,7 +56,7 @@ function CertificatesPage() {
       <PageHeader
         eyebrow="Admin"
         title="Certificates"
-        subtitle="Issued automatically when someone completes the initial assessment — read-only, since grading and issuing both happen server-side."
+        subtitle="Issued automatically when someone completes the Foundation assessment — read-only, since grading and issuing both happen server-side."
       />
 
       <div className="mb-5 max-w-sm">

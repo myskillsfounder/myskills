@@ -22,7 +22,7 @@ export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 })
 
-/** Certificate + badge earned from the initial assessment. */
+/** Certificate + badge earned from the Foundation assessment. */
 function CertificateSection() {
   const [cert, setCert] = useState<Cert | null>(null)
   const [loading, setLoading] = useState(true)
@@ -71,7 +71,7 @@ function CertificateSection() {
             {cert.kind === 'gold' && <DistinctionBadge />}
           </div>
           <p className="mt-2 text-xs text-ink-600">
-            {cert.title} · Digital Marketing Initial Assessment · {cert.percent}%
+            Foundational Progress in {cert.title} · {cert.percent}%
           </p>
           <div className="mt-0.5 flex items-center gap-1.5">
             <p className="text-[11px] text-ink-500">ID: {cert.code}</p>
@@ -95,7 +95,7 @@ function CertificateSection() {
         <div className="rounded-xl border border-dashed border-ink-300 bg-ink-100 p-4">
           <p className="text-sm font-medium text-ink-800">No certificate yet</p>
           <p className="mt-0.5 text-xs text-ink-600">
-            Complete the Digital Marketing Initial Assessment to earn your certificate.
+            Complete the Foundation assessment to earn your certificate of foundational progress.
           </p>
           <Link to="/practice" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
             Go to assessment →

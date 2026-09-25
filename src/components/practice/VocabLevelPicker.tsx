@@ -8,7 +8,7 @@ interface LevelRow {
   learned: number
   total: number
   /** Set once, on the Advanced row, once Beginner clears the unlock
-   *  threshold — see ADVANCED_UNLOCK_PERCENT below. */
+   *  threshold — see VOCAB_UNLOCK_PERCENT in lib/vocabularyProgress.ts. */
   locked?: boolean
   lockedHint?: string
 }

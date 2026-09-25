@@ -316,9 +316,9 @@ function InitialAssessmentView({ onBack }: { onBack: () => void }) {
       </button>
 
       <PageHeader
-        eyebrow="Initial Assessment"
+        eyebrow="Foundation Assessment"
         title="Question bank"
-        subtitle="The one-time initial assessment. Correct answers stay server-side until you save a change here."
+        subtitle="The one-time Foundation assessment. Correct answers stay server-side until you save a change here."
         actions={
           <Button
             icon={Plus}
@@ -567,7 +567,7 @@ function Hub({
       <PageHeader
         eyebrow="Admin"
         title="Assessment"
-        subtitle="The one-time initial assessment, plus any number of additional practice question sets."
+        subtitle="The one-time Foundation assessment, plus any number of additional practice question sets."
         actions={
           <Button icon={FolderPlus} onClick={() => setCreating(true)}>
             New set
@@ -612,7 +612,7 @@ function Hub({
           className="card flex flex-col gap-2 p-5 text-left transition-shadow hover:shadow-e2"
         >
           <ClipboardList className="text-brand-600" size={20} />
-          <p className="font-medium text-ink-900">Initial Assessment</p>
+          <p className="font-medium text-ink-900">Foundation Assessment</p>
           <p className="text-sm text-ink-500">The one-time, gated benchmark quiz.</p>
         </button>
 

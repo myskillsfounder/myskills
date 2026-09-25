@@ -33,6 +33,19 @@ function writeLearned(userKey: string, ids: string[]) {
   }
 }
 
+/** The share of the Beginner vocabulary a learner must have learned before
+ *  the next thing unlocks: the Advanced level, and the Foundation assessment.
+ *  One number, so the two can't drift apart. */
+export const VOCAB_UNLOCK_PERCENT = 70
+
+/** How many of `bank`'s terms this learner has learned, read straight from
+ *  storage. For places that need the answer on first render (a lock screen)
+ *  rather than after the hook's effect has run. */
+export function countLearnedNow(userKey: string, bank: VocabTerm[]): number {
+  const learned = new Set(readLearned(userKey))
+  return bank.reduce((n, t) => (learned.has(t.id) ? n + 1 : n), 0)
+}
+
 export function useVocabProgress(userKey: string) {
   const [learnedIds, setLearnedIds] = useState<Set<string>>(() => new Set())
 

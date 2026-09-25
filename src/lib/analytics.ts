@@ -73,7 +73,7 @@ export function trackSignUp(method: string) {
   trackEvent('sign_up', { method })
 }
 
-/** The one-attempt initial assessment was graded and saved. */
+/** The one-attempt Foundation assessment was graded and saved. */
 export function trackAssessmentComplete(percent: number) {
   trackEvent('assessment_complete', { score: percent, passed: percent >= 60 })
 }

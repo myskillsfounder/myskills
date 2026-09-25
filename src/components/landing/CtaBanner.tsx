@@ -9,11 +9,11 @@ export function CtaBanner() {
         <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
         <div className="relative">
           <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            Ready to find your skill gaps?
+            Ready to find your marketing strengths?
           </h2>
           <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-            Take the free Digital Marketing Initial Assessment and unlock every practice track
-            today.
+            Start with the free aptitude assessment — about five minutes — and unlock every practice
+            track today.
           </p>
         </div>
         <Link
