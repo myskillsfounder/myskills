@@ -31,7 +31,9 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const DIST = join(ROOT, 'dist')
+// Same OUT_DIR the build used (vite.config.ts), so the prerendered pages land
+// next to the bundle they belong to.
+const DIST = join(ROOT, process.env.OUT_DIR ?? 'dist')
 
 /**
  * Minimal .env loader, mirroring Vite's own precedence for this build's mode.
