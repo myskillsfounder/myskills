@@ -103,6 +103,8 @@ export interface ProgrammeStanding {
   dmLiveSessions: number
   crSignedOff: boolean
   dmSignedOff: boolean
+  /** All 8 Digital Marketing tracks practised — only then can its review be asked for. */
+  dmPracticeDone?: boolean
 }
 export const NO_STANDING: ProgrammeStanding = {
   modulesDone: 0,
@@ -290,7 +292,8 @@ export function computeReadiness(
       programme: 2,
     })
   }
-  if (!standing.dmSignedOff) {
+  // Only suggest a review the student can actually ask for today.
+  if (!standing.dmSignedOff && standing.dmPracticeDone) {
     candidates.push({
       label: 'Get your Digital Marketing mentor review',
       upTo: DM_SIGNOFF_POINTS,
