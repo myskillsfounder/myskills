@@ -39,6 +39,7 @@ import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
 import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
 import { useMentorReview } from '@/lib/mentorReview'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
+import { useMyLiveSessions } from '@/lib/liveSessions'
 import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
 
 export const Route = createFileRoute('/practice')({
@@ -172,6 +173,7 @@ function PracticePage() {
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
   const { progress: crProgress } = useCareerReadinessProgress()
+  const { sessions: liveSessions } = useMyLiveSessions()
 
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
@@ -274,7 +276,11 @@ function PracticePage() {
               {programme === 2 && (
                 <>
                   <AssessmentCard />
-                  <CareerReadinessOverview progress={crProgress} mentorApproved={crReview.state === 'approved'} />
+                  <CareerReadinessOverview
+                    progress={crProgress}
+                    mentorApproved={crReview.state === 'approved'}
+                    liveSessions={liveSessions.length}
+                  />
                   <ProgrammeCompletion stages={crStages}>
                     <MentorReviewPanel
                       programme="career-readiness"

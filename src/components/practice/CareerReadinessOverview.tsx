@@ -1,7 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
-import { PERSONAL_MAX, personalPoints } from '@/lib/readinessScore'
+import {
+  CR_SIGNOFF_POINTS,
+  LIVE_SESSIONS_MAX_POINTS,
+  PERSONAL_MAX,
+  POINTS_PER_MODULE,
+  personalPoints,
+} from '@/lib/readinessScore'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -26,13 +32,16 @@ const CIRC = 2 * Math.PI * R
 export function CareerReadinessOverview({
   progress,
   mentorApproved,
+  liveSessions,
 }: {
   progress: ProgrammeProgress
   mentorApproved: boolean
+  /** Live sessions with a trainer, mentor or institution, confirmed by them. */
+  liveSessions: number
 }) {
   const { modules, modulesDone, modulesTotal, itemsDone, itemsTotal, next, started } = progress
   const percent = itemsTotal ? Math.round((itemsDone / itemsTotal) * 100) : 0
-  const points = personalPoints({ modulesDone, mentorApproved })
+  const points = personalPoints({ modulesDone, liveSessions, crSignedOff: mentorApproved })
   const target = next ?? modules[0]
   const targetIndex = modules.findIndex((m) => m.slug === target.slug)
 
@@ -75,7 +84,9 @@ export function CareerReadinessOverview({
               <span className="text-base font-normal text-white/50"> / {PERSONAL_MAX} points</span>
             </p>
             <p className="mt-1 text-xs leading-relaxed text-white/70">
-              4 points for every module you finish, and 10 more when a mentor signs off your practice.
+              {POINTS_PER_MODULE} points for every module you finish, up to {LIVE_SESSIONS_MAX_POINTS} for live
+              sessions with a trainer, mentor or institution, and {CR_SIGNOFF_POINTS} when a mentor signs off your
+              practice.
             </p>
           </div>
 
@@ -109,10 +120,10 @@ export function CareerReadinessOverview({
             </p>
           </div>
           <div>
-            <p className="text-[11px] font-medium text-white/60">Tasks written</p>
+            <p className="text-[11px] font-medium text-white/60">Live sessions</p>
             <p className="mt-0.5 font-display text-lg font-semibold text-white">
-              {itemsDone}
-              <span className="text-sm font-normal text-white/50">/{itemsTotal}</span>
+              {liveSessions}
+              <span className="text-sm font-normal text-white/50">/{LIVE_SESSIONS_MAX_POINTS / 2}</span>
             </p>
           </div>
           <div>

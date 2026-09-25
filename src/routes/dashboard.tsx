@@ -10,6 +10,8 @@ import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResult
 import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
+import { useMyLiveSessions } from '@/lib/liveSessions'
+import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
 import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
@@ -107,7 +109,8 @@ function DashboardPage() {
   const [practice, setPractice] = useState<PracticeSummary>({})
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
-  const { progress: crProgress } = useCareerReadinessProgress()
+  const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
+  const { sessions: liveSessions, loading: liveLoading } = useMyLiveSessions()
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -117,15 +120,32 @@ function DashboardPage() {
 
   // The score comes from the profile alone (see lib/readinessScore.ts);
   // practice results still feed the course progress in KeyMeasures.
-  const readiness = useMemo(
+  const estimate = useMemo(
     () =>
       profile
         ? computeReadiness(profile, verification.view, verification.hasOpenRequest, {
             modulesDone: crProgress.modulesDone,
-            mentorApproved: crReview.state === 'approved',
+            liveSessions: liveSessions.length,
+            crSignedOff: crReview.state === 'approved',
+            dmSignedOff: dmReview.state === 'approved',
           })
         : null,
-    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, crReview.state],
+    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, liveSessions.length, crReview.state, dmReview.state],
+  )
+  // The number itself is issued by the server; the estimate above is the guide
+  // and the fallback. Re-ask whenever something the score depends on changes.
+  const [serverScore, setServerScore] = useState<ServerScore | null>(null)
+  useEffect(() => {
+    if (profileLoading || verification.loading || crLoading || liveLoading) return
+    let active = true
+    refreshMyScore().then((s) => active && setServerScore(s))
+    return () => {
+      active = false
+    }
+  }, [profileLoading, verification.loading, crLoading, liveLoading, verification.view, crProgress.modulesDone, liveSessions.length, crReview.state, dmReview.state])
+  const readiness = useMemo(
+    () => (estimate && serverScore ? withServerScore(estimate, serverScore) : estimate),
+    [estimate, serverScore],
   )
   const practicedCount = useMemo(
     () => skillTracks.filter((t) => practice[t.slug]).length,
