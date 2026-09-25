@@ -5,9 +5,11 @@
  * A standard, market-facing measure of where a student stands as a candidate,
  * built only from evidence somebody checked. Method v3:
  *
- *   30  Personal development     — the Career Readiness Programme: 4 points per
- *                                   module finished (5 modules = 20) and 10
- *                                   when a mentor signs the programme off
+ *   30  Personal development     — 2 points per Career Readiness module (5 = 10),
+ *                                   2 per live session with a trainer, mentor
+ *                                   or institution whose attendance was
+ *                                   confirmed (5 = 10), and 10 when a mentor
+ *                                   signs the programme off
  *   20  Professional             — verified education (max 10) and 10 when a
  *                                   mentor signs off the Digital Marketing
  *                                   practice
@@ -35,7 +37,8 @@
  * ever disagree.
  *
  * VERIFIED vs SELF-REPORTED: education, experience, projects and the mentor
- * sign-offs are checked by a person. Module completions (written, not yet read
+ * sign-offs and confirmed live sessions are checked by a person. Module
+ * completions (written, not yet read
  * by a mentor) are self-reported until the Career Readiness sign-off. Both are counted, and reported separately,
  * so nobody has to guess how much of a number was checked.
  */
@@ -61,9 +64,11 @@ export const PERSONAL_MAX = 30
 export const PROFESSIONAL_MAX = 20
 export const EXPERIENCE_MAX = 30
 
-/** Personal: 5 modules x 4 = 20, plus the Career Readiness sign-off. */
-export const POINTS_PER_MODULE = 4
+/** Personal: 5 modules x 2 = 10, live sessions up to 10, the sign-off 10. */
+export const POINTS_PER_MODULE = 2
 export const PROGRAMME_MODULES = 5
+export const POINTS_PER_LIVE_SESSION = 2
+export const LIVE_SESSIONS_MAX_POINTS = 10
 export const CR_SIGNOFF_POINTS = 10
 /** Professional: the Digital Marketing sign-off (education is the other 10). */
 export const DM_SIGNOFF_POINTS = 10
@@ -91,15 +96,23 @@ const PROJECTS_MAX = 10
 export interface ProgrammeStanding {
   /** Career Readiness modules with all four items written. */
   modulesDone: number
+  /** Live sessions whose attendance was confirmed by whoever ran them. */
+  liveSessions: number
   crSignedOff: boolean
   dmSignedOff: boolean
 }
-export const NO_STANDING: ProgrammeStanding = { modulesDone: 0, crSignedOff: false, dmSignedOff: false }
+export const NO_STANDING: ProgrammeStanding = { modulesDone: 0, liveSessions: 0, crSignedOff: false, dmSignedOff: false }
 
 /** The Personal Development points a learner has earned so far. */
-export function personalPoints(p: Pick<ProgrammeStanding, 'modulesDone' | 'crSignedOff'>): number {
+export function livePoints(sessions: number): number {
+  return Math.min(sessions * POINTS_PER_LIVE_SESSION, LIVE_SESSIONS_MAX_POINTS)
+}
+
+export function personalPoints(p: Pick<ProgrammeStanding, 'modulesDone' | 'liveSessions' | 'crSignedOff'>): number {
   return Math.min(
-    Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE + (p.crSignedOff ? CR_SIGNOFF_POINTS : 0),
+    Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE +
+      livePoints(p.liveSessions) +
+      (p.crSignedOff ? CR_SIGNOFF_POINTS : 0),
     PERSONAL_MAX,
   )
 }
@@ -243,6 +256,13 @@ export function computeReadiness(
 
   // -- The single biggest gain the student can act on right now.
   const candidates: NextAction[] = []
+  if (livePoints(standing.liveSessions) < LIVE_SESSIONS_MAX_POINTS) {
+    candidates.push({
+      label: 'Attend a live session with a mentor or trainer',
+      upTo: POINTS_PER_LIVE_SESSION,
+      to: '/community/mentors',
+    })
+  }
   if (modulesDone < PROGRAMME_MODULES) {
     candidates.push({ label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 })
   } else if (!standing.crSignedOff) {
@@ -286,6 +306,7 @@ export function computeReadiness(
     verifiedPoints: round1(
       t.education +
         t.experience +
+        livePoints(standing.liveSessions) +
         (standing.crSignedOff ? CR_SIGNOFF_POINTS + modulesDone * POINTS_PER_MODULE : 0) +
         (standing.dmSignedOff ? DM_SIGNOFF_POINTS : 0),
     ),
@@ -296,6 +317,7 @@ export function computeReadiness(
       max: PERSONAL_MAX,
       detail: [
         `${modulesDone} of ${PROGRAMME_MODULES} modules`,
+        plural(standing.liveSessions, 'live session'),
         standing.crSignedOff ? 'signed off by a mentor' : `mentor sign-off adds ${CR_SIGNOFF_POINTS}`,
       ].join(' · '),
     },

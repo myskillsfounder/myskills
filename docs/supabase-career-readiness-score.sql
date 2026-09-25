@@ -8,15 +8,19 @@
 -- refresh_my_career_readiness_score() is what the dashboard calls.
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
--- Depends on: public.profiles, public.verified_items
+-- Depends on: public.profiles, public.live_session_attendance
+-- (docs/supabase-live-sessions.sql — run that first), public.verified_items
 -- (docs/supabase-profile-verification.sql), public.career_readiness_items() and
 -- career_readiness_responses (docs/supabase-career-readiness-programme.sql),
 -- public.mentor_reviews (docs/supabase-mentor-reviews.sql), public.is_admin().
 --
 -- THE METHOD (v3) — the same rules as src/lib/readinessScore.ts, which stays
 -- as the student's "what next" guide and as a fallback if this isn't run:
---   Personal development  30   4 per Career Readiness module finished (5 x 4)
---                              + 10 when a mentor signs off the programme
+--   Personal development  30   2 per Career Readiness module finished (5 x 2)
+--                              + 2 per live session with a trainer, mentor or
+--                              institution whose attendance was confirmed
+--                              (5 sessions = 10) + 10 when a mentor signs off
+--                              the programme
 --   Professional          20   highest VERIFIED education level (Class 10 = 2,
 --                              Class 12 = 4, Diploma = 6, Bachelor's = 8,
 --                              Master's = 9, Doctorate = 10; x0.75 while in
@@ -75,7 +79,8 @@ set search_path = public
 as $$
 declare
   c_method constant text := 'v3';
-  c_mod_pts constant int := 4;
+  c_mod_pts constant int := 2;
+  c_live_pts constant int := 2;
   c_cr_pts constant int := 10;
   c_dm_pts constant int := 10;
 
@@ -105,6 +110,7 @@ declare
   v_months int;
 
   v_modules int := 0;
+  v_live int := 0;
   v_cr_signed boolean := false;
   v_dm_signed boolean := false;
 
@@ -232,6 +238,8 @@ begin
      group by c.module
     having count(*) = 4
   ) m;
+  select count(*) into v_live from public.live_session_attendance a where a.student_id = p_user;
+
   select exists (select 1 from public.mentor_reviews mr
                   where mr.user_id = p_user and mr.programme = 'career-readiness' and mr.status = 'approved'),
          exists (select 1 from public.mentor_reviews mr
@@ -240,11 +248,12 @@ begin
 
   v_prof_total := v_best_edu + case when v_dm_signed then c_dm_pts else 0 end;
   v_exp_total  := least(v_internships * 5, 15) + least(v_work_months, 5) + least(v_projects * 2.5, 10);
-  v_personal   := least(v_modules, 5) * c_mod_pts + case when v_cr_signed then c_cr_pts else 0 end;
+  v_personal   := least(v_modules, 5) * c_mod_pts + least(v_live * c_live_pts, 10)
+                  + case when v_cr_signed then c_cr_pts else 0 end;
 
   -- Once a mentor has signed the programme off they have read the modules, so
   -- those points stop being self-reported.
-  v_verified := v_best_edu + v_exp_total
+  v_verified := v_best_edu + v_exp_total + least(v_live * c_live_pts, 10)
                 + case when v_cr_signed then c_cr_pts + least(v_modules, 5) * c_mod_pts else 0 end
                 + case when v_dm_signed then c_dm_pts else 0 end;
   v_self     := case when v_cr_signed then 0 else least(v_modules, 5) * c_mod_pts end;
@@ -256,7 +265,8 @@ begin
     'self_reported_points', round(v_self, 1),
     'identity_verified', v_identity,
     'personal', jsonb_build_object(
-      'points', v_personal, 'max', 30, 'modules_done', least(v_modules, 5), 'mentor_approved', v_cr_signed),
+      'points', v_personal, 'max', 30, 'modules_done', least(v_modules, 5), 'live_sessions', v_live,
+      'mentor_approved', v_cr_signed),
     'professional', jsonb_build_object(
       'points', v_prof_total, 'max', 20, 'education_points', v_best_edu,
       'education_level', v_edu_label, 'mentor_approved', v_dm_signed),

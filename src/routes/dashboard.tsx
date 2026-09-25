@@ -10,6 +10,7 @@ import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResult
 import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
+import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
 import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
@@ -109,6 +110,7 @@ function DashboardPage() {
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
   const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
+  const { sessions: liveSessions, loading: liveLoading } = useMyLiveSessions()
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -123,23 +125,24 @@ function DashboardPage() {
       profile
         ? computeReadiness(profile, verification.view, verification.hasOpenRequest, {
             modulesDone: crProgress.modulesDone,
+            liveSessions: liveSessions.length,
             crSignedOff: crReview.state === 'approved',
             dmSignedOff: dmReview.state === 'approved',
           })
         : null,
-    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, crReview.state, dmReview.state],
+    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, liveSessions.length, crReview.state, dmReview.state],
   )
   // The number itself is issued by the server; the estimate above is the guide
   // and the fallback. Re-ask whenever something the score depends on changes.
   const [serverScore, setServerScore] = useState<ServerScore | null>(null)
   useEffect(() => {
-    if (profileLoading || verification.loading || crLoading) return
+    if (profileLoading || verification.loading || crLoading || liveLoading) return
     let active = true
     refreshMyScore().then((s) => active && setServerScore(s))
     return () => {
       active = false
     }
-  }, [profileLoading, verification.loading, crLoading, verification.view, crProgress.modulesDone, crReview.state, dmReview.state])
+  }, [profileLoading, verification.loading, crLoading, liveLoading, verification.view, crProgress.modulesDone, liveSessions.length, crReview.state, dmReview.state])
   const readiness = useMemo(
     () => (estimate && serverScore ? withServerScore(estimate, serverScore) : estimate),
     [estimate, serverScore],
