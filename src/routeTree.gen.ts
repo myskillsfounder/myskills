@@ -54,7 +54,6 @@ import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
 import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
-import { Route as AdminLayoutUsersRouteImport } from './routes/admin/_layout/users'
 import { Route as AdminLayoutMentorsRouteImport } from './routes/admin/_layout/mentors'
 import { Route as AdminLayoutMentorReviewsRouteImport } from './routes/admin/_layout/mentor-reviews'
 import { Route as AdminLayoutLiveSessionsRouteImport } from './routes/admin/_layout/live-sessions'
@@ -65,6 +64,8 @@ import { Route as AdminLayoutCertificatesRouteImport } from './routes/admin/_lay
 import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog'
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
+import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
+import { Route as AdminLayoutUsersIdRouteImport } from './routes/admin/_layout/users.$id'
 
 const WellnessRoute = WellnessRouteImport.update({
   id: '/wellness',
@@ -294,11 +295,6 @@ const AdminLayoutVerificationRoute = AdminLayoutVerificationRouteImport.update({
   path: '/verification',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
-const AdminLayoutUsersRoute = AdminLayoutUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AdminLayoutRoute,
-} as any)
 const AdminLayoutMentorsRoute = AdminLayoutMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
@@ -350,6 +346,16 @@ const AdminLayoutAssessmentQuestionsRoute =
 const AdminLayoutAdsRoute = AdminLayoutAdsRouteImport.update({
   id: '/ads',
   path: '/ads',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutUsersIndexRoute = AdminLayoutUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutUsersIdRoute = AdminLayoutUsersIdRouteImport.update({
+  id: '/users/$id',
+  path: '/users/$id',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
 
@@ -406,10 +412,11 @@ export interface FileRoutesByFullPath {
   '/admin/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
-  '/admin/users': typeof AdminLayoutUsersRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin/': typeof AdminLayoutIndexRoute
+  '/admin/users/$id': typeof AdminLayoutUsersIdRoute
+  '/admin/users/': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -462,10 +469,11 @@ export interface FileRoutesByTo {
   '/admin/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
-  '/admin/users': typeof AdminLayoutUsersRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/admin': typeof AdminLayoutIndexRoute
+  '/admin/users/$id': typeof AdminLayoutUsersIdRoute
+  '/admin/users': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -521,10 +529,11 @@ export interface FileRoutesById {
   '/admin/_layout/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/_layout/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/_layout/mentors': typeof AdminLayoutMentorsRoute
-  '/admin/_layout/users': typeof AdminLayoutUsersRoute
   '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
+  '/admin/_layout/users/$id': typeof AdminLayoutUsersIdRoute
+  '/admin/_layout/users/': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -581,10 +590,11 @@ export interface FileRouteTypes {
     | '/admin/live-sessions'
     | '/admin/mentor-reviews'
     | '/admin/mentors'
-    | '/admin/users'
     | '/admin/verification'
     | '/admin/wellness'
     | '/admin/'
+    | '/admin/users/$id'
+    | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -637,10 +647,11 @@ export interface FileRouteTypes {
     | '/admin/live-sessions'
     | '/admin/mentor-reviews'
     | '/admin/mentors'
-    | '/admin/users'
     | '/admin/verification'
     | '/admin/wellness'
     | '/admin'
+    | '/admin/users/$id'
+    | '/admin/users'
   id:
     | '__root__'
     | '/'
@@ -695,10 +706,11 @@ export interface FileRouteTypes {
     | '/admin/_layout/live-sessions'
     | '/admin/_layout/mentor-reviews'
     | '/admin/_layout/mentors'
-    | '/admin/_layout/users'
     | '/admin/_layout/verification'
     | '/admin/_layout/wellness'
     | '/admin/_layout/'
+    | '/admin/_layout/users/$id'
+    | '/admin/_layout/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1059,13 +1071,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutVerificationRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/admin/_layout/users': {
-      id: '/admin/_layout/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminLayoutUsersRouteImport
-      parentRoute: typeof AdminLayoutRoute
-    }
     '/admin/_layout/mentors': {
       id: '/admin/_layout/mentors'
       path: '/mentors'
@@ -1136,6 +1141,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutAdsRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/users/': {
+      id: '/admin/_layout/users/'
+      path: '/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminLayoutUsersIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/users/$id': {
+      id: '/admin/_layout/users/$id'
+      path: '/users/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AdminLayoutUsersIdRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
   }
 }
 
@@ -1178,10 +1197,11 @@ interface AdminLayoutRouteChildren {
   AdminLayoutLiveSessionsRoute: typeof AdminLayoutLiveSessionsRoute
   AdminLayoutMentorReviewsRoute: typeof AdminLayoutMentorReviewsRoute
   AdminLayoutMentorsRoute: typeof AdminLayoutMentorsRoute
-  AdminLayoutUsersRoute: typeof AdminLayoutUsersRoute
   AdminLayoutVerificationRoute: typeof AdminLayoutVerificationRoute
   AdminLayoutWellnessRoute: typeof AdminLayoutWellnessRoute
   AdminLayoutIndexRoute: typeof AdminLayoutIndexRoute
+  AdminLayoutUsersIdRoute: typeof AdminLayoutUsersIdRoute
+  AdminLayoutUsersIndexRoute: typeof AdminLayoutUsersIndexRoute
 }
 
 const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
@@ -1195,10 +1215,11 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutLiveSessionsRoute: AdminLayoutLiveSessionsRoute,
   AdminLayoutMentorReviewsRoute: AdminLayoutMentorReviewsRoute,
   AdminLayoutMentorsRoute: AdminLayoutMentorsRoute,
-  AdminLayoutUsersRoute: AdminLayoutUsersRoute,
   AdminLayoutVerificationRoute: AdminLayoutVerificationRoute,
   AdminLayoutWellnessRoute: AdminLayoutWellnessRoute,
   AdminLayoutIndexRoute: AdminLayoutIndexRoute,
+  AdminLayoutUsersIdRoute: AdminLayoutUsersIdRoute,
+  AdminLayoutUsersIndexRoute: AdminLayoutUsersIndexRoute,
 }
 
 const AdminLayoutRouteWithChildren = AdminLayoutRoute._addFileChildren(
