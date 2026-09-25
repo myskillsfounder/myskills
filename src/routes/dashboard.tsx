@@ -10,6 +10,7 @@ import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResult
 import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
+import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
 import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
@@ -107,7 +108,7 @@ function DashboardPage() {
   const [practice, setPractice] = useState<PracticeSummary>({})
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
-  const { progress: crProgress } = useCareerReadinessProgress()
+  const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -117,7 +118,7 @@ function DashboardPage() {
 
   // The score comes from the profile alone (see lib/readinessScore.ts);
   // practice results still feed the course progress in KeyMeasures.
-  const readiness = useMemo(
+  const estimate = useMemo(
     () =>
       profile
         ? computeReadiness(profile, verification.view, verification.hasOpenRequest, {
@@ -126,6 +127,21 @@ function DashboardPage() {
           })
         : null,
     [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, crReview.state],
+  )
+  // The number itself is issued by the server; the estimate above is the guide
+  // and the fallback. Re-ask whenever something the score depends on changes.
+  const [serverScore, setServerScore] = useState<ServerScore | null>(null)
+  useEffect(() => {
+    if (profileLoading || verification.loading || crLoading) return
+    let active = true
+    refreshMyScore().then((s) => active && setServerScore(s))
+    return () => {
+      active = false
+    }
+  }, [profileLoading, verification.loading, crLoading, verification.view, crProgress.modulesDone, crReview.state])
+  const readiness = useMemo(
+    () => (estimate && serverScore ? withServerScore(estimate, serverScore) : estimate),
+    [estimate, serverScore],
   )
   const practicedCount = useMemo(
     () => skillTracks.filter((t) => practice[t.slug]).length,

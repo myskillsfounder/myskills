@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
-import { PERSONAL_MAX, personalPoints } from '@/lib/readinessScore'
+import { MENTOR_SIGNOFF_POINTS, PERSONAL_MAX, POINTS_PER_MODULE, personalPoints } from '@/lib/readinessScore'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -75,7 +75,8 @@ export function CareerReadinessOverview({
               <span className="text-base font-normal text-white/50"> / {PERSONAL_MAX} points</span>
             </p>
             <p className="mt-1 text-xs leading-relaxed text-white/70">
-              4 points for every module you finish, and 10 more when a mentor signs off your practice.
+              {POINTS_PER_MODULE} points for every module you finish, and {MENTOR_SIGNOFF_POINTS} more when a mentor
+              signs off your practice.
             </p>
           </div>
 

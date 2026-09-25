@@ -7,9 +7,10 @@
  * the job market.
  *
  *   30  Personal development      — earned only through the Career
- *                                    Readiness Programme: 4 points per module
- *                                    finished (5 modules) and 10 once a mentor
- *                                    signs the practice off
+ *                                    Readiness Programme: 2 points per module
+ *                                    finished (5 modules) and 20 once a mentor
+ *                                    signs the practice off — most of it needs
+ *                                    a person, not just writing something down
  *   30  Professional development  — education level + skills
  *   40  Experience                — internships + work + projects
  *
@@ -19,6 +20,19 @@
  *
  * Every rule is a named constant below so the method can be published and
  * adjusted without hunting through logic.
+ *
+ * WHO ISSUES THE NUMBER: the server does (docs/supabase-career-readiness-
+ * score.sql, called through lib/scoreService.ts): it works the score out from
+ * verified records and stores it with a date and a method version. This file
+ * is the same method in the browser — it still drives the "what next" guide
+ * and the pending-points figure, and stands in if the server score isn't
+ * available. Keep the two in step; the dashboard warns in the console if they
+ * ever disagree.
+ *
+ * VERIFIED vs SELF-REPORTED: education, experience, projects and the mentor
+ * sign-off are checked by a person. Skills (self-declared) and module
+ * completions (written, not yet read) are self-reported. Both are counted, and
+ * reported separately, so nobody has to guess how much of a number was checked.
  */
 import type { Education, Experience, Profile, Project } from './profile'
 import { NO_VERIFICATION, type VerificationView } from './verification'
@@ -49,9 +63,11 @@ const EDUCATION_MAX = 22
 const POINTS_PER_SKILL = 1
 const SKILLS_MAX = 8
 
-/** Personal development: 5 modules x 4 = 20, plus 10 for a mentor's sign-off. */
-export const POINTS_PER_MODULE = 4
-export const MENTOR_SIGNOFF_POINTS = 10
+/** Personal development: 5 modules x 2 = 10, plus 20 for a mentor's sign-off. */
+export const POINTS_PER_MODULE = 2
+export const MENTOR_SIGNOFF_POINTS = 20
+/** Bump when the rules change, so a stored score says which rules made it. */
+export const METHOD_VERSION = 'v2'
 export const PROGRAMME_MODULES = 5
 
 /** How far a learner is through the Career Readiness Programme. */
@@ -90,6 +106,10 @@ const BANDS: { min: number; band: ReadinessBand }[] = [
   { min: 0, band: { label: 'Getting started', note: 'Every qualification, internship and project adds to this.' } },
 ]
 
+export function bandFor(score: number): ReadinessBand {
+  return BANDS.find((b) => score >= b.min)!.band
+}
+
 export interface ReadinessComponent {
   points: number
   max: number
@@ -110,6 +130,14 @@ export interface Readiness {
   band: ReadinessBand
   /** Points already on the profile that verification would unlock. */
   pendingPoints: number
+  /** Points a person has checked (verified profile entries, mentor sign-off). */
+  verifiedPoints: number
+  /** Points that count but nobody has checked yet (listed skills, finished modules). */
+  selfReportedPoints: number
+  /** Where the number came from: the server's stored calculation, or this browser's. */
+  source: 'server' | 'estimate'
+  /** When the server worked it out. */
+  computedAt?: string
   personal: ReadinessComponent
   professional: ReadinessComponent
   experience: ReadinessComponent
@@ -243,14 +271,19 @@ export function computeReadiness(
 
   return {
     score,
-    band: BANDS.find((b) => score >= b.min)!.band,
+    band: bandFor(score),
     pendingPoints,
+    verifiedPoints: round1(
+      t.professional - t.skillsPts + t.experience + (programme.mentorApproved ? MENTOR_SIGNOFF_POINTS : 0),
+    ),
+    selfReportedPoints: round1(t.skillsPts + modulesDone * POINTS_PER_MODULE),
+    source: 'estimate',
     personal: {
       points: personalPts,
       max: PERSONAL_MAX,
       detail: [
         `${modulesDone} of ${PROGRAMME_MODULES} modules`,
-        programme.mentorApproved ? 'signed off by a mentor' : 'mentor sign-off adds 10',
+        programme.mentorApproved ? 'signed off by a mentor' : `mentor sign-off adds ${MENTOR_SIGNOFF_POINTS}`,
       ].join(' · '),
     },
     professional: {

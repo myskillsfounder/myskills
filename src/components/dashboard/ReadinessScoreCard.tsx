@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, TrendingUp } from 'lucide-react'
-import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
+import { METHOD_VERSION, type Readiness, type ReadinessComponent } from '@/lib/readinessScore'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
 function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
@@ -33,7 +33,9 @@ function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
  * it?" — a score with no lever attached is just a grade.
  */
 export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
-  const { score, band, personal, professional, experience, nextAction } = readiness
+  const { score, band, personal, professional, experience, nextAction, verifiedPoints, selfReportedPoints } = readiness
+  const counted = verifiedPoints + selfReportedPoints
+  const verifiedShare = counted > 0 ? (verifiedPoints / counted) * 100 : 0
   const R = 54
   const C = 2 * Math.PI * R
 
@@ -91,6 +93,37 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
         </div>
       </div>
 
+      {counted > 0 && (
+        <div className="mt-6 rounded-2xl border border-ink-900/[0.06] bg-ink-50/70 p-4">
+          <div className="flex items-baseline justify-between gap-3 text-sm">
+            <span className="font-medium text-ink-800">How much of it has been checked</span>
+            <span className="shrink-0 tabular-nums text-ink-500">
+              <span className="font-semibold text-ink-900">{Math.round(verifiedPoints)}</span> of {Math.round(counted)}
+            </span>
+          </div>
+          <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-ink-100" aria-hidden>
+            <div className="bg-emerald-500" style={{ width: `${verifiedShare}%` }} />
+            <div className="bg-amber-300" style={{ width: `${100 - verifiedShare}%` }} />
+          </div>
+          <ul className="mt-3 space-y-1.5 text-xs leading-relaxed text-ink-600">
+            <li className="flex items-start gap-2">
+              <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+              <span>
+                <span className="font-semibold text-ink-800">Verified · {Math.round(verifiedPoints)} points.</span>{' '}
+                Education, work and projects MySkills checked on a call, and a mentor’s sign-off.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-300" />
+              <span>
+                <span className="font-semibold text-ink-800">Self-reported · {Math.round(selfReportedPoints)} points.</span>{' '}
+                Skills you list and modules you’ve finished — they count, but no one has checked them yet.
+              </span>
+            </li>
+          </ul>
+        </div>
+      )}
+
       {nextAction && (
         <Link
           to={nextAction.to}
@@ -119,7 +152,14 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       <p className="mt-4 text-[11px] leading-relaxed text-ink-400">
         Education, experience and projects count once the MySkills team verifies them. Personal
         development comes from the Career Readiness Programme. Your assessment and practice scores
-        aren’t part of it.
+        aren’t part of it.{' '}
+        {readiness.source === 'server' && readiness.computedAt
+          ? `Issued by MySkills on ${new Date(readiness.computedAt).toLocaleDateString(undefined, {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            })} · method ${METHOD_VERSION}.`
+          : 'Shown as calculated in your browser; the official score appears once it has synced.'}
       </p>
     </section>
   )
