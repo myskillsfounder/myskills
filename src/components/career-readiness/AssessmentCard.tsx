@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { suggestedStart, useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
+import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -19,8 +19,8 @@ const cta =
 /**
  * Practice's entry to the Career Readiness assessment, in the same dark
  * feature-card treatment as the Career Readiness cards around it: an
- * invitation until it's taken, then one line — the headline result and a way
- * back to the rest, which lives on the result page. Renders nothing while loading so the page doesn't flash the
+ * invitation until it's taken, then just a heading and a way to the result,
+ * which lives on the result page. Renders nothing while loading so the page doesn't flash the
  * wrong state.
  */
 export function AssessmentCard() {
@@ -46,17 +46,12 @@ export function AssessmentCard() {
     )
   }
 
-  const start = suggestedStart(result.scores)
-
   return (
     <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between">
       <Rings />
-      <div className="relative min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Your personal aptitude</p>
-        <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-          Start with {start.module}
-        </h3>
-      </div>
+      <h3 className="relative min-w-0 font-display text-2xl font-semibold leading-tight text-white">
+        Your personal aptitude
+      </h3>
       <Link to="/career-readiness-assessment" className={`relative ${cta}`}>
         View your results
         <ArrowRight size={16} />
