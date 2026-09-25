@@ -263,4 +263,7 @@ main() {
 }
 
 # Only run when executed, so the functions above can be sourced and tested.
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi
+# The `exit` matters: this script runs `git pull`, which can rewrite this very
+# file mid-run, and bash reads a script as it goes. Leaving here means it never
+# reads on from an offset in a file that has changed underneath it.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; exit $?; fi
