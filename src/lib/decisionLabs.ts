@@ -1,13 +1,19 @@
 /**
- * Practice-track scenario question bank ("Decision Labs").
+ * Practice-track scenario question bank ("Decision Labs") — the QUESTIONS only.
  * Auto-generated from content/source-assessment-bank/MySkills_*_Scenario.xlsx
  * (8 files, one per skill track). Regenerate from the xlsx if the source
  * content changes — do not hand-edit the data array below.
  *
- * This is DIFFERENT from src/lib/initialAssessment.ts (the one-time,
- * plain-MCQ initial assessment). These are richer business scenarios used
- * for retakeable practice, one track at a time. See docs/BACKEND.md and
- * docs/FRONTEND.md (Module 16) for the product decisions behind this split.
+ * The correct answers and the explanations are NOT in this file, on purpose:
+ * this file ships to every visitor's browser, and an answer key in the
+ * bundle is an answer key for anyone who opens devtools. They live in
+ * public.decision_lab_answer_key (docs/supabase-practice-server-grading.sql),
+ * are graded by submit_practice_attempt(), and come back with the result —
+ * after the attempt is recorded, never before.
+ *
+ * This is DIFFERENT from the Foundation assessment (the one-time, plain-MCQ
+ * test graded by grade_initial_assessment). These are richer business
+ * scenarios used for retakeable practice, one track at a time.
  */
 
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
@@ -29,8 +35,12 @@ export interface ScenarioQuestion {
   constraints: string
   question: string
   options: string[]
+}
+
+/** What the server returns for one question after grading an attempt. */
+export interface ScenarioReview {
   /** index (0-3) of the correct option */
-  correct: number
+  correctIndex: number
   whyCorrect: string
   whyOthersWrong: string
   learningOutcome: string
@@ -38,7 +48,8 @@ export interface ScenarioQuestion {
 
 /**
  * Points awarded per question, by difficulty — harder scenarios are worth
- * more (product decision: weighted scoring, not flat). Tune here only.
+ * more (product decision: weighted scoring, not flat). Display only: the
+ * server holds the real weight for each question in the answer key.
  */
 export const DIFFICULTY_WEIGHT: Record<Difficulty, number> = {
   Beginner: 5,
@@ -68,11 +79,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Meta Lead Campaign",
       "Google Search Campaign",
       "Influencer Marketing"
-    ],
-    "correct": 2,
-    "whyCorrect": "Google Search captures people actively searching for courses, making it the fastest source of qualified demand for a new brand.",
-    "whyOthersWrong": "SEO is slow, Meta lacks historical data for optimisation, and influencer campaigns build awareness but not predictable lead volume.",
-    "learningOutcome": "Selecting channels based on business goals and customer intent."
+    ]
   },
   {
     "id": "MF-S002",
@@ -94,11 +101,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Women 35–50 interested in premium skincare",
       "Teenagers",
       "Broad audience with no interests"
-    ],
-    "correct": 1,
-    "whyCorrect": "Launching with the highest-intent segment improves learning and ROI.",
-    "whyOthersWrong": "Broad targeting wastes budget while teenagers are unlikely buyers.",
-    "learningOutcome": "Market segmentation and audience prioritisation."
+    ]
   },
   {
     "id": "MF-S003",
@@ -120,11 +123,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Consideration",
       "Conversion",
       "Retention"
-    ],
-    "correct": 2,
-    "whyCorrect": "The business is attracting visitors but failing to convert them into customers.",
-    "whyOthersWrong": "Traffic is already strong; retention becomes important after purchases increase.",
-    "learningOutcome": "Diagnosing customer journey bottlenecks."
+    ]
   },
   {
     "id": "MF-S004",
@@ -146,11 +145,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Scientifically formulated for busy professionals",
       "Largest warehouse",
       "Fastest delivery"
-    ],
-    "correct": 1,
-    "whyCorrect": "A differentiated benefit targeted at a specific audience creates stronger positioning.",
-    "whyOthersWrong": "Price alone starts a race to the bottom; logistics are not unique customer benefits.",
-    "learningOutcome": "Creating compelling value propositions."
+    ]
   },
   {
     "id": "MF-S005",
@@ -172,11 +167,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Choose one priority segment",
       "Ignore segmentation",
       "Launch internationally"
-    ],
-    "correct": 1,
-    "whyCorrect": "Focused positioning creates stronger messaging and better optimisation.",
-    "whyOthersWrong": "Trying to serve everyone usually weakens campaign performance.",
-    "learningOutcome": "Applying STP in real decisions."
+    ]
   },
   {
     "id": "MF-S006",
@@ -198,11 +189,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Landing page CTA and enquiry form",
       "Office location",
       "Facebook followers"
-    ],
-    "correct": 1,
-    "whyCorrect": "Improving the conversion step has the highest impact before increasing traffic.",
-    "whyOthersWrong": "Brand assets don't address the bottleneck.",
-    "learningOutcome": "Marketing funnel optimisation."
+    ]
   },
   {
     "id": "MF-S007",
@@ -224,11 +211,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Strengthen differentiation and service quality",
       "Stop advertising",
       "Exit the market"
-    ],
-    "correct": 1,
-    "whyCorrect": "Competing on value is more sustainable than reacting solely on price.",
-    "whyOthersWrong": "Price wars erode profitability and are difficult to sustain.",
-    "learningOutcome": "Competitive positioning."
+    ]
   },
   {
     "id": "MF-S008",
@@ -250,11 +233,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Use a balanced mix of Search, Social and Remarketing",
       "Only newspapers",
       "Only television"
-    ],
-    "correct": 1,
-    "whyCorrect": "A diversified plan captures both active buyers and future prospects.",
-    "whyOthersWrong": "Single-channel strategies increase risk and miss parts of the buyer journey.",
-    "learningOutcome": "Strategic budget allocation."
+    ]
   },
   {
     "id": "MF-S009",
@@ -276,11 +255,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Launch retention campaigns and loyalty programme",
       "Increase prices",
       "Pause marketing"
-    ],
-    "correct": 1,
-    "whyCorrect": "Retaining existing customers is generally more cost-effective than constantly acquiring new ones.",
-    "whyOthersWrong": "More acquisition increases costs without fixing the root problem.",
-    "learningOutcome": "Customer retention strategy."
+    ]
   },
   {
     "id": "MF-S010",
@@ -302,11 +277,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "SEO + Content + Search Ads + Email Nurturing",
       "Social media only",
       "Referral marketing only"
-    ],
-    "correct": 1,
-    "whyCorrect": "An integrated strategy builds long-term assets while continuing to generate leads.",
-    "whyOthersWrong": "Single-channel dependence increases business risk.",
-    "learningOutcome": "Integrated marketing planning."
+    ]
   },
   {
     "id": "MR-S001",
@@ -328,11 +299,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "AI Product Management",
       "Delay",
       "Copy competitors"
-    ],
-    "correct": 1,
-    "whyCorrect": "Growing demand with lower competition.",
-    "whyOthersWrong": "Others increase risk or delay.",
-    "learningOutcome": "Identify market gaps"
+    ]
   },
   {
     "id": "MR-S002",
@@ -354,11 +321,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "KD28",
       "Both",
       "Neither"
-    ],
-    "correct": 1,
-    "whyCorrect": "Lower difficulty offers realistic wins.",
-    "whyOthersWrong": "High KD unrealistic.",
-    "learningOutcome": "Keyword prioritisation"
+    ]
   },
   {
     "id": "MR-S003",
@@ -380,11 +343,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Freelancers",
       "Families",
       "Everyone"
-    ],
-    "correct": 1,
-    "whyCorrect": "Highest willingness to pay.",
-    "whyOthersWrong": "Broad targeting weakens focus.",
-    "learningOutcome": "Segmentation"
+    ]
   },
   {
     "id": "MR-S004",
@@ -406,11 +365,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Run usability testing",
       "Trust surveys",
       "Redesign homepage"
-    ],
-    "correct": 1,
-    "whyCorrect": "Validate with behavioural testing.",
-    "whyOthersWrong": "Single source insufficient.",
-    "learningOutcome": "Mixed-method research"
+    ]
   },
   {
     "id": "MR-S005",
@@ -432,11 +387,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "New trend keyword",
       "Ignore trends",
       "Pause SEO"
-    ],
-    "correct": 1,
-    "whyCorrect": "Follow customer language.",
-    "whyOthersWrong": "Others ignore demand.",
-    "learningOutcome": "Trend analysis"
+    ]
   },
   {
     "id": "MR-S006",
@@ -458,11 +409,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "SEO content",
       "Logo",
       "Employees"
-    ],
-    "correct": 1,
-    "whyCorrect": "Content likely drives rankings.",
-    "whyOthersWrong": "Others irrelevant.",
-    "learningOutcome": "Benchmark competitors"
+    ]
   },
   {
     "id": "MR-S007",
@@ -484,11 +431,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Launch niche",
       "Everyone",
       "Reduce price"
-    ],
-    "correct": 1,
-    "whyCorrect": "Profitable niches can outperform mass markets.",
-    "whyOthersWrong": "Volume isn't everything.",
-    "learningOutcome": "Market sizing"
+    ]
   },
   {
     "id": "MR-S008",
@@ -510,11 +453,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Validate quantitatively",
       "Follow sales",
       "Target all"
-    ],
-    "correct": 1,
-    "whyCorrect": "Use additional evidence.",
-    "whyOthersWrong": "Avoid assumptions.",
-    "learningOutcome": "Persona validation"
+    ]
   },
   {
     "id": "MR-S009",
@@ -536,11 +475,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Balanced research",
       "Brand redesign",
       "Social contests"
-    ],
-    "correct": 1,
-    "whyCorrect": "Balanced research reduces risk.",
-    "whyOthersWrong": "Single source creates gaps.",
-    "learningOutcome": "Research planning"
+    ]
   },
   {
     "id": "MR-S010",
@@ -562,11 +497,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Phased launch",
       "Wait",
       "Acquire competitor"
-    ],
-    "correct": 1,
-    "whyCorrect": "Evidence supports controlled entry.",
-    "whyOthersWrong": "Others ignore research.",
-    "learningOutcome": "Strategic recommendations"
+    ]
   },
   {
     "id": "META-S001",
@@ -588,11 +519,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Traffic",
       "Leads",
       "Engagement"
-    ],
-    "correct": 2,
-    "whyCorrect": "Lead campaigns optimize toward lead generation.",
-    "whyOthersWrong": "Other objectives optimize for different outcomes.",
-    "learningOutcome": "Choose objectives aligned to goals."
+    ]
   },
   {
     "id": "META-S002",
@@ -614,11 +541,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Separate campaigns by audience",
       "One ad set only",
       "One ad per course"
-    ],
-    "correct": 1,
-    "whyCorrect": "Separate campaigns improve budget control and reporting.",
-    "whyOthersWrong": "Other options mix audiences and reduce optimization.",
-    "learningOutcome": "Design scalable structures."
+    ]
   },
   {
     "id": "META-S003",
@@ -640,11 +563,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Lookalike of existing patients",
       "Random interests",
       "Worldwide"
-    ],
-    "correct": 1,
-    "whyCorrect": "Lookalikes leverage existing conversion data.",
-    "whyOthersWrong": "Other audiences are less qualified.",
-    "learningOutcome": "Audience selection."
+    ]
   },
   {
     "id": "META-S004",
@@ -666,11 +585,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Prioritize best-selling categories",
       "Spend on weakest products",
       "Random split"
-    ],
-    "correct": 1,
-    "whyCorrect": "Budget should follow proven demand.",
-    "whyOthersWrong": "Equal or random allocation ignores performance.",
-    "learningOutcome": "Budget optimisation."
+    ]
   },
   {
     "id": "META-S005",
@@ -692,11 +607,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Advantage+ Placements",
       "Stories only",
       "Reels only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Automatic placements maximize delivery opportunities.",
-    "whyOthersWrong": "Restricting placements limits learning.",
-    "learningOutcome": "Placement strategy."
+    ]
   },
   {
     "id": "META-S006",
@@ -718,11 +629,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Increase budget",
       "Pause account",
       "Change logo"
-    ],
-    "correct": 0,
-    "whyCorrect": "Poor CTR suggests creative or messaging issues.",
-    "whyOthersWrong": "More budget won't solve low engagement.",
-    "learningOutcome": "Interpret CTR and CPC."
+    ]
   },
   {
     "id": "META-S007",
@@ -744,11 +651,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Landing page",
       "Budget",
       "Placements"
-    ],
-    "correct": 1,
-    "whyCorrect": "Traffic quality is good but page experience is poor.",
-    "whyOthersWrong": "Other factors are less supported by the data.",
-    "learningOutcome": "Diagnose funnel issues."
+    ]
   },
   {
     "id": "META-S008",
@@ -770,11 +673,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Double budget",
       "Duplicate campaign",
       "Pause all ads"
-    ],
-    "correct": 0,
-    "whyCorrect": "Investigate causes before making major changes.",
-    "whyOthersWrong": "Reactive changes may worsen results.",
-    "learningOutcome": "Systematic optimization."
+    ]
   },
   {
     "id": "META-S009",
@@ -796,11 +695,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Launch new creatives",
       "Reduce bids",
       "Delete pixel"
-    ],
-    "correct": 1,
-    "whyCorrect": "High frequency indicates creative fatigue.",
-    "whyOthersWrong": "Budget changes won't refresh engagement.",
-    "learningOutcome": "Creative testing."
+    ]
   },
   {
     "id": "META-S010",
@@ -822,11 +717,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Gradually increase Lookalike budget",
       "Pause Lookalike",
       "Use interests only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Scale gradually to avoid performance shocks.",
-    "whyOthersWrong": "Abrupt shifts can reset learning.",
-    "learningOutcome": "Scaling audiences."
+    ]
   },
   {
     "id": "META-S011",
@@ -848,11 +739,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Increase 300% overnight",
       "Duplicate 10 campaigns",
       "Restart learning"
-    ],
-    "correct": 0,
-    "whyCorrect": "Gradual scaling protects learning phase.",
-    "whyOthersWrong": "Aggressive scaling destabilizes delivery.",
-    "learningOutcome": "Scale campaigns safely."
+    ]
   },
   {
     "id": "META-S012",
@@ -874,11 +761,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Logo update",
       "Audience size",
       "Campaign name"
-    ],
-    "correct": 0,
-    "whyCorrect": "Tracking changes often cause attribution gaps.",
-    "whyOthersWrong": "Other options don't explain missing conversions.",
-    "learningOutcome": "Validate tracking."
+    ]
   },
   {
     "id": "META-S013",
@@ -900,11 +783,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Implement Conversion API",
       "Stop tracking",
       "Use manual reporting"
-    ],
-    "correct": 1,
-    "whyCorrect": "CAPI complements Pixel and improves signal quality.",
-    "whyOthersWrong": "Removing tracking reduces optimization quality.",
-    "learningOutcome": "Modern attribution."
+    ]
   },
   {
     "id": "META-S014",
@@ -926,11 +805,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Increase budget",
       "Launch new page only",
       "Pause account"
-    ],
-    "correct": 0,
-    "whyCorrect": "Understand root causes before changing strategy.",
-    "whyOthersWrong": "Quick fixes rarely solve systemic issues.",
-    "learningOutcome": "Campaign diagnostics."
+    ]
   },
   {
     "id": "META-S015",
@@ -952,11 +827,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Reallocate budget to high-ROAS campaigns while testing new opportunities",
       "Stop low performers immediately",
       "Only refresh creatives"
-    ],
-    "correct": 1,
-    "whyCorrect": "Investment should follow proven performance while preserving experimentation.",
-    "whyOthersWrong": "Extreme actions ignore long-term learning.",
-    "learningOutcome": "Strategic performance management."
+    ]
   },
   {
     "id": "GA-S001",
@@ -978,11 +849,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Search",
       "Video",
       "Demand Gen"
-    ],
-    "correct": 1,
-    "whyCorrect": "Search captures high-intent users actively looking for courses.",
-    "whyOthersWrong": "Other campaign types are better suited for awareness or remarketing.",
-    "learningOutcome": "Choose the right campaign type."
+    ]
   },
   {
     "id": "GA-S002",
@@ -1004,11 +871,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Broad Match with no negatives",
       "Exact + Phrase",
       "Display keywords"
-    ],
-    "correct": 2,
-    "whyCorrect": "Tighter match types improve relevance during launch.",
-    "whyOthersWrong": "Broad match can waste budget without optimization.",
-    "learningOutcome": "Keyword strategy."
+    ]
   },
   {
     "id": "GA-S003",
@@ -1030,11 +893,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Add negative keywords",
       "Pause campaign",
       "Raise budget"
-    ],
-    "correct": 1,
-    "whyCorrect": "Negative keywords eliminate irrelevant traffic.",
-    "whyOthersWrong": "Other actions don't solve poor search intent.",
-    "learningOutcome": "Search query optimization."
+    ]
   },
   {
     "id": "GA-S004",
@@ -1056,11 +915,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Office location",
       "Campaign name",
       "Account currency"
-    ],
-    "correct": 0,
-    "whyCorrect": "Quality Score is strongly influenced by relevance.",
-    "whyOthersWrong": "Other options don't affect Quality Score.",
-    "learningOutcome": "Quality Score analysis."
+    ]
   },
   {
     "id": "GA-S005",
@@ -1082,11 +937,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Rewrite ad copy and headlines",
       "Pause keywords",
       "Change logo"
-    ],
-    "correct": 1,
-    "whyCorrect": "Compelling copy improves CTR before bid changes.",
-    "whyOthersWrong": "Higher bids won't fix weak messaging.",
-    "learningOutcome": "Ad optimization."
+    ]
   },
   {
     "id": "GA-S006",
@@ -1108,11 +959,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Website colors",
       "Office address",
       "Email signatures"
-    ],
-    "correct": 0,
-    "whyCorrect": "Auction Insights reveal competitive pressure.",
-    "whyOthersWrong": "Other items are unrelated.",
-    "learningOutcome": "Bid strategy analysis."
+    ]
   },
   {
     "id": "GA-S007",
@@ -1134,11 +981,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Improve landing page speed and UX",
       "Increase budget",
       "Pause ads"
-    ],
-    "correct": 1,
-    "whyCorrect": "Good traffic but poor landing page performance limits conversions.",
-    "whyOthersWrong": "Budget isn't the core issue.",
-    "learningOutcome": "Landing page optimization."
+    ]
   },
   {
     "id": "GA-S008",
@@ -1160,11 +1003,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Continue while measuring business KPIs",
       "Move all budget to Display",
       "Disable tracking"
-    ],
-    "correct": 1,
-    "whyCorrect": "Business performance matters more than limited reporting.",
-    "whyOthersWrong": "Other actions reduce effective performance.",
-    "learningOutcome": "Performance Max evaluation."
+    ]
   },
   {
     "id": "GA-S009",
@@ -1186,11 +1025,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Review search terms and add negatives",
       "Duplicate campaign",
       "Pause account"
-    ],
-    "correct": 1,
-    "whyCorrect": "Search term optimization improves relevance.",
-    "whyOthersWrong": "Other actions don't address wasted spend.",
-    "learningOutcome": "Search term management."
+    ]
   },
   {
     "id": "GA-S010",
@@ -1212,11 +1047,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Remarketing campaign",
       "Display without audiences",
       "Video awareness"
-    ],
-    "correct": 1,
-    "whyCorrect": "Remarketing targets users with existing purchase intent.",
-    "whyOthersWrong": "Awareness campaigns won't recover abandoned carts.",
-    "learningOutcome": "Remarketing."
+    ]
   },
   {
     "id": "GA-S011",
@@ -1238,11 +1069,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Gradually increase budget while monitoring CPA",
       "Restart campaign",
       "Pause keywords"
-    ],
-    "correct": 1,
-    "whyCorrect": "Gradual scaling preserves performance stability.",
-    "whyOthersWrong": "Large jumps can destabilize learning.",
-    "learningOutcome": "Campaign scaling."
+    ]
   },
   {
     "id": "GA-S012",
@@ -1264,11 +1091,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Ad copy",
       "Keyword bids",
       "Extensions"
-    ],
-    "correct": 0,
-    "whyCorrect": "Recent site changes often break tracking.",
-    "whyOthersWrong": "Other changes don't explain missing conversions.",
-    "learningOutcome": "Tracking validation."
+    ]
   },
   {
     "id": "GA-S013",
@@ -1290,11 +1113,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Shift budget toward higher ROAS campaigns",
       "Pause all",
       "Increase all budgets"
-    ],
-    "correct": 1,
-    "whyCorrect": "Allocate budget based on business performance.",
-    "whyOthersWrong": "Equal distribution ignores results.",
-    "learningOutcome": "Budget optimization."
+    ]
   },
   {
     "id": "GA-S014",
@@ -1316,11 +1135,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Increase budget",
       "Launch Display",
       "Pause account"
-    ],
-    "correct": 0,
-    "whyCorrect": "Systematic diagnosis identifies the real bottleneck.",
-    "whyOthersWrong": "Reactive changes lack evidence.",
-    "learningOutcome": "Campaign diagnostics."
+    ]
   },
   {
     "id": "GA-S015",
@@ -1342,11 +1157,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Invest more in top-performing campaigns while testing new opportunities",
       "Pause low performers immediately",
       "Replace all keywords"
-    ],
-    "correct": 1,
-    "whyCorrect": "Balance optimization with experimentation.",
-    "whyOthersWrong": "Extreme decisions ignore long-term account growth.",
-    "learningOutcome": "Strategic account management."
+    ]
   },
   {
     "id": "SEO-S001",
@@ -1368,11 +1179,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Audit redirects and technical SEO",
       "Increase Meta Ads budget",
       "Publish more social posts"
-    ],
-    "correct": 1,
-    "whyCorrect": "Site migrations often break redirects and indexing, causing sudden ranking losses.",
-    "whyOthersWrong": "Other options do not address the root technical issue.",
-    "learningOutcome": "Identify technical SEO issues."
+    ]
   },
   {
     "id": "SEO-S002",
@@ -1394,11 +1201,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Keyword B",
       "Both equally",
       "Neither"
-    ],
-    "correct": 1,
-    "whyCorrect": "Lower difficulty keywords provide realistic early ranking opportunities.",
-    "whyOthersWrong": "High difficulty keywords require stronger authority.",
-    "learningOutcome": "Prioritize keywords strategically."
+    ]
   },
   {
     "id": "SEO-S003",
@@ -1420,11 +1223,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Perform a content gap analysis and build a content plan",
       "Buy backlinks only",
       "Ignore competitors"
-    ],
-    "correct": 1,
-    "whyCorrect": "A structured content plan fills missing topical coverage.",
-    "whyOthersWrong": "Shortcuts don't build sustainable authority.",
-    "learningOutcome": "Content planning."
+    ]
   },
   {
     "id": "SEO-S004",
@@ -1446,11 +1245,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Optimize Google Business Profile and local citations",
       "Change logo",
       "Rewrite homepage only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Local SEO depends heavily on business profile optimization, reviews and local signals.",
-    "whyOthersWrong": "Other actions have limited local ranking impact.",
-    "learningOutcome": "Improve local search visibility."
+    ]
   },
   {
     "id": "SEO-S005",
@@ -1472,11 +1267,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Improve page speed and Core Web Vitals",
       "Increase backlinks",
       "Run paid ads"
-    ],
-    "correct": 1,
-    "whyCorrect": "User experience metrics influence SEO and conversions.",
-    "whyOthersWrong": "Other actions won't solve performance issues.",
-    "learningOutcome": "Optimize Core Web Vitals."
+    ]
   },
   {
     "id": "SEO-S006",
@@ -1498,11 +1289,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Earn authoritative backlinks through partnerships and content",
       "Ignore backlinks",
       "Stuff keywords"
-    ],
-    "correct": 1,
-    "whyCorrect": "Relevant, authoritative links build trust and rankings sustainably.",
-    "whyOthersWrong": "Manipulative tactics risk penalties.",
-    "learningOutcome": "Ethical link building."
+    ]
   },
   {
     "id": "SEO-S007",
@@ -1524,11 +1311,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Product schema markup",
       "More pop-ups",
       "More images only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Structured data helps search engines understand content and enables rich snippets.",
-    "whyOthersWrong": "Other actions don't improve structured search results.",
-    "learningOutcome": "Use schema effectively."
+    ]
   },
   {
     "id": "SEO-S008",
@@ -1550,11 +1333,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Restructure content with concise answers, headings and FAQs",
       "Delete the page",
       "Reduce content length drastically"
-    ],
-    "correct": 1,
-    "whyCorrect": "Snippet-friendly formatting improves eligibility.",
-    "whyOthersWrong": "Paid ads don't affect organic snippets.",
-    "learningOutcome": "Optimize for featured snippets."
+    ]
   },
   {
     "id": "SEO-S009",
@@ -1576,11 +1355,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Create expert, structured content with FAQs and schema",
       "Pause SEO",
       "Focus only on backlinks"
-    ],
-    "correct": 1,
-    "whyCorrect": "Answer engines reward clear, authoritative, well-structured information.",
-    "whyOthersWrong": "Single-factor strategies are less effective.",
-    "learningOutcome": "Optimize for AI-driven search."
+    ]
   },
   {
     "id": "SEO-S010",
@@ -1602,11 +1377,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Create redirect mapping and test indexing",
       "Launch without testing",
       "Pause Search Console"
-    ],
-    "correct": 1,
-    "whyCorrect": "Redirect planning preserves rankings and user access.",
-    "whyOthersWrong": "Skipping preparation risks major traffic loss.",
-    "learningOutcome": "Manage SEO migrations."
+    ]
   },
   {
     "id": "SEO-S011",
@@ -1628,11 +1399,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Build a strategic internal linking structure",
       "Reduce navigation",
       "Duplicate pages"
-    ],
-    "correct": 1,
-    "whyCorrect": "Internal links distribute authority and improve crawlability.",
-    "whyOthersWrong": "Other actions reduce discoverability.",
-    "learningOutcome": "Strengthen site architecture."
+    ]
   },
   {
     "id": "SEO-S012",
@@ -1654,11 +1421,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Audit content quality against search intent and E-E-A-T",
       "Change domain",
       "Pause publishing"
-    ],
-    "correct": 1,
-    "whyCorrect": "Core updates often reward helpful, trustworthy content.",
-    "whyOthersWrong": "Quick fixes rarely solve quality issues.",
-    "learningOutcome": "Recover from algorithm updates."
+    ]
   },
   {
     "id": "SEO-S013",
@@ -1680,11 +1443,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Refresh and expand existing content",
       "Ignore them",
       "Only change titles"
-    ],
-    "correct": 1,
-    "whyCorrect": "Refreshing strong content is often faster than creating from scratch.",
-    "whyOthersWrong": "Deletion wastes existing authority.",
-    "learningOutcome": "Content lifecycle management."
+    ]
   },
   {
     "id": "SEO-S014",
@@ -1706,11 +1465,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Organic conversions, rankings, CTR and revenue",
       "Page colors",
       "Bounce rate only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Business outcomes matter more than vanity metrics.",
-    "whyOthersWrong": "Single metrics provide incomplete insights.",
-    "learningOutcome": "Measure SEO performance."
+    ]
   },
   {
     "id": "SEO-S015",
@@ -1732,11 +1487,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Combine technical SEO, content, authority building, local SEO and AEO",
       "Publish blogs only",
       "Depend entirely on paid ads"
-    ],
-    "correct": 1,
-    "whyCorrect": "A balanced strategy builds durable organic growth across multiple ranking factors.",
-    "whyOthersWrong": "Single-channel approaches are less resilient.",
-    "learningOutcome": "Develop long-term SEO & AEO strategies."
+    ]
   },
   {
     "id": "ANA-S001",
@@ -1758,11 +1509,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Configure key events and conversions",
       "Change website colors",
       "Increase budget"
-    ],
-    "correct": 1,
-    "whyCorrect": "Without conversion tracking, campaign success cannot be measured accurately.",
-    "whyOthersWrong": "The other options do not establish reliable measurement.",
-    "learningOutcome": "Understand GA4 setup."
+    ]
   },
   {
     "id": "ANA-S002",
@@ -1784,11 +1531,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Landing page engagement and conversion funnel",
       "Logo redesign",
       "Social media followers"
-    ],
-    "correct": 1,
-    "whyCorrect": "The issue lies after the visit, not in acquiring traffic.",
-    "whyOthersWrong": "Other options do not address conversion performance.",
-    "learningOutcome": "Analyze traffic quality vs. conversions."
+    ]
   },
   {
     "id": "ANA-S003",
@@ -1810,11 +1553,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Different attribution windows and models produce different numbers",
       "GA4 lost all data",
       "Meta inflates every conversion"
-    ],
-    "correct": 1,
-    "whyCorrect": "Different platforms use different attribution methodologies.",
-    "whyOthersWrong": "The other options are unsupported assumptions.",
-    "learningOutcome": "Interpret attribution correctly."
+    ]
   },
   {
     "id": "ANA-S004",
@@ -1836,11 +1575,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Checkout process and payment experience",
       "Increase impressions",
       "Pause campaigns"
-    ],
-    "correct": 1,
-    "whyCorrect": "The largest loss occurs during checkout.",
-    "whyOthersWrong": "Other actions ignore the biggest bottleneck.",
-    "learningOutcome": "Diagnose funnel leakage."
+    ]
   },
   {
     "id": "ANA-S005",
@@ -1862,11 +1597,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Allocate more budget to the higher ROAS channel while continuing controlled tests",
       "Pause Meta",
       "Spend only on Google"
-    ],
-    "correct": 1,
-    "whyCorrect": "Budget should follow performance while preserving experimentation.",
-    "whyOthersWrong": "Extreme decisions reduce learning opportunities.",
-    "learningOutcome": "Use ROI to guide investment."
+    ]
   },
   {
     "id": "ANA-S006",
@@ -1888,11 +1619,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Conversion event implementation",
       "Ad headlines",
       "Audience settings"
-    ],
-    "correct": 1,
-    "whyCorrect": "Website updates commonly break tracking tags or events.",
-    "whyOthersWrong": "Other items don't explain missing conversions.",
-    "learningOutcome": "Troubleshoot analytics implementation."
+    ]
   },
   {
     "id": "ANA-S007",
@@ -1914,11 +1641,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Revenue, Leads, CPA, ROAS and Conversion Rate",
       "Impressions only",
       "CTR only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Executives need metrics tied to business performance.",
-    "whyOthersWrong": "Vanity metrics don't reflect business impact.",
-    "learningOutcome": "Build meaningful dashboards."
+    ]
   },
   {
     "id": "ANA-S008",
@@ -1940,11 +1663,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Improve landing pages and targeting for new visitors",
       "Pause remarketing",
       "Increase prices"
-    ],
-    "correct": 1,
-    "whyCorrect": "The largest opportunity is improving first-visit experience and traffic quality.",
-    "whyOthersWrong": "Other actions don't address the observed behavior.",
-    "learningOutcome": "Analyze audience segments."
+    ]
   },
   {
     "id": "ANA-S009",
@@ -1966,11 +1685,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Increase investment in top-performing channels while maintaining diversification",
       "Pause SEO",
       "Remove email"
-    ],
-    "correct": 1,
-    "whyCorrect": "Balance current performance with long-term growth.",
-    "whyOthersWrong": "Single-channel dependence increases risk.",
-    "learningOutcome": "Evaluate marketing mix performance."
+    ]
   },
   {
     "id": "ANA-S010",
@@ -1992,11 +1707,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Present business insights, trends, attribution, ROI analysis and strategic recommendations",
       "Export raw GA4 reports",
       "Focus only on conversion rate"
-    ],
-    "correct": 1,
-    "whyCorrect": "Decision-makers need insights and recommendations rather than raw metrics.",
-    "whyOthersWrong": "Other options provide incomplete decision support.",
-    "learningOutcome": "Turn analytics into business strategy."
+    ]
   },
   {
     "id": "CM-S001",
@@ -2018,11 +1729,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Educational content answering student questions",
       "Memes only",
       "Daily discount posts"
-    ],
-    "correct": 1,
-    "whyCorrect": "Educational content builds trust, authority and supports both SEO and lead generation.",
-    "whyOthersWrong": "The other options create limited long-term value.",
-    "learningOutcome": "Develop a customer-first content strategy."
+    ]
   },
   {
     "id": "CM-S002",
@@ -2044,11 +1751,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Short educational videos with supporting articles",
       "Radio ads",
       "Banner ads only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Video combined with supporting articles reaches users effectively and improves discoverability.",
-    "whyOthersWrong": "Other formats provide less engagement.",
-    "learningOutcome": "Match content format to audience behavior."
+    ]
   },
   {
     "id": "CM-S003",
@@ -2070,11 +1773,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Monthly editorial calendar aligned with campaigns",
       "Post only when sales drop",
       "Stop publishing"
-    ],
-    "correct": 1,
-    "whyCorrect": "A structured calendar improves planning, quality and consistency.",
-    "whyOthersWrong": "Reactive publishing weakens strategy.",
-    "learningOutcome": "Plan content systematically."
+    ]
   },
   {
     "id": "CM-S004",
@@ -2096,11 +1795,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Improve readability, structure and user experience",
       "Increase ad spend",
       "Delete all articles"
-    ],
-    "correct": 1,
-    "whyCorrect": "Readable, well-structured content keeps users engaged.",
-    "whyOthersWrong": "Traffic alone doesn't improve engagement.",
-    "learningOutcome": "Optimize content quality."
+    ]
   },
   {
     "id": "CM-S005",
@@ -2122,11 +1817,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Create TOFU, MOFU and BOFU content",
       "Stop blogging",
       "Use only testimonials"
-    ],
-    "correct": 1,
-    "whyCorrect": "Different funnel stages require different content to nurture prospects.",
-    "whyOthersWrong": "Single-stage content limits conversions.",
-    "learningOutcome": "Map content to the customer journey."
+    ]
   },
   {
     "id": "CM-S006",
@@ -2148,11 +1839,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Repurpose into videos, infographics, email and social content",
       "Delete after campaign",
       "Rewrite from scratch"
-    ],
-    "correct": 1,
-    "whyCorrect": "Repurposing extends reach while reducing production effort.",
-    "whyOthersWrong": "Ignoring successful assets wastes opportunity.",
-    "learningOutcome": "Scale winning content."
+    ]
   },
   {
     "id": "CM-S007",
@@ -2174,11 +1861,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Publish expert insights, case studies and educational guides",
       "Focus only on paid ads",
       "Use stock content"
-    ],
-    "correct": 1,
-    "whyCorrect": "Original expertise builds trust and long-term authority.",
-    "whyOthersWrong": "Generic content rarely differentiates a brand.",
-    "learningOutcome": "Create thought leadership."
+    ]
   },
   {
     "id": "CM-S008",
@@ -2200,11 +1883,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Shift more resources toward high-performing video content while testing new ideas",
       "Stop image posts forever",
       "Ignore analytics"
-    ],
-    "correct": 1,
-    "whyCorrect": "Investing more in proven formats while continuing experimentation balances growth and innovation.",
-    "whyOthersWrong": "Extreme decisions reduce learning.",
-    "learningOutcome": "Optimize using performance data."
+    ]
   },
   {
     "id": "CM-S009",
@@ -2226,11 +1905,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Leads, engagement, assisted conversions and revenue impact",
       "Followers only",
       "Likes only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Business outcomes provide a complete view of content performance.",
-    "whyOthersWrong": "Vanity metrics don't demonstrate business value.",
-    "learningOutcome": "Measure content marketing effectively."
+    ]
   },
   {
     "id": "CM-S010",
@@ -2252,11 +1927,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Coordinate blogs, videos, email, SEO and social content around one campaign theme",
       "Only YouTube videos",
       "Only email newsletters"
-    ],
-    "correct": 1,
-    "whyCorrect": "Integrated campaigns reinforce messaging across the customer journey and improve overall performance.",
-    "whyOthersWrong": "Single-channel strategies limit reach and consistency.",
-    "learningOutcome": "Design integrated content marketing campaigns."
+    ]
   },
   {
     "id": "MAI-S001",
@@ -2278,11 +1949,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Welcome email sequence",
       "Monthly sales email",
       "No automation"
-    ],
-    "correct": 1,
-    "whyCorrect": "A welcome sequence engages leads immediately while interest is highest.",
-    "whyOthersWrong": "Other options are less timely and less personalized.",
-    "learningOutcome": "Build basic lifecycle automation."
+    ]
   },
   {
     "id": "MAI-S002",
@@ -2304,11 +1971,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Automated nurturing workflow based on user actions",
       "Send one reminder email",
       "Pause free trials"
-    ],
-    "correct": 1,
-    "whyCorrect": "Behavior-based nurturing delivers relevant messages at the right time.",
-    "whyOthersWrong": "Manual outreach doesn't scale.",
-    "learningOutcome": "Design nurture journeys."
+    ]
   },
   {
     "id": "MAI-S003",
@@ -2330,11 +1993,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Automated appointment reminders",
       "Daily promotional messages",
       "SMS only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Automated reminders improve attendance while saving staff time.",
-    "whyOthersWrong": "Promotional messages don't solve the problem.",
-    "learningOutcome": "Automate customer communication."
+    ]
   },
   {
     "id": "MAI-S004",
@@ -2356,11 +2015,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Lead scoring model",
       "More cold calls",
       "Ignore website activity"
-    ],
-    "correct": 1,
-    "whyCorrect": "Lead scoring helps sales focus on the most qualified prospects.",
-    "whyOthersWrong": "Other approaches waste sales effort.",
-    "learningOutcome": "Implement lead qualification."
+    ]
   },
   {
     "id": "MAI-S005",
@@ -2382,11 +2037,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Automated cart abandonment reminders",
       "Mass promotional email",
       "Delete inactive carts"
-    ],
-    "correct": 1,
-    "whyCorrect": "Timely reminders recover purchase intent.",
-    "whyOthersWrong": "Generic campaigns are less effective.",
-    "learningOutcome": "Recover abandoned carts."
+    ]
   },
   {
     "id": "MAI-S006",
@@ -2408,11 +2059,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Generate first drafts and review before publishing",
       "Avoid AI completely",
       "Replace the content team"
-    ],
-    "correct": 1,
-    "whyCorrect": "AI accelerates creation while human review ensures quality and brand accuracy.",
-    "whyOthersWrong": "Unreviewed AI can introduce errors.",
-    "learningOutcome": "Use AI responsibly."
+    ]
   },
   {
     "id": "MAI-S007",
@@ -2434,11 +2081,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Use AI to identify audience patterns and validate findings",
       "Ignore older data",
       "Random segmentation"
-    ],
-    "correct": 1,
-    "whyCorrect": "AI can uncover patterns faster, but results should still be validated.",
-    "whyOthersWrong": "Manual-only analysis doesn't scale.",
-    "learningOutcome": "Apply AI to customer insights."
+    ]
   },
   {
     "id": "MAI-S008",
@@ -2460,11 +2103,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Automated workflow integrations",
       "Hire more administrators",
       "Print spreadsheets"
-    ],
-    "correct": 1,
-    "whyCorrect": "Automation reduces errors and saves time.",
-    "whyOthersWrong": "Manual processes don't scale.",
-    "learningOutcome": "Design integrated workflows."
+    ]
   },
   {
     "id": "MAI-S009",
@@ -2486,11 +2125,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Deploy an AI chatbot with human escalation",
       "Use only email",
       "Disable live chat"
-    ],
-    "correct": 1,
-    "whyCorrect": "AI handles repetitive questions while humans manage complex cases.",
-    "whyOthersWrong": "A hybrid approach balances efficiency and service quality.",
-    "learningOutcome": "Implement conversational AI."
+    ]
   },
   {
     "id": "MAI-S010",
@@ -2512,11 +2147,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Automated personalized re-engagement sequence",
       "Only social media ads",
       "Acquire new users only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Personalized automation targets users with existing brand awareness.",
-    "whyOthersWrong": "Retention is often more cost-effective than acquisition.",
-    "learningOutcome": "Build win-back campaigns."
+    ]
   },
   {
     "id": "MAI-S011",
@@ -2538,11 +2169,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Create structured prompts with context, goals and constraints",
       "Stop using AI",
       "Generate random prompts"
-    ],
-    "correct": 1,
-    "whyCorrect": "Detailed prompts produce more reliable outputs.",
-    "whyOthersWrong": "Poor prompts create inconsistent results.",
-    "learningOutcome": "Develop prompt engineering skills."
+    ]
   },
   {
     "id": "MAI-S012",
@@ -2564,11 +2191,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Audit existing automations and optimize weak points",
       "Delete all workflows",
       "Increase ad spend"
-    ],
-    "correct": 1,
-    "whyCorrect": "Optimization begins with understanding existing performance.",
-    "whyOthersWrong": "Adding complexity without analysis is ineffective.",
-    "learningOutcome": "Audit automation systems."
+    ]
   },
   {
     "id": "MAI-S013",
@@ -2590,11 +2213,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Require human review, transparency and compliance checks",
       "Avoid AI forever",
       "Hide AI usage"
-    ],
-    "correct": 1,
-    "whyCorrect": "Responsible governance protects customers and the brand.",
-    "whyOthersWrong": "Blind automation creates legal and ethical risks.",
-    "learningOutcome": "Apply ethical AI practices."
+    ]
   },
   {
     "id": "MAI-S014",
@@ -2616,11 +2235,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Create unified cross-channel automation journeys",
       "Email only",
       "Meta Ads only"
-    ],
-    "correct": 1,
-    "whyCorrect": "Coordinated journeys improve customer experience across touchpoints.",
-    "whyOthersWrong": "Isolated channels reduce personalization.",
-    "learningOutcome": "Design omnichannel automation."
+    ]
   },
   {
     "id": "MAI-S015",
@@ -2642,11 +2257,7 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
       "Implement AI in phases with training, governance, automation and continuous measurement",
       "Buy every AI tool available",
       "Delay AI adoption indefinitely"
-    ],
-    "correct": 1,
-    "whyCorrect": "A phased strategy reduces risk while maximizing long-term adoption.",
-    "whyOthersWrong": "Extreme approaches are unrealistic and increase organizational risk.",
-    "learningOutcome": "Develop enterprise AI marketing strategy."
+    ]
   }
 ]
 
@@ -2656,6 +2267,7 @@ export function questionsForTrack(track: string): ScenarioQuestion[] {
   return decisionLabQuestions.filter((q) => q.track === track)
 }
 
+/** The server's grade for one attempt. */
 export interface ScenarioGrade {
   correct: number
   total: number
@@ -2663,30 +2275,4 @@ export interface ScenarioGrade {
   maxWeight: number
   /** weighted percent — NOT correct/total, reflects difficulty weighting */
   percent: number
-}
-
-/** Grade an answer sheet for a single track's scenario set using
- * difficulty-weighted scoring. */
-export function gradeScenarios(
-  questions: ScenarioQuestion[],
-  answers: (number | null)[],
-): ScenarioGrade {
-  let correct = 0
-  let earnedWeight = 0
-  let maxWeight = 0
-  questions.forEach((q, i) => {
-    const weight = DIFFICULTY_WEIGHT[q.difficulty] ?? 5
-    maxWeight += weight
-    if (answers[i] === q.correct) {
-      correct += 1
-      earnedWeight += weight
-    }
-  })
-  return {
-    correct,
-    total: questions.length,
-    earnedWeight,
-    maxWeight,
-    percent: maxWeight ? Math.round((earnedWeight / maxWeight) * 100) : 0,
-  }
 }

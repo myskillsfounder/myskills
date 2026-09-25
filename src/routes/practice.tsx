@@ -7,10 +7,10 @@ import { useAuthUser } from '@/lib/useAuth'
 import { useInitialAssessment } from '@/lib/assessmentResults'
 import {
   fetchPracticeSummary,
-  recordPracticeAttempt,
+  submitPracticeAttempt,
   type PracticeSummary,
 } from '@/lib/practiceResults'
-import { questionsForTrack, type ScenarioGrade } from '@/lib/decisionLabs'
+import { questionsForTrack } from '@/lib/decisionLabs'
 import { skillTracks } from '@/lib/skillTracks'
 import { vocabularyTerms, type VocabLevel } from '@/lib/vocabulary'
 import { VOCAB_UNLOCK_PERCENT, useVocabProgress } from '@/lib/vocabularyProgress'
@@ -160,11 +160,12 @@ function PracticePage() {
       .finally(() => setPracticeLoading(false))
   }, [unlocked])
 
-  async function completeTrack(track: string, grade: ScenarioGrade) {
-    await recordPracticeAttempt(track, grade)
+  // The server grades and records the attempt; refresh the scores behind the
+  // result screen, and stay on it so the learner can read the review.
+  async function submitTrack(track: string, answers: Record<string, number>) {
+    const result = await submitPracticeAttempt(track, answers)
     setPractice(await fetchPracticeSummary())
-    // Return to the practice home so the user sees their updated progress.
-    setSelected(null)
+    return result
   }
 
   const error = assessmentError ?? practiceError
@@ -216,7 +217,7 @@ function PracticePage() {
           trackName={skillTracks.find((t) => t.slug === selected)?.name ?? selected}
           questions={questionsForTrack(selected)}
           onBack={() => setSelected(null)}
-          onComplete={(grade) => completeTrack(selected, grade)}
+          onSubmit={(answers) => submitTrack(selected, answers)}
         />
       )}
 
