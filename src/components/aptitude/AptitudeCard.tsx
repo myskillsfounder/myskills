@@ -1,11 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import {
-  LEVEL_TONE_DARK,
-  orderedAptitudes,
-  strongestAptitude,
-  type AptitudeResult,
-} from '@/lib/dmAptitude'
+import { strongestAptitude, type AptitudeResult } from '@/lib/dmAptitude'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -27,24 +22,23 @@ const cta =
  *  - `gate`: Practice is locked until it's taken, so it's the whole page.
  *  - not taken, not a gate: a learner who finished the Foundation assessment
  *    before the aptitude test existed keeps Practice, and is invited to take it.
- *  - taken: a compact read-out with a way back to the result.
+ *  - taken: one line — the headline result and a way back to the rest. The
+ *    full read-out lives on the result page, not here.
  */
 export function AptitudeCard({ result, gate = false }: { result: AptitudeResult | null; gate?: boolean }) {
   if (!result) {
     return (
-      <section className="surface-wood-dark rise-in relative flex flex-col gap-5 overflow-hidden rounded-2xl p-6 shadow-e2 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <Rings />
         <div className="relative min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
             {gate ? 'Step 1 · Start here' : 'Recommended'}
           </p>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white sm:text-3xl">
+          <h2 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
             {gate ? 'Start with the aptitude assessment' : 'Take the aptitude assessment'}
           </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/70">
-            {gate
-              ? 'Do you read billboards when you travel? Notice a struck-out price? A quick, honest look at how marketing already shows up in your life — 20 statements, about 5 minutes. It unlocks Practice.'
-              : 'A quick, honest look at how marketing already shows up in your life — 20 statements, about 5 minutes. It shows where to begin.'}
+          <p className="mt-1.5 text-sm text-white/70">
+            {gate ? '20 statements, about 5 minutes. Unlocks Practice.' : '20 statements, about 5 minutes.'}
           </p>
         </div>
         <Link to="/aptitude-assessment" className={`relative ${cta}`}>
@@ -57,27 +51,18 @@ export function AptitudeCard({ result, gate = false }: { result: AptitudeResult 
 
   const top = strongestAptitude(result.scores)
   return (
-    <section className="surface-wood-dark rise-in relative overflow-hidden rounded-2xl p-5 shadow-e2 sm:p-6">
+    <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between">
       <Rings />
-      <div className="relative flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Your marketing aptitude</p>
-          <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-            Strongest pull: {top.name}
-          </h3>
-        </div>
-        <Link to="/aptitude-assessment" className={cta}>
-          View your results
-          <ArrowRight size={16} />
-        </Link>
+      <div className="relative min-w-0">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Your marketing aptitude</p>
+        <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
+          Strongest pull: {top.name}
+        </h3>
       </div>
-      <ul className="relative mt-4 flex flex-wrap gap-2">
-        {orderedAptitudes(result.scores).map((a) => (
-          <li key={a.key} className={`rounded-full px-3 py-1 text-xs font-semibold ${LEVEL_TONE_DARK[a.level]}`}>
-            {a.name} · {a.level}
-          </li>
-        ))}
-      </ul>
+      <Link to="/aptitude-assessment" className={`relative ${cta}`}>
+        View your results
+        <ArrowRight size={16} />
+      </Link>
     </section>
   )
 }
