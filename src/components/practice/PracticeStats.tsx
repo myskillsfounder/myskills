@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'
-import { levelLabel } from './practiceStatus'
+import { STRONG_MIN, levelLabel } from './practiceStatus'
 
-/** Progress read-out: score ring, the level it maps to, and headline numbers.
- *  Uses the same dark "feature surface" treatment as the dashboard's
- *  NextStep card, so the two premium moments in the app read as one family. */
+/** Progress read-out, as two separate numbers so neither hides the other:
+ *  the SCORE (how well you do — the average of your best result on each track
+ *  you've practised) and COMPLETE (how much of the programme you've covered —
+ *  tracks practised out of 8). One good track gives a high score but a low
+ *  completion, and the card says both. Uses the same dark "feature surface"
+ *  treatment as the dashboard's NextStep card. */
 export function PracticeStats({ practice }: { practice: PracticeSummary }) {
   const rows = skillTracks.map((t) => {
     const r = practice[t.slug]
-    return { percent: r?.percent ?? 0, started: Boolean(r), attempts: r?.attempts ?? 0 }
+    return { slug: t.slug, name: t.name, percent: r?.percent ?? 0, started: Boolean(r), attempts: r?.attempts ?? 0 }
   })
   const started = rows.filter((r) => r.started)
   const avg = started.length
@@ -18,6 +21,8 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
     : 0
   const attempts = rows.reduce((s, r) => s + r.attempts, 0)
   const best = started.length ? Math.max(...started.map((r) => r.percent)) : 0
+  const strong = started.filter((r) => r.percent >= STRONG_MIN).length
+  const complete = Math.round((started.length / skillTracks.length) * 100)
 
   // animate the ring + bar from 0 on mount
   const [shown, setShown] = useState(0)
@@ -29,8 +34,6 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
   const R = 34
   const C = 2 * Math.PI * R
   const offset = C * (1 - shown / 100)
-  const beads = 14
-  const filled = Math.round((shown / 100) * beads)
 
   return (
     <section className="surface-wood-dark rise-in relative overflow-hidden rounded-2xl p-5 shadow-e2 sm:p-6">
@@ -75,28 +78,30 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
           <p className="mt-1 text-xs leading-relaxed text-white/70">
             {started.length === 0
               ? 'Practice a track to start building your score.'
-              : `Average of your best score across the ${started.length} of ${skillTracks.length} tracks you’ve practised.`}
+              : `Average of your best result on the ${started.length === 1 ? 'track' : `${started.length} tracks`} you’ve practised.`}
           </p>
         </div>
 
-        {/* bead progress */}
+        {/* completion: one segment per track */}
         <div className="min-w-0 sm:w-56">
-          <div className="flex items-center gap-2">
-            <div className="flex flex-1 items-center gap-[3px] rounded-full bg-white/10 p-1.5">
-              {Array.from({ length: beads }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-2.5 flex-1 rounded-full transition-all duration-500 ${
-                    i < filled ? 'bg-brand-400' : 'bg-white/15'
-                  }`}
-                  style={{ transitionDelay: `${i * 45}ms` }}
-                />
-              ))}
-            </div>
-            <span className="font-display text-lg font-semibold text-white">{avg}%</span>
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Complete</p>
+            <span className="font-display text-lg font-semibold text-white">{complete}%</span>
+          </div>
+          <div className="mt-1.5 flex items-center gap-[3px] rounded-full bg-white/10 p-1.5">
+            {rows.map((r, i) => (
+              <span
+                key={r.slug}
+                title={r.started ? `${r.name} — ${r.percent}%` : `${r.name} — not practised yet`}
+                className={`h-2.5 flex-1 rounded-full transition-colors duration-500 ${
+                  r.started ? 'bg-brand-400' : 'bg-white/15'
+                }`}
+                style={{ transitionDelay: `${i * 45}ms` }}
+              />
+            ))}
           </div>
           <p className="mt-1.5 text-[11px] text-white/60">
-            {avg >= 70 ? 'Excellent work — keep the streak alive.' : 'Keep going! You’re making steady progress.'}
+            {started.length} of {skillTracks.length} tracks practised
           </p>
         </div>
       </div>
@@ -104,9 +109,10 @@ export function PracticeStats({ practice }: { practice: PracticeSummary }) {
       {/* stat strip */}
       <div className="relative mt-5 grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-4 text-center">
         <div>
-          <p className="text-[11px] font-medium text-white/60">Tracks practiced</p>
+          {/* Not "tracks practised" — the completion bar above already says that. */}
+          <p className="text-[11px] font-medium text-white/60">Strong tracks</p>
           <p className="mt-0.5 font-display text-lg font-semibold text-white">
-            {started.length}
+            {strong}
             <span className="text-sm font-normal text-white/50">/{skillTracks.length}</span>
           </p>
         </div>
