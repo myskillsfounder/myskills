@@ -118,6 +118,11 @@ function DashboardPage() {
       .catch(() => {})
   }, [])
 
+  const practicedCount = useMemo(
+    () => skillTracks.filter((t) => practice[t.slug]).length,
+    [practice],
+  )
+
   // The score comes from the profile alone (see lib/readinessScore.ts);
   // practice results still feed the course progress in KeyMeasures.
   const estimate = useMemo(
@@ -129,9 +134,10 @@ function DashboardPage() {
             dmLiveSessions: dmSessions.length,
             crSignedOff: crReview.state === 'approved',
             dmSignedOff: dmReview.state === 'approved',
+            dmPracticeDone: practicedCount === skillTracks.length,
           })
         : null,
-    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state],
+    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state, practicedCount],
   )
   // The number itself is issued by the server; the estimate above is the guide
   // and the fallback. Re-ask whenever something the score depends on changes.
@@ -147,10 +153,6 @@ function DashboardPage() {
   const readiness = useMemo(
     () => (estimate && serverScore ? withServerScore(estimate, serverScore) : estimate),
     [estimate, serverScore],
-  )
-  const practicedCount = useMemo(
-    () => skillTracks.filter((t) => practice[t.slug]).length,
-    [practice],
   )
 
   return (
