@@ -101,6 +101,8 @@ export interface NextAction {
   label: string
   upTo: number
   to: string
+  /** Which Practice tab the link should open on, when `to` is /practice. */
+  programme?: 1 | 2
 }
 
 export interface Readiness {
@@ -207,9 +209,14 @@ export function computeReadiness(
   // -- The single biggest gain the student can act on right now.
   const candidates: NextAction[] = []
   if (modulesDone < PROGRAMME_MODULES) {
-    candidates.push({ label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice' })
+    candidates.push({ label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 })
   } else if (!programme.mentorApproved) {
-    candidates.push({ label: 'Get your Career Readiness mentor review', upTo: MENTOR_SIGNOFF_POINTS, to: '/practice' })
+    candidates.push({
+      label: 'Get your Career Readiness mentor review',
+      upTo: MENTOR_SIGNOFF_POINTS,
+      to: '/practice',
+      programme: 2,
+    })
   }
   if (pendingPoints >= 0.5 && !hasOpenRequest) {
     candidates.push({ label: 'Get your profile verified', upTo: pendingPoints, to: '/profile' })

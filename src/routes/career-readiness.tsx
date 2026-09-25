@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import type { ComponentType } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
@@ -14,15 +13,9 @@ import {
   Target,
   Users,
 } from 'lucide-react'
-import { errorMessage } from '@/lib/errors'
 import { useAuthUser } from '@/lib/useAuth'
-import { useProfile } from '@/lib/useProfile'
-import {
-  CAREER_READINESS,
-  PERSONAL_DEVELOPMENT_MODULES,
-  fetchMyProgrammeInterest,
-  registerProgrammeInterest,
-} from '@/lib/programmes'
+import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
@@ -83,103 +76,34 @@ const OUTCOMES = [
   'Mentor feedback on your progress, not just automated scores',
 ]
 
-/* -- interest CTA --------------------------------------------------------- */
+/* -- start CTA ------------------------------------------------------------ */
 
-type CtaState = 'loading' | 'signed-out' | 'ready' | 'saving' | 'registered'
-
-function useInterest() {
+/** The way in: straight to the first module for a signed-in learner, to
+ *  sign-up for a visitor. There's no waiting list any more — the programme is open. */
+function StartCta({ dark = false }: { dark?: boolean }) {
   const { user } = useAuthUser()
-  const { profile } = useProfile()
-  const [state, setState] = useState<CtaState>('loading')
-  const [error, setError] = useState<string>()
-
-  useEffect(() => {
-    if (!user) {
-      setState('signed-out')
-      return
-    }
-    let active = true
-    fetchMyProgrammeInterest(CAREER_READINESS.slug).then((row) => {
-      if (active) setState(row ? 'registered' : 'ready')
-    })
-    return () => {
-      active = false
-    }
-  }, [user])
-
-  async function register() {
-    if (!user) return
-    setState('saving')
-    setError(undefined)
-    try {
-      await registerProgrammeInterest(CAREER_READINESS.slug, {
-        full_name: profile?.full_name ?? '',
-        email: user.email ?? '',
-      })
-      setState('registered')
-    } catch (e) {
-      setError(errorMessage(e))
-      setState('ready')
-    }
-  }
-
-  return { state, error, register }
-}
-
-function InterestCta({
-  state,
-  error,
-  onRegister,
-  dark = false,
-}: {
-  state: CtaState
-  error?: string
-  onRegister: () => void
-  dark?: boolean
-}) {
-  const primary =
-    'press inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-60'
   const tone = dark
     ? 'bg-white text-ink-900 shadow-e2 hover:bg-brand-50'
     : 'bg-brand-600 text-white hover:bg-brand-700'
-
-  if (state === 'registered') {
+  const cls = `press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition-colors ${tone}`
+  if (user) {
     return (
-      <p
-        className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${
-          dark ? 'bg-white/10 text-white' : 'bg-emerald-50 text-emerald-800'
-        }`}
+      <Link
+        to="/career-module/$slug"
+        params={{ slug: PERSONAL_DEVELOPMENT_MODULES[0].slug }}
+        onClick={() => rememberProgramme(2)}
+        className={cls}
       >
-        <CheckCircle2 size={17} />
-        You’re on the list — we’ll email you as soon as it opens.
-      </p>
-    )
-  }
-
-  if (state === 'signed-out') {
-    return (
-      <Link to="/signup" className={`${primary} ${tone}`}>
-        Create a free account to join
+        Start the programme
         <ArrowRight size={16} />
       </Link>
     )
   }
-
   return (
-    <div>
-      <button
-        type="button"
-        onClick={onRegister}
-        disabled={state === 'loading' || state === 'saving'}
-        className={`${primary} ${tone}`}
-      >
-        {state === 'saving' ? 'Saving…' : 'Register your interest'}
-        <ArrowRight size={16} />
-      </button>
-      {error && (
-        <p className={`mt-2 text-sm ${dark ? 'text-red-200' : 'text-red-700'}`}>{error}</p>
-      )}
-    </div>
+    <Link to="/signup" className={cls}>
+      Create a free account to start
+      <ArrowRight size={16} />
+    </Link>
   )
 }
 
@@ -233,8 +157,6 @@ function WorkflowCard() {
 }
 
 function CareerReadinessPage() {
-  const { state, error, register } = useInterest()
-
   return (
     <div className="min-h-screen bg-ink-900">
       <Navbar />
@@ -267,30 +189,21 @@ function CareerReadinessPage() {
               </p>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
                 Skills get you shortlisted; how you set goals, communicate, lead, adapt and keep
-                growing gets you hired. Practise all five with AI as your coach — and get a
+                growing gets you hired. Learn and practise all five in writing — and get a
                 human’s honest feedback before an interviewer gives you theirs.
               </p>
 
-              {/* One CTA button, no competing links — clicking through to a
-                  proper page keeps the hero uncluttered and gives the
-                  waitlist form room for its own success state (a real
-                  "you're on the list" page, not a cramped inline message).
-                  A plain vertical stack for the trust points below, same
-                  fix as the homepage hero: a wrapped horizontal row either
-                  orphans a phrase on its own line or reads as a cluster —
-                  one column has neither problem at any width. */}
+              {/* One CTA, no competing links. A plain vertical stack for the trust
+                  points below, same fix as the homepage hero: a wrapped
+                  horizontal row either orphans a phrase on its own line or
+                  reads as a cluster — one column has neither problem at any
+                  width. */}
               <div className="mt-8">
-                <Link
-                  to="/career-readiness-waitlist"
-                  className="press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-                >
-                  Join the waitlist
-                  <ArrowRight size={16} />
-                </Link>
+                <StartCta dark />
               </div>
 
               <ul className="mt-6 space-y-2.5 text-sm text-white/70">
-                {['Free to join the waitlist', 'AI-guided practice', 'Mentor feedback, not just scores'].map((t) => (
+                {['Five short modules, about four hours', 'Written practice you can revisit', 'Mentor feedback, not just scores'].map((t) => (
                   <li key={t} className="flex items-center gap-2">
                     <BadgeCheck size={16} className="shrink-0 text-brand-200" />
                     {t}
@@ -436,15 +349,15 @@ function CareerReadinessPage() {
             <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
             <div className="relative">
               <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Be first in when it opens.
+                Start the first module today.
               </h2>
               <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-                Register your interest and we’ll email you the moment the {CAREER_READINESS.name} is
-                ready — no commitment.
+                Learn it, practise it in writing, reflect — then ask a mentor to review your work. The{' '}
+                {CAREER_READINESS.name} is open now.
               </p>
             </div>
             <div className="relative">
-              <InterestCta state={state} error={error} onRegister={register} dark />
+              <StartCta dark />
             </div>
           </div>
         </section>

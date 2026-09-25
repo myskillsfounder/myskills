@@ -30,8 +30,8 @@ export function AssessmentResult({ result }: { result: Result }) {
       levelTone={LEVEL_TONE_DARK}
       start={{
         title: start.module,
-        body: 'It’s your lowest starting point, so it’s where the programme will move the needle most. The Career Readiness Programme opens soon — you’re first in line for it.',
-        cta: { to: '/career-readiness', label: 'See the programme' },
+        body: 'It’s your lowest starting point, so it’s where the programme will move the needle most. The Career Readiness Programme is open — start here.',
+        cta: { to: '/practice', label: 'Open the programme' },
       }}
       detail={{
         title: 'Where you are today',

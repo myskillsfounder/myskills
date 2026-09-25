@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 import { trackCareerAssessmentComplete } from '@/lib/analytics'
 import {
   fetchAssessmentQuestions,
@@ -14,8 +15,7 @@ import { AssessmentResult } from '@/components/career-readiness/AssessmentResult
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
 import { SelfAssessmentQuiz, type QuizCopy } from '@/components/self-assessment/Quiz'
 
-// Not in PAGE_SEO on purpose — it's behind sign-in, and the programme it
-// belongs to isn't live yet (see career-readiness.tsx).
+// Not in PAGE_SEO on purpose — it's behind sign-in.
 export const Route = createFileRoute('/career-readiness-assessment')({
   beforeLoad: requireOnboarded,
   component: CareerReadinessAssessmentPage,
@@ -36,6 +36,8 @@ const COPY: QuizCopy = {
 
 function CareerReadinessAssessmentPage() {
   const { result, loading, setResult } = useMyAssessmentResult()
+  // "Back to Practice" returns to this programme's tab.
+  useEffect(() => rememberProgramme(2), [])
   const [questions, setQuestions] = useState<AssessmentQuestion[] | null>(null)
   const [error, setError] = useState<string>()
 

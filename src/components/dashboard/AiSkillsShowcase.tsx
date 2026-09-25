@@ -149,11 +149,9 @@ const SUPPORT: { icon: IconType; title: string; body: string; to: string; tag: s
 ]
 
 /**
- * The two kinds of skill MySkills builds — professional (Digital Marketing,
- * live) and personal (Career Readiness, opening soon) — followed by the
- * people and support around them. Copy stays honest about what runs today:
- * Digital Marketing practice is live, the AI practice partner belongs to the
- * personal-development programme that hasn't opened yet.
+ * The two kinds of skill MySkills builds — professional (Digital Marketing)
+ * and personal (Career Readiness), both live — followed by the people and
+ * support around them.
  */
 export function AiSkillsShowcase() {
   const professional = skillTracks.map((t) => ({
@@ -189,12 +187,11 @@ export function AiSkillsShowcase() {
           title={CAREER_READINESS.name}
           intro="The skills that decide whether you get the job and grow in it — goals, communication, leadership, agile working and a growth mindset."
           aiNote="AI is your practice partner: rehearse, get instant feedback, then a mentor reviews your growth."
-          status="Opens soon"
-          live={false}
+          status="Live"
+          live
           rows={personal}
           to={CAREER_READINESS.path}
-          cta="See the programme"
-          muted
+          cta="Start the programme"
         />
       </div>
 

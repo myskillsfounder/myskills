@@ -39,6 +39,7 @@ import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
 import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
 import { useMentorReview } from '@/lib/mentorReview'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
+import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -57,19 +58,6 @@ function MigrationError({ message }: { message: string }) {
       </p>
     </div>
   )
-}
-
-type Programme = 1 | 2
-
-const PROGRAMME_KEY = 'practice-programme'
-
-/** The programme last open, so coming back to Practice lands where you left. */
-function savedProgramme(): Programme {
-  try {
-    return localStorage.getItem(PROGRAMME_KEY) === '2' ? 2 : 1
-  } catch {
-    return 1
-  }
 }
 
 /** The two programmes, side by side: one tap switches between them. Only the
@@ -168,11 +156,7 @@ function PracticePage() {
 
   function chooseProgramme(p: Programme) {
     setProgramme(p)
-    try {
-      localStorage.setItem(PROGRAMME_KEY, String(p))
-    } catch {
-      /* the choice just won't be remembered */
-    }
+    rememberProgramme(p)
   }
 
 

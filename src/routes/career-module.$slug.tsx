@@ -5,6 +5,7 @@ import { requireOnboarded } from '@/lib/guards'
 import { moduleContent } from '@/lib/careerReadinessContent'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { ModuleFlow } from '@/components/career-readiness/ModuleFlow'
@@ -23,13 +24,7 @@ function CareerModulePage() {
   const meta = PERSONAL_DEVELOPMENT_MODULES[index]
 
   // Practice opens on the programme last used; coming from a module, that's this one.
-  useEffect(() => {
-    try {
-      localStorage.setItem('practice-programme', '2')
-    } catch {
-      /* not remembered */
-    }
-  }, [])
+  useEffect(() => rememberProgramme(2), [])
 
   return (
     <AppShell wide>
