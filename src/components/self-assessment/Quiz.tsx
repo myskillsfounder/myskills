@@ -2,21 +2,36 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, ListChecks, Loader2, Lock, Send, Sparkles } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { useAuthUser } from '@/lib/useAuth'
-import { FREQUENCY, type AssessmentQuestion } from '@/lib/careerReadinessAssessment'
+import { FREQUENCY } from '@/lib/careerReadinessAssessment'
 import { Eyebrow } from '@/components/landing/Eyebrow'
 
 type Phase = 'intro' | 'questions' | 'reflection'
 
-const draftKey = (userId: string) => `myskills.careerAssessmentDraft.${userId}`
+/** All the quiz needs to know about a statement. Which ones are reverse-scored
+ *  stays on the server, so it isn't here. */
+export interface QuizStatement {
+  id: string
+  statement: string
+}
+
+/** What differs between one self-assessment and another. */
+export interface QuizCopy {
+  /** localStorage namespace for the saved draft; the user id is appended. */
+  draftPrefix: string
+  /** The paragraph under the intro heading. */
+  intro: string
+  /** The optional, unscored closing question. */
+  closing: { title: string; hint: string; placeholder: string; ariaLabel: string }
+}
 
 interface Draft {
   answers: Record<string, number>
   index: number
 }
 
-function loadDraft(userId: string, questions: AssessmentQuestion[]): Draft | null {
+function loadDraft(key: string, questions: QuizStatement[]): Draft | null {
   try {
-    const raw = localStorage.getItem(draftKey(userId))
+    const raw = localStorage.getItem(key)
     if (!raw) return null
     const d = JSON.parse(raw) as Draft
     // Only keep answers to questions that still exist, so a changed question
@@ -30,17 +45,17 @@ function loadDraft(userId: string, questions: AssessmentQuestion[]): Draft | nul
   }
 }
 
-function saveDraft(userId: string, draft: Draft) {
+function saveDraft(key: string, draft: Draft) {
   try {
-    localStorage.setItem(draftKey(userId), JSON.stringify(draft))
+    localStorage.setItem(key, JSON.stringify(draft))
   } catch {
     /* private mode / storage disabled — the quiz still works, it just can't resume */
   }
 }
 
-function clearDraft(userId: string) {
+function clearDraft(key: string) {
   try {
-    localStorage.removeItem(draftKey(userId))
+    localStorage.removeItem(key)
   } catch {
     /* ignore */
   }
@@ -54,20 +69,24 @@ const secondaryButton =
 const panel = 'card-glass-dark glow-edge relative overflow-hidden rounded-xl p-6 sm:p-9'
 
 /**
- * The Career Readiness self-awareness assessment, on the site's dark theme:
- * one statement per screen, rated Never / Sometimes / Often / Always, then an
- * optional closing question. Scoring happens on the server (see onSubmit), so
- * nothing here knows which statements are reverse-scored.
+ * The self-assessment quiz, on the site's dark theme: one statement per
+ * screen, rated Never / Sometimes / Often / Always, then an optional closing
+ * question. Shared by the Career Readiness and Digital Marketing aptitude
+ * assessments. Scoring happens on the server (see onSubmit), so nothing here
+ * knows which statements are reverse-scored.
  */
-export function AssessmentQuiz({
+export function SelfAssessmentQuiz({
   questions,
+  copy,
   onSubmit,
 }: {
-  questions: AssessmentQuestion[]
+  questions: QuizStatement[]
+  copy: QuizCopy
   onSubmit: (answers: Record<string, number>, reflection: string) => Promise<void>
 }) {
   const { user } = useAuthUser()
   const userId = user?.id
+  const key = userId ? `${copy.draftPrefix}.${userId}` : undefined
 
   const [phase, setPhase] = useState<Phase>('intro')
   const [index, setIndex] = useState(0)
@@ -89,18 +108,18 @@ export function AssessmentQuiz({
   useEffect(() => {
     if (!userId || checked.current) return
     checked.current = true
-    const d = loadDraft(userId, questions)
+    const d = loadDraft(`${copy.draftPrefix}.${userId}`, questions)
     if (d) {
       setAnswers(d.answers)
       setIndex(d.index)
       setResumable(true)
     }
-  }, [userId, questions])
+  }, [userId, questions, copy.draftPrefix])
 
   useEffect(() => {
-    if (!userId || answeredCount === 0 || phase === 'intro') return
-    saveDraft(userId, { answers, index })
-  }, [userId, answers, index, answeredCount, phase])
+    if (!key || answeredCount === 0 || phase === 'intro') return
+    saveDraft(key, { answers, index })
+  }, [key, answers, index, answeredCount, phase])
 
   useEffect(() => () => window.clearTimeout(advance.current), [])
 
@@ -131,7 +150,7 @@ export function AssessmentQuiz({
     setSubmitting(true)
     try {
       await onSubmit(answers, reflection)
-      if (userId) clearDraft(userId)
+      if (key) clearDraft(key)
     } catch (e) {
       setError(errorMessage(e))
       setSubmitting(false)
@@ -146,8 +165,7 @@ export function AssessmentQuiz({
           {total} statements. About {minutes} minutes.
         </h2>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/70">
-          You’ll see one statement at a time. Say how often it’s true for you — it’s a starting point, not a
-          test, so answer as you really are. It doesn’t change your Career Readiness Score.
+          {copy.intro}
         </p>
 
         <ul className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -182,7 +200,7 @@ export function AssessmentQuiz({
               type="button"
               className={secondaryButton}
               onClick={() => {
-                if (userId) clearDraft(userId)
+                if (key) clearDraft(key)
                 setAnswers({})
                 setIndex(0)
                 setResumable(false)
@@ -202,19 +220,18 @@ export function AssessmentQuiz({
       <div className={panel}>
         <Eyebrow dark>One last thing</Eyebrow>
         <h2 className="mt-3 font-display text-2xl font-semibold leading-snug tracking-tight text-white sm:text-3xl">
-          Which one skill would you most like to get better at?
+          {copy.closing.title}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-white/70">
-          In your own words. It’s optional and isn’t scored — a mentor will see it when they review your
-          progress.
+          {copy.closing.hint}
         </p>
         <textarea
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
           rows={4}
           maxLength={500}
-          placeholder="e.g. Speaking up in meetings without freezing…"
-          aria-label="The skill you most want to improve"
+          placeholder={copy.closing.placeholder}
+          aria-label={copy.closing.ariaLabel}
           className="mt-5 w-full resize-y rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/40 transition-colors focus:border-brand-300 focus:bg-white/[0.09] focus:outline-none"
         />
         <p className="mt-1.5 text-right font-mono text-[11px] text-white/40">{reflection.length} / 500</p>

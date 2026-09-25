@@ -31,6 +31,7 @@ const HIDE_EXACT = new Set([
   '/become-a-mentor',
   '/career-readiness-waitlist',
   '/career-readiness-assessment',
+  '/aptitude-assessment',
 ])
 const HIDE_PREFIX = ['/blog', '/admin']
 

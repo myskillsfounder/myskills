@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useAssessmentDone } from '@/lib/assessmentResults'
+import { useAptitudeDone } from '@/lib/dmAptitude'
 import { useProfile } from '@/lib/useProfile'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
@@ -177,8 +178,9 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
   )
 }
 
-/** Card prompt shown at the top of every page until the one-time initial
- * assessment is done. Hidden on /practice (where it's taken). */
+/** Card prompt shown at the top of every page until the Digital Marketing
+ * aptitude assessment (step 1, which unlocks Practice) is done. Hidden on
+ * /practice, where the same invitation is the page itself. */
 function AssessmentCard() {
   return (
     <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -187,14 +189,14 @@ function AssessmentCard() {
           <ClipboardCheck size={20} />
         </span>
         <div>
-          <p className="text-sm font-semibold text-amber-900">Complete your Digital Marketing Initial Assessment</p>
+          <p className="text-sm font-semibold text-amber-900">Start with the Digital Marketing aptitude assessment</p>
           <p className="mt-0.5 text-xs leading-relaxed text-amber-700">
-            Take the one-time assessment to unlock your skill tracks and start tracking progress.
+            A quick look at how marketing shows up in your life — about 5 minutes. It unlocks Practice.
           </p>
         </div>
       </div>
       <Link
-        to="/practice"
+        to="/aptitude-assessment"
         className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-amber-700"
       >
         Start assessment
@@ -213,8 +215,11 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false)
   const assessmentDone = useAssessmentDone()
+  const aptitudeDone = useAptitudeDone()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const showNudge = assessmentDone === false && pathname !== '/practice'
+  // Someone who finished the Foundation assessment before the aptitude test
+  // existed already has Practice, so they aren't nagged.
+  const showNudge = aptitudeDone === false && assessmentDone === false && pathname !== '/practice'
 
   return (
     <div className="surface-paper min-h-screen">
