@@ -9,7 +9,11 @@ import type { ComponentType } from 'react'
 import { MessageSquare, Sprout, Target, Users, Workflow } from 'lucide-react'
 import { supabase } from './supabase'
 
+export type ModuleSlug = 'goal-setting' | 'communication' | 'leadership' | 'agile' | 'growth-mindset'
+
 export interface ProgrammeModule {
+  /** Stored with a learner's responses (docs/supabase-career-readiness-programme.sql). */
+  slug: ModuleSlug
   icon: ComponentType<{ size?: number; className?: string }>
   title: string
   body: string
@@ -25,30 +29,35 @@ export interface ProgrammeModule {
  */
 export const PERSONAL_DEVELOPMENT_MODULES: ProgrammeModule[] = [
   {
+    slug: 'goal-setting',
     icon: Target,
     title: 'Goal Setting',
     body: 'Turn “I want a good job” into specific, measurable goals — and a weekly plan that actually gets you there.',
     ai: 'Break big goals into milestones with AI, then check in on your progress every week.',
   },
   {
+    slug: 'communication',
     icon: MessageSquare,
     title: 'Communication',
     body: 'Write and speak clearly — emails, presentations, and explaining your work to a client or an interviewer.',
     ai: 'Rehearse pitches and presentations and get instant AI feedback on clarity, structure and tone.',
   },
   {
+    slug: 'leadership',
     icon: Users,
     title: 'Leadership',
     body: 'Lead without a title: take ownership, run a small project, and bring people with you.',
     ai: 'Role-play difficult conversations and team decisions with AI before they happen for real.',
   },
   {
+    slug: 'agile',
     icon: Workflow,
     title: 'Agile Methodology',
     body: 'Work the way modern teams do — sprints, stand-ups, backlogs and short feedback loops.',
     ai: 'Plan sprints and run retrospectives with AI as your scrum assistant.',
   },
   {
+    slug: 'growth-mindset',
     icon: Sprout,
     title: 'Growth Mindset',
     body: 'Treat setbacks as information, and build the habits that keep you learning when things get hard.',

@@ -7,7 +7,9 @@
  * the job market.
  *
  *   30  Personal development      — earned only through the Career
- *                                    Readiness Programme (locked until it runs)
+ *                                    Readiness Programme: 4 points per module
+ *                                    finished (5 modules) and 10 once a mentor
+ *                                    signs the practice off
  *   30  Professional development  — education level + skills
  *   40  Experience                — internships + work + projects
  *
@@ -47,6 +49,26 @@ const EDUCATION_MAX = 22
 const POINTS_PER_SKILL = 1
 const SKILLS_MAX = 8
 
+/** Personal development: 5 modules x 4 = 20, plus 10 for a mentor's sign-off. */
+export const POINTS_PER_MODULE = 4
+export const MENTOR_SIGNOFF_POINTS = 10
+export const PROGRAMME_MODULES = 5
+
+/** How far a learner is through the Career Readiness Programme. */
+export interface PersonalProgress {
+  modulesDone: number
+  mentorApproved: boolean
+}
+export const NO_PERSONAL_PROGRESS: PersonalProgress = { modulesDone: 0, mentorApproved: false }
+
+/** The Personal Development points a learner has earned so far. */
+export function personalPoints(p: PersonalProgress): number {
+  return Math.min(
+    Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE + (p.mentorApproved ? MENTOR_SIGNOFF_POINTS : 0),
+    PERSONAL_MAX,
+  )
+}
+
 const POINTS_PER_INTERNSHIP = 5
 const INTERNSHIPS_MAX = 15
 const POINTS_PER_WORK_MONTH = 1
@@ -59,8 +81,8 @@ export interface ReadinessBand {
   note: string
 }
 
-// Personal development is locked for everyone until the programme runs, so
-// the realistic ceiling today is 70. "Standout" deliberately needs it.
+// "Standout" deliberately needs personal development: without the programme
+// the ceiling is 70.
 const BANDS: { min: number; band: ReadinessBand }[] = [
   { min: 80, band: { label: 'Standout', note: 'A well-rounded candidate across every dimension.' } },
   { min: 55, band: { label: 'Strong', note: 'A solid profile — personal development is your next frontier.' } },
@@ -86,7 +108,7 @@ export interface Readiness {
   band: ReadinessBand
   /** Points already on the profile that verification would unlock. */
   pendingPoints: number
-  personal: ReadinessComponent & { locked: boolean }
+  personal: ReadinessComponent
   professional: ReadinessComponent
   experience: ReadinessComponent
   nextAction: NextAction | null
@@ -169,6 +191,7 @@ export function computeReadiness(
   profile: Profile,
   verification: VerificationView = NO_VERIFICATION,
   hasOpenRequest = false,
+  programme: PersonalProgress = NO_PERSONAL_PROGRESS,
 ): Readiness {
   const counts = (type: 'education' | 'experience' | 'project', entry: Education | Experience | Project) =>
     verification.identity === 'verified' && verification.status(type, entry) === 'verified'
@@ -176,14 +199,18 @@ export function computeReadiness(
   const t = tally(profile, counts)
   const potential = tally(profile, () => true)
 
-  const personalPts = 0 // programme not live — see header
+  const modulesDone = Math.min(programme.modulesDone, PROGRAMME_MODULES)
+  const personalPts = personalPoints(programme)
   const score = Math.round(personalPts + t.professional + t.experience)
   const pendingPoints = round1(potential.professional + potential.experience - (t.professional + t.experience))
 
-  // -- The single biggest gain the student can act on right now. Personal
-  // development is excluded: it can't be earned until the programme runs,
-  // and it has its own call to action on the card.
+  // -- The single biggest gain the student can act on right now.
   const candidates: NextAction[] = []
+  if (modulesDone < PROGRAMME_MODULES) {
+    candidates.push({ label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice' })
+  } else if (!programme.mentorApproved) {
+    candidates.push({ label: 'Get your Career Readiness mentor review', upTo: MENTOR_SIGNOFF_POINTS, to: '/practice' })
+  }
   if (pendingPoints >= 0.5 && !hasOpenRequest) {
     candidates.push({ label: 'Get your profile verified', upTo: pendingPoints, to: '/profile' })
   }
@@ -214,8 +241,10 @@ export function computeReadiness(
     personal: {
       points: personalPts,
       max: PERSONAL_MAX,
-      locked: true,
-      detail: 'Earned by completing the Career Readiness Programme — practice, a mentor review and an internship through MySkills.',
+      detail: [
+        `${modulesDone} of ${PROGRAMME_MODULES} modules`,
+        programme.mentorApproved ? 'signed off by a mentor' : 'mentor sign-off adds 10',
+      ].join(' · '),
     },
     professional: {
       points: round1(t.professional),

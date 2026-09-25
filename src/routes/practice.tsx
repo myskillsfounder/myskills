@@ -32,13 +32,13 @@ import {
   CAREER_READINESS,
   completionStages,
   DIGITAL_MARKETING,
-  PERSONAL_DEVELOPMENT_MODULES,
 } from '@/lib/programmes'
 import { CareerReadinessPractice } from '@/components/practice/CareerReadinessPractice'
 import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOverview'
 import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
 import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
 import { useMentorReview } from '@/lib/mentorReview'
+import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -77,7 +77,7 @@ function savedProgramme(): Programme {
 function ProgrammeTabs({ active, onChange }: { active: Programme; onChange: (p: Programme) => void }) {
   const items: { step: Programme; name: string; status: string; live: boolean }[] = [
     { step: 1, name: DIGITAL_MARKETING.name, status: 'In progress', live: true },
-    { step: 2, name: CAREER_READINESS.name, status: 'Opens soon', live: false },
+    { step: 2, name: CAREER_READINESS.name, status: 'Live', live: true },
   ]
   return (
     <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-3">
@@ -195,6 +195,8 @@ function PracticePage() {
 
   const error = assessmentError ?? practiceError
   const dmReview = useMentorReview('digital-marketing')
+  const crReview = useMentorReview('career-readiness')
+  const { progress: crProgress } = useCareerReadinessProgress()
 
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
@@ -212,10 +214,12 @@ function PracticePage() {
     internshipDone: false,
   })
   const crStages = completionStages({
-    practiceDone: false,
-    practiceStarted: false,
-    practiceDetail: `All ${PERSONAL_DEVELOPMENT_MODULES.length} modules — opens with the programme`,
-    mentorReview: 'none',
+    practiceDone: crProgress.complete,
+    practiceStarted: crProgress.started,
+    practiceDetail: crProgress.started
+      ? `${crProgress.modulesDone} of ${crProgress.modulesTotal} modules finished`
+      : `Finish all ${crProgress.modulesTotal} modules`,
+    mentorReview: crReview.state,
     internshipDone: false,
   })
 
@@ -295,9 +299,17 @@ function PracticePage() {
               {programme === 2 && (
                 <>
                   <AssessmentCard />
-                  <CareerReadinessOverview />
-                  <ProgrammeCompletion stages={crStages} />
-                  <CareerReadinessPractice />
+                  <CareerReadinessOverview progress={crProgress} mentorApproved={crReview.state === 'approved'} />
+                  <ProgrammeCompletion stages={crStages}>
+                    <MentorReviewPanel
+                      programme="career-readiness"
+                      practiceDone={crProgress.complete}
+                      review={crReview.review}
+                      state={crReview.state}
+                      onChange={() => void crReview.reload()}
+                    />
+                  </ProgrammeCompletion>
+                  <CareerReadinessPractice progress={crProgress} />
                 </>
               )}
             </>

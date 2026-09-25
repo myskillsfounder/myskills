@@ -1,13 +1,7 @@
-import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, CheckCircle2 } from 'lucide-react'
-import { useAuthUser } from '@/lib/useAuth'
-import {
-  CAREER_READINESS,
-  fetchMyProgrammeInterest,
-  PERSONAL_DEVELOPMENT_MODULES,
-} from '@/lib/programmes'
-import { PERSONAL_MAX } from '@/lib/readinessScore'
+import { ArrowRight } from 'lucide-react'
+import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
+import { PERSONAL_MAX, personalPoints } from '@/lib/readinessScore'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -20,28 +14,27 @@ const Rings = () => (
   </span>
 )
 
+const R = 34
+const CIRC = 2 * Math.PI * R
+
 /**
  * The Career Readiness half of /practice, built to mirror the Digital
  * Marketing half (PracticeStats + NextUpCard) card for card, so the two
- * programmes read as one system. Nothing is earned here until the programme
- * opens — the card says so plainly instead of showing a 0% that reads like
- * failure.
+ * programmes read as one system: a score card with the learner's progress, and
+ * a "start here" card that takes them to the next module.
  */
-export function CareerReadinessOverview() {
-  const { user } = useAuthUser()
-  const [joined, setJoined] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    if (!user) return
-    let active = true
-    fetchMyProgrammeInterest(CAREER_READINESS.slug).then((r) => active && setJoined(Boolean(r)))
-    return () => {
-      active = false
-    }
-  }, [user])
-
-  const total = PERSONAL_DEVELOPMENT_MODULES.length
-  const first = PERSONAL_DEVELOPMENT_MODULES[0]
+export function CareerReadinessOverview({
+  progress,
+  mentorApproved,
+}: {
+  progress: ProgrammeProgress
+  mentorApproved: boolean
+}) {
+  const { modules, modulesDone, modulesTotal, itemsDone, itemsTotal, next, started } = progress
+  const percent = itemsTotal ? Math.round((itemsDone / itemsTotal) * 100) : 0
+  const points = personalPoints({ modulesDone, mentorApproved })
+  const target = next ?? modules[0]
+  const targetIndex = modules.findIndex((m) => m.slug === target.slug)
 
   return (
     <div className="grid gap-5 lg:grid-cols-3">
@@ -51,38 +44,57 @@ export function CareerReadinessOverview() {
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
           <div className="relative h-[92px] w-[92px] shrink-0">
             <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90" aria-hidden>
-              <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" strokeWidth="8" strokeDasharray="4 6" className="text-white/20" />
+              <circle cx="40" cy="40" r={R} fill="none" stroke="currentColor" strokeWidth="8" className="text-white/15" />
+              <circle
+                cx="40"
+                cy="40"
+                r={R}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeDasharray={CIRC}
+                strokeDashoffset={CIRC * (1 - percent / 100)}
+                className="text-brand-200 transition-[stroke-dashoffset] duration-700"
+              />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-display text-xl font-semibold leading-none text-white/80">—</span>
-              <span className="mt-1 text-[9px] font-medium leading-none text-white/60">Not started</span>
+              <span className="font-display text-xl font-semibold leading-none text-white">{percent}%</span>
+              <span className="mt-1 text-[9px] font-medium leading-none text-white/60">
+                {started ? 'Complete' : 'Not started'}
+              </span>
             </div>
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="flex h-2 w-2 rounded-full bg-white/40" />
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
-                Personal Development Score
-              </p>
-            </div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+              Personal Development Score
+            </p>
             <p className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-              {joined ? 'You’re on the waitlist' : 'Opens with the programme'}
+              {points}
+              <span className="text-base font-normal text-white/50"> / {PERSONAL_MAX} points</span>
             </p>
             <p className="mt-1 text-xs leading-relaxed text-white/70">
-              Built across all {total} modules — and worth up to {PERSONAL_MAX} points of your Career
-              Readiness Score.
+              4 points for every module you finish, and 10 more when a mentor signs off your practice.
             </p>
           </div>
 
           <div className="min-w-0 sm:w-56">
             <div className="flex items-center gap-2">
               <div className="flex flex-1 items-center gap-[3px] rounded-full bg-white/10 p-1.5">
-                {PERSONAL_DEVELOPMENT_MODULES.map((m) => (
-                  <span key={m.title} className="h-2.5 flex-1 rounded-full bg-white/15" title={m.title} />
+                {modules.map((m) => (
+                  <span
+                    key={m.slug}
+                    title={`${m.title} — ${m.done} of ${m.total}`}
+                    className={`h-2.5 flex-1 rounded-full ${
+                      m.complete ? 'bg-brand-200' : m.started ? 'bg-brand-200/45' : 'bg-white/15'
+                    }`}
+                  />
                 ))}
               </div>
-              <span className="font-display text-lg font-semibold text-white">0/{total}</span>
+              <span className="font-display text-lg font-semibold text-white">
+                {modulesDone}/{modulesTotal}
+              </span>
             </div>
             <p className="mt-1.5 text-[11px] text-white/60">One bead per module.</p>
           </div>
@@ -92,42 +104,48 @@ export function CareerReadinessOverview() {
           <div>
             <p className="text-[11px] font-medium text-white/60">Modules completed</p>
             <p className="mt-0.5 font-display text-lg font-semibold text-white">
-              0<span className="text-sm font-normal text-white/50">/{total}</span>
+              {modulesDone}
+              <span className="text-sm font-normal text-white/50">/{modulesTotal}</span>
             </p>
           </div>
           <div>
-            <p className="text-[11px] font-medium text-white/60">Status</p>
+            <p className="text-[11px] font-medium text-white/60">Tasks written</p>
             <p className="mt-0.5 font-display text-lg font-semibold text-white">
-              {joined ? 'Waitlisted' : 'Not joined'}
+              {itemsDone}
+              <span className="text-sm font-normal text-white/50">/{itemsTotal}</span>
             </p>
           </div>
           <div>
             <p className="text-[11px] font-medium text-white/60">Readiness points</p>
             <p className="mt-0.5 font-display text-lg font-semibold text-white">
-              0<span className="text-sm font-normal text-white/50">/{PERSONAL_MAX}</span>
+              {points}
+              <span className="text-sm font-normal text-white/50">/{PERSONAL_MAX}</span>
             </p>
           </div>
         </div>
       </section>
 
-      {/* Start here */}
+      {/* Next up */}
       <Link
-        to={CAREER_READINESS.path}
+        to="/career-module/$slug"
+        params={{ slug: target.slug }}
         className="surface-wood-dark lift rise-in group relative flex h-full w-full flex-col justify-between overflow-hidden rounded-2xl p-5 text-left shadow-md sm:p-6"
       >
         <Rings />
         <div className="relative">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Start here</p>
-          <p className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">{first.title}</p>
-          <p className="mt-1.5 text-xs text-white/70">Module 1 of {total} · with AI</p>
-          {joined && (
-            <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-300">
-              <CheckCircle2 size={13} /> We’ll email you when it opens
-            </p>
-          )}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+            {next ? (started ? 'Next up' : 'Start here') : 'All modules done'}
+          </p>
+          <p className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">{target.title}</p>
+          <p className="mt-1.5 text-xs text-white/70">
+            Module {targetIndex + 1} of {modulesTotal}
+            {next ? ` · ${target.done} of ${target.total} written` : ' · review your answers'}
+          </p>
         </div>
         <span className="relative mt-6 flex items-center justify-between gap-3">
-          <span className="text-xs font-semibold text-white/80">{joined ? 'See the programme' : 'Join the programme'}</span>
+          <span className="text-xs font-semibold text-white/80">
+            {!next ? 'Open module' : target.started ? 'Continue' : 'Begin the module'}
+          </span>
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink-800 shadow-lg transition-transform duration-300 group-hover:translate-x-1 group-hover:scale-110">
             <ArrowRight size={20} />
           </span>
