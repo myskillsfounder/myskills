@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,13 +11,10 @@ import {
   Target,
   X,
 } from 'lucide-react'
-import {
-  DIFFICULTY_WEIGHT,
-  gradeScenarios,
-  type Difficulty,
-  type ScenarioGrade,
-  type ScenarioQuestion,
-} from '@/lib/decisionLabs'
+import { errorMessage } from '@/lib/errors'
+import { DIFFICULTY_WEIGHT, type Difficulty, type ScenarioQuestion } from '@/lib/decisionLabs'
+import type { PracticeResult } from '@/lib/practiceResults'
+import { Alert } from '@/components/ui'
 
 const DIFFICULTY_TINT: Record<Difficulty, string> = {
   Beginner: 'bg-emerald-50 text-emerald-700',
@@ -29,23 +26,21 @@ const DIFFICULTY_TINT: Record<Difficulty, string> = {
 export function ScenarioQuiz({
   trackName,
   questions,
-  onComplete,
+  onSubmit,
   onBack,
 }: {
   trackName: string
   questions: ScenarioQuestion[]
-  onComplete: (grade: ScenarioGrade) => Promise<void>
+  /** Sends the answers (question id -> option) to be graded and recorded by
+   *  the server, and resolves with the result. */
+  onSubmit: (answers: Record<string, number>) => Promise<PracticeResult>
   onBack: () => void
 }) {
   const [index, setIndex] = useState(0)
   const [answers, setAnswers] = useState<(number | null)[]>(() => questions.map(() => null))
-  const [phase, setPhase] = useState<'quiz' | 'result'>('quiz')
+  const [result, setResult] = useState<PracticeResult | null>(null)
   const [submitting, setSubmitting] = useState(false)
-
-  const grade = useMemo<ScenarioGrade | null>(
-    () => (phase === 'result' ? gradeScenarios(questions, answers) : null),
-    [phase, questions, answers],
-  )
+  const [error, setError] = useState<string>()
 
   const q = questions[index]
   const answered = answers.filter((a) => a !== null).length
@@ -63,19 +58,30 @@ export function ScenarioQuiz({
   function retake() {
     setAnswers(questions.map(() => null))
     setIndex(0)
-    setPhase('quiz')
+    setResult(null)
+    setError(undefined)
   }
 
+  // Graded and recorded by the server; nothing is scored in the browser, so
+  // there is no result to look at — or to walk away from — before it counts.
   async function finish() {
     setSubmitting(true)
+    setError(undefined)
     try {
-      await onComplete(gradeScenarios(questions, answers))
+      const payload: Record<string, number> = {}
+      questions.forEach((question, i) => {
+        payload[question.id] = answers[i] as number
+      })
+      setResult(await onSubmit(payload))
+    } catch (e) {
+      setError(errorMessage(e))
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (phase === 'result' && grade) {
+  if (result) {
+    const { grade, review } = result
     const passed = grade.percent >= 60
     return (
       <div className="mx-auto max-w-2xl space-y-5">
@@ -95,22 +101,18 @@ export function ScenarioQuiz({
             weighted points
           </p>
 
+          <p className="mt-3 text-xs text-ink-500">
+            Saved. A track’s score is the best of your last three attempts.
+          </p>
+
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={finish}
-              disabled={submitting}
-              className="inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700 disabled:opacity-60"
-            >
-              {submitting ? 'Saving…' : 'Save result'}
-              <ArrowRight size={16} />
-            </button>
-            <button
-              type="button"
               onClick={retake}
-              className="inline-flex items-center gap-2 rounded-full border border-ink-300 px-6 py-2.5 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-100"
+              className="inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
             >
               Practice again
+              <ArrowRight size={16} />
             </button>
             <button
               type="button"
@@ -126,7 +128,8 @@ export function ScenarioQuiz({
           <h2 className="font-display text-lg font-semibold text-ink-900">Review scenarios</h2>
           <ul className="mt-4 space-y-5">
             {questions.map((question, i) => {
-              const correct = answers[i] === question.correct
+              const r = review[question.id]
+              const correct = r != null && answers[i] === r.correctIndex
               return (
                 <li key={question.id} className="border-b border-ink-200 pb-5 last:border-0">
                   <div className="flex items-start gap-2">
@@ -142,16 +145,14 @@ export function ScenarioQuiz({
                       <p className="mt-1 text-xs text-ink-600">{question.question}</p>
                       <p className="mt-1.5 text-xs text-ink-600">
                         <span className="font-medium text-ink-900">Correct: </span>
-                        {question.options[question.correct]}
+                        {r ? question.options[r.correctIndex] : '—'}
                       </p>
-                      <p className="mt-1 text-xs text-ink-500">{question.whyCorrect}</p>
-                      {!correct && (
-                        <p className="mt-1 text-xs text-ink-500">{question.whyOthersWrong}</p>
-                      )}
-                      {question.learningOutcome && (
+                      {r && <p className="mt-1 text-xs text-ink-500">{r.whyCorrect}</p>}
+                      {r && !correct && <p className="mt-1 text-xs text-ink-500">{r.whyOthersWrong}</p>}
+                      {r?.learningOutcome && (
                         <p className="mt-1.5 inline-flex items-start gap-1 text-xs font-medium text-brand-700">
                           <ListChecks size={13} className="mt-0.5 shrink-0" />
-                          {question.learningOutcome}
+                          {r.learningOutcome}
                         </p>
                       )}
                     </div>
@@ -263,6 +264,14 @@ export function ScenarioQuiz({
         </div>
       </div>
 
+      {error && (
+        <div className="mt-4">
+          <Alert tone="danger" title="Couldn’t submit your answers">
+            <p>{error}</p>
+          </Alert>
+        </div>
+      )}
+
       <div className="mt-5 flex items-center justify-between">
         <button
           type="button"
@@ -277,11 +286,15 @@ export function ScenarioQuiz({
         {isLast ? (
           <button
             type="button"
-            onClick={() => setPhase('result')}
-            disabled={answered < questions.length}
+            onClick={() => void finish()}
+            disabled={answered < questions.length || submitting}
             className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {answered < questions.length ? `Answer all (${answered}/${questions.length})` : 'See results'}
+            {answered < questions.length
+              ? `Answer all (${answered}/${questions.length})`
+              : submitting
+                ? 'Grading…'
+                : 'Submit answers'}
           </button>
         ) : (
           <button

@@ -2,13 +2,14 @@
  * Practice-attempt persistence — normalized, append-only table, NOT a JSONB
  * blob on profiles. See docs/supabase-migration-2026-07-11-normalize-assessment.sql.
  *
- *   practice_attempts     — one row PER ATTEMPT (full history, never overwritten)
- *   practice_best_scores  — a view: best percent + attempt count per track,
- *                           derived from practice_attempts (RLS applies via
- *                           the underlying table, no separate policy needed)
+ *   practice_attempts     — one row PER ATTEMPT (full history, never overwritten),
+ *                           written only by submit_practice_attempt()
+ *   practice_best_scores  — a view: a track's score is the best of the last 3
+ *                           attempts, plus the all-time attempt count (RLS
+ *                           applies via the underlying table)
  */
 import { supabase } from './supabase'
-import type { ScenarioGrade } from './decisionLabs'
+import type { ScenarioGrade, ScenarioReview } from './decisionLabs'
 
 export interface PracticeTrackBest {
   track_slug: string
@@ -38,25 +39,28 @@ export async function fetchPracticeSummary(): Promise<PracticeSummary> {
   return summary
 }
 
-/** Record one practice attempt (always an insert — history is never
- * overwritten; "best score" is a derived query, not stored state). */
-export async function recordPracticeAttempt(
-  track: string,
-  grade: ScenarioGrade,
-): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error('You are not signed in.')
+/** What the server sends back for an attempt: the grade, and per-question
+ *  explanations (including the correct answers — revealed only now, after the
+ *  attempt is recorded). */
+export interface PracticeResult {
+  grade: ScenarioGrade
+  review: Record<string, ScenarioReview>
+}
 
-  const { error } = await supabase.from('practice_attempts').insert({
-    profile_id: user.id,
-    track_slug: track,
-    correct: grade.correct,
-    total: grade.total,
-    earned_weight: grade.earnedWeight,
-    max_weight: grade.maxWeight,
-    percent: grade.percent,
+/**
+ * Submit one practice attempt. The server grades it (answer key: docs/
+ * supabase-practice-server-grading.sql), records it and returns the result —
+ * the browser can no longer write a score. `answers` maps each question id to
+ * the option chosen, and must cover the whole track.
+ */
+export async function submitPracticeAttempt(
+  track: string,
+  answers: Record<string, number>,
+): Promise<PracticeResult> {
+  const { data, error } = await supabase.rpc('submit_practice_attempt', {
+    p_track: track,
+    p_answers: answers,
   })
-  if (error) throw error
+  if (error) throw new Error(error.message?.trim() || 'Something went wrong.')
+  return data as PracticeResult
 }
