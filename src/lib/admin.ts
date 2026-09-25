@@ -18,56 +18,10 @@ function raise(error: { message?: string; hint?: string | null } | null): never 
 }
 
 /* ========================================================================== */
-/* OVERVIEW                                                                   */
-/* ========================================================================== */
-
-export interface AdminOverview {
-  total_users: number
-  active_today: number
-  new_this_week: number
-  total_logins: number
-  assessments_done: number
-  practice_attempts: number
-  avg_rating: number | null
-  feedback_count: number
-  blog_posts: number
-  blog_published: number
-  certificates: number
-  mentor_applications_pending: number
-}
-
-/** Aggregated server-side — the browser has no business pulling 235 profile
- *  rows just to render the number 235. */
-export async function fetchOverview(): Promise<AdminOverview> {
-  const { data, error } = await supabase.rpc('admin_overview')
-  if (error) raise(error)
-  if (!data) throw new Error('Not authorized.')
-  return data as AdminOverview
-}
-
-/* ========================================================================== */
 /* USERS                                                                      */
 /* ========================================================================== */
 
-export interface AdminUser {
-  id: string
-  email: string
-  full_name: string | null
-  headline: string | null
-  is_mentor: boolean
-  created_at: string
-  last_login: string | null
-  assessment_percent: number | null
-}
-
-export async function fetchUsers(search?: string): Promise<AdminUser[]> {
-  const { data, error } = await supabase.rpc('admin_users', {
-    search: search?.trim() || null,
-    max_rows: 200,
-  })
-  if (error) raise(error)
-  return (data ?? []) as AdminUser[]
-}
+// The overview and the student list live in lib/adminStudents.ts (admin v2).
 
 /** Grants or revokes support-chat mentor powers (profiles.is_mentor), which is
  *  separate from being listed publicly in Community.

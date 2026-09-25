@@ -1,16 +1,18 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { createFileRoute, Link, Outlet, useRouter, useRouterState } from '@tanstack/react-router'
 import {
   Award,
   BarChart3,
   Building2,
   CalendarCheck,
+  ChevronDown,
   ClipboardCheck,
   ClipboardList,
   FileText,
   GraduationCap,
   HeartHandshake,
   LogOut,
+  Menu,
   MessageSquare,
   Megaphone,
   ShieldAlert,
@@ -44,63 +46,128 @@ export const Route = createFileRoute('/admin/_layout')({
   component: AdminLayout,
 })
 
-// Ordered by how often an admin actually reaches for it, not alphabetically.
-// `section: null` marks Overview — not a grantable slug, shown only to full
-// admins (see src/lib/staffAccess.ts for why that's checked separately from
-// "granted all 9 sections").
-const TABS: { to: string; label: string; icon: typeof BarChart3; exact?: boolean; section: StaffSection | null }[] = [
-  { to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: null },
-  { to: '/admin/users', label: 'Users', icon: Users, section: 'users' },
-  { to: '/admin/assessment-questions', label: 'Assessment', icon: ClipboardList, section: 'assessment' },
-  { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
-  { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
-  { to: '/admin/wellness', label: 'Wellness', icon: HeartHandshake, section: 'wellness' },
-  { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
-  { to: '/admin/mentor-reviews', label: 'Mentor Reviews', icon: ClipboardCheck, section: 'mentor-reviews' },
-  { to: '/admin/live-sessions', label: 'Live Sessions', icon: CalendarCheck, section: 'mentor-reviews' },
-  { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
-  { to: '/admin/institution-partners', label: 'Institution Partners', icon: GraduationCap, section: 'institution-partners' },
-  { to: '/admin/demo-requests', label: 'Demo Requests', icon: Building2, section: 'demo-requests' },
-  { to: '/admin/blog', label: 'Blog', icon: FileText, section: 'blog' },
-  { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
+type NavItem = { to: string; label: string; icon: typeof BarChart3; exact?: boolean; section: StaffSection | null }
+
+// Grouped the way the work is: the students and their score, the two
+// programmes, the people and organisations MySkills works with, and the site
+// itself. `section: null` marks Overview — not a grantable slug, shown only to
+// full admins (see src/lib/staffAccess.ts).
+const GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Overview',
+    items: [{ to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: null }],
+  },
+  {
+    label: 'Students',
+    items: [
+      { to: '/admin/users', label: 'All students', icon: Users, section: 'users' },
+      { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
+      { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
+    ],
+  },
+  {
+    label: 'Programmes',
+    items: [
+      { to: '/admin/mentor-reviews', label: 'Mentor reviews', icon: ClipboardCheck, section: 'mentor-reviews' },
+      { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
+      { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
+    ],
+  },
+  {
+    label: 'Partners',
+    items: [
+      { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
+      { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
+      { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
+    ],
+  },
+  {
+    label: 'Site',
+    items: [
+      { to: '/admin/blog', label: 'Blog', icon: FileText, section: 'blog' },
+      { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
+      { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
+      { to: '/admin/wellness', label: 'Wellness', icon: HeartHandshake, section: 'wellness' },
+    ],
+  },
 ]
 
-function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSection[] }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const visible = TABS.filter((t) => t.section === null ? isAdmin : isAdmin || sections.includes(t.section))
+function visibleGroups(isAdmin: boolean, sections: StaffSection[]) {
+  return GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((t) => (t.section === null ? isAdmin : isAdmin || sections.includes(t.section))),
+  })).filter((g) => g.items.length > 0)
+}
 
+function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: StaffSection[]; onPick?: () => void }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   return (
-    <nav aria-label="Admin sections" className="mb-6">
-      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-        {visible.map(({ to, label, icon: Icon, exact }) => {
-          // Prefix matching so a sub-page keeps its tab lit; the overview tab
-          // has to be exact or it would match every child route.
-          const active = exact ? pathname === to : pathname === to || pathname.startsWith(`${to}/`)
-          return (
-            <li key={to}>
-              <Link
-                to={to}
-                aria-current={active ? 'page' : undefined}
-                className={`lift flex flex-col items-center gap-1.5 rounded-2xl border px-3 py-3.5 text-center text-sm font-medium transition-colors ${
-                  active
-                    ? 'border-brand-200 bg-brand-50 text-brand-800'
-                    : 'border-ink-100 bg-white text-ink-600 hover:border-ink-200 hover:text-ink-900'
-                }`}
-              >
-                <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl ${
-                    active ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-500'
-                  }`}
-                >
-                  <Icon size={17} />
-                </span>
-                {label}
-              </Link>
-            </li>
-          )
-        })}
-      </ul>
-    </nav>
+    <div className="space-y-5">
+      {visibleGroups(isAdmin, sections).map((g) => (
+        <div key={g.label}>
+          <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-400">{g.label}</p>
+          <ul className="mt-1.5 space-y-0.5">
+            {g.items.map(({ to, label, icon: Icon, exact }) => {
+              // Prefix matching so a sub-page keeps its item lit; Overview has
+              // to be exact or it would match every child route.
+              const active = exact ? pathname === to : pathname === to || pathname.startsWith(`${to}/`)
+              return (
+                <li key={to}>
+                  <Link
+                    to={to}
+                    onClick={onPick}
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                      active ? 'bg-brand-50 text-brand-800' : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
+                    }`}
+                  >
+                    <Icon size={16} className={active ? 'text-brand-600' : 'text-ink-400'} />
+                    {label}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** A fixed sidebar on wide screens; a collapsible menu above the page on phones. */
+function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSection[] }) {
+  const [open, setOpen] = useState(false)
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const current =
+    GROUPS.flatMap((g) => g.items).find((t) =>
+      t.exact ? pathname === t.to : pathname === t.to || pathname.startsWith(`${t.to}/`),
+    )?.label ?? 'Menu'
+  return (
+    <>
+      <nav aria-label="Admin sections" className="hidden w-56 shrink-0 lg:block">
+        <div className="sticky top-24">
+          <NavLinks isAdmin={isAdmin} sections={sections} />
+        </div>
+      </nav>
+      <nav aria-label="Admin sections" className="mb-5 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          className="flex w-full items-center justify-between rounded-xl border border-ink-900/[0.08] bg-white px-4 py-2.5 text-sm font-medium text-ink-800 shadow-e1"
+        >
+          <span className="inline-flex items-center gap-2">
+            <Menu size={16} className="text-ink-500" /> {current}
+          </span>
+          <ChevronDown size={16} className={`text-ink-500 transition-transform ${open ? 'rotate-180' : ''}`} />
+        </button>
+        {open && (
+          <div className="mt-2 rounded-2xl border border-ink-900/[0.08] bg-white p-3 shadow-e2">
+            <NavLinks isAdmin={isAdmin} sections={sections} onPick={() => setOpen(false)} />
+          </div>
+        )}
+      </nav>
+    </>
   )
 }
 
@@ -122,7 +189,7 @@ function StaffShell({ children }: { children: ReactNode }) {
   return (
     <div className="surface-paper min-h-screen">
       <header className="surface-paper sticky top-0 z-30 border-b border-ink-900/[0.06] backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2.5">
             <img src="/logo-mark.png" alt="" className="h-8 w-8 shrink-0" />
             <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
@@ -139,7 +206,7 @@ function StaffShell({ children }: { children: ReactNode }) {
           </button>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-8">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-8">{children}</main>
     </div>
   )
 }
@@ -172,8 +239,12 @@ function AdminLayout() {
   return (
     <StaffAccessContext.Provider value={access}>
       <StaffShell>
-        <AdminNav isAdmin={isAdmin} sections={sections} />
-        <Outlet />
+        <div className="lg:flex lg:gap-8">
+          <AdminNav isAdmin={isAdmin} sections={sections} />
+          <div className="min-w-0 flex-1">
+            <Outlet />
+          </div>
+        </div>
       </StaffShell>
     </StaffAccessContext.Provider>
   )
