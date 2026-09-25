@@ -159,7 +159,7 @@ export function AssessmentQuiz({
               </div>
             ))}
           </div>
-          <p className="mt-6 text-sm text-white/70">Your certificate of foundational progress is ready.</p>
+          <p className="mt-6 text-sm text-white/70">Your certificate of foundational progress is ready — you’ll find it in your profile.</p>
           <button type="button" onClick={() => onContinue(result)} className={`mt-4 ${primaryButton}`}>
             Continue
             <ArrowRight size={16} />

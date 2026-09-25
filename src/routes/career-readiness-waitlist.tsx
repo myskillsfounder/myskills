@@ -125,7 +125,7 @@ function CareerReadinessWaitlistPage() {
                   to={user ? '/career-readiness-assessment' : '/signup'}
                   className="press mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
                 >
-                  Take the Career Readiness assessment
+                  Take the personal aptitude assessment
                   <ArrowRight size={16} />
                 </Link>
                 {!user && (

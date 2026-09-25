@@ -97,7 +97,7 @@ function CertificateSection() {
           <p className="mt-0.5 text-xs text-ink-600">
             Complete the Foundation assessment to earn your certificate of foundational progress.
           </p>
-          <Link to="/practice" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
+          <Link to="/foundation-assessment" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
             Go to assessment →
           </Link>
         </div>

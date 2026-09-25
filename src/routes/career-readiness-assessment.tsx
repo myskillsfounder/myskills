@@ -57,7 +57,7 @@ function CareerReadinessAssessmentPage() {
     <DarkShell
       back={{ to: '/practice', label: 'Back to Practice' }}
       eyebrow="Career Readiness"
-      title={taken ? 'Your starting point' : 'Initial assessment'}
+      title={taken ? 'Your personal aptitude' : 'Personal aptitude assessment'}
       description={
         taken
           ? 'What you told us about how you work today, and where the programme can help most.'

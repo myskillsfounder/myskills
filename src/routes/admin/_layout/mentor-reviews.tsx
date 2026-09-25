@@ -80,7 +80,7 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
         // learner's self-awareness baseline, not their Digital Marketing scores.
         <div className="mt-4 border-t border-ink-200 pt-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-            Career Readiness assessment · baseline
+            Personal aptitude assessment · baseline
           </p>
           {review.career_readiness ? (
             <>
