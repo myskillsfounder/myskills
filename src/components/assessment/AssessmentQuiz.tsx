@@ -6,6 +6,16 @@ import type { QuizGradeResult } from '@/lib/assessmentResults'
 import { clearDraft, loadDraft, saveDraft } from '@/lib/assessmentDraft'
 import { useAuthUser } from '@/lib/useAuth'
 
+const primaryButton =
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-50'
+const secondaryButton =
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:border-white/40 disabled:cursor-not-allowed disabled:opacity-40'
+
+/**
+ * The Foundation assessment quiz (the old initial assessment) on the dark
+ * theme. The logic — draft saving and resuming, one-attempt server grading,
+ * the review of answers — is unchanged; only how it looks moved.
+ */
 export function AssessmentQuiz({
   questions,
   onSubmit,
@@ -119,71 +129,68 @@ export function AssessmentQuiz({
     const passed = result.percent >= 60
     return (
       <div className="mx-auto max-w-2xl space-y-5">
-        <div className="card p-8 text-center">
+        <div className="card-glass-dark glow-edge rounded-xl p-8 text-center">
           <div
             className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${
-              passed ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+              passed ? 'bg-emerald-400/15 text-emerald-300' : 'bg-amber-400/15 text-amber-200'
             }`}
           >
             <CheckCircle2 size={30} />
           </div>
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-ink-900">
+          <p className="mt-4 font-display text-6xl font-semibold leading-none tabular-nums text-white">
             {result.percent}%
-          </h1>
-          <p className="mt-1 text-sm text-ink-600">
+          </p>
+          <p className="mt-2 text-sm text-white/70">
             You answered {result.correct} of {result.total} correctly.
           </p>
-          <div className="mt-6 space-y-2 text-left">
+          <div className="mt-6 space-y-2.5 text-left">
             {result.byCategory.map((c) => (
               <div key={c.category} className="flex items-center gap-3">
-                <span className="w-40 shrink-0 truncate text-xs text-ink-600">{c.category}</span>
-                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-200">
+                <span className="w-40 shrink-0 truncate text-xs text-white/60">{c.category}</span>
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
                   <div
-                    className="h-full rounded-full bg-brand-500"
+                    className="h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-200"
                     style={{ width: `${Math.round((c.correct / c.total) * 100)}%` }}
                   />
                 </div>
-                <span className="w-10 shrink-0 text-right text-xs font-medium text-ink-800">
+                <span className="w-10 shrink-0 text-right font-mono text-xs font-bold tabular-nums text-white/80">
                   {c.correct}/{c.total}
                 </span>
               </div>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={() => onContinue(result)}
-            className="mt-8 inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
-          >
+          <p className="mt-6 text-sm text-white/70">Your certificate of foundational progress is ready.</p>
+          <button type="button" onClick={() => onContinue(result)} className={`mt-4 ${primaryButton}`}>
             Continue
             <ArrowRight size={16} />
           </button>
         </div>
 
-        <div className="card p-5 sm:p-6">
-          <h2 className="font-display text-lg font-semibold text-ink-900">Review answers</h2>
+        <div className="card-glass-dark rounded-xl p-5 sm:p-6">
+          <h2 className="font-display text-lg font-semibold text-white">Review answers</h2>
           <ul className="mt-4 space-y-4">
             {questions.map((question, i) => {
               const review = result.review[question.id]
               const correct = answers[i] === review?.correctIndex
               return (
-                <li key={question.id} className="border-b border-ink-200 pb-4 last:border-0">
-                  <div className="flex items-start gap-2">
+                <li key={question.id} className="border-b border-white/10 pb-4 last:border-0">
+                  <div className="flex items-start gap-2.5">
                     <span
                       className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                        correct ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'
+                        correct ? 'bg-emerald-400/20 text-emerald-300' : 'bg-red-400/20 text-red-300'
                       }`}
                     >
                       {correct ? <Check size={12} /> : <X size={12} />}
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-ink-900">{question.question}</p>
+                      <p className="text-sm font-medium text-white">{question.question}</p>
                       {review && (
                         <>
-                          <p className="mt-1 text-xs text-ink-600">
+                          <p className="mt-1 text-xs text-white/70">
                             Correct: {question.options[review.correctIndex]}
                           </p>
                           {review.explanation && (
-                            <p className="mt-0.5 text-xs text-ink-500">{review.explanation}</p>
+                            <p className="mt-0.5 text-xs text-white/50">{review.explanation}</p>
                           )}
                         </>
                       )}
@@ -202,8 +209,8 @@ export function AssessmentQuiz({
     <div className="lg:flex lg:items-start lg:gap-6">
       {showSidebar && (
         <aside className="mb-4 hidden lg:block lg:w-60 lg:shrink-0">
-          <div className="sticky top-6 card p-4">
-            <p className="px-1 text-xs font-semibold uppercase tracking-wide text-ink-500">
+          <div className="card-glass-dark sticky top-6 rounded-xl p-4">
+            <p className="px-1 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-brand-200">
               Categories
             </p>
             <ul className="mt-3 space-y-1">
@@ -215,22 +222,22 @@ export function AssessmentQuiz({
                       type="button"
                       onClick={() => setIndex(c.first)}
                       className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors ${
-                        active ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink-600 hover:bg-ink-100'
+                        active ? 'bg-white/10 font-medium text-white' : 'text-white/60 hover:bg-white/[0.06] hover:text-white'
                       }`}
                     >
                       <span
                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] ${
                           c.done
-                            ? 'bg-emerald-500 text-white'
+                            ? 'bg-emerald-400 text-ink-900'
                             : active
-                              ? 'border border-brand-500 text-brand-600'
-                              : 'border border-ink-300 text-ink-500'
+                              ? 'border border-brand-300 text-brand-200'
+                              : 'border border-white/25 text-white/50'
                         }`}
                       >
                         {c.done ? <Check size={12} /> : c.answered > 0 ? c.answered : ''}
                       </span>
                       <span className="min-w-0 flex-1 truncate">{c.category}</span>
-                      <span className="shrink-0 text-[11px] text-ink-500">
+                      <span className="shrink-0 font-mono text-[11px] text-white/40">
                         {c.answered}/{c.total}
                       </span>
                     </button>
@@ -244,14 +251,14 @@ export function AssessmentQuiz({
 
       <div className="mx-auto max-w-2xl flex-1">
         {resumed && (
-          <div className="rise-in mb-4 flex flex-col gap-2.5 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-brand-900">
+          <div className="rise-in mb-4 flex flex-col gap-2.5 rounded-xl border border-brand-300/30 bg-brand-500/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-brand-100">
               Picked up where you left off — {answered} of {questions.length} answered.
             </p>
             <button
               type="button"
               onClick={startOver}
-              className="press inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-brand-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-brand-800 transition-colors hover:bg-brand-100 sm:self-auto"
+              className="press inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:border-white/40 sm:self-auto"
             >
               <RotateCcw size={13} />
               Start over
@@ -260,23 +267,27 @@ export function AssessmentQuiz({
         )}
 
         <div className="mb-5">
-          <div className="flex items-center justify-between text-xs font-medium text-ink-500">
-            <span className="uppercase tracking-wide text-brand-600">{q.category}</span>
-            <span>
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-brand-200">
+              [ {q.category} ]
+            </span>
+            <span className="font-mono text-[11px] font-bold tabular-nums text-white/50">
               {index + 1} / {questions.length}
             </span>
           </div>
-          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink-200">
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
             <div
-              className="h-full rounded-full bg-brand-600 transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-200 transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold leading-snug text-ink-900">{q.question}</h2>
-          <div className="mt-5 space-y-2.5">
+        <div key={q.id} className="card-glass-dark glow-edge rise-in rounded-xl p-6 sm:p-8">
+          <h2 className="font-display text-xl font-semibold leading-snug tracking-tight text-white sm:text-2xl">
+            {q.question}
+          </h2>
+          <div className="mt-6 space-y-2.5">
             {q.options.map((opt, i) => {
               const selected = answers[index] === i
               return (
@@ -284,15 +295,15 @@ export function AssessmentQuiz({
                   key={i}
                   type="button"
                   onClick={() => choose(i)}
-                  className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                  className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-sm transition-all duration-200 ${
                     selected
-                      ? 'border-brand-500 bg-brand-50 text-brand-900'
-                      : 'border-ink-300 text-ink-800 hover:border-ink-400 hover:bg-ink-100'
+                      ? 'border-brand-300 bg-brand-500/30 text-white shadow-[0_0_28px_-8px_rgba(143,133,238,0.85)]'
+                      : 'border-white/15 bg-white/[0.06] text-white/85 hover:border-white/30 hover:bg-white/[0.12]'
                   }`}
                 >
                   <span
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs ${
-                      selected ? 'border-brand-600 bg-brand-600 text-white' : 'border-ink-300'
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-xs font-bold ${
+                      selected ? 'border-white bg-white text-ink-900' : 'border-white/25 text-white/60'
                     }`}
                   >
                     {String.fromCharCode(65 + i)}
@@ -305,7 +316,7 @@ export function AssessmentQuiz({
         </div>
 
         {submitError && (
-          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p role="alert" className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             Couldn't submit your assessment: {submitError}
           </p>
         )}
@@ -315,7 +326,7 @@ export function AssessmentQuiz({
             type="button"
             onClick={() => setIndex((v) => Math.max(0, v - 1))}
             disabled={index === 0}
-            className="inline-flex items-center gap-1.5 press h-10 rounded-xl border border-ink-300 bg-white px-4 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+            className={secondaryButton}
           >
             <ArrowLeft size={16} />
             Back
@@ -326,7 +337,7 @@ export function AssessmentQuiz({
               type="button"
               onClick={submit}
               disabled={answered < questions.length || submitting}
-              className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className={primaryButton}
             >
               {submitting
                 ? 'Grading…'
@@ -339,7 +350,7 @@ export function AssessmentQuiz({
               type="button"
               onClick={() => setIndex((v) => Math.min(questions.length - 1, v + 1))}
               disabled={answers[index] === null}
-              className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className={primaryButton}
             >
               Next
               <ArrowRight size={16} />

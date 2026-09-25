@@ -43,7 +43,7 @@ const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
   {
     icon: ClipboardCheck,
     title: 'Find out where you stand',
-    body: 'A free initial assessment benchmarks your skills, so you know exactly where to start.',
+    body: 'A free aptitude assessment shows where marketing comes naturally to you, so you know exactly where to start.',
     tag: 'Free',
   },
   {
@@ -175,7 +175,7 @@ function PillarCard({
 
 function HomePage() {
   const { user } = useAuthUser()
-  const assessmentTo = user ? '/practice' : '/signup'
+  const assessmentTo = user ? '/aptitude-assessment' : '/signup'
 
   return (
     <div className="min-h-screen bg-ink-900">
@@ -207,7 +207,7 @@ function HomePage() {
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
 
               {/* No CTA here — the hero's job is the idea, not the click.
-                  "Take the initial assessment" is the final CTA further
+                  "Take the aptitude assessment" is the final CTA further
                   down. The "Two kinds of skill" statement now closes the
                   hero as its own centred line, below both columns. */}
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
@@ -427,7 +427,7 @@ function HomePage() {
                 Nothing is impossible. Start with where you stand.
               </h2>
               <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-                The initial assessment is free, with no time limit. Everything else builds from it.
+                The aptitude assessment is free and takes about five minutes. Everything else builds from it.
               </p>
             </div>
             <Link
@@ -435,7 +435,7 @@ function HomePage() {
               className="press relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
             >
               <Target size={16} />
-              Take the initial assessment
+              Take the aptitude assessment
               <ArrowRight size={16} />
             </Link>
           </div>

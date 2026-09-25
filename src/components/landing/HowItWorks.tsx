@@ -33,9 +33,9 @@ interface StepDef {
 const steps: StepDef[] = [
   {
     icon: ClipboardCheck,
-    title: 'Take the Digital Marketing Initial Assessment',
+    title: 'Take the aptitude assessment',
     description:
-      'A one-time, 8-track benchmark. It tells you — and the app — exactly where you’re strong and where to focus first.',
+      'A five-minute look at how marketing already shows up in your life — billboards, offers, trends. It shows where you’re naturally strong, and unlocks Practice.',
     cta: 'Start assessment',
     badge: { label: 'Start here', tone: 'brand' },
   },
@@ -43,7 +43,7 @@ const steps: StepDef[] = [
     icon: Dumbbell,
     title: 'Practice with real scenarios',
     description:
-      'Work through Decision Labs for each track, scored like the real job. Your dashboard shows exactly how you’re improving.',
+      'Work through Decision Labs for each track, scored like the real job, then take the Foundation assessment for your certificate. Your dashboard shows how you’re improving.',
     cta: 'Practice a track',
     badge: { label: '8 tracks', tone: 'neutral' },
   },

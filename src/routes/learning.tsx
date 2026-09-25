@@ -26,14 +26,14 @@ function LockedState() {
       </div>
       <h1 className="mt-4 text-xl font-semibold text-ink-900">Learning is locked</h1>
       <p className="mt-1.5 text-sm text-ink-600">
-        Complete the Digital Marketing Initial Assessment to unlock your learning tracks. It only
-        takes a few minutes.
+        Complete the Foundation assessment to unlock your learning tracks. It opens once you’ve
+        worked through the Beginner vocabulary in Practice.
       </p>
       <Link
-        to="/assessment"
+        to="/foundation-assessment"
         className="mt-6 inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
       >
-        Take the Digital Marketing Initial Assessment
+        Go to the Foundation assessment
         <ArrowRight size={16} />
       </Link>
     </div>

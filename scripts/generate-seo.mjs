@@ -91,7 +91,7 @@ const STATIC_PAGES = [
     changefreq: 'weekly',
     priority: '1.0',
     title: 'MySkills — Personal & Professional Development, Powered by AI',
-    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free initial assessment.',
+    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free aptitude assessment.',
   },
   {
     path: '/digital-marketing',

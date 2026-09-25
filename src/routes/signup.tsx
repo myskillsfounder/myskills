@@ -178,7 +178,7 @@ function SignupPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Start the Digital Marketing Initial Assessment and unlock all 8 tracks."
+      subtitle="Start with the aptitude assessment and unlock all 8 tracks."
       footer={
         <>
           Already have an account?{' '}

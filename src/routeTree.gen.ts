@@ -26,6 +26,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearningRouteImport } from './routes/learning'
 import { Route as InternshipsRouteImport } from './routes/internships'
 import { Route as GamesRouteImport } from './routes/games'
+import { Route as FoundationAssessmentRouteImport } from './routes/foundation-assessment'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DigitalMarketingRouteImport } from './routes/digital-marketing'
@@ -146,6 +147,11 @@ const InternshipsRoute = InternshipsRouteImport.update({
 const GamesRoute = GamesRouteImport.update({
   id: '/games',
   path: '/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FoundationAssessmentRoute = FoundationAssessmentRouteImport.update({
+  id: '/foundation-assessment',
+  path: '/foundation-assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -351,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/digital-marketing': typeof DigitalMarketingRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/foundation-assessment': typeof FoundationAssessmentRoute
   '/games': typeof GamesRoute
   '/internships': typeof InternshipsRoute
   '/learning': typeof LearningRoute
@@ -405,6 +412,7 @@ export interface FileRoutesByTo {
   '/digital-marketing': typeof DigitalMarketingRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/foundation-assessment': typeof FoundationAssessmentRoute
   '/games': typeof GamesRoute
   '/internships': typeof InternshipsRoute
   '/learning': typeof LearningRoute
@@ -460,6 +468,7 @@ export interface FileRoutesById {
   '/digital-marketing': typeof DigitalMarketingRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/foundation-assessment': typeof FoundationAssessmentRoute
   '/games': typeof GamesRoute
   '/internships': typeof InternshipsRoute
   '/learning': typeof LearningRoute
@@ -517,6 +526,7 @@ export interface FileRouteTypes {
     | '/digital-marketing'
     | '/feedback'
     | '/forgot-password'
+    | '/foundation-assessment'
     | '/games'
     | '/internships'
     | '/learning'
@@ -571,6 +581,7 @@ export interface FileRouteTypes {
     | '/digital-marketing'
     | '/feedback'
     | '/forgot-password'
+    | '/foundation-assessment'
     | '/games'
     | '/internships'
     | '/learning'
@@ -625,6 +636,7 @@ export interface FileRouteTypes {
     | '/digital-marketing'
     | '/feedback'
     | '/forgot-password'
+    | '/foundation-assessment'
     | '/games'
     | '/internships'
     | '/learning'
@@ -681,6 +693,7 @@ export interface RootRouteChildren {
   DigitalMarketingRoute: typeof DigitalMarketingRoute
   FeedbackRoute: typeof FeedbackRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  FoundationAssessmentRoute: typeof FoundationAssessmentRoute
   GamesRoute: typeof GamesRoute
   InternshipsRoute: typeof InternshipsRoute
   LearningRoute: typeof LearningRoute
@@ -823,6 +836,13 @@ declare module '@tanstack/react-router' {
       path: '/games'
       fullPath: '/games'
       preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/foundation-assessment': {
+      id: '/foundation-assessment'
+      path: '/foundation-assessment'
+      fullPath: '/foundation-assessment'
+      preLoaderRoute: typeof FoundationAssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1160,6 +1180,7 @@ const rootRouteChildren: RootRouteChildren = {
   DigitalMarketingRoute: DigitalMarketingRoute,
   FeedbackRoute: FeedbackRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  FoundationAssessmentRoute: FoundationAssessmentRoute,
   GamesRoute: GamesRoute,
   InternshipsRoute: InternshipsRoute,
   LearningRoute: LearningRoute,

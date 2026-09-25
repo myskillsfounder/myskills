@@ -39,7 +39,7 @@ export interface PageSeo {
 export const PAGE_SEO: Record<string, PageSeo> = {
   '/': {
     title: 'MySkills — Personal & Professional Development, Powered by AI',
-    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free initial assessment.',
+    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free aptitude assessment.',
   },
   '/digital-marketing': {
     title: 'Learn Digital Marketing Online — Free Practice & Certification | MySkills',

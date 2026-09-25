@@ -69,7 +69,7 @@ export const CAREER_READINESS = {
 
 /**
  * The Digital Marketing Programme is everything MySkills already had before
- * programmes existed — the Digital Marketing Initial Assessment, the 8 skill
+ * programmes existed — the Foundation assessment, the 8 skill
  * tracks and their Decision Labs, the Vocabulary Builder and the certificate.
  * It's live, so there's no interest list: progress comes from real results.
  */
@@ -182,9 +182,9 @@ export function digitalMarketingProgress(
     percent,
     status: done === 0 ? 'Not started' : done >= steps ? 'Complete' : 'In progress',
     detail: !assessmentDone
-      ? 'Start with the Digital Marketing Initial Assessment'
+      ? 'Start with the aptitude assessment, then practise'
       : !practiceDone
-        ? `Assessment done · ${practicedTracks} of ${totalTracks} tracks practised`
+        ? `Foundation done · ${practicedTracks} of ${totalTracks} tracks practised`
         : !mentorReviewed
           ? 'Practice done · mentor review next'
           : !internshipDone
