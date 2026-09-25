@@ -110,8 +110,8 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
           <p className="mt-1 text-sm leading-relaxed text-ink-600">{band.note}</p>
 
           <div className="mt-5 space-y-4">
-            <LockedBreakdown label="Personal development" c={personal} />
-            <Breakdown label="Professional development" c={professional} />
+            <LockedBreakdown label="Personal Development" c={personal} />
+            <Breakdown label="Professional Development" c={professional} />
             <Breakdown label="Experience" c={experience} />
           </div>
         </div>
