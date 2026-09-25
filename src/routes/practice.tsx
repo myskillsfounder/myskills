@@ -202,7 +202,7 @@ function PracticePage() {
             className="mb-1"
             eyebrow="Programmes"
             title="Practice"
-            description="Two programmes, one place to practise: your digital marketing skills, and personal development with AI."
+            description="Digital marketing and personal development, in one place."
           />
           <AptitudeCard result={null} gate />
         </div>
@@ -226,7 +226,7 @@ function PracticePage() {
             className="mb-1"
             eyebrow="Programmes"
             title="Practice"
-            description="Two programmes, one place to practise: your digital marketing skills, and personal development with AI."
+            description="Digital marketing and personal development, in one place."
           />
 
           {practiceLoading ? (
@@ -242,7 +242,7 @@ function PracticePage() {
                 status="In progress"
                 live
                 title="Your digital marketing skills"
-                subtitle="Real scenarios, the language marketers use, and the numbers behind every campaign."
+                subtitle="Real scenarios, marketing language and campaign numbers."
               />
 
               <AptitudeCard result={aptitude} />
@@ -286,7 +286,7 @@ function PracticePage() {
                   status="Opens soon"
                   live={false}
                   title="Personal development with AI"
-                  subtitle="Five modules — goal setting, communication, leadership, agile methodology and a growth mindset. AI is your practice partner; people give the feedback."
+                  subtitle="Five modules, with AI as your practice partner."
                 />
               </div>
               <AssessmentCard />
