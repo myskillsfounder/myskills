@@ -113,7 +113,9 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">Your next step</p>
             <p className="text-sm font-semibold text-ink-900">
-              {nextAction.label} <span className="font-medium text-brand-700">· +{nextAction.upTo}</span>
+              {nextAction.label}
+              {/* Some steps (practising the tracks) earn nothing on their own — they open the next one. */}
+              {nextAction.upTo > 0 && <span className="font-medium text-brand-700"> · +{Math.round(nextAction.upTo)}</span>}
             </p>
           </div>
           <ArrowRight

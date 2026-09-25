@@ -266,56 +266,46 @@ export function computeReadiness(
   const score = Math.round(personalPts + professionalPts + t.experience)
   const pendingPoints = round1(potential.education + potential.experience - (t.education + t.experience))
 
-  // -- The single biggest gain the student can act on right now.
-  const candidates: NextAction[] = []
-  if (livePoints(standing.liveSessions) < LIVE_SESSIONS_MAX_POINTS) {
-    candidates.push({
-      label: 'Attend a live Career Readiness session',
-      upTo: POINTS_PER_LIVE_SESSION,
-      to: '/community/mentors',
-    })
-  }
-  if (livePoints(standing.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS) {
-    candidates.push({
-      label: 'Attend a live Digital Marketing training',
-      upTo: POINTS_PER_LIVE_SESSION,
-      to: '/community/institutions',
-    })
-  }
-  if (modulesDone < PROGRAMME_MODULES) {
-    candidates.push({ label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 })
-  } else if (!standing.crSignedOff) {
-    candidates.push({
-      label: 'Get your Career Readiness mentor review',
-      upTo: CR_SIGNOFF_POINTS,
-      to: '/practice',
-      programme: 2,
-    })
-  }
-  // Only suggest a review the student can actually ask for today.
-  if (!standing.dmSignedOff && standing.dmPracticeDone) {
-    candidates.push({
-      label: 'Get your Digital Marketing mentor review',
-      upTo: DM_SIGNOFF_POINTS,
-      to: '/practice',
-      programme: 1,
-    })
-  }
-  if (pendingPoints >= 0.5 && !hasOpenRequest) {
-    candidates.push({ label: 'Get your profile verified', upTo: pendingPoints, to: '/profile' })
-  }
-  if (profile.education.length === 0) {
-    candidates.push({ label: 'Add and verify your education', upTo: EDUCATION_MAX, to: '/profile' })
-  } else if (potential.unleveledEducation && potential.education === 0) {
-    candidates.push({ label: 'Set your education level', upTo: EDUCATION_MAX, to: '/profile' })
-  }
-  if (potential.internshipPts < INTERNSHIPS_MAX) {
-    candidates.push({ label: 'Add and verify an internship', upTo: POINTS_PER_INTERNSHIP, to: '/profile' })
-  }
-  if (potential.projectPts < PROJECTS_MAX) {
-    candidates.push({ label: 'Add and verify a project', upTo: POINTS_PER_PROJECT, to: '/profile' })
-  }
-  const nextAction = candidates.filter((c) => c.upTo >= 0.5).sort((a, b) => b.upTo - a.upTo)[0] ?? null
+  // -- The next step, in the order of the learning journey — not whatever
+  // happens to be worth the most. Learn and practise first; get the basics on
+  // the profile verified; then the steps that need other people and real
+  // work: mentor reviews, live sessions with mentors and trainers, projects,
+  // and internships last. The first step that still applies is the one shown.
+  const journey: (NextAction | null)[] = [
+    modulesDone < PROGRAMME_MODULES
+      ? { label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 }
+      : null,
+    !standing.dmPracticeDone && !standing.dmSignedOff
+      ? { label: 'Practise all 8 Digital Marketing tracks', upTo: 0, to: '/practice', programme: 1 }
+      : null,
+    profile.education.length === 0
+      ? { label: 'Add your education', upTo: EDUCATION_MAX, to: '/profile' }
+      : potential.unleveledEducation && potential.education === 0
+        ? { label: 'Set your education level', upTo: EDUCATION_MAX, to: '/profile' }
+        : null,
+    pendingPoints >= 0.5 && !hasOpenRequest
+      ? { label: 'Get your profile verified', upTo: pendingPoints, to: '/profile' }
+      : null,
+    modulesDone >= PROGRAMME_MODULES && !standing.crSignedOff
+      ? { label: 'Get your Career Readiness mentor review', upTo: CR_SIGNOFF_POINTS, to: '/practice', programme: 2 }
+      : null,
+    standing.dmPracticeDone && !standing.dmSignedOff
+      ? { label: 'Get your Digital Marketing mentor review', upTo: DM_SIGNOFF_POINTS, to: '/practice', programme: 1 }
+      : null,
+    livePoints(standing.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS
+      ? { label: 'Attend a live Digital Marketing training', upTo: POINTS_PER_LIVE_SESSION, to: '/community/institutions' }
+      : null,
+    livePoints(standing.liveSessions) < LIVE_SESSIONS_MAX_POINTS
+      ? { label: 'Attend a live session with a mentor', upTo: POINTS_PER_LIVE_SESSION, to: '/community/mentors' }
+      : null,
+    potential.projectPts < PROJECTS_MAX
+      ? { label: 'Add and verify a project', upTo: POINTS_PER_PROJECT, to: '/profile' }
+      : null,
+    potential.internshipPts < INTERNSHIPS_MAX
+      ? { label: 'Add and verify an internship', upTo: POINTS_PER_INTERNSHIP, to: '/profile' }
+      : null,
+  ]
+  const nextAction = journey.find((step): step is NextAction => step !== null) ?? null
 
   return {
     score,
