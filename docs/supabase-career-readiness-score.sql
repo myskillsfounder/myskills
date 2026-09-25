@@ -105,6 +105,7 @@ declare
   v_work_months int := 0;
   v_projects int := 0;
   v_sm text[];
+  v_live_end text;
   v_em text[];
   v_start_y int; v_start_m int; v_end_y int; v_end_m int;
   v_months int;
@@ -175,6 +176,10 @@ begin
 
     -- Experience: verified internships, and months of other verified work.
     for r in select value as x from jsonb_array_elements(coalesce(v_exp, '[]'::jsonb)) loop
+      -- Worked out here, not inside the IF below: plpgsql ends an IF condition
+      -- at the first THEN it sees, so a CASE ... THEN in the condition breaks it.
+      v_live_end := case when coalesce((r.x ->> 'current')::boolean, false)
+                         then '' else btrim(coalesce(r.x ->> 'endDate', '')) end;
       select vi.snapshot into vsnap
         from public.verified_items vi
        where vi.user_id = p_user and vi.item_type = 'experience' and vi.item_id = r.x ->> 'id';
@@ -183,8 +188,7 @@ begin
          and coalesce(vsnap ->> 'company', '')        = btrim(coalesce(r.x ->> 'company', ''))
          and coalesce(vsnap ->> 'employmentType', '') = btrim(coalesce(r.x ->> 'employmentType', ''))
          and coalesce(vsnap ->> 'startDate', '')      = btrim(coalesce(r.x ->> 'startDate', ''))
-         and coalesce(vsnap ->> 'endDate', '') = case when coalesce((r.x ->> 'current')::boolean, false)
-                                                      then '' else btrim(coalesce(r.x ->> 'endDate', '')) end
+         and coalesce(vsnap ->> 'endDate', '') = v_live_end
          and coalesce((vsnap ->> 'current')::boolean, false) = coalesce((r.x ->> 'current')::boolean, false)
       then
         if (coalesce(vsnap ->> 'employmentType', '') || ' ' || coalesce(vsnap ->> 'title', '')) ~* '(intern|apprentic)' then
