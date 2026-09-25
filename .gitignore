@@ -9,6 +9,10 @@ lerna-debug.log*
 
 node_modules
 dist
+releases
+.dist.next
+.swaptest
+.deploy.lock
 dist-ssr
 *.local
 .env

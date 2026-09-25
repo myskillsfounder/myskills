@@ -25,6 +25,10 @@ export default defineConfig({
     port: 5173,
   },
   build: {
+    // Where the site is written. Normally `dist`; scripts/deploy.sh sets
+    // OUT_DIR so a build lands in its own folder and never touches the folder
+    // the live site is served from until it has been checked.
+    outDir: process.env.OUT_DIR ?? 'dist',
     rollupOptions: {
       output: {
         // Without this, Rollup's automatic chunking is sensitive to
