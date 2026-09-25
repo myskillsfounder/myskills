@@ -37,6 +37,10 @@ SITE_HOST="${SITE_HOST:-myskills.org.in}"
 # nginx here is really serving the new build.
 SMOKE_RESOLVE="${SMOKE_RESOLVE:-$SITE_HOST:443:127.0.0.1}"
 
+# Set by the deploy/dry-run commands; read by their EXIT trap (see cleanup_partial).
+PARTIAL_DIR=""      # a half-built folder to remove if we stop early
+SWAPPED=0           # 1 once the live site points at the new release
+
 log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 ok()   { printf '\033[1;32m ok\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m !!\033[0m %s\n' "$*" >&2; }
@@ -48,7 +52,7 @@ die()  { printf '\033[1;31mERR\033[0m %s\n' "$*" >&2; exit 1; }
 # is chronological; the adopted pre-script build is named to sort oldest.
 list_releases() {
   [[ -d "$RELEASES" ]] || return 0
-  find "$RELEASES" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -r
+  find "$RELEASES" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | grep -E '^[0-9]{8}-[0-9]{6}-' | sort -r || true
 }
 
 # The release `dist` currently points at (empty output if it isn't a symlink).
@@ -128,6 +132,17 @@ adopt_legacy_dist() {
   mv -Tf "$APP_DIR/.dist.next" "$LIVE"
 }
 
+# Runs on every exit. Removes a build that never went live; never touches a
+# release that did.
+cleanup_partial() {
+  local status=$?
+  if [[ -n "$PARTIAL_DIR" && "$SWAPPED" -ne 1 ]]; then
+    rm -rf -- "${PARTIAL_DIR:?}"
+    (( status == 0 )) || warn "Stopped — the live site was not touched."
+  fi
+  return $status
+}
+
 # ---------------------------------------------------------------- commands --
 
 acquire_lock() {
@@ -181,10 +196,11 @@ cmd_check() {
 cmd_dry_run() {
   local id="dryrun-$(date +%Y%m%d-%H%M%S)"
   cd "$APP_DIR"
-  trap 'rm -rf -- "${RELEASES:?}/$id"' EXIT
-  log "Dry run: building the current code into releases/$id (live site untouched)"
-  OUT_DIR="releases/$id" npm run build
-  verify_release "$RELEASES/$id" || die "The build did not pass its checks."
+  PARTIAL_DIR="$APP_DIR/.dryrun/$id"
+  trap cleanup_partial EXIT
+  log "Dry run: building the current code into .dryrun/$id (live site untouched)"
+  OUT_DIR=".dryrun/$id" npm run build
+  verify_release "$PARTIAL_DIR" || die "The build did not pass its checks."
   ok "The build is complete and would have been safe to switch to."
 }
 
@@ -202,7 +218,7 @@ cmd_rollback() {
 
 cmd_deploy() {
   cd "$APP_DIR"
-  local before after id previous swapped=0
+  local before after id previous
   acquire_lock
   adopt_legacy_dist
 
@@ -218,7 +234,8 @@ cmd_deploy() {
   id="$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)"
   # If anything below fails or the session drops, remove the half-built folder.
   # The live site is not affected either way.
-  trap '[[ $swapped -eq 1 ]] || { rm -rf -- "${RELEASES:?}/$id"; warn "Deploy stopped — the live site was not touched."; }' EXIT
+  PARTIAL_DIR="$RELEASES/$id"
+  trap cleanup_partial EXIT
 
   log "Building release $id"
   OUT_DIR="releases/$id" npm run build
@@ -230,7 +247,7 @@ cmd_deploy() {
   previous=$(current_release || true)
   log "Switching the live site to $id"
   point_live_at "$id"
-  swapped=1
+  SWAPPED=1
 
   log "Checking the live site"
   if smoke_test "$RELEASES/$id"; then
