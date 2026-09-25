@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { strongestAptitude, type AptitudeResult } from '@/lib/dmAptitude'
+import type { AptitudeResult } from '@/lib/dmAptitude'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -22,8 +22,8 @@ const cta =
  *  - `gate`: Practice is locked until it's taken, so it's the whole page.
  *  - not taken, not a gate: a learner who finished the Foundation assessment
  *    before the aptitude test existed keeps Practice, and is invited to take it.
- *  - taken: one line — the headline result and a way back to the rest. The
- *    full read-out lives on the result page, not here.
+ *  - taken: just a heading and a way to the result — the read-out itself lives
+ *    on the result page, not here.
  */
 export function AptitudeCard({ result, gate = false }: { result: AptitudeResult | null; gate?: boolean }) {
   if (!result) {
@@ -49,16 +49,12 @@ export function AptitudeCard({ result, gate = false }: { result: AptitudeResult 
     )
   }
 
-  const top = strongestAptitude(result.scores)
   return (
     <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between">
       <Rings />
-      <div className="relative min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Your marketing aptitude</p>
-        <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-          Strongest pull: {top.name}
-        </h3>
-      </div>
+      <h3 className="relative min-w-0 font-display text-2xl font-semibold leading-tight text-white">
+        Your marketing aptitude
+      </h3>
       <Link to="/aptitude-assessment" className={`relative ${cta}`}>
         View your results
         <ArrowRight size={16} />
