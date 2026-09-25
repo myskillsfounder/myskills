@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, TrendingUp } from 'lucide-react'
-import { METHOD_VERSION, type Readiness, type ReadinessComponent } from '@/lib/readinessScore'
+import { METHOD_VERSION, RESERVED_POINTS, type Readiness, type ReadinessComponent } from '@/lib/readinessScore'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
 function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
@@ -89,6 +89,17 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
             <Breakdown label="Personal Development" c={personal} />
             <Breakdown label="Professional Development" c={professional} />
             <Breakdown label="Experience" c={experience} />
+            {/* Held back on purpose, so 100 isn't reachable yet and nobody is
+                surprised when the number moves the day these are added. */}
+            <div className="rounded-xl border border-dashed border-ink-300 bg-ink-50/70 p-3">
+              <div className="flex items-baseline justify-between gap-3 text-sm">
+                <span className="font-medium text-ink-700">Coming next</span>
+                <span className="shrink-0 tabular-nums text-ink-400">— / {RESERVED_POINTS}</span>
+              </div>
+              <p className="mt-1 text-xs text-ink-500">
+                Practice results and mentor-confirmed hours will be added to the score.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -110,14 +121,14 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
               <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
               <span>
                 <span className="font-semibold text-ink-800">Verified · {Math.round(verifiedPoints)} points.</span>{' '}
-                Education, work and projects MySkills checked on a call, and a mentor’s sign-off.
+                Education, work and projects MySkills checked on a call, and mentors’ sign-offs.
               </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-300" />
               <span>
                 <span className="font-semibold text-ink-800">Self-reported · {Math.round(selfReportedPoints)} points.</span>{' '}
-                Skills you list and modules you’ve finished — they count, but no one has checked them yet.
+                Career Readiness modules you’ve finished — they count, but a mentor hasn’t read them yet.
               </span>
             </li>
           </ul>
@@ -150,9 +161,9 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       )}
 
       <p className="mt-4 text-[11px] leading-relaxed text-ink-400">
-        Education, experience and projects count once the MySkills team verifies them. Personal
-        development comes from the Career Readiness Programme. Your assessment and practice scores
-        aren’t part of it.{' '}
+        Education, experience and projects count once the MySkills team verifies them, and each
+        programme earns points when a mentor signs it off. Skills you list appear on your profile but
+        aren’t scored.{' '}
         {readiness.source === 'server' && readiness.computedAt
           ? `Issued by MySkills on ${new Date(readiness.computedAt).toLocaleDateString(undefined, {
               day: 'numeric',

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
-import { MENTOR_SIGNOFF_POINTS, PERSONAL_MAX, POINTS_PER_MODULE, personalPoints } from '@/lib/readinessScore'
+import { CR_SIGNOFF_POINTS, PERSONAL_MAX, POINTS_PER_MODULE, personalPoints } from '@/lib/readinessScore'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -32,7 +32,7 @@ export function CareerReadinessOverview({
 }) {
   const { modules, modulesDone, modulesTotal, itemsDone, itemsTotal, next, started } = progress
   const percent = itemsTotal ? Math.round((itemsDone / itemsTotal) * 100) : 0
-  const points = personalPoints({ modulesDone, mentorApproved })
+  const points = personalPoints({ modulesDone, crSignedOff: mentorApproved })
   const target = next ?? modules[0]
   const targetIndex = modules.findIndex((m) => m.slug === target.slug)
 
@@ -75,7 +75,7 @@ export function CareerReadinessOverview({
               <span className="text-base font-normal text-white/50"> / {PERSONAL_MAX} points</span>
             </p>
             <p className="mt-1 text-xs leading-relaxed text-white/70">
-              {POINTS_PER_MODULE} points for every module you finish, and {MENTOR_SIGNOFF_POINTS} more when a mentor
+              {POINTS_PER_MODULE} points for every module you finish, and {CR_SIGNOFF_POINTS} more when a mentor
               signs off your practice.
             </p>
           </div>

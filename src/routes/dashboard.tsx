@@ -123,10 +123,11 @@ function DashboardPage() {
       profile
         ? computeReadiness(profile, verification.view, verification.hasOpenRequest, {
             modulesDone: crProgress.modulesDone,
-            mentorApproved: crReview.state === 'approved',
+            crSignedOff: crReview.state === 'approved',
+            dmSignedOff: dmReview.state === 'approved',
           })
         : null,
-    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, crReview.state],
+    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, crReview.state, dmReview.state],
   )
   // The number itself is issued by the server; the estimate above is the guide
   // and the fallback. Re-ask whenever something the score depends on changes.
@@ -138,7 +139,7 @@ function DashboardPage() {
     return () => {
       active = false
     }
-  }, [profileLoading, verification.loading, crLoading, verification.view, crProgress.modulesDone, crReview.state])
+  }, [profileLoading, verification.loading, crLoading, verification.view, crProgress.modulesDone, crReview.state, dmReview.state])
   const readiness = useMemo(
     () => (estimate && serverScore ? withServerScore(estimate, serverScore) : estimate),
     [estimate, serverScore],
