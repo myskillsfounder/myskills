@@ -2,7 +2,9 @@
  * Live sessions with a trainer, mentor or institution — see docs/supabase-
  * live-sessions.sql. Attendance is confirmed by the person who ran the session
  * (or the team on their behalf), never added by the student, and is worth 2
- * points each toward the Career Readiness Score, up to 10.
+ * points each toward the Career Readiness Score, up to 10 per programme:
+ * Career Readiness sessions count toward Personal Development, Digital
+ * Marketing training toward Professional Development.
  */
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
@@ -15,8 +17,16 @@ export const HOST_KINDS: { value: HostKind; label: string }[] = [
   { value: 'institution', label: 'Institution' },
 ]
 
+export type SessionProgramme = 'career-readiness' | 'digital-marketing'
+
+export const SESSION_PROGRAMMES: { value: SessionProgramme; label: string }[] = [
+  { value: 'digital-marketing', label: 'Digital Marketing (Professional)' },
+  { value: 'career-readiness', label: 'Career Readiness (Personal)' },
+]
+
 export interface LiveSession {
   id: string
+  programme: SessionProgramme
   held_on: string
   host_kind: HostKind
   host_name: string
@@ -28,7 +38,7 @@ export interface LiveSession {
 export async function fetchMyLiveSessions(): Promise<LiveSession[]> {
   const { data, error } = await supabase
     .from('live_session_attendance')
-    .select('id, held_on, host_kind, host_name, title')
+    .select('id, programme, held_on, host_kind, host_name, title')
     .order('held_on', { ascending: false })
   if (error) return []
   return (data ?? []) as LiveSession[]
@@ -46,7 +56,14 @@ export function useMyLiveSessions() {
       active = false
     }
   }, [])
-  return { sessions, loading }
+  return {
+    sessions,
+    /** Career Readiness sessions (Personal Development). */
+    crSessions: sessions.filter((s) => (s.programme ?? 'career-readiness') === 'career-readiness'),
+    /** Digital Marketing training (Professional Development). */
+    dmSessions: sessions.filter((s) => s.programme === 'digital-marketing'),
+    loading,
+  }
 }
 
 /* -- staff ---------------------------------------------------------------- */
@@ -65,6 +82,7 @@ export async function fetchAdminLiveSessions(): Promise<AdminLiveSession[]> {
 }
 
 export async function recordLiveSession(input: {
+  programme: SessionProgramme
   studentEmail: string
   hostKind: HostKind
   hostName: string
@@ -72,6 +90,7 @@ export async function recordLiveSession(input: {
   heldOn: string
 }): Promise<void> {
   const { error } = await supabase.rpc('record_live_session_attendance', {
+    p_programme: input.programme,
     p_student_email: input.studentEmail,
     p_host_kind: input.hostKind,
     p_host_name: input.hostName,

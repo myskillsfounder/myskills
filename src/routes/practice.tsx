@@ -38,6 +38,7 @@ import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOv
 import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
 import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
 import { useMentorReview } from '@/lib/mentorReview'
+import { refreshMyScore, type ServerScore } from '@/lib/scoreService'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
@@ -172,8 +173,18 @@ function PracticePage() {
   const error = assessmentError ?? practiceError
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
+  // The Professional Development number on the Digital Marketing card includes
+  // verified education, which the server-issued score already works out.
+  const [serverScore, setServerScore] = useState<ServerScore | null>(null)
+  useEffect(() => {
+    let active = true
+    refreshMyScore().then((s) => active && setServerScore(s))
+    return () => {
+      active = false
+    }
+  }, [dmReview.state])
   const { progress: crProgress } = useCareerReadinessProgress()
-  const { sessions: liveSessions } = useMyLiveSessions()
+  const { crSessions: liveSessions, dmSessions } = useMyLiveSessions()
 
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
@@ -241,7 +252,13 @@ function PracticePage() {
 
                   <div className="grid gap-5 lg:grid-cols-3">
                     <div className="lg:col-span-2">
-                      <PracticeStats practice={practice} />
+                      <PracticeStats
+                        practice={practice}
+                        foundationDone={assessment != null}
+                        mentorApproved={dmReview.state === 'approved'}
+                        educationPoints={serverScore?.professional.education_points ?? 0}
+                        liveSessions={dmSessions.length}
+                      />
                     </div>
                     <div className="lg:col-span-1">
                       <NextUpCard practice={practice} onSelect={setSelected} />

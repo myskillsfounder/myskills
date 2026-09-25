@@ -15,7 +15,7 @@ export interface ServerScore {
   self_reported_points: number
   computed_at?: string
   personal: { points: number; max: number }
-  professional: { points: number; max: number }
+  professional: { points: number; max: number; education_points?: number }
   experience: { points: number; max: number }
 }
 

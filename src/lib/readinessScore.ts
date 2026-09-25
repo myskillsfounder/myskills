@@ -3,22 +3,23 @@
  * and the one a company can rely on when choosing interns.
  *
  * A standard, market-facing measure of where a student stands as a candidate,
- * built only from evidence somebody checked. Method v3:
+ * built only from evidence somebody checked. Method v4:
  *
  *   30  Personal development     — 2 points per Career Readiness module (5 = 10),
  *                                   2 per live session with a trainer, mentor
  *                                   or institution whose attendance was
  *                                   confirmed (5 = 10), and 10 when a mentor
  *                                   signs the programme off
- *   20  Professional             — verified education (max 10) and 10 when a
- *                                   mentor signs off the Digital Marketing
- *                                   practice
+ *   30  Professional             — verified education (max 10), 2 per live
+ *                                   Digital Marketing training session whose
+ *                                   attendance was confirmed (5 = 10), and 10
+ *                                   when a mentor signs off the Digital
+ *                                   Marketing practice
  *   30  Experience               — verified internships, work and projects
- *   20  Reserved                 — not scored yet; will carry practice results
- *                                   and mentor-confirmed hours (see RESERVED_POINTS)
+ *   10  Reserved                 — not scored yet (see RESERVED_POINTS)
  *
- * Mentor endorsement is worth 20 of the 80 that can be earned today (10 per
- * programme). Skills a student lists are shown on their profile but earn no
+ * Mentor endorsement is worth 20 of the 90 that can be earned today (10 per
+ * programme), and confirmed live sessions another 20 (10 per programme). Skills a student lists are shown on their profile but earn no
  * points: nobody has checked them.
  *
  * Age is never scored: it isn't a skill, and scoring it penalises students for
@@ -54,14 +55,14 @@ import {
 import type { EducationLevel } from './profile'
 
 /** Bump when the rules change, so a stored score says which rules made it. */
-export const METHOD_VERSION = 'v3'
+export const METHOD_VERSION = 'v4'
 
 export const SCORE_TOTAL = 100
-/** Held back for practice results and mentor-confirmed hours, decided later. */
-export const RESERVED_POINTS = 20
+/** Held back, to be allocated later. */
+export const RESERVED_POINTS = 10
 
 export const PERSONAL_MAX = 30
-export const PROFESSIONAL_MAX = 20
+export const PROFESSIONAL_MAX = 30
 export const EXPERIENCE_MAX = 30
 
 /** Personal: 5 modules x 2 = 10, live sessions up to 10, the sign-off 10. */
@@ -70,7 +71,7 @@ export const PROGRAMME_MODULES = 5
 export const POINTS_PER_LIVE_SESSION = 2
 export const LIVE_SESSIONS_MAX_POINTS = 10
 export const CR_SIGNOFF_POINTS = 10
-/** Professional: the Digital Marketing sign-off (education is the other 10). */
+/** Professional: education up to 10, live training up to 10, the sign-off 10. */
 export const DM_SIGNOFF_POINTS = 10
 
 const EDUCATION_POINTS: Record<EducationLevel, number> = {
@@ -96,12 +97,20 @@ const PROJECTS_MAX = 10
 export interface ProgrammeStanding {
   /** Career Readiness modules with all four items written. */
   modulesDone: number
-  /** Live sessions whose attendance was confirmed by whoever ran them. */
+  /** Career Readiness live sessions whose attendance was confirmed by whoever ran them. */
   liveSessions: number
+  /** Digital Marketing live training sessions, confirmed the same way. */
+  dmLiveSessions: number
   crSignedOff: boolean
   dmSignedOff: boolean
 }
-export const NO_STANDING: ProgrammeStanding = { modulesDone: 0, liveSessions: 0, crSignedOff: false, dmSignedOff: false }
+export const NO_STANDING: ProgrammeStanding = {
+  modulesDone: 0,
+  liveSessions: 0,
+  dmLiveSessions: 0,
+  crSignedOff: false,
+  dmSignedOff: false,
+}
 
 /** The Personal Development points a learner has earned so far. */
 export function livePoints(sessions: number): number {
@@ -122,13 +131,13 @@ export interface ReadinessBand {
   note: string
 }
 
-// The most that can be earned today is 80 (RESERVED_POINTS are held back), so
-// the bands sit at 80% of their old marks. Revisit when the reserved points
-// are allocated.
+// The most that can be earned today is 90 (RESERVED_POINTS are held back), so
+// the bands sit at 90% of the original 80 / 55 / 25 marks. Revisit when the
+// reserved points are allocated.
 const BANDS: { min: number; band: ReadinessBand }[] = [
-  { min: 64, band: { label: 'Standout', note: 'A well-rounded candidate across every dimension.' } },
-  { min: 44, band: { label: 'Strong', note: 'A solid profile — mentor sign-off is the next step up.' } },
-  { min: 20, band: { label: 'Building', note: 'Real foundations. Verified experience moves you fastest from here.' } },
+  { min: 72, band: { label: 'Standout', note: 'A well-rounded candidate across every dimension.' } },
+  { min: 50, band: { label: 'Strong', note: 'A solid profile — mentor sign-off is the next step up.' } },
+  { min: 23, band: { label: 'Building', note: 'Real foundations. Verified experience moves you fastest from here.' } },
   { min: 0, band: { label: 'Getting started', note: 'Every module, qualification, internship and project adds to this.' } },
 ]
 
@@ -250,7 +259,8 @@ export function computeReadiness(
 
   const modulesDone = Math.min(standing.modulesDone, PROGRAMME_MODULES)
   const personalPts = personalPoints(standing)
-  const professionalPts = t.education + (standing.dmSignedOff ? DM_SIGNOFF_POINTS : 0)
+  const professionalPts =
+    t.education + livePoints(standing.dmLiveSessions) + (standing.dmSignedOff ? DM_SIGNOFF_POINTS : 0)
   const score = Math.round(personalPts + professionalPts + t.experience)
   const pendingPoints = round1(potential.education + potential.experience - (t.education + t.experience))
 
@@ -258,9 +268,16 @@ export function computeReadiness(
   const candidates: NextAction[] = []
   if (livePoints(standing.liveSessions) < LIVE_SESSIONS_MAX_POINTS) {
     candidates.push({
-      label: 'Attend a live session with a mentor or trainer',
+      label: 'Attend a live Career Readiness session',
       upTo: POINTS_PER_LIVE_SESSION,
       to: '/community/mentors',
+    })
+  }
+  if (livePoints(standing.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS) {
+    candidates.push({
+      label: 'Attend a live Digital Marketing training',
+      upTo: POINTS_PER_LIVE_SESSION,
+      to: '/community/institutions',
     })
   }
   if (modulesDone < PROGRAMME_MODULES) {
@@ -307,6 +324,7 @@ export function computeReadiness(
       t.education +
         t.experience +
         livePoints(standing.liveSessions) +
+        livePoints(standing.dmLiveSessions) +
         (standing.crSignedOff ? CR_SIGNOFF_POINTS + modulesDone * POINTS_PER_MODULE : 0) +
         (standing.dmSignedOff ? DM_SIGNOFF_POINTS : 0),
     ),
@@ -326,6 +344,7 @@ export function computeReadiness(
       max: PROFESSIONAL_MAX,
       detail: [
         t.bestEduLabel || (profile.education.length ? 'No verified education yet' : 'No education added'),
+        plural(standing.dmLiveSessions, 'live training'),
         standing.dmSignedOff ? 'marketing practice signed off' : `mentor sign-off adds ${DM_SIGNOFF_POINTS}`,
       ].join(' · '),
     },
