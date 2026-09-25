@@ -6,6 +6,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import type { SkillKey } from './careerReadinessAssessment'
 
 export type ReviewProgramme = 'digital-marketing' | 'career-readiness'
 export type MentorReviewStatus = 'requested' | 'approved' | 'changes_requested' | 'cancelled'
@@ -81,6 +82,12 @@ export interface AdminMentorReview extends MentorReview {
   email: string | null
   assessment_percent: number | null
   tracks: { track: string; percent: number; attempts: number }[]
+  /** The learner's Career Readiness assessment, or null if not taken yet. */
+  career_readiness: {
+    scores: Record<SkillKey, number>
+    reflection: string | null
+    completed_at: string
+  } | null
 }
 
 export async function fetchMentorReviewQueue(): Promise<AdminMentorReview[]> {

@@ -78,6 +78,11 @@ export function trackAssessmentComplete(percent: number) {
   trackEvent('assessment_complete', { score: percent, passed: percent >= 60 })
 }
 
+/** The one-attempt Career Readiness assessment was scored and saved. */
+export function trackCareerAssessmentComplete() {
+  trackEvent('career_assessment_complete')
+}
+
 /** The certificate was saved, shared from the phone share sheet, or sent to
  * print. Print fires on click -- the browser never says whether it finished. */
 export function trackCertificateDownload(method: 'download' | 'share' | 'print') {

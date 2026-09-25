@@ -33,6 +33,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as CareerReadinessWaitlistRouteImport } from './routes/career-readiness-waitlist'
+import { Route as CareerReadinessAssessmentRouteImport } from './routes/career-readiness-assessment'
 import { Route as CareerReadinessRouteImport } from './routes/career-readiness'
 import { Route as BecomeAnInternshipPartnerRouteImport } from './routes/become-an-internship-partner'
 import { Route as BecomeAPartnerInstitutionRouteImport } from './routes/become-a-partner-institution'
@@ -181,6 +182,12 @@ const CareerReadinessWaitlistRoute = CareerReadinessWaitlistRouteImport.update({
   path: '/career-readiness-waitlist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareerReadinessAssessmentRoute =
+  CareerReadinessAssessmentRouteImport.update({
+    id: '/career-readiness-assessment',
+    path: '/career-readiness-assessment',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CareerReadinessRoute = CareerReadinessRouteImport.update({
   id: '/career-readiness',
   path: '/career-readiness',
@@ -329,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
   '/become-an-internship-partner': typeof BecomeAnInternshipPartnerRoute
   '/career-readiness': typeof CareerReadinessRoute
+  '/career-readiness-assessment': typeof CareerReadinessAssessmentRoute
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
@@ -382,6 +390,7 @@ export interface FileRoutesByTo {
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
   '/become-an-internship-partner': typeof BecomeAnInternshipPartnerRoute
   '/career-readiness': typeof CareerReadinessRoute
+  '/career-readiness-assessment': typeof CareerReadinessAssessmentRoute
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/dashboard': typeof DashboardRoute
@@ -434,6 +443,7 @@ export interface FileRoutesById {
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
   '/become-an-internship-partner': typeof BecomeAnInternshipPartnerRoute
   '/career-readiness': typeof CareerReadinessRoute
+  '/career-readiness-assessment': typeof CareerReadinessAssessmentRoute
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
@@ -489,6 +499,7 @@ export interface FileRouteTypes {
     | '/become-a-partner-institution'
     | '/become-an-internship-partner'
     | '/career-readiness'
+    | '/career-readiness-assessment'
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/community'
@@ -542,6 +553,7 @@ export interface FileRouteTypes {
     | '/become-a-partner-institution'
     | '/become-an-internship-partner'
     | '/career-readiness'
+    | '/career-readiness-assessment'
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/dashboard'
@@ -593,6 +605,7 @@ export interface FileRouteTypes {
     | '/become-a-partner-institution'
     | '/become-an-internship-partner'
     | '/career-readiness'
+    | '/career-readiness-assessment'
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/community'
@@ -647,6 +660,7 @@ export interface RootRouteChildren {
   BecomeAPartnerInstitutionRoute: typeof BecomeAPartnerInstitutionRoute
   BecomeAnInternshipPartnerRoute: typeof BecomeAnInternshipPartnerRoute
   CareerReadinessRoute: typeof CareerReadinessRoute
+  CareerReadinessAssessmentRoute: typeof CareerReadinessAssessmentRoute
   CareerReadinessWaitlistRoute: typeof CareerReadinessWaitlistRoute
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
@@ -845,6 +859,13 @@ declare module '@tanstack/react-router' {
       path: '/career-readiness-waitlist'
       fullPath: '/career-readiness-waitlist'
       preLoaderRoute: typeof CareerReadinessWaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/career-readiness-assessment': {
+      id: '/career-readiness-assessment'
+      path: '/career-readiness-assessment'
+      fullPath: '/career-readiness-assessment'
+      preLoaderRoute: typeof CareerReadinessAssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/career-readiness': {
@@ -1110,6 +1131,7 @@ const rootRouteChildren: RootRouteChildren = {
   BecomeAPartnerInstitutionRoute: BecomeAPartnerInstitutionRoute,
   BecomeAnInternshipPartnerRoute: BecomeAnInternshipPartnerRoute,
   CareerReadinessRoute: CareerReadinessRoute,
+  CareerReadinessAssessmentRoute: CareerReadinessAssessmentRoute,
   CareerReadinessWaitlistRoute: CareerReadinessWaitlistRoute,
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,

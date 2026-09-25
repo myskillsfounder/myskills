@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { trackLead } from '@/lib/analytics'
+import { useAuthUser } from '@/lib/useAuth'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2, Send } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Send } from 'lucide-react'
 import { submitCareerReadinessLead } from '@/lib/programmes'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -43,6 +44,7 @@ function validate(form: FormState): Partial<Record<keyof FormState, string>> {
 }
 
 function CareerReadinessWaitlistPage() {
+  const { user } = useAuthUser()
   const [form, setForm] = useState<FormState>(EMPTY)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -110,10 +112,30 @@ function CareerReadinessWaitlistPage() {
                 Thanks, {form.full_name.split(' ')[0]} — we'll be in touch as soon as the Career
                 Readiness Programme opens.
               </p>
-              <div className="mt-6">
+              {/* While you wait: the assessment is open now. It needs an
+                  account (results are saved to one), so a signed-out visitor
+                  is sent to sign up rather than to a login wall. */}
+              <div className="mx-auto mt-6 max-w-sm rounded-xl bg-brand-50 p-4 text-left">
+                <p className="text-sm font-semibold text-ink-900">While you wait, see where you stand</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-600">
+                  A quick, honest look at goal setting, communication, leadership, agile working and a growth
+                  mindset — about 8 minutes.
+                </p>
+                <Link
+                  to={user ? '/career-readiness-assessment' : '/signup'}
+                  className="press mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+                >
+                  Take the Career Readiness assessment
+                  <ArrowRight size={16} />
+                </Link>
+                {!user && (
+                  <p className="mt-2 text-xs text-ink-500">You’ll need a free MySkills account to save your results.</p>
+                )}
+              </div>
+              <div className="mt-5">
                 <Link
                   to="/career-readiness"
-                  className="press inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+                  className="text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
                 >
                   Back to Career Readiness Programme
                 </Link>
