@@ -32,7 +32,7 @@ export const Route = createFileRoute('/')({
  * built together with AI, so nothing is impossible for a student who's
  * ready to work for it. It shares the Career Readiness page's dark theme.
  * Each programme has its own page — /digital-marketing (live) and
- * /career-readiness (opening soon) — and this page routes to both, then
+ * /career-readiness (both live) — and this page routes to both, then
  * makes room for the three things beyond the skill tracks: mentors,
  * internships, and wellness support.
  * Nothing here names a price, a date or a guaranteed outcome — "nothing is
@@ -285,9 +285,9 @@ function HomePage() {
                 title={CAREER_READINESS.name}
                 body="Five modules on the skills that decide careers, each practised with AI as your coach and reviewed by a mentor."
                 items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
-                live={false}
+                live
                 to={CAREER_READINESS.path}
-                cta="See the programme"
+                cta="Explore Career Readiness"
               />
             </div>
             <CompletionPath />

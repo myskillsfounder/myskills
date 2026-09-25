@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, TrendingUp } from 'lucide-react'
 import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 
 function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
   const pct = c.max ? (c.points / c.max) * 100 : 0
@@ -93,6 +94,7 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       {nextAction && (
         <Link
           to={nextAction.to}
+          onClick={() => nextAction.programme && rememberProgramme(nextAction.programme)}
           className="group mt-6 flex items-center gap-3 rounded-2xl border border-brand-100 bg-brand-50/70 p-4 transition-colors hover:border-brand-300"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">

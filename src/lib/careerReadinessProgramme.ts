@@ -119,3 +119,19 @@ export function useCareerReadinessProgress() {
   const progress = useMemo(() => progressFrom(responses), [responses])
   return { responses, progress, loading, save }
 }
+
+/* -- staff ---------------------------------------------------------------- */
+
+export interface LearnerResponse {
+  module: ModuleSlug
+  item: ItemKey
+  response: string
+  updated_at: string
+}
+
+/** One learner's written answers, for a mentor reviewing them. */
+export async function fetchLearnerResponses(userId: string): Promise<LearnerResponse[]> {
+  const { data, error } = await supabase.rpc('admin_career_readiness_responses', { p_user: userId })
+  if (error) fail(error)
+  return (data ?? []) as LearnerResponse[]
+}

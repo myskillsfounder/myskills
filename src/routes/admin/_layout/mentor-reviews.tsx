@@ -11,6 +11,7 @@ import {
   type MentorReviewStatus,
 } from '@/lib/mentorReview'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { CareerReadinessResponses } from '@/components/admin/CareerReadinessResponses'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/mentor-reviews')({
@@ -74,6 +75,10 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
         </div>
         <Badge tone={status.tone}>{status.label}</Badge>
       </div>
+
+      {review.programme === 'career-readiness' && (
+        <CareerReadinessResponses userId={review.user_id} defaultOpen={review.status === 'requested'} />
+      )}
 
       {review.programme === 'career-readiness' ? (
         // A Career Readiness review is about the personal skills, so show the
