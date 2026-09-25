@@ -83,6 +83,11 @@ export function trackCareerAssessmentComplete() {
   trackEvent('career_assessment_complete')
 }
 
+/** The one-attempt Digital Marketing aptitude assessment was scored and saved. */
+export function trackAptitudeComplete() {
+  trackEvent('dm_aptitude_complete')
+}
+
 /** The certificate was saved, shared from the phone share sheet, or sent to
  * print. Print fires on click -- the browser never says whether it finished. */
 export function trackCertificateDownload(method: 'download' | 'share' | 'print') {

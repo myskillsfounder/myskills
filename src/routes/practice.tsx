@@ -20,6 +20,8 @@ import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { AssessmentCard } from '@/components/career-readiness/AssessmentCard'
 import { AssessmentQuiz } from '@/components/assessment/AssessmentQuiz'
+import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
+import { useMyAptitudeResult } from '@/lib/dmAptitude'
 import { AssessmentSummaryCard } from '@/components/assessment/AssessmentSummaryCard'
 import { PracticeStats } from '@/components/practice/PracticeStats'
 import { NextUpCard } from '@/components/practice/NextUpCard'
@@ -140,6 +142,14 @@ function PracticePage() {
     commit,
   } = useInitialAssessment()
 
+  // The aptitude assessment is step 1 and unlocks Practice. Anyone who already
+  // finished the Foundation assessment (the old initial assessment) before it
+  // existed keeps their access rather than being sent back to the start.
+  const { result: aptitude, loading: aptitudeLoading } = useMyAptitudeResult()
+  const unlocked = aptitude != null || assessment != null
+  const gateLoading = assessmentLoading || aptitudeLoading
+  const [showFoundation, setShowFoundation] = useState(false)
+
   const { user } = useAuthUser()
   const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
     useVocabProgress(user?.id ?? 'guest')
@@ -164,19 +174,23 @@ function PracticePage() {
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [quizQuestionsError, setQuizQuestionsError] = useState<string>()
 
+  // Practice data loads as soon as Practice is unlocked, not only once the
+  // Foundation assessment is done.
   useEffect(() => {
-    if (assessmentLoading) return
-    if (!assessment) {
-      fetchInitialAssessmentQuestions()
-        .then(setQuizQuestions)
-        .catch((e) => setQuizQuestionsError(errorMessage(e)))
-      return
-    }
+    if (!unlocked) return
     fetchPracticeSummary()
       .then(setPractice)
       .catch((e) => setPracticeError(errorMessage(e)))
       .finally(() => setPracticeLoading(false))
-  }, [assessment, assessmentLoading])
+  }, [unlocked])
+
+  // The Foundation questions are only needed once someone opens that quiz.
+  useEffect(() => {
+    if (!showFoundation || assessment || quizQuestions.length > 0) return
+    fetchInitialAssessmentQuestions()
+      .then(setQuizQuestions)
+      .catch((e) => setQuizQuestionsError(errorMessage(e)))
+  }, [showFoundation, assessment, quizQuestions.length])
 
   async function completeTrack(track: string, grade: ScenarioGrade) {
     await recordPracticeAttempt(track, grade)
@@ -213,33 +227,60 @@ function PracticePage() {
 
   return (
     <AppShell wide>
-      {assessmentLoading && <p className="text-sm text-ink-600">Loading…</p>}
+      {gateLoading && <p className="text-sm text-ink-600">Loading…</p>}
 
       {error && <MigrationError message={error} />}
 
-      {/* Not taken yet -> the one-time initial assessment gates everything else. */}
-      {!assessmentLoading && !error && !assessment && quizQuestions.length === 0 && (
+      {/* Practice is locked until the aptitude assessment is taken. */}
+      {!gateLoading && !error && !unlocked && (
+        <div className="space-y-5">
+          <PageHeader
+            className="mb-1"
+            eyebrow="Programmes"
+            title="Practice"
+            description="Two programmes, one place to practise: your digital marketing skills, and personal development with AI."
+          />
+          <AptitudeCard result={null} gate />
+        </div>
+      )}
+
+      {/* The Foundation assessment (the old initial assessment), opened from
+          the card on the practice home. */}
+      {unlocked && !error && !assessment && showFoundation && quizQuestions.length === 0 && (
         <p className="text-sm text-ink-600">Loading questions…</p>
       )}
-      {!assessmentLoading && !error && !assessment && quizQuestions.length > 0 && (
+      {unlocked && !error && !assessment && showFoundation && quizQuestions.length > 0 && (
         <div>
+          <button
+            type="button"
+            onClick={() => setShowFoundation(false)}
+            className="group mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+          >
+            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to Practice
+          </button>
           <PageHeader
             eyebrow="Practice"
-            title="Digital Marketing Initial Assessment"
+            title="Foundation assessment"
             description={
               <>
-                Answer {quizQuestions.length} quick questions to unlock scenario practice
-                across all skill tracks. You get one attempt, so take your time — there’s
-                no time limit.
+                Answer {quizQuestions.length} quick questions on the fundamentals across all skill
+                tracks. You get one attempt, so take your time — there’s no time limit.
               </>
             }
           />
-          <AssessmentQuiz questions={quizQuestions} onSubmit={submit} onContinue={commit} />
+          <AssessmentQuiz
+            questions={quizQuestions}
+            onSubmit={submit}
+            onContinue={(r) => {
+              commit(r)
+              setShowFoundation(false)
+            }}
+          />
         </div>
       )}
 
       {/* A practice track is open -> run its Decision Lab. */}
-      {assessment && !error && selected && (
+      {unlocked && !error && selected && (
         <ScenarioQuiz
           trackName={skillTracks.find((t) => t.slug === selected)?.name ?? selected}
           questions={questionsForTrack(selected)}
@@ -250,14 +291,14 @@ function PracticePage() {
 
       {/* Practice home. Order is deliberate: where you stand, what to do next,
           then the modes — action before inventory. */}
-      {assessment && !error && !selected && mode === null && (
+      {unlocked && !error && !selected && mode === null && !showFoundation && (
         <div className="space-y-5">
           <PageHeader
             className="mb-1"
             eyebrow="Programmes"
             title="Practice"
             description="Two programmes, one place to practise: your digital marketing skills, and personal development with AI."
-            actions={<CertificateRow percent={assessment.overall.percent} />}
+            actions={assessment ? <CertificateRow percent={assessment.overall.percent} /> : undefined}
           />
 
           {practiceLoading ? (
@@ -275,6 +316,8 @@ function PracticePage() {
                 title="Your digital marketing skills"
                 subtitle="Real scenarios, the language marketers use, and the numbers behind every campaign."
               />
+
+              <AptitudeCard result={aptitude} />
 
               <div className="grid gap-5 lg:grid-cols-3">
                 <div className="lg:col-span-2">
@@ -302,7 +345,28 @@ function PracticePage() {
                 onSelect={setMode}
               />
 
-              <AssessmentSummaryCard assessment={assessment} />
+              {assessment ? (
+                <AssessmentSummaryCard assessment={assessment} />
+              ) : (
+                <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Foundation assessment</p>
+                    <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
+                      Test what you know
+                    </h3>
+                    <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-white/70 sm:text-sm">
+                      One attempt across all skill tracks, and the certificate for your foundational progress.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowFoundation(true)}
+                    className="press inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+                  >
+                    Take the assessment
+                  </button>
+                </section>
+              )}
 
               <div className="pt-4">
                 <ProgrammeHeading
@@ -324,7 +388,7 @@ function PracticePage() {
       )}
 
       {/* Scenario mode — the full track list lives here. */}
-      {assessment && !error && !selected && mode === 'scenario' && (
+      {unlocked && !error && !selected && mode === 'scenario' && (
         <div className="space-y-5">
           <button
             type="button"
@@ -356,7 +420,7 @@ function PracticePage() {
 
       {/* Vocabulary Builder — pick a level, then a multiple-choice round
           through that level's terms. */}
-      {assessment && !error && !selected && mode === 'vocabulary' && vocabLevel === null && (
+      {unlocked && !error && !selected && mode === 'vocabulary' && vocabLevel === null && (
         <div className="space-y-5">
           <button
             type="button"
@@ -402,7 +466,7 @@ function PracticePage() {
         </div>
       )}
 
-      {assessment && !error && !selected && mode === 'vocabulary' && vocabLevel !== null && (
+      {unlocked && !error && !selected && mode === 'vocabulary' && vocabLevel !== null && (
         <VocabularyQuiz
           bank={vocabularyTerms.filter((t) => t.level === vocabLevel)}
           learnedIds={vocabLearnedIds}

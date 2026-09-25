@@ -39,6 +39,7 @@ import { Route as BecomeAnInternshipPartnerRouteImport } from './routes/become-a
 import { Route as BecomeAPartnerInstitutionRouteImport } from './routes/become-a-partner-institution'
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
+import { Route as AptitudeAssessmentRouteImport } from './routes/aptitude-assessment'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
@@ -215,6 +216,11 @@ const AssessmentRoute = AssessmentRouteImport.update({
   path: '/assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AptitudeAssessmentRoute = AptitudeAssessmentRouteImport.update({
+  id: '/aptitude-assessment',
+  path: '/aptitude-assessment',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -331,6 +337,7 @@ const AdminLayoutAdsRoute = AdminLayoutAdsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aptitude-assessment': typeof AptitudeAssessmentRoute
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
@@ -385,6 +392,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aptitude-assessment': typeof AptitudeAssessmentRoute
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
@@ -438,6 +446,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aptitude-assessment': typeof AptitudeAssessmentRoute
   '/assessment': typeof AssessmentRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/become-a-partner-institution': typeof BecomeAPartnerInstitutionRoute
@@ -494,6 +503,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aptitude-assessment'
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
@@ -548,6 +558,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aptitude-assessment'
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/aptitude-assessment'
     | '/assessment'
     | '/become-a-mentor'
     | '/become-a-partner-institution'
@@ -655,6 +667,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AptitudeAssessmentRoute: typeof AptitudeAssessmentRoute
   AssessmentRoute: typeof AssessmentRoute
   BecomeAMentorRoute: typeof BecomeAMentorRoute
   BecomeAPartnerInstitutionRoute: typeof BecomeAPartnerInstitutionRoute
@@ -903,6 +916,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aptitude-assessment': {
+      id: '/aptitude-assessment'
+      path: '/aptitude-assessment'
+      fullPath: '/aptitude-assessment'
+      preLoaderRoute: typeof AptitudeAssessmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -1126,6 +1146,7 @@ const AdminLayoutRouteWithChildren = AdminLayoutRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AptitudeAssessmentRoute: AptitudeAssessmentRoute,
   AssessmentRoute: AssessmentRoute,
   BecomeAMentorRoute: BecomeAMentorRoute,
   BecomeAPartnerInstitutionRoute: BecomeAPartnerInstitutionRoute,
