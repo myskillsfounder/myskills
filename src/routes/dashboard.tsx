@@ -9,6 +9,7 @@ import { useHasFeedback } from '@/lib/feedback'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
 import { skillTracks } from '@/lib/skillTracks'
 import { computeReadiness } from '@/lib/readinessScore'
+import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
@@ -105,6 +106,8 @@ function DashboardPage() {
 
   const [practice, setPractice] = useState<PracticeSummary>({})
   const dmReview = useMentorReview('digital-marketing')
+  const crReview = useMentorReview('career-readiness')
+  const { progress: crProgress } = useCareerReadinessProgress()
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -115,8 +118,14 @@ function DashboardPage() {
   // The score comes from the profile alone (see lib/readinessScore.ts);
   // practice results still feed the course progress in KeyMeasures.
   const readiness = useMemo(
-    () => (profile ? computeReadiness(profile, verification.view, verification.hasOpenRequest) : null),
-    [profile, verification.view, verification.hasOpenRequest],
+    () =>
+      profile
+        ? computeReadiness(profile, verification.view, verification.hasOpenRequest, {
+            modulesDone: crProgress.modulesDone,
+            mentorApproved: crReview.state === 'approved',
+          })
+        : null,
+    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, crReview.state],
   )
   const practicedCount = useMemo(
     () => skillTracks.filter((t) => practice[t.slug]).length,

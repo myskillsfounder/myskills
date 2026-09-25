@@ -35,6 +35,8 @@ export function MentorReviewPanel({
 
   if (!practiceDone && state === 'none') return null
 
+  const isCareer = programme === 'career-readiness'
+
   async function run(fn: () => Promise<void>) {
     setBusy(true)
     setError(undefined)
@@ -105,15 +107,18 @@ export function MentorReviewPanel({
           </p>
           {reviewerNote}
           <p className="mt-3 text-sm text-ink-600">
-            Worked on them? Practise the tracks again, then ask for another review.
+            {isCareer
+              ? 'Worked on them? Update your answers in the modules, then ask for another review.'
+              : 'Worked on them? Practise the tracks again, then ask for another review.'}
           </p>
         </>
       ) : (
         <>
           <p className="text-sm font-semibold text-ink-900">Practice done — ask a mentor to review it</p>
           <p className="mt-0.5 text-sm text-ink-600">
-            A mentor reads your assessment and track results, then signs your practice off or tells you
-            what to work on.
+            {isCareer
+              ? 'A mentor reads what you wrote in the five modules, then signs your practice off or tells you what to work on.'
+              : 'A mentor reads your assessment and track results, then signs your practice off or tells you what to work on.'}
           </p>
         </>
       )}
@@ -126,7 +131,9 @@ export function MentorReviewPanel({
           required={false}
           rows={2}
           maxLength={1000}
-          placeholder="e.g. I’m least confident about Google Ads bidding."
+          placeholder={
+            isCareer ? 'e.g. I’d like feedback on my goal in module 1.' : 'e.g. I’m least confident about Google Ads bidding.'
+          }
         />
       </div>
 

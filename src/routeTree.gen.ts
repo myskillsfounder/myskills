@@ -47,6 +47,7 @@ import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
+import { Route as CareerModuleSlugRouteImport } from './routes/career-module.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
@@ -257,6 +258,11 @@ const CommunityInstitutionsRoute = CommunityInstitutionsRouteImport.update({
   path: '/institutions',
   getParentRoute: () => CommunityRoute,
 } as any)
+const CareerModuleSlugRoute = CareerModuleSlugRouteImport.update({
+  id: '/career-module/$slug',
+  path: '/career-module/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
@@ -378,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminLayoutRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/career-module/$slug': typeof CareerModuleSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -432,6 +439,7 @@ export interface FileRoutesByTo {
   '/wellness': typeof WellnessRoute
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/career-module/$slug': typeof CareerModuleSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -489,6 +497,7 @@ export interface FileRoutesById {
   '/admin/_layout': typeof AdminLayoutRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/career-module/$slug': typeof CareerModuleSlugRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -547,6 +556,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/login'
     | '/blog/$slug'
+    | '/career-module/$slug'
     | '/community/institutions'
     | '/community/mentors'
     | '/partnerships/login'
@@ -601,6 +611,7 @@ export interface FileRouteTypes {
     | '/wellness'
     | '/admin/login'
     | '/blog/$slug'
+    | '/career-module/$slug'
     | '/community/institutions'
     | '/community/mentors'
     | '/partnerships/login'
@@ -657,6 +668,7 @@ export interface FileRouteTypes {
     | '/admin/_layout'
     | '/admin/login'
     | '/blog/$slug'
+    | '/career-module/$slug'
     | '/community/institutions'
     | '/community/mentors'
     | '/partnerships/login'
@@ -714,6 +726,7 @@ export interface RootRouteChildren {
   AdminLayoutRoute: typeof AdminLayoutRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  CareerModuleSlugRoute: typeof CareerModuleSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -985,6 +998,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityInstitutionsRouteImport
       parentRoute: typeof CommunityRoute
     }
+    '/career-module/$slug': {
+      id: '/career-module/$slug'
+      path: '/career-module/$slug'
+      fullPath: '/career-module/$slug'
+      preLoaderRoute: typeof CareerModuleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
@@ -1201,6 +1221,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLayoutRoute: AdminLayoutRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   BlogSlugRoute: BlogSlugRoute,
+  CareerModuleSlugRoute: CareerModuleSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport

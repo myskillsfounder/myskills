@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Lock, TrendingUp } from 'lucide-react'
+import { ArrowRight, TrendingUp } from 'lucide-react'
 import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
-import { CAREER_READINESS } from '@/lib/programmes'
 
 function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
   const pct = c.max ? (c.points / c.max) * 100 : 0
@@ -23,32 +22,6 @@ function Breakdown({ label, c }: { label: string; c: ReadinessComponent }) {
         />
       </div>
       <p className="mt-1 text-xs text-ink-500">{c.detail}</p>
-    </div>
-  )
-}
-
-/** Personal development can't be earned yet — it's the programme's job — so
- *  it's drawn as a locked slot with the way in, not an empty bar that reads
- *  like the student is failing at something. */
-function LockedBreakdown({ label, c }: { label: string; c: ReadinessComponent }) {
-  return (
-    <div className="rounded-xl border border-dashed border-ink-300 bg-ink-50/70 p-3">
-      <div className="flex items-center justify-between gap-3 text-sm">
-        <span className="inline-flex items-center gap-1.5 font-medium text-ink-700">
-          <Lock size={13} className="text-ink-400" />
-          {label}
-        </span>
-        <span className="shrink-0 tabular-nums text-ink-400">— / {c.max}</span>
-      </div>
-      <p className="mt-1 text-xs text-ink-500">
-        {c.detail}{' '}
-        <Link
-          to={CAREER_READINESS.path}
-          className="font-semibold text-brand-700 underline-offset-2 hover:underline"
-        >
-          Join the programme
-        </Link>
-      </p>
     </div>
   )
 }
@@ -110,7 +83,7 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
           <p className="mt-1 text-sm leading-relaxed text-ink-600">{band.note}</p>
 
           <div className="mt-5 space-y-4">
-            <LockedBreakdown label="Personal Development" c={personal} />
+            <Breakdown label="Personal Development" c={personal} />
             <Breakdown label="Professional Development" c={professional} />
             <Breakdown label="Experience" c={experience} />
           </div>
@@ -142,8 +115,9 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       )}
 
       <p className="mt-4 text-[11px] leading-relaxed text-ink-400">
-        Based on your verified profile — education, experience and projects count once the MySkills
-        team verifies them. Your MySkills assessment and practice scores aren’t part of it.
+        Education, experience and projects count once the MySkills team verifies them. Personal
+        development comes from the Career Readiness Programme. Your assessment and practice scores
+        aren’t part of it.
       </p>
     </section>
   )
