@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react'
 import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'
 import { digitalMarketingProgress } from '@/lib/programmes'
-import { DM_SIGNOFF_POINTS, PROFESSIONAL_MAX } from '@/lib/readinessScore'
+import {
+  DM_SIGNOFF_POINTS,
+  LIVE_SESSIONS_MAX_POINTS,
+  POINTS_PER_LIVE_SESSION,
+  PROFESSIONAL_MAX,
+  livePoints,
+} from '@/lib/readinessScore'
 
 const R = 34
 const C = 2 * Math.PI * R
@@ -14,8 +20,8 @@ const C = 2 * Math.PI * R
  * the programme has earned you, and one bead per track shows coverage.
  *
  * The headline is the whole Professional Development part of the score (out
- * of 20): verified education (up to 10) and this programme's mentor sign-off
- * (10). `educationPoints` comes from the server-issued score; until that has
+ * of 30): verified education (up to 10), live training (up to 10) and this
+ * programme's mentor sign-off (10). `educationPoints` comes from the server-issued score; until that has
  * loaded it's 0, so the number can only go up, never flash too high.
  *
  * No practice percentage here on purpose: an average of the tracks you
@@ -31,18 +37,22 @@ export function PracticeStats({
   foundationDone,
   mentorApproved,
   educationPoints,
+  liveSessions,
 }: {
   practice: PracticeSummary
   foundationDone: boolean
   mentorApproved: boolean
   /** Verified education points, from the server-issued Career Readiness Score. */
   educationPoints: number
+  /** Digital Marketing live training sessions, confirmed by whoever ran them. */
+  liveSessions: number
 }) {
   const rows = skillTracks.map((t) => ({ slug: t.slug, name: t.name, result: practice[t.slug] }))
   const practised = rows.filter((r) => r.result).length
-  const attempts = rows.reduce((s, r) => s + (r.result?.attempts ?? 0), 0)
   const { percent } = digitalMarketingProgress(foundationDone, practised, skillTracks.length, mentorApproved)
-  const points = Math.round(educationPoints + (mentorApproved ? DM_SIGNOFF_POINTS : 0))
+  const points = Math.round(
+    educationPoints + livePoints(liveSessions) + (mentorApproved ? DM_SIGNOFF_POINTS : 0),
+  )
 
   // animate the ring from 0 on mount
   const [shown, setShown] = useState(0)
@@ -96,8 +106,8 @@ export function PracticeStats({
             <span className="text-base font-normal text-white/50"> / {PROFESSIONAL_MAX} points</span>
           </p>
           <p className="mt-1 text-xs leading-relaxed text-white/70">
-            Verified education adds up to 10. Practise all {skillTracks.length} tracks and a mentor’s sign-off adds{' '}
-            {DM_SIGNOFF_POINTS} more.
+            Verified education adds up to 10, live training up to {LIVE_SESSIONS_MAX_POINTS}, and a mentor’s sign-off{' '}
+            {DM_SIGNOFF_POINTS} once all {skillTracks.length} tracks are done.
           </p>
         </div>
 
@@ -129,8 +139,11 @@ export function PracticeStats({
           </p>
         </div>
         <div>
-          <p className="text-[11px] font-medium text-white/60">Total attempts</p>
-          <p className="mt-0.5 font-display text-lg font-semibold text-white">{attempts}</p>
+          <p className="text-[11px] font-medium text-white/60">Live training</p>
+          <p className="mt-0.5 font-display text-lg font-semibold text-white">
+            {liveSessions}
+            <span className="text-sm font-normal text-white/50">/{LIVE_SESSIONS_MAX_POINTS / POINTS_PER_LIVE_SESSION}</span>
+          </p>
         </div>
         <div>
           <p className="text-[11px] font-medium text-white/60">Readiness points</p>

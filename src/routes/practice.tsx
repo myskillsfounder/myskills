@@ -184,7 +184,7 @@ function PracticePage() {
     }
   }, [dmReview.state])
   const { progress: crProgress } = useCareerReadinessProgress()
-  const { sessions: liveSessions } = useMyLiveSessions()
+  const { crSessions: liveSessions, dmSessions } = useMyLiveSessions()
 
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
@@ -257,6 +257,7 @@ function PracticePage() {
                         foundationDone={assessment != null}
                         mentorApproved={dmReview.state === 'approved'}
                         educationPoints={serverScore?.professional.education_points ?? 0}
+                        liveSessions={dmSessions.length}
                       />
                     </div>
                     <div className="lg:col-span-1">

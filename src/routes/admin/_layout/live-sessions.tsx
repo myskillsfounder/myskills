@@ -4,10 +4,12 @@ import { CalendarCheck, Send } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   HOST_KINDS,
+  SESSION_PROGRAMMES,
   fetchAdminLiveSessions,
   recordLiveSession,
   type AdminLiveSession,
   type HostKind,
+  type SessionProgramme,
 } from '@/lib/liveSessions'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
@@ -29,6 +31,7 @@ function LiveSessionsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
 
+  const [programme, setProgramme] = useState<SessionProgramme>('digital-marketing')
   const [email, setEmail] = useState('')
   const [kind, setKind] = useState<HostKind>('trainer')
   const [host, setHost] = useState('')
@@ -58,7 +61,7 @@ function LiveSessionsPage() {
     setFormError(undefined)
     setSaved(undefined)
     try {
-      await recordLiveSession({ studentEmail: email, hostKind: kind, hostName: host, title, heldOn })
+      await recordLiveSession({ programme, studentEmail: email, hostKind: kind, hostName: host, title, heldOn })
       setSaved(`Recorded for ${email.trim()}.`)
       setEmail('')
       await load()
@@ -74,12 +77,29 @@ function LiveSessionsPage() {
       <PageHeader
         eyebrow="Admin"
         title="Live sessions"
-        subtitle="Confirm that a student attended a live session with a trainer, mentor or institution. Each confirmed session is worth 2 points of their Career Readiness Score, up to 10."
+        subtitle="Confirm that a student attended a live session with a trainer, mentor or institution. Each confirmed session is worth 2 points of their Career Readiness Score, up to 10 per programme."
       />
 
       <form onSubmit={submit} className="card mb-6 space-y-4 p-5 sm:p-6">
         <h2 className="font-display text-lg font-semibold text-ink-900">Record attendance</h2>
         <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-ink-800" htmlFor="programme">
+              Programme
+            </label>
+            <select
+              id="programme"
+              value={programme}
+              onChange={(e) => setProgramme(e.target.value as SessionProgramme)}
+              className="field"
+            >
+              {SESSION_PROGRAMMES.map((p) => (
+                <option key={p.value} value={p.value}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <Input label="Student’s email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink-800" htmlFor="kind">
@@ -137,6 +157,7 @@ function LiveSessionsPage() {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Student</th>
                 <th className="px-4 py-3">Session</th>
+                <th className="px-4 py-3">Programme</th>
                 <th className="px-4 py-3">Run by</th>
                 <th className="px-4 py-3">Recorded by</th>
               </tr>
@@ -150,6 +171,9 @@ function LiveSessionsPage() {
                     <p className="text-xs text-ink-500">{r.student_email}</p>
                   </td>
                   <td className="px-4 py-3 text-ink-800">{r.title}</td>
+                  <td className="px-4 py-3 text-ink-600">
+                    {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Career Readiness'}
+                  </td>
                   <td className="px-4 py-3 text-ink-700">
                     {r.host_name} <span className="text-xs text-ink-500">· {r.host_kind}</span>
                   </td>

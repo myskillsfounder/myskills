@@ -97,7 +97,7 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
                 <span className="shrink-0 tabular-nums text-ink-400">— / {RESERVED_POINTS}</span>
               </div>
               <p className="mt-1 text-xs text-ink-500">
-                Practice results and mentor-confirmed hours will be added to the score.
+                Held back for now — more ways to earn points will be added here.
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
               <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
               <span>
                 <span className="font-semibold text-ink-800">Verified · {Math.round(verifiedPoints)} points.</span>{' '}
-                Education, work and projects MySkills checked on a call, and mentors’ sign-offs.
+                Education, work and projects MySkills checked on a call, confirmed live sessions, and mentors’ sign-offs.
               </span>
             </li>
             <li className="flex items-start gap-2">
