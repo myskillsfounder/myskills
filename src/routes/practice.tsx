@@ -63,9 +63,9 @@ function MigrationError({ message }: { message: string }) {
 /** The two programmes, side by side: one tap switches between them. Only the
  *  chosen programme's content is on the page, so neither buries the other. */
 function ProgrammeTabs({ active, onChange }: { active: Programme; onChange: (p: Programme) => void }) {
-  const items: { step: Programme; name: string; status: string; live: boolean }[] = [
-    { step: 1, name: DIGITAL_MARKETING.name, status: 'In progress', live: true },
-    { step: 2, name: CAREER_READINESS.name, status: 'Live', live: true },
+  const items: { step: Programme; name: string }[] = [
+    { step: 1, name: DIGITAL_MARKETING.name },
+    { step: 2, name: CAREER_READINESS.name },
   ]
   return (
     <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-3">
@@ -91,17 +91,7 @@ function ProgrammeTabs({ active, onChange }: { active: Programme; onChange: (p: 
             >
               {it.step}
             </span>
-            <span className="min-w-0">
-              <span className="block font-display text-sm font-semibold leading-snug sm:text-base">{it.name}</span>
-              <span
-                className={`mt-1 inline-flex items-center gap-1.5 text-[11px] font-semibold ${
-                  on ? 'text-white/70' : 'text-ink-500'
-                }`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${it.live ? 'bg-emerald-500' : 'bg-ink-400'}`} />
-                {it.status}
-              </span>
-            </span>
+            <span className="min-w-0 font-display text-sm font-semibold leading-snug sm:text-base">{it.name}</span>
           </button>
         )
       })}
