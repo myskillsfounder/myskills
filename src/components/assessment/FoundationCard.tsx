@@ -22,10 +22,10 @@ const shell =
 
 /**
  * Practice's entry to the Foundation assessment, in the dark feature-card
- * treatment. Three states: done (the score and the certificate it earned),
- * ready (vocabulary is far enough along), and locked (how far to go, and a
- * way to the vocabulary). `unlock` is passed in rather than read here because
- * Practice knows the live vocabulary numbers as the learner works.
+ * treatment. Two states: ready (vocabulary is far enough along) and locked
+ * (how far to go, and a way to the vocabulary). Nothing once it's been taken.
+ * `unlock` is passed in rather than read here because Practice knows the live
+ * vocabulary numbers as the learner works.
  */
 export function FoundationCard({
   assessment,
@@ -36,26 +36,9 @@ export function FoundationCard({
   unlock: FoundationUnlock
   onOpenVocabulary: () => void
 }) {
-  if (assessment) {
-    return (
-      <section className={shell}>
-        <Rings />
-        <div className="relative min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Foundation assessment</p>
-          <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-            {assessment.overall.percent}% · Foundational progress earned
-          </h3>
-          <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-white/70 sm:text-sm">
-            {assessment.overall.correct} of {assessment.overall.total} correct. Your certificate is in your profile.
-          </p>
-        </div>
-        <Link to="/foundation-assessment" className={cta}>
-          View your results
-          <ArrowRight size={16} />
-        </Link>
-      </section>
-    )
-  }
+  // Once it's done the card leaves Practice: the result and the certificate
+  // live on the assessment page and in the profile.
+  if (assessment) return null
 
   if (unlock.unlocked) {
     return (
