@@ -7,7 +7,8 @@ import {
   LIVE_SESSIONS_MAX_POINTS,
   POINTS_PER_LIVE_SESSION,
   PROFESSIONAL_MAX,
-  livePoints,
+  TRACK_PASS_PERCENT,
+  professionalPoints,
 } from '@/lib/readinessScore'
 
 const R = 34
@@ -19,10 +20,9 @@ const C = 2 * Math.PI * R
  * through the programme you are, the headline is the Career Readiness points
  * the programme has earned you, and one bead per track shows coverage.
  *
- * The headline is the whole Professional Development part of the score (out
- * of 30): verified education (up to 10), live training (up to 10) and this
- * programme's mentor sign-off (10). `educationPoints` comes from the server-issued score; until that has
- * loaded it's 0, so the number can only go up, never flash too high.
+ * The headline is the whole Professional Development part of the Career
+ * Readiness Score (out of 40): tracks scored 60%+, the Foundation assessment,
+ * live training and this programme's mentor sign-off.
  *
  * No practice percentage here on purpose: an average of the tracks you
  * happen to have tried reads as "82% · Advanced" after a single track. Each
@@ -36,14 +36,14 @@ export function PracticeStats({
   practice,
   foundationDone,
   mentorApproved,
-  educationPoints,
+  foundationPercent,
   liveSessions,
 }: {
   practice: PracticeSummary
   foundationDone: boolean
   mentorApproved: boolean
-  /** Verified education points, from the server-issued Career Readiness Score. */
-  educationPoints: number
+  /** Foundation assessment percent, or null if not taken. */
+  foundationPercent: number | null
   /** Digital Marketing live training sessions, confirmed by whoever ran them. */
   liveSessions: number
 }) {
@@ -51,7 +51,12 @@ export function PracticeStats({
   const practised = rows.filter((r) => r.result).length
   const { percent } = digitalMarketingProgress(foundationDone, practised, skillTracks.length, mentorApproved)
   const points = Math.round(
-    educationPoints + livePoints(liveSessions) + (mentorApproved ? DM_SIGNOFF_POINTS : 0),
+    professionalPoints({
+      dmTracksPassed: rows.filter((r) => (r.result?.percent ?? 0) >= TRACK_PASS_PERCENT).length,
+      foundationPercent,
+      dmLiveSessions: liveSessions,
+      dmSignedOff: mentorApproved,
+    }),
   )
 
   // animate the ring from 0 on mount
@@ -106,8 +111,9 @@ export function PracticeStats({
             <span className="text-base font-normal text-white/50"> / {PROFESSIONAL_MAX} points</span>
           </p>
           <p className="mt-1 text-xs leading-relaxed text-white/70">
-            Verified education adds up to 10, live training up to {LIVE_SESSIONS_MAX_POINTS}, and a mentor’s sign-off{' '}
-            {DM_SIGNOFF_POINTS} once all {skillTracks.length} tracks are done.
+            Tracks scored {TRACK_PASS_PERCENT}%+ add up to 10, the Foundation assessment up to 10, live training up to{' '}
+            {LIVE_SESSIONS_MAX_POINTS}, and a mentor’s sign-off {DM_SIGNOFF_POINTS} once all {skillTracks.length}{' '}
+            tracks are done.
           </p>
         </div>
 

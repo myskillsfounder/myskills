@@ -116,8 +116,8 @@ export function EducationSection({
               value={editing.school}
               onChange={(e) => setEditing({ ...editing, school: e.target.value })}
             />
-            {/* Scored by the Career Readiness Score. Pre-filled from the free-text
-                degree for older entries, so re-saving one locks the guess in. */}
+            {/* Pre-filled from the free-text degree for older entries, so
+                re-saving one locks the guess in. */}
             <Select
               label="Level"
               required

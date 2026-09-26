@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, CheckCircle2, Mail, Phone } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { fetchStudentDetail, type StudentDetail } from '@/lib/adminStudents'
-import { bandFor, RESERVED_POINTS } from '@/lib/readinessScore'
+import { bandFor } from '@/lib/readinessScore'
 import { skillTracks } from '@/lib/skillTracks'
 import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
 import { SKILLS, levelFor as skillLevel } from '@/lib/careerReadinessAssessment'
@@ -177,11 +177,11 @@ function StudentPage() {
             <div className="space-y-4">
               <Bar label="Personal Development" points={score.personal.points} max={score.personal.max} />
               <Bar label="Professional Development" points={score.professional.points} max={score.professional.max} />
-              <Bar label="Experience" points={score.experience.points} max={score.experience.max} />
+              <Bar label="Internship" points={score.internship?.points ?? 0} max={score.internship?.max ?? 20} />
               <p className="text-xs text-ink-500">
                 Verified <span className="font-semibold text-emerald-700">{Math.round(score.verified_points)}</span> ·
                 self-reported <span className="font-semibold text-amber-700">{Math.round(score.self_reported_points)}</span> ·{' '}
-                {RESERVED_POINTS} points not scored yet · method {score.method_version}
+                method {score.method_version}
               </p>
             </div>
           ) : (

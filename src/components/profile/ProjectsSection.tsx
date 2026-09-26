@@ -113,8 +113,8 @@ export function ProjectsSection({
         </ul>
       ) : (
         <p className="text-sm text-ink-500">
-          Campaigns, case studies, websites or freelance work you’ve done — each one counts toward
-          your Career Readiness Score.
+          Campaigns, case studies, websites or freelance work you’ve done — each one shows employers
+          what you can do.
         </p>
       )}
 

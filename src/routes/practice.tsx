@@ -38,7 +38,6 @@ import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOv
 import { ProgrammeCompletion } from '@/components/practice/ProgrammeCompletion'
 import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
 import { useMentorReview } from '@/lib/mentorReview'
-import { refreshMyScore, type ServerScore } from '@/lib/scoreService'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
@@ -173,16 +172,6 @@ function PracticePage() {
   const error = assessmentError ?? practiceError
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
-  // The Professional Development number on the Digital Marketing card includes
-  // verified education, which the server-issued score already works out.
-  const [serverScore, setServerScore] = useState<ServerScore | null>(null)
-  useEffect(() => {
-    let active = true
-    refreshMyScore().then((s) => active && setServerScore(s))
-    return () => {
-      active = false
-    }
-  }, [dmReview.state])
   const { progress: crProgress } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions } = useMyLiveSessions()
 
@@ -256,7 +245,7 @@ function PracticePage() {
                         practice={practice}
                         foundationDone={assessment != null}
                         mentorApproved={dmReview.state === 'approved'}
-                        educationPoints={serverScore?.professional.education_points ?? 0}
+                        foundationPercent={assessment?.overall.percent ?? null}
                         liveSessions={dmSessions.length}
                       />
                     </div>

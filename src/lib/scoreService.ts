@@ -15,8 +15,8 @@ export interface ServerScore {
   self_reported_points: number
   computed_at?: string
   personal: { points: number; max: number }
-  professional: { points: number; max: number; education_points?: number }
-  experience: { points: number; max: number }
+  professional: { points: number; max: number }
+  internship: { points: number; max: number }
 }
 
 export async function refreshMyScore(): Promise<ServerScore | null> {
@@ -46,6 +46,6 @@ export function withServerScore(local: Readiness, server: ServerScore): Readines
     computedAt: server.computed_at,
     personal: { ...local.personal, points: server.personal.points },
     professional: { ...local.professional, points: server.professional.points },
-    experience: { ...local.experience, points: server.experience.points },
+    internship: { ...local.internship, points: server.internship?.points ?? 0 },
   }
 }

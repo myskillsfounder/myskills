@@ -43,7 +43,7 @@ const MODAL_KEYS = new Set(['phone', 'date_of_birth', 'gender', 'country', 'stat
 export interface DetailItem {
   key: keyof Pick<
     Profile,
-    'phone' | 'date_of_birth' | 'gender' | 'country' | 'state' | 'avatar_url' | 'education'
+    'phone' | 'date_of_birth' | 'gender' | 'country' | 'state' | 'avatar_url' | 'education' | 'experience'
   >
   label: string
 }
@@ -56,6 +56,7 @@ export const DETAIL_ITEMS: DetailItem[] = [
   { key: 'country', label: f.country.label },
   { key: 'state', label: f.state.label },
   { key: 'education', label: 'Education' },
+  { key: 'experience', label: 'Experience or internship' },
 ]
 
 /** Which personal details are still blank. Handles both plain string fields

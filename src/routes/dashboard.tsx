@@ -8,11 +8,10 @@ import { useInitialAssessment } from '@/lib/assessmentResults'
 import { useHasFeedback } from '@/lib/feedback'
 import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
 import { skillTracks } from '@/lib/skillTracks'
-import { computeReadiness } from '@/lib/readinessScore'
+import { computeReadiness, TRACK_PASS_PERCENT } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
-import { useVerification } from '@/lib/useVerification'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
@@ -98,7 +97,6 @@ function DashboardPage() {
   const name = raw.charAt(0).toUpperCase() + raw.slice(1)
   const userKey = user?.id ?? 'guest'
   const { profile, loading: profileLoading } = useProfile()
-  const verification = useVerification(profile)
   const goals = profile?.goals ?? []
   const { result: assessment } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
@@ -123,35 +121,34 @@ function DashboardPage() {
     [practice],
   )
 
-  // The score comes from the profile alone (see lib/readinessScore.ts);
-  // practice results still feed the course progress in KeyMeasures.
+  // Only what the student has done on MySkills counts (see lib/readinessScore.ts).
   const estimate = useMemo(
     () =>
-      profile
-        ? computeReadiness(profile, verification.view, verification.hasOpenRequest, {
-            modulesDone: crProgress.modulesDone,
-            liveSessions: liveSessions.length,
-            dmLiveSessions: dmSessions.length,
-            crSignedOff: crReview.state === 'approved',
-            dmSignedOff: dmReview.state === 'approved',
-            dmPracticeDone: practicedCount === skillTracks.length,
-          })
-        : null,
-    [profile, verification.view, verification.hasOpenRequest, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state, practicedCount],
+      computeReadiness({
+        modulesDone: crProgress.modulesDone,
+        liveSessions: liveSessions.length,
+        dmLiveSessions: dmSessions.length,
+        crSignedOff: crReview.state === 'approved',
+        dmSignedOff: dmReview.state === 'approved',
+        dmTracksPassed: skillTracks.filter((t) => (practice[t.slug]?.percent ?? 0) >= TRACK_PASS_PERCENT).length,
+        dmPracticeDone: practicedCount === skillTracks.length,
+        foundationPercent: assessment?.overall.percent ?? null,
+      }),
+    [crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state, practice, practicedCount, assessment],
   )
   // The number itself is issued by the server; the estimate above is the guide
   // and the fallback. Re-ask whenever something the score depends on changes.
   const [serverScore, setServerScore] = useState<ServerScore | null>(null)
   useEffect(() => {
-    if (profileLoading || verification.loading || crLoading || liveLoading) return
+    if (crLoading || liveLoading) return
     let active = true
     refreshMyScore().then((s) => active && setServerScore(s))
     return () => {
       active = false
     }
-  }, [profileLoading, verification.loading, crLoading, liveLoading, verification.view, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state])
+  }, [crLoading, liveLoading, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state, practice, assessment])
   const readiness = useMemo(
-    () => (estimate && serverScore ? withServerScore(estimate, serverScore) : estimate),
+    () => (serverScore ? withServerScore(estimate, serverScore) : estimate),
     [estimate, serverScore],
   )
 
@@ -165,7 +162,7 @@ function DashboardPage() {
       <div className="space-y-6">
         {/* Order is deliberate: the score (where you stand), then the
             programme (the structured way to raise it), then everything else. */}
-        {profileLoading || verification.loading || !readiness ? (
+        {profileLoading || !readiness ? (
           <div className="grid gap-5 lg:grid-cols-3">
             <Skeleton className="h-80 lg:col-span-2" />
             <Skeleton className="h-80" />
