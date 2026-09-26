@@ -59,14 +59,14 @@ begin
       'internship_leads',     (select count(*) from public.internship_partner_leads where not contacted),
       'career_readiness_leads', (select count(*) from public.career_readiness_leads where not contacted)
     ),
-    -- Bands match BANDS in src/lib/readinessScore.ts (method v4): 72 / 50 / 23.
+    -- Bands match BANDS in src/lib/readinessScore.ts (method v5): 64 / 44 / 20.
     'score', json_build_object(
       'students',        (select count(*) from s),
       'average',         (select round(avg(score), 1) from s),
-      'standout',        (select count(*) from s where score >= 72),
-      'strong',          (select count(*) from s where score >= 50 and score < 72),
-      'building',        (select count(*) from s where score >= 23 and score < 50),
-      'getting_started', (select count(*) from s where score < 23),
+      'standout',        (select count(*) from s where score >= 64),
+      'strong',          (select count(*) from s where score >= 44 and score < 64),
+      'building',        (select count(*) from s where score >= 20 and score < 44),
+      'getting_started', (select count(*) from s where score < 20),
       'verified_share',  (select case when sum(verified + self_reported) > 0
                                       then round(100 * sum(verified) / sum(verified + self_reported))
                                       else 0 end from s)

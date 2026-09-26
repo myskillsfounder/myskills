@@ -2,96 +2,56 @@
  * Career Readiness Score — the number the LaunchPad dashboard is built around,
  * and the one a company can rely on when choosing interns.
  *
- * A standard, market-facing measure of where a student stands as a candidate,
- * built only from evidence somebody checked. Method v4:
+ * It measures only what a student has done INSIDE MySkills, checked by the
+ * server or by a person. Education, outside work and projects belong to the
+ * profile (and its completion), not to this number. Method v5:
  *
- *   30  Personal development     — 2 points per Career Readiness module (5 = 10),
- *                                   2 per live session with a trainer, mentor
- *                                   or institution whose attendance was
- *                                   confirmed (5 = 10), and 10 when a mentor
- *                                   signs the programme off
- *   30  Professional             — verified education (max 10), 2 per live
- *                                   Digital Marketing training session whose
- *                                   attendance was confirmed (5 = 10), and 10
- *                                   when a mentor signs off the Digital
- *                                   Marketing practice
- *   30  Experience               — verified internships, work and projects
- *   10  Reserved                 — not scored yet (see RESERVED_POINTS)
- *
- * Mentor endorsement is worth 20 of the 90 that can be earned today (10 per
- * programme), and confirmed live sessions another 20 (10 per programme). Skills a student lists are shown on their profile but earn no
- * points: nobody has checked them.
- *
- * Age is never scored: it isn't a skill, and scoring it penalises students for
- * something they can't change. Education is scored by level completed, never
- * by institution — the score measures readiness, not prestige.
+ *   40  Personal development     — the Career Readiness Programme: 2 per module
+ *                                   finished (5 = 10), 2 per confirmed live
+ *                                   session (5 = 10), 20 for the mentor sign-off
+ *   40  Professional development — the Digital Marketing Programme: 1.25 per
+ *                                   track scored 60%+ (8 = 10), the Foundation
+ *                                   assessment (its % / 10, up to 10), 2 per
+ *                                   confirmed live training (5 = 10), 10 for the
+ *                                   mentor sign-off
+ *   20  Internship               — an internship through MySkills; not open
+ *                                   yet, so nobody can earn it today
  *
  * Every rule is a named constant below so the method can be published and
  * adjusted without hunting through logic.
  *
  * WHO ISSUES THE NUMBER: the server does (docs/supabase-career-readiness-
- * score.sql, called through lib/scoreService.ts): it works the score out from
- * verified records and stores it with a date and a method version. This file
- * is the same method in the browser — it still drives the "what next" guide
- * and the pending-points figure, and stands in if the server score isn't
- * available. Keep the two in step; the dashboard warns in the console if they
- * ever disagree.
+ * score.sql, called through lib/scoreService.ts) and stores it with a date and
+ * the method version. This file is the same method in the browser — it drives
+ * "your next step" and stands in if the server score isn't available. Keep
+ * the two in step; the dashboard warns in the console if they disagree. (One
+ * known difference: the server counts only server-graded practice attempts.)
  *
- * VERIFIED vs SELF-REPORTED: education, experience, projects and the mentor
- * sign-offs and confirmed live sessions are checked by a person. Module
- * completions (written, not yet read
- * by a mentor) are self-reported until the Career Readiness sign-off. Both are counted, and reported separately,
- * so nobody has to guess how much of a number was checked.
+ * VERIFIED vs SELF-REPORTED: practice and the Foundation assessment are graded
+ * by the server; live sessions and sign-offs are confirmed by a person. Module
+ * answers are self-reported until a mentor signs the programme off.
  */
-import type { Education, Experience, Profile, Project } from './profile'
-import { NO_VERIFICATION, type VerificationView } from './verification'
-import {
-  educationLevelOf,
-  isEducationComplete,
-  isInternship,
-  monthsInRole,
-  EDUCATION_LEVELS,
-} from './careerProfile'
-import type { EducationLevel } from './profile'
 
 /** Bump when the rules change, so a stored score says which rules made it. */
-export const METHOD_VERSION = 'v4'
+export const METHOD_VERSION = 'v5'
 
-export const SCORE_TOTAL = 100
-/** Held back, to be allocated later. */
-export const RESERVED_POINTS = 10
+export const PERSONAL_MAX = 40
+export const PROFESSIONAL_MAX = 40
+export const INTERNSHIP_MAX = 20
 
-export const PERSONAL_MAX = 30
-export const PROFESSIONAL_MAX = 30
-export const EXPERIENCE_MAX = 30
-
-/** Personal: 5 modules x 2 = 10, live sessions up to 10, the sign-off 10. */
+/** Personal: modules, live sessions, the Career Readiness sign-off. */
 export const POINTS_PER_MODULE = 2
 export const PROGRAMME_MODULES = 5
 export const POINTS_PER_LIVE_SESSION = 2
 export const LIVE_SESSIONS_MAX_POINTS = 10
-export const CR_SIGNOFF_POINTS = 10
-/** Professional: education up to 10, live training up to 10, the sign-off 10. */
+export const CR_SIGNOFF_POINTS = 20
+
+/** Professional: practice, Foundation, live training, the Digital Marketing sign-off. */
+export const PRACTICE_TRACKS = 8
+export const TRACK_PASS_PERCENT = 60
+export const POINTS_PER_TRACK = 1.25
+export const FOUNDATION_MAX_POINTS = 10
 export const DM_SIGNOFF_POINTS = 10
-
-const EDUCATION_POINTS: Record<EducationLevel, number> = {
-  'class-10': 2,
-  'class-12': 4,
-  diploma: 6,
-  bachelors: 8,
-  masters: 9,
-  doctorate: 10,
-}
-/** A level still in progress earns this share of its points. */
-const IN_PROGRESS_SHARE = 0.75
-const EDUCATION_MAX = 10
-
-const POINTS_PER_INTERNSHIP = 5
-const INTERNSHIPS_MAX = 15
-const POINTS_PER_WORK_MONTH = 1
-const WORK_MAX = 5
-const POINTS_PER_PROJECT = 2.5
-const PROJECTS_MAX = 10
 
 /** Where a learner stands in the two programmes. */
 export interface ProgrammeStanding {
@@ -103,8 +63,12 @@ export interface ProgrammeStanding {
   dmLiveSessions: number
   crSignedOff: boolean
   dmSignedOff: boolean
-  /** All 8 Digital Marketing tracks practised — only then can its review be asked for. */
-  dmPracticeDone?: boolean
+  /** Digital Marketing tracks whose score (best of the last 3 attempts) is 60%+. */
+  dmTracksPassed: number
+  /** All 8 tracks practised — only then can the Digital Marketing review be asked for. */
+  dmPracticeDone: boolean
+  /** Foundation assessment percent, or null if it hasn't been taken. */
+  foundationPercent: number | null
 }
 export const NO_STANDING: ProgrammeStanding = {
   modulesDone: 0,
@@ -112,13 +76,26 @@ export const NO_STANDING: ProgrammeStanding = {
   dmLiveSessions: 0,
   crSignedOff: false,
   dmSignedOff: false,
+  dmTracksPassed: 0,
+  dmPracticeDone: false,
+  foundationPercent: null,
 }
 
-/** The Personal Development points a learner has earned so far. */
+const round1 = (n: number) => Math.round(n * 10) / 10
+
 export function livePoints(sessions: number): number {
   return Math.min(sessions * POINTS_PER_LIVE_SESSION, LIVE_SESSIONS_MAX_POINTS)
 }
 
+export function foundationPoints(percent: number | null): number {
+  return percent === null ? 0 : round1(Math.min(percent / 10, FOUNDATION_MAX_POINTS))
+}
+
+export function practicePoints(tracksPassed: number): number {
+  return Math.min(tracksPassed, PRACTICE_TRACKS) * POINTS_PER_TRACK
+}
+
+/** The Personal Development points a learner has earned so far. */
 export function personalPoints(p: Pick<ProgrammeStanding, 'modulesDone' | 'liveSessions' | 'crSignedOff'>): number {
   return Math.min(
     Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE +
@@ -128,19 +105,34 @@ export function personalPoints(p: Pick<ProgrammeStanding, 'modulesDone' | 'liveS
   )
 }
 
+/** The Professional Development points a learner has earned so far. */
+export function professionalPoints(
+  p: Pick<ProgrammeStanding, 'dmTracksPassed' | 'foundationPercent' | 'dmLiveSessions' | 'dmSignedOff'>,
+): number {
+  return round1(
+    Math.min(
+      practicePoints(p.dmTracksPassed) +
+        foundationPoints(p.foundationPercent) +
+        livePoints(p.dmLiveSessions) +
+        (p.dmSignedOff ? DM_SIGNOFF_POINTS : 0),
+      PROFESSIONAL_MAX,
+    ),
+  )
+}
+
 export interface ReadinessBand {
   label: string
   note: string
 }
 
-// The most that can be earned today is 90 (RESERVED_POINTS are held back), so
-// the bands sit at 90% of the original 80 / 55 / 25 marks. Revisit when the
-// reserved points are allocated.
+// The most that can be earned today is 80 (the internship part isn't open),
+// so the bands sit at 80% of the original 80 / 55 / 25 marks. Revisit when
+// internships open.
 const BANDS: { min: number; band: ReadinessBand }[] = [
-  { min: 72, band: { label: 'Standout', note: 'A well-rounded candidate across every dimension.' } },
-  { min: 50, band: { label: 'Strong', note: 'A solid profile — mentor sign-off is the next step up.' } },
-  { min: 23, band: { label: 'Building', note: 'Real foundations. Verified experience moves you fastest from here.' } },
-  { min: 0, band: { label: 'Getting started', note: 'Every module, qualification, internship and project adds to this.' } },
+  { min: 64, band: { label: 'Standout', note: 'A well-rounded candidate across both programmes.' } },
+  { min: 44, band: { label: 'Strong', note: 'A solid record — a mentor sign-off is the next step up.' } },
+  { min: 20, band: { label: 'Building', note: 'Real progress. Keep practising and finishing modules.' } },
+  { min: 0, band: { label: 'Getting started', note: 'Every module, track and session adds to this.' } },
 ]
 
 export function bandFor(score: number): ReadinessBand {
@@ -156,6 +148,7 @@ export interface ReadinessComponent {
 
 export interface NextAction {
   label: string
+  /** Points the step adds; 0 for a step that only opens the next one. */
   upTo: number
   to: string
   /** Which Practice tab the link should open on, when `to` is /practice. */
@@ -165,9 +158,7 @@ export interface NextAction {
 export interface Readiness {
   score: number
   band: ReadinessBand
-  /** Points already on the profile that verification would unlock. */
-  pendingPoints: number
-  /** Points a person has checked (verified profile entries, mentor sign-offs). */
+  /** Points graded by the server or confirmed by a person. */
   verifiedPoints: number
   /** Points that count but nobody has checked yet (finished modules). */
   selfReportedPoints: number
@@ -177,178 +168,80 @@ export interface Readiness {
   computedAt?: string
   personal: ReadinessComponent
   professional: ReadinessComponent
-  experience: ReadinessComponent
+  internship: ReadinessComponent
   nextAction: NextAction | null
 }
 
-const levelLabel = (l: EducationLevel) => EDUCATION_LEVELS.find((x) => x.value === l)?.label ?? l
-const round1 = (n: number) => Math.round(n * 10) / 10
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 
-interface Tally {
-  education: number
-  experience: number
-  bestEduLabel: string
-  unleveledEducation: boolean
-  internships: number
-  workMonths: number
-  projects: number
-  internshipPts: number
-  projectPts: number
-}
-
-/** Score whatever subset of the profile the caller says may count. */
-function tally(
-  profile: Profile,
-  counts: (type: 'education' | 'experience' | 'project', entry: Education | Experience | Project) => boolean,
-): Tally {
-  let bestEdu = 0
-  let bestEduLabel = ''
-  let unleveledEducation = false
-  for (const e of profile.education) {
-    const level = educationLevelOf(e)
-    if (!level) {
-      unleveledEducation = true
-      continue
-    }
-    if (!counts('education', e)) continue
-    const complete = isEducationComplete(e)
-    const pts = EDUCATION_POINTS[level] * (complete ? 1 : IN_PROGRESS_SHARE)
-    if (pts > bestEdu) {
-      bestEdu = pts
-      bestEduLabel = `${levelLabel(level)}${complete ? '' : ' (in progress)'}`
-    }
-  }
-
-  const exp = profile.experience.filter((x) => counts('experience', x))
-  const internships = exp.filter(isInternship)
-  const workMonths = exp.filter((x) => !isInternship(x)).reduce((s, x) => s + monthsInRole(x), 0)
-  const projects = profile.projects.filter((p) => counts('project', p)).length
-  const internshipPts = Math.min(internships.length * POINTS_PER_INTERNSHIP, INTERNSHIPS_MAX)
-  const workPts = Math.min(workMonths * POINTS_PER_WORK_MONTH, WORK_MAX)
-  const projectPts = Math.min(projects * POINTS_PER_PROJECT, PROJECTS_MAX)
-
-  return {
-    education: bestEdu,
-    experience: internshipPts + workPts + projectPts,
-    bestEduLabel,
-    unleveledEducation,
-    internships: internships.length,
-    workMonths,
-    projects,
-    internshipPts,
-    projectPts,
-  }
-}
-
-/**
- * Education, experience and projects count only once the MySkills team has
- * verified them on a video call (lib/verification.ts) — and only while
- * identity is verified too, since a credential proves nothing about a person
- * whose identity wasn't checked.
- */
-export function computeReadiness(
-  profile: Profile,
-  verification: VerificationView = NO_VERIFICATION,
-  hasOpenRequest = false,
-  standing: ProgrammeStanding = NO_STANDING,
-): Readiness {
-  const counts = (type: 'education' | 'experience' | 'project', entry: Education | Experience | Project) =>
-    verification.identity === 'verified' && verification.status(type, entry) === 'verified'
-
-  const t = tally(profile, counts)
-  const potential = tally(profile, () => true)
-
-  const modulesDone = Math.min(standing.modulesDone, PROGRAMME_MODULES)
-  const personalPts = personalPoints(standing)
-  const professionalPts =
-    t.education + livePoints(standing.dmLiveSessions) + (standing.dmSignedOff ? DM_SIGNOFF_POINTS : 0)
-  const score = Math.round(personalPts + professionalPts + t.experience)
-  const pendingPoints = round1(potential.education + potential.experience - (t.education + t.experience))
+export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Readiness {
+  const s = standing
+  const modulesDone = Math.min(s.modulesDone, PROGRAMME_MODULES)
+  const personalPts = personalPoints(s)
+  const professionalPts = professionalPoints(s)
+  const score = Math.round(personalPts + professionalPts)
 
   // -- The next step, in the order of the learning journey — not whatever
-  // happens to be worth the most. Learn and practise first; get the basics on
-  // the profile verified; then the steps that need other people and real
-  // work: mentor reviews, live sessions with mentors and trainers, projects,
-  // and internships last. The first step that still applies is the one shown.
+  // happens to be worth the most. Learn and practise first, then the
+  // assessment, then the steps that need other people: mentor reviews and live
+  // sessions last. The first step that still applies is the one shown.
   const journey: (NextAction | null)[] = [
     modulesDone < PROGRAMME_MODULES
       ? { label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 }
       : null,
-    !standing.dmPracticeDone && !standing.dmSignedOff
-      ? { label: 'Practise all 8 Digital Marketing tracks', upTo: 0, to: '/practice', programme: 1 }
+    s.dmTracksPassed < PRACTICE_TRACKS && !s.dmSignedOff
+      ? { label: 'Score 60% or more on a Digital Marketing track', upTo: POINTS_PER_TRACK, to: '/practice', programme: 1 }
       : null,
-    profile.education.length === 0
-      ? { label: 'Add your education', upTo: EDUCATION_MAX, to: '/profile' }
-      : potential.unleveledEducation && potential.education === 0
-        ? { label: 'Set your education level', upTo: EDUCATION_MAX, to: '/profile' }
-        : null,
-    pendingPoints >= 0.5 && !hasOpenRequest
-      ? { label: 'Get your profile verified', upTo: pendingPoints, to: '/profile' }
+    s.foundationPercent === null
+      ? { label: 'Take the Foundation assessment', upTo: FOUNDATION_MAX_POINTS, to: '/foundation-assessment' }
       : null,
-    modulesDone >= PROGRAMME_MODULES && !standing.crSignedOff
+    modulesDone >= PROGRAMME_MODULES && !s.crSignedOff
       ? { label: 'Get your Career Readiness mentor review', upTo: CR_SIGNOFF_POINTS, to: '/practice', programme: 2 }
       : null,
-    standing.dmPracticeDone && !standing.dmSignedOff
+    s.dmPracticeDone && !s.dmSignedOff
       ? { label: 'Get your Digital Marketing mentor review', upTo: DM_SIGNOFF_POINTS, to: '/practice', programme: 1 }
       : null,
-    livePoints(standing.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS
+    livePoints(s.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS
       ? { label: 'Attend a live Digital Marketing training', upTo: POINTS_PER_LIVE_SESSION, to: '/community/institutions' }
       : null,
-    livePoints(standing.liveSessions) < LIVE_SESSIONS_MAX_POINTS
+    livePoints(s.liveSessions) < LIVE_SESSIONS_MAX_POINTS
       ? { label: 'Attend a live session with a mentor', upTo: POINTS_PER_LIVE_SESSION, to: '/community/mentors' }
-      : null,
-    potential.projectPts < PROJECTS_MAX
-      ? { label: 'Add and verify a project', upTo: POINTS_PER_PROJECT, to: '/profile' }
-      : null,
-    potential.internshipPts < INTERNSHIPS_MAX
-      ? { label: 'Add and verify an internship', upTo: POINTS_PER_INTERNSHIP, to: '/profile' }
       : null,
   ]
   const nextAction = journey.find((step): step is NextAction => step !== null) ?? null
 
+  const modulePts = modulesDone * POINTS_PER_MODULE
   return {
     score,
     band: bandFor(score),
-    pendingPoints,
     // Once a mentor has signed the programme off they have read the modules,
     // so those points stop being self-reported.
-    verifiedPoints: round1(
-      t.education +
-        t.experience +
-        livePoints(standing.liveSessions) +
-        livePoints(standing.dmLiveSessions) +
-        (standing.crSignedOff ? CR_SIGNOFF_POINTS + modulesDone * POINTS_PER_MODULE : 0) +
-        (standing.dmSignedOff ? DM_SIGNOFF_POINTS : 0),
-    ),
-    selfReportedPoints: standing.crSignedOff ? 0 : round1(modulesDone * POINTS_PER_MODULE),
+    verifiedPoints: round1(personalPts + professionalPts - (s.crSignedOff ? 0 : modulePts)),
+    selfReportedPoints: s.crSignedOff ? 0 : modulePts,
     source: 'estimate',
     personal: {
       points: personalPts,
       max: PERSONAL_MAX,
       detail: [
         `${modulesDone} of ${PROGRAMME_MODULES} modules`,
-        plural(standing.liveSessions, 'live session'),
-        standing.crSignedOff ? 'signed off by a mentor' : `mentor sign-off adds ${CR_SIGNOFF_POINTS}`,
+        plural(s.liveSessions, 'live session'),
+        s.crSignedOff ? 'signed off by a mentor' : `mentor sign-off adds ${CR_SIGNOFF_POINTS}`,
       ].join(' · '),
     },
     professional: {
-      points: round1(professionalPts),
+      points: professionalPts,
       max: PROFESSIONAL_MAX,
       detail: [
-        t.bestEduLabel || (profile.education.length ? 'No verified education yet' : 'No education added'),
-        plural(standing.dmLiveSessions, 'live training'),
-        standing.dmSignedOff ? 'marketing practice signed off' : `mentor sign-off adds ${DM_SIGNOFF_POINTS}`,
+        `${Math.min(s.dmTracksPassed, PRACTICE_TRACKS)} of ${PRACTICE_TRACKS} tracks at ${TRACK_PASS_PERCENT}%+`,
+        s.foundationPercent === null ? 'Foundation not taken' : `Foundation ${s.foundationPercent}%`,
+        plural(s.dmLiveSessions, 'live training'),
+        s.dmSignedOff ? 'signed off by a mentor' : `mentor sign-off adds ${DM_SIGNOFF_POINTS}`,
       ].join(' · '),
     },
-    experience: {
-      points: round1(t.experience),
-      max: EXPERIENCE_MAX,
-      detail: [
-        `${plural(t.internships, 'internship')}`,
-        `${plural(t.workMonths, 'month')} of work`,
-        plural(t.projects, 'project'),
-      ].join(' · ') + ' verified',
+    internship: {
+      points: 0,
+      max: INTERNSHIP_MAX,
+      detail: 'Internships through MySkills open later',
     },
     nextAction,
   }

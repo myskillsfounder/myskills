@@ -114,21 +114,20 @@ function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () =>
 }
 
 /**
- * The KYC step of profile completion. The score only counts what the MySkills
- * team has verified on a call, so this card is where every unverified point
- * on the profile gets unlocked.
+ * The KYC step of profile completion: the MySkills team checks identity and
+ * each credential on a short call, so a profile shows employers what's been
+ * proven. It completes the profile; it isn't part of the Career Readiness
+ * Score, which only counts what's done on MySkills.
  */
 export function VerificationSection({
   profile,
   view,
   request,
-  pendingPoints,
   onChange,
 }: {
   profile: Profile
   view: VerificationView
   request: VerificationRequest | null
-  pendingPoints: number
   onChange: () => void
 }) {
   const [showForm, setShowForm] = useState(false)
@@ -204,16 +203,8 @@ export function VerificationSection({
             </p>
           ) : (
             <p className="mt-2 text-sm leading-relaxed text-ink-600">
-              Your education, experience and projects only count toward your Career Readiness Score
-              once the MySkills team verifies them on a short video call.
-              {pendingPoints >= 0.5 && (
-                <>
-                  {' '}
-                  <span className="font-semibold text-brand-700">
-                    {Math.round(pendingPoints)} points are waiting on verification.
-                  </span>
-                </>
-              )}
+              Get your identity, education, experience and projects verified on a short video call, so
+              employers can see what’s been checked.
             </p>
           )}
 

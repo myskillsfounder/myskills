@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react'
-import { RESERVED_POINTS, type Readiness, type ReadinessComponent } from '@/lib/readinessScore'
+import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
 /** One part of the score: what it is, how full it is, and where its points
@@ -36,7 +36,7 @@ function Part({ label, from, c }: { label: string; from: string; c: ReadinessCom
  * of it has been checked is one line, not a panel of its own.
  */
 export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
-  const { score, band, personal, professional, experience, nextAction, verifiedPoints, selfReportedPoints } = readiness
+  const { score, band, personal, professional, internship, nextAction, verifiedPoints, selfReportedPoints } = readiness
   const counted = Math.round(verifiedPoints + selfReportedPoints)
   const R = 54
   const C = 2 * Math.PI * R
@@ -79,7 +79,8 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
         <div className="min-w-0 flex-1">
           <p className="font-display text-2xl font-semibold leading-tight text-ink-900">{band.label}</p>
           <p className="mt-1 text-sm leading-relaxed text-ink-600">
-            This is what employers see. It goes up as you learn, practise and get your work checked.
+            This is what employers see. It only counts what you do on MySkills — learning, practice, live
+            sessions and your mentors’ sign-off.
           </p>
           {counted > 0 && (
             <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-ink-600">
@@ -91,14 +92,17 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       </div>
 
       <div className="mt-6 space-y-4">
-        <Part label="Personal Development" from="Career Readiness modules, live sessions and a mentor’s sign-off" c={personal} />
+        <Part
+          label="Personal Development"
+          from="Career Readiness modules, live sessions and a mentor’s sign-off"
+          c={personal}
+        />
         <Part
           label="Professional Development"
-          from="Your verified education, live training and the Digital Marketing sign-off"
+          from="Digital Marketing practice, the Foundation assessment, live training and a mentor’s sign-off"
           c={professional}
         />
-        <Part label="Experience" from="Internships, jobs and projects that MySkills has verified" c={experience} />
-        <p className="text-xs text-ink-400">{RESERVED_POINTS} more points will be added to the score later.</p>
+        <Part label="Internship" from="An internship through MySkills — opens later" c={internship} />
       </div>
 
       {nextAction && (

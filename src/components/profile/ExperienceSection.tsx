@@ -119,7 +119,7 @@ export function ExperienceSection({
         </ul>
       ) : (
         <p className="text-sm text-ink-500">
-          Add your work or internship experience — both count toward your Career Readiness Score.
+          Add your work or internship experience — it completes your profile for employers.
         </p>
       )}
 

@@ -13,7 +13,6 @@ import { EducationSection } from '@/components/profile/EducationSection'
 import { ProjectsSection } from '@/components/profile/ProjectsSection'
 import { VerificationSection } from '@/components/profile/VerificationSection'
 import { useVerification } from '@/lib/useVerification'
-import { computeReadiness } from '@/lib/readinessScore'
 import { SkillsSection } from '@/components/profile/SkillsSection'
 import { DetailsSection, ProfileCompletion } from '@/components/profile/DetailsSection'
 
@@ -126,9 +125,6 @@ function ActiveLearningLocked() {
 function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
-  const pendingPoints = profile
-    ? computeReadiness(profile, verification.view, verification.hasOpenRequest).pendingPoints
-    : 0
 
   return (
     <AppShell wide>
@@ -153,13 +149,12 @@ function ProfilePage() {
           {/* Personal details moved out of onboarding — asked for here instead. */}
           <ProfileCompletion profile={profile} save={save} />
 
-          {/* KYC: nothing below counts toward the score until it's verified. */}
+          {/* KYC: a verified profile is one employers can trust. It isn't part of the score. */}
           {!verification.loading && (
             <VerificationSection
               profile={profile}
               view={verification.view}
               request={verification.request}
-              pendingPoints={pendingPoints}
               onChange={() => void verification.reload()}
             />
           )}
