@@ -1,7 +1,14 @@
 import { useState } from 'react'
-import { CalendarClock, CheckCircle2, ShieldAlert, ShieldCheck, Video } from 'lucide-react'
+import {
+  CalendarClock,
+  Check,
+  Clock,
+  ShieldAlert,
+  ShieldCheck,
+  Video,
+} from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
-import type { Profile } from '@/lib/profile'
+import type { Profile, Project } from '@/lib/profile'
 import {
   cancelMyVerificationRequest,
   requestVerification,
@@ -94,10 +101,9 @@ function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () =>
           onChange={(e) => setConsent(e.target.checked)}
         />
         <span>
-          I agree to a video call with the MySkills team to verify my identity and the education,
-          experience and projects on my profile. I’ll show my documents on camera. MySkills won’t
-          record the call or keep copies of them, and will only use the result to mark my profile
-          entries as verified.
+          I agree to a video call with the MySkills team to verify my identity and the projects on
+          my profile. I’ll show my documents and work on camera. MySkills won’t record the call or
+          keep copies of them, and will only use the result to mark my profile entries as verified.
         </span>
       </label>
       {error && <p className="text-sm text-red-700">{error}</p>}
@@ -113,11 +119,43 @@ function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () =>
   )
 }
 
+/** 'none' = nothing in this category to verify yet — shown for information,
+ *  but it doesn't block completion or count in the ring (a student with no
+ *  projects can still reach "Complete"). */
+type StepState = 'done' | 'partial' | 'todo' | 'none'
+
+/** One row of the checklist — the KYC-app pattern: an icon that says at a
+ *  glance whether the step is done, and a short line of why not if it isn't. */
+function Step({ label, state, detail }: { label: string; state: StepState; detail: string }) {
+  return (
+    <li className="flex items-center gap-3 py-2.5">
+      <span
+        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+          state === 'done'
+            ? 'bg-emerald-100 text-emerald-700'
+            : state === 'partial'
+              ? 'bg-amber-100 text-amber-700'
+              : state === 'none'
+                ? 'bg-ink-50 text-ink-300'
+                : 'bg-ink-100 text-ink-400'
+        }`}
+      >
+        {state === 'done' ? <Check size={15} strokeWidth={3} /> : <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className={`text-sm font-medium ${state === 'none' ? 'text-ink-500' : 'text-ink-900'}`}>{label}</p>
+        <p className="text-xs text-ink-500">{detail}</p>
+      </div>
+    </li>
+  )
+}
+
 /**
- * The KYC step of profile completion: the MySkills team checks identity and
- * each credential on a short call, so a profile shows employers what's been
- * proven. It completes the profile; it isn't part of the Career Readiness
- * Score, which only counts what's done on MySkills.
+ * The KYC step of profile completion, shown the way verification checklists
+ * usually are: one step per part of the profile, each with its own done /
+ * in-progress / not-started mark, a ring for the overall share, and a single
+ * call to action underneath. It completes the profile; it isn't part of the
+ * Career Readiness Score, which only counts what's done on MySkills.
  */
 export function VerificationSection({
   profile,
@@ -134,14 +172,36 @@ export function VerificationSection({
   const [error, setError] = useState<string>()
 
   const open = request?.status === 'requested' || request?.status === 'scheduled'
-  const entries = [
-    ...profile.education.map((e) => view.status('education', e)),
-    ...profile.experience.map((x) => view.status('experience', x)),
-    ...profile.projects.map((p) => view.status('project', p)),
+
+  const group = (label: string, list: Project[], type: 'project') => {
+    const verified = list.filter((e) => view.status(type, e) === 'verified').length
+    const state: StepState =
+      list.length === 0 ? 'none' : verified === list.length ? 'done' : verified > 0 ? 'partial' : 'todo'
+    const detail =
+      list.length === 0
+        ? `No ${label.toLowerCase()} added yet`
+        : verified === list.length
+          ? `All ${list.length} verified`
+          : `${verified} of ${list.length} verified`
+    return { key: label, label, state, detail }
+  }
+
+  const steps: { key: string; label: string; state: StepState; detail: string }[] = [
+    {
+      key: 'identity',
+      label: 'Identity',
+      state: view.identity === 'verified' ? 'done' : 'todo',
+      detail: view.identity === 'verified' ? 'Verified' : 'Not yet verified',
+    },
+    // The profile has no education or work history — only what's built
+    // through MySkills — so identity and projects are all there is to check.
+    group('Projects', profile.projects, 'project'),
   ]
-  const verified = entries.filter((s) => s === 'verified').length
-  const needsCheck = entries.length - verified + (view.identity === 'verified' ? 0 : 1)
-  const fullyVerified = view.identity === 'verified' && entries.length > 0 && needsCheck === 0
+  // Empty categories (e.g. no projects added) don't block completion or count
+  // in the ring — there's nothing there to verify.
+  const counted = steps.filter((s) => s.state !== 'none')
+  const done = counted.filter((s) => s.state === 'done').length
+  const fullyVerified = counted.length > 0 && done === counted.length
 
   async function cancel() {
     setError(undefined)
@@ -154,104 +214,125 @@ export function VerificationSection({
   }
 
   const link = safeHttps(request?.meeting_link ?? null)
+  const R = 20
+  const C = 2 * Math.PI * R
+  const share = counted.length ? done / counted.length : 0
 
   return (
     <section id="verification" className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-start gap-4">
-        <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-e1 ${
-            fullyVerified ? 'bg-emerald-600' : 'bg-gradient-to-br from-brand-500 to-brand-700'
-          }`}
-        >
-          {fullyVerified ? <ShieldCheck size={22} /> : <Video size={22} />}
-        </span>
+        <div className="relative h-12 w-12 shrink-0">
+          <svg viewBox="0 0 48 48" className="h-full w-full -rotate-90" aria-hidden>
+            <circle cx="24" cy="24" r={R} fill="none" strokeWidth="4" className="stroke-ink-100" />
+            {share > 0 && (
+              <circle
+                cx="24"
+                cy="24"
+                r={R}
+                fill="none"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className={fullyVerified ? 'stroke-emerald-600' : 'stroke-brand-600'}
+                strokeDasharray={C}
+                strokeDashoffset={C * (1 - share)}
+                style={{ transition: 'stroke-dashoffset 0.8s ease' }}
+              />
+            )}
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            {fullyVerified ? (
+              <ShieldCheck size={18} className="text-emerald-600" />
+            ) : (
+              <span className="font-display text-xs font-semibold text-ink-700">
+                {done}/{counted.length}
+              </span>
+            )}
+          </div>
+        </div>
+
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-display text-lg font-semibold text-ink-900">Profile verification</h2>
-            <VerificationBadge status={view.identity} />
-          </div>
-
-          {request?.status === 'scheduled' && request.scheduled_at ? (
-            <div className="mt-2 space-y-2 text-sm text-ink-700">
-              <p className="inline-flex items-center gap-1.5 font-semibold text-ink-900">
-                <CalendarClock size={16} className="text-brand-600" /> Your call: {fmtCall(request.scheduled_at)}
-              </p>
-              <p>
-                Have a government photo ID ready, plus proof for each entry on your profile —
-                certificates, marksheets, offer or experience letters.
-              </p>
-              {link && (
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
-                >
-                  <Video size={15} /> Join the call
-                </a>
-              )}
-            </div>
-          ) : request?.status === 'requested' ? (
-            <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-ink-700">
-              <CheckCircle2 size={16} className="text-emerald-600" />
-              Request received. We’ll email you a call time soon.
-            </p>
-          ) : fullyVerified ? (
-            <p className="mt-2 text-sm text-ink-700">
-              Your identity and every entry on your profile are verified. Edits to a verified entry
-              need re-checking before they count again.
-            </p>
-          ) : (
-            <p className="mt-2 text-sm leading-relaxed text-ink-600">
-              Get your identity, education, experience and projects verified on a short video call, so
-              employers can see what’s been checked.
-            </p>
-          )}
-
-          {request?.status === 'completed' && request.note_to_student && !open && (
-            <p className="mt-3 rounded-xl bg-ink-50 p-3 text-sm text-ink-700">
-              <span className="font-semibold">From the MySkills team: </span>
-              {request.note_to_student}
-            </p>
-          )}
-
-          <p className="mt-3 text-xs text-ink-500">
-            {view.identity === 'verified' ? 'Identity verified' : 'Identity not yet verified'} ·{' '}
-            {verified} of {entries.length} {entries.length === 1 ? 'entry' : 'entries'} verified
-          </p>
-          {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
-        </div>
-
-        {!showForm && (
-          <div className="shrink-0">
-            {open ? (
-              <button
-                type="button"
-                onClick={cancel}
-                className="text-sm font-medium text-ink-500 hover:text-red-700"
-              >
-                Cancel request
-              </button>
-            ) : (
-              !fullyVerified && (
-                <PrimaryButton type="button" onClick={() => setShowForm(true)}>
-                  {request?.status === 'completed' ? 'Verify new entries' : 'Request verification'}
-                </PrimaryButton>
-              )
+            {fullyVerified && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                <ShieldCheck size={11} /> Complete
+              </span>
             )}
           </div>
-        )}
+          <p className="mt-1 text-sm text-ink-600">
+            {fullyVerified
+              ? 'Everything on your profile is verified. Editing a verified entry sends it back for a re-check.'
+              : 'Employers trust what a person has checked. Get verified on a short video call.'}
+          </p>
+        </div>
       </div>
 
-      {showForm && (
-        <RequestForm
-          onDone={() => {
-            setShowForm(false)
-            onChange()
-          }}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
+      <ul className="mt-4 divide-y divide-ink-100 border-t border-ink-100">
+        {steps.map((s) => (
+          <Step key={s.key} label={s.label} state={s.state} detail={s.detail} />
+        ))}
+      </ul>
+
+      <div className="mt-4 border-t border-ink-100 pt-4">
+        {request?.status === 'scheduled' && request.scheduled_at ? (
+          <div className="space-y-2 text-sm text-ink-700">
+            <p className="inline-flex items-center gap-1.5 font-semibold text-ink-900">
+              <CalendarClock size={16} className="text-brand-600" /> Your call: {fmtCall(request.scheduled_at)}
+            </p>
+            <p>
+              Have a government photo ID ready, and be ready to show the projects on your profile —
+              links, files or the work itself.
+            </p>
+            {link && (
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+              >
+                <Video size={15} /> Join the call
+              </a>
+            )}
+            <div>
+              <button type="button" onClick={cancel} className="text-sm font-medium text-ink-500 hover:text-red-700">
+                Cancel request
+              </button>
+            </div>
+          </div>
+        ) : request?.status === 'requested' ? (
+          <div className="space-y-2">
+            <p className="inline-flex items-center gap-1.5 text-sm text-ink-700">
+              <Clock size={16} className="text-amber-600" />
+              Request received. We’ll email you a call time soon.
+            </p>
+            <button type="button" onClick={cancel} className="text-sm font-medium text-ink-500 hover:text-red-700">
+              Cancel request
+            </button>
+          </div>
+        ) : showForm ? (
+          <RequestForm
+            onDone={() => {
+              setShowForm(false)
+              onChange()
+            }}
+            onCancel={() => setShowForm(false)}
+          />
+        ) : (
+          !fullyVerified && (
+            <PrimaryButton type="button" onClick={() => setShowForm(true)}>
+              {request?.status === 'completed' ? 'Verify new entries' : 'Request verification'}
+            </PrimaryButton>
+          )
+        )}
+
+        {request?.status === 'completed' && request.note_to_student && !open && !showForm && (
+          <p className="mt-3 rounded-xl bg-ink-50 p-3 text-sm text-ink-700">
+            <span className="font-semibold">From the MySkills team: </span>
+            {request.note_to_student}
+          </p>
+        )}
+        {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+      </div>
     </section>
   )
 }
