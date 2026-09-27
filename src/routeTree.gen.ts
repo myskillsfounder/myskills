@@ -21,6 +21,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MentoringRouteImport } from './routes/mentoring'
 import { Route as MentorRouteImport } from './routes/mentor'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearningRouteImport } from './routes/learning'
@@ -132,6 +133,11 @@ const PartnershipsRoute = PartnershipsRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentoringRoute = MentoringRouteImport.update({
+  id: '/mentoring',
+  path: '/mentoring',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentorRoute = MentorRouteImport.update({
@@ -424,6 +430,7 @@ export interface FileRoutesByFullPath {
   '/learning': typeof LearningRoute
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
+  '/mentoring': typeof MentoringRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -489,6 +496,7 @@ export interface FileRoutesByTo {
   '/learning': typeof LearningRoute
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
+  '/mentoring': typeof MentoringRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -555,6 +563,7 @@ export interface FileRoutesById {
   '/learning': typeof LearningRoute
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
+  '/mentoring': typeof MentoringRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -623,6 +632,7 @@ export interface FileRouteTypes {
     | '/learning'
     | '/login'
     | '/mentor'
+    | '/mentoring'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -688,6 +698,7 @@ export interface FileRouteTypes {
     | '/learning'
     | '/login'
     | '/mentor'
+    | '/mentoring'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -753,6 +764,7 @@ export interface FileRouteTypes {
     | '/learning'
     | '/login'
     | '/mentor'
+    | '/mentoring'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -820,6 +832,7 @@ export interface RootRouteChildren {
   LearningRoute: typeof LearningRoute
   LoginRoute: typeof LoginRoute
   MentorRoute: typeof MentorRoute
+  MentoringRoute: typeof MentoringRoute
   OnboardingRoute: typeof OnboardingRoute
   PartnershipsRoute: typeof PartnershipsRouteWithChildren
   PracticeRoute: typeof PracticeRoute
@@ -923,6 +936,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentoring': {
+      id: '/mentoring'
+      path: '/mentoring'
+      fullPath: '/mentoring'
+      preLoaderRoute: typeof MentoringRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentor': {
@@ -1396,6 +1416,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearningRoute: LearningRoute,
   LoginRoute: LoginRoute,
   MentorRoute: MentorRoute,
+  MentoringRoute: MentoringRoute,
   OnboardingRoute: OnboardingRoute,
   PartnershipsRoute: PartnershipsRouteWithChildren,
   PracticeRoute: PracticeRoute,
