@@ -170,6 +170,8 @@ export interface Readiness {
   professional: ReadinessComponent
   internship: ReadinessComponent
   nextAction: NextAction | null
+  /** Every step that still applies, in journey order (nextAction is the first). */
+  nextActions: NextAction[]
 }
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
@@ -208,7 +210,8 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       ? { label: 'Attend a live session with a mentor', upTo: POINTS_PER_LIVE_SESSION, to: '/community/mentors' }
       : null,
   ]
-  const nextAction = journey.find((step): step is NextAction => step !== null) ?? null
+  const nextActions = journey.filter((step): step is NextAction => step !== null)
+  const nextAction = nextActions[0] ?? null
 
   const modulePts = modulesDone * POINTS_PER_MODULE
   return {
@@ -244,5 +247,6 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       detail: 'Internships through MySkills open later',
     },
     nextAction,
+    nextActions,
   }
 }
