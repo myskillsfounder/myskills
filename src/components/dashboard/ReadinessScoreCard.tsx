@@ -55,36 +55,15 @@ type Slide = {
 }
 
 /**
- * Each slide is a "liquid glass" panel: two soft blobs of the slide's colour
- * glowing behind a frosted, translucent layer with a bright top edge and a
- * sheen across the upper half — so it reads as glass over colour rather than
- * a flat tinted box.
+ * Each slide uses the app's dark feature-card surface (the same wood-dark
+ * panel, rings and white pill button as the aptitude and programme cards), so
+ * the slider reads as part of the product. Only a small accent — the icon
+ * tile and the eyebrow — tells the three apart.
  */
-const TONE: Record<Tone, { wash: string; blobA: string; blobB: string; icon: string; eyebrow: string; cta: string }> = {
-  gold: {
-    wash: 'from-amber-100 via-orange-50 to-yellow-100',
-    blobA: 'bg-amber-400/80',
-    blobB: 'bg-orange-400/60',
-    icon: 'from-amber-400 to-orange-500 shadow-[0_6px_16px_-4px_rgba(245,158,11,0.6)]',
-    eyebrow: 'text-amber-700',
-    cta: 'from-amber-500 to-orange-500 shadow-[0_8px_20px_-6px_rgba(245,158,11,0.7)]',
-  },
-  brand: {
-    wash: 'from-brand-100 via-violet-50 to-indigo-100',
-    blobA: 'bg-brand-400/70',
-    blobB: 'bg-fuchsia-400/50',
-    icon: 'from-brand-500 to-violet-600 shadow-[0_6px_16px_-4px_rgba(111,99,226,0.6)]',
-    eyebrow: 'text-brand-700',
-    cta: 'from-brand-500 to-violet-600 shadow-[0_8px_20px_-6px_rgba(111,99,226,0.7)]',
-  },
-  green: {
-    wash: 'from-emerald-100 via-teal-50 to-cyan-100',
-    blobA: 'bg-emerald-400/70',
-    blobB: 'bg-teal-400/60',
-    icon: 'from-emerald-500 to-teal-600 shadow-[0_6px_16px_-4px_rgba(16,185,129,0.6)]',
-    eyebrow: 'text-emerald-700',
-    cta: 'from-emerald-500 to-teal-600 shadow-[0_8px_20px_-6px_rgba(16,185,129,0.7)]',
-  },
+const TONE: Record<Tone, { icon: string; eyebrow: string }> = {
+  gold: { icon: 'bg-amber-400/15 text-amber-300 ring-amber-300/30', eyebrow: 'text-amber-200' },
+  brand: { icon: 'bg-brand-400/20 text-brand-200 ring-brand-300/30', eyebrow: 'text-brand-200' },
+  green: { icon: 'bg-emerald-400/15 text-emerald-300 ring-emerald-300/30', eyebrow: 'text-emerald-200' },
 }
 
 const ADVANCE_MS = 3000
@@ -179,39 +158,34 @@ function ActionSlider({ highlights }: { highlights: Highlights }) {
                 aria-label={`${i + 1} of ${slides.length}`}
                 aria-hidden={i !== index}
               >
-                <div className={`relative isolate overflow-hidden rounded-3xl bg-gradient-to-br p-[1px] ${t.wash}`}>
-                  {/* colour glowing behind the glass */}
-                  <span aria-hidden className={`absolute -left-8 -top-12 h-40 w-40 rounded-full blur-xl ${t.blobA}`} />
-                  <span aria-hidden className={`absolute -bottom-14 right-6 h-44 w-44 rounded-full blur-2xl ${t.blobB}`} />
-                  {/* the glass */}
-                  <div className="relative flex flex-col gap-3 rounded-[23px] border border-white/70 bg-white/30 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_10px_30px_-12px_rgba(28,25,23,0.25)] backdrop-blur-md sm:flex-row sm:items-center sm:p-5">
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-[23px] bg-gradient-to-b from-white/70 to-transparent"
-                    />
-                    <div className="relative flex min-w-0 flex-1 items-center gap-3.5">
-                      <span
-                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white ring-1 ring-white/60 ${t.icon}`}
-                      >
-                        <Icon size={19} />
-                      </span>
-                      <div className="min-w-0">
-                        <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${t.eyebrow}`}>{s.eyebrow}</p>
-                        <p className="mt-0.5 font-display text-[15px] font-semibold leading-snug text-ink-900">{s.title}</p>
-                        {s.note && <p className="mt-0.5 text-xs text-ink-600">{s.note}</p>}
-                      </div>
+                <div className="surface-wood-dark relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center">
+                  <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
+                    <svg width="180" height="180" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="2">
+                      <circle cx="130" cy="70" r="76" />
+                      <circle cx="130" cy="70" r="56" />
+                      <circle cx="130" cy="70" r="36" />
+                      <circle cx="130" cy="70" r="16" />
+                    </svg>
+                  </span>
+                  <div className="relative flex min-w-0 flex-1 items-center gap-3.5">
+                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ring-1 ${t.icon}`}>
+                      <Icon size={19} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${t.eyebrow}`}>{s.eyebrow}</p>
+                      <p className="mt-1 font-display text-lg font-semibold leading-snug text-white">{s.title}</p>
+                      {s.note && <p className="mt-0.5 text-xs text-white/60">{s.note}</p>}
                     </div>
-                    <Link
-                      to={s.to}
-                      onClick={() => s.programme && rememberProgramme(s.programme)}
-                      tabIndex={i === index ? 0 : -1}
-                      className={`press relative inline-flex shrink-0 items-center justify-center gap-1.5 self-start overflow-hidden rounded-full bg-gradient-to-br px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/40 transition-transform hover:-translate-y-0.5 sm:self-auto ${t.cta}`}
-                    >
-                      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent" />
-                      <span className="relative">{s.cta}</span>
-                      <ArrowRight size={15} className="relative" />
-                    </Link>
                   </div>
+                  <Link
+                    to={s.to}
+                    onClick={() => s.programme && rememberProgramme(s.programme)}
+                    tabIndex={i === index ? 0 : -1}
+                    className="press relative inline-flex shrink-0 items-center justify-center gap-2 self-start whitespace-nowrap rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 sm:self-auto"
+                  >
+                    {s.cta}
+                    <ArrowRight size={16} />
+                  </Link>
                 </div>
               </div>
             )
