@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Award, Check, Copy, ExternalLink, Lock } from 'lucide-react'
+import { Award, Check, Copy, ExternalLink } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
+import { useCareerReadinessScore } from '@/lib/useCareerReadinessScore'
+import { skillTracks } from '@/lib/skillTracks'
 import { AppShell } from '@/components/app/AppShell'
 import { Section } from '@/components/profile/ui'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
+import { ProfileScoreCard } from '@/components/profile/ProfileScoreCard'
 import { ExperienceSection } from '@/components/profile/ExperienceSection'
 import { EducationSection } from '@/components/profile/EducationSection'
 import { ProjectsSection } from '@/components/profile/ProjectsSection'
@@ -105,26 +108,20 @@ function CertificateSection() {
   )
 }
 
-/** Locked — track-by-track learning is a future feature. */
-function ActiveLearningLocked() {
-  return (
-    <Section title="Active learning">
-      <div className="flex items-center gap-3 rounded-xl border border-dashed border-ink-300 bg-ink-100 p-4">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink-200 text-ink-500">
-          <Lock size={18} />
-        </span>
-        <div>
-          <p className="text-sm font-medium text-ink-800">Coming soon</p>
-          <p className="text-xs text-ink-500">Track-by-track learning launches soon.</p>
-        </div>
-      </div>
-    </Section>
-  )
-}
-
 function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
+  const { readiness, practice, crProgress } = useCareerReadinessScore()
+
+  // Proof, not a claim: tracks actually passed and modules actually finished,
+  // shown apart from whatever the student typed in themselves.
+  const verifiedSkills = useMemo(
+    () => [
+      ...skillTracks.filter((t) => (practice[t.slug]?.percent ?? 0) >= 60).map((t) => t.name),
+      ...crProgress.modules.filter((m) => m.complete).map((m) => m.title),
+    ],
+    [practice, crProgress.modules],
+  )
 
   return (
     <AppShell wide>
@@ -162,12 +159,10 @@ function ProfilePage() {
           {/* Two columns on desktop, one ordered stack on mobile. The column
               wrappers are `contents` below lg, so their children become direct
               flex items and `order-*` can interleave across columns — that's
-              what lets the certificate lead on a phone while still sitting in
-              the right-hand rail on desktop. */}
+              what lets the score and certificate lead on a phone while still
+              sitting in the right-hand rail on desktop. */}
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3">
             <div className="contents lg:col-span-2 lg:block lg:space-y-5">
-              <div className="order-2 lg:order-none">
-              </div>
               <div className="order-3 lg:order-none">
                 <ExperienceSection profile={profile} save={save} verification={verification.view} />
               </div>
@@ -183,16 +178,16 @@ function ProfilePage() {
 
             <div className="contents lg:block lg:space-y-5">
               <div className="order-1 lg:order-none">
+                <ProfileScoreCard readiness={readiness} />
+              </div>
+              <div className="order-2 lg:order-none">
                 <CertificateSection />
               </div>
               <div className="order-5 lg:order-none">
                 <DetailsSection profile={profile} save={save} />
               </div>
               <div className="order-6 lg:order-none">
-                <ActiveLearningLocked />
-              </div>
-              <div className="order-7 lg:order-none">
-                <SkillsSection profile={profile} save={save} />
+                <SkillsSection profile={profile} save={save} verifiedSkills={verifiedSkills} />
               </div>
             </div>
           </div>

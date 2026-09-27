@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X } from 'lucide-react'
+import { CheckCircle2, X } from 'lucide-react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import { Modal, PrimaryButton, Section } from './ui'
 
@@ -19,9 +19,13 @@ const SUGGESTED = [
 export function SkillsSection({
   profile,
   save,
+  verifiedSkills = [],
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
+  /** Skills earned by practice (a passed track, a finished module) — proof,
+   *  not a claim, so they're shown separately and can't be removed here. */
+  verifiedSkills?: string[]
 }) {
   const [open, setOpen] = useState(false)
   const [skills, setSkills] = useState<string[]>(profile.skills)
@@ -51,6 +55,22 @@ export function SkillsSection({
         setOpen(true)
       }}
     >
+      {verifiedSkills.length > 0 && (
+        <div className="mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">From your practice</p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {verifiedSkills.map((s) => (
+              <span
+                key={s}
+                className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800"
+              >
+                <CheckCircle2 size={13} /> {s}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {profile.skills.length ? (
         <div className="flex flex-wrap gap-2">
           {profile.skills.map((s) => (
@@ -62,9 +82,9 @@ export function SkillsSection({
             </span>
           ))}
         </div>
-      ) : (
+      ) : verifiedSkills.length === 0 ? (
         <p className="text-sm text-ink-500">Add the marketing skills you’re building.</p>
-      )}
+      ) : null}
 
       <Modal open={open} title="Edit skills" onClose={() => setOpen(false)}>
         <div className="space-y-4">
