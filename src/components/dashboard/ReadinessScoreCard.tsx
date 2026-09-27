@@ -3,8 +3,8 @@ import { ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react'
 import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
-/** One part of the score: what it is, how full it is, and where its points
- *  come from — in plain words, not a list of counts. */
+/** One part of the score: what it is, how full it is, and what raising it
+ *  gets the student — the outcome, not the mechanics. */
 function Part({ label, from, c }: { label: string; from: string; c: ReadinessComponent }) {
   const pct = c.max ? (c.points / c.max) * 100 : 0
   return (
@@ -94,15 +94,15 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       <div className="mt-6 space-y-4">
         <Part
           label="Personal Development"
-          from="Career Readiness modules, live sessions and a mentor’s sign-off"
+          from="Builds the habits employers hire for — clear goals, confident communication and leadership you can show."
           c={personal}
         />
         <Part
           label="Professional Development"
-          from="Digital Marketing practice, the Foundation assessment, live training and a mentor’s sign-off"
+          from="Proves you can do the job — real marketing decisions, a certificate and a mentor who vouches for your work."
           c={professional}
         />
-        <Part label="Internship" from="An internship through MySkills — opens later" c={internship} />
+        <Part label="Internship" from="Gives you real work experience with a partner company — the strongest proof of all. Opens soon." c={internship} />
       </div>
 
       {nextAction && (
