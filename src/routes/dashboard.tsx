@@ -14,6 +14,8 @@ import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
 import { careerReadinessProgress, digitalMarketingProgress } from '@/lib/programmes'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
+import { useFoundationUnlock } from '@/lib/foundation'
+import { useMyMatch } from '@/lib/mentorMatches'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
@@ -109,6 +111,9 @@ function DashboardPage() {
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
   const crAptitude = useMyAssessmentResult()
+  const foundationUnlock = useFoundationUnlock()
+  const dmMatch = useMyMatch('digital-marketing')
+  const crMatch = useMyMatch('career-readiness')
   const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions, loading: liveLoading } = useMyLiveSessions()
 
@@ -172,7 +177,17 @@ function DashboardPage() {
         ) : (
           <div className="grid items-stretch gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <ReadinessScoreCard readiness={readiness} />
+              <ReadinessScoreCard
+                readiness={readiness}
+                highlights={{
+                  certificate: assessment ? 'earned' : foundationUnlock.unlocked ? 'ready' : 'locked',
+                  hasMentor: dmMatch.match?.status === 'active' || crMatch.match?.status === 'active',
+                  tracksPractised: practicedCount,
+                  totalTracks: skillTracks.length,
+                  modulesDone: crProgress.modulesDone,
+                  totalModules: crProgress.modulesTotal,
+                }}
+              />
             </div>
             <KeyMeasures
               goals={goals}
