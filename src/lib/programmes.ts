@@ -90,6 +90,8 @@ export const DIGITAL_MARKETING = {
 export interface CourseProgress {
   name: string
   path: string
+  /** Which Practice tab the link opens on. */
+  programme?: 1 | 2
   /** 0–100 */
   percent: number
   status: 'Not started' | 'In progress' | 'Complete'
@@ -188,6 +190,7 @@ export function digitalMarketingProgress(
   return {
     name: DIGITAL_MARKETING.name,
     path: DIGITAL_MARKETING.path,
+    programme: 1,
     percent,
     status: done === 0 ? 'Not started' : done >= steps ? 'Complete' : 'In progress',
     detail: !assessmentDone
@@ -196,6 +199,38 @@ export function digitalMarketingProgress(
         ? `Foundation done · ${practicedTracks} of ${totalTracks} tracks practised`
         : !mentorReviewed
           ? 'Practice done · mentor review next'
+          : !internshipDone
+            ? 'Mentor-reviewed · internship next'
+            : 'Complete',
+  }
+}
+
+/**
+ * Progress toward finishing the Career Readiness Programme, built the same way
+ * as digitalMarketingProgress: one step for the personal aptitude assessment,
+ * one per module finished, plus the mentor review and the internship.
+ */
+export function careerReadinessProgress(
+  aptitudeDone: boolean,
+  modulesDone: number,
+  totalModules: number,
+  mentorReviewed = false,
+  internshipDone = false,
+): CourseProgress {
+  const steps = 1 + totalModules + 2
+  const done =
+    (aptitudeDone ? 1 : 0) + Math.min(modulesDone, totalModules) + (mentorReviewed ? 1 : 0) + (internshipDone ? 1 : 0)
+  return {
+    name: CAREER_READINESS.name,
+    path: '/practice',
+    programme: 2,
+    percent: Math.round((done / steps) * 100),
+    status: done === 0 ? 'Not started' : done >= steps ? 'Complete' : 'In progress',
+    detail:
+      modulesDone < totalModules
+        ? `${aptitudeDone ? 'Aptitude done · ' : ''}${modulesDone} of ${totalModules} modules finished`
+        : !mentorReviewed
+          ? 'Modules done · mentor review next'
           : !internshipDone
             ? 'Mentor-reviewed · internship next'
             : 'Complete',

@@ -12,7 +12,8 @@ import { computeReadiness, TRACK_PASS_PERCENT } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
-import { digitalMarketingProgress } from '@/lib/programmes'
+import { careerReadinessProgress, digitalMarketingProgress } from '@/lib/programmes'
+import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
@@ -107,6 +108,7 @@ function DashboardPage() {
   const [practice, setPractice] = useState<PracticeSummary>({})
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
+  const crAptitude = useMyAssessmentResult()
   const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions, loading: liveLoading } = useMyLiveSessions()
 
@@ -175,12 +177,22 @@ function DashboardPage() {
             <KeyMeasures
               goals={goals}
               streak={streak}
-              courses={[digitalMarketingProgress(
+              courses={[
+                digitalMarketingProgress(
                   assessment != null,
                   practicedCount,
                   skillTracks.length,
                   dmReview.state === 'approved',
-                )]}
+                ),
+                careerReadinessProgress(
+                  crAptitude.result != null,
+                  crProgress.modulesDone,
+                  crProgress.modulesTotal,
+                  crReview.state === 'approved',
+                ),
+                // Digital Marketing always shows (it's where everyone starts);
+                // Career Readiness once the student has begun it.
+              ].filter((c) => c.status !== 'Not started' || c.programme === 1)}
             />
           </div>
         )}
