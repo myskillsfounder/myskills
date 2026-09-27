@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Clock, Flame, Target } from 'lucide-react'
 import type { CourseProgress } from '@/lib/programmes'
 import { goalsStep } from '@/lib/onboardingContent'
 import { timeSeries } from '@/lib/timeTracker'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 
 const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
 
@@ -64,6 +65,7 @@ export function KeyMeasures({
                 <li key={c.name}>
                   <Link
                     to={c.path}
+                    onClick={() => c.programme && rememberProgramme(c.programme)}
                     className="group block rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
                   >
                     <div className="flex items-center gap-2.5">
