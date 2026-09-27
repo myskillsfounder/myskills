@@ -54,7 +54,7 @@ export function ProjectsSection({
   }
 
   return (
-    <Section title="Projects" onAdd={() => setEditing({ ...EMPTY, id: newId() })}>
+    <Section title="Projects & internships" onAdd={() => setEditing({ ...EMPTY, id: newId() })}>
       {list.length ? (
         <ul className="space-y-5">
           {list.map((x) => {
@@ -113,8 +113,8 @@ export function ProjectsSection({
         </ul>
       ) : (
         <p className="text-sm text-ink-500">
-          Campaigns, case studies, websites or freelance work you’ve done — each one shows employers
-          what you can do.
+          Add the work you do through MySkills — a project from a programme, or an internship with a
+          MySkills partner. Only work done on the platform belongs here.
         </p>
       )}
 

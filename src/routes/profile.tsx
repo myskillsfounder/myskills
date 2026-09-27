@@ -4,15 +4,14 @@ import { Award, Check, Copy, ExternalLink } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
-import { useCareerReadinessScore } from '@/lib/useCareerReadinessScore'
+import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
+import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { skillTracks } from '@/lib/skillTracks'
+import { TRACK_PASS_PERCENT } from '@/lib/readinessScore'
 import { AppShell } from '@/components/app/AppShell'
 import { Section } from '@/components/profile/ui'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
-import { ProfileScoreCard } from '@/components/profile/ProfileScoreCard'
-import { ExperienceSection } from '@/components/profile/ExperienceSection'
-import { EducationSection } from '@/components/profile/EducationSection'
 import { ProjectsSection } from '@/components/profile/ProjectsSection'
 import { VerificationSection } from '@/components/profile/VerificationSection'
 import { useVerification } from '@/lib/useVerification'
@@ -111,13 +110,23 @@ function CertificateSection() {
 function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
-  const { readiness, practice, crProgress } = useCareerReadinessScore()
+  const { progress: crProgress } = useCareerReadinessProgress()
+  const [practice, setPractice] = useState<PracticeSummary>({})
+  useEffect(() => {
+    let active = true
+    fetchPracticeSummary()
+      .then((p) => active && setPractice(p))
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [])
 
   // Proof, not a claim: tracks actually passed and modules actually finished,
   // shown apart from whatever the student typed in themselves.
   const verifiedSkills = useMemo(
     () => [
-      ...skillTracks.filter((t) => (practice[t.slug]?.percent ?? 0) >= 60).map((t) => t.name),
+      ...skillTracks.filter((t) => (practice[t.slug]?.percent ?? 0) >= TRACK_PASS_PERCENT).map((t) => t.name),
       ...crProgress.modules.filter((m) => m.complete).map((m) => m.title),
     ],
     [practice, crProgress.modules],
@@ -159,35 +168,27 @@ function ProfilePage() {
           {/* Two columns on desktop, one ordered stack on mobile. The column
               wrappers are `contents` below lg, so their children become direct
               flex items and `order-*` can interleave across columns — that's
-              what lets the score and certificate lead on a phone while still
-              sitting in the right-hand rail on desktop. */}
+              what lets the certificate lead on a phone while still sitting in
+              the right-hand rail on desktop.
+              The profile is deliberately fresh: no education history or past
+              jobs. Projects (and, when they open, internships) are what a
+              student builds through MySkills. */}
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3">
             <div className="contents lg:col-span-2 lg:block lg:space-y-5">
-              <div className="order-3 lg:order-none">
-                <ExperienceSection profile={profile} save={save} verification={verification.view} />
-              </div>
-              <div className="order-4 lg:order-none">
-                <EducationSection profile={profile} save={save} verification={verification.view} />
-              </div>
-              {/* Same order as Education — ties fall back to DOM order, so on a
-                  phone it lands right after it, before Details. */}
-              <div className="order-4 lg:order-none">
+              <div className="order-2 lg:order-none">
                 <ProjectsSection profile={profile} save={save} verification={verification.view} />
               </div>
             </div>
 
             <div className="contents lg:block lg:space-y-5">
               <div className="order-1 lg:order-none">
-                <ProfileScoreCard readiness={readiness} />
-              </div>
-              <div className="order-2 lg:order-none">
                 <CertificateSection />
               </div>
-              <div className="order-5 lg:order-none">
-                <DetailsSection profile={profile} save={save} />
-              </div>
-              <div className="order-6 lg:order-none">
+              <div className="order-3 lg:order-none">
                 <SkillsSection profile={profile} save={save} verifiedSkills={verifiedSkills} />
+              </div>
+              <div className="order-4 lg:order-none">
+                <DetailsSection profile={profile} save={save} />
               </div>
             </div>
           </div>

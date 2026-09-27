@@ -43,7 +43,7 @@ const MODAL_KEYS = new Set(['phone', 'date_of_birth', 'gender', 'country', 'stat
 export interface DetailItem {
   key: keyof Pick<
     Profile,
-    'phone' | 'date_of_birth' | 'gender' | 'country' | 'state' | 'avatar_url' | 'education' | 'experience'
+    'phone' | 'date_of_birth' | 'gender' | 'country' | 'state' | 'avatar_url'
   >
   label: string
 }
@@ -55,12 +55,10 @@ export const DETAIL_ITEMS: DetailItem[] = [
   { key: 'gender', label: f.gender.label },
   { key: 'country', label: f.country.label },
   { key: 'state', label: f.state.label },
-  { key: 'education', label: 'Education' },
-  { key: 'experience', label: 'Experience or internship' },
 ]
 
-/** Which personal details are still blank. Handles both plain string fields
- *  and array fields (education) with the same generic check. */
+/** Which personal details are still blank. (No education or work history:
+ *  the profile only carries what's built through MySkills.) */
 export function missingDetails(profile: Profile): DetailItem[] {
   return DETAIL_ITEMS.filter((i) => {
     const value = profile[i.key]
@@ -216,9 +214,8 @@ export function ProfileCompletion({
 
   const done = DETAIL_ITEMS.length - missing.length
   const percent = Math.round((done / DETAIL_ITEMS.length) * 100)
-  // Profile picture and education live in their own sections on this same
-  // page (the avatar right above, Education further down) -- this button
-  // only ever needs to appear when it has something of ITS OWN to open.
+  // The profile picture lives in the header right above -- this button only
+  // ever needs to appear when it has something of ITS OWN to open.
   const canOpenModal = missing.some((m) => MODAL_KEYS.has(m.key))
 
   return (

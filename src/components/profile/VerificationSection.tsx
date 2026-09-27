@@ -8,7 +8,7 @@ import {
   Video,
 } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
-import type { Education, Experience, Profile, Project } from '@/lib/profile'
+import type { Profile, Project } from '@/lib/profile'
 import {
   cancelMyVerificationRequest,
   requestVerification,
@@ -101,10 +101,9 @@ function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () =>
           onChange={(e) => setConsent(e.target.checked)}
         />
         <span>
-          I agree to a video call with the MySkills team to verify my identity and the education,
-          experience and projects on my profile. I’ll show my documents on camera. MySkills won’t
-          record the call or keep copies of them, and will only use the result to mark my profile
-          entries as verified.
+          I agree to a video call with the MySkills team to verify my identity and the projects on
+          my profile. I’ll show my documents and work on camera. MySkills won’t record the call or
+          keep copies of them, and will only use the result to mark my profile entries as verified.
         </span>
       </label>
       {error && <p className="text-sm text-red-700">{error}</p>}
@@ -174,7 +173,7 @@ export function VerificationSection({
 
   const open = request?.status === 'requested' || request?.status === 'scheduled'
 
-  const group = (label: string, list: (Education | Experience | Project)[], type: 'education' | 'experience' | 'project') => {
+  const group = (label: string, list: Project[], type: 'project') => {
     const verified = list.filter((e) => view.status(type, e) === 'verified').length
     const state: StepState =
       list.length === 0 ? 'none' : verified === list.length ? 'done' : verified > 0 ? 'partial' : 'todo'
@@ -194,8 +193,8 @@ export function VerificationSection({
       state: view.identity === 'verified' ? 'done' : 'todo',
       detail: view.identity === 'verified' ? 'Verified' : 'Not yet verified',
     },
-    group('Education', profile.education, 'education'),
-    group('Experience', profile.experience, 'experience'),
+    // The profile has no education or work history — only what's built
+    // through MySkills — so identity and projects are all there is to check.
     group('Projects', profile.projects, 'project'),
   ]
   // Empty categories (e.g. no projects added) don't block completion or count
@@ -281,8 +280,8 @@ export function VerificationSection({
               <CalendarClock size={16} className="text-brand-600" /> Your call: {fmtCall(request.scheduled_at)}
             </p>
             <p>
-              Have a government photo ID ready, plus proof for each entry on your profile —
-              certificates, marksheets, offer or experience letters.
+              Have a government photo ID ready, and be ready to show the projects on your profile —
+              links, files or the work itself.
             </p>
             {link && (
               <a
