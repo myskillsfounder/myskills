@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 import {
   ArrowRight,
   BarChart3,
@@ -62,6 +63,7 @@ function SkillPillar({
   live,
   rows,
   to,
+  programme,
   cta,
   muted,
 }: {
@@ -73,6 +75,8 @@ function SkillPillar({
   live: boolean
   rows: { icon: IconType; title: string; body: string }[]
   to: string
+  /** Which Practice tab `to` should open on, when it's /practice. */
+  programme?: 1 | 2
   cta: string
   muted?: boolean
 }) {
@@ -107,6 +111,7 @@ function SkillPillar({
       <div className="border-t border-ink-100 px-5 py-4 sm:px-6">
         <Link
           to={to}
+          onClick={() => programme && rememberProgramme(programme)}
           className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800"
         >
           {cta}
@@ -190,7 +195,8 @@ export function AiSkillsShowcase() {
           status="Live"
           live
           rows={personal}
-          to={CAREER_READINESS.path}
+          to="/practice"
+          programme={2}
           cta="Start the programme"
         />
       </div>
