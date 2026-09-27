@@ -204,10 +204,10 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       ? { label: 'Get your Digital Marketing mentor review', upTo: DM_SIGNOFF_POINTS, to: '/practice', programme: 1 }
       : null,
     livePoints(s.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS
-      ? { label: 'Attend a live Digital Marketing training', upTo: POINTS_PER_LIVE_SESSION, to: '/community/institutions' }
+      ? { label: 'Work with a mentor on Digital Marketing', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 1 }
       : null,
     livePoints(s.liveSessions) < LIVE_SESSIONS_MAX_POINTS
-      ? { label: 'Attend a live session with a mentor', upTo: POINTS_PER_LIVE_SESSION, to: '/community/mentors' }
+      ? { label: 'Work with a mentor on Career Readiness', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 2 }
       : null,
   ]
   const nextActions = journey.filter((step): step is NextAction => step !== null)

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Award, CheckCircle2, TrendingUp, UserCheck } from 'lucide-react'
+import { ArrowRight, Award, CheckCircle2, TrendingUp, UserCheck, Users } from 'lucide-react'
 import type { NextAction, Readiness, ReadinessComponent } from '@/lib/readinessScore'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
@@ -41,9 +41,9 @@ type Slide = {
 }
 
 const MAX_STEPS = 3
-const ADVANCE_MS = 5000
+const ADVANCE_MS = 3000
 
-/** The next few steps in journey order, then what they lead to. */
+/** The next few steps in journey order, live mentor sessions, then what they lead to. */
 function slidesFor(steps: NextAction[]): Slide[] {
   const stepSlides: Slide[] = steps.slice(0, MAX_STEPS).map((s, i) => ({
     key: `step-${s.label}`,
@@ -55,6 +55,30 @@ function slidesFor(steps: NextAction[]): Slide[] {
     icon: TrendingUp,
     tone: 'step',
   }))
+  // Live mentor sessions, one per programme: each opens that programme's tab,
+  // where the "Live mentor sessions" card finds a mentor.
+  const mentoring: Slide[] = [
+    {
+      key: 'mentor-dm',
+      eyebrow: 'Live mentor sessions',
+      title: 'Work with a mentor on Digital Marketing',
+      badge: '+2 a session',
+      to: '/practice',
+      programme: 1,
+      icon: Users,
+      tone: 'step',
+    },
+    {
+      key: 'mentor-cr',
+      eyebrow: 'Live mentor sessions',
+      title: 'Work with a mentor on Career Readiness',
+      badge: '+2 a session',
+      to: '/practice',
+      programme: 2,
+      icon: Users,
+      tone: 'step',
+    },
+  ]
   const outcomes: Slide[] = [
     {
       key: 'certificate',
@@ -74,7 +98,9 @@ function slidesFor(steps: NextAction[]): Slide[] {
       tone: 'outcome',
     },
   ]
-  return [...stepSlides, ...outcomes]
+  // A mentor step already among the next steps isn't shown twice.
+  const shown = new Set(stepSlides.map((s) => s.title))
+  return [...stepSlides, ...mentoring.filter((m) => !shown.has(m.title)), ...outcomes]
 }
 
 /**
