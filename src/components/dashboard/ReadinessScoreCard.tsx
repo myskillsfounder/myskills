@@ -1,11 +1,11 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, CheckCircle2, TrendingUp } from 'lucide-react'
-import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
+import { ArrowRight, Award, CheckCircle2, TrendingUp, UserCheck } from 'lucide-react'
+import type { NextAction, Readiness, ReadinessComponent } from '@/lib/readinessScore'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
-/** One part of the score: what it is, how full it is, and where its points
- *  come from — in plain words, not a list of counts. */
-function Part({ label, from, c }: { label: string; from: string; c: ReadinessComponent }) {
+/** One part of the score: its name, points and a bar — nothing else. */
+function Part({ label, c }: { label: string; c: ReadinessComponent }) {
   const pct = c.max ? (c.points / c.max) * 100 : 0
   return (
     <div>
@@ -24,19 +24,185 @@ function Part({ label, from, c }: { label: string; from: string; c: ReadinessCom
           }}
         />
       </div>
-      <p className="mt-1 text-xs text-ink-500">{from}</p>
+    </div>
+  )
+}
+
+type Slide = {
+  key: string
+  eyebrow: string
+  title: string
+  /** e.g. "+2" for a step, or the reward for an outcome. */
+  badge?: string
+  to: string
+  programme?: 1 | 2
+  icon: typeof TrendingUp
+  tone: 'step' | 'outcome'
+}
+
+const MAX_STEPS = 3
+const ADVANCE_MS = 5000
+
+/** The next few steps in journey order, then what they lead to. */
+function slidesFor(steps: NextAction[]): Slide[] {
+  const stepSlides: Slide[] = steps.slice(0, MAX_STEPS).map((s, i) => ({
+    key: `step-${s.label}`,
+    eyebrow: i === 0 ? 'Your next step' : 'Then',
+    title: s.label,
+    badge: s.upTo > 0 ? `+${Number(s.upTo.toFixed(2))}` : undefined,
+    to: s.to,
+    programme: s.programme,
+    icon: TrendingUp,
+    tone: 'step',
+  }))
+  const outcomes: Slide[] = [
+    {
+      key: 'certificate',
+      eyebrow: 'What you get',
+      title: 'A certificate of foundational progress in digital marketing',
+      to: '/foundation-assessment',
+      icon: Award,
+      tone: 'outcome',
+    },
+    {
+      key: 'signoff',
+      eyebrow: 'What you get',
+      title: 'A mentor’s sign-off that vouches for your work',
+      to: '/practice',
+      programme: 2,
+      icon: UserCheck,
+      tone: 'outcome',
+    },
+  ]
+  return [...stepSlides, ...outcomes]
+}
+
+/**
+ * A slider at the foot of the card: the next steps, then two slides on what
+ * they earn. Moves on by itself every few seconds (stopping while the pointer
+ * or focus is on it); the dots or a swipe move it by hand.
+ */
+function ActionSlider({ steps }: { steps: NextAction[] }) {
+  const slides = slidesFor(steps)
+  const [index, setIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const touchX = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (paused || slides.length < 2) return
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), ADVANCE_MS)
+    return () => window.clearInterval(id)
+  }, [paused, slides.length])
+
+  const go = (i: number) => setIndex((i + slides.length) % slides.length)
+
+  return (
+    <div
+      className="mt-6"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
+      {/* The track slides with a transform — one slide wide, moved by index —
+          so the dots, the timer and a swipe can never disagree about which
+          slide is showing. */}
+      <div
+        className="overflow-hidden"
+        aria-roledescription="carousel"
+        onTouchStart={(e) => {
+          touchX.current = e.touches[0].clientX
+          setPaused(true)
+        }}
+        onTouchEnd={(e) => {
+          const start = touchX.current
+          touchX.current = null
+          setPaused(false)
+          if (start === null) return
+          const dx = e.changedTouches[0].clientX - start
+          if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1))
+        }}
+      >
+        <div
+          className="flex transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(-${index * 100}%)` }}
+        >
+        {slides.map((s, i) => {
+          const Icon = s.icon
+          const outcome = s.tone === 'outcome'
+          return (
+            <div
+              key={s.key}
+              className="w-full shrink-0"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${slides.length}`}
+              aria-hidden={i !== index}
+            >
+              <Link
+                to={s.to}
+                onClick={() => s.programme && rememberProgramme(s.programme)}
+                tabIndex={i === index ? 0 : -1}
+                className={`group flex items-center gap-3 rounded-2xl border p-4 transition-colors ${
+                  outcome
+                    ? 'border-amber-200 bg-amber-50/70 hover:border-amber-300'
+                    : 'border-brand-100 bg-brand-50/70 hover:border-brand-300'
+                }`}
+              >
+                <span
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white ${
+                    outcome ? 'bg-amber-500' : 'bg-brand-600'
+                  }`}
+                >
+                  <Icon size={18} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={`text-[11px] font-semibold uppercase tracking-wide ${outcome ? 'text-amber-700' : 'text-brand-700'}`}
+                  >
+                    {s.eyebrow}
+                  </p>
+                  <p className="text-sm font-semibold text-ink-900">
+                    {s.title}
+                    {s.badge && <span className="font-medium text-brand-700"> · {s.badge}</span>}
+                  </p>
+                </div>
+                <ArrowRight
+                  size={18}
+                  className={`shrink-0 transition-transform duration-300 group-hover:translate-x-1 ${
+                    outcome ? 'text-amber-600' : 'text-brand-600'
+                  }`}
+                />
+              </Link>
+            </div>
+          )
+        })}
+        </div>
+      </div>
+
+      {slides.length > 1 && (
+        <div className="mt-3 flex justify-center gap-1.5">
+          {slides.map((s, i) => (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => go(i)}
+              aria-label={`Show ${i + 1} of ${slides.length}`}
+              aria-current={i === index}
+              className={`h-1.5 rounded-full transition-all ${i === index ? 'w-5 bg-brand-600' : 'w-1.5 bg-ink-300 hover:bg-ink-400'}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 /**
- * The LaunchPad's centrepiece, kept to three questions a student can answer at
- * a glance: where am I (the ring), what is it made of (three parts, each with
- * where its points come from), and what do I do next (one action). How much
- * of it has been checked is one line, not a panel of its own.
+ * The LaunchPad's centrepiece: where am I (the ring), what is it made of
+ * (three parts), and what do I do next (a slider of steps and what they earn).
  */
 export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
-  const { score, band, personal, professional, internship, nextAction, verifiedPoints, selfReportedPoints } = readiness
+  const { score, band, personal, professional, internship, nextActions, verifiedPoints, selfReportedPoints } = readiness
   const counted = Math.round(verifiedPoints + selfReportedPoints)
   const R = 54
   const C = 2 * Math.PI * R
@@ -92,42 +258,12 @@ export function ReadinessScoreCard({ readiness }: { readiness: Readiness }) {
       </div>
 
       <div className="mt-6 space-y-4">
-        <Part
-          label="Personal Development"
-          from="Career Readiness modules, live sessions and a mentor’s sign-off"
-          c={personal}
-        />
-        <Part
-          label="Professional Development"
-          from="Digital Marketing practice, the Foundation assessment, live training and a mentor’s sign-off"
-          c={professional}
-        />
-        <Part label="Internship" from="An internship through MySkills — opens later" c={internship} />
+        <Part label="Personal Development" c={personal} />
+        <Part label="Professional Development" c={professional} />
+        <Part label="Internship" c={internship} />
       </div>
 
-      {nextAction && (
-        <Link
-          to={nextAction.to}
-          onClick={() => nextAction.programme && rememberProgramme(nextAction.programme)}
-          className="group mt-6 flex items-center gap-3 rounded-2xl border border-brand-100 bg-brand-50/70 p-4 transition-colors hover:border-brand-300"
-        >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">
-            <TrendingUp size={18} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">Your next step</p>
-            <p className="text-sm font-semibold text-ink-900">
-              {nextAction.label}
-              {/* Some steps (practising the tracks) earn nothing on their own — they open the next one. */}
-              {nextAction.upTo > 0 && <span className="font-medium text-brand-700"> · +{Math.round(nextAction.upTo)}</span>}
-            </p>
-          </div>
-          <ArrowRight
-            size={18}
-            className="shrink-0 text-brand-600 transition-transform duration-300 group-hover:translate-x-1"
-          />
-        </Link>
-      )}
+      <ActionSlider steps={nextActions ?? []} />
 
       {readiness.source === 'server' && readiness.computedAt && (
         <p className="mt-4 text-[11px] text-ink-400">
