@@ -21,7 +21,6 @@ import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
-import { ProgrammePromoCard } from '@/components/dashboard/ProgrammePromoCard'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
 import { Skeleton } from '@/components/ui'
@@ -211,8 +210,6 @@ function DashboardPage() {
             />
           </div>
         )}
-
-        <ProgrammePromoCard />
 
         {/* Talk to a mentor — promoted: a real person, one tap away */}
         <MentorPromoCard />
