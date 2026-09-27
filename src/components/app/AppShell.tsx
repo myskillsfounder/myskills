@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import {
+  GraduationCap,
   ArrowRight,
   ChevronRight,
   ClipboardCheck,
@@ -17,6 +18,7 @@ import {
 import { signOut } from '@/lib/auth'
 import { useAssessmentDone } from '@/lib/assessmentResults'
 import { useAptitudeDone } from '@/lib/dmAptitude'
+import { useIsListedMentor } from '@/lib/mentorMatches'
 import { useProfile } from '@/lib/useProfile'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
@@ -43,6 +45,9 @@ const NAV: { to: string; label: string; icon: IconType }[] = [
 function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  // Mentors whose listing is linked to their account also see their students.
+  const isListedMentor = useIsListedMentor()
+  const nav = isListedMentor ? [...NAV, { to: '/mentoring', label: 'My students', icon: GraduationCap }] : NAV
 
   async function handleSignOut() {
     await signOut()
@@ -68,7 +73,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* Nav */}
       <nav className="flex-1 space-y-1 px-3 py-5">
-        {NAV.map(({ to, label, icon: Icon }) => {
+        {nav.map(({ to, label, icon: Icon }) => {
           const active = pathname === to
           return (
             <Link

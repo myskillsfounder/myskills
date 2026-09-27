@@ -17,6 +17,8 @@ import { VOCAB_UNLOCK_PERCENT, useVocabProgress } from '@/lib/vocabularyProgress
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { AssessmentCard } from '@/components/career-readiness/AssessmentCard'
+import { LiveMentorCard } from '@/components/practice/LiveMentorCard'
+import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
 import { useMyAptitudeResult } from '@/lib/dmAptitude'
 import type { FoundationUnlock } from '@/lib/foundation'
@@ -174,6 +176,7 @@ function PracticePage() {
   const crReview = useMentorReview('career-readiness')
   const { progress: crProgress } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions } = useMyLiveSessions()
+  const crAptitude = useMyAssessmentResult()
 
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
@@ -276,6 +279,15 @@ function PracticePage() {
                     unlock={foundationUnlock}
                     onOpenVocabulary={() => setMode('vocabulary')}
                   />
+
+                  {/* After the self-paced practice: live sessions with a mentor
+                      the student and mentor both agreed on. */}
+                  <LiveMentorCard
+                    programme="digital-marketing"
+                    aptitudeDone={aptitude != null}
+                    aptitudeTo="/aptitude-assessment"
+                    sessions={dmSessions.length}
+                  />
                 </>
               )}
 
@@ -297,6 +309,12 @@ function PracticePage() {
                     />
                   </ProgrammeCompletion>
                   <CareerReadinessPractice progress={crProgress} />
+                  <LiveMentorCard
+                    programme="career-readiness"
+                    aptitudeDone={crAptitude.result != null}
+                    aptitudeTo="/career-readiness-assessment"
+                    sessions={liveSessions.length}
+                  />
                 </>
               )}
             </>
