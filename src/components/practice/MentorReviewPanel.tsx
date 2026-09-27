@@ -76,7 +76,7 @@ export function MentorReviewPanel({
       <div className="mt-5 flex flex-col gap-3 rounded-xl bg-brand-50 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="flex items-center gap-2 text-sm font-semibold text-brand-900">
-            <Clock size={16} /> Review requested
+            <Clock size={16} /> Sign-off requested
             {review && <span className="font-normal text-brand-800/80">· {new Date(review.created_at).toLocaleDateString()}</span>}
           </p>
           <p className="mt-0.5 text-xs text-brand-800/80">
@@ -114,7 +114,7 @@ export function MentorReviewPanel({
         </>
       ) : (
         <>
-          <p className="text-sm font-semibold text-ink-900">Practice done — ask a mentor to review it</p>
+          <p className="text-sm font-semibold text-ink-900">Practice done — ask for your mentor’s sign-off</p>
           <p className="mt-0.5 text-sm text-ink-600">
             {isCareer
               ? 'A mentor reads what you wrote in the five modules, then signs your practice off or tells you what to work on.'
@@ -152,7 +152,7 @@ export function MentorReviewPanel({
         disabled={busy}
         onClick={() => run(() => requestMentorReview(programme, note))}
       >
-        {busy ? 'Sending…' : again ? 'Ask for another review' : 'Request mentor review'}
+        {busy ? 'Sending…' : again ? 'Ask again' : 'Ask for sign-off'}
       </Button>
     </div>
   )

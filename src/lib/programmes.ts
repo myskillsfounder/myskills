@@ -99,19 +99,19 @@ export interface CourseProgress {
 }
 
 /**
- * Completing a programme takes three stages, in order: practice, a mentor's
- * review, and an internship done through MySkills. Practice alone can raise
- * the score but never finishes the programme — the proof has to come from a
- * person and from real work.
+ * Completing a programme takes three stages, in order: self-paced practice,
+ * live sessions with a mentor (which end in the mentor signing the student
+ * off), and an internship done through MySkills. Practice alone can raise the
+ * score but never finishes the programme — the proof has to come from a person
+ * and from real work.
  *
- * Neither the mentor review nor platform internships exist yet, so every
- * caller passes false for both today and nothing can reach "Complete". When
- * those flows land, this is the one place that learns about them.
+ * Platform internships don't exist yet, so every caller passes false and
+ * nothing can reach "Complete".
  */
 export type StageState = 'done' | 'active' | 'todo' | 'locked'
 
 export interface ProgrammeStage {
-  key: 'practice' | 'mentor-review' | 'internship'
+  key: 'practice' | 'mentoring' | 'internship'
   title: string
   detail: string
   state: StageState
@@ -123,15 +123,27 @@ export interface CompletionInput {
   /** Has any practice started? */
   practiceStarted: boolean
   practiceDetail: string
-  /** Where the programme's mentor review stands (src/lib/mentorReview.ts). */
+  /** Where the programme's mentor review stands (src/lib/mentorReview.ts);
+   *  'approved' is the mentor's sign-off, which completes the mentoring stage. */
   mentorReview: 'none' | 'requested' | 'approved' | 'changes_requested'
+  /** Live mentor sessions (src/lib/mentorMatches.ts). */
+  mentoring: {
+    /** The aptitude assessment opens this stage — it's where the mentor starts. */
+    aptitudeDone: boolean
+    status: 'requested' | 'active' | 'declined' | 'ended' | 'cancelled' | null
+    mentorName: string | null
+    sessions: number
+  }
   internshipDone: boolean
 }
 
 export function completionStages(c: CompletionInput): ProgrammeStage[] {
-  // Stages open in order: a mentor reviews finished practice, and the
-  // internship comes after the review.
+  // Mentoring opens with the aptitude report and finishes with the mentor's
+  // sign-off; the internship comes after that.
   const reviewed = c.mentorReview === 'approved'
+  const m = c.mentoring
+  const mentor = m.mentorName ?? 'your mentor'
+  const sessions = `${m.sessions} ${m.sessions === 1 ? 'session' : 'sessions'}`
   return [
     {
       key: 'practice',
@@ -140,18 +152,18 @@ export function completionStages(c: CompletionInput): ProgrammeStage[] {
       state: c.practiceDone ? 'done' : c.practiceStarted ? 'active' : 'todo',
     },
     {
-      key: 'mentor-review',
-      title: 'Mentor review',
+      key: 'mentoring',
+      title: 'Live mentor sessions',
       detail: reviewed
-        ? 'Signed off by a mentor'
-        : !c.practiceDone
-          ? 'Opens once practice is finished'
-          : c.mentorReview === 'requested'
-            ? 'Requested — a mentor is reviewing your work'
-            : c.mentorReview === 'changes_requested'
-              ? 'Your mentor left notes — work on them, then ask again'
-              : 'Ready — ask a mentor to review your work',
-      state: reviewed ? 'done' : c.practiceDone ? 'active' : 'locked',
+        ? 'Signed off by your mentor'
+        : !m.aptitudeDone
+          ? 'Opens after the aptitude assessment'
+          : m.status === 'active'
+            ? `With ${mentor} · ${sessions}${c.practiceDone ? ' · ask for your sign-off' : ''}`
+            : m.status === 'requested'
+              ? `Waiting for ${mentor} to accept`
+              : 'Ready — choose a mentor',
+      state: reviewed ? 'done' : m.aptitudeDone ? 'active' : 'locked',
     },
     {
       key: 'internship',
@@ -160,7 +172,7 @@ export function completionStages(c: CompletionInput): ProgrammeStage[] {
         ? 'Completed and verified'
         : reviewed
           ? 'Coming soon — real briefs with partner companies'
-          : 'Opens after your mentor review',
+          : 'Opens after your mentor signs you off',
       state: c.internshipDone ? 'done' : 'locked',
     },
   ]
