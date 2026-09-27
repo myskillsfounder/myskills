@@ -19,6 +19,7 @@ import { PageHeader } from '@/components/app/PageHeader'
 import { AssessmentCard } from '@/components/career-readiness/AssessmentCard'
 import { LiveMentorCard } from '@/components/practice/LiveMentorCard'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
+import { useMyMatch } from '@/lib/mentorMatches'
 import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
 import { useMyAptitudeResult } from '@/lib/dmAptitude'
 import type { FoundationUnlock } from '@/lib/foundation'
@@ -177,6 +178,8 @@ function PracticePage() {
   const { progress: crProgress } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions } = useMyLiveSessions()
   const crAptitude = useMyAssessmentResult()
+  const dmMatch = useMyMatch('digital-marketing')
+  const crMatch = useMyMatch('career-readiness')
 
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
@@ -191,6 +194,12 @@ function PracticePage() {
       ? `${practisedTracks.length} of ${skillTracks.length} tracks practised · ${practiceAvg}% average`
       : `Practise all ${skillTracks.length} skill tracks`,
     mentorReview: dmReview.state,
+    mentoring: {
+      aptitudeDone: aptitude != null,
+      status: dmMatch.match?.status ?? null,
+      mentorName: dmMatch.match?.mentor?.full_name ?? null,
+      sessions: dmSessions.length,
+    },
     internshipDone: false,
   })
   const crStages = completionStages({
@@ -200,6 +209,12 @@ function PracticePage() {
       ? `${crProgress.modulesDone} of ${crProgress.modulesTotal} modules finished`
       : `Finish all ${crProgress.modulesTotal} modules`,
     mentorReview: crReview.state,
+    mentoring: {
+      aptitudeDone: crAptitude.result != null,
+      status: crMatch.match?.status ?? null,
+      mentorName: crMatch.match?.mentor?.full_name ?? null,
+      sessions: liveSessions.length,
+    },
     internshipDone: false,
   })
 
