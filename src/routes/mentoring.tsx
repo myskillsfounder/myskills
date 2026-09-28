@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { CalendarPlus, Check, Mail, UserX, Users } from 'lucide-react'
+import { Award, CalendarPlus, Check, Mail, UserX, Users, X } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -13,6 +13,7 @@ import {
 import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
 import { SKILLS, levelFor as skillLevel } from '@/lib/careerReadinessAssessment'
 import { LIVE_SESSIONS_MAX_POINTS, POINTS_PER_LIVE_SESSION } from '@/lib/readinessScore'
+import { awardBadge, fetchMenteeSkills, removeBadge, skillName, type MenteeSkill } from '@/lib/skillBadges'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { Alert, Avatar, Badge, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
@@ -118,6 +119,93 @@ function RequestCard({ m, onDone }: { m: MentorSideMatch; onDone: () => void }) 
   )
 }
 
+/**
+ * The programme's skills for one student: which they've earned in practice,
+ * and a button to award the badge for each earned one. A badge can only be
+ * awarded once the work is done — the server checks that too.
+ */
+function SkillBadgesPanel({ matchId }: { matchId: string }) {
+  const [skills, setSkills] = useState<MenteeSkill[] | null>(null)
+  const [busy, setBusy] = useState<string>()
+  const [error, setError] = useState<string>()
+
+  const load = useCallback(async () => {
+    try {
+      setSkills(await fetchMenteeSkills(matchId))
+    } catch (e) {
+      setError(errorMessage(e))
+    }
+  }, [matchId])
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  async function run(key: string, fn: () => Promise<void>) {
+    setBusy(key)
+    setError(undefined)
+    try {
+      await fn()
+      await load()
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setBusy(undefined)
+    }
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-ink-200 p-4">
+      <p className="text-sm font-semibold text-ink-900">Skill badges</p>
+      <p className="mt-0.5 text-xs text-ink-500">Award a badge for a skill they’ve earned in practice. It shows on their profile.</p>
+      {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+      {!skills ? (
+        <p className="mt-3 text-xs text-ink-500">Loading…</p>
+      ) : (
+        <ul className="mt-3 divide-y divide-ink-100">
+          {skills.map((sk) => (
+            <li key={sk.skill} className="flex items-center justify-between gap-3 py-2">
+              <div className="min-w-0">
+                <p className={`truncate text-sm font-medium ${sk.earned ? 'text-ink-900' : 'text-ink-400'}`}>
+                  {skillName(sk.skill)}
+                </p>
+                <p className="text-[11px] text-ink-500">{sk.result}</p>
+              </div>
+              {sk.awarded ? (
+                <span className="inline-flex shrink-0 items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+                    <Award size={12} /> Awarded
+                  </span>
+                  <button
+                    type="button"
+                    disabled={busy === sk.skill}
+                    onClick={() => sk.badge_id && void run(sk.skill, () => removeBadge(sk.badge_id!))}
+                    aria-label={`Remove the ${skillName(sk.skill)} badge`}
+                    className="rounded-full p-1 text-ink-400 hover:bg-ink-100 hover:text-red-600 disabled:opacity-50"
+                  >
+                    <X size={13} />
+                  </button>
+                </span>
+              ) : sk.earned ? (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  icon={Award}
+                  disabled={busy === sk.skill}
+                  onClick={() => void run(sk.skill, () => awardBadge(matchId, sk.skill))}
+                >
+                  Award
+                </Button>
+              ) : (
+                <span className="shrink-0 text-[11px] text-ink-400">Not earned yet</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function StudentCard({ m, onDone }: { m: MentorSideMatch; onDone: () => void }) {
   const [title, setTitle] = useState('')
   const [heldOn, setHeldOn] = useState(today())
@@ -165,6 +253,8 @@ function StudentCard({ m, onDone }: { m: MentorSideMatch; onDone: () => void }) 
           <AptitudeReport m={m} />
         </div>
       </details>
+
+      <SkillBadgesPanel matchId={m.id} />
 
       <form
         className="mt-4 rounded-xl border border-ink-200 p-4"
