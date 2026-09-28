@@ -6,7 +6,7 @@
  * profile completion, at the user's own pace.
  */
 import { useState } from 'react'
-import { Cake, Phone, UserRound } from 'lucide-react'
+import { Cake, Lock, MapPin, Phone, UserRound } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import {
@@ -271,9 +271,9 @@ export function headerExtras(profile: Profile): { careerStage?: string } {
 }
 
 /**
- * The private details only the student sees — phone, date of birth, gender.
- * Career stage and location live in the header now; this is a
- * compact strip rather than a tall list, so the page doesn't run on.
+ * The student's personal details as a tidy grid of tiles — phone, date of
+ * birth, gender and where they live. Private to them; career stage and the
+ * public location line live in the header.
  */
 export function DetailsSection({
   profile,
@@ -283,26 +283,32 @@ export function DetailsSection({
   save: (patch: ProfilePatch) => Promise<Profile>
 }) {
   const [open, setOpen] = useState(false)
+  const place = [profile.state, profile.country].filter(Boolean).join(', ')
   const items: { icon: IconType; label: string; value: string }[] = [
     { icon: Phone, label: f.phone.label, value: profile.phone },
     { icon: Cake, label: f.dob.label, value: formatDob(profile.date_of_birth) },
     { icon: UserRound, label: f.gender.label, value: profile.gender ? genderLabel(profile.gender) : '' },
+    { icon: MapPin, label: 'Lives in', value: place },
   ]
 
   return (
-    <Section title="Private details" onEdit={() => setOpen(true)}>
-      <p className="-mt-1 mb-3 text-xs text-ink-500">Only you can see these.</p>
-      <dl className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+    <Section title="Details" onEdit={() => setOpen(true)}>
+      <dl className="grid grid-cols-2 gap-2.5">
         {items.map(({ icon: Icon, label, value }) => (
-          <div key={label} className="flex items-center gap-2.5">
-            <Icon size={15} className="shrink-0 text-ink-400" />
-            <div className="min-w-0">
-              <dt className="text-[11px] text-ink-500">{label}</dt>
-              <dd className="truncate text-sm font-medium text-ink-900">{value || '—'}</dd>
-            </div>
+          <div key={label} className="rounded-xl bg-ink-50 p-3">
+            <dt className="flex items-center gap-1.5 text-[11px] font-medium text-ink-500">
+              <Icon size={13} className="shrink-0" />
+              {label}
+            </dt>
+            <dd className={`mt-1 truncate text-sm font-semibold ${value ? 'text-ink-900' : 'text-ink-400'}`}>
+              {value || 'Add'}
+            </dd>
           </div>
         ))}
       </dl>
+      <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-ink-500">
+        <Lock size={12} /> Only you can see these.
+      </p>
 
       <PersonalDetailsModal open={open} profile={profile} save={save} onClose={() => setOpen(false)} />
     </Section>
