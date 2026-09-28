@@ -6,7 +6,7 @@
  * profile completion, at the user's own pace.
  */
 import { useState } from 'react'
-import { BookOpen, Cake, MapPin, Phone, Target, UserRound } from 'lucide-react'
+import { Cake, Phone, UserRound } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import {
@@ -267,20 +267,19 @@ export function ProfileCompletion({
 
 /* ------------------------------------------------------------ details card */
 
-function DetailRow({ icon: Icon, label, value }: { icon: IconType; label: string; value: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink-100 text-ink-600">
-        <Icon size={16} />
-      </span>
-      <div className="min-w-0">
-        <p className="text-xs text-ink-500">{label}</p>
-        <p className="truncate text-sm font-medium text-ink-900">{value || '—'}</p>
-      </div>
-    </div>
-  )
+/** Career stage and focus areas as display labels, for the header. */
+export function headerExtras(profile: Profile): { careerStage?: string; focusAreas: string[] } {
+  return {
+    careerStage: profile.career_stage ? careerLabel(profile.career_stage) : undefined,
+    focusAreas: profile.goals.map(goalLabel),
+  }
 }
 
+/**
+ * The private details only the student sees — phone, date of birth, gender.
+ * Career stage, location and focus areas live in the header now; this is a
+ * compact strip rather than a tall list, so the page doesn't run on.
+ */
 export function DetailsSection({
   profile,
   save,
@@ -289,54 +288,28 @@ export function DetailsSection({
   save: (patch: ProfilePatch) => Promise<Profile>
 }) {
   const [open, setOpen] = useState(false)
-  const location = [profile.state, profile.country].filter(Boolean).join(', ')
+  const items: { icon: IconType; label: string; value: string }[] = [
+    { icon: Phone, label: f.phone.label, value: profile.phone },
+    { icon: Cake, label: f.dob.label, value: formatDob(profile.date_of_birth) },
+    { icon: UserRound, label: f.gender.label, value: profile.gender ? genderLabel(profile.gender) : '' },
+  ]
 
   return (
-    <Section title="Details" onEdit={() => setOpen(true)}>
-      <div className="space-y-4">
-        <DetailRow
-          icon={Target}
-          label="Career stage"
-          value={profile.career_stage ? careerLabel(profile.career_stage) : '—'}
-        />
-        <DetailRow icon={MapPin} label="Location" value={location} />
-        <DetailRow icon={Phone} label={f.phone.label} value={profile.phone} />
-        <DetailRow icon={Cake} label={f.dob.label} value={formatDob(profile.date_of_birth)} />
-        <DetailRow
-          icon={UserRound}
-          label={f.gender.label}
-          value={profile.gender ? genderLabel(profile.gender) : ''}
-        />
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <BookOpen size={16} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-xs text-ink-500">Focus areas</p>
-            {profile.goals.length ? (
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {profile.goals.map((id) => (
-                  <span
-                    key={id}
-                    className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700"
-                  >
-                    {goalLabel(id)}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm font-medium text-ink-900">—</p>
-            )}
+    <Section title="Private details" onEdit={() => setOpen(true)}>
+      <p className="-mt-1 mb-3 text-xs text-ink-500">Only you can see these.</p>
+      <dl className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+        {items.map(({ icon: Icon, label, value }) => (
+          <div key={label} className="flex items-center gap-2.5">
+            <Icon size={15} className="shrink-0 text-ink-400" />
+            <div className="min-w-0">
+              <dt className="text-[11px] text-ink-500">{label}</dt>
+              <dd className="truncate text-sm font-medium text-ink-900">{value || '—'}</dd>
+            </div>
           </div>
-        </div>
-      </div>
+        ))}
+      </dl>
 
-      <PersonalDetailsModal
-        open={open}
-        profile={profile}
-        save={save}
-        onClose={() => setOpen(false)}
-      />
+      <PersonalDetailsModal open={open} profile={profile} save={save} onClose={() => setOpen(false)} />
     </Section>
   )
 }
