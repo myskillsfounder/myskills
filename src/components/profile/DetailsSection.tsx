@@ -6,7 +6,7 @@
  * profile completion, at the user's own pace.
  */
 import { useState } from 'react'
-import { Cake, Lock, MapPin, Phone, UserRound } from 'lucide-react'
+import { BadgeCheck, Cake, Lock, MapPin, Phone, UserRound } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import {
@@ -278,9 +278,12 @@ export function headerExtras(profile: Profile): { careerStage?: string } {
 export function DetailsSection({
   profile,
   save,
+  verified = false,
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
+  /** Identity (name and date of birth) checked by MySkills on a call. */
+  verified?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const place = [profile.state, profile.country].filter(Boolean).join(', ')
@@ -293,6 +296,11 @@ export function DetailsSection({
 
   return (
     <Section title="Details" onEdit={() => setOpen(true)}>
+      {verified && (
+        <p className="-mt-1 mb-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+          <BadgeCheck size={13} /> Verified by MySkills
+        </p>
+      )}
       <dl className="grid grid-cols-2 gap-2.5">
         {items.map(({ icon: Icon, label, value }) => (
           <div key={label} className="rounded-xl bg-ink-50 p-3">
@@ -306,8 +314,11 @@ export function DetailsSection({
           </div>
         ))}
       </dl>
-      <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-ink-500">
-        <Lock size={12} /> Only you can see these.
+      <p className="mt-3 inline-flex items-start gap-1.5 text-xs leading-relaxed text-ink-500">
+        <Lock size={12} className="mt-0.5 shrink-0" />
+        {verified
+          ? 'Only you can see these. Changing your name or date of birth sends it back for a re-check.'
+          : 'Only you can see these. They’re checked on your verification call.'}
       </p>
 
       <PersonalDetailsModal open={open} profile={profile} save={save} onClose={() => setOpen(false)} />

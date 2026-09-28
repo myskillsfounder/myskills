@@ -8,7 +8,7 @@ import {
   Video,
 } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
-import type { Profile, Project } from '@/lib/profile'
+import type { Profile } from '@/lib/profile'
 import {
   cancelMyVerificationRequest,
   requestVerification,
@@ -101,9 +101,9 @@ function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () =>
           onChange={(e) => setConsent(e.target.checked)}
         />
         <span>
-          I agree to a video call with the MySkills team to verify my identity and the projects on
-          my profile. I’ll show my documents and work on camera. MySkills won’t record the call or
-          keep copies of them, and will only use the result to mark my profile entries as verified.
+          I agree to a video call with the MySkills team to verify my identity and personal details.
+          I’ll show a photo ID on camera. MySkills won’t record the call or keep a copy of it, and
+          will only use the result to mark my profile as verified.
         </span>
       </label>
       {error && <p className="text-sm text-red-700">{error}</p>}
@@ -127,8 +127,8 @@ type StepState = 'done' | 'partial' | 'todo' | 'none'
 /** Identity checked and every project on the profile verified — the point at
  *  which the checklist has nothing left to ask, and the profile shows the
  *  verified tick by the name instead. */
-export function isVerificationComplete(profile: Profile, view: VerificationView): boolean {
-  return view.identity === 'verified' && profile.projects.every((p) => view.status('project', p) === 'verified')
+export function isVerificationComplete(_profile: Profile, view: VerificationView): boolean {
+  return view.identity === 'verified'
 }
 
 /** One row of the checklist — the KYC-app pattern: an icon that says at a
@@ -165,12 +165,12 @@ function Step({ label, state, detail }: { label: string; state: StepState; detai
  * Career Readiness Score, which only counts what's done on MySkills.
  */
 export function VerificationSection({
-  profile,
   view,
   request,
   onChange,
 }: {
-  profile: Profile
+  /** Kept for callers; the check itself is identity only now. */
+  profile?: Profile
   view: VerificationView
   request: VerificationRequest | null
   onChange: () => void
@@ -180,29 +180,15 @@ export function VerificationSection({
 
   const open = request?.status === 'requested' || request?.status === 'scheduled'
 
-  const group = (label: string, list: Project[], type: 'project') => {
-    const verified = list.filter((e) => view.status(type, e) === 'verified').length
-    const state: StepState =
-      list.length === 0 ? 'none' : verified === list.length ? 'done' : verified > 0 ? 'partial' : 'todo'
-    const detail =
-      list.length === 0
-        ? `No ${label.toLowerCase()} added yet`
-        : verified === list.length
-          ? `All ${list.length} verified`
-          : `${verified} of ${list.length} verified`
-    return { key: label, label, state, detail }
-  }
-
   const steps: { key: string; label: string; state: StepState; detail: string }[] = [
     {
       key: 'identity',
       label: 'Identity',
       state: view.identity === 'verified' ? 'done' : 'todo',
-      detail: view.identity === 'verified' ? 'Verified' : 'Not yet verified',
+      detail: view.identity === 'verified' ? 'Name and date of birth verified' : 'Name and date of birth, checked on a short video call',
     },
-    // The profile has no education or work history — only what's built
-    // through MySkills — so identity and projects are all there is to check.
-    group('Projects', profile.projects, 'project'),
+    // Projects are recorded and verified by mentors now, so the call only
+    // needs to check who the student is.
   ]
   // Empty categories (e.g. no projects added) don't block completion or count
   // in the ring — there's nothing there to verify.
@@ -287,8 +273,7 @@ export function VerificationSection({
               <CalendarClock size={16} className="text-brand-600" /> Your call: {fmtCall(request.scheduled_at)}
             </p>
             <p>
-              Have a government photo ID ready, and be ready to show the projects on your profile —
-              links, files or the work itself.
+              Have a government photo ID ready.
             </p>
             {link && (
               <a

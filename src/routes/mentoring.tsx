@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Award, CalendarPlus, Check, Mail, UserX, Users, X } from 'lucide-react'
+import { Award, CalendarPlus, Check, FolderPlus, Mail, UserX, Users, X } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -14,6 +14,7 @@ import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
 import { SKILLS, levelFor as skillLevel } from '@/lib/careerReadinessAssessment'
 import { LIVE_SESSIONS_MAX_POINTS, POINTS_PER_LIVE_SESSION } from '@/lib/readinessScore'
 import { awardBadge, fetchMenteeSkills, removeBadge, skillName, type MenteeSkill } from '@/lib/skillBadges'
+import { addMenteeProject, fetchMenteeProjects, removeMenteeProject, type MentorProject } from '@/lib/mentorProjects'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { Alert, Avatar, Badge, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
@@ -206,6 +207,129 @@ function SkillBadgesPanel({ matchId }: { matchId: string }) {
   )
 }
 
+/**
+ * Projects the mentor records for this student — work they saw them do on the
+ * programme. They show on the student's profile as verified by this mentor;
+ * the student can't add projects themselves.
+ */
+function ProjectsPanel({ matchId }: { matchId: string }) {
+  const [projects, setProjects] = useState<MentorProject[] | null>(null)
+  const [form, setForm] = useState({ title: '', year: String(new Date().getFullYear()), link: '', description: '' })
+  const [adding, setAdding] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string>()
+
+  const load = useCallback(async () => {
+    try {
+      setProjects(await fetchMenteeProjects(matchId))
+    } catch (e) {
+      setError(errorMessage(e))
+    }
+  }, [matchId])
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  async function run(fn: () => Promise<void>) {
+    setBusy(true)
+    setError(undefined)
+    try {
+      await fn()
+      await load()
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-ink-200 p-4">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-ink-900">Projects</p>
+        {!adding && (
+          <button
+            type="button"
+            onClick={() => setAdding(true)}
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-50"
+          >
+            <FolderPlus size={14} /> Add a project
+          </button>
+        )}
+      </div>
+      <p className="mt-0.5 text-xs text-ink-500">Work you saw them do. It shows on their profile as verified by you.</p>
+      {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+
+      {adding && (
+        <form
+          className="mt-3 space-y-3 rounded-xl bg-ink-50 p-3"
+          onSubmit={(e) => {
+            e.preventDefault()
+            void run(async () => {
+              await addMenteeProject(matchId, form)
+              setForm({ title: '', year: String(new Date().getFullYear()), link: '', description: '' })
+              setAdding(false)
+            })
+          }}
+        >
+          <Input label="Project title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
+            <Input label="Year" value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} />
+            <Input
+              label="Link"
+              required={false}
+              placeholder="https://"
+              value={form.link}
+              onChange={(e) => setForm({ ...form, link: e.target.value })}
+            />
+          </div>
+          <Textarea
+            label="What did they do?"
+            required={false}
+            rows={3}
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+          <div className="flex gap-2">
+            <Button size="sm" type="submit" disabled={busy || form.title.trim().length < 2}>
+              Add to their profile
+            </Button>
+            <Button size="sm" variant="ghost" type="button" onClick={() => setAdding(false)}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {!projects ? (
+        <p className="mt-3 text-xs text-ink-500">Loading…</p>
+      ) : projects.length === 0 ? (
+        !adding && <p className="mt-3 text-xs text-ink-400">No projects yet.</p>
+      ) : (
+        <ul className="mt-3 divide-y divide-ink-100">
+          {projects.map((p) => (
+            <li key={p.id} className="flex items-start justify-between gap-3 py-2">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-ink-900">{p.title}</p>
+                {p.year && <p className="text-[11px] text-ink-500">{p.year}</p>}
+              </div>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void run(() => removeMenteeProject(p.id))}
+                aria-label={`Remove ${p.title}`}
+                className="rounded-full p-1 text-ink-400 hover:bg-ink-100 hover:text-red-600 disabled:opacity-50"
+              >
+                <X size={13} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function StudentCard({ m, onDone }: { m: MentorSideMatch; onDone: () => void }) {
   const [title, setTitle] = useState('')
   const [heldOn, setHeldOn] = useState(today())
@@ -255,6 +379,7 @@ function StudentCard({ m, onDone }: { m: MentorSideMatch; onDone: () => void }) 
       </details>
 
       <SkillBadgesPanel matchId={m.id} />
+      <ProjectsPanel matchId={m.id} />
 
       <form
         className="mt-4 rounded-xl border border-ink-200 p-4"
