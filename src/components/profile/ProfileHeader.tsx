@@ -20,7 +20,6 @@ export function ProfileHeader({
   upload,
   verified = false,
   careerStage,
-  focusAreas = [],
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
@@ -29,7 +28,6 @@ export function ProfileHeader({
    *  name and a green ring round the photo, not a card of its own. */
   verified?: boolean
   careerStage?: string
-  focusAreas?: string[]
 }) {
   const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState<'avatar' | 'banner' | null>(null)
@@ -191,15 +189,7 @@ export function ProfileHeader({
             )}
           </p>
         )}
-        {focusAreas.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {focusAreas.map((f) => (
-              <span key={f} className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">
-                {f}
-              </span>
-            ))}
-          </div>
-        )}
+
       </div>
 
       <Modal open={editing} title="Edit intro" onClose={() => setEditing(false)}>

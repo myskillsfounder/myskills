@@ -12,7 +12,6 @@ import type { Profile, ProfilePatch } from '@/lib/profile'
 import {
   careerStageStep,
   genderOptions,
-  goalsStep,
   personalDetailsForm,
 } from '@/lib/onboardingContent'
 import { Field, Modal, PrimaryButton, Section, Select } from './ui'
@@ -21,7 +20,6 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 
 const f = personalDetailsForm.fields
 
-const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
 const careerLabel = (id: string) =>
   careerStageStep.options.find((o) => o.id === id)?.title ?? id
 const genderLabel = (v: string) => genderOptions.find((o) => o.value === v)?.label ?? v
@@ -267,17 +265,14 @@ export function ProfileCompletion({
 
 /* ------------------------------------------------------------ details card */
 
-/** Career stage and focus areas as display labels, for the header. */
-export function headerExtras(profile: Profile): { careerStage?: string; focusAreas: string[] } {
-  return {
-    careerStage: profile.career_stage ? careerLabel(profile.career_stage) : undefined,
-    focusAreas: profile.goals.map(goalLabel),
-  }
+/** Career stage as a display label, for the header. */
+export function headerExtras(profile: Profile): { careerStage?: string } {
+  return { careerStage: profile.career_stage ? careerLabel(profile.career_stage) : undefined }
 }
 
 /**
  * The private details only the student sees — phone, date of birth, gender.
- * Career stage, location and focus areas live in the header now; this is a
+ * Career stage and location live in the header now; this is a
  * compact strip rather than a tall list, so the page doesn't run on.
  */
 export function DetailsSection({
