@@ -12,7 +12,7 @@ const fmtMonth = (iso: string) => new Date(iso).toLocaleDateString(undefined, { 
  */
 export function SkillsSection({ badges = [] }: { badges?: SkillBadge[] }) {
   return (
-    <Section title="Skill badges">
+    <Section title="Skill Badges">
       {badges.length > 0 ? (
         <ul className="space-y-2">
           {badges.map((b) => (
