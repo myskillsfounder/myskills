@@ -1,7 +1,11 @@
 import { useState } from 'react'
-import { CheckCircle2, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { Award, X } from 'lucide-react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
+import { skillName, type SkillBadge } from '@/lib/skillBadges'
 import { Modal, PrimaryButton, Section } from './ui'
+
+const fmtMonth = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
 
 const SUGGESTED = [
   'Marketing Fundamentals',
@@ -19,13 +23,14 @@ const SUGGESTED = [
 export function SkillsSection({
   profile,
   save,
-  verifiedSkills = [],
+  badges = [],
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
-  /** Skills earned by practice (a passed track, a finished module) — proof,
-   *  not a claim, so they're shown separately and can't be removed here. */
-  verifiedSkills?: string[]
+  /** Skill badges awarded by the student's mentors — proof, not a claim, so
+   *  they're shown apart from the skills the student lists and can't be
+   *  edited here. */
+  badges?: SkillBadge[]
 }) {
   const [open, setOpen] = useState(false)
   const [skills, setSkills] = useState<string[]>(profile.skills)
@@ -55,21 +60,34 @@ export function SkillsSection({
         setOpen(true)
       }}
     >
-      {verifiedSkills.length > 0 && (
-        <div className="mb-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">From your practice</p>
-          <div className="mt-1.5 flex flex-wrap gap-2">
-            {verifiedSkills.map((s) => (
-              <span
-                key={s}
-                className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800"
-              >
-                <CheckCircle2 size={13} /> {s}
-              </span>
+      <div className="mb-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">Badges from your mentors</p>
+        {badges.length > 0 ? (
+          <ul className="mt-2 space-y-2">
+            {badges.map((b) => (
+              <li key={b.id} className="flex items-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50 p-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white">
+                  <Award size={15} />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-ink-900">{skillName(b.skill)}</p>
+                  <p className="truncate text-[11px] text-ink-600">
+                    {b.mentor?.full_name ? `by ${b.mentor.full_name} · ` : ''}
+                    {fmtMonth(b.awarded_at)}
+                  </p>
+                </div>
+              </li>
             ))}
-          </div>
-        </div>
-      )}
+          </ul>
+        ) : (
+          <p className="mt-1.5 text-xs leading-relaxed text-ink-500">
+            Practise a skill, then your mentor can award you its badge.{' '}
+            <Link to="/practice" className="font-semibold text-brand-700 hover:underline">
+              Find a mentor
+            </Link>
+          </p>
+        )}
+      </div>
 
       {profile.skills.length ? (
         <div className="flex flex-wrap gap-2">
@@ -82,9 +100,9 @@ export function SkillsSection({
             </span>
           ))}
         </div>
-      ) : verifiedSkills.length === 0 ? (
-        <p className="text-sm text-ink-500">Add the marketing skills you’re building.</p>
-      ) : null}
+      ) : (
+        <p className="text-sm text-ink-500">Add the other skills you’re building.</p>
+      )}
 
       <Modal open={open} title="Edit skills" onClose={() => setOpen(false)}>
         <div className="space-y-4">

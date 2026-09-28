@@ -1,13 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, Check, Copy, ExternalLink } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
-import { fetchPracticeSummary, type PracticeSummary } from '@/lib/practiceResults'
-import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
-import { skillTracks } from '@/lib/skillTracks'
-import { TRACK_PASS_PERCENT } from '@/lib/readinessScore'
+import { useMyBadges } from '@/lib/skillBadges'
 import { AppShell } from '@/components/app/AppShell'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
@@ -108,27 +105,7 @@ function CertificateCard() {
 function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
-  const { progress: crProgress } = useCareerReadinessProgress()
-  const [practice, setPractice] = useState<PracticeSummary>({})
-  useEffect(() => {
-    let active = true
-    fetchPracticeSummary()
-      .then((p) => active && setPractice(p))
-      .catch(() => {})
-    return () => {
-      active = false
-    }
-  }, [])
-
-  // Proof, not a claim: tracks actually passed and modules actually finished,
-  // shown apart from whatever the student typed in themselves.
-  const verifiedSkills = useMemo(
-    () => [
-      ...skillTracks.filter((t) => (practice[t.slug]?.percent ?? 0) >= TRACK_PASS_PERCENT).map((t) => t.name),
-      ...crProgress.modules.filter((m) => m.complete).map((m) => m.title),
-    ],
-    [practice, crProgress.modules],
-  )
+  const badges = useMyBadges()
 
   return (
     <AppShell wide>
@@ -189,7 +166,7 @@ function ProfilePage() {
               />
             </div>
             <div className="space-y-5">
-              <SkillsSection profile={profile} save={save} verifiedSkills={verifiedSkills} />
+              <SkillsSection profile={profile} save={save} badges={badges} />
               <DetailsSection profile={profile} save={save} />
             </div>
           </div>
