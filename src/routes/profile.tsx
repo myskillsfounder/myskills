@@ -5,10 +5,11 @@ import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
 import { useMyBadges } from '@/lib/skillBadges'
+import { useMyProjects } from '@/lib/mentorProjects'
 import { AppShell } from '@/components/app/AppShell'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
-import { ProjectsSection } from '@/components/profile/ProjectsSection'
+import { AchievementsSection } from '@/components/profile/AchievementsSection'
 import { VerificationSection, isVerificationComplete } from '@/components/profile/VerificationSection'
 import { useVerification } from '@/lib/useVerification'
 import { SkillsSection } from '@/components/profile/SkillsSection'
@@ -106,6 +107,8 @@ function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
   const badges = useMyBadges()
+  const projects = useMyProjects()
+  const identityVerified = !verification.loading && verification.view.identity === 'verified'
 
   return (
     <AppShell wide>
@@ -129,7 +132,7 @@ function ProfilePage() {
             profile={profile}
             save={save}
             upload={upload}
-            verified={!verification.loading && verification.view.identity === 'verified'}
+            verified={identityVerified}
             {...headerExtras(profile)}
           />
 
@@ -151,23 +154,19 @@ function ProfilePage() {
             />
           )}
 
-          {/* Achievements (certificates, projects and internships — all earned
-              through MySkills) take the wide column; skills and details sit
-              beside them. On a phone they stack in that order.
+          {/* Achievements (certificates, mentor-verified projects and, later,
+              internships through the app) take the wide column; skill badges
+              and details sit beside them. Nothing but the details is typed in
+              by the student. On a phone they stack in that order.
               The profile is deliberately fresh: no education history or past
               jobs. */}
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:items-start">
             <div className="lg:col-span-2">
-              <ProjectsSection
-                profile={profile}
-                save={save}
-                verification={verification.view}
-                certificate={<CertificateCard />}
-              />
+              <AchievementsSection certificate={<CertificateCard />} projects={projects} />
             </div>
             <div className="space-y-5">
-              <SkillsSection profile={profile} save={save} badges={badges} />
-              <DetailsSection profile={profile} save={save} />
+              <SkillsSection badges={badges} />
+              <DetailsSection profile={profile} save={save} verified={identityVerified} />
             </div>
           </div>
         </div>
