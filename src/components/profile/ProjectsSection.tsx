@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { ExternalLink, FolderKanban, Pencil, Trash2 } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { ExternalLink, FolderKanban, Pencil, Plus, Trash2 } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { newId, type Profile, type ProfilePatch, type Project } from '@/lib/profile'
 import { Field, Modal, PrimaryButton, Section, Textarea } from './ui'
@@ -15,15 +15,22 @@ function safeLink(url?: string): string | null {
   return v && /^https?:\/\//i.test(v) ? v : null
 }
 
+/**
+ * Everything a student has earned on MySkills, in one card: certificates on
+ * top, then the projects and internships they've done through the platform.
+ */
 export function ProjectsSection({
   profile,
   save,
   verification,
+  certificate,
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
   /** Omit to hide verification badges. */
   verification?: VerificationView
+  /** The certificates block, shown above the projects. */
+  certificate?: ReactNode
 }) {
   const list = profile.projects
   const [editing, setEditing] = useState<Project | null>(null)
@@ -54,7 +61,24 @@ export function ProjectsSection({
   }
 
   return (
-    <Section title="Projects & internships" onAdd={() => setEditing({ ...EMPTY, id: newId() })}>
+    <Section title="Achievements">
+      {certificate && (
+        <div className="mb-6">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Certificates</p>
+          {certificate}
+        </div>
+      )}
+
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Projects &amp; internships</p>
+        <button
+          type="button"
+          onClick={() => setEditing({ ...EMPTY, id: newId() })}
+          className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-50"
+        >
+          <Plus size={14} /> Add
+        </button>
+      </div>
       {list.length ? (
         <ul className="space-y-5">
           {list.map((x) => {

@@ -9,7 +9,6 @@ import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { skillTracks } from '@/lib/skillTracks'
 import { TRACK_PASS_PERCENT } from '@/lib/readinessScore'
 import { AppShell } from '@/components/app/AppShell'
-import { Section } from '@/components/profile/ui'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { ProjectsSection } from '@/components/profile/ProjectsSection'
@@ -23,8 +22,9 @@ export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 })
 
-/** Certificate + badge earned from the Foundation assessment. */
-function CertificateSection() {
+/** Certificate + badge earned from the Foundation assessment — shown inside
+ *  the Achievements card, above projects and internships. */
+function CertificateCard() {
   const [cert, setCert] = useState<Cert | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
@@ -52,16 +52,14 @@ function CertificateSection() {
   // page and made everything below jump once the fetch resolved.
   if (loading) {
     return (
-      <Section title="Certificate">
-        <div className="h-24 animate-pulse rounded-xl bg-ink-100" />
-      </Section>
+      <div className="h-24 animate-pulse rounded-xl bg-ink-100" />
     )
   }
 
   const tier = cert ? tierForCertificate(cert) : null
 
   return (
-    <Section title="Certificate">
+    <>
       {cert && tier ? (
         <div className={`rounded-xl border p-4 ${tier.ui.border} ${tier.ui.bg}`}>
           <div className="flex items-center justify-between gap-2">
@@ -103,7 +101,7 @@ function CertificateSection() {
           </Link>
         </div>
       )}
-    </Section>
+    </>
   )
 }
 
@@ -176,31 +174,23 @@ function ProfilePage() {
             />
           )}
 
-          {/* Two columns on desktop, one ordered stack on mobile. The column
-              wrappers are `contents` below lg, so their children become direct
-              flex items and `order-*` can interleave across columns — that's
-              what lets the certificate lead on a phone while still sitting in
-              the right-hand rail on desktop.
+          {/* Achievements (certificates, projects and internships — all earned
+              through MySkills) take the wide column; skills and details sit
+              beside them. On a phone they stack in that order.
               The profile is deliberately fresh: no education history or past
-              jobs. Projects (and, when they open, internships) are what a
-              student builds through MySkills. */}
-          <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3">
-            <div className="contents lg:col-span-2 lg:block lg:space-y-5">
-              <div className="order-2 lg:order-none">
-                <ProjectsSection profile={profile} save={save} verification={verification.view} />
-              </div>
+              jobs. */}
+          <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:items-start">
+            <div className="lg:col-span-2">
+              <ProjectsSection
+                profile={profile}
+                save={save}
+                verification={verification.view}
+                certificate={<CertificateCard />}
+              />
             </div>
-
-            <div className="contents lg:block lg:space-y-5">
-              <div className="order-1 lg:order-none">
-                <CertificateSection />
-              </div>
-              <div className="order-3 lg:order-none">
-                <SkillsSection profile={profile} save={save} verifiedSkills={verifiedSkills} />
-              </div>
-              <div className="order-4 lg:order-none">
-                <DetailsSection profile={profile} save={save} />
-              </div>
+            <div className="space-y-5">
+              <SkillsSection profile={profile} save={save} verifiedSkills={verifiedSkills} />
+              <DetailsSection profile={profile} save={save} />
             </div>
           </div>
         </div>
