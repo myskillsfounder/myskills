@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react'
-import { Camera, MapPin, Pencil } from 'lucide-react'
+import { BadgeCheck, Briefcase, Camera, MapPin, Pencil } from 'lucide-react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import { Field, Modal, PrimaryButton } from './ui'
 import { BannerCropper } from './BannerCropper'
 
 /** width / height -- must match the crop frame the banner is actually
  *  displayed at below, or a saved crop won't show what the user picked. */
-const BANNER_ASPECT_RATIO = 4
+const BANNER_ASPECT_RATIO = 5
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -18,10 +18,16 @@ export function ProfileHeader({
   profile,
   save,
   upload,
+  verified = false,
+  careerStage,
 }: {
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
   upload: (file: File, kind: 'avatar' | 'banner') => Promise<string>
+  /** Identity checked by MySkills — shown the way most apps do: a tick by the
+   *  name and a green ring round the photo, not a card of its own. */
+  verified?: boolean
+  careerStage?: string
 }) {
   const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState<'avatar' | 'banner' | null>(null)
@@ -104,7 +110,11 @@ export function ProfileHeader({
       <div className="px-5 pb-5 sm:px-6 sm:pb-6">
         <div className="-mt-12 flex items-end justify-between sm:-mt-16">
           <div className="relative">
-            <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-brand-100 text-2xl font-semibold text-brand-700 sm:h-32 sm:w-32">
+            <div
+              className={`flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-brand-100 text-2xl font-semibold text-brand-700 sm:h-32 sm:w-32 ${
+                verified ? 'ring-4 ring-emerald-500' : ''
+              }`}
+            >
               {profile.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -150,18 +160,36 @@ export function ProfileHeader({
           </button>
         </div>
 
-        <h1 className="mt-3 text-2xl font-semibold tracking-tight text-ink-900">
+        <h1 className="mt-3 flex items-center gap-1.5 text-2xl font-semibold tracking-tight text-ink-900">
           {profile.full_name || 'Your name'}
+          {verified && (
+            <BadgeCheck
+              size={22}
+              className="shrink-0 fill-emerald-500 text-white"
+              aria-label="Verified by MySkills"
+            >
+              <title>Verified by MySkills</title>
+            </BadgeCheck>
+          )}
         </h1>
-        {profile.headline && (
-          <p className="mt-1 text-sm text-ink-800">{profile.headline}</p>
-        )}
-        {profile.location && (
-          <p className="mt-1.5 inline-flex items-center gap-1 text-sm text-ink-600">
-            <MapPin size={14} />
-            {profile.location}
+        {profile.headline && <p className="mt-1 text-sm text-ink-800">{profile.headline}</p>}
+        {(profile.location || careerStage) && (
+          <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-600">
+            {profile.location && (
+              <span className="inline-flex items-center gap-1">
+                <MapPin size={14} />
+                {profile.location}
+              </span>
+            )}
+            {careerStage && (
+              <span className="inline-flex items-center gap-1">
+                <Briefcase size={14} />
+                {careerStage}
+              </span>
+            )}
           </p>
         )}
+
       </div>
 
       <Modal open={editing} title="Edit intro" onClose={() => setEditing(false)}>

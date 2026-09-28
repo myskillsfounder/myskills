@@ -124,6 +124,13 @@ function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () =>
  *  projects can still reach "Complete"). */
 type StepState = 'done' | 'partial' | 'todo' | 'none'
 
+/** Identity checked and every project on the profile verified — the point at
+ *  which the checklist has nothing left to ask, and the profile shows the
+ *  verified tick by the name instead. */
+export function isVerificationComplete(profile: Profile, view: VerificationView): boolean {
+  return view.identity === 'verified' && profile.projects.every((p) => view.status('project', p) === 'verified')
+}
+
 /** One row of the checklist — the KYC-app pattern: an icon that says at a
  *  glance whether the step is done, and a short line of why not if it isn't. */
 function Step({ label, state, detail }: { label: string; state: StepState; detail: string }) {

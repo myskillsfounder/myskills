@@ -13,10 +13,10 @@ import { Section } from '@/components/profile/ui'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { ProjectsSection } from '@/components/profile/ProjectsSection'
-import { VerificationSection } from '@/components/profile/VerificationSection'
+import { VerificationSection, isVerificationComplete } from '@/components/profile/VerificationSection'
 import { useVerification } from '@/lib/useVerification'
 import { SkillsSection } from '@/components/profile/SkillsSection'
-import { DetailsSection, ProfileCompletion } from '@/components/profile/DetailsSection'
+import { DetailsSection, ProfileCompletion, headerExtras } from '@/components/profile/DetailsSection'
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: requireOnboarded,
@@ -150,13 +150,24 @@ function ProfilePage() {
 
       {profile && (
         <div className="space-y-5">
-          <ProfileHeader profile={profile} save={save} upload={upload} />
+          <ProfileHeader
+            profile={profile}
+            save={save}
+            upload={upload}
+            verified={!verification.loading && verification.view.identity === 'verified'}
+            {...headerExtras(profile)}
+          />
 
           {/* Personal details moved out of onboarding — asked for here instead. */}
           <ProfileCompletion profile={profile} save={save} />
 
-          {/* KYC: a verified profile is one employers can trust. It isn't part of the score. */}
-          {!verification.loading && (
+          {/* KYC: a verified profile is one employers can trust. Once it's all
+              checked, the tick by the name says so — the checklist only shows
+              while there's something to do or a call is booked. */}
+          {!verification.loading &&
+            (!isVerificationComplete(profile, verification.view) ||
+              verification.request?.status === 'requested' ||
+              verification.request?.status === 'scheduled') && (
             <VerificationSection
               profile={profile}
               view={verification.view}
