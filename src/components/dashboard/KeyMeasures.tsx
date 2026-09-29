@@ -1,10 +1,27 @@
 import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, BookOpen, Clock, Flame, Target } from 'lucide-react'
+import { ArrowRight, BookOpen, Clock, Compass, Flame, Megaphone, Target } from 'lucide-react'
 import type { CourseProgress } from '@/lib/programmes'
 import { goalsStep } from '@/lib/onboardingContent'
 import { timeSeries } from '@/lib/timeTracker'
 import { rememberProgramme } from '@/lib/practiceProgramme'
+
+/** Each programme gets its own mark, so the two courses read apart at a
+ *  glance: a megaphone for marketing, a compass for finding your direction. */
+const COURSE_LOOK: Record<1 | 2, { icon: typeof BookOpen; tile: string; bar: string; text: string }> = {
+  1: {
+    icon: Megaphone,
+    tile: 'from-brand-400 to-brand-700 shadow-[0_6px_14px_-6px_rgba(111,99,226,0.7)]',
+    bar: 'from-brand-500 to-brand-700',
+    text: 'text-brand-700',
+  },
+  2: {
+    icon: Compass,
+    tile: 'from-emerald-400 to-teal-600 shadow-[0_6px_14px_-6px_rgba(16,185,129,0.7)]',
+    bar: 'from-emerald-500 to-teal-600',
+    text: 'text-emerald-700',
+  },
+}
 
 const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
 
@@ -68,10 +85,20 @@ export function KeyMeasures({
                     onClick={() => c.programme && rememberProgramme(c.programme)}
                     className="group block rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white">
-                        <BookOpen size={15} />
-                      </span>
+                    <div className="flex items-center gap-3">
+                      {(() => {
+                        const look = c.programme ? COURSE_LOOK[c.programme] : null
+                        const Icon = look?.icon ?? BookOpen
+                        return (
+                          <span
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/40 ${
+                              look?.tile ?? 'from-brand-500 to-brand-700'
+                            }`}
+                          >
+                            <Icon size={18} strokeWidth={2.2} />
+                          </span>
+                        )
+                      })()}
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-ink-900">{c.name}</p>
                         <p className="text-[11px] leading-snug text-ink-500">{c.detail}</p>
@@ -84,11 +111,17 @@ export function KeyMeasures({
                     <div className="mt-2.5 flex items-center gap-2">
                       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-100">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-700"
+                          className={`h-full rounded-full bg-gradient-to-r ${
+                            (c.programme && COURSE_LOOK[c.programme].bar) || 'from-brand-500 to-brand-700'
+                          }`}
                           style={{ width: c.percent > 0 ? `${Math.max(c.percent, 4)}%` : '0%' }}
                         />
                       </div>
-                      <span className="shrink-0 text-[11px] font-semibold tabular-nums text-brand-700">
+                      <span
+                        className={`shrink-0 text-[11px] font-semibold tabular-nums ${
+                          (c.programme && COURSE_LOOK[c.programme].text) || 'text-brand-700'
+                        }`}
+                      >
                         {c.status === 'Not started' ? c.status : `${c.percent}%`}
                       </span>
                     </div>
