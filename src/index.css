@@ -208,6 +208,11 @@ body {
   color: var(--color-ink-900);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+/* iPhone Safari zooms the page in when a field under 16px gets focus, and
+   doesn't zoom back out — so on phones, fields are 16px. */
+@media (max-width: 639px) {
+  .field { font-size: 1rem; }
+}
 .field::placeholder { color: var(--color-ink-400); }
 .field:hover { border-color: var(--color-ink-400); }
 .field:focus {

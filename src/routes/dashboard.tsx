@@ -169,12 +169,12 @@ function DashboardPage() {
         {/* Order is deliberate: the score (where you stand), then the
             programme (the structured way to raise it), then everything else. */}
         {profileLoading || !readiness ? (
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <Skeleton className="h-80 lg:col-span-2" />
             <Skeleton className="h-80" />
           </div>
         ) : (
-          <div className="grid items-stretch gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <ReadinessScoreCard
                 readiness={readiness}
