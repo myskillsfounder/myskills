@@ -4,6 +4,7 @@ import { Check } from 'lucide-react'
 import { trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { requireSession } from '@/lib/guards'
+import { takeAfterOnboarding } from '@/lib/afterOnboarding'
 import { careerStageStep, goalsStep, stepLabels } from '@/lib/onboardingContent'
 
 export const Route = createFileRoute('/onboarding')({
@@ -52,7 +53,7 @@ function OnboardingPage() {
     try {
       const method = await completeOnboarding({ career_stage: careerStage, goals })
       trackSignUp(method)
-      router.navigate({ to: '/dashboard' })
+      router.navigate({ to: takeAfterOnboarding() ?? '/dashboard' })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save your profile. Please try again.')
       setSubmitting(false)

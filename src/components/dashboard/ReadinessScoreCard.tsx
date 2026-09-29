@@ -242,8 +242,12 @@ function ActionSlider({ highlights }: { highlights: Highlights }) {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
+      {/* `contain: inline-size` stops the track (every slide side by side)
+          from counting toward the card's width — without it, a grid with no
+          set columns (the dashboard on phones) grows to fit all the slides
+          and the whole page renders wider than the screen. */}
       <div
-        className="overflow-hidden rounded-2xl"
+        className="overflow-hidden rounded-2xl [contain:inline-size]"
         aria-roledescription="carousel"
         onTouchStart={(e) => {
           touchX.current = e.touches[0].clientX

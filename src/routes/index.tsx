@@ -6,6 +6,7 @@ import {
   Bot,
   Briefcase,
   ClipboardCheck,
+  Clock,
   GraduationCap,
   HeartHandshake,
   Lock,
@@ -13,6 +14,7 @@ import {
   Target,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
+import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { skillTracks } from '@/lib/skillTracks'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { Navbar } from '@/components/landing/Navbar'
@@ -173,6 +175,60 @@ function PillarCard({
   )
 }
 
+/**
+ * The phone hero's one action: the aptitude test, which is step 1 of the
+ * Digital Marketing programme and unlocks Practice. A signed-out visitor
+ * goes through sign-up first; we remember where they were heading so
+ * onboarding sends them straight to the test (lib/afterOnboarding.ts).
+ */
+function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment' | '/signup'; signedIn: boolean }) {
+  return (
+    <div className="card-glass-dark mt-7 p-5 lg:hidden">
+      <div className="flex items-center gap-3.5">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-[0_6px_14px_-6px_rgba(111,99,226,0.8)] ring-1 ring-white/25">
+          <Target size={20} />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-200">Step 1 · Free</p>
+          <p className="mt-0.5 font-display text-xl font-semibold leading-tight text-white">Take the aptitude test</p>
+        </div>
+      </div>
+      <p className="mt-3 text-sm leading-relaxed text-white/70">
+        A quick look at how you already notice ads, offers and trends. It shows where to start and unlocks
+        Practice.
+      </p>
+      <ul className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-white/80">
+        {[
+          { icon: Clock, label: '5 minutes' },
+          { icon: Sparkles, label: 'No right answers' },
+          { icon: BadgeCheck, label: 'Free' },
+        ].map(({ icon: Icon, label }) => (
+          <li key={label} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1">
+            <Icon size={12} className="text-brand-200" />
+            {label}
+          </li>
+        ))}
+      </ul>
+      <Link
+        to={to}
+        onClick={() => !signedIn && setAfterOnboarding('/aptitude-assessment')}
+        className="press mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+      >
+        Start the aptitude test
+        <ArrowRight size={17} />
+      </Link>
+      {!signedIn && (
+        <p className="mt-3 text-center text-sm text-white/60">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-white underline-offset-2 hover:underline">
+            Sign in
+          </Link>
+        </p>
+      )}
+    </div>
+  )
+}
+
 function HomePage() {
   const { user } = useAuthUser()
   const assessmentTo = user ? '/aptitude-assessment' : '/signup'
@@ -194,28 +250,29 @@ function HomePage() {
             </svg>
           </span>
 
-          <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:px-8">
+          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-8 pb-12 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-12 lg:px-8">
             <div className="rise-in">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
                 <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
                 <Sparkles size={13} />
                 Powered by AI · Reviewed by people
               </span>
-              <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="mt-5 font-display text-[2.125rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
                 Personal &amp; Professional Development
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
 
-              {/* No CTA here — the hero's job is the idea, not the click.
-                  "Take the aptitude assessment" is the final CTA further
-                  down. The "Two kinds of skill" statement now closes the
-                  hero as its own centred line, below both columns. */}
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+              {/* On desktop the hero is the idea, not the click — "Take the
+                  aptitude assessment" is the final CTA further down. On a
+                  phone that's several screens away, so the phone hero gets
+                  the aptitude test as its first and only action. */}
+              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/70 sm:mt-5 sm:text-lg">
                 Personal skills and professional skills, built together — practising with AI so you move
                 fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
                 for it. Free to start.
               </p>
 
+              <AptitudeHeroCta to={assessmentTo} signedIn={Boolean(user)} />
             </div>
 
             <AiCoachPreview />
@@ -228,8 +285,18 @@ function HomePage() {
               "always one line" requirement as the statement below: a fluid,
               viewport-scaled font size instead of fixed steps, shrinking
               enough that three phrases plus icons still fit at 375px. */}
+          {/* Phones: the one-line row below would shrink to ~8px text, so
+              here the three points wrap at a readable size instead. */}
+          <ul className="relative flex flex-wrap justify-center gap-x-4 gap-y-2 px-4 text-xs text-white/70 sm:hidden">
+            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
+              <li key={t} className="inline-flex items-center gap-1.5">
+                <BadgeCheck size={13} className="shrink-0 text-brand-200" />
+                {t}
+              </li>
+            ))}
+          </ul>
           <ul
-            className="relative mx-auto flex max-w-6xl items-center justify-center whitespace-nowrap px-4 pt-2 text-white/70 sm:px-6 lg:px-8"
+            className="relative mx-auto hidden max-w-6xl items-center justify-center whitespace-nowrap px-4 pt-2 text-white/70 sm:flex sm:px-6 lg:px-8"
             style={{ fontSize: 'clamp(0.4rem, 2.15vw, 0.875rem)' }}
           >
             {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t, i, all) => (
@@ -432,6 +499,7 @@ function HomePage() {
             </div>
             <Link
               to={assessmentTo}
+              onClick={() => !user && setAfterOnboarding('/aptitude-assessment')}
               className="press relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
             >
               <Target size={16} />
