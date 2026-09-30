@@ -178,7 +178,7 @@ function SignupPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Start with the aptitude assessment and unlock all 8 tracks."
+      subtitle="Take a 5-minute aptitude assessment, then start practising — free."
       footer={
         <>
           Already have an account?{' '}

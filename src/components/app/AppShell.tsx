@@ -54,7 +54,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             MySkills
           </p>
           <p className="truncate text-xs font-medium text-ink-500">
-            Self-learning platform
+            Personal &amp; professional development
           </p>
         </div>
       </div>

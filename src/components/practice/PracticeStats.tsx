@@ -29,18 +29,21 @@ const C = 2 * Math.PI * R
  * track's own result is on the track list below.
  *
  * Progress is the same number as the LaunchPad's course card
- * (digitalMarketingProgress): the Foundation assessment, the 8 tracks, the
- * mentor review and the internship.
+ * (digitalMarketingProgress): the aptitude assessment, the Foundation
+ * assessment, the 8 tracks, the mentor review and the internship.
  */
 export function PracticeStats({
   practice,
   foundationDone,
+  aptitudeDone,
   mentorApproved,
   foundationPercent,
   liveSessions,
 }: {
   practice: PracticeSummary
   foundationDone: boolean
+  /** The marketing aptitude assessment — a step of the programme's progress. */
+  aptitudeDone: boolean
   mentorApproved: boolean
   /** Foundation assessment percent, or null if not taken. */
   foundationPercent: number | null
@@ -49,7 +52,7 @@ export function PracticeStats({
 }) {
   const rows = skillTracks.map((t) => ({ slug: t.slug, name: t.name, result: practice[t.slug] }))
   const practised = rows.filter((r) => r.result).length
-  const { percent } = digitalMarketingProgress(foundationDone, practised, skillTracks.length, mentorApproved)
+  const { percent } = digitalMarketingProgress(foundationDone, practised, skillTracks.length, mentorApproved, false, aptitudeDone)
   const points = Math.round(
     professionalPoints({
       dmTracksPassed: rows.filter((r) => (r.result?.percent ?? 0) >= TRACK_PASS_PERCENT).length,

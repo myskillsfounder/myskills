@@ -174,10 +174,18 @@ export function digitalMarketingProgress(
   totalTracks: number,
   mentorReviewed = false,
   internshipDone = false,
+  aptitudeDone = false,
 ): CourseProgress {
-  const steps = 1 + totalTracks + 2
+  // The aptitude assessment is a step of its own (it opens Practice), as in the
+  // Career Readiness Programme; then the Foundation assessment, the tracks, the
+  // mentor review and the internship.
+  const steps = 1 + 1 + totalTracks + 2
   const done =
-    (assessmentDone ? 1 : 0) + practicedTracks + (mentorReviewed ? 1 : 0) + (internshipDone ? 1 : 0)
+    (aptitudeDone ? 1 : 0) +
+    (assessmentDone ? 1 : 0) +
+    practicedTracks +
+    (mentorReviewed ? 1 : 0) +
+    (internshipDone ? 1 : 0)
   const percent = Math.round((done / steps) * 100)
   const practiceDone = assessmentDone && practicedTracks >= totalTracks
   return {
@@ -187,7 +195,11 @@ export function digitalMarketingProgress(
     percent,
     status: done === 0 ? 'Not started' : done >= steps ? 'Complete' : 'In progress',
     detail: !assessmentDone
-      ? 'Start with the aptitude assessment, then practise'
+      ? aptitudeDone
+        ? practicedTracks > 0
+          ? `${practicedTracks} of ${totalTracks} tracks practised`
+          : 'Aptitude done · start practising'
+        : 'Start with the aptitude assessment, then practise'
       : !practiceDone
         ? `Foundation done · ${practicedTracks} of ${totalTracks} tracks practised`
         : !mentorReviewed

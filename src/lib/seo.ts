@@ -73,7 +73,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   '/signup': {
     title: 'Create your free account | MySkills',
     description:
-      'Create a free MySkills account to take the digital marketing assessment and earn your certificate.',
+      'Create a free MySkills account. Take a 5-minute aptitude assessment, practise with an AI coach and work with real mentors on digital marketing and career skills.',
   },
   // The four partner pages share their words with the page components and
   // the prerender script: src/content/partner-pages.json.

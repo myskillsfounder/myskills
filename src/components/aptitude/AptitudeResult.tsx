@@ -42,7 +42,7 @@ export function AptitudeResult({ result }: { result: Result }) {
           'Each aptitude is read from what you already notice and do. A starting point, not a grade — there’s no pass or fail, and every one of these can be built.',
       }}
       reflection={result.reflection ? { label: 'What you’re most curious about', text: result.reflection } : null}
-      footnote="You get one attempt at this assessment. Next comes the Foundation assessment, which tests what you know — it opens after you’ve worked through some vocabulary."
+      footnote="You get one attempt at this assessment. The Foundation assessment, which earns your certificate, opens once you’ve learned some vocabulary."
     />
   )
 }

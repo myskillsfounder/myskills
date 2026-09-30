@@ -11,9 +11,9 @@ interface AuthShellProps {
 }
 
 const PROOF = [
-  'Benchmark your marketing skills in 10 minutes',
-  'Practice with real business scenarios',
-  'Earn a shareable certificate',
+  'Start with a 5-minute aptitude assessment',
+  'Practise digital marketing and career skills with an AI coach',
+  'Work with real mentors and build proof you can show',
 ]
 
 /**
@@ -48,7 +48,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
           </ul>
         </div>
 
-        <p className="text-xs text-white/40">Self-learning platform for digital marketers</p>
+        <p className="text-xs text-white/40">Personal and professional development, powered by AI</p>
       </aside>
 
       {/* Form pane */}

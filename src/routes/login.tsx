@@ -65,7 +65,7 @@ function LoginPage() {
   return (
     <AuthShell
       title="Welcome back"
-      subtitle="Sign in to continue your skill tracks."
+      subtitle="Sign in to pick up where you left off."
       footer={
         <>
           Don’t have an account?{' '}
