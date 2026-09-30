@@ -276,6 +276,7 @@ function PracticePage() {
                       <PracticeStats
                         practice={practice}
                         foundationDone={assessment != null}
+                        aptitudeDone={aptitude != null}
                         mentorApproved={dmReview.state === 'approved'}
                         foundationPercent={assessment?.overall.percent ?? null}
                         liveSessions={dmSessions.length}

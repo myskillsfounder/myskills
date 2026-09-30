@@ -12,7 +12,7 @@ import { computeReadiness, TRACK_PASS_PERCENT } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
-import { careerReadinessProgress, digitalMarketingProgress } from '@/lib/programmes'
+import { careerReadinessProgress, digitalMarketingProgress, type CourseProgress } from '@/lib/programmes'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { useMyAptitudeResult } from '@/lib/dmAptitude'
 import { useFoundationUnlock } from '@/lib/foundation'
@@ -138,6 +138,10 @@ function DashboardPage() {
     [practice],
   )
 
+  // A course appears once the student has started it.
+  const dmStarted = dmAptitude.result != null || assessment != null || practicedCount > 0
+  const crStarted = crAptitude.result != null || crProgress.modulesDone > 0
+
   // Only what the student has done on MySkills counts (see lib/readinessScore.ts).
   const estimate = useMemo(
     () =>
@@ -204,21 +208,26 @@ function DashboardPage() {
               streak={streak}
               startHere={startHere}
               courses={[
-                digitalMarketingProgress(
-                  assessment != null,
-                  practicedCount,
-                  skillTracks.length,
-                  dmReview.state === 'approved',
-                ),
-                careerReadinessProgress(
-                  crAptitude.result != null,
-                  crProgress.modulesDone,
-                  crProgress.modulesTotal,
-                  crReview.state === 'approved',
-                ),
-                // Digital Marketing always shows (it's where everyone starts);
-                // Career Readiness once the student has begun it.
-              ].filter((c) => c.status !== 'Not started' || c.programme === 1)}
+                // A course appears once the student has started it — taken its
+                // aptitude assessment or done any work — never before, so a new
+                // student's objective isn't a row of "Not started".
+                dmStarted &&
+                  digitalMarketingProgress(
+                    assessment != null,
+                    practicedCount,
+                    skillTracks.length,
+                    dmReview.state === 'approved',
+                    false,
+                    dmAptitude.result != null,
+                  ),
+                crStarted &&
+                  careerReadinessProgress(
+                    crAptitude.result != null,
+                    crProgress.modulesDone,
+                    crProgress.modulesTotal,
+                    crReview.state === 'approved',
+                  ),
+              ].filter((c): c is CourseProgress => c !== false)}
             />
           </div>
         )}
