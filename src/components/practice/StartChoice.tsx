@@ -65,12 +65,16 @@ export function StartChoice({
   recommended = null,
   showHeading = true,
   disabled = false,
+  tone = 'light',
 }: {
   onChoose?: (option: 'marketing' | 'personal', to: Option['to']) => void
   recommended?: 'marketing' | 'personal' | null
   showHeading?: boolean
   disabled?: boolean
+  /** 'dark' for the dark onboarding surface: glass cards, light text. */
+  tone?: 'light' | 'dark'
 }) {
+  const dark = tone === 'dark'
   return (
     <section aria-labelledby={showHeading ? 'start-choice' : undefined}>
       {showHeading && (
@@ -90,10 +94,20 @@ export function StartChoice({
         {OPTIONS.map((o) => (
           <article
             key={o.key}
-            className={`card flex flex-col p-5 transition-colors sm:p-6 ${o.hover}`}
+            className={`flex flex-col p-5 transition-colors sm:p-6 ${
+              dark
+                ? `card-glass-dark hover:border-white/25 ${recommended === o.key ? 'glow-edge' : ''}`
+                : `card ${o.hover}`
+            }`}
           >
             {recommended === o.key && (
-              <span className="mb-3 inline-flex self-start rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-200">
+              <span
+                className={`mb-3 inline-flex self-start rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${
+                  dark
+                    ? 'bg-emerald-400/15 text-emerald-300 ring-emerald-300/30'
+                    : 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+                }`}
+              >
                 Suggested for you
               </span>
             )}
@@ -104,25 +118,25 @@ export function StartChoice({
                 <o.icon size={22} />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">{o.programme}</p>
-                <h3 className="font-display text-xl font-semibold leading-tight text-ink-900">{o.title}</h3>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? 'text-white/55' : 'text-ink-500'}`}>{o.programme}</p>
+                <h3 className={`font-display text-xl font-semibold leading-tight ${dark ? 'text-white' : 'text-ink-900'}`}>{o.title}</h3>
               </div>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-ink-600">{o.blurb}</p>
+            <p className={`mt-4 text-sm leading-relaxed ${dark ? 'text-white/70' : 'text-ink-600'}`}>{o.blurb}</p>
 
-            <p className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Opens</p>
+            <p className={`mt-5 text-[11px] font-semibold uppercase tracking-wide ${dark ? 'text-white/50' : 'text-ink-500'}`}>Opens</p>
             <ul className="mt-2 space-y-2">
               {o.unlocks.map((u) => (
-                <li key={u} className="flex items-start gap-2.5 text-sm text-ink-700">
-                  <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-ink-400" />
+                <li key={u} className={`flex items-start gap-2.5 text-sm ${dark ? 'text-white/80' : 'text-ink-700'}`}>
+                  <CheckCircle2 size={16} className={`mt-0.5 shrink-0 ${dark ? 'text-brand-200' : 'text-ink-400'}`} />
                   {u}
                 </li>
               ))}
             </ul>
 
             <div className="mt-6 flex flex-1 flex-col justify-end gap-3">
-              <p className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
+              <p className={`inline-flex items-center gap-1.5 text-xs font-medium ${dark ? 'text-white/55' : 'text-ink-500'}`}>
                 <Clock size={13} /> 20 statements · about 5 minutes
               </p>
               {onChoose ? (

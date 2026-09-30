@@ -27,7 +27,7 @@ export interface GoalOption {
 }
 
 /** Step labels shown in the progress header (order defines the flow). */
-export const stepLabels = ['About you', 'Your goals', 'Get started'] as const
+export const stepLabels = ['Your goal', 'About you', 'Get started'] as const
 
 /* --------------------------------------------- Personal details (/profile) */
 
@@ -89,47 +89,64 @@ export const careerStageStep = {
 
 /* ------------------------------------------------------------------ Step 2 */
 
-/** The two groups, in the order the goals are shown. */
-export const goalGroups: { id: GoalOption['group']; label: string }[] = [
-  { id: 'personal', label: 'Career & personal skills' },
-  { id: 'marketing', label: 'Digital marketing' },
-]
+/** Which aptitude assessment a goal points toward (see recommendStart). */
+type StartSuggestion = 'marketing' | 'personal' | null
 
-export const goalsStep = {
-  title: 'What brings you here?',
-  subtitle: 'Pick everything that fits — it helps us suggest where to start.',
-  // Existing ids are kept: a student who onboarded earlier still sees their
-  // goals, with the same labels, on the LaunchPad.
-  options: [
-    { id: 'first-job', label: 'Land my first job or internship', group: 'personal' },
-    { id: 'confidence', label: 'Communicate and present with confidence', group: 'personal' },
-    { id: 'career-plan', label: 'Set clear career goals and a plan to reach them', group: 'personal' },
-    { id: 'leadership', label: 'Build leadership experience', group: 'personal' },
-    { id: 'habits', label: 'Build habits that keep me growing', group: 'personal' },
-    { id: 'job-ready', label: 'Build job-ready digital marketing skills', group: 'marketing' },
-    { id: 'interviews', label: 'Prepare for marketing interviews', group: 'marketing' },
-    { id: 'freelancing', label: 'Start freelancing with marketing services', group: 'marketing' },
-    { id: 'grow-business', label: 'Grow my own business online', group: 'marketing' },
-    { id: 'portfolio', label: 'Build a campaign portfolio', group: 'marketing' },
-    { id: 'seo-content', label: 'Learn SEO and content strategy', group: 'marketing' },
-    { id: 'paid-ads', label: 'Run better paid ad campaigns', group: 'marketing' },
-    { id: 'analytics', label: 'Understand analytics and reporting', group: 'marketing' },
-  ] as GoalOption[],
+export interface PrimaryGoal {
+  id: string
+  title: string
+  description: string
+  /** A lucide icon name, resolved in the onboarding page. */
+  icon: 'briefcase' | 'rocket' | 'sparkles' | 'trending-up' | 'laptop' | 'users'
+  start: StartSuggestion
 }
 
-/** Which aptitude assessment to suggest first, from the goals picked: the
- *  programme with more goals wins; a tie (or nothing picked) suggests neither,
- *  and both are shown equally. */
-export function recommendStart(goals: string[]): 'marketing' | 'personal' | null {
-  let personal = 0
-  let marketing = 0
-  for (const id of goals) {
-    const g = goalsStep.options.find((o) => o.id === id)?.group
-    if (g === 'personal') personal++
-    else if (g === 'marketing') marketing++
-  }
-  if (personal === marketing) return null
-  return personal > marketing ? 'personal' : 'marketing'
+/**
+ * The one goal a student is working towards — asked first, because everything
+ * after it (what to start with, what the LaunchPad calls their objective) is
+ * built on it. One answer, not a list: a single clear aim.
+ */
+export const goalStep = {
+  title: 'What’s the one goal you want to work towards?',
+  subtitle: 'Pick the one that matters most right now.',
+  options: [
+    { id: 'job', title: 'Find a new job', description: 'Land a role, or your first internship.', icon: 'briefcase', start: 'personal' },
+    { id: 'business', title: 'Start your own business', description: 'Turn an idea into something real.', icon: 'rocket', start: 'marketing' },
+    { id: 'skill', title: 'Learn a new skill', description: 'Build something you can show for it.', icon: 'sparkles', start: null },
+    { id: 'grow', title: 'Grow in my current career', description: 'Move up, or take on more.', icon: 'trending-up', start: 'personal' },
+    { id: 'freelance', title: 'Become a freelancer', description: 'Earn from your skills, on your terms.', icon: 'laptop', start: 'marketing' },
+    { id: 'confidence', title: 'Build confidence and leadership', description: 'Communicate, lead and back yourself.', icon: 'users', start: 'personal' },
+  ] as PrimaryGoal[],
+}
+
+/** Goals chosen under the earlier multi-select onboarding. They stay on those
+ *  accounts, so their labels stay resolvable (the LaunchPad objective shows one). */
+const LEGACY_GOAL_LABELS: Record<string, string> = {
+  'job-ready': 'Build job-ready digital marketing skills',
+  interviews: 'Prepare for marketing interviews',
+  freelancing: 'Start freelancing with marketing services',
+  'grow-business': 'Grow my own business online',
+  portfolio: 'Build a campaign portfolio',
+  'seo-content': 'Learn SEO and content strategy',
+  'paid-ads': 'Run better paid ad campaigns',
+  analytics: 'Understand analytics and reporting',
+  'first-job': 'Land my first job or internship',
+  confidence: 'Communicate and present with confidence',
+  'career-plan': 'Set clear career goals and a plan to reach them',
+  leadership: 'Build leadership experience',
+  habits: 'Build habits that keep me growing',
+}
+
+/** The label for a saved goal, current or earlier; unknown ids are shown as-is. */
+export function goalLabel(id: string): string {
+  return goalStep.options.find((o) => o.id === id)?.title ?? LEGACY_GOAL_LABELS[id] ?? id
+}
+
+/** Which aptitude assessment to suggest first, from the goal: business and
+ *  freelancing point at marketing; a job, growing or confidence at the
+ *  personal skills; "learn a new skill" is open, so neither is suggested. */
+export function recommendStart(goal: string | undefined): StartSuggestion {
+  return goalStep.options.find((o) => o.id === goal)?.start ?? null
 }
 
 /* ------------------------------------------------------------------ Step 3 */
@@ -138,5 +155,6 @@ export const startStep = {
   title: 'Where would you like to start?',
   subtitle:
     'Pick an aptitude assessment — 20 statements, about five minutes, no right answers. You can take the other one any time.',
+  goalPrefix: 'Your goal',
   skip: 'I’ll look around first',
 }
