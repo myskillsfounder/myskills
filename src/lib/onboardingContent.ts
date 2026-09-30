@@ -117,26 +117,40 @@ export const goalStep = {
   ] as PrimaryGoal[],
 }
 
-/** Goals chosen under the earlier multi-select onboarding. They stay on those
- *  accounts, so their labels stay resolvable (the LaunchPad objective shows one). */
-const LEGACY_GOAL_LABELS: Record<string, string> = {
-  'job-ready': 'Build job-ready digital marketing skills',
-  interviews: 'Prepare for marketing interviews',
-  freelancing: 'Start freelancing with marketing services',
-  'grow-business': 'Grow my own business online',
-  portfolio: 'Build a campaign portfolio',
-  'seo-content': 'Learn SEO and content strategy',
-  'paid-ads': 'Run better paid ad campaigns',
-  analytics: 'Understand analytics and reporting',
-  'first-job': 'Land my first job or internship',
-  'career-plan': 'Set clear career goals and a plan to reach them',
-  leadership: 'Build leadership experience',
-  habits: 'Build habits that keep me growing',
+/**
+ * Goals chosen under the earlier multi-select onboarding. They stay saved on
+ * those accounts, but the list no longer offers them, so each one is shown as
+ * the current goal closest to it (an old "Prepare for marketing interviews"
+ * reads "Find a new job"). Ids shared with today's list (confidence) need no
+ * entry.
+ */
+const LEGACY_GOALS: Record<string, string> = {
+  'job-ready': 'job',
+  interviews: 'job',
+  'first-job': 'job',
+  freelancing: 'freelance',
+  'grow-business': 'business',
+  portfolio: 'skill',
+  'seo-content': 'skill',
+  'paid-ads': 'skill',
+  analytics: 'skill',
+  'career-plan': 'grow',
+  leadership: 'confidence',
+  habits: 'confidence',
+}
+
+/** A saved goal as today's goal: itself, or the current one closest to an old id. */
+export function resolveGoal(id: string | undefined): PrimaryGoal | undefined {
+  if (!id) return undefined
+  const current = goalStep.options.find((o) => o.id === id)
+  if (current) return current
+  const mapped = LEGACY_GOALS[id]
+  return mapped ? goalStep.options.find((o) => o.id === mapped) : undefined
 }
 
 /** The label for a saved goal, current or earlier; unknown ids are shown as-is. */
 export function goalLabel(id: string): string {
-  return goalStep.options.find((o) => o.id === id)?.label ?? LEGACY_GOAL_LABELS[id] ?? id
+  return resolveGoal(id)?.label ?? id
 }
 
 /** What to start with: "digital marketing", "career and personal skills", or

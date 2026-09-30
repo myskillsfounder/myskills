@@ -1,5 +1,6 @@
-import { ArrowDown } from 'lucide-react'
-import { goalLabel } from '@/lib/onboardingContent'
+import { Link } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
+import { ASSESSMENT_ROUTE, START_LABEL, goalLabel, resolveGoal, type StartKey } from '@/lib/onboardingContent'
 import { GridBackdrop } from '@/components/landing/GridBackdrop'
 
 const STEPS = [
@@ -25,10 +26,13 @@ const STEPS = [
  * What a brand-new student sees in place of the score card: their path, in
  * four steps, with the first one current. A score of 0/100, a slider of
  * certificates and an hours counter say nothing before they've begun; this
- * says what happens and what to do first. The first step points at the
- * "Start here" choice in the objective card rather than repeating it.
+ * says what happens and what to do first. The first step's button starts the
+ * assessment their goal points to; the other is one link away, and the
+ * objective card beside it offers both.
  */
-export function FirstRunPath({ name, goal, onChoose }: { name: string; goal?: string; onChoose: () => void }) {
+export function FirstRunPath({ name, goal }: { name: string; goal?: string }) {
+  const suggested: StartKey = resolveGoal(goal)?.lean ?? 'personal'
+  const other: StartKey = suggested === 'marketing' ? 'personal' : 'marketing'
   return (
     <section className="surface-wood-dark rise-in relative h-full overflow-hidden rounded-2xl p-6 shadow-e2 sm:p-8">
       <GridBackdrop mask="ellipse 70% 60% at 85% 10%" />
@@ -74,14 +78,21 @@ export function FirstRunPath({ name, goal, onChoose }: { name: string; goal?: st
                   <p className="text-[15px] font-semibold text-white">{s.title}</p>
                   <p className="mt-0.5 text-sm leading-relaxed text-white/65">{s.body}</p>
                   {current && (
-                    <button
-                      type="button"
-                      onClick={onChoose}
-                      className="press mt-3 inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-                    >
-                      Choose your aptitude
-                      <ArrowDown size={15} />
-                    </button>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+                      <Link
+                        to={ASSESSMENT_ROUTE[suggested]}
+                        className="press inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+                      >
+                        Start the {START_LABEL[suggested]}
+                        <ArrowRight size={15} />
+                      </Link>
+                      <Link
+                        to={ASSESSMENT_ROUTE[other]}
+                        className="py-2 text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+                      >
+                        or take the {START_LABEL[other]}
+                      </Link>
+                    </div>
                   )}
                 </div>
               </li>
