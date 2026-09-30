@@ -11,6 +11,7 @@
  */
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { forgetStarted } from './startedCache'
 
 export type SkillKey = 'communication' | 'goal-setting' | 'growth-mindset' | 'leadership' | 'agile'
 
@@ -178,6 +179,7 @@ export async function submitAssessment(
     p_reflection: reflection.trim() || null,
   })
   if (error) fail(error)
+  forgetStarted()
   const r = data as { scores: Record<SkillKey, number>; reflection: string | null }
   return { scores: r.scores, reflection: r.reflection ?? null, completedAt: null }
 }

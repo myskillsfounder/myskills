@@ -79,6 +79,7 @@ export function KeyMeasures({
   streak,
   courses,
   startHere = false,
+  showHours = true,
 }: {
   goals: string[]
   streak: number
@@ -86,13 +87,16 @@ export function KeyMeasures({
   courses: CourseProgress[]
   /** The student hasn't taken any aptitude assessment yet. */
   startHere?: boolean
+  /** The hours card says nothing before they've begun, so a new student's
+   *  LaunchPad leaves it out. */
+  showHours?: boolean
 }) {
   const hours = useMemo(() => timeSeries('month').totalHours, [])
   const [primary, ...rest] = goals
 
   return (
     <div className="flex h-full flex-col gap-5">
-      <section className="card flex-1 p-5">
+      <section id={startHere ? 'start-here' : undefined} className="card flex-1 scroll-mt-20 p-5">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <Target size={16} />
@@ -182,6 +186,7 @@ export function KeyMeasures({
         {startHere && <StartHere />}
       </section>
 
+      {showHours && (
       <section className="card p-5">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
@@ -203,6 +208,7 @@ export function KeyMeasures({
         </p>
         <p className="mt-2 text-[11px] leading-relaxed text-ink-400">Tracked on this device.</p>
       </section>
+      )}
     </div>
   )
 }

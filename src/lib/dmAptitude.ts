@@ -12,6 +12,7 @@
  */
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { forgetStarted } from './startedCache'
 import { skillTracks } from './skillTracks'
 
 export type AptitudeKey = 'noticing' | 'offers' | 'creativity' | 'numbers' | 'curiosity'
@@ -181,6 +182,7 @@ export async function submitAptitude(
     p_reflection: reflection.trim() || null,
   })
   if (error) fail(error)
+  forgetStarted()
   const r = data as { scores: Record<AptitudeKey, number>; reflection: string | null }
   return { scores: r.scores, reflection: r.reflection ?? null, completedAt: null }
 }
