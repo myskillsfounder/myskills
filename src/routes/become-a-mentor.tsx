@@ -65,11 +65,13 @@ function validate(form: FormState): Partial<Record<keyof FormState, string>> {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) {
     errors.email = 'Enter a valid email address.'
   }
-  if (form.linkedin_url.trim() && !/^https:\/\/([a-z]+\.)?linkedin\.com\//i.test(form.linkedin_url.trim())) {
-    errors.linkedin_url = 'Should look like https://www.linkedin.com/in/your-name'
+  if (!/^https:\/\/([a-z]+\.)?linkedin\.com\//i.test(form.linkedin_url.trim())) {
+    errors.linkedin_url = 'Add your LinkedIn profile — it should look like https://www.linkedin.com/in/your-name'
   }
   if (len(form.location) > 80) errors.location = 'Please keep this under 80 characters.'
-  if (len(form.phone) > 32) errors.phone = 'Please keep this under 32 characters.'
+  if (!/^[0-9+() -]{7,20}$/.test(form.phone.trim())) {
+    errors.phone = 'Enter a phone number we can reach you on — digits, spaces, + or - only.'
+  }
   if (len(form.motivation) > 2000) errors.motivation = 'Please keep this under 2000 characters.'
   if (parseExpertise(form.expertise).length > 10) {
     errors.expertise = 'Up to 10 areas, separated by commas.'
@@ -224,7 +226,6 @@ function BecomeAMentorPage() {
                   value={form.linkedin_url}
                   onChange={set('linkedin_url')}
                   error={errors.linkedin_url}
-                  required={false}
                   type="url"
                   placeholder="https://www.linkedin.com/in/your-name"
                 />
@@ -250,7 +251,6 @@ function BecomeAMentorPage() {
                       value={form.phone}
                       onChange={set('phone')}
                       error={errors.phone}
-                      required={false}
                       type="tel"
                       autoComplete="tel"
                     />

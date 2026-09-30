@@ -141,6 +141,11 @@ export interface ListedMentor {
   linked: boolean
   account_email: string | null
   account_name: string | null
+  /** From docs/supabase-mentor-portal.sql — absent until that's run. */
+  ready?: boolean
+  accepting?: boolean
+  /** Required profile items still empty: 'bio' | 'expertise' | 'linkedin' | 'phone'. */
+  missing?: string[]
 }
 
 /** Staff with the Mentors section only. See docs/supabase-mentor-link.sql. */

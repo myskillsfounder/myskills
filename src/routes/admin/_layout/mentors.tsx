@@ -24,6 +24,13 @@ export const Route = createFileRoute('/admin/_layout/mentors')({
   ),
 })
 
+const MISSING_LABEL: Record<string, string> = {
+  bio: 'a bio',
+  expertise: 'areas of expertise',
+  linkedin: 'their LinkedIn',
+  phone: 'a phone number',
+}
+
 const FILTERS: { label: string; value: ApplicationStatus | 'all' }[] = [
   { label: 'Pending', value: 'pending' },
   { label: 'Approved', value: 'approved' },
@@ -212,9 +219,13 @@ function ListedMentorCard({
           <p className="mt-0.5 text-sm font-medium text-brand-600">{mentor.headline}</p>
         </div>
         {mentor.linked ? (
-          <Badge tone="success" icon={Check}>
-            Linked
-          </Badge>
+          <div className="flex flex-wrap justify-end gap-1.5">
+            <Badge tone="success" icon={Check}>
+              Linked
+            </Badge>
+            {mentor.ready === false && <Badge tone="warning">Profile incomplete</Badge>}
+            {mentor.ready && mentor.accepting === false && <Badge tone="neutral">Paused</Badge>}
+          </div>
         ) : (
           <Badge tone="warning">Not linked yet</Badge>
         )}
@@ -240,6 +251,12 @@ function ListedMentorCard({
             <span className="break-all font-medium text-ink-900">{mentor.account_email}</span>
             {mentor.account_name && <span className="text-ink-500"> · {mentor.account_name}</span>}
           </p>
+          {mentor.ready === false && mentor.missing && mentor.missing.length > 0 && (
+            <p className="w-full text-sm text-amber-800">
+              Students can’t see them until they add: {mentor.missing.map((k) => MISSING_LABEL[k] ?? k).join(', ')}. They
+              do this in their Mentor portal.
+            </p>
+          )}
           {confirming ? (
             <div className="flex gap-2">
               <Button

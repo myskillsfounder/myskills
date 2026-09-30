@@ -18,7 +18,7 @@ import {
 import { signOut } from '@/lib/auth'
 import { useAssessmentDone } from '@/lib/assessmentResults'
 import { useAptitudeDone } from '@/lib/dmAptitude'
-import { useIsListedMentor } from '@/lib/mentorMatches'
+import { useMentorNav } from '@/lib/mentorPortal'
 import { useProfile } from '@/lib/useProfile'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
@@ -46,8 +46,10 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   // Mentors whose listing is linked to their account also see their students.
-  const isListedMentor = useIsListedMentor()
-  const nav = isListedMentor ? [...NAV, { to: '/mentoring', label: 'My students', icon: GraduationCap }] : NAV
+  const { isMentor, waiting } = useMentorNav()
+  const nav: { to: string; label: string; icon: IconType; badge?: number }[] = isMentor
+    ? [...NAV, { to: '/mentor-portal', label: 'Mentor portal', icon: GraduationCap, badge: waiting }]
+    : NAV
 
   async function handleSignOut() {
     await signOut()
@@ -73,7 +75,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* Nav */}
       <nav className="flex-1 space-y-1 px-3 py-5">
-        {nav.map(({ to, label, icon: Icon }) => {
+        {nav.map(({ to, label, icon: Icon, badge }) => {
           const active = pathname === to
           return (
             <Link
@@ -106,6 +108,14 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                 }`}
               />
               <span className="relative">{label}</span>
+              {badge ? (
+                <span
+                  className="relative ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white"
+                  aria-label={`${badge} waiting`}
+                >
+                  {badge}
+                </span>
+              ) : null}
             </Link>
           )
         })}
