@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
+import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { ArrowRight, Briefcase, ClipboardCheck, Dumbbell, GraduationCap, Lock } from 'lucide-react'
 import { Eyebrow } from './Eyebrow'
 import { GridBackdrop } from './GridBackdrop'
@@ -105,6 +106,7 @@ export function HowItWorks() {
 
               <Link
                 to="/signup"
+                onClick={() => setAfterOnboarding('/aptitude-assessment')}
                 className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-200 hover:text-white"
               >
                 {step.cta}

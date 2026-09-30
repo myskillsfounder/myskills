@@ -1,6 +1,6 @@
 /**
  * Onboarding content — edit copy, options, and placeholders here (no JSX changes
- * needed). Kerala + digital-marketing flavored.
+ * needed). Covers both programmes: Digital Marketing and Career Readiness.
  *
  * Consumed by routes/onboarding.tsx (career stage + goals) and by the profile
  * "complete your profile" flow (personal details). Personal details are NOT
@@ -22,10 +22,12 @@ export interface OptionCard {
 export interface GoalOption {
   id: string
   label: string
+  /** Which programme this goal points toward — used to suggest where to start. */
+  group: 'personal' | 'marketing'
 }
 
 /** Step labels shown in the progress header (order defines the flow). */
-export const stepLabels = ['Career stage', 'Your goals'] as const
+export const stepLabels = ['About you', 'Your goals', 'Get started'] as const
 
 /* --------------------------------------------- Personal details (/profile) */
 
@@ -47,20 +49,20 @@ export const personalDetailsForm = {
     dob: { label: 'Date of birth' },
     gender: { label: 'Gender', placeholder: 'Select gender' },
     country: { label: 'Country', placeholder: 'India', default: 'India' },
-    state: { label: 'State', placeholder: 'Kerala', default: 'Kerala' },
+    state: { label: 'State', placeholder: 'Your state', default: '' },
   },
 }
 
 /* ------------------------------------------------------------------ Step 1 */
 
 export const careerStageStep = {
-  title: 'Career stage',
-  subtitle: 'Tell us where you are now so recommendations can match your next move.',
+  title: 'Where are you right now?',
+  subtitle: 'So we can match what you practise to your next move.',
   options: [
     {
       id: 'studying',
       title: 'Currently studying',
-      description: 'School, college, university, or an active marketing course.',
+      description: 'School, college, university or a course.',
     },
     {
       id: 'graduated',
@@ -87,17 +89,54 @@ export const careerStageStep = {
 
 /* ------------------------------------------------------------------ Step 2 */
 
+/** The two groups, in the order the goals are shown. */
+export const goalGroups: { id: GoalOption['group']; label: string }[] = [
+  { id: 'personal', label: 'Career & personal skills' },
+  { id: 'marketing', label: 'Digital marketing' },
+]
+
 export const goalsStep = {
-  title: 'Your goals',
-  subtitle: 'Choose what you would like to achieve with MySkills.',
+  title: 'What brings you here?',
+  subtitle: 'Pick everything that fits — it helps us suggest where to start.',
+  // Existing ids are kept: a student who onboarded earlier still sees their
+  // goals, with the same labels, on the LaunchPad.
   options: [
-    { id: 'job-ready', label: 'Build job-ready digital marketing skills' },
-    { id: 'interviews', label: 'Prepare for marketing interviews' },
-    { id: 'freelancing', label: 'Start freelancing with marketing services' },
-    { id: 'grow-business', label: 'Grow my own business online' },
-    { id: 'portfolio', label: 'Build a campaign portfolio' },
-    { id: 'seo-content', label: 'Learn SEO and content strategy' },
-    { id: 'paid-ads', label: 'Run better paid ad campaigns' },
-    { id: 'analytics', label: 'Understand analytics and reporting' },
+    { id: 'first-job', label: 'Land my first job or internship', group: 'personal' },
+    { id: 'confidence', label: 'Communicate and present with confidence', group: 'personal' },
+    { id: 'career-plan', label: 'Set clear career goals and a plan to reach them', group: 'personal' },
+    { id: 'leadership', label: 'Build leadership experience', group: 'personal' },
+    { id: 'habits', label: 'Build habits that keep me growing', group: 'personal' },
+    { id: 'job-ready', label: 'Build job-ready digital marketing skills', group: 'marketing' },
+    { id: 'interviews', label: 'Prepare for marketing interviews', group: 'marketing' },
+    { id: 'freelancing', label: 'Start freelancing with marketing services', group: 'marketing' },
+    { id: 'grow-business', label: 'Grow my own business online', group: 'marketing' },
+    { id: 'portfolio', label: 'Build a campaign portfolio', group: 'marketing' },
+    { id: 'seo-content', label: 'Learn SEO and content strategy', group: 'marketing' },
+    { id: 'paid-ads', label: 'Run better paid ad campaigns', group: 'marketing' },
+    { id: 'analytics', label: 'Understand analytics and reporting', group: 'marketing' },
   ] as GoalOption[],
+}
+
+/** Which aptitude assessment to suggest first, from the goals picked: the
+ *  programme with more goals wins; a tie (or nothing picked) suggests neither,
+ *  and both are shown equally. */
+export function recommendStart(goals: string[]): 'marketing' | 'personal' | null {
+  let personal = 0
+  let marketing = 0
+  for (const id of goals) {
+    const g = goalsStep.options.find((o) => o.id === id)?.group
+    if (g === 'personal') personal++
+    else if (g === 'marketing') marketing++
+  }
+  if (personal === marketing) return null
+  return personal > marketing ? 'personal' : 'marketing'
+}
+
+/* ------------------------------------------------------------------ Step 3 */
+
+export const startStep = {
+  title: 'Where would you like to start?',
+  subtitle:
+    'Pick an aptitude assessment — 20 statements, about five minutes, no right answers. You can take the other one any time.',
+  skip: 'I’ll look around first',
 }
