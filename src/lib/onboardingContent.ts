@@ -2,7 +2,8 @@
  * Onboarding content — edit copy, options, and placeholders here (no JSX changes
  * needed). Covers both programmes: Digital Marketing and Career Readiness.
  *
- * Consumed by routes/onboarding.tsx (career stage + goals) and by the profile
+ * Consumed by routes/onboarding.tsx (the sentence: stage, goal and where to
+ * start, then the plan built from them) and by the profile
  * "complete your profile" flow (personal details). Personal details are NOT
  * asked during onboarding any more — sign-up stays short and people fill them
  * in later from /profile.
@@ -12,22 +13,6 @@ export interface SelectOption {
   value: string
   label: string
 }
-
-export interface OptionCard {
-  id: string
-  title: string
-  description: string
-}
-
-export interface GoalOption {
-  id: string
-  label: string
-  /** Which programme this goal points toward — used to suggest where to start. */
-  group: 'personal' | 'marketing'
-}
-
-/** Step labels shown in the progress header (order defines the flow). */
-export const stepLabels = ['Your goal', 'About you', 'Get started'] as const
 
 /* --------------------------------------------- Personal details (/profile) */
 
@@ -53,48 +38,43 @@ export const personalDetailsForm = {
   },
 }
 
-/* ------------------------------------------------------------------ Step 1 */
+/* ---------------------------------------------------------- The sentence */
+
+/*
+ * Onboarding is one sentence, completed with three dropdowns:
+ *
+ *   "I'm [a student] and I want to [find a new job], starting with [digital marketing]."
+ *
+ * and then MySkills answers with a plan built from those three choices. Each
+ * option carries the words that go into the sentence (`chip`) as well as the
+ * label and description shown in its dropdown.
+ */
+
+export interface SentenceOption {
+  id: string
+  label: string
+  description: string
+  /** The words that fill the blank in the sentence. */
+  chip: string
+}
+
+export interface StageOption extends SentenceOption {
+  /** How the answer refers to them: "As a student…", "As someone returning…". */
+  who: string
+}
 
 export const careerStageStep = {
   title: 'Where are you right now?',
   subtitle: 'So we can match what you practise to your next move.',
   options: [
-    {
-      id: 'student',
-      title: 'Student',
-      description: 'In school, college or university.',
-    },
-    {
-      id: 'final-year',
-      title: 'Final-year student',
-      description: 'Close to finishing, with internships and a first job ahead.',
-    },
-    {
-      id: 'graduate',
-      title: 'Recent graduate',
-      description: 'Finished studying and looking for a first role.',
-    },
-    {
-      id: 'professional',
-      title: 'Working professional',
-      description: 'Employed and looking to grow or change direction.',
-    },
-    {
-      id: 'freelancer',
-      title: 'Freelancer or business owner',
-      description: 'Working for yourself, with clients or your own venture.',
-    },
-    {
-      id: 'returning',
-      title: 'Returning after a break',
-      description: 'Getting back to work after time away.',
-    },
-    {
-      id: 'exploring',
-      title: 'Still exploring',
-      description: 'Not sure yet which direction suits you.',
-    },
-  ] as OptionCard[],
+    { id: 'student', label: 'Student', description: 'In school, college or university.', chip: 'a student', who: 'a student' },
+    { id: 'final-year', label: 'Final-year student', description: 'Close to finishing, with internships and a first job ahead.', chip: 'a final-year student', who: 'a final-year student' },
+    { id: 'graduate', label: 'Recent graduate', description: 'Finished studying and looking for a first role.', chip: 'a recent graduate', who: 'a recent graduate' },
+    { id: 'professional', label: 'Working professional', description: 'Employed and looking to grow or change direction.', chip: 'a working professional', who: 'a working professional' },
+    { id: 'freelancer', label: 'Freelancer or business owner', description: 'Working for yourself, with clients or your own venture.', chip: 'a freelancer or business owner', who: 'a freelancer or business owner' },
+    { id: 'returning', label: 'Returning after a break', description: 'Getting back to work after time away.', chip: 'returning after a break', who: 'someone returning after a break' },
+    { id: 'exploring', label: 'Still exploring', description: 'Not sure yet which direction suits you.', chip: 'still exploring', who: 'someone still exploring' },
+  ] as StageOption[],
 }
 
 /** Answers saved before the list was rewritten. They stay valid: an account
@@ -106,38 +86,34 @@ const LEGACY_CAREER_STAGES: Record<string, string> = {
 
 /** The label for a saved career stage, old or new; unknown ids are shown as-is. */
 export function careerStageLabel(id: string): string {
-  return careerStageStep.options.find((o) => o.id === id)?.title ?? LEGACY_CAREER_STAGES[id] ?? id
+  return careerStageStep.options.find((o) => o.id === id)?.label ?? LEGACY_CAREER_STAGES[id] ?? id
 }
 
-/* ------------------------------------------------------------------ Step 2 */
+export type StartKey = 'marketing' | 'personal'
 
-/** Which aptitude assessment a goal points toward (see recommendStart). */
-type StartSuggestion = 'marketing' | 'personal' | null
-
-export interface PrimaryGoal {
-  id: string
-  title: string
-  description: string
-  /** A lucide icon name, resolved in the onboarding page. */
+export interface PrimaryGoal extends SentenceOption {
+  /** The same goal as the answer says it, speaking to them: "start your own business". */
+  you: string
+  /** A lucide icon name, resolved where it's drawn. */
   icon: 'briefcase' | 'rocket' | 'sparkles' | 'trending-up' | 'laptop' | 'users'
-  start: StartSuggestion
+  /** The programme this goal most naturally starts in. */
+  lean: StartKey
 }
 
 /**
- * The one goal a student is working towards — asked first, because everything
- * after it (what to start with, what the LaunchPad calls their objective) is
- * built on it. One answer, not a list: a single clear aim.
+ * The one goal a student is working towards. One answer, not a list: a single
+ * clear aim that the plan, and the LaunchPad's objective, are built on.
  */
 export const goalStep = {
   title: 'What’s the one goal you want to work towards?',
   subtitle: 'Pick the one that matters most right now.',
   options: [
-    { id: 'job', title: 'Find a new job', description: 'Land a role, or your first internship.', icon: 'briefcase', start: 'personal' },
-    { id: 'business', title: 'Start your own business', description: 'Turn an idea into something real.', icon: 'rocket', start: 'marketing' },
-    { id: 'skill', title: 'Learn a new skill', description: 'Build something you can show for it.', icon: 'sparkles', start: null },
-    { id: 'grow', title: 'Grow in my current career', description: 'Move up, or take on more.', icon: 'trending-up', start: 'personal' },
-    { id: 'freelance', title: 'Become a freelancer', description: 'Earn from your skills, on your terms.', icon: 'laptop', start: 'marketing' },
-    { id: 'confidence', title: 'Build confidence and leadership', description: 'Communicate, lead and back yourself.', icon: 'users', start: 'personal' },
+    { id: 'job', label: 'Find a new job', description: 'Land a role, or your first internship.', chip: 'find a new job', you: 'find a new job', icon: 'briefcase', lean: 'personal' },
+    { id: 'business', label: 'Start your own business', description: 'Turn an idea into something real.', chip: 'start my own business', you: 'start your own business', icon: 'rocket', lean: 'marketing' },
+    { id: 'skill', label: 'Learn a new skill', description: 'Build something you can show for it.', chip: 'learn a new skill', you: 'learn a new skill', icon: 'sparkles', lean: 'marketing' },
+    { id: 'grow', label: 'Grow in my current career', description: 'Move up, or take on more.', chip: 'grow in my current career', you: 'grow in your current career', icon: 'trending-up', lean: 'personal' },
+    { id: 'freelance', label: 'Become a freelancer', description: 'Earn from your skills, on your terms.', chip: 'become a freelancer', you: 'become a freelancer', icon: 'laptop', lean: 'marketing' },
+    { id: 'confidence', label: 'Build confidence and leadership', description: 'Communicate, lead and back yourself.', chip: 'build confidence and leadership', you: 'build confidence and leadership', icon: 'users', lean: 'personal' },
   ] as PrimaryGoal[],
 }
 
@@ -153,7 +129,6 @@ const LEGACY_GOAL_LABELS: Record<string, string> = {
   'paid-ads': 'Run better paid ad campaigns',
   analytics: 'Understand analytics and reporting',
   'first-job': 'Land my first job or internship',
-  confidence: 'Communicate and present with confidence',
   'career-plan': 'Set clear career goals and a plan to reach them',
   leadership: 'Build leadership experience',
   habits: 'Build habits that keep me growing',
@@ -161,22 +136,94 @@ const LEGACY_GOAL_LABELS: Record<string, string> = {
 
 /** The label for a saved goal, current or earlier; unknown ids are shown as-is. */
 export function goalLabel(id: string): string {
-  return goalStep.options.find((o) => o.id === id)?.title ?? LEGACY_GOAL_LABELS[id] ?? id
+  return goalStep.options.find((o) => o.id === id)?.label ?? LEGACY_GOAL_LABELS[id] ?? id
 }
 
-/** Which aptitude assessment to suggest first, from the goal: business and
- *  freelancing point at marketing; a job, growing or confidence at the
- *  personal skills; "learn a new skill" is open, so neither is suggested. */
-export function recommendStart(goal: string | undefined): StartSuggestion {
-  return goalStep.options.find((o) => o.id === goal)?.start ?? null
-}
-
-/* ------------------------------------------------------------------ Step 3 */
-
-export const startStep = {
+/** What to start with: "digital marketing", "career and personal skills", or
+ *  "whatever you suggest" (then the goal decides). */
+export const focusStep = {
   title: 'Where would you like to start?',
-  subtitle:
-    'Pick an aptitude assessment — 20 statements, about five minutes, no right answers. You can take the other one any time.',
-  goalPrefix: 'Your goal',
-  skip: 'I’ll look around first',
+  options: [
+    { id: 'marketing', label: 'Digital marketing', description: 'Eight skill tracks: SEO, ads, analytics and more.', chip: 'digital marketing' },
+    { id: 'personal', label: 'Career & personal skills', description: 'Goal setting, communication, leadership and more.', chip: 'career and personal skills' },
+    { id: 'unsure', label: 'Not sure yet', description: 'We’ll suggest one from your goal.', chip: 'whatever you suggest' },
+  ] as SentenceOption[],
+}
+
+/** Where each assessment lives. */
+export const ASSESSMENT_ROUTE: Record<StartKey, '/aptitude-assessment' | '/career-readiness-assessment'> = {
+  marketing: '/aptitude-assessment',
+  personal: '/career-readiness-assessment',
+}
+
+export const START_LABEL: Record<StartKey, string> = {
+  marketing: 'Marketing aptitude',
+  personal: 'Personal aptitude',
+}
+
+/* ------------------------------------------------------------------ The answer */
+
+export interface Plan {
+  start: StartKey
+  other: StartKey
+  /** "Based on": the three choices, in words. */
+  basedOn: string[]
+  /** One sentence: what to start with, and why. */
+  headline: string
+  /** Three steps, in order. */
+  steps: { title: string; body: string }[]
+}
+
+const STEPS: Record<StartKey, Plan['steps']> = {
+  marketing: [
+    {
+      title: 'Take the Marketing aptitude',
+      body: '20 statements, about five minutes. It shows how marketing already shows up in your life, and opens Practice.',
+    },
+    {
+      title: 'Practise eight skill tracks',
+      body: 'Real scenarios with an AI coach — SEO, Google Ads, Meta Ads, analytics and more — then the Foundation assessment for your certificate.',
+    },
+    {
+      title: 'Work with a mentor',
+      body: 'Ask a mentor to work with you. They see your results, run sessions and award skill badges when you’ve earned them.',
+    },
+  ],
+  personal: [
+    {
+      title: 'Take the Personal aptitude',
+      body: '20 statements, about five minutes. It shows your starting point in goal setting, communication, leadership, agile and growth mindset.',
+    },
+    {
+      title: 'Work through five modules',
+      body: 'Practise each one in writing with an AI coach, at your own pace.',
+    },
+    {
+      title: 'Get a mentor’s feedback',
+      body: 'A mentor reviews your progress and helps you build proof of it.',
+    },
+  ],
+}
+
+/**
+ * The answer to the sentence. The start comes from what they said they'd like
+ * to start with; "not sure" lets the goal decide. Deterministic on purpose —
+ * the same three choices always give the same plan.
+ */
+export function planFor(stageId: string, goalId: string, focusId: string): Plan {
+  const stage = careerStageStep.options.find((o) => o.id === stageId)
+  const goal = goalStep.options.find((o) => o.id === goalId)
+  const focus = focusStep.options.find((o) => o.id === focusId)
+
+  const start: StartKey = focusId === 'marketing' || focusId === 'personal' ? focusId : (goal?.lean ?? 'personal')
+  const other: StartKey = start === 'marketing' ? 'personal' : 'marketing'
+
+  const because = focusId === 'marketing' || focusId === 'personal' ? '' : ' — it’s the closest fit to your goal'
+  return {
+    start,
+    other,
+    basedOn: [stage?.label, goal?.label, focus?.label].filter((x): x is string => Boolean(x)),
+    headline: `As ${stage?.who ?? 'you'}, working to ${goal?.you ?? 'reach your goal'}, I’d start with the ${START_LABEL[start]}${because}.`,
+    steps: STEPS[start],
+  }
 }
