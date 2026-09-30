@@ -34,7 +34,7 @@ const validDetails = (v: string) => /https?:\/\//i.test(v) || v.split(/\s+/).fil
  *  there needs to be a way to call the learner back. */
 const CONTACT: Record<'contact-name' | 'contact-phone' | 'contact-email', { ask: string; placeholder: string }> = {
   'contact-name': {
-    ask: 'No mentor is online right now, so I’ll queue this — what’s your full name, so a mentor knows who they’re about to talk to?',
+    ask: 'No mentor is online right now — leave your details and a mentor will get back to you. What’s your full name?',
     placeholder: 'Full name',
   },
   'contact-phone': {
@@ -383,8 +383,20 @@ export function BotIntake({
                 disabled={connecting}
                 className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 disabled:opacity-60"
               >
-                {connecting ? <Loader2 size={15} className="animate-spin" /> : <UserRound size={15} />}
-                {connecting ? 'Connecting…' : mentorName ? `Connect me with ${mentorName}` : 'Join the queue'}
+                {connecting ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : mentorName ? (
+                  <UserRound size={15} />
+                ) : (
+                  <Send size={15} />
+                )}
+                {connecting
+                  ? mentorName
+                    ? 'Connecting…'
+                    : 'Sending…'
+                  : mentorName
+                    ? `Connect me with ${mentorName}`
+                    : 'Submit my details'}
               </button>
               <button
                 type="button"
@@ -406,7 +418,7 @@ export function BotIntake({
             <p className="max-w-[76%] text-[11px] leading-relaxed text-ink-500">
               {mentorName
                 ? 'Mentors are volunteers, so give them a moment to reply once you’re connected.'
-                : 'No mentor is online this moment — you’ll join the queue and we’ll connect you as soon as one is free.'}
+                : 'No mentor is online right now. Submit your details and a mentor will get back to you — you don’t need to wait here.'}
             </p>
           </div>
         )}

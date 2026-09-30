@@ -183,7 +183,8 @@ function SupportPage() {
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-ink-300" /> No mentor online — you’ll be queued
+                <span className="h-2 w-2 rounded-full bg-ink-300" /> No mentor online right now — leave your details and
+                we’ll get back to you
               </span>
             )
           }
@@ -207,8 +208,46 @@ function SupportPage() {
           />
         )}
 
-        {/* 2) Waiting room */}
-        {session?.status === 'waiting' && (
+        {/* 2a) A request left with contact details while no mentor was online:
+            it's a callback, not a live wait — confirm it and let them go. */}
+        {session?.status === 'waiting' && (session.email || session.contact_name) && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-600 text-white">
+              <Check size={22} />
+            </span>
+            <h2 className="mt-3 text-base font-semibold text-emerald-900">We’ve got your details</h2>
+            <p className="mt-1 text-sm leading-relaxed text-emerald-800">
+              A mentor will get back to you
+              {session.email ? (
+                <>
+                  {' '}
+                  at <span className="font-semibold">{session.email}</span>
+                </>
+              ) : null}
+              {session.phone ? (
+                <>
+                  {' '}
+                  or on <span className="font-semibold">{session.phone}</span>
+                </>
+              ) : null}
+              . You don’t need to keep this page open.
+            </p>
+            <div className="mt-4 rounded-xl bg-white/70 p-3 text-left">
+              <p className="text-xs font-semibold text-ink-800">{session.topic}</p>
+              <p className="mt-0.5 text-xs text-ink-600">{session.details}</p>
+            </div>
+            <button
+              type="button"
+              onClick={leave}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-white px-4 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100"
+            >
+              <X size={13} /> Withdraw request
+            </button>
+          </div>
+        )}
+
+        {/* 2b) Waiting room — a live connect to a mentor who's online */}
+        {session?.status === 'waiting' && !(session.email || session.contact_name) && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
             <Loader2 size={26} className="mx-auto animate-spin text-amber-600" />
             <h2 className="mt-3 text-base font-semibold text-amber-900">Waiting for a mentor…</h2>
