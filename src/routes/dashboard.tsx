@@ -95,16 +95,6 @@ function greet() {
   return 'Good evening'
 }
 
-/** The path card's first step: bring the "Start here" choice into view and
- *  light it up for a moment, so it's clear where to act. */
-function pointToStart() {
-  const el = document.getElementById('start-here')
-  if (!el) return
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  el.classList.add('attention')
-  window.setTimeout(() => el.classList.remove('attention'), 8000)
-}
-
 function DashboardPage() {
   const { user } = useAuthUser()
   const raw = userDisplayName(user).split(' ')[0]
@@ -119,6 +109,7 @@ function DashboardPage() {
   const eligibleForReviewNudge = assessment != null || visits >= 5
 
   const [practice, setPractice] = useState<PracticeSummary>({})
+  const [practiceLoaded, setPracticeLoaded] = useState(false)
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
   const crAptitude = useMyAssessmentResult()
@@ -142,20 +133,13 @@ function DashboardPage() {
     fetchPracticeSummary()
       .then(setPractice)
       .catch(() => {})
+      .finally(() => setPracticeLoaded(true))
   }, [])
 
   const practicedCount = useMemo(
     () => skillTracks.filter((t) => practice[t.slug]).length,
     [practice],
   )
-
-  // A course appears once the student has started it.
-  const dmStarted = dmAptitude.result != null || assessment != null || practicedCount > 0
-  const crStarted = crAptitude.result != null || crProgress.modulesDone > 0
-  // A brand-new student: no aptitude assessment, no modules, no practice. They
-  // see their path instead of a 0/100 score, and nothing that only matters once
-  // they're under way (hours, the mentor chat, the skills showcase).
-  const firstRun = startHere && !crLoading && crProgress.modulesDone === 0 && practicedCount === 0
 
   // Only what the student has done on MySkills counts (see lib/readinessScore.ts).
   const estimate = useMemo(
@@ -188,6 +172,31 @@ function DashboardPage() {
     [estimate, serverScore],
   )
 
+  // A course appears once the student has started it: taken its aptitude
+  // assessment, done any work in it, or earned points from it.
+  const dmStarted =
+    dmAptitude.result != null || assessment != null || practicedCount > 0 || readiness.professional.points > 0
+  const crStarted = crAptitude.result != null || crProgress.modulesDone > 0 || readiness.personal.points > 0
+
+  // A brand-new student: nothing done anywhere. Not just "no assessment": an
+  // account from before the aptitude assessments existed has a score, practice
+  // or mentor history, and keeps its normal LaunchPad. So this needs every
+  // signal to be in and every one to be empty — and if the score couldn't be
+  // fetched we can't tell, so they get the normal LaunchPad, not the welcome.
+  // They see their path instead of a 0/100 score, and nothing that only matters
+  // once they're under way (hours, the mentor chat, the skills showcase).
+  const dataLoaded =
+    practiceLoaded && serverScore !== null && !crLoading && !liveLoading && !dmMatch.loading && !crMatch.loading
+  const hasHistory =
+    readiness.score > 0 ||
+    crProgress.modulesDone > 0 ||
+    practicedCount > 0 ||
+    dmMatch.match != null ||
+    crMatch.match != null ||
+    liveSessions.length > 0 ||
+    dmSessions.length > 0
+  const firstRun = startHere && dataLoaded && !hasHistory
+
   return (
     <AppShell wide>
       {/* "LaunchPad" is the page; the greeting stays, but as the subtitle —
@@ -207,7 +216,7 @@ function DashboardPage() {
           <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
               {firstRun ? (
-                <FirstRunPath name={name} goal={goals[0]} onChoose={pointToStart} />
+                <FirstRunPath name={name} goal={goals[0]} />
               ) : (
                 <ReadinessScoreCard
                   readiness={readiness}
@@ -257,7 +266,7 @@ function DashboardPage() {
         {!firstRun && <MentorPromoCard />}
 
         {/* Rate & review — deliberately eye-catching, and only until they leave one */}
-        {hasFeedback === false && eligibleForReviewNudge && (
+        {hasFeedback === false && eligibleForReviewNudge && !firstRun && (
           <Link
             to="/feedback"
             className="attention group flex flex-col gap-3 rounded-2xl border border-gold-200 bg-gradient-to-r from-gold-50 via-gold-50 to-white p-4 shadow-e1 transition-colors hover:border-gold-300 sm:flex-row sm:items-center sm:gap-4 sm:p-5"

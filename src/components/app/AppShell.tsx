@@ -54,7 +54,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           <p className="font-display text-[17px] font-semibold leading-tight tracking-tight text-ink-900">
             MySkills
           </p>
-          <p className="truncate text-xs font-medium text-ink-500">
+          <p className="text-xs font-medium leading-snug text-ink-500">
             Personal &amp; professional development
           </p>
         </div>

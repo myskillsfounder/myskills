@@ -96,7 +96,7 @@ export function KeyMeasures({
 
   return (
     <div className="flex h-full flex-col gap-5">
-      <section id={startHere ? 'start-here' : undefined} className="card flex-1 scroll-mt-20 p-5">
+      <section className="card flex-1 p-5">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <Target size={16} />
