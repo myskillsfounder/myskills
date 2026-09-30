@@ -1,0 +1,51 @@
+{
+  "path": "/career-readiness",
+  "seoTitle": "Career Readiness Programme: Learn with AI & Mentors | MySkills",
+  "seoDescription": "Learn goal setting, communication, leadership, agile and growth mindset in five short modules. Practise with an AI coach and get mentor feedback. Free to start.",
+  "name": "Career Readiness Programme",
+  "tagline": "Use AI the way employers now expect you to.",
+  "intro": "Skills get you shortlisted; how you set goals, communicate, lead, adapt and keep growing gets you hired. Learn and practise all five in writing — and get a human’s honest feedback before an interviewer gives you theirs.",
+  "insideTitle": "Five modules. AI in every one of them.",
+  "insideIntro": "Each module pairs a real career skill with a specific way of using AI to do it better — never as a shortcut around learning it.",
+  "modules": [
+    {
+      "slug": "goal-setting",
+      "title": "Goal Setting",
+      "body": "Turn “I want a good job” into specific, measurable goals — and a weekly plan that actually gets you there.",
+      "ai": "Break big goals into milestones with AI, then check in on your progress every week."
+    },
+    {
+      "slug": "communication",
+      "title": "Communication",
+      "body": "Write and speak clearly — emails, presentations, and explaining your work to a client or an interviewer.",
+      "ai": "Rehearse pitches and presentations and get instant AI feedback on clarity, structure and tone."
+    },
+    {
+      "slug": "leadership",
+      "title": "Leadership",
+      "body": "Lead without a title: take ownership, run a small project, and bring people with you.",
+      "ai": "Role-play difficult conversations and team decisions with AI before they happen for real."
+    },
+    {
+      "slug": "agile",
+      "title": "Agile Methodology",
+      "body": "Work the way modern teams do — sprints, stand-ups, backlogs and short feedback loops.",
+      "ai": "Plan sprints and run retrospectives with AI as your scrum assistant."
+    },
+    {
+      "slug": "growth-mindset",
+      "title": "Growth Mindset",
+      "body": "Treat setbacks as information, and build the habits that keep you learning when things get hard.",
+      "ai": "Reflect on wins and setbacks with an AI coach, and spot the patterns in how you grow."
+    }
+  ],
+  "outcomesTitle": "Not a certificate of attendance. Evidence.",
+  "outcomes": [
+    "Clear, measurable career goals — and a plan to reach them",
+    "Confident communication in writing, presentations and interviews",
+    "Leadership experience you can point to, not just describe",
+    "Hands-on fluency with agile ways of working",
+    "A growth mindset backed by habits, not slogans",
+    "Mentor feedback on your progress, not just automated scores"
+  ]
+}

@@ -104,6 +104,14 @@ const STATIC_PAGES = [
       'Learn digital marketing online with 1:1 expert mentor support. Practice real-world scenarios across SEO, Google Ads, Meta Ads and analytics, then earn a free certificate.',
   },
   {
+    path: '/career-readiness',
+    changefreq: 'weekly',
+    priority: '0.9',
+    title: 'Career Readiness Programme: Learn with AI & Mentors | MySkills',
+    description:
+      'Learn goal setting, communication, leadership, agile and growth mindset in five short modules. Practise with an AI coach and get mentor feedback. Free to start.',
+  },
+  {
     path: '/signup',
     changefreq: 'monthly',
     priority: '0.8',
@@ -171,6 +179,15 @@ const STATIC_PAGES = [
  * (src/content/partner-pages.json), so the prerendered text and the visible
  * text can't drift apart. */
 const PARTNERS = JSON.parse(readFileSync(join(ROOT, 'src/content/partner-pages.json'), 'utf8'))
+/* Likewise the Career Readiness Programme page (src/content/career-readiness.json). */
+const CAREER = JSON.parse(readFileSync(join(ROOT, 'src/content/career-readiness.json'), 'utf8'))
+{
+  const page = STATIC_PAGES.find((p) => p.path === CAREER.path)
+  if (page) {
+    page.title = CAREER.seoTitle
+    page.description = CAREER.seoDescription
+  }
+}
 for (const key of ['hub', 'mentors', 'institutions', 'companies']) {
   const page = STATIC_PAGES.find((p) => p.path === PARTNERS[key].path)
   if (page) {
@@ -293,6 +310,47 @@ function partnerJsonLd({ page, url, name, crumb, faqs }) {
       },
     ],
   }
+}
+
+/** Career Readiness Programme: the page's text, and Course + breadcrumb data. */
+function careerReadinessExtras() {
+  const url = `${SITE_URL}${CAREER.path}`
+  const bodyHtml = `<main>
+<nav aria-label="Breadcrumb"><a href="/">Home</a> › ${esc(CAREER.name)}</nav>
+<h1>${esc(CAREER.name)}</h1><p>${esc(CAREER.tagline)}</p><p>${esc(CAREER.intro)}</p>
+<h2>${esc(CAREER.insideTitle)}</h2><p>${esc(CAREER.insideIntro)}</p>
+<ol>${CAREER.modules
+    .map((m) => `<li><h3>${esc(m.title)}</h3><p>${esc(m.body)}</p><p>${esc(m.ai)}</p></li>`)
+    .join('')}</ol>
+<h2>${esc(CAREER.outcomesTitle)}</h2>${list(CAREER.outcomes)}
+<p><a href="/signup">Create a free account to start</a></p>
+</main>`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Course',
+        '@id': url,
+        url,
+        name: CAREER.name,
+        description: CAREER.seoDescription,
+        inLanguage: 'en',
+        isAccessibleForFree: true,
+        provider: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+        // "Five short modules, about four hours" is what the page itself says.
+        hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: 'PT4H' },
+        teaches: CAREER.modules.map((m) => m.title),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: CAREER.name, item: url },
+        ],
+      },
+    ],
+  }
+  return { [CAREER.path]: { bodyHtml, jsonLd } }
 }
 
 /** path -> { bodyHtml, jsonLd } for the four partner pages. */
@@ -561,7 +619,7 @@ async function main() {
   // The four partner pages are the exception to "head only": they're the pages
   // people land on from search, so they carry their real text and structured
   // data too (see partnerPageExtras).
-  const extras = partnerPageExtras()
+  const extras = { ...partnerPageExtras(), ...careerReadinessExtras() }
   for (const page of otherStaticPages) {
     const extra = extras[page.path]
     write(
