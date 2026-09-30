@@ -7,6 +7,7 @@ import { fetchMyMentees, type MentorSideMatch } from '@/lib/mentorMatches'
 import { fetchMyMentorProfile, type MyMentorProfile } from '@/lib/mentorPortal'
 import { MentorPortalContext } from '@/components/mentoring/MentorPortalContext'
 import { MentorShell } from '@/components/mentoring/MentorShell'
+import { RequestsLine } from '@/components/mentoring/RequestsLine'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/mentor-portal/_layout')({
@@ -83,6 +84,7 @@ function MentorPortalLayout() {
         />
       ) : (
         <MentorPortalContext.Provider value={{ profile, rows, reload: async () => void (await load()) }}>
+          <RequestsLine rows={rows} />
           <Outlet />
         </MentorPortalContext.Provider>
       )}
