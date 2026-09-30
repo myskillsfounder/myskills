@@ -199,7 +199,7 @@ export function digitalMarketingProgress(
         ? practicedTracks > 0
           ? `${practicedTracks} of ${totalTracks} tracks practised`
           : 'Aptitude done · start practising'
-        : 'Start with the aptitude assessment, then practise'
+        : 'Begin practising to move this forward'
       : !practiceDone
         ? `Foundation done · ${practicedTracks} of ${totalTracks} tracks practised`
         : !mentorReviewed
