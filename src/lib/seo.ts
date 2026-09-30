@@ -13,6 +13,7 @@
  */
 
 import partners from '@/content/partner-pages.json'
+import career from '@/content/career-readiness.json'
 
 /** Canonical origin, no trailing slash. Overridable at build time. */
 export const SITE_URL = (
@@ -48,6 +49,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Learn digital marketing online with 1:1 expert mentor support. Practice real-world scenarios across SEO, Google Ads, Meta Ads and analytics, then earn a free certificate.',
   },
+  [career.path]: { title: career.seoTitle, description: career.seoDescription },
   '/blog': {
     title: 'Digital Marketing Blog — Guides & Insights | MySkills',
     description:
@@ -93,6 +95,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: string }[] = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/digital-marketing', changefreq: 'weekly', priority: '0.9' },
+  { path: '/career-readiness', changefreq: 'weekly', priority: '0.9' },
   { path: '/signup', changefreq: 'monthly', priority: '0.8' },
   { path: '/blog', changefreq: 'daily', priority: '0.9' },
   { path: '/community', changefreq: 'weekly', priority: '0.8' },

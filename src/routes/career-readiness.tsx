@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import career from '@/content/career-readiness.json'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -23,9 +24,9 @@ import { GridBackdrop, GlowOrb } from '@/components/landing/GridBackdrop'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
-// Public, but deliberately absent from PAGE_SEO (src/lib/seo.ts), so it's
-// served noindex until the programme's details are final. Add it there, to
-// SITEMAP_ROUTES and to scripts/generate-seo.mjs when it's ready to rank.
+// Indexed: it has its own entry in PAGE_SEO and SITEMAP_ROUTES (src/lib/seo.ts)
+// and is prerendered by scripts/generate-seo.mjs, which reads the same
+// src/content/career-readiness.json this page does.
 export const Route = createFileRoute('/career-readiness')({
   component: CareerReadinessPage,
 })
@@ -65,15 +66,6 @@ const HUMANS: { icon: IconType; title: string; body: string }[] = [
     title: 'Counsellors, when it gets heavy',
     body: 'Job-hunting is stressful. Confidential support is part of the programme, not an afterthought.',
   },
-]
-
-const OUTCOMES = [
-  'Clear, measurable career goals — and a plan to reach them',
-  'Confident communication in writing, presentations and interviews',
-  'Leadership experience you can point to, not just describe',
-  'Hands-on fluency with agile ways of working',
-  'A growth mindset backed by habits, not slogans',
-  'Mentor feedback on your progress, not just automated scores',
 ]
 
 /* -- start CTA ------------------------------------------------------------ */
@@ -185,12 +177,10 @@ function CareerReadinessPage() {
                 {CAREER_READINESS.name}
               </h1>
               <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">
-                Use AI the way employers now expect you to.
+                {career.tagline}
               </p>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                Skills get you shortlisted; how you set goals, communicate, lead, adapt and keep
-                growing gets you hired. Learn and practise all five in writing — and get a
-                human’s honest feedback before an interviewer gives you theirs.
+                {career.intro}
               </p>
 
               {/* One CTA, no competing links. A plain vertical stack for the trust
@@ -252,11 +242,10 @@ function CareerReadinessPage() {
             <div className="max-w-2xl">
               <Eyebrow dark>What’s inside</Eyebrow>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Five modules. AI in every one of them.
+                {career.insideTitle}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-white/70">
-                Each module pairs a real career skill with a specific way of using AI to do it better —
-                never as a shortcut around learning it.
+                {career.insideIntro}
               </p>
             </div>
 
@@ -328,11 +317,11 @@ function CareerReadinessPage() {
               <div>
                 <Eyebrow dark>What you leave with</Eyebrow>
                 <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                  Not a certificate of attendance. Evidence.
+                  {career.outcomesTitle}
                 </h2>
               </div>
               <ul className="space-y-3.5">
-                {OUTCOMES.map((o) => (
+                {career.outcomes.map((o) => (
                   <li key={o} className="flex items-start gap-3 text-[15px] text-white/80">
                     <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-200" />
                     {o}
