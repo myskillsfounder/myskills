@@ -130,6 +130,43 @@ export async function rejectMentorApplication(id: string, note?: string): Promis
   if (error) raise(error)
 }
 
+/** A published mentor, as staff see them: whether their listing is linked to
+ *  a MySkills account (needed to receive student requests) and to which. */
+export interface ListedMentor {
+  id: string
+  full_name: string
+  headline: string
+  expertise: string[]
+  created_at: string
+  linked: boolean
+  account_email: string | null
+  account_name: string | null
+}
+
+/** Staff with the Mentors section only. See docs/supabase-mentor-link.sql. */
+export async function fetchListedMentors(): Promise<ListedMentor[]> {
+  const { data, error } = await supabase.rpc('admin_listed_mentors')
+  if (error) {
+    // PGRST202: the function isn't there — the SQL hasn't been run yet.
+    if (error.code === 'PGRST202') {
+      throw new Error('Linking isn’t set up yet — run docs/supabase-mentor-link.sql in Supabase.')
+    }
+    raise(error)
+  }
+  return (data ?? []) as ListedMentor[]
+}
+
+/** Point a mentor's listing at the MySkills account with this email. */
+export async function linkMentorAccount(mentorId: string, email: string): Promise<void> {
+  const { error } = await supabase.rpc('link_mentor_account', { p_mentor: mentorId, p_email: email.trim() })
+  if (error) raise(error)
+}
+
+export async function unlinkMentorAccount(mentorId: string): Promise<void> {
+  const { error } = await supabase.rpc('unlink_mentor_account', { p_mentor: mentorId })
+  if (error) raise(error)
+}
+
 export async function isAdmin(): Promise<boolean> {
   const { data, error } = await supabase.rpc('is_admin')
   if (error) return false
