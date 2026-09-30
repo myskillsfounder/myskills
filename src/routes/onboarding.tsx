@@ -120,7 +120,7 @@ function OnboardingPage() {
                       key={opt.id}
                       type="button"
                       onClick={() => setCareerStage(opt.id)}
-                      className={`flex h-full w-full items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left transition-colors ${
+                      className={`flex h-full w-full items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left transition-colors sm:[&:last-child:nth-child(odd)]:col-span-2 ${
                         active
                           ? 'border-brand-500 bg-brand-50'
                           : 'border-ink-300 hover:border-ink-400'
