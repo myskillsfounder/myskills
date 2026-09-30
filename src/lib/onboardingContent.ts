@@ -60,31 +60,53 @@ export const careerStageStep = {
   subtitle: 'So we can match what you practise to your next move.',
   options: [
     {
-      id: 'studying',
-      title: 'Currently studying',
-      description: 'School, college, university or a course.',
+      id: 'student',
+      title: 'Student',
+      description: 'In school, college or university.',
     },
     {
-      id: 'graduated',
-      title: 'Graduated',
-      description: 'Completed formal education and planning next steps.',
+      id: 'final-year',
+      title: 'Final-year student',
+      description: 'Close to finishing, with internships and a first job ahead.',
     },
     {
-      id: 'freelancer',
-      title: 'Freelancer',
-      description: 'Working independently with clients or projects.',
+      id: 'graduate',
+      title: 'Recent graduate',
+      description: 'Finished studying and looking for a first role.',
     },
     {
       id: 'professional',
       title: 'Working professional',
-      description: 'Employed, interning, or building career experience.',
+      description: 'Employed and looking to grow or change direction.',
+    },
+    {
+      id: 'freelancer',
+      title: 'Freelancer or business owner',
+      description: 'Working for yourself, with clients or your own venture.',
+    },
+    {
+      id: 'returning',
+      title: 'Returning after a break',
+      description: 'Getting back to work after time away.',
     },
     {
       id: 'exploring',
-      title: 'Exploring options',
-      description: 'Still figuring out the best career direction.',
+      title: 'Still exploring',
+      description: 'Not sure yet which direction suits you.',
     },
   ] as OptionCard[],
+}
+
+/** Answers saved before the list was rewritten. They stay valid: an account
+ *  that chose "studying" or "graduated" still shows a sensible label. */
+const LEGACY_CAREER_STAGES: Record<string, string> = {
+  studying: 'Student',
+  graduated: 'Recent graduate',
+}
+
+/** The label for a saved career stage, old or new; unknown ids are shown as-is. */
+export function careerStageLabel(id: string): string {
+  return careerStageStep.options.find((o) => o.id === id)?.title ?? LEGACY_CAREER_STAGES[id] ?? id
 }
 
 /* ------------------------------------------------------------------ Step 2 */

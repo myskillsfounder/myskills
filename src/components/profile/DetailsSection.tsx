@@ -10,7 +10,7 @@ import { BadgeCheck, Cake, Lock, MapPin, Phone, UserRound } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { Profile, ProfilePatch } from '@/lib/profile'
 import {
-  careerStageStep,
+  careerStageLabel,
   genderOptions,
   personalDetailsForm,
 } from '@/lib/onboardingContent'
@@ -20,8 +20,7 @@ type IconType = ComponentType<{ size?: number; className?: string }>
 
 const f = personalDetailsForm.fields
 
-const careerLabel = (id: string) =>
-  careerStageStep.options.find((o) => o.id === id)?.title ?? id
+const careerLabel = careerStageLabel
 const genderLabel = (v: string) => genderOptions.find((o) => o.value === v)?.label ?? v
 
 const formatDob = (iso: string) => {
