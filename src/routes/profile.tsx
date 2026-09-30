@@ -3,6 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, Check, Copy, ExternalLink } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useProfile } from '@/lib/useProfile'
+import { useHasStarted } from '@/lib/firstRun'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
 import { useMyBadges } from '@/lib/skillBadges'
 import { useMyProjects } from '@/lib/mentorProjects'
@@ -107,6 +108,8 @@ function ProfilePage() {
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
   const badges = useMyBadges()
+  // The verification checklist waits until they've begun (taken an aptitude assessment).
+  const started = useHasStarted()
   const projects = useMyProjects()
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
 
@@ -142,7 +145,8 @@ function ProfilePage() {
           {/* KYC: a verified profile is one employers can trust. Once it's all
               checked, the tick by the name says so — the checklist only shows
               while there's something to do or a call is booked. */}
-          {!verification.loading &&
+          {started === true &&
+            !verification.loading &&
             (!isVerificationComplete(profile, verification.view) ||
               verification.request?.status === 'requested' ||
               verification.request?.status === 'scheduled') && (

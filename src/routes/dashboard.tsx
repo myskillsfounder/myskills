@@ -24,6 +24,7 @@ import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
+import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
 import { Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -94,6 +95,16 @@ function greet() {
   return 'Good evening'
 }
 
+/** The path card's first step: bring the "Start here" choice into view and
+ *  light it up for a moment, so it's clear where to act. */
+function pointToStart() {
+  const el = document.getElementById('start-here')
+  if (!el) return
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  el.classList.add('attention')
+  window.setTimeout(() => el.classList.remove('attention'), 8000)
+}
+
 function DashboardPage() {
   const { user } = useAuthUser()
   const raw = userDisplayName(user).split(' ')[0]
@@ -141,6 +152,10 @@ function DashboardPage() {
   // A course appears once the student has started it.
   const dmStarted = dmAptitude.result != null || assessment != null || practicedCount > 0
   const crStarted = crAptitude.result != null || crProgress.modulesDone > 0
+  // A brand-new student: no aptitude assessment, no modules, no practice. They
+  // see their path instead of a 0/100 score, and nothing that only matters once
+  // they're under way (hours, the mentor chat, the skills showcase).
+  const firstRun = startHere && !crLoading && crProgress.modulesDone === 0 && practicedCount === 0
 
   // Only what the student has done on MySkills counts (see lib/readinessScore.ts).
   const estimate = useMemo(
@@ -191,22 +206,27 @@ function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <ReadinessScoreCard
-                readiness={readiness}
-                highlights={{
-                  certificate: assessment ? 'earned' : foundationUnlock.unlocked ? 'ready' : 'locked',
-                  hasMentor: dmMatch.match?.status === 'active' || crMatch.match?.status === 'active',
-                  tracksPractised: practicedCount,
-                  totalTracks: skillTracks.length,
-                  modulesDone: crProgress.modulesDone,
-                  totalModules: crProgress.modulesTotal,
-                }}
-              />
+              {firstRun ? (
+                <FirstRunPath name={name} goal={goals[0]} onChoose={pointToStart} />
+              ) : (
+                <ReadinessScoreCard
+                  readiness={readiness}
+                  highlights={{
+                    certificate: assessment ? 'earned' : foundationUnlock.unlocked ? 'ready' : 'locked',
+                    hasMentor: dmMatch.match?.status === 'active' || crMatch.match?.status === 'active',
+                    tracksPractised: practicedCount,
+                    totalTracks: skillTracks.length,
+                    modulesDone: crProgress.modulesDone,
+                    totalModules: crProgress.modulesTotal,
+                  }}
+                />
+              )}
             </div>
             <KeyMeasures
               goals={goals}
               streak={streak}
               startHere={startHere}
+              showHours={!firstRun}
               courses={[
                 // A course appears once the student has started it — taken its
                 // aptitude assessment or done any work — never before, so a new
@@ -232,8 +252,9 @@ function DashboardPage() {
           </div>
         )}
 
-        {/* Talk to a mentor — promoted: a real person, one tap away */}
-        <MentorPromoCard />
+        {/* Talk to a mentor — promoted: a real person, one tap away. Not on day
+            one: mentor sessions come after the aptitude assessment. */}
+        {!firstRun && <MentorPromoCard />}
 
         {/* Rate & review — deliberately eye-catching, and only until they leave one */}
         {hasFeedback === false && eligibleForReviewNudge && (
@@ -257,7 +278,7 @@ function DashboardPage() {
           </Link>
         )}
 
-        <AiSkillsShowcase />
+        {!firstRun && <AiSkillsShowcase />}
       </div>
     </AppShell>
   )

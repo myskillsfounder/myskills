@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { trackAssessmentComplete } from './analytics'
 import { supabase } from './supabase'
+import { forgetStarted } from './startedCache'
 
 export interface CategoryResult {
   category: string
@@ -86,6 +87,7 @@ export async function submitInitialAssessment(
 ): Promise<QuizGradeResult> {
   const { data, error } = await supabase.rpc('grade_initial_assessment', { answers })
   if (error) throw error
+  forgetStarted()
   const graded = data as QuizGradeResult
   // Server enforces one attempt per user, so this fires at most once each.
   trackAssessmentComplete(graded.percent)

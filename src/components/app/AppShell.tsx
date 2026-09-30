@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useProfile } from '@/lib/useProfile'
+import { useHasStarted } from '@/lib/firstRun'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
 
@@ -129,7 +130,10 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
  */
 function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; active: boolean }) {
   const { profile } = useProfile()
-  const missing = profile ? missingDetails(profile) : []
+  // The "finish your profile" nag waits for the first step: a student who
+  // hasn't taken an aptitude assessment has more important things to do.
+  const started = useHasStarted()
+  const missing = profile && started === true ? missingDetails(profile) : []
   const incomplete = missing.length > 0
   const percent = profile ? Math.round(((DETAIL_ITEMS.length - missing.length) / DETAIL_ITEMS.length) * 100) : null
 
