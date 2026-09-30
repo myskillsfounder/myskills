@@ -95,7 +95,7 @@ export interface PrimaryGoal extends SentenceOption {
   /** The same goal as the answer says it, speaking to them: "start your own business". */
   you: string
   /** A lucide icon name, resolved where it's drawn. */
-  icon: 'briefcase' | 'rocket' | 'sparkles' | 'trending-up' | 'laptop' | 'users'
+  icon: 'briefcase' | 'rocket' | 'sparkles' | 'trending-up' | 'laptop' | 'users' | 'message-circle' | 'dumbbell' | 'gauge'
   /** The programme this goal most naturally starts in. */
   lean: StartKey
 }
@@ -114,7 +114,33 @@ export const goalStep = {
     { id: 'grow', label: 'Grow in my current career', description: 'Move up, or take on more.', chip: 'grow in my current career', you: 'grow in your current career', icon: 'trending-up', lean: 'personal' },
     { id: 'freelance', label: 'Become a freelancer', description: 'Earn from your skills, on your terms.', chip: 'become a freelancer', you: 'become a freelancer', icon: 'laptop', lean: 'marketing' },
     { id: 'confidence', label: 'Build confidence and leadership', description: 'Communicate, lead and back yourself.', chip: 'build confidence and leadership', you: 'build confidence and leadership', icon: 'users', lean: 'personal' },
+    { id: 'mentor', label: 'Connect with a mentor', description: 'Get guidance from someone who has done it.', chip: 'connect with a mentor', you: 'connect with a mentor', icon: 'message-circle', lean: 'marketing' },
+    { id: 'practise', label: 'Practise a skill', description: 'Sharpen it on real scenarios with an AI coach.', chip: 'practise a skill', you: 'practise a skill', icon: 'dumbbell', lean: 'marketing' },
+    { id: 'assess', label: 'Assess my skill level', description: 'See where you stand today.', chip: 'assess my skill level', you: 'assess your skill level', icon: 'gauge', lean: 'marketing' },
   ] as PrimaryGoal[],
+}
+
+/**
+ * Which goals each career stage is offered, so nobody scrolls past options that
+ * don't fit them: a freelancer isn't asked to "find a new job", a student isn't
+ * asked to "grow in my current career". Order is the order they're shown in.
+ * A stage not listed (or an unknown one) is offered every goal.
+ */
+const GOALS_BY_STAGE: Record<string, string[]> = {
+  student: ['skill', 'practise', 'assess', 'mentor', 'job', 'business', 'freelance', 'confidence'],
+  'final-year': ['job', 'skill', 'practise', 'assess', 'mentor', 'business', 'freelance', 'confidence'],
+  graduate: ['job', 'skill', 'practise', 'assess', 'mentor', 'business', 'freelance', 'confidence'],
+  professional: ['grow', 'skill', 'practise', 'assess', 'mentor', 'job', 'business', 'confidence'],
+  freelancer: ['mentor', 'skill', 'practise', 'assess'],
+  returning: ['job', 'skill', 'practise', 'assess', 'mentor', 'confidence'],
+  exploring: ['assess', 'skill', 'mentor', 'confidence', 'job'],
+}
+
+/** The goals to offer someone at this career stage. */
+export function goalsFor(stageId: string): PrimaryGoal[] {
+  const ids = GOALS_BY_STAGE[stageId]
+  if (!ids) return goalStep.options
+  return ids.map((id) => goalStep.options.find((o) => o.id === id)).filter((o): o is PrimaryGoal => Boolean(o))
 }
 
 /**
