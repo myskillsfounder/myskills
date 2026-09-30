@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Check } from 'lucide-react'
-import { trackSignUp } from '@/lib/analytics'
+import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { requireSession } from '@/lib/guards'
-import { takeAfterOnboarding } from '@/lib/afterOnboarding'
-import { careerStageStep, goalsStep, stepLabels } from '@/lib/onboardingContent'
+import { peekAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
+import {
+  careerStageStep,
+  goalGroups,
+  goalsStep,
+  recommendStart,
+  startStep,
+  stepLabels,
+} from '@/lib/onboardingContent'
+import { StartChoice } from '@/components/practice/StartChoice'
 
 export const Route = createFileRoute('/onboarding')({
   beforeLoad: requireSession,
@@ -38,22 +46,33 @@ function OnboardingPage() {
     return true
   }
 
+  // A visitor who came from "Take the aptitude test" (or a programme's "start")
+  // has already said where they're heading, so there's nothing left to ask:
+  // their goals step finishes onboarding and lands them on that assessment.
+  const knownDestination = peekAfterOnboarding()
+  const lastQuestion = step === 1 && knownDestination !== null
+
   function handleNext() {
     if (!validate()) return
-    if (step < stepLabels.length - 1) {
-      setStep((s) => s + 1)
+    trackEvent('onboarding_step', { step: step + 1 })
+    if (lastQuestion) {
+      void finish(undefined, 'remembered')
     } else {
-      void finish()
+      setStep((s) => s + 1)
     }
   }
 
-  async function finish() {
+  /** Saves the answers, then goes to `to` — the assessment they picked, where
+   *  they were already heading, or the LaunchPad. */
+  async function finish(to: string | undefined, how: string) {
     setSubmitting(true)
     setError(undefined)
     try {
       const method = await completeOnboarding({ career_stage: careerStage, goals })
       trackSignUp(method)
-      router.navigate({ to: takeAfterOnboarding() ?? '/dashboard' })
+      trackEvent('onboarding_finish', { start: how })
+      const remembered = takeAfterOnboarding()
+      router.navigate({ to: to ?? remembered ?? '/dashboard' })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save your profile. Please try again.')
       setSubmitting(false)
@@ -65,7 +84,7 @@ function OnboardingPage() {
     router.navigate({ to: '/login' })
   }
 
-  const current = step === 0 ? careerStageStep : goalsStep
+  const current = step === 0 ? careerStageStep : step === 1 ? goalsStep : startStep
 
   return (
     <div className="flex min-h-screen flex-col justify-center bg-ink-100">
@@ -129,26 +148,44 @@ function OnboardingPage() {
             )}
 
             {step === 1 && (
-              <div className="flex flex-wrap gap-2">
-                {goalsStep.options.map((opt) => {
-                  const active = goals.includes(opt.id)
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => toggleGoal(opt.id)}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${
-                        active
-                          ? 'border-brand-500 bg-brand-50 text-brand-800'
-                          : 'border-ink-300 text-ink-800 hover:border-ink-400'
-                      }`}
-                    >
-                      {active && <Check size={14} className="text-brand-600" />}
-                      {opt.label}
-                    </button>
-                  )
-                })}
+              <div className="space-y-5">
+                {goalGroups.map((g) => (
+                  <div key={g.id}>
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">{g.label}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {goalsStep.options
+                        .filter((o) => o.group === g.id)
+                        .map((opt) => {
+                          const active = goals.includes(opt.id)
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => toggleGoal(opt.id)}
+                              className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2.5 text-[13px] transition-colors sm:py-2 ${
+                                active
+                                  ? 'border-brand-500 bg-brand-50 text-brand-800'
+                                  : 'border-ink-300 text-ink-800 hover:border-ink-400'
+                              }`}
+                            >
+                              {active && <Check size={14} className="text-brand-600" />}
+                              {opt.label}
+                            </button>
+                          )
+                        })}
+                    </div>
+                  </div>
+                ))}
               </div>
+            )}
+
+            {step === 2 && (
+              <StartChoice
+                showHeading={false}
+                recommended={recommendStart(goals)}
+                disabled={submitting}
+                onChoose={(option, to) => void finish(to, option)}
+              />
             )}
           </div>
 
@@ -176,14 +213,25 @@ function OnboardingPage() {
               </button>
             )}
 
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={submitting}
-              className="press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {step < stepLabels.length - 1 ? 'Continue' : submitting ? 'Finishing…' : 'Finish'}
-            </button>
+            {step < stepLabels.length - 1 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={submitting}
+                className="press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {lastQuestion ? (submitting ? 'Finishing…' : 'Finish') : 'Continue'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void finish('/dashboard', 'later')}
+                disabled={submitting}
+                className="-mr-2 px-2 py-3 text-sm font-medium text-ink-600 hover:text-ink-900 disabled:opacity-60"
+              >
+                {submitting ? 'Finishing…' : startStep.skip}
+              </button>
+            )}
           </div>
         </div>
       </div>

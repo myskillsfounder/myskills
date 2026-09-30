@@ -16,6 +16,7 @@ import {
 import { useAuthUser } from '@/lib/useAuth'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import career from '@/content/career-readiness.json'
+import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -92,7 +93,7 @@ function StartCta({ dark = false }: { dark?: boolean }) {
     )
   }
   return (
-    <Link to="/signup" className={cls}>
+    <Link to="/signup" onClick={() => setAfterOnboarding('/career-readiness-assessment')} className={cls}>
       Create a free account to start
       <ArrowRight size={16} />
     </Link>

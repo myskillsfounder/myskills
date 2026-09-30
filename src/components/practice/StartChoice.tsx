@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight, CheckCircle2, Clock, Compass, Megaphone } from 'lucide-react'
 
 type Option = {
-  key: string
+  key: 'marketing' | 'personal'
   to: '/aptitude-assessment' | '/career-readiness-assessment'
   programme: string
   title: string
@@ -51,28 +51,52 @@ const OPTIONS: Option[] = [
 ]
 
 /**
- * What a student with no aptitude assessment sees on Practice: two equal
- * starting points, one per programme, instead of a single marketing card.
- * Either assessment opens Practice; the other stays available any time.
+ * The two starting points, one per programme: what a student with no aptitude
+ * assessment sees on Practice, and the last step of onboarding. Either
+ * assessment opens Practice; the other stays available any time.
+ *
+ * Practice uses it as-is (each card is a link to its assessment). Onboarding
+ * passes `onChoose` — so picking a card can finish onboarding first — plus a
+ * `recommended` card suggested from the student's goals, and hides the big
+ * heading because the onboarding step already has one.
  */
-export function StartChoice() {
+export function StartChoice({
+  onChoose,
+  recommended = null,
+  showHeading = true,
+  disabled = false,
+}: {
+  onChoose?: (option: 'marketing' | 'personal', to: Option['to']) => void
+  recommended?: 'marketing' | 'personal' | null
+  showHeading?: boolean
+  disabled?: boolean
+}) {
   return (
-    <section aria-labelledby="start-choice">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-500">Step 1 · Start here</p>
-      <h2 id="start-choice" className="mt-1.5 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
-        Where would you like to start?
-      </h2>
-      <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-ink-600">
-        Pick an aptitude assessment. Each one has 20 statements, takes about five minutes and has no right answers —
-        it just shows you where to begin. You can take the other one any time.
-      </p>
+    <section aria-labelledby={showHeading ? 'start-choice' : undefined}>
+      {showHeading && (
+        <>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-500">Step 1 · Start here</p>
+          <h2 id="start-choice" className="mt-1.5 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
+            Where would you like to start?
+          </h2>
+          <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-ink-600">
+            Pick an aptitude assessment. Each one has 20 statements, takes about five minutes and has no right answers —
+            it just shows you where to begin. You can take the other one any time.
+          </p>
+        </>
+      )}
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className={`${showHeading ? 'mt-6' : ''} grid gap-4 md:grid-cols-2`}>
         {OPTIONS.map((o) => (
           <article
             key={o.key}
             className={`card flex flex-col p-5 transition-colors sm:p-6 ${o.hover}`}
           >
+            {recommended === o.key && (
+              <span className="mb-3 inline-flex self-start rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                Suggested for you
+              </span>
+            )}
             <div className="flex items-center gap-3.5">
               <span
                 className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/40 ${o.tile}`}
@@ -101,13 +125,25 @@ export function StartChoice() {
               <p className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
                 <Clock size={13} /> 20 statements · about 5 minutes
               </p>
-              <Link
-                to={o.to}
-                className={`press inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-white shadow-e1 transition-colors ${o.button}`}
-              >
-                Take the {o.title.toLowerCase()}
-                <ArrowRight size={17} />
-              </Link>
+              {onChoose ? (
+                <button
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => onChoose(o.key, o.to)}
+                  className={`press inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 py-2 text-center text-[15px] leading-tight font-semibold text-white shadow-e1 transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${o.button}`}
+                >
+                  Take the {o.title.toLowerCase()}
+                  <ArrowRight size={17} />
+                </button>
+              ) : (
+                <Link
+                  to={o.to}
+                  className={`press inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 py-2 text-center text-[15px] leading-tight font-semibold text-white shadow-e1 transition-colors ${o.button}`}
+                >
+                  Take the {o.title.toLowerCase()}
+                  <ArrowRight size={17} />
+                </Link>
+              )}
             </div>
           </article>
         ))}

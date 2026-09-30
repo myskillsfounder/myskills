@@ -10,13 +10,23 @@
 const KEY = 'myskills.afterOnboarding'
 
 /** Only in-app paths we expect — never an arbitrary URL from storage. */
-const ALLOWED = new Set(['/aptitude-assessment'])
+const ALLOWED = new Set(['/aptitude-assessment', '/career-readiness-assessment'])
 
 export function setAfterOnboarding(path: string): void {
   try {
     sessionStorage.setItem(KEY, path)
   } catch {
     // Storage blocked (private mode) — they'll land on the LaunchPad instead.
+  }
+}
+
+/** Reads it without clearing — to know whether onboarding can skip asking. */
+export function peekAfterOnboarding(): string | null {
+  try {
+    const path = sessionStorage.getItem(KEY)
+    return path && ALLOWED.has(path) ? path : null
+  } catch {
+    return null
   }
 }
 

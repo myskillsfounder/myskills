@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { GridBackdrop } from './GridBackdrop'
 
 export function CtaBanner() {
@@ -18,6 +19,7 @@ export function CtaBanner() {
         </div>
         <Link
           to="/signup"
+          onClick={() => setAfterOnboarding('/aptitude-assessment')}
           className="press relative inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 sm:w-auto"
         >
           Get started free
