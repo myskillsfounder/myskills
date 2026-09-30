@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BookOpen, Clock, Compass, Flame, Megaphone, Target } from 'lucide-react'
 import type { CourseProgress } from '@/lib/programmes'
-import { goalsStep } from '@/lib/onboardingContent'
+import { goalLabel } from '@/lib/onboardingContent'
 import { timeSeries } from '@/lib/timeTracker'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
@@ -23,7 +23,6 @@ const COURSE_LOOK: Record<1 | 2, { icon: typeof BookOpen; tile: string; bar: str
   },
 }
 
-const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
 
 /** A new student's first step: the two aptitude assessments, one per programme
  *  (either one opens Practice). It fills the space under "Courses in progress",
