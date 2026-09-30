@@ -465,7 +465,7 @@ export function StudentsPanel({
       ) : (
         <>
           {requests.length > 0 && (
-            <section>
+            <section id="requests" className="scroll-mt-32">
               <h2 className="mb-3 font-display text-lg font-semibold text-ink-900">Requests · {requests.length}</h2>
               <div className="space-y-4">
                 {requests.map((m) => (
