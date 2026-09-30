@@ -10,6 +10,25 @@ interface Bubble {
 
 type Step = 'topic' | 'details' | 'contact-name' | 'contact-phone' | 'contact-email' | 'ready'
 
+/* What the chat accepts. It can't tell a real answer from keyboard mashing, but
+ * it stops the obvious: a "phone number" with no digits, a name that's only
+ * numbers, an answer too short for a mentor to act on. */
+
+/** A name needs at least two letters and no run of digits. */
+const validName = (v: string) => /\p{L}.*\p{L}/u.test(v) && !/\d{3,}/.test(v) && v.length <= 80
+
+/** 7–15 digits, with the usual spaces, dashes, brackets and a leading +. */
+function validPhone(v: string): boolean {
+  if (!/^\+?[0-9 ()-]+$/.test(v)) return false
+  const digits = v.replace(/\D/g, '').length
+  return digits >= 7 && digits <= 15
+}
+
+const SKIP = /^(skip|no|none|n\/a|-)$/i
+
+/** A few words, or a link — enough for a mentor to know what's being asked. */
+const validDetails = (v: string) => /https?:\/\//i.test(v) || v.split(/\s+/).filter(Boolean).length >= 2
+
 /** Prompt + input placeholder for each contact step, asked only when no
  *  mentor is online — queueing means nobody may see this for a while, so
  *  there needs to be a way to call the learner back. */
@@ -19,7 +38,7 @@ const CONTACT: Record<'contact-name' | 'contact-phone' | 'contact-email', { ask:
     placeholder: 'Full name',
   },
   'contact-phone': {
-    ask: 'Thanks. And a phone number, in case the team wants to follow up directly?',
+    ask: 'Thanks. And a phone number, in case the team wants to follow up directly? (Type “skip” if you’d rather not.)',
     placeholder: 'Phone number',
   },
   'contact-email': {
@@ -200,10 +219,33 @@ export function BotIntake({
     e.preventDefault()
     const v = text.trim()
     if (!v) return
-    if (step === 'details') commitDetails(v)
-    else if (step === 'contact-name') commitContactName(v)
-    else if (step === 'contact-phone') commitPhone(v)
-    else if (step === 'contact-email') {
+    if (step === 'details') {
+      if (!validDetails(v)) {
+        say('bot', 'Could you add a little more — a few words, or a link — so a mentor knows how to help?', 400)
+        return
+      }
+      commitDetails(v)
+    } else if (step === 'contact-name') {
+      if (!validName(v)) {
+        say('bot', 'Could you tell me your name, so a mentor knows who they’re talking to?', 400)
+        return
+      }
+      commitContactName(v)
+    } else if (step === 'contact-phone') {
+      if (SKIP.test(v)) {
+        setPhone('')
+        setText('')
+        say('me', 'Skip')
+        setStep('contact-email')
+        say('bot', CONTACT['contact-email'].ask, 600)
+        return
+      }
+      if (!validPhone(v)) {
+        say('bot', 'That doesn’t look like a phone number — try digits like 98765 43210, or type “skip”.', 400)
+        return
+      }
+      commitPhone(v)
+    } else if (step === 'contact-email') {
       // The one field the team can't follow up without, so a typo is worth
       // a second ask here rather than a dead-end address in the queue.
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) {
@@ -318,7 +360,7 @@ export function BotIntake({
                     Contact details
                   </p>
                   <p className="mt-0.5 text-sm text-ink-800">
-                    {contactName} · {phone} · {email}
+                    {[contactName, phone, email].filter(Boolean).join(' · ')}
                   </p>
                 </>
               )}
