@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, Brain, Target } from 'lucide-react'
@@ -21,6 +21,7 @@ import { LiveMentorCard } from '@/components/practice/LiveMentorCard'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { useMyMatch } from '@/lib/mentorMatches'
 import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
+import { StartChoice } from '@/components/practice/StartChoice'
 import { useMyAptitudeResult } from '@/lib/dmAptitude'
 import type { FoundationUnlock } from '@/lib/foundation'
 import { FoundationCard } from '@/components/assessment/FoundationCard'
@@ -114,8 +115,14 @@ function PracticePage() {
   // finished the Foundation assessment (the old initial assessment) before it
   // existed keeps their access rather than being sent back to the start.
   const { result: aptitude, loading: aptitudeLoading } = useMyAptitudeResult()
-  const unlocked = aptitude != null || assessment != null
-  const gateLoading = assessmentLoading || aptitudeLoading
+  // Either programme's aptitude assessment opens Practice: a student can start
+  // with the marketing one or the personal one. Each programme's own content
+  // still waits for its own assessment (see the programme tabs below).
+  const crAptitude = useMyAssessmentResult()
+  const dmUnlocked = aptitude != null || assessment != null
+  const crUnlocked = crAptitude.result != null
+  const unlocked = dmUnlocked || crUnlocked
+  const gateLoading = assessmentLoading || aptitudeLoading || crAptitude.loading
 
   const { user } = useAuthUser()
   const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
@@ -153,6 +160,15 @@ function PracticePage() {
     rememberProgramme(p)
   }
 
+  // Someone who has only taken the personal aptitude shouldn't land on a
+  // marketing page they can't use yet — open on the programme they started.
+  // Once, when the gate has loaded — never again, so it can't fight a tab tap.
+  const startTabChosen = useRef(false)
+  useEffect(() => {
+    if (gateLoading || startTabChosen.current) return
+    startTabChosen.current = true
+    if (crUnlocked && !dmUnlocked && programme === 1) setProgramme(2)
+  }, [gateLoading, crUnlocked, dmUnlocked, programme])
 
   // Practice data loads as soon as Practice is unlocked, not only once the
   // Foundation assessment is done.
@@ -177,7 +193,6 @@ function PracticePage() {
   const crReview = useMentorReview('career-readiness')
   const { progress: crProgress } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions } = useMyLiveSessions()
-  const crAptitude = useMyAssessmentResult()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
 
@@ -224,12 +239,9 @@ function PracticePage() {
 
       {error && <MigrationError message={error} />}
 
-      {/* Practice is locked until the aptitude assessment is taken. */}
-      {!gateLoading && !error && !unlocked && (
-        <div className="space-y-5">
-          <AptitudeCard result={null} gate />
-        </div>
-      )}
+      {/* Practice is locked until an aptitude assessment is taken — the
+          marketing one or the personal one, the student's choice. */}
+      {!gateLoading && !error && !unlocked && <StartChoice />}
 
       {/* A practice track is open -> run its Decision Lab. */}
       {unlocked && !error && selected && (
@@ -253,7 +265,9 @@ function PracticePage() {
 
               {/* Programme 1 is everything from the aptitude assessment through the
                   Foundation assessment, all 8 tracks and vocabulary. */}
-              {programme === 1 && (
+              {programme === 1 && !dmUnlocked && <AptitudeCard result={null} gate />}
+
+              {programme === 1 && dmUnlocked && (
                 <>
                   <AptitudeCard result={aptitude} />
 

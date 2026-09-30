@@ -17,6 +17,7 @@ import {
 import { signOut } from '@/lib/auth'
 import { useAssessmentDone } from '@/lib/assessmentResults'
 import { useAptitudeDone } from '@/lib/dmAptitude'
+import { useCareerAptitudeDone } from '@/lib/careerReadinessAssessment'
 import { useProfile } from '@/lib/useProfile'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
@@ -177,30 +178,36 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
   )
 }
 
-/** Card prompt shown at the top of every page until the Digital Marketing
- * aptitude assessment (step 1, which unlocks Practice) is done. Hidden on
- * /practice, where the same invitation is the page itself. */
+/** Card prompt shown at the top of every page until the student has taken an
+ * aptitude assessment — the marketing one or the personal one (step 1, which
+ * opens Practice). Hidden on /practice, where the same choice is the page. */
 function AssessmentCard() {
+  const btn =
+    'inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-amber-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-amber-700 sm:h-9 sm:text-xs'
   return (
-    <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
           <ClipboardCheck size={20} />
         </span>
         <div>
-          <p className="text-sm font-semibold text-amber-900">Start with the Digital Marketing aptitude assessment</p>
+          <p className="text-sm font-semibold text-amber-900">Start with an aptitude assessment</p>
           <p className="mt-0.5 text-xs leading-relaxed text-amber-700">
-            A quick look at how marketing shows up in your life — about 5 minutes. It unlocks Practice.
+            A quick look at how you already work — about 5 minutes, no right answers. Pick marketing or personal; either
+            one opens Practice.
           </p>
         </div>
       </div>
-      <Link
-        to="/aptitude-assessment"
-        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-amber-700"
-      >
-        Start assessment
-        <ArrowRight size={13} />
-      </Link>
+      <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+        <Link to="/aptitude-assessment" className={btn}>
+          Marketing aptitude
+          <ArrowRight size={13} />
+        </Link>
+        <Link to="/career-readiness-assessment" className={btn}>
+          Personal aptitude
+          <ArrowRight size={13} />
+        </Link>
+      </div>
     </div>
   )
 }
@@ -215,10 +222,13 @@ export function AppShell({
   const [open, setOpen] = useState(false)
   const assessmentDone = useAssessmentDone()
   const aptitudeDone = useAptitudeDone()
+  const careerAptitudeDone = useCareerAptitudeDone()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   // Someone who finished the Foundation assessment before the aptitude test
-  // existed already has Practice, so they aren't nagged.
-  const showNudge = aptitudeDone === false && assessmentDone === false && pathname !== '/practice'
+  // existed, or who has taken either aptitude assessment, already has
+  // Practice, so they aren't nagged.
+  const showNudge =
+    aptitudeDone === false && careerAptitudeDone === false && assessmentDone === false && pathname !== '/practice'
 
   return (
     <div className="surface-paper min-h-screen">
