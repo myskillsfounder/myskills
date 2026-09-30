@@ -12,6 +12,8 @@
  * other to it. Change both together if the canonical host ever changes.
  */
 
+import partners from '@/content/partner-pages.json'
+
 /** Canonical origin, no trailing slash. Overridable at build time. */
 export const SITE_URL = (
   import.meta.env.VITE_SITE_URL ?? 'https://myskills.org.in'
@@ -71,26 +73,12 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Create a free MySkills account to take the digital marketing assessment and earn your certificate.',
   },
-  '/become-a-mentor': {
-    title: 'Become a mentor | MySkills',
-    description:
-      'Help students across India build real digital marketing skills. Apply to mentor on MySkills — no account needed, just a few minutes.',
-  },
-  '/become-a-partner-institution': {
-    title: 'Partner your institution with MySkills',
-    description:
-      'Run digital marketing courses or training programs? Apply to be a verified MySkills partner institution and reach students looking for classroom learning.',
-  },
-  '/become-an-internship-partner': {
-    title: 'Offer internships through MySkills',
-    description:
-      'Hire from a pipeline of students who’ve already practised real scenarios and earned a score. Tell us what internship roles your company is offering.',
-  },
-  '/community': {
-    title: 'Partner with MySkills | Community',
-    description:
-      'Mentor a student, host an intern, or bring your institution on board. Every way to partner with MySkills — apply in a few minutes.',
-  },
+  // The four partner pages share their words with the page components and
+  // the prerender script: src/content/partner-pages.json.
+  [partners.mentors.path]: { title: partners.mentors.seoTitle, description: partners.mentors.seoDescription },
+  [partners.institutions.path]: { title: partners.institutions.seoTitle, description: partners.institutions.seoDescription },
+  [partners.companies.path]: { title: partners.companies.seoTitle, description: partners.companies.seoDescription },
+  [partners.hub.path]: { title: partners.hub.seoTitle, description: partners.hub.seoDescription },
   '/privacy': {
     title: 'Privacy Policy | MySkills',
     description: 'What information MySkills collects, how it’s used, and the choices you have about it.',
@@ -107,10 +95,10 @@ export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: strin
   { path: '/digital-marketing', changefreq: 'weekly', priority: '0.9' },
   { path: '/signup', changefreq: 'monthly', priority: '0.8' },
   { path: '/blog', changefreq: 'daily', priority: '0.9' },
-  { path: '/community', changefreq: 'weekly', priority: '0.7' },
-  { path: '/become-a-mentor', changefreq: 'monthly', priority: '0.6' },
-  { path: '/become-a-partner-institution', changefreq: 'monthly', priority: '0.6' },
-  { path: '/become-an-internship-partner', changefreq: 'monthly', priority: '0.6' },
+  { path: '/community', changefreq: 'weekly', priority: '0.8' },
+  { path: '/become-a-mentor', changefreq: 'monthly', priority: '0.8' },
+  { path: '/become-a-partner-institution', changefreq: 'monthly', priority: '0.8' },
+  { path: '/become-an-internship-partner', changefreq: 'monthly', priority: '0.8' },
   { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
   { path: '/terms', changefreq: 'yearly', priority: '0.3' },
 ]
