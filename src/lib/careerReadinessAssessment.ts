@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { forgetStarted } from './startedCache'
+import { ensureProfile } from './profile'
 
 export type SkillKey = 'communication' | 'goal-setting' | 'growth-mindset' | 'leadership' | 'agile'
 
@@ -174,6 +175,7 @@ export async function submitAssessment(
   answers: Record<string, number>,
   reflection: string,
 ): Promise<AssessmentResult> {
+  await ensureProfile()
   const { data, error } = await supabase.rpc('submit_career_readiness_assessment', {
     p_answers: answers,
     p_reflection: reflection.trim() || null,
