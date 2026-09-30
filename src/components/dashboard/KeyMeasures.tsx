@@ -25,6 +25,51 @@ const COURSE_LOOK: Record<1 | 2, { icon: typeof BookOpen; tile: string; bar: str
 
 const goalLabel = (id: string) => goalsStep.options.find((o) => o.id === id)?.label ?? id
 
+/** A new student's first step: the two aptitude assessments, one per programme
+ *  (either one opens Practice). It fills the space under "Courses in progress",
+ *  which is otherwise nearly empty before anything has been started. */
+function StartHere() {
+  const options = [
+    { to: '/aptitude-assessment', label: 'Marketing aptitude', sub: 'Digital Marketing Programme', look: COURSE_LOOK[1] },
+    { to: '/career-readiness-assessment', label: 'Personal aptitude', sub: 'Career Readiness Programme', look: COURSE_LOOK[2] },
+  ] as const
+  return (
+    <div className="mt-4 border-t border-ink-900/[0.06] pt-4">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Start here</p>
+      <p className="mt-1.5 font-display text-base font-semibold leading-snug text-ink-900">
+        Take an aptitude assessment
+      </p>
+      <p className="mt-1 text-xs leading-relaxed text-ink-500">
+        20 statements, about 5 minutes, no right answers. Pick one — either opens Practice.
+      </p>
+      <ul className="mt-3 space-y-2">
+        {options.map((o) => (
+          <li key={o.to}>
+            <Link
+              to={o.to}
+              className="press group flex items-center gap-3 rounded-xl border border-ink-900/[0.08] p-2.5 transition-colors hover:border-brand-300"
+            >
+              <span
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/40 ${o.look.tile}`}
+              >
+                <o.look.icon size={18} strokeWidth={2.2} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-ink-900">{o.label}</span>
+                <span className="block text-[11px] leading-snug text-ink-500">{o.sub}</span>
+              </span>
+              <ArrowRight
+                size={15}
+                className="shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brand-600"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 /**
  * The two measures that sit beside the score: what the student is aiming at,
  * and how much time they're putting in. Neither feeds the score (hours are
@@ -34,11 +79,14 @@ export function KeyMeasures({
   goals,
   streak,
   courses,
+  startHere = false,
 }: {
   goals: string[]
   streak: number
   /** The programmes working toward the objective, e.g. Digital Marketing. */
   courses: CourseProgress[]
+  /** The student hasn't taken any aptitude assessment yet. */
+  startHere?: boolean
 }) {
   const hours = useMemo(() => timeSeries('month').totalHours, [])
   const [primary, ...rest] = goals
@@ -131,6 +179,8 @@ export function KeyMeasures({
             </ul>
           </div>
         )}
+
+        {startHere && <StartHere />}
       </section>
 
       <section className="card p-5">

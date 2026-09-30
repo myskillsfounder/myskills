@@ -185,20 +185,6 @@ export async function submitAptitude(
   return { scores: r.scores, reflection: r.reflection ?? null, completedAt: null }
 }
 
-/** Has the learner taken it? true / false, or null while we don't know yet.
- *  For places (the app-wide nudge) that only need the yes/no. */
-export function useAptitudeDone(): boolean | null {
-  const [done, setDone] = useState<boolean | null>(null)
-  useEffect(() => {
-    let active = true
-    fetchMyAptitudeResult().then((r) => active && setDone(r != null))
-    return () => {
-      active = false
-    }
-  }, [])
-  return done
-}
-
 /** Has the learner taken it? `loading` is true until we know. */
 export function useMyAptitudeResult() {
   const [result, setResult] = useState<AptitudeResult | null>(null)

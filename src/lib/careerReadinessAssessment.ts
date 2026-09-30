@@ -207,15 +207,3 @@ export function useMyAssessmentResult() {
   return { result, loading, setResult }
 }
 
-/** Has the learner taken the personal aptitude assessment? null while loading. */
-export function useCareerAptitudeDone(): boolean | null {
-  const [done, setDone] = useState<boolean | null>(null)
-  useEffect(() => {
-    let active = true
-    fetchMyAssessmentResult().then((r) => active && setDone(r != null))
-    return () => {
-      active = false
-    }
-  }, [])
-  return done
-}
