@@ -14,6 +14,7 @@ import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
 import { careerReadinessProgress, digitalMarketingProgress } from '@/lib/programmes'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
+import { useMyAptitudeResult } from '@/lib/dmAptitude'
 import { useFoundationUnlock } from '@/lib/foundation'
 import { useMyMatch } from '@/lib/mentorMatches'
 import { useMentorReview } from '@/lib/mentorReview'
@@ -100,7 +101,7 @@ function DashboardPage() {
   const userKey = user?.id ?? 'guest'
   const { profile, loading: profileLoading } = useProfile()
   const goals = profile?.goals ?? []
-  const { result: assessment } = useInitialAssessment()
+  const { result: assessment, loading: assessmentLoading } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
   const streak = useStreak(userKey)
   const visits = useVisitCount(userKey)
@@ -110,6 +111,16 @@ function DashboardPage() {
   const dmReview = useMentorReview('digital-marketing')
   const crReview = useMentorReview('career-readiness')
   const crAptitude = useMyAssessmentResult()
+  const dmAptitude = useMyAptitudeResult()
+  // No aptitude assessment taken yet (the old Foundation assessment counts too).
+  // Wait until all three answers are in so the card never flashes in and out.
+  const startHere =
+    !assessmentLoading &&
+    !crAptitude.loading &&
+    !dmAptitude.loading &&
+    assessment == null &&
+    crAptitude.result == null &&
+    dmAptitude.result == null
   const foundationUnlock = useFoundationUnlock()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
@@ -191,6 +202,7 @@ function DashboardPage() {
             <KeyMeasures
               goals={goals}
               streak={streak}
+              startHere={startHere}
               courses={[
                 digitalMarketingProgress(
                   assessment != null,
