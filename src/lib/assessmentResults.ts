@@ -18,6 +18,7 @@ import { errorMessage } from '@/lib/errors'
 import { trackAssessmentComplete } from './analytics'
 import { supabase } from './supabase'
 import { forgetStarted } from './startedCache'
+import { ensureProfile } from './profile'
 
 export interface CategoryResult {
   category: string
@@ -85,6 +86,7 @@ export async function fetchInitialAssessment(): Promise<AssessmentResult | null>
 export async function submitInitialAssessment(
   answers: Record<string, number>,
 ): Promise<QuizGradeResult> {
+  await ensureProfile()
   const { data, error } = await supabase.rpc('grade_initial_assessment', { answers })
   if (error) throw error
   forgetStarted()

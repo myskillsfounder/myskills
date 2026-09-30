@@ -152,6 +152,32 @@ export async function fetchMyProfile(): Promise<Profile> {
   return normalize(inserted)
 }
 
+let ensured: { id: string; done: Promise<void> } | null = null
+
+/**
+ * Makes sure the signed-in user has a `profiles` row. Nothing creates one at
+ * sign-up: fetchMyProfile seeds it the first time a page that shows the
+ * profile loads (the LaunchPad, the sidebar). Anything that writes a row
+ * pointing at profiles(id) — the aptitude and other assessment results —
+ * fails on its foreign key without one, so a student who goes straight from
+ * onboarding to an assessment must not depend on having seen such a page.
+ *
+ * Runs once per user per session; a failure is not remembered, so it retries.
+ */
+export function ensureProfile(): Promise<void> {
+  return supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) return
+    if (ensured?.id === session.user.id) return ensured.done
+    const done = fetchMyProfile().then(() => undefined)
+    const mine = { id: session.user.id, done }
+    ensured = mine
+    done.catch(() => {
+      if (ensured === mine) ensured = null
+    })
+    return done
+  })
+}
+
 export async function saveMyProfile(patch: ProfilePatch): Promise<Profile> {
   const {
     data: { user },

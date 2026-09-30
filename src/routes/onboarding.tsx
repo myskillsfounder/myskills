@@ -3,6 +3,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ArrowRight, Briefcase, Laptop, Rocket, Sparkles, TrendingUp, Users } from 'lucide-react'
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
+import { ensureProfile } from '@/lib/profile'
 import { requireSession } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { peekAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
@@ -102,6 +103,13 @@ function OnboardingPage() {
     setError(undefined)
     try {
       const method = await completeOnboarding({ career_stage: stage, goals: goal ? [goal] : [] })
+      // Create their profile row now: the assessment they're about to take saves
+      // a result that points at it. If this fails, saving the assessment retries.
+      try {
+        await ensureProfile()
+      } catch {
+        /* retried by the assessment's own save */
+      }
       trackSignUp(method)
       trackEvent('onboarding_finish', { start: how, goal })
       const remembered = takeAfterOnboarding()

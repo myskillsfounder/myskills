@@ -13,6 +13,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { forgetStarted } from './startedCache'
+import { ensureProfile } from './profile'
 import { skillTracks } from './skillTracks'
 
 export type AptitudeKey = 'noticing' | 'offers' | 'creativity' | 'numbers' | 'curiosity'
@@ -177,6 +178,7 @@ export async function submitAptitude(
   answers: Record<string, number>,
   reflection: string,
 ): Promise<AptitudeResult> {
+  await ensureProfile()
   const { data, error } = await supabase.rpc('submit_dm_aptitude_assessment', {
     p_answers: answers,
     p_reflection: reflection.trim() || null,
