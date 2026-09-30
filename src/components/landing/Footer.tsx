@@ -7,7 +7,15 @@ const columns = [
       { label: 'Home', href: '/' },
       { label: 'Digital Marketing', href: '/digital-marketing' },
       { label: 'Career Readiness', href: '/career-readiness' },
-      { label: 'Community', href: '/community' },
+    ],
+  },
+  {
+    title: 'Partner with us',
+    links: [
+      { label: 'Become a mentor', href: '/become-a-mentor' },
+      { label: 'Partner your institution', href: '/become-a-partner-institution' },
+      { label: 'Offer internships', href: '/become-an-internship-partner' },
+      { label: 'All partnerships', href: '/community' },
     ],
   },
   {
@@ -23,7 +31,7 @@ export function Footer() {
   return (
     <footer className="border-t border-ink-100">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-4">
           <div>
             <p className="text-lg font-semibold tracking-tight text-ink-900">
               MySkills

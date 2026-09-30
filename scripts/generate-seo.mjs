@@ -167,6 +167,19 @@ const STATIC_PAGES = [
   },
 ]
 
+/* The partner pages' words come from one file, shared with the React pages
+ * (src/content/partner-pages.json), so the prerendered text and the visible
+ * text can't drift apart. */
+const PARTNERS = JSON.parse(readFileSync(join(ROOT, 'src/content/partner-pages.json'), 'utf8'))
+for (const key of ['hub', 'mentors', 'institutions', 'companies']) {
+  const page = STATIC_PAGES.find((p) => p.path === PARTNERS[key].path)
+  if (page) {
+    page.title = PARTNERS[key].seoTitle
+    page.description = PARTNERS[key].seoDescription
+    page.priority = '0.8'
+  }
+}
+
 /**
  * Signed-in app routes. Listed so the intent is explicit, never emitted.
  *
@@ -211,6 +224,94 @@ async function fetchPosts() {
     console.warn(`[seo] Could not fetch blog posts (${err.message}) — sitemap will omit them.`)
     return []
   }
+}
+
+/* -- partner pages: prerendered text + structured data --------------------- */
+
+const list = (items) => `<ul>${items.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`
+const faqHtml = (faqs) =>
+  `<h2>Questions</h2>${faqs.map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join('')}`
+
+/** Plain semantic HTML of a partner landing page — the same words the React
+ *  page renders, for crawlers that don't run JavaScript. React replaces it on
+ *  mount, so visitors never see this copy. */
+function partnerBodyHtml(p) {
+  return `<main>
+<nav aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/community">Partner with MySkills</a> › ${esc(p.eyebrow.replace(/^For /, ''))}</nav>
+<h1>${esc(p.h1)}</h1><p>${esc(p.intro)}</p>
+<h2>${esc(p.benefitsTitle)}</h2><ul>${p.benefits.map((b) => `<li><h3>${esc(b.title)}</h3><p>${esc(b.body)}</p></li>`).join('')}</ul>
+<h2>${esc(p.stepsTitle)}</h2><ol>${p.steps.map((x) => `<li><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></li>`).join('')}</ol>
+<h2>${esc(p.lookingForTitle)}</h2>${list(p.lookingFor)}
+${faqHtml(p.faqs)}
+<p><a href="#apply">${esc(p.cta)}</a></p>
+</main>`
+}
+
+/** The hub: an intro, the three ways to partner, each linking to its page. */
+function hubBodyHtml(hub) {
+  return `<main>
+<h1>${esc(hub.h1)} ${esc(hub.h1Accent)}</h1><p>${esc(hub.intro)}</p>
+${hub.sections
+  .map(
+    (sec) =>
+      `<section id="${esc(sec.anchor)}"><h2>${esc(sec.title)}</h2><p>${esc(sec.summary)}</p>${list(sec.bullets)}<p><a href="${PARTNERS[sec.key].path}">${esc(sec.cta)}</a></p></section>`,
+  )
+  .join('')}
+${faqHtml(hub.faqs)}
+</main>`
+}
+
+/** WebPage + BreadcrumbList + FAQPage. The questions are all visible on the
+ *  page, which is what Google requires of FAQ markup. */
+function partnerJsonLd({ page, url, name, crumb, faqs }) {
+  const crumbs = [{ name: 'Home', url: `${SITE_URL}/` }]
+  if (crumb) crumbs.push({ name: 'Partner with MySkills', url: `${SITE_URL}/community` }, { name: crumb, url })
+  else crumbs.push({ name: 'Partner with MySkills', url })
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': url,
+        url,
+        name,
+        description: page.seoDescription,
+        isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+        publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: c.url })),
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
+    ],
+  }
+}
+
+/** path -> { bodyHtml, jsonLd } for the four partner pages. */
+function partnerPageExtras() {
+  const out = {}
+  const hub = PARTNERS.hub
+  out[hub.path] = {
+    bodyHtml: hubBodyHtml(hub),
+    jsonLd: partnerJsonLd({ page: hub, url: `${SITE_URL}${hub.path}`, name: hub.seoTitle, faqs: hub.faqs }),
+  }
+  for (const key of ['mentors', 'institutions', 'companies']) {
+    const p = PARTNERS[key]
+    const crumb = { mentors: 'Mentors', institutions: 'Partner institutions', companies: 'Internship partners' }[key]
+    out[p.path] = {
+      bodyHtml: partnerBodyHtml(p),
+      jsonLd: partnerJsonLd({ page: p, url: `${SITE_URL}${p.path}`, name: p.seoTitle, crumb, faqs: p.faqs }),
+    }
+  }
+  return out
 }
 
 /* -- sitemap + robots ------------------------------------------------------ */
@@ -457,7 +558,12 @@ async function main() {
   // left to the client render, and duplicating five different page layouts
   // as hand-templated static HTML here isn't worth the maintenance drift.
   const otherStaticPages = STATIC_PAGES.filter((p) => p.path !== '/' && p.path !== '/blog')
+  // The four partner pages are the exception to "head only": they're the pages
+  // people land on from search, so they carry their real text and structured
+  // data too (see partnerPageExtras).
+  const extras = partnerPageExtras()
   for (const page of otherStaticPages) {
+    const extra = extras[page.path]
     write(
       `${page.path.slice(1)}/index.html`,
       renderPage(shell, {
@@ -466,7 +572,9 @@ async function main() {
           description: page.description,
           url: `${SITE_URL}${page.path}`,
           image: OG_IMAGE,
+          jsonLd: extra?.jsonLd,
         }),
+        bodyHtml: extra?.bodyHtml,
       }),
     )
   }

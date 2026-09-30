@@ -2,16 +2,19 @@ import { useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { trackLead } from '@/lib/analytics'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2, Send } from 'lucide-react'
+import { ArrowLeft, Briefcase, CheckCircle2, Send } from 'lucide-react'
 import { submitInternshipPartnerLead } from '@/lib/internshipPartners'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 // Public on purpose: an interested company is an outside party, and making
 // someone create a learner account before they can even express interest
 // loses most of them — same reasoning as /become-a-mentor and
 // /become-a-partner-institution.
+const page = partnerPage('companies')
+
 export const Route = createFileRoute('/become-an-internship-partner')({
   component: BecomeAnInternshipPartnerPage,
 })
@@ -113,15 +116,25 @@ function BecomeAnInternshipPartnerPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="surface-paper">
+      <main>
+        {!done && (
+          <>
+            <PartnerHero page={page} icon={Briefcase} breadcrumb="Internship partners" />
+            <PartnerDetails page={page} />
+            <PartnerFaq faqs={page.faqs} />
+          </>
+        )}
+        <div id="apply" className="surface-paper scroll-mt-16">
         <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+          {done && (
           <Link
-            to="/community"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
-          >
-            <ArrowLeft size={16} />
-            Back to Community
-          </Link>
+              to="/community"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+            >
+              <ArrowLeft size={16} />
+              Back to Partner with MySkills
+            </Link>
+          )}
 
           {done ? (
             <div className="card px-6 py-14 text-center">
@@ -146,19 +159,9 @@ function BecomeAnInternshipPartnerPage() {
             </div>
           ) : (
             <>
-              <header className="mb-8">
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                  Community
-                </p>
-                <h1 className="font-display text-3xl font-semibold leading-tight text-ink-900 sm:text-[2.5rem]">
-                  Offer internships through MySkills
-                </h1>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-                  Every MySkills student practises real scenarios and gets a score before they ever
-                  apply anywhere — so an internship you post here starts from a pool that's already
-                  shown its work, not just a resume. Tell us about your company and we'll be in
-                  touch to set it up.
-                </p>
+              <header className="mb-6">
+                <h2 className="font-display text-2xl font-semibold leading-tight text-ink-900 sm:text-3xl">Tell us about your company</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">It takes a few minutes. A real person reads every submission and gets in touch.</p>
               </header>
 
               <form onSubmit={handleSubmit} noValidate className="card space-y-5 p-6 sm:p-7">
@@ -265,6 +268,7 @@ function BecomeAnInternshipPartnerPage() {
               </form>
             </>
           )}
+        </div>
         </div>
       </main>
 

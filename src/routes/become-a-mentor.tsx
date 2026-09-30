@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { trackLead } from '@/lib/analytics'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2, Send } from 'lucide-react'
+import { ArrowLeft, GraduationCap, CheckCircle2, Send } from 'lucide-react'
 import { submitMentorApplication } from '@/lib/mentors'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 // Public on purpose: a mentor is an outside party, and making them create a
 // learner account before they can even offer to help loses most of them.
+const page = partnerPage('mentors')
+
 export const Route = createFileRoute('/become-a-mentor')({
   component: BecomeAMentorPage,
 })
@@ -125,15 +128,25 @@ function BecomeAMentorPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="surface-paper">
+      <main>
+        {!done && (
+          <>
+            <PartnerHero page={page} icon={GraduationCap} breadcrumb="Mentors" />
+            <PartnerDetails page={page} />
+            <PartnerFaq faqs={page.faqs} />
+          </>
+        )}
+        <div id="apply" className="surface-paper scroll-mt-16">
         <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+          {done && (
           <Link
-            to="/"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
-          >
-            <ArrowLeft size={16} />
-            Back to MySkills
-          </Link>
+              to="/"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+            >
+              <ArrowLeft size={16} />
+              Back to MySkills
+            </Link>
+          )}
 
           {done ? (
             <div className="card px-6 py-14 text-center">
@@ -159,18 +172,9 @@ function BecomeAMentorPage() {
             </div>
           ) : (
             <>
-              <header className="mb-8">
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                  Community
-                </p>
-                <h1 className="font-display text-3xl font-semibold leading-tight text-ink-900 sm:text-[2.5rem]">
-                  Become a mentor
-                </h1>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-                  Students across India use MySkills to build real digital marketing skills.
-                  If you've done the work, a little of your time goes a long way. Tell us
-                  about yourself and we'll be in touch.
-                </p>
+              <header className="mb-6">
+                <h2 className="font-display text-2xl font-semibold leading-tight text-ink-900 sm:text-3xl">Apply to mentor</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">It takes a few minutes. We review every application by hand and reply by email.</p>
               </header>
 
               <form onSubmit={handleSubmit} noValidate className="card space-y-5 p-6 sm:p-7">
@@ -298,6 +302,7 @@ function BecomeAMentorPage() {
               </form>
             </>
           )}
+        </div>
         </div>
       </main>
 

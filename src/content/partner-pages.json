@@ -1,0 +1,264 @@
+{
+  "hub": {
+    "path": "/community",
+    "seoTitle": "Partner with MySkills — Mentors, Institutes & Internships",
+    "seoDescription": "Mentor students, list your training institute, or offer internships. Every way to partner with MySkills starts with a short application — a real person reads each one.",
+    "eyebrow": "Partner with MySkills",
+    "h1": "Partner with MySkills",
+    "h1Accent": "and help students get job-ready",
+    "intro": "MySkills helps students across India build personal and professional skills — practising with AI, working with real mentors, and proving it with internships. We partner with mentors, training institutes and companies. Applying takes a few minutes, and a real person reads every application.",
+    "sections": [
+      {
+        "key": "mentors",
+        "anchor": "mentors",
+        "eyebrow": "For mentors",
+        "title": "Mentors — guide students one to one",
+        "summary": "Share what you know with students who are just starting out. Accept the students you want to work with, hold sessions your way and vouch for the skills they earn.",
+        "bullets": [
+          "See a student's aptitude report before you say yes",
+          "Sessions on your schedule — pause new requests any time",
+          "Award skill badges and verify projects with your name on them"
+        ],
+        "cta": "Become a mentor"
+      },
+      {
+        "key": "institutions",
+        "anchor": "academies",
+        "eyebrow": "For partner academies",
+        "title": "Partner academies — get listed for classroom learning",
+        "summary": "Training institutes that teach digital marketing and career skills are verified and listed in the MySkills Community, where students looking for classroom learning can find them.",
+        "bullets": [
+          "A verified partner listing with your courses, city and Google rating",
+          "Enquiries from students who already know what they want to learn",
+          "Student ratings that build trust with future students"
+        ],
+        "cta": "Partner your institution"
+      },
+      {
+        "key": "companies",
+        "anchor": "internships",
+        "eyebrow": "For internship companies",
+        "title": "Internship companies — hire students with proof",
+        "summary": "Offer internships to students who have practised real scenarios, worked with mentors and earned a Career Readiness Score.",
+        "bullets": [
+          "A Career Readiness Score out of 100, built from verified MySkills activity",
+          "Skills and projects vouched for by mentors",
+          "Tell us the roles you offer and we'll be in touch"
+        ],
+        "cta": "Offer internships"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Who can partner with MySkills?",
+        "a": "Three kinds of partner: mentors who want to guide students, training institutes that teach digital marketing or related career skills, and companies that can offer internships."
+      },
+      {
+        "q": "Does it cost anything to apply?",
+        "a": "No. Each application is a short form, and there is nothing to pay to submit it. We review every application by hand and reply by email."
+      },
+      {
+        "q": "Who are the students?",
+        "a": "Students and early-career learners across India working through the MySkills Digital Marketing Programme and Career Readiness Programme."
+      },
+      {
+        "q": "Do I need a MySkills account to apply?",
+        "a": "No. All three applications work without an account."
+      }
+    ]
+  },
+  "mentors": {
+    "path": "/become-a-mentor",
+    "seoTitle": "Become an Online Mentor for Students in India | MySkills",
+    "seoDescription": "Mentor students in digital marketing and career skills. See their aptitude report, run sessions your own way and award skill badges. Apply in minutes — no account needed.",
+    "eyebrow": "For mentors",
+    "h1": "Become a mentor and help students build real skills",
+    "intro": "MySkills students practise digital marketing and career-readiness skills with AI, then work with a real mentor who knows the field. If you've done the work, a little of your time changes how a student starts their career.",
+    "cta": "Apply to mentor",
+    "benefitsTitle": "What mentoring on MySkills looks like",
+    "benefits": [
+      {
+        "title": "Students arrive prepared",
+        "body": "A student asks you after taking an aptitude assessment, so you see their strengths, gaps and what they want help with before you say yes."
+      },
+      {
+        "title": "Mentor your way",
+        "body": "You accept or decline each request. You arrange sessions with the student by call, video or chat, and you can pause new requests whenever you're busy."
+      },
+      {
+        "title": "Your word carries weight",
+        "body": "Award a skill badge when a student has earned it in practice, and record projects you've seen them complete. Both appear on their profile with your name."
+      },
+      {
+        "title": "A profile and a portal of your own",
+        "body": "A MySkills mentor profile with your photo, expertise and LinkedIn link, and a private portal to manage requests, students and sessions."
+      }
+    ],
+    "stepsTitle": "How it works",
+    "steps": [
+      { "title": "Apply", "body": "Tell us about your experience. It takes a few minutes and you don't need a MySkills account." },
+      { "title": "We review", "body": "A real person reads every application and replies by email." },
+      { "title": "Set up your profile", "body": "Once approved, sign in to the mentor portal and finish your profile so students can find you." },
+      { "title": "Meet your students", "body": "Accept requests, hold sessions your way and log each one." }
+    ],
+    "lookingForTitle": "Who we're looking for",
+    "lookingFor": [
+      "Real experience in digital marketing, or in skills like communication, leadership and goal setting",
+      "Patience and clarity with people who are just starting out",
+      "Time to hold sessions — you decide how many students you take",
+      "A LinkedIn profile and a phone number we can reach you on"
+    ],
+    "faqs": [
+      {
+        "q": "Do I need a MySkills account to apply?",
+        "a": "No. Apply with the form below. Once you're approved we link your mentor profile to an account so you can sign in to the mentor portal."
+      },
+      {
+        "q": "Who are the students?",
+        "a": "Students and early-career learners across India working through the Digital Marketing Programme (eight skill tracks) and the Career Readiness Programme (five modules). They practise with AI first, then ask a mentor to work with them."
+      },
+      {
+        "q": "How much time will mentoring take?",
+        "a": "That's up to you. You accept or decline each request, agree session times with the student, and can pause new requests at any time. Students you're already working with aren't affected when you pause."
+      },
+      {
+        "q": "What happens in a session?",
+        "a": "Whatever helps the student most — reviewing their practice work, answering questions or coaching them toward their goals. You arrange the sessions yourselves and log each one in the mentor portal."
+      },
+      {
+        "q": "What do students see about me?",
+        "a": "Your name, photo, title, bio, areas of expertise and LinkedIn link. Your phone number and email stay private and are used only by the MySkills team to reach you."
+      },
+      {
+        "q": "What happens after I apply?",
+        "a": "We review every application by hand and email you. If it's a fit, your profile goes live in the Community and we set you up with the mentor portal."
+      }
+    ]
+  },
+  "institutions": {
+    "path": "/become-a-partner-institution",
+    "seoTitle": "Partner Your Training Institute with MySkills | Get Listed",
+    "seoDescription": "Run digital marketing or career-skills courses? Become a verified MySkills partner institute and get listed for students looking for classroom learning. Apply in minutes.",
+    "eyebrow": "For institutions",
+    "h1": "Partner your institution with MySkills",
+    "intro": "MySkills students learn online first, and many want a classroom, a teacher in the room and an institute they can visit. Partner institutions are verified and listed in the MySkills Community, so those students can find you.",
+    "cta": "Apply to partner",
+    "benefitsTitle": "What partnering gives your institution",
+    "benefits": [
+      {
+        "title": "A verified listing",
+        "body": "Your institution, courses, city, website and Google rating, shown to MySkills students under a verified partner listing."
+      },
+      {
+        "title": "Enquiries from interested students",
+        "body": "Students who want classroom learning can send an enquiry through MySkills, so the conversation starts with someone who has already chosen to learn."
+      },
+      {
+        "title": "Students with a head start",
+        "body": "MySkills students arrive having practised real scenarios and taken an aptitude assessment, so they know what they want to study."
+      },
+      {
+        "title": "Ratings that build trust",
+        "body": "Students can rate partner institutions, giving future students an honest view alongside your Google rating."
+      }
+    ],
+    "stepsTitle": "How it works",
+    "steps": [
+      { "title": "Apply", "body": "Tell us about your institution and the courses you run. It takes a few minutes and needs no MySkills account." },
+      { "title": "We verify", "body": "We check your details — legal name, years in education, website and Google profile — before anything goes live." },
+      { "title": "Get listed", "body": "Your partner listing appears in the MySkills Community for signed-in students." },
+      { "title": "Hear from students", "body": "Interested students send enquiries through MySkills." }
+    ],
+    "lookingForTitle": "Who we're looking for",
+    "lookingFor": [
+      "An established institution or training centre teaching digital marketing or related career skills",
+      "A verifiable presence online — a website and, ideally, a Google business profile",
+      "Courses students can actually attend, in a named city",
+      "A contact person we can reach by email and phone"
+    ],
+    "faqs": [
+      {
+        "q": "Which institutions can apply?",
+        "a": "Training institutes, colleges and academies that run digital marketing courses or other career-skills programmes and can be verified online."
+      },
+      {
+        "q": "How do you verify an institution?",
+        "a": "We review the details you give us — your institution's legal name, how long it has been teaching, and its website and Google profile — before listing it."
+      },
+      {
+        "q": "How do students find us?",
+        "a": "Verified partners are listed in the MySkills Community, where signed-in students can see your courses and city, rate your institution and send an enquiry."
+      },
+      {
+        "q": "What do you need from us to apply?",
+        "a": "Your institution's name and city, the courses you offer, how many years you have been teaching, your website and Google profile, and a contact person."
+      },
+      {
+        "q": "What happens after we apply?",
+        "a": "We review every application by hand and email the contact you name. If it's a fit, we verify the details and publish your listing."
+      }
+    ]
+  },
+  "companies": {
+    "path": "/become-an-internship-partner",
+    "seoTitle": "Offer Internships to Skilled Students in India | MySkills",
+    "seoDescription": "Hire interns who've practised real scenarios, worked with mentors and earned a Career Readiness Score. Tell us the roles you're offering and we'll be in touch.",
+    "eyebrow": "For companies",
+    "h1": "Offer internships to students who've shown their skills",
+    "intro": "Hire interns who've practised real scenarios, worked with mentors and built a Career Readiness Score — not just sent a résumé. Tell us about your company and the roles you're offering, and we'll be in touch.",
+    "cta": "Offer internships",
+    "benefitsTitle": "Why companies partner with MySkills",
+    "benefits": [
+      {
+        "title": "Evidence, not just a CV",
+        "body": "Every student builds a Career Readiness Score out of 100 from what they do on MySkills: learning, practice, live mentor sessions and mentor sign-off."
+      },
+      {
+        "title": "Skills a mentor has vouched for",
+        "body": "Skill badges and projects on a student's profile are awarded and verified by the mentors who worked with them."
+      },
+      {
+        "title": "Students across India",
+        "body": "A growing pool of students working through the Digital Marketing and Career Readiness programmes."
+      },
+      {
+        "title": "You describe the role",
+        "body": "Tell us what kind of internships you can offer and the skills you need, and we'll talk it through with you."
+      }
+    ],
+    "stepsTitle": "How it works",
+    "steps": [
+      { "title": "Tell us about your company", "body": "Your company, the kinds of internships you can offer and who to contact. No MySkills account needed." },
+      { "title": "We get in touch", "body": "A real person reads every submission and reaches out to understand the roles." },
+      { "title": "Meet students who've shown their skills", "body": "Interns come from students with a track record on MySkills, not a blank page." }
+    ],
+    "lookingForTitle": "Who we're looking for",
+    "lookingFor": [
+      "A company or agency with real, supervised work for interns to do",
+      "Clear roles — for example marketing, content, analytics or design",
+      "A named contact we can reach by email and phone"
+    ],
+    "faqs": [
+      {
+        "q": "What is the Career Readiness Score?",
+        "a": "A score out of 100 that counts only what a student does on MySkills: learning and practice across their programmes, live sessions with mentors, and mentor sign-off. It is worked out on our servers, not typed in by the student."
+      },
+      {
+        "q": "What kinds of internships can we offer?",
+        "a": "Roles where MySkills students' skills apply. Digital marketing is the largest programme today — SEO, paid ads, analytics and content — with personal and career skills alongside."
+      },
+      {
+        "q": "How do students become available?",
+        "a": "Students build their profile through the programmes: practice, mentor sessions, skill badges and projects. We'll talk with you about the roles and the profile you're looking for."
+      },
+      {
+        "q": "Do we need a MySkills account?",
+        "a": "No. Tell us about your company with the form below and we'll be in touch."
+      },
+      {
+        "q": "What happens after we submit?",
+        "a": "A real person at MySkills reads it and contacts the person you name to discuss your roles."
+      }
+    ]
+  }
+}

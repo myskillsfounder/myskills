@@ -20,6 +20,7 @@ import { Eyebrow } from '@/components/landing/Eyebrow'
 import { GridBackdrop } from '@/components/landing/GridBackdrop'
 import { supabase } from '@/lib/supabase'
 import { fetchMentors } from '@/lib/mentors'
+import { hubPage, partnerPage, PartnerFaq, type PartnerKey } from '@/components/partner/PartnerLanding'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import {
   CategoryBar,
@@ -69,70 +70,11 @@ function CommunityIndexRoute() {
 const primaryButton =
   'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
 
-/** Three-pillar "at a glance" preview row, under the hero copy. Mirrors the
- *  checkmark row on the homepage Hero, but foreshadows the sections below
- *  instead of restating the value prop. */
-function PillarPreview({ icon: Icon, label }: { icon: IconType; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <Icon size={16} className="text-brand-200" />
-      {label}
-    </span>
-  )
-}
-
-/** The compact overview card for each pillar — same shape for all three, so
- *  the "this is one community with three parts" read comes from consistency,
- *  not from any one of them dominating. */
-function PillarCard({
-  icon: Icon,
-  live,
-  title,
-  description,
-  action,
-}: {
-  icon: IconType
-  live: boolean
-  title: string
-  description: string
-  action: ReactNode
-}) {
-  return (
-    <div className={`card-glass-dark lift group flex flex-col p-6 ${live ? '' : 'hover:!translate-y-0 hover:!shadow-none'}`}>
-      <div className="flex items-start justify-between gap-3">
-        <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-white shadow-e1 transition-transform duration-300 ${
-            live
-              ? 'bg-gradient-to-br from-brand-500 to-brand-700 group-hover:scale-105'
-              : 'bg-white/10 opacity-70 grayscale'
-          }`}
-        >
-          <Icon size={22} />
-        </span>
-        {live ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">
-            Available
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/60">
-            <Lock size={10} />
-            Coming soon
-          </span>
-        )}
-      </div>
-
-      <h3 className="mt-4 font-display text-lg font-semibold text-white">{title}</h3>
-      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-white/70">{description}</p>
-
-      <div className="mt-4">{action}</div>
-    </div>
-  )
-}
-
 /** Full-width deep-dive section shared by all three pillars. `live` swaps the
  *  colorful, actionable treatment for the honest muted "coming soon" one —
  *  same structure either way, so nothing feels like an afterthought. */
 function PillarSection({
+  id,
   icon: Icon,
   live,
   reverse = false,
@@ -143,6 +85,7 @@ function PillarSection({
   actions,
   gridMask,
 }: {
+  id?: string
   icon: IconType
   live: boolean
   /** Alternates which side the text sits on down the page, so three
@@ -156,7 +99,7 @@ function PillarSection({
   gridMask: string
 }) {
   return (
-    <section className="relative overflow-hidden border-t border-white/[0.06] px-4 py-10 sm:px-6 lg:px-8">
+    <section id={id} className="relative scroll-mt-16 overflow-hidden border-t border-white/[0.06] px-4 py-10 sm:px-6 lg:px-8">
       <div className="card-glass-dark relative mx-auto grid max-w-6xl items-center gap-10 overflow-hidden p-8 lg:grid-cols-2 lg:p-12">
         <GridBackdrop mask={gridMask} />
         <div className={`relative ${reverse ? 'lg:order-2' : ''}`}>
@@ -202,188 +145,71 @@ function PillarSection({
 }
 
 function PublicCommunityPage() {
+  const icons: Record<string, IconType> = { mentors: GraduationCap, institutions: Building2, companies: Briefcase }
+  const gridMasks = [
+    'ellipse 55% 60% at 10% 20%',
+    'ellipse 55% 60% at 90% 80%',
+    'ellipse 55% 60% at 10% 20%',
+  ]
+
   return (
     <div className="min-h-screen bg-ink-900">
       <Navbar />
 
       <main>
-        {/* Hero */}
+        {/* Hero: who this page is for, in the order the sections follow. */}
         <section className="surface-wood-dark relative overflow-hidden">
           <GridBackdrop mask="ellipse 75% 65% at 50% 0%" />
-          <div className="relative mx-auto max-w-6xl px-4 pt-10 pb-10 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
-            <div className="rise-in mx-auto max-w-2xl text-center">
+          <div className="relative mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
+            <div className="rise-in mx-auto max-w-3xl text-center">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
                 <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
                 <Users size={13} />
-                Community
+                {hubPage.eyebrow}
               </span>
               <h1 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-                Partner with the students{' '}
-                <span className="text-brand-200">who'll do the work</span>
+                {hubPage.h1} <span className="text-brand-200">{hubPage.h1Accent}</span>
               </h1>
-              <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                Mentor a student, host an intern, or bring your institution on board.
-                Every way to partner with MySkills starts with a two-minute form below —
-                a real person reads every one.
-              </p>
-
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/65">
-                <PillarPreview icon={GraduationCap} label="Become a mentor" />
-                <PillarPreview icon={Briefcase} label="Offer internships" />
-                <PillarPreview icon={Building2} label="Partner your institution" />
-              </div>
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">{hubPage.intro}</p>
+              <nav aria-label="Ways to partner" className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
+                {hubPage.sections.map((s) => (
+                  <a
+                    key={s.key}
+                    href={`#${s.anchor}`}
+                    className="inline-flex h-10 items-center gap-2 rounded-full bg-white/10 px-4 text-sm font-medium text-white/85 transition-colors hover:bg-white/20 hover:text-white"
+                  >
+                    {s.eyebrow.replace(/^For /, '').replace(/^./, (c) => c.toUpperCase())}
+                    <ArrowRight size={14} />
+                  </a>
+                ))}
+              </nav>
             </div>
           </div>
         </section>
 
-        {/* Three pillars, at a glance */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] bg-ink-900">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="grid gap-4 sm:grid-cols-3">
-              <PillarCard
-                icon={GraduationCap}
-                live
-                title="Mentors"
-                description="Working marketers reviewing student work in live chat — apply in a few minutes, no learner account needed."
-                action={
-                  <Link
-                    to="/become-a-mentor"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
-                  >
-                    Apply to mentor
-                    <ArrowRight size={15} />
-                  </Link>
-                }
-              />
-              <PillarCard
-                icon={Building2}
-                live
-                title="Institutions"
-                description="Training institutions verified as MySkills partners for offline learning — apply to get listed."
-                action={
-                  <Link
-                    to="/become-a-partner-institution"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
-                  >
-                    Apply to partner
-                    <ArrowRight size={15} />
-                  </Link>
-                }
-              />
-              <PillarCard
-                icon={Briefcase}
-                live
-                title="Internships"
-                description="Real internship roles for students who've already proven their skills — tell us what you're hiring for."
-                action={
-                  <Link
-                    to="/become-an-internship-partner"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
-                  >
-                    Offer internships
-                    <ArrowRight size={15} />
-                  </Link>
-                }
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Mentors — the live pillar */}
-        <PillarSection
-          icon={GraduationCap}
-          live
-          eyebrow="Available now"
-          title="Become a mentor"
-          gridMask="ellipse 55% 60% at 10% 20%"
-          description="Students across India use MySkills to build real digital marketing skills. If you've done the work, a little of your time goes a long way — no learner account needed, just a few minutes to apply."
-          bullets={[
-            'Answer questions and unblock students in live support chat',
-            'Get featured on your profile with a verified mentor badge',
-            'Shape what a career in digital marketing actually looks like',
-          ]}
-          actions={
-            <Link to="/become-a-mentor" className={primaryButton}>
-              Apply to mentor
-              <ArrowRight size={16} />
-            </Link>
-          }
-        />
-
-        {/* Institutions — open partner program */}
-        <PillarSection
-          icon={Building2}
-          live
-          reverse
-          eyebrow="Open to institutions"
-          title="Partner with MySkills"
-          gridMask="ellipse 55% 60% at 90% 80%"
-          description="Run digital marketing courses or training programs? Get listed as a verified MySkills partner institution so our students know who to trust for offline or classroom learning."
-          bullets={[
-            'A verified listing your prospective students can find and trust',
-            'Built on the same MySkills tracks your students can already practice',
-            'A guided path from practice scores to real classroom coaching',
-          ]}
-          actions={
-            <Link to="/become-a-partner-institution" className={primaryButton}>
-              Apply to partner
-              <ArrowRight size={16} />
-            </Link>
-          }
-        />
-
-        {/* Internships — companies, not students: the audience for this whole
-            page is who supplies the internship, not who does it. */}
-        <PillarSection
-          icon={Briefcase}
-          live
-          reverse
-          eyebrow="Open to companies"
-          title="Offer internships through MySkills"
-          gridMask="ellipse 55% 60% at 10% 20%"
-          description="Every student comes to you having already practised real scenarios and earned a score — so hiring from MySkills starts from proof, not just a resume. Tell us what roles you're hiring for."
-          bullets={[
-            'A pipeline of students already scored on the skills you need',
-            'No cost to list a role — we handle the matching',
-            "A screened shortlist, not an open inbox of applications",
-          ]}
-          actions={
-            <Link to="/become-an-internship-partner" className={primaryButton}>
-              Offer internships
-              <ArrowRight size={16} />
-            </Link>
-          }
-        />
-
-        {/* Closing CTA — a recap, not a new pitch: every path on this page
-            is one of these three forms, so the close just makes picking
-            one easy instead of introducing a fourth (student signup) that
-            belongs on the homepage, not here. */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="surface-wood-dark glow-edge relative mx-auto max-w-6xl overflow-hidden rounded-xl px-6 py-10 text-center sm:px-10">
-            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
-            <h2 className="relative font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              Ready to partner with MySkills?
-            </h2>
-            <p className="relative mx-auto mt-2 max-w-md text-sm text-white/70 sm:text-base">
-              Pick the one that fits — every form goes straight to a real person on the team.
-            </p>
-            <div className="relative mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link to="/become-a-mentor" className={primaryButton}>
-                Apply to mentor
+        {/* Mentors, then partner academies, then internship companies. */}
+        {hubPage.sections.map((s, i) => (
+          <PillarSection
+            key={s.key}
+            id={s.anchor}
+            icon={icons[s.key]}
+            live
+            reverse={i === 1}
+            eyebrow={s.eyebrow}
+            title={s.title}
+            gridMask={gridMasks[i]}
+            description={s.summary}
+            bullets={s.bullets}
+            actions={
+              <Link to={partnerPage(s.key as PartnerKey).path} className={primaryButton}>
+                {s.cta}
                 <ArrowRight size={16} />
               </Link>
-              <Link to="/become-a-partner-institution" className={primaryButton}>
-                Apply to partner
-                <ArrowRight size={16} />
-              </Link>
-              <Link to="/become-an-internship-partner" className={primaryButton}>
-                Offer internships
-                <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </section>
+            }
+          />
+        ))}
+
+        <PartnerFaq faqs={hubPage.faqs} title="Common questions" />
       </main>
 
       <Footer />

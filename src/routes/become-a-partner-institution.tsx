@@ -2,15 +2,18 @@ import { useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { trackLead } from '@/lib/analytics'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2, Send } from 'lucide-react'
+import { ArrowLeft, Building2, CheckCircle2, Send } from 'lucide-react'
 import { submitInstitutionPartnerApplication } from '@/lib/institutionPartners'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 // Public on purpose: an applying institution is an outside party, and making
 // someone create a learner account before they can even apply loses most of
 // them — same reasoning as /become-a-mentor.
+const page = partnerPage('institutions')
+
 export const Route = createFileRoute('/become-a-partner-institution')({
   component: BecomeAPartnerInstitutionPage,
 })
@@ -154,15 +157,25 @@ function BecomeAPartnerInstitutionPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="surface-paper">
+      <main>
+        {!done && (
+          <>
+            <PartnerHero page={page} icon={Building2} breadcrumb="Partner institutions" />
+            <PartnerDetails page={page} />
+            <PartnerFaq faqs={page.faqs} />
+          </>
+        )}
+        <div id="apply" className="surface-paper scroll-mt-16">
         <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+          {done && (
           <Link
-            to="/community/institutions"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
-          >
-            <ArrowLeft size={16} />
-            Back to Institutions
-          </Link>
+              to="/community"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+            >
+              <ArrowLeft size={16} />
+              Back to Partner with MySkills
+            </Link>
+          )}
 
           {done ? (
             <div className="card px-6 py-14 text-center">
@@ -187,18 +200,9 @@ function BecomeAPartnerInstitutionPage() {
             </div>
           ) : (
             <>
-              <header className="mb-8">
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                  Community
-                </p>
-                <h1 className="font-display text-3xl font-semibold leading-tight text-ink-900 sm:text-[2.5rem]">
-                  Partner with MySkills
-                </h1>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-                  Run digital marketing courses or training programs? Get listed as a verified
-                  MySkills partner institution so our students know who to trust for offline or
-                  classroom learning. Tell us about your institution and we'll be in touch.
-                </p>
+              <header className="mb-6">
+                <h2 className="font-display text-2xl font-semibold leading-tight text-ink-900 sm:text-3xl">Apply to partner</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">It takes a few minutes. We review every application by hand and reply by email.</p>
               </header>
 
               <form onSubmit={handleSubmit} noValidate className="card space-y-5 p-6 sm:p-7">
@@ -355,6 +359,7 @@ function BecomeAPartnerInstitutionPage() {
               </form>
             </>
           )}
+        </div>
         </div>
       </main>
 

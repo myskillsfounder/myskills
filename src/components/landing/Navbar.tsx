@@ -40,7 +40,7 @@ export function Navbar() {
             to="/community"
             className="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
           >
-            Community
+            Partner with us
           </Link>
           <Link
             to="/blog"
@@ -108,7 +108,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className="rounded-md px-2 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
             >
-              Community
+              Partner with us
             </Link>
             <Link
               to="/blog"
