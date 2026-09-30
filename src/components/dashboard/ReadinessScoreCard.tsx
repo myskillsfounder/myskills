@@ -236,7 +236,7 @@ function ActionSlider({ highlights }: { highlights: Highlights }) {
 
   return (
     <div
-      className="mt-auto pt-6"
+      className="pt-6"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -368,7 +368,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
   const shownScore = useCountUp(score, entered)
 
   return (
-    <section className="card flex h-full flex-col p-6 sm:p-7">
+    <section className="card flex flex-col p-6 sm:p-7">
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Career Readiness Score</p>
 
       <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">

@@ -213,7 +213,7 @@ function DashboardPage() {
             <Skeleton className="h-80" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3">
             <div className="lg:col-span-2">
               {firstRun ? (
                 <FirstRunPath name={name} goal={goals[0]} />
@@ -234,7 +234,7 @@ function DashboardPage() {
             <KeyMeasures
               goals={goals}
               streak={streak}
-              startHere={startHere}
+              startHere={firstRun}
               showHours={!firstRun}
               courses={[
                 // A course appears once the student has started it — taken its
