@@ -55,15 +55,29 @@ export function useMyMatch(programme: MatchProgramme) {
   return { match, loading, reload }
 }
 
-/** Mentors a student can ask — listed mentors whose listing is linked to an account. */
+/** Mentors a student can ask — linked to an account, with a finished profile,
+ *  and taking new students (docs/supabase-mentor-portal.sql). */
 export async function fetchMatchableMentors(): Promise<Mentor[]> {
+  const cols = 'id, full_name, headline, bio, location, expertise, linkedin_url, avatar_url, profile_id'
   const { data, error } = await supabase
     .from('mentors')
-    .select('id, full_name, headline, bio, location, expertise, linkedin_url, avatar_url, profile_id')
+    .select(cols)
+    .not('profile_id', 'is', null)
+    .eq('ready', true)
+    .eq('accepting', true)
+    .order('sort_order', { ascending: true })
+  if (!error) return (data ?? []) as Mentor[]
+
+  // 42703: the portal SQL isn't run yet, so there's no ready/accepting column.
+  // Fall back to every linked mentor rather than showing students nobody.
+  if (error.code !== '42703') fail(error)
+  const legacy = await supabase
+    .from('mentors')
+    .select(cols)
     .not('profile_id', 'is', null)
     .order('sort_order', { ascending: true })
-  if (error) fail(error)
-  return (data ?? []) as Mentor[]
+  if (legacy.error) fail(legacy.error)
+  return (legacy.data ?? []) as Mentor[]
 }
 
 export async function requestMentor(programme: MatchProgramme, mentorId: string, note: string): Promise<void> {
@@ -107,24 +121,4 @@ export async function decideRequest(matchId: string, accept: boolean, note: stri
 export async function logSession(matchId: string, title: string, heldOn: string): Promise<void> {
   const { error } = await supabase.rpc('log_mentor_session', { p_match: matchId, p_title: title, p_held_on: heldOn })
   if (error) fail(error)
-}
-
-/** Is the signed-in user a listed mentor linked to their account? */
-export function useIsListedMentor(): boolean {
-  const [yes, setYes] = useState(false)
-  useEffect(() => {
-    let active = true
-    void (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
-      const { data } = await supabase.from('mentors').select('id').eq('profile_id', user.id).limit(1)
-      if (active) setYes(Boolean(data && data.length))
-    })()
-    return () => {
-      active = false
-    }
-  }, [])
-  return yes
 }

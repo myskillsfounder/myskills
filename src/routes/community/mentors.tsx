@@ -42,15 +42,16 @@ const initialsOf = (name: string) =>
     .join('')
 
 /**
- * A mentor who is also a platform user keeps their card in sync with their own
- * profile, so editing it in-app updates the listing without an admin round trip.
+ * A mentor edits their card in the Mentor portal (their listing), so the
+ * listing wins. Their general profile only fills gaps — a photo or location
+ * they haven't added to the listing yet.
  */
 function MentorCard({ mentor, db }: { mentor: Mentor; db?: DbProfile }) {
-  const name = db?.full_name?.trim() || mentor.full_name
-  const role = db?.headline?.trim() || mentor.headline
-  const avatar = db?.avatar_url || mentor.avatar_url
-  const location = db?.location?.trim() || mentor.location
-  const expertise = db?.skills?.length ? db.skills : mentor.expertise
+  const name = mentor.full_name || db?.full_name?.trim() || ''
+  const role = mentor.headline || db?.headline?.trim() || ''
+  const avatar = mentor.avatar_url || db?.avatar_url
+  const location = mentor.location || db?.location?.trim()
+  const expertise = mentor.expertise.length ? mentor.expertise : db?.skills ?? []
 
   return (
     <div className="rounded-2xl card p-6 shadow-sm">
