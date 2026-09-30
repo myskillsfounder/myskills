@@ -3,10 +3,7 @@
  * their account completes their own listing (the public card students see)
  * and a private phone number, and chooses whether they're taking students.
  */
-import { useEffect, useState } from 'react'
-import { useRouterState } from '@tanstack/react-router'
 import { supabase } from './supabase'
-import { fetchMyMentees } from './mentorMatches'
 
 function fail(error: { message?: string }): never {
   throw new Error(error.message?.trim() || 'Something went wrong.')
@@ -72,54 +69,4 @@ export async function saveMyMentorProfile(p: MentorProfileInput): Promise<void> 
 export async function setAccepting(on: boolean): Promise<void> {
   const { error } = await supabase.rpc('set_my_mentor_accepting', { p_on: on })
   if (error) fail(error)
-}
-
-type MentorNav = { isMentor: boolean; waiting: number }
-const NOT_MENTOR: MentorNav = { isMentor: false, waiting: 0 }
-
-// The sidebar, the page shell and the bottom bar all ask the same question on
-// every page — share one lookup between them rather than making three.
-let shared: { key: string; at: number; result: Promise<MentorNav> } | null = null
-
-async function lookupMentorNav(userId: string, key: string): Promise<MentorNav> {
-  if (shared && shared.key === key && Date.now() - shared.at < 3000) return shared.result
-  const result = (async (): Promise<MentorNav> => {
-    const { data } = await supabase.from('mentors').select('id').eq('profile_id', userId).limit(1)
-    if (!data?.length) return NOT_MENTOR
-    let waiting = 0
-    try {
-      waiting = (await fetchMyMentees()).filter((m) => m.status === 'requested').length
-    } catch {
-      /* the badge is a nicety — the page itself shows the error */
-    }
-    return { isMentor: true, waiting }
-  })()
-  shared = { key, at: Date.now(), result }
-  return result
-}
-
-/** What the signed-in user's navigation needs to know: are they a mentor, and
- *  how many student requests are waiting on them. Refreshes on every page
- *  change, so the count is current when they come back to the app. */
-export function useMentorNav(): MentorNav {
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const [state, setState] = useState<MentorNav>(NOT_MENTOR)
-
-  useEffect(() => {
-    let active = true
-    void (async () => {
-      // The cached session — no server round trip, unlike getUser().
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      if (!session) return
-      const next = await lookupMentorNav(session.user.id, `${session.user.id}:${pathname}`)
-      if (active) setState(next)
-    })()
-    return () => {
-      active = false
-    }
-  }, [pathname])
-
-  return state
 }
