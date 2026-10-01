@@ -104,8 +104,8 @@ export interface CompletionInput {
   /** Has any practice started? */
   practiceStarted: boolean
   practiceDetail: string
-  /** Where the programme's mentor review stands (src/lib/mentorReview.ts);
-   *  'approved' is the mentor's sign-off, which completes the mentoring stage. */
+  /** Where the programme's project stands with its mentor (src/lib/mentorReview.ts);
+   *  'approved' means it passed, which completes the mentoring stage. */
   mentorReview: 'none' | 'requested' | 'approved' | 'changes_requested'
   /** Live mentor sessions (src/lib/mentorMatches.ts). */
   mentoring: {
@@ -120,7 +120,7 @@ export interface CompletionInput {
 
 export function completionStages(c: CompletionInput): ProgrammeStage[] {
   // Mentoring opens with the aptitude report and finishes with the mentor's
-  // sign-off; the internship comes after that.
+  // passed project; the internship comes after that.
   const reviewed = c.mentorReview === 'approved'
   const m = c.mentoring
   const mentor = m.mentorName ?? 'your mentor'
@@ -136,11 +136,11 @@ export function completionStages(c: CompletionInput): ProgrammeStage[] {
       key: 'mentoring',
       title: 'Live mentor sessions',
       detail: reviewed
-        ? 'Signed off by your mentor'
+        ? 'Project passed'
         : !m.aptitudeDone
           ? 'Opens after the aptitude assessment'
           : m.status === 'active'
-            ? `With ${mentor} · ${sessions}${c.practiceDone ? ' · ask for your sign-off' : ''}`
+            ? `With ${mentor} · ${sessions}${c.practiceDone ? ' · submit your project' : ''}`
             : m.status === 'requested'
               ? `Waiting for ${mentor} to accept`
               : 'Ready — choose a mentor',
@@ -203,9 +203,9 @@ export function digitalMarketingProgress(
       : !practiceDone
         ? `Foundation done · ${practicedTracks} of ${totalTracks} tracks practised`
         : !mentorReviewed
-          ? 'Practice done · mentor review next'
+          ? 'Practice done · submit your project'
           : !internshipDone
-            ? 'Mentor-reviewed · internship next'
+            ? 'Project passed · internship next'
             : 'Complete',
   }
 }
@@ -235,9 +235,9 @@ export function careerReadinessProgress(
       modulesDone < totalModules
         ? `${aptitudeDone ? 'Aptitude done · ' : ''}${modulesDone} of ${totalModules} modules finished`
         : !mentorReviewed
-          ? 'Modules done · mentor review next'
+          ? 'Modules done · submit your project'
           : !internshipDone
-            ? 'Mentor-reviewed · internship next'
+            ? 'Project passed · internship next'
             : 'Complete',
   }
 }

@@ -5,12 +5,15 @@ import { errorMessage } from '@/lib/errors'
 import { skillTracks } from '@/lib/skillTracks'
 import { LEVEL_TONE, SKILL_MAX, orderedSkills } from '@/lib/careerReadinessAssessment'
 import {
-  decideMentorReview,
+  RUBRIC_CRITERIA,
   fetchMentorReviewQueue,
+  gradeMentorReview,
   type AdminMentorReview,
   type MentorReviewStatus,
   type ReviewProgramme,
+  type Rubric,
 } from '@/lib/mentorReview'
+import { PROJECT_CRITERIA_MAX, PROJECT_MAX, PROJECT_PASS, PROJECT_SUBMISSIONS } from '@/lib/readinessScore'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { CareerReadinessResponses } from '@/components/admin/CareerReadinessResponses'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
@@ -30,17 +33,27 @@ export const Route = createFileRoute('/admin/_layout/mentor-reviews')({
 })
 
 const FILTERS: { label: string; value: MentorReviewStatus | 'all' }[] = [
-  { label: 'Waiting', value: 'requested' },
-  { label: 'Signed off', value: 'approved' },
+  { label: 'To grade', value: 'requested' },
+  { label: 'Passed', value: 'approved' },
   { label: 'Sent back', value: 'changes_requested' },
   { label: 'All', value: 'all' },
 ]
 
 const STATUS: Record<MentorReviewStatus, { label: string; tone: 'warning' | 'success' | 'neutral' | 'brand' }> = {
-  requested: { label: 'Waiting', tone: 'warning' },
-  approved: { label: 'Signed off', tone: 'success' },
+  requested: { label: 'To grade', tone: 'warning' },
+  approved: { label: 'Passed', tone: 'success' },
   changes_requested: { label: 'Sent back', tone: 'brand' },
   cancelled: { label: 'Withdrawn', tone: 'neutral' },
+}
+
+const NO_GRADE: Rubric = { relevance: 0, quality: 0, application: 0, presentation: 0 }
+
+/** Turn the project's links field (one per line) into links a reviewer can open. */
+function projectLinks(text: string | null): string[] {
+  return (text ?? '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
 }
 
 const PROGRAMME: Record<string, string> = {
@@ -50,16 +63,19 @@ const PROGRAMME: Record<string, string> = {
 
 function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () => void }) {
   const [note, setNote] = useState('')
+  const [grade, setGrade] = useState<Rubric>(NO_GRADE)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string>()
   const best = new Map(review.tracks.map((t) => [t.track, t]))
   const status = STATUS[review.status]
+  const total = grade.relevance + grade.quality + grade.application + grade.presentation
+  const passes = total >= PROJECT_PASS
 
-  async function decide(decision: 'approved' | 'changes_requested') {
+  async function submitGrade() {
     setBusy(true)
     setError(undefined)
     try {
-      await decideMentorReview(review.id, decision, note)
+      await gradeMentorReview(review.id, grade, note)
       onDone()
     } catch (e) {
       setError(errorMessage(e))
@@ -148,6 +164,33 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
         </div>
       )}
 
+      {review.project_title && (
+        <div className="mt-4 rounded-xl border border-brand-200 bg-brand-50/50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">
+            Project · submission {review.attempt} of {PROJECT_SUBMISSIONS}
+          </p>
+          <p className="mt-1 font-display text-lg font-semibold text-ink-900">{review.project_title}</p>
+          {review.project_summary && (
+            <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink-700">{review.project_summary}</p>
+          )}
+          {projectLinks(review.project_links).length > 0 && (
+            <ul className="mt-2 space-y-1 text-sm">
+              {projectLinks(review.project_links).map((l) => (
+                <li key={l} className="truncate">
+                  {/^https?:\/\//i.test(l) ? (
+                    <a href={l} target="_blank" rel="noreferrer noopener" className="text-brand-700 underline underline-offset-2">
+                      {l}
+                    </a>
+                  ) : (
+                    <span className="text-ink-700">{l}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       {review.student_note && (
         <div className="mt-4 rounded-xl bg-ink-100 p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">From the student</p>
@@ -157,36 +200,81 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
 
       {review.status === 'requested' ? (
         <div className="mt-4 border-t border-ink-200 pt-4">
-          <Textarea
-            label="Note to the student"
-            hint="They see this, and it's emailed to them. Required when sending back."
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            required={false}
-            rows={3}
-            maxLength={2000}
-          />
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            Grade the project · {PROJECT_CRITERIA_MAX} per criterion, {PROJECT_MAX} in all
+          </p>
+          <ul className="mt-2 space-y-2.5">
+            {RUBRIC_CRITERIA.map((c) => (
+              <li key={c.key} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-ink-900">{c.label}</p>
+                  <p className="text-xs text-ink-500">{c.hint}</p>
+                </div>
+                <div className="flex gap-1" role="radiogroup" aria-label={c.label}>
+                  {Array.from({ length: PROJECT_CRITERIA_MAX + 1 }, (_, n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      role="radio"
+                      aria-checked={grade[c.key] === n}
+                      onClick={() => setGrade((g) => ({ ...g, [c.key]: n }))}
+                      className={`h-9 w-9 rounded-lg border text-sm font-semibold tabular-nums transition-colors ${
+                        grade[c.key] === n
+                          ? 'border-brand-600 bg-brand-600 text-white'
+                          : 'border-ink-300 text-ink-700 hover:bg-ink-100'
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p className={`mt-3 text-sm font-semibold ${passes ? 'text-emerald-700' : 'text-amber-700'}`}>
+            {total} of {PROJECT_MAX} · {passes ? 'passes — releases the held activity points' : `below the pass mark of ${PROJECT_PASS} — it goes back to the student`}
+          </p>
+          <div className="mt-3">
+            <Textarea
+              label="Feedback for the student"
+              hint="They see the scores and this note, and it's emailed to them. Required below the pass mark."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              required={false}
+              rows={3}
+              maxLength={2000}
+            />
+          </div>
           {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Button size="sm" disabled={busy} onClick={() => decide('approved')}>
-              Sign off
-            </Button>
-            <Button size="sm" variant="secondary" disabled={busy || !note.trim()} onClick={() => decide('changes_requested')}>
-              Send back with notes
+          <div className="mt-3">
+            <Button size="sm" disabled={busy || (!passes && !note.trim())} onClick={() => void submitGrade()}>
+              {busy ? 'Saving…' : 'Save grade'}
             </Button>
           </div>
         </div>
       ) : (
-        review.reviewer_note && (
-          <div className="mt-4 rounded-xl bg-emerald-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Your note</p>
-            <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink-700">{review.reviewer_note}</p>
-          </div>
-        )
+        <div className="mt-4 rounded-xl bg-emerald-50 p-4">
+          {review.project_points != null && (
+            <p className="text-sm font-semibold text-ink-900">
+              {review.project_points} <span className="font-normal text-ink-500">of {PROJECT_MAX}</span>
+              {review.rubric && (
+                <span className="ml-2 font-normal text-ink-500">
+                  {RUBRIC_CRITERIA.map((c) => `${c.label} ${review.rubric?.[c.key]}`).join(' · ')}
+                </span>
+              )}
+            </p>
+          )}
+          {review.reviewer_note && (
+            <>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">Your feedback</p>
+              <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink-700">{review.reviewer_note}</p>
+            </>
+          )}
+        </div>
       )}
 
       <p className="mt-4 text-xs text-ink-500">
-        Requested {new Date(review.created_at).toLocaleDateString()}
+        Submitted {new Date(review.created_at).toLocaleDateString()}
         {review.reviewed_at && ` · decided ${new Date(review.reviewed_at).toLocaleDateString()}`}
       </p>
     </article>
@@ -224,7 +312,7 @@ function MentorReviewsPage() {
       <PageHeader
         eyebrow={programme ? PROGRAMME[programme] : 'Both programmes'}
         title="Mentor reviews"
-        subtitle="Students who finished practice and asked for a sign-off. Signing off unlocks the internship stage."
+        subtitle="Projects students submitted after finishing a programme's practice. Grade each on four criteria: 8 of 20 passes and releases the student's held activity points."
       />
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -246,7 +334,7 @@ function MentorReviewsPage() {
         <div className="mb-5">
           <Alert tone="danger" title="Couldn’t load reviews">
             <p>{error}</p>
-            <p className="mt-1">First run? Apply docs/supabase-mentor-reviews.sql in Supabase.</p>
+            <p className="mt-1">First run? Apply docs/supabase-mentor-reviews.sql and docs/supabase-programme-projects.sql in Supabase.</p>
           </Alert>
         </div>
       )}
@@ -260,7 +348,7 @@ function MentorReviewsPage() {
         <EmptyState
           icon={ClipboardCheck}
           title="Nothing here"
-          description="When a student finishes all 8 tracks and asks for a review, it shows up here."
+          description="When a student finishes a programme and submits their project, it shows up here."
         />
       ) : (
         <div className="space-y-4">

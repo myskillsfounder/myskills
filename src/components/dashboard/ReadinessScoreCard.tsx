@@ -51,7 +51,8 @@ const PART_TONE = {
   internship: { dot: 'bg-amber-500', bar: 'from-amber-300 to-amber-500', glow: 'shadow-[0_0_10px_-2px_rgba(245,158,11,0.6)]' },
 } as const
 
-/** One part of the score: its name, points and a bar — nothing else. */
+/** One part of the score: its name, points and a bar — and, when some of what
+ *  the student earned is waiting on their project, how much. */
 function Part({
   label,
   c,
@@ -78,6 +79,12 @@ function Part({
           <span className="font-semibold text-ink-900">{Math.round(c.points)}</span> / {c.max}
         </span>
       </div>
+      {c.held !== undefined && c.held > 0.5 && (
+        <p className="mt-0.5 text-xs text-ink-500">
+          <span className="font-semibold text-amber-700">{Math.round(c.held)} more points</span> are earned and
+          waiting for your project to pass.
+        </p>
+      )}
       <div
         className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-ink-100 shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)]"
         role="progressbar"
@@ -152,8 +159,9 @@ function slidesFor(h: Highlights): Slide[] {
         : { key: 'cert', eyebrow: 'Earn a certificate', title: 'Certificate in Foundational Progress in Digital Marketing', note: 'Learn the Beginner vocabulary in Practice to unlock it.', cta: 'Unlock', to: '/practice', programme: 1, icon: Award, tone: 'gold' }
   const mentor: Slide = {
     key: 'mentor',
-    eyebrow: 'Live mentor sessions',
-    title: 'Live sessions with a mentor can raise your score by up to 20 points',
+    eyebrow: 'Capstone project',
+    title: 'Your project, graded by a mentor, is worth up to 20 points in each programme',
+    note: 'A passing grade also releases the points you’ve already earned.',
     cta: h.hasMentor ? 'See your mentor' : 'Find your mentor',
     to: '/practice',
     programme: 1,
@@ -418,7 +426,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
           <p className="font-display text-2xl font-semibold leading-tight text-ink-900">{band.label}</p>
           <p className="mt-1 text-sm leading-relaxed text-ink-600">
             This is what employers see. It only counts what you do on MySkills — learning, practice, live
-            sessions and your mentors’ sign-off.
+            sessions and the project a mentor grades.
           </p>
           {counted > 0 && (
             <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-ink-600">

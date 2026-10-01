@@ -3,12 +3,17 @@ import { skillTracks } from '@/lib/skillTracks'
 import type { PracticeSummary } from '@/lib/practiceResults'
 import { digitalMarketingProgress } from '@/lib/programmes'
 import {
-  DM_SIGNOFF_POINTS,
+  ACTIVITY_HELD_CAP,
+  FOUNDATION_MAX_POINTS,
   LIVE_SESSIONS_MAX_POINTS,
   POINTS_PER_LIVE_SESSION,
+  PRACTICE_MAX_POINTS,
   PROFESSIONAL_MAX,
-  TRACK_PASS_PERCENT,
+  PROJECT_MAX,
+  countedActivity,
+  professionalActivity,
   professionalPoints,
+  type ProjectStanding,
 } from '@/lib/readinessScore'
 
 const R = 34
@@ -21,8 +26,8 @@ const C = 2 * Math.PI * R
  * the programme has earned you, and one bead per track shows coverage.
  *
  * The headline is the whole Professional Development part of the Career
- * Readiness Score (out of 40): tracks scored 60%+, the Foundation assessment,
- * live training and this programme's mentor sign-off.
+ * Readiness Score (out of 40): activity (tracks, the Foundation assessment,
+ * live training; 20) and the project a mentor grades (20).
  *
  * No practice percentage here on purpose: an average of the tracks you
  * happen to have tried reads as "82% · Advanced" after a single track. Each
@@ -36,7 +41,7 @@ export function PracticeStats({
   practice,
   foundationDone,
   aptitudeDone,
-  mentorApproved,
+  project,
   foundationPercent,
   liveSessions,
 }: {
@@ -44,7 +49,8 @@ export function PracticeStats({
   foundationDone: boolean
   /** The marketing aptitude assessment — a step of the programme's progress. */
   aptitudeDone: boolean
-  mentorApproved: boolean
+  /** Where the programme's project stands with its mentor, and its best grade. */
+  project: ProjectStanding
   /** Foundation assessment percent, or null if not taken. */
   foundationPercent: number | null
   /** Digital Marketing live training sessions, confirmed by whoever ran them. */
@@ -52,15 +58,23 @@ export function PracticeStats({
 }) {
   const rows = skillTracks.map((t) => ({ slug: t.slug, name: t.name, result: practice[t.slug] }))
   const practised = rows.filter((r) => r.result).length
-  const { percent } = digitalMarketingProgress(foundationDone, practised, skillTracks.length, mentorApproved, false, aptitudeDone)
-  const points = Math.round(
-    professionalPoints({
-      dmTracksPassed: rows.filter((r) => (r.result?.percent ?? 0) >= TRACK_PASS_PERCENT).length,
-      foundationPercent,
-      dmLiveSessions: liveSessions,
-      dmSignedOff: mentorApproved,
-    }),
+  const { percent } = digitalMarketingProgress(
+    foundationDone,
+    practised,
+    skillTracks.length,
+    project.status === 'approved',
+    false,
+    aptitudeDone,
   )
+  const standing = {
+    dmTrackPercents: rows.flatMap((r) => (r.result ? [r.result.percent] : [])),
+    foundationPercent,
+    dmLiveSessions: liveSessions,
+    dmProject: project,
+  }
+  const points = Math.round(professionalPoints(standing))
+  const activity = professionalActivity(standing)
+  const held = Math.round(activity - countedActivity(activity, project))
 
   // animate the ring from 0 on mount
   const [shown, setShown] = useState(0)
@@ -114,9 +128,11 @@ export function PracticeStats({
             <span className="text-base font-normal text-white/50"> / {PROFESSIONAL_MAX} points</span>
           </p>
           <p className="mt-1 text-xs leading-relaxed text-white/70">
-            Tracks scored {TRACK_PASS_PERCENT}%+ add up to 10, the Foundation assessment up to 10, live training up to{' '}
-            {LIVE_SESSIONS_MAX_POINTS}, and a mentor’s sign-off {DM_SIGNOFF_POINTS} once all {skillTracks.length}{' '}
-            tracks are done.
+            Tracks add up to {PRACTICE_MAX_POINTS} (the higher your score, the more), the Foundation assessment up to{' '}
+            {FOUNDATION_MAX_POINTS}, live training up to {LIVE_SESSIONS_MAX_POINTS}, and your project, graded by a
+            mentor, up to {PROJECT_MAX}.
+            {held > 0 &&
+              ` ${held} of your earned points are held until your project passes (only ${ACTIVITY_HELD_CAP} count before then).`}
           </p>
         </div>
 

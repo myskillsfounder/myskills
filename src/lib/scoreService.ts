@@ -6,7 +6,7 @@
  * the dashboard falls back to the browser's own calculation.
  */
 import { supabase } from './supabase'
-import { bandFor, type Readiness } from './readinessScore'
+import { bandFor, type ProjectStatus, type Readiness } from './readinessScore'
 
 export interface ServerScore {
   method_version: string
@@ -14,9 +14,20 @@ export interface ServerScore {
   verified_points: number
   self_reported_points: number
   computed_at?: string
-  personal: { points: number; max: number }
-  professional: { points: number; max: number }
+  personal: ServerProgramme
+  professional: ServerProgramme
   internship: { points: number; max: number }
+}
+
+/** A programme's part of the score. The held/project fields are method v6; a
+ *  score issued before it doesn't have them. */
+interface ServerProgramme {
+  points: number
+  max: number
+  held?: number
+  project_points?: number
+  project_max?: number
+  project_status?: ProjectStatus | null
 }
 
 export async function refreshMyScore(): Promise<ServerScore | null> {
@@ -44,8 +55,19 @@ export function withServerScore(local: Readiness, server: ServerScore): Readines
     selfReportedPoints: server.self_reported_points,
     source: 'server',
     computedAt: server.computed_at,
-    personal: { ...local.personal, points: server.personal.points },
-    professional: { ...local.professional, points: server.professional.points },
+    personal: withServerProgramme(local.personal, server.personal),
+    professional: withServerProgramme(local.professional, server.professional),
     internship: { ...local.internship, points: server.internship?.points ?? 0 },
+  }
+}
+
+function withServerProgramme(local: Readiness['personal'], server: ServerProgramme): Readiness['personal'] {
+  return {
+    ...local,
+    points: server.points,
+    held: server.held ?? local.held,
+    projectPoints: server.project_points ?? local.projectPoints,
+    projectMax: server.project_max ?? local.projectMax,
+    projectStatus: server.project_status ?? local.projectStatus,
   }
 }
