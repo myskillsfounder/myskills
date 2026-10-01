@@ -10,6 +10,8 @@
  * docs/supabase-migration-2026-07-11-normalize-assessment.sql.
  */
 import { supabase } from './supabase'
+import { shared } from './shared'
+import { sessionUser } from './sessionUser'
 
 export interface Experience {
   id: string
@@ -111,10 +113,12 @@ function normalize(row: Record<string, unknown>, projects: Project[] = []): Prof
 
 /** Fetch the signed-in user's profile, seeding a row from their auth metadata
  * (name + onboarding answers) on first visit. */
-export async function fetchMyProfile(): Promise<Profile> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export function fetchMyProfile(): Promise<Profile> {
+  return shared('fetchMyProfile', fetchMyProfileOnce)
+}
+
+async function fetchMyProfileOnce(): Promise<Profile> {
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const { data, error } = await supabase
@@ -179,9 +183,7 @@ export function ensureProfile(): Promise<void> {
 }
 
 export async function saveMyProfile(patch: ProfilePatch): Promise<Profile> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const { data, error } = await supabase
@@ -204,9 +206,7 @@ export async function uploadProfileMedia(
   file: File,
   kind: 'avatar' | 'banner',
 ): Promise<string> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'

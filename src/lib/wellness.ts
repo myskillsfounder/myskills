@@ -7,6 +7,7 @@
  * up directly once real people are onboarded (see the admin Wellness queue).
  */
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 
 export type WellnessRequestType = 'psychologist' | 'career_mentor'
 export type WellnessRequestStatus = 'pending' | 'contacted' | 'closed'
@@ -37,9 +38,7 @@ export async function submitWellnessRequest(
   type: WellnessRequestType,
   input: WellnessRequestInput,
 ): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const { error } = await supabase.from('wellness_requests').insert({
@@ -59,9 +58,7 @@ export async function submitWellnessRequest(
 export async function fetchMyOpenWellnessRequest(
   type: WellnessRequestType,
 ): Promise<WellnessRequest | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return null
   const { data, error } = await supabase
     .from('wellness_requests')

@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { shared } from './shared'
 import { forgetStarted } from './startedCache'
 import type { Mentor } from './mentors'
 
@@ -31,7 +32,11 @@ export interface StudentMatch {
 
 /** The student's latest request or match for a programme, or null. Tolerates
  *  the table not existing yet (SQL not run). */
-export async function fetchMyMatch(programme: MatchProgramme): Promise<StudentMatch | null> {
+export function fetchMyMatch(programme: MatchProgramme): Promise<StudentMatch | null> {
+  return shared(`fetchMyMatch:${programme}`, () => fetchMyMatchOnce(programme))
+}
+
+async function fetchMyMatchOnce(programme: MatchProgramme): Promise<StudentMatch | null> {
   const { data, error } = await supabase
     .from('mentor_matches')
     .select('id, created_at, programme, status, student_note, mentor_note, mentor:mentors(id, full_name, headline, avatar_url)')

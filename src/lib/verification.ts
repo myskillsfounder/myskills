@@ -9,6 +9,7 @@
  * visibly lapses it until it's re-checked.
  */
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 import type { Education, Experience, Profile, Project } from './profile'
 import { educationLevelOf } from './careerProfile'
 
@@ -119,9 +120,7 @@ export async function fetchMyVerification(): Promise<{
   request: VerificationRequest | null
   items: VerifiedItem[]
 }> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return { request: null, items: [] }
 
   const [req, items] = await Promise.all([
@@ -143,9 +142,7 @@ export async function fetchMyVerification(): Promise<{
 }
 
 export async function requestVerification(input: { preferred_times: string; phone: string }): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
   const { error } = await supabase.from('verification_requests').insert({
     user_id: user.id,

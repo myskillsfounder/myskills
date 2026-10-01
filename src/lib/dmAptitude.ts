@@ -12,6 +12,8 @@
  */
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { shared } from './shared'
+import { sessionUser } from './sessionUser'
 import { forgetStarted } from './startedCache'
 import { ensureProfile } from './profile'
 import { skillTracks } from './skillTracks'
@@ -155,10 +157,12 @@ export async function fetchAptitudeQuestions(): Promise<AptitudeQuestion[]> {
 /** The signed-in learner's result, or null if they haven't taken it. Before
  *  the SQL is run the table doesn't exist — that reads as "not taken", the
  *  same way the Career Readiness assessment does. */
-export async function fetchMyAptitudeResult(): Promise<AptitudeResult | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export function fetchMyAptitudeResult(): Promise<AptitudeResult | null> {
+  return shared('fetchMyAptitudeResult', fetchMyAptitudeResultOnce)
+}
+
+async function fetchMyAptitudeResultOnce(): Promise<AptitudeResult | null> {
+  const user = await sessionUser()
   if (!user) return null
   const { data, error } = await supabase
     .from('dm_aptitude_results')

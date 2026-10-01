@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
  * review. Stored in Supabase (own-row RLS). See docs/supabase-feedback.sql.
  */
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 
 export interface Feedback {
   id: string
@@ -20,9 +21,7 @@ export interface FeedbackInput {
 }
 
 export async function submitFeedback(input: FeedbackInput): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const { error } = await supabase.from('feedback').insert({
@@ -37,9 +36,7 @@ export async function submitFeedback(input: FeedbackInput): Promise<void> {
 }
 
 export async function fetchMyFeedback(): Promise<Feedback[]> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return []
   const { data, error } = await supabase
     .from('feedback')
@@ -86,9 +83,7 @@ export function clearFeedbackCache() {
 }
 
 export async function hasSubmittedFeedback(): Promise<boolean> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return false
   const { count, error } = await supabase
     .from('feedback')

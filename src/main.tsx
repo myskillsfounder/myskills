@@ -20,6 +20,10 @@ const queryClient = new QueryClient({
 // app dropping to a white screen.
 const router = createRouter({
   routeTree,
+  // Fetch a page's code when a link is hovered, focused or touched, so it is
+  // usually already there by the time the click lands. (The data behind a page
+  // isn't preloaded; only its chunks.)
+  defaultPreload: 'intent',
   defaultErrorComponent: RouteErrorState,
   defaultNotFoundComponent: RouteNotFoundState,
 })

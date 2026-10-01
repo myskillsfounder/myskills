@@ -150,16 +150,22 @@ function DashboardPage() {
     [crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.project, dmReview.project, practice, practicedCount, assessment],
   )
   // The number itself is issued by the server; the estimate above is the guide
-  // and the fallback. Re-ask whenever something the score depends on changes.
+  // and the fallback. Re-ask whenever something the score depends on changes —
+  // but only once everything has loaded. The server works the score out from its
+  // own records, not from what this page holds, so asking while the practice
+  // results, assessment or reviews are still arriving only repeats the same
+  // (fairly heavy) calculation as each piece lands.
   const [serverScore, setServerScore] = useState<ServerScore | null>(null)
+  const scoreInputsLoaded =
+    !crLoading && !liveLoading && practiceLoaded && !assessmentLoading && !dmReview.loading && !crReview.loading
   useEffect(() => {
-    if (crLoading || liveLoading) return
+    if (!scoreInputsLoaded) return
     let active = true
     refreshMyScore().then((s) => active && setServerScore(s))
     return () => {
       active = false
     }
-  }, [crLoading, liveLoading, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state, crReview.project.points, dmReview.project.points, practice, assessment])
+  }, [scoreInputsLoaded, crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.state, dmReview.state, crReview.project.points, dmReview.project.points, practice, assessment])
   const readiness = useMemo(
     () => (serverScore ? withServerScore(estimate, serverScore) : estimate),
     [estimate, serverScore],

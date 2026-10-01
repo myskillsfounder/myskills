@@ -17,6 +17,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { trackAssessmentComplete } from './analytics'
 import { supabase } from './supabase'
+import { shared } from './shared'
+import { sessionUser } from './sessionUser'
 import { forgetStarted } from './startedCache'
 import { ensureProfile } from './profile'
 
@@ -44,10 +46,12 @@ export interface AssessmentResult {
 }
 
 /** Read the signed-in user's assessment result, or null if not taken yet. */
-export async function fetchInitialAssessment(): Promise<AssessmentResult | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export function fetchInitialAssessment(): Promise<AssessmentResult | null> {
+  return shared('fetchInitialAssessment', fetchInitialAssessmentOnce)
+}
+
+async function fetchInitialAssessmentOnce(): Promise<AssessmentResult | null> {
+  const user = await sessionUser()
   if (!user) return null
 
   const [overallRes, categoriesRes] = await Promise.all([

@@ -8,6 +8,7 @@
 import type { ComponentType } from 'react'
 import { MessageSquare, Sprout, Target, Users, Workflow } from 'lucide-react'
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 import careerContent from '@/content/career-readiness.json'
 
 export type ModuleSlug = 'goal-setting' | 'communication' | 'leadership' | 'agile' | 'growth-mindset'
@@ -248,9 +249,7 @@ export interface ProgrammeInterest {
 }
 
 export async function fetchMyProgrammeInterest(programme: string): Promise<ProgrammeInterest | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return null
   const { data, error } = await supabase
     .from('programme_interest')
@@ -266,9 +265,7 @@ export async function registerProgrammeInterest(
   programme: string,
   contact: { full_name: string; email: string },
 ): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const { error } = await supabase.from('programme_interest').insert({
@@ -300,9 +297,7 @@ export interface CareerReadinessLead {
  * docs/supabase-career-readiness-leads.sql.
  */
 export async function submitCareerReadinessLead(lead: CareerReadinessLead): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
 
   const { error } = await supabase.from('career_readiness_leads').insert({
     user_id: user?.id ?? null,
