@@ -122,33 +122,40 @@ function SkillPillar({
   )
 }
 
-const SUPPORT: { icon: IconType; title: string; body: string; to: string; tag: string }[] = [
+/** Each card opens the Community page already filtered to that kind of support. */
+const SUPPORT: {
+  icon: IconType
+  title: string
+  body: string
+  category: 'mentors' | 'wellness' | 'guidance' | 'internships'
+  tag: string
+}[] = [
   {
     icon: GraduationCap,
     title: 'Mentors',
     body: 'Real marketers who answer questions and review your work in live chat.',
-    to: '/community/mentors',
+    category: 'mentors',
     tag: 'Live',
   },
   {
     icon: HeartHandshake,
     title: 'Wellness support',
     body: 'Private conversations with counsellors, whenever the pressure builds up.',
-    to: '/wellness',
+    category: 'wellness',
     tag: 'Live',
   },
   {
     icon: Compass,
     title: 'Career guidance',
     body: 'Talk through which track to focus on and what to do next.',
-    to: '/wellness',
+    category: 'guidance',
     tag: 'Live',
   },
   {
     icon: Briefcase,
     title: 'Internships',
     body: 'Real briefs with partner companies — the last step to completing a programme.',
-    to: '/community',
+    category: 'internships',
     tag: 'Opening soon',
   },
 ]
@@ -207,7 +214,12 @@ export function AiSkillsShowcase() {
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SUPPORT.map((s) => (
-            <Link key={s.title} to={s.to} className="card lift group flex flex-col p-5">
+            <Link
+              key={s.title}
+              to="/community"
+              search={{ category: s.category }}
+              className="card lift group flex flex-col p-5"
+            >
               <div className="flex items-start justify-between gap-2">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                   <s.icon size={18} />
