@@ -397,7 +397,7 @@ function CommunityHub() {
         <header>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Community</p>
           <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
-            Find the right person for what you need next
+            Find the Right Person for What You Need Next
           </h1>
         </header>
 
@@ -438,27 +438,13 @@ function CommunityHub() {
           </div>
         )}
 
-        {supportServices.length > 0 && (
-          <MarketSection
-            icon={HeartHandshake}
-            title="Wellness & career guidance"
-            subtitle="For the moments practice alone can’t fix — overwhelm, self-doubt, or not knowing what’s next."
-          >
-            <div className={marketGrid}>
-              {supportServices.map((s) => (
-                <ServiceCard key={s.id} service={s} />
-              ))}
-              <HowSupportWorks />
-            </div>
-          </MarketSection>
-        )}
-
+        {/* Mentors lead: a person to work with is what most students come here for. */}
         {visible('mentors', mentorHits.length) && (
           <MarketSection
             icon={GraduationCap}
             title="Mentors"
             subtitle="Marketers who’ve done the work — get feedback on yours and unblock your next step."
-            seeAll={mentors.length ? { to: '/community/mentors', label: 'All mentors' } : undefined}
+            seeAll={mentors.length ? { to: '/community/mentors', label: 'All Mentors' } : undefined}
           >
             {loading ? (
               <ListingSkeletons />
@@ -470,7 +456,7 @@ function CommunityHub() {
                 {!q && (
                   <JoinCard
                     icon={UserPlus}
-                    title={mentors.length ? 'Become a mentor' : 'Be our first mentor'}
+                    title={mentors.length ? 'Become a Mentor' : 'Be Our First Mentor'}
                     body="Done the work? Share what you know with students starting out."
                     to="/become-a-mentor"
                   />
@@ -480,10 +466,25 @@ function CommunityHub() {
           </MarketSection>
         )}
 
+        {supportServices.length > 0 && (
+          <MarketSection
+            icon={HeartHandshake}
+            title="Wellness & Career Guidance"
+            subtitle="For the moments practice alone can’t fix — overwhelm, self-doubt, or not knowing what’s next."
+          >
+            <div className={marketGrid}>
+              {supportServices.map((s) => (
+                <ServiceCard key={s.id} service={s} />
+              ))}
+              <HowSupportWorks />
+            </div>
+          </MarketSection>
+        )}
+
         {visible('internships', internshipHits.length) && (
           <MarketSection
             icon={Briefcase}
-            title="Upcoming internships"
+            title="Upcoming Internships"
             subtitle="Real work with partner companies — the step that turns practice into experience you can show."
           >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -497,9 +498,9 @@ function CommunityHub() {
         {visible('institutions', institutionHits.length) && (
           <MarketSection
             icon={Building2}
-            title="Partner institutions"
+            title="Partner Institutions"
             subtitle="Verified training institutions for classroom and offline learning."
-            seeAll={institutions.length ? { to: '/community/institutions', label: 'All institutions' } : undefined}
+            seeAll={institutions.length ? { to: '/community/institutions', label: 'All Institutions' } : undefined}
           >
             {loading ? (
               <ListingSkeletons />
@@ -511,7 +512,7 @@ function CommunityHub() {
                 {!q && (
                   <JoinCard
                     icon={Building2}
-                    title="List your institution"
+                    title="List Your Institution"
                     body="Run digital marketing courses? Apply to become a verified partner."
                     to="/become-a-partner-institution"
                   />

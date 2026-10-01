@@ -22,9 +22,9 @@ export type Category = 'all' | 'wellness' | 'guidance' | 'mentors' | 'internship
 
 export const CATEGORIES: { id: Category; label: string; icon?: IconType }[] = [
   { id: 'all', label: 'All' },
-  { id: 'wellness', label: 'Wellness', icon: HeartHandshake },
-  { id: 'guidance', label: 'Career guidance', icon: Compass },
   { id: 'mentors', label: 'Mentors', icon: GraduationCap },
+  { id: 'wellness', label: 'Wellness', icon: HeartHandshake },
+  { id: 'guidance', label: 'Career Guidance', icon: Compass },
   { id: 'internships', label: 'Internships', icon: Briefcase },
   { id: 'institutions', label: 'Institutions', icon: Building2 },
 ]
@@ -100,22 +100,22 @@ export const SERVICES: Service[] = [
     id: 'psychologist',
     category: 'wellness',
     icon: HeartHandshake,
-    title: 'Psychologists & counsellors',
-    who: 'Wellness support',
+    title: 'Psychologists & Counsellors',
+    who: 'Wellness Support',
     body: 'Exam pressure, stress, self-doubt, or something you can’t name yet — talk it through privately with someone who listens without judging.',
-    tags: ['Private', 'At your pace'],
-    cta: 'Talk to a counsellor',
+    tags: ['Private', 'At Your Pace'],
+    cta: 'Talk to a Counsellor',
     tint: 'from-rose-100 via-brand-50 to-white',
   },
   {
     id: 'career_mentor',
     category: 'guidance',
     icon: Compass,
-    title: 'Career guidance professionals',
-    who: 'Career guidance',
+    title: 'Career Guidance Professionals',
+    who: 'Career Guidance',
     body: 'Which track to focus on, how to read a job description, what to do after your certificate — plan your next step with a career guide.',
-    tags: ['1:1', 'Any stage'],
-    cta: 'Get career guidance',
+    tags: ['1:1', 'Any Stage'],
+    cta: 'Get Career Guidance',
     tint: 'from-amber-100 via-brand-50 to-white',
   },
 ]
@@ -204,9 +204,9 @@ export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
 
       <div className="flex-1" />
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
-        <span className="text-xs font-medium text-ink-500">Live chat</span>
+        <span className="text-xs font-medium text-ink-500">Live Chat</span>
         <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
-          View profile
+          View Profile
           <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
         </span>
       </div>
@@ -265,22 +265,22 @@ export interface InternshipTrack {
  */
 export const INTERNSHIP_TRACKS: InternshipTrack[] = [
   {
-    title: 'Performance marketing intern',
+    title: 'Performance Marketing Intern',
     skills: ['Meta Ads', 'Google Ads'],
     body: 'Plan, launch and optimise real ad campaigns with a partner company’s budget.',
   },
   {
-    title: 'SEO & content intern',
+    title: 'SEO & Content Intern',
     skills: ['SEO & AEO', 'Content Marketing'],
     body: 'Research keywords, write and optimise pages, and track what ranks.',
   },
   {
-    title: 'Marketing analytics intern',
+    title: 'Marketing Analytics Intern',
     skills: ['Analytics', 'Market Research'],
     body: 'Turn campaign data into reports and recommendations a team acts on.',
   },
   {
-    title: 'Marketing automation & AI intern',
+    title: 'Marketing Automation & AI Intern',
     skills: ['Marketing Automation & AI'],
     body: 'Build email journeys and AI-assisted workflows that run on their own.',
   },
@@ -298,7 +298,7 @@ export function InternshipCard({ track }: { track: InternshipTrack }) {
           <Briefcase size={21} />
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-ink-50 px-2.5 py-1 text-[11px] font-medium text-ink-600">
-          <Lock size={11} /> Opening soon
+          <Lock size={11} /> Opening Soon
         </span>
       </div>
       <h3 className="relative mt-4 font-display text-lg font-semibold text-ink-900">{track.title}</h3>
