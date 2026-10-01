@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { fetchPostBySlug, formatDate, sanitizeBlogHtml, type BlogPost } from '@/lib/blog'
 import { applySeo } from '@/lib/seo'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { Eyebrow } from '@/components/landing/Eyebrow'
+import { BlogHero } from '@/components/blog/BlogHero'
+import { BlogImage } from '@/components/blog/BlogImage'
 
 export const Route = createFileRoute('/blog/$slug')({
   component: BlogPostPage,
@@ -17,12 +20,10 @@ function BlogPostPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [error, setError] = useState<string>()
-  const [thumbnailBroken, setThumbnailBroken] = useState(false)
 
   useEffect(() => {
     setLoading(true)
     setNotFound(false)
-    setThumbnailBroken(false)
     fetchPostBySlug(slug)
       .then((p) => {
         if (!p) setNotFound(true)
@@ -48,50 +49,56 @@ function BlogPostPage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-        <Link
-          to="/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
-        >
-          <ArrowLeft size={16} />
-          All posts
-        </Link>
+      <main>
+        <BlogHero>
+          <div className="mx-auto max-w-3xl px-4 pb-12 pt-10 sm:px-6 sm:pb-14 sm:pt-12">
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-white/65 transition-colors hover:text-white"
+            >
+              <ArrowLeft size={16} />
+              All posts
+            </Link>
 
-        {loading && (
-          <div className="flex items-center gap-2 py-16 text-sm text-ink-600">
-            <Loader2 size={16} className="animate-spin" /> Loading…
-          </div>
-        )}
-
-        {error && (
-          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        {notFound && !loading && (
-          <div className="mt-10 rounded-2xl border border-dashed border-ink-300 p-12 text-center">
-            <p className="text-sm font-medium text-ink-800">Post not found</p>
-            <p className="mt-1 text-sm text-ink-600">It may have been unpublished or removed.</p>
-          </div>
-        )}
-
-        {post && (
-          <article className="mt-6">
-            <p className="text-sm text-ink-500">{formatDate(post.published_at)}</p>
-            <h1 className="mt-1.5 text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
-              {post.title}
-            </h1>
-            {post.description && (
-              <p className="mt-3 text-lg text-ink-600">{post.description}</p>
+            {loading && (
+              <div className="mt-8 space-y-3" aria-hidden>
+                <div className="h-3 w-28 animate-pulse rounded bg-white/10" />
+                <div className="h-9 w-4/5 animate-pulse rounded bg-white/10" />
+                <div className="h-4 w-3/5 animate-pulse rounded bg-white/[0.06]" />
+              </div>
             )}
-            {post.thumbnail_url && !thumbnailBroken && (
-              <img
-                src={post.thumbnail_url}
-                alt=""
-                className="mt-6 aspect-video w-full rounded-2xl object-cover"
-                onError={() => setThumbnailBroken(true)}
-              />
+
+            {error && <div className="card-glass-dark mt-6 p-5 text-sm text-red-200">{error}</div>}
+
+            {notFound && !loading && (
+              <div className="card-glass-dark mt-8 p-10 text-center">
+                <p className="text-sm font-medium text-white">Post not found</p>
+                <p className="mt-1 text-sm text-white/60">It may have been unpublished or removed.</p>
+              </div>
+            )}
+
+            {post && (
+              <header className="mt-6">
+                <Eyebrow dark>{formatDate(post.published_at)}</Eyebrow>
+                <h1 className="mt-3 font-display text-3xl font-semibold leading-[1.15] tracking-tight text-white sm:text-[2.6rem]">
+                  {post.title}
+                </h1>
+                {post.description && (
+                  <p className="mt-3.5 text-lg leading-relaxed text-white/70">{post.description}</p>
+                )}
+              </header>
+            )}
+          </div>
+        </BlogHero>
+
+        {/* The article itself stays on a light page: long-form reading is easier
+            dark-on-light, and the body styles (.blog-content) are written for it. */}
+        {post && (
+          <article className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+            {post.thumbnail_url && (
+              <div className="-mt-6 overflow-hidden rounded-2xl shadow-e2 ring-1 ring-ink-900/[0.06]">
+                <BlogImage url={post.thumbnail_url} width={1400} eager className="aspect-video w-full object-cover" />
+              </div>
             )}
             {/* Content is authored in the trusted admin panel, but still
                 sanitized before injection — see lib/blog.ts. */}
@@ -99,6 +106,13 @@ function BlogPostPage() {
               className="blog-content mt-8"
               dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
             />
+            <Link
+              to="/blog"
+              className="mt-10 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800"
+            >
+              <ArrowLeft size={16} />
+              More from the blog
+            </Link>
           </article>
         )}
       </main>

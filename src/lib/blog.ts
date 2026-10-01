@@ -98,15 +98,38 @@ export interface BlogPost {
   published_at: string | null
 }
 
-/** Newest published posts first. */
-export async function fetchPublishedPosts(): Promise<BlogPost[]> {
+/** What the listing shows of a post: everything except its body. */
+export type BlogPostSummary = Pick<
+  BlogPost,
+  'id' | 'title' | 'description' | 'slug' | 'thumbnail_url' | 'published_at'
+>
+
+/** Newest published posts first. The listing only shows a card per post, so it
+ *  doesn't ask for the bodies — with them the response was every article in
+ *  full, most of the wait before the page could show anything. */
+export async function fetchPublishedPosts(): Promise<BlogPostSummary[]> {
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('*')
+    .select('id, title, description, slug, thumbnail_url, published_at')
     .eq('status', 'published')
     .order('published_at', { ascending: false })
   if (error) throw error
-  return (data ?? []) as BlogPost[]
+  return (data ?? []) as BlogPostSummary[]
+}
+
+/**
+ * A thumbnail at the size it is shown. Thumbnails are uploaded as full-size
+ * images (often a 1.7 MB PNG, 1672px wide) and were sent as-is to a card 400px
+ * wide. Supabase Storage can resize on the way out: the same file under
+ * /render/image/ with a width, re-encoded (as WebP where the browser takes
+ * it). `resize=contain` scales the whole image; without it only the width is
+ * cut down and the sides are cropped off. URLs that aren't Supabase Storage objects are returned unchanged, and
+ * the pages fall back to the original if the resized one fails to load.
+ */
+export function sizedImage(url: string, width: number): string {
+  const marker = '/storage/v1/object/public/'
+  if (!url.includes(marker) || url.includes('?')) return url
+  return `${url.replace(marker, '/storage/v1/render/image/public/')}?width=${width}&resize=contain&quality=75`
 }
 
 /** A single published post by slug, or null. */
