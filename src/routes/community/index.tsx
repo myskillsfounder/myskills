@@ -383,7 +383,7 @@ function CommunityHub() {
   const services = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags))
   const wellness = services.filter((s) => s.category === 'wellness')
   const guidance = services.filter((s) => s.category === 'guidance')
-  const mentorHits = mentors.filter((m) => matches(q, m.name, m.role, m.location, m.expertise))
+  const mentorHits = mentors.filter((m) => matches(q, m.name, m.role, m.location, m.expertise, m.bio))
   const internshipHits = INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
   const institutionHits = institutions.filter((p) => matches(q, p.legal_name, p.city, p.courses_offered))
 
@@ -457,7 +457,6 @@ function CommunityHub() {
             icon={GraduationCap}
             title="Mentors"
             subtitle="Marketers who’ve done the work — get feedback on yours and unblock your next step."
-            seeAll={mentors.length ? { to: '/community/mentors', label: 'All Mentors' } : undefined}
           >
             {loading ? (
               <ListingSkeletons />
