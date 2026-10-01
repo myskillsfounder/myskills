@@ -26,6 +26,7 @@ import { SearchHeader } from '@/components/community/SearchHeader'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import {
+  CATEGORIES,
   INTERNSHIP_TRACKS,
   InstitutionListingCard,
   InternshipCard,
@@ -42,7 +43,13 @@ import {
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
+// ?category=mentors (or wellness, guidance, internships, institutions) opens
+// the hub already filtered, so a link elsewhere in the app can point at one
+// kind of support. Anything else is ignored and shows everything.
 export const Route = createFileRoute('/community/')({
+  validateSearch: (s: Record<string, unknown>): { category?: Category } => ({
+    category: CATEGORIES.some((c) => c.id === s.category && c.id !== 'all') ? (s.category as Category) : undefined,
+  }),
   component: CommunityIndexRoute,
 })
 
@@ -362,7 +369,13 @@ function YourMentors({ matches }: { matches: { match: StudentMatch | null; progr
 function CommunityHub() {
   const { mentors, institutions, loading } = useMarketplaceData()
   const [query, setQuery] = useState('')
-  const [category, setCategory] = useState<Category>('all')
+  // The category lives in the address, so a filtered view can be linked to,
+  // shared, and survives a refresh; "All" is the bare /community.
+  const { category: fromUrl } = Route.useSearch()
+  const navigate = Route.useNavigate()
+  const category: Category = fromUrl ?? 'all'
+  const setCategory = (next: Category) =>
+    void navigate({ search: { category: next === 'all' ? undefined : next }, replace: true })
   const q = query.trim().toLowerCase()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
