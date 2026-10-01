@@ -97,9 +97,13 @@ function StartHere() {
 }
 
 /**
- * The two measures that sit beside the score: what the student is aiming at,
- * and how much time they're putting in. Neither feeds the score (hours are
+ * The two measures around the score: what the student is aiming at, and how
+ * much time they're putting in. Neither feeds the score (hours are
  * device-local), but both are what give the number meaning.
+ *
+ * They return grid items, not a column of their own: the LaunchPad's grid
+ * stacks them in the right-hand column and lets the hours card take up any
+ * slack (see the layout note in routes/dashboard.tsx).
  */
 export function KeyMeasures({
   goals,
@@ -122,8 +126,8 @@ export function KeyMeasures({
   const [primary, ...rest] = goals
 
   return (
-    <div className="flex h-full flex-col gap-5">
-      <section className="card flex-1 p-5">
+    <>
+      <section className={`card p-5 lg:col-start-3 lg:row-start-1 ${showHours ? '' : 'lg:row-span-2'}`}>
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <Target size={16} />
@@ -212,28 +216,26 @@ export function KeyMeasures({
       </section>
 
       {showHours && (
-      <section className="card p-5">
-        <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-            <Clock size={16} />
-          </span>
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">
-            Hours spent
-          </h2>
-        </div>
-        <p className="mt-3 flex items-baseline gap-1.5">
-          <span className="font-display text-4xl font-semibold tabular-nums leading-none text-ink-900">
-            {hours < 10 ? hours.toFixed(1) : Math.round(hours)}
-          </span>
-          <span className="text-sm font-medium text-ink-500">hrs · last 30 days</span>
-        </p>
-        <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-ink-600">
-          <Flame size={13} className="text-orange-500" />
-          {streak}-day streak
-        </p>
-        <p className="mt-2 text-[11px] leading-relaxed text-ink-400">Tracked on this device.</p>
-      </section>
+        <section className="card flex flex-col justify-center p-5 lg:col-start-3 lg:row-start-2">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <Clock size={16} />
+            </span>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">Hours spent</h2>
+          </div>
+          <p className="mt-3 flex items-baseline gap-1.5">
+            <span className="font-display text-4xl font-semibold tabular-nums leading-none text-ink-900">
+              {hours < 10 ? hours.toFixed(1) : Math.round(hours)}
+            </span>
+            <span className="text-sm font-medium text-ink-500">hrs · last 30 days</span>
+          </p>
+          <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-ink-600">
+            <Flame size={13} className="text-orange-500" />
+            {streak}-day streak
+          </p>
+          <p className="mt-2 text-[11px] leading-relaxed text-ink-400">Tracked on this device.</p>
+        </section>
       )}
-    </div>
+    </>
   )
 }

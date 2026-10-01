@@ -215,6 +215,22 @@ export function SkillProfile({
         </section>
       )}
 
+      <section className="card-glass-dark flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="min-w-0">
+          <p className="font-display text-lg font-semibold leading-snug text-white">Your starting point is saved</p>
+          <p className="mt-1 text-sm leading-relaxed text-white/65">
+            Head to your LaunchPad to see your score, your objective and what to do next.
+          </p>
+        </div>
+        <Link
+          to="/dashboard"
+          className="press inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+        >
+          Go to your LaunchPad
+          <ArrowRight size={15} />
+        </Link>
+      </section>
+
       <p className="text-xs leading-relaxed text-white/50">{footnote}</p>
     </div>
   )

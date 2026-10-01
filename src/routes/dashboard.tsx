@@ -213,8 +213,15 @@ function DashboardPage() {
             <Skeleton className="h-80" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3">
-            <div className="lg:col-span-2">
+          // Layout note — why a gap can't open up beside the score. The score takes
+          // two columns and BOTH rows; the right column stacks the objective (its
+          // own height) over hours (the flexible row). The two columns always end
+          // together: if the right side is shorter, the hours card takes up the
+          // slack (its content is centred, so it just has more room); if it is
+          // taller, the score card spreads its sections a little. The two sides are
+          // close in height, so neither is ever more than a few dozen pixels.
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
+            <div className="lg:col-span-2 lg:col-start-1 lg:row-span-2 lg:row-start-1">
               {firstRun ? (
                 <FirstRunPath name={name} goal={goals[0]} />
               ) : (
