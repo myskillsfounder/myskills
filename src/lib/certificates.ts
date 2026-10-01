@@ -19,6 +19,7 @@
  * with the CASE in docs/supabase-migration-2026-07-30-certificate-bands.sql.
  */
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 
 export type CertificateKind = 'gold' | 'silver' | 'bronze'
 
@@ -193,9 +194,7 @@ export function tierForCertificate(cert: Pick<Certificate, 'kind' | 'percent'>):
  * certificates table has no client-facing INSERT policy at all.
  */
 export async function fetchMyCertificate(): Promise<Certificate | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return null
   const { data, error } = await supabase
     .from('certificates')

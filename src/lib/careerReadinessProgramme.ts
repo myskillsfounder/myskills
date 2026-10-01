@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
+import { shared } from './shared'
 import { forgetStarted } from './startedCache'
 import { PERSONAL_DEVELOPMENT_MODULES, type ModuleSlug } from './programmes'
 import { ITEM_KEYS, MODULE_CONTENT, type ItemKey } from './careerReadinessContent'
@@ -23,7 +24,11 @@ function fail(error: { message?: string }): never {
   throw new Error(error.message?.trim() || 'Something went wrong.')
 }
 
-export async function fetchMyResponses(): Promise<ResponseMap> {
+export function fetchMyResponses(): Promise<ResponseMap> {
+  return shared('fetchMyResponses', fetchMyResponsesOnce)
+}
+
+async function fetchMyResponsesOnce(): Promise<ResponseMap> {
   const { data, error } = await supabase
     .from('career_readiness_responses')
     .select('module, item, response')

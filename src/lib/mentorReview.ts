@@ -6,6 +6,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
+import { shared } from './shared'
 import { forgetStarted } from './startedCache'
 import type { SkillKey } from './careerReadinessAssessment'
 import { PROJECT_SUBMISSIONS, type ProjectStanding } from './readinessScore'
@@ -62,7 +63,11 @@ export interface MentorReviewSet {
   used: number
 }
 
-export async function fetchMyMentorReview(programme: ReviewProgramme): Promise<MentorReviewSet> {
+export function fetchMyMentorReview(programme: ReviewProgramme): Promise<MentorReviewSet> {
+  return shared(`fetchMyMentorReview:${programme}`, () => fetchMyMentorReviewOnce(programme))
+}
+
+async function fetchMyMentorReviewOnce(programme: ReviewProgramme): Promise<MentorReviewSet> {
   const { data, error } = await supabase
     .from('mentor_reviews')
     .select(

@@ -8,6 +8,7 @@
  */
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { shared } from './shared'
 
 export type HostKind = 'mentor' | 'trainer' | 'institution'
 
@@ -35,7 +36,11 @@ export interface LiveSession {
 
 /** The signed-in student's confirmed sessions, newest first. Empty if the SQL
  *  hasn't been run yet, so Practice and LaunchPad keep working. */
-export async function fetchMyLiveSessions(): Promise<LiveSession[]> {
+export function fetchMyLiveSessions(): Promise<LiveSession[]> {
+  return shared('fetchMyLiveSessions', fetchMyLiveSessionsOnce)
+}
+
+async function fetchMyLiveSessionsOnce(): Promise<LiveSession[]> {
   const { data, error } = await supabase
     .from('live_session_attendance')
     .select('id, programme, held_on, host_kind, host_name, title')

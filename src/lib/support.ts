@@ -7,6 +7,7 @@
  * cleanup_support().
  */
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 
 export type SessionStatus = 'waiting' | 'active' | 'ended' | 'cancelled'
 
@@ -118,9 +119,7 @@ export async function createSession(
   details: string,
   contact?: SupportContact,
 ): Promise<SupportSession> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   // Reuse an existing open session instead of stacking duplicates.
@@ -162,9 +161,7 @@ export async function createSession(
 }
 
 export async function fetchMySession(): Promise<SupportSession | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return null
   const { data } = await supabase
     .from('support_sessions')
@@ -205,9 +202,7 @@ export async function fetchQueue(): Promise<SupportSession[]> {
 
 /** Mentor: sessions this mentor is currently handling. */
 export async function fetchMyActiveAsMentor(): Promise<SupportSession[]> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return []
   const { data } = await supabase
     .from('support_sessions')
@@ -220,9 +215,7 @@ export async function fetchMyActiveAsMentor(): Promise<SupportSession[]> {
 
 /** Mentor claims a waiting session. Guarded so two mentors can't double-claim. */
 export async function claimSession(id: string): Promise<SupportSession | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
   const { data, error } = await supabase
     .from('support_sessions')
@@ -297,9 +290,7 @@ export async function fetchMessages(sessionId: string): Promise<SupportMessage[]
 }
 
 export async function sendMessage(sessionId: string, body: string): Promise<SupportMessage> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
   const { data, error } = await supabase
     .from('support_messages')
@@ -498,9 +489,7 @@ export function subscribeQueue(onChange: () => void) {
 /** Is the signed-in account flagged as a mentor? Drives the RLS that exposes
  * the waiting queue — if this is false the queue will always look empty. */
 export async function amIMentor(): Promise<{ id: string | null; isMentor: boolean; error?: string }> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) return { id: null, isMentor: false, error: 'not signed in' }
   const { data, error } = await supabase
     .from('profiles')
@@ -513,9 +502,7 @@ export async function amIMentor(): Promise<{ id: string | null; isMentor: boolea
 
 /** Mentor presence heartbeat. Returns a stop() that marks them offline. */
 export async function goOnline(): Promise<() => Promise<void>> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
   if (!user) throw new Error('You are not signed in.')
 
   const beat = async (online: boolean) => {

@@ -7,6 +7,7 @@
  * aren't live for students yet. See docs/supabase-internship-partner-leads.sql.
  */
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 
 export interface InternshipPartnerLeadInput {
   company: string
@@ -42,9 +43,7 @@ function raise(error: { message?: string; hint?: string | null } | null): never 
  * fail.
  */
 export async function submitInternshipPartnerLead(input: InternshipPartnerLeadInput): Promise<void> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await sessionUser()
 
   const { error } = await supabase.from('internship_partner_leads').insert({
     user_id: user?.id ?? null,

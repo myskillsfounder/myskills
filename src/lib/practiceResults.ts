@@ -9,6 +9,8 @@
  *                           applies via the underlying table)
  */
 import { supabase } from './supabase'
+import { shared } from './shared'
+import { sessionUser } from './sessionUser'
 import type { ScenarioGrade, ScenarioReview } from './decisionLabs'
 
 export interface PracticeTrackBest {
@@ -22,10 +24,12 @@ export interface PracticeTrackBest {
 export type PracticeSummary = Record<string, PracticeTrackBest>
 
 /** Best score + attempt count per track for the signed-in user. */
-export async function fetchPracticeSummary(): Promise<PracticeSummary> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export function fetchPracticeSummary(): Promise<PracticeSummary> {
+  return shared('fetchPracticeSummary', fetchPracticeSummaryOnce)
+}
+
+async function fetchPracticeSummaryOnce(): Promise<PracticeSummary> {
+  const user = await sessionUser()
   if (!user) return {}
 
   const { data, error } = await supabase
