@@ -14,6 +14,7 @@ import {
   FileText,
   GraduationCap,
   HeartHandshake,
+  KeyRound,
   LogOut,
   Menu,
   MessageSquare,
@@ -88,6 +89,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness' },
       { to: '/admin/internship-partners', label: 'Internships', icon: Briefcase, section: null },
       { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
+      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: null },
     ],
   },
   {

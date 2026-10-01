@@ -1,11 +1,26 @@
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
-import { LogOut, User, Users } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { Avatar } from '@/components/ui'
 
+/** One section of the portal the signed-in account may open. */
+export interface PortalTab {
+  to: string
+  label: string
+  /** A shorter label for the phone tab row. */
+  short: string
+  icon: ComponentType<{ size?: number }>
+  /** Something is waiting (student requests). */
+  count?: number
+  /** Needs attention (an unfinished profile). */
+  dot?: boolean
+  /** Match this address exactly rather than everything under it. */
+  exact?: boolean
+}
+
 /**
- * The mentor portal's own frame. Deliberately shares nothing with the student
+ * The Community portal's own frame. Deliberately shares nothing with the student
  * app — no LaunchPad, Practice or Community, no bottom tab bar — so a mentor
  * sees a workspace built for them, the way /admin is for staff.
  */
@@ -13,17 +28,14 @@ export function MentorShell({
   children,
   name,
   photo,
-  waiting = 0,
-  needsProfile = false,
+  tabs: tabList,
 }: {
   children: ReactNode
-  /** The signed-in mentor, once known. */
+  /** The signed-in person, once known. */
   name?: string
   photo?: string | null
-  /** Student requests waiting on a decision. */
-  waiting?: number
-  /** Profile isn't complete yet — flags the Profile tab. */
-  needsProfile?: boolean
+  /** The sections this account may open: only the resources it was given. */
+  tabs: PortalTab[]
 }) {
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
@@ -33,10 +45,13 @@ export function MentorShell({
     router.navigate({ to: '/community-portal/login' })
   }
 
-  const tabs = [
-    { to: '/community-portal', label: 'Students & requests', icon: Users, active: pathname === '/community-portal' || pathname === '/community-portal/', count: waiting, dot: false },
-    { to: '/community-portal/profile', label: 'My profile', icon: User, active: pathname.startsWith('/community-portal/profile'), count: 0, dot: needsProfile },
-  ]
+  const here = pathname.replace(/\/$/, '')
+  const tabs = tabList.map((t) => ({
+    ...t,
+    count: t.count ?? 0,
+    dot: t.dot ?? false,
+    active: t.exact ? here === t.to : here === t.to || here.startsWith(`${t.to}/`),
+  }))
 
   return (
     <div className="min-h-screen bg-ink-50">
@@ -90,19 +105,19 @@ export function MentorShell({
           </div>
         </div>
 
-        {/* Phones: the two sections as tabs under the bar, not a hamburger. */}
-        <nav aria-label="Community portal" className="flex border-t border-ink-900/[0.06] sm:hidden">
+        {/* Phones: the sections as tabs under the bar, not a hamburger. */}
+        <nav aria-label="Community portal" className="flex overflow-x-auto border-t border-ink-900/[0.06] [scrollbar-width:none] sm:hidden">
           {tabs.map((t) => (
             <Link
               key={t.to}
               to={t.to}
               aria-current={t.active ? 'page' : undefined}
-              className={`relative flex h-11 flex-1 items-center justify-center gap-2 text-sm font-semibold ${
+              className={`relative flex h-11 min-w-fit flex-1 items-center justify-center gap-2 whitespace-nowrap px-3 text-sm font-semibold ${
                 t.active ? 'text-brand-700' : 'text-ink-600'
               }`}
             >
               <t.icon size={16} />
-              {t.label === 'Students & requests' ? 'Students' : 'Profile'}
+              {t.short}
               {t.count > 0 && (
                 <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
                   {t.count}
