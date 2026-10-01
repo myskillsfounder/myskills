@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute, Link, Outlet, useRouter } from '@tanstack/react-router'
-import { Briefcase, Building2, Compass, GraduationCap, HeartHandshake, User, Users } from 'lucide-react'
+import { Briefcase, Building2, Compass, GraduationCap, HeartHandshake, LayoutDashboard, User, Users } from 'lucide-react'
 import { requireMentorSession } from '@/lib/guards'
+import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { errorMessage } from '@/lib/errors'
 import { fetchMyMentees, type MentorSideMatch } from '@/lib/mentorMatches'
 import { fetchMyMentorProfile, type MyMentorProfile } from '@/lib/mentorPortal'
@@ -11,7 +12,7 @@ import {
   type CommunityAccess,
   type CommunityResource,
 } from '@/lib/communityPortal'
-import { MentorPortalContext, PortalAccessContext } from '@/components/mentoring/MentorPortalContext'
+import { MentorPortalContext, PortalAccessContext, PortalNameContext } from '@/components/mentoring/MentorPortalContext'
 import { MentorShell, type PortalTab } from '@/components/mentoring/MentorShell'
 import { RequestsLine } from '@/components/mentoring/RequestsLine'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
@@ -20,6 +21,9 @@ export const Route = createFileRoute('/community-portal/_layout')({
   beforeLoad: requireMentorSession,
   component: MentorPortalLayout,
 })
+
+/** The order of the student Community page's tiles: Mentors first. */
+const ORDER: CommunityResource[] = ['mentors', 'wellness', 'guidance', 'internships', 'institutions']
 
 const RESOURCE_ICON: Record<CommunityResource, PortalTab['icon']> = {
   mentors: GraduationCap,
@@ -40,6 +44,7 @@ function MentorPortalLayout() {
   const [profile, setProfile] = useState<MyMentorProfile | null>(null)
   const [rows, setRows] = useState<MentorSideMatch[]>([])
   const [access, setAccess] = useState<CommunityAccess[]>([])
+  const { user } = useAuthUser()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
 
@@ -70,14 +75,11 @@ function MentorPortalLayout() {
   useEffect(() => {
     void load().then((loaded) => {
       if (!loaded) return
-      const { mine, others } = loaded
+      const { mine } = loaded
       const here = window.location.pathname.replace(/\/$/, '')
-      const onMentorPage = here === '/community-portal' || here === '/community-portal/profile'
+      // A mentor whose profile isn't finished starts there; everyone else on Home.
       if (mine && !mine.ready && here === '/community-portal') {
         router.navigate({ to: '/community-portal/profile', replace: true })
-      } else if (!mine && others.length > 0 && onMentorPage) {
-        // Not a mentor: open on the first resource they do have.
-        router.navigate({ to: '/community-portal/$resource', params: { resource: others[0].resource }, replace: true })
       }
     })
     // First load only.
@@ -85,25 +87,36 @@ function MentorPortalLayout() {
   }, [])
 
   const waiting = rows.filter((r) => r.status === 'requested').length
+  const displayName = profile?.full_name || (user ? userDisplayName(user) : undefined)
+  const sections = [...access].sort((a, b) => ORDER.indexOf(a.resource) - ORDER.indexOf(b.resource))
+  // Mentors first, as on the Community page: this account's own students if it is
+  // a mentor, and the overview beside them if it can also see every mentor's.
   const tabs: PortalTab[] = [
+    { to: '/community-portal', label: 'Home', icon: LayoutDashboard, exact: true },
     ...(profile
-      ? [
-          { to: '/community-portal', label: 'My students', short: 'My students', icon: Users, count: waiting, exact: true },
-        ]
+      ? [{ to: '/community-portal/students', label: 'My students', icon: Users, count: waiting, group: 'Community' }]
       : []),
-    ...access.map((a) => ({
+    ...sections.map((a, i) => ({
       to: `/community-portal/${a.resource}`,
-      label: RESOURCE_LABEL[a.resource],
-      short: RESOURCE_LABEL[a.resource],
+      label: a.resource === 'mentors' && profile ? 'All mentors’ students' : RESOURCE_LABEL[a.resource],
       icon: RESOURCE_ICON[a.resource],
+      group: !profile && i === 0 ? 'Community' : undefined,
     })),
     ...(profile
-      ? [{ to: '/community-portal/profile', label: 'My profile', short: 'Profile', icon: User, dot: !profile.ready }]
+      ? [{ to: '/community-portal/profile', label: 'My profile', icon: User, dot: !profile.ready, group: 'Account' }]
       : []),
   ]
 
+  const roles = [
+    profile ? 'Mentor' : null,
+    ...sections.filter((a) => a.resource !== 'mentors' || !profile).map((a) => RESOURCE_LABEL[a.resource]),
+  ].filter(Boolean) as string[]
+  const subtitle =
+    sections.find((a) => a.organisation)?.organisation ||
+    (sections.some((a) => a.sees_all) ? 'Overview · all sections' : roles.slice(0, 2).join(' · '))
+
   return (
-    <MentorShell name={profile?.full_name} photo={profile?.avatar_url} tabs={tabs}>
+    <MentorShell name={displayName} photo={profile?.avatar_url} subtitle={subtitle} tabs={tabs}>
       {loading ? (
         <>
           <Skeleton className="h-8 w-56" />
@@ -126,12 +139,14 @@ function MentorPortalLayout() {
         />
       ) : (
         <PortalAccessContext.Provider value={access}>
+          <PortalNameContext.Provider value={displayName}>
           <MentorPortalContext.Provider
             value={profile ? { profile, rows, reload: async () => void (await load()) } : null}
           >
             {profile && <RequestsLine rows={rows} />}
             <Outlet />
           </MentorPortalContext.Provider>
+          </PortalNameContext.Provider>
         </PortalAccessContext.Provider>
       )}
     </MentorShell>

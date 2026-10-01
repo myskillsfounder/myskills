@@ -1,31 +1,20 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { PageHeader } from '@/components/ui'
-import { useMentorPortalOptional } from '@/components/mentoring/MentorPortalContext'
-import { StudentsPanel } from '@/components/mentoring/StudentsPanel'
+import { createFileRoute } from '@tanstack/react-router'
+import { useMentorPortalOptional, usePortalAccess, usePortalName } from '@/components/mentoring/MentorPortalContext'
+import { PortalHome } from '@/components/mentoring/PortalHome'
 
 export const Route = createFileRoute('/community-portal/_layout/')({
-  component: StudentsPage,
+  component: HomePage,
 })
 
-function StudentsPage() {
-  const router = useRouter()
-  // A counsellor or a company has no mentor page; the layout sends them on.
+/** The portal's front page: totals, what needs attention, and a card per section. */
+function HomePage() {
   const mentor = useMentorPortalOptional()
-  if (!mentor) return null
-  const { profile, rows, reload } = mentor
   return (
-    <>
-      <PageHeader
-        eyebrow="Community portal"
-        title="Students & requests"
-        subtitle="Students who asked you to mentor them, and the ones you’re working with. Arrange sessions your own way, then log each one here."
-      />
-      <StudentsPanel
-        rows={rows}
-        profile={profile}
-        onChanged={() => void reload()}
-        onOpenProfile={() => router.navigate({ to: '/community-portal/profile' })}
-      />
-    </>
+    <PortalHome
+      name={usePortalName()}
+      access={usePortalAccess()}
+      mentorRows={mentor?.rows ?? []}
+      isMentor={Boolean(mentor)}
+    />
   )
 }

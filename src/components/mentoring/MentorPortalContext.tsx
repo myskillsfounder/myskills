@@ -32,3 +32,10 @@ export const PortalAccessContext = createContext<CommunityAccess[]>([])
 export function usePortalAccess(): CommunityAccess[] {
   return useContext(PortalAccessContext)
 }
+
+/** The signed-in person's name, for the greeting. */
+export const PortalNameContext = createContext<string | undefined>(undefined)
+
+export function usePortalName(): string | undefined {
+  return useContext(PortalNameContext)
+}

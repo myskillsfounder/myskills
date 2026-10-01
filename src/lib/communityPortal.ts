@@ -225,3 +225,71 @@ export async function fetchCommunityUsage(): Promise<CommunityUsage[]> {
   if (error) fail(error)
   return (data ?? []) as CommunityUsage[]
 }
+
+/* -- one student's record -------------------------------------------------- */
+
+/** What the signed-in account may see of a student, set by how they work with
+ *  them (docs/supabase-community-portal-record.sql): a mentor or career guide
+ *  sees everything below; a company or institution sees contact, progress and
+ *  certificates; a counsellor sees contact and their own session dates. */
+export type RecordLevel = 'full' | 'progress' | 'contact'
+
+export interface RecordRelationship {
+  resource: CommunityResource
+  provider: string | null
+  status: 'requested' | 'active' | 'ended'
+  programme: 'digital-marketing' | 'career-readiness' | null
+  started_on: string
+  ended_on: string | null
+  /** Whether it is the signed-in account's own student (an overview sees others'). */
+  mine: boolean
+  sessions: number
+  last_session: string | null
+}
+
+export interface StudentRecord {
+  level: RecordLevel
+  student: {
+    id: string
+    full_name: string | null
+    email: string
+    phone: string | null
+    location: string | null
+    headline: string | null
+    avatar_url: string | null
+    career_stage: string | null
+    joined_on: string
+  }
+  relationships: RecordRelationship[]
+  /** The Career Readiness Score as stored, with its parts. Null below 'progress' or before the student has one. */
+  progress: {
+    score: number
+    computed_at: string
+    method_version?: string
+    personal?: { points: number; max: number; modules_done?: number; held?: number; project_points?: number; project_status?: string | null }
+    professional?: {
+      points: number
+      max: number
+      tracks_passed?: number
+      foundation_percent?: number | null
+      held?: number
+      project_points?: number
+      project_status?: string | null
+    }
+    internship?: { points: number; max: number }
+  } | null
+  certificates: { title: string; kind: 'gold' | 'silver' | 'bronze'; percent: number; issued_at: string }[]
+  assessments: { digital_marketing: boolean; career_readiness: boolean; foundation_percent: number | null } | null
+  sessions: { date: string; resource: CommunityResource; provider: string | null; title: string | null }[]
+}
+
+export async function fetchStudentRecord(studentId: string): Promise<StudentRecord> {
+  const { data, error } = await supabase.rpc('community_student_record', { p_student: studentId })
+  if (error) {
+    if (error.code === 'PGRST202') {
+      throw new Error('Student records aren’t available yet — run docs/supabase-community-portal-record.sql in Supabase.')
+    }
+    fail(error)
+  }
+  return data as StudentRecord
+}

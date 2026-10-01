@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Award, CalendarPlus, Check, FolderPlus, GraduationCap, Mail, UserX, Users, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -346,7 +347,11 @@ function StudentCard({ m, onDone }: { m: MentorSideMatch; onDone: () => void }) 
         <div className="flex min-w-0 items-center gap-3">
           <Avatar name={m.student_name || m.student_email} size={40} />
           <div className="min-w-0">
-            <h3 className="truncate font-display text-lg font-semibold text-ink-900">{m.student_name || 'Student'}</h3>
+            <h3 className="truncate font-display text-lg font-semibold text-ink-900">
+              <Link to="/community-portal/student/$id" params={{ id: m.student_id }} className="hover:text-brand-700 hover:underline">
+                {m.student_name || 'Student'}
+              </Link>
+            </h3>
             <a href={`mailto:${m.student_email}`} className="inline-flex items-center gap-1 text-xs text-ink-500 hover:text-brand-700">
               <Mail size={12} /> {m.student_email}
             </a>
