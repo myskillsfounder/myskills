@@ -368,7 +368,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
   const shownScore = useCountUp(score, entered)
 
   return (
-    <section className="card flex flex-col p-6 sm:p-7">
+    <section className="card flex h-full flex-col p-6 sm:p-7">
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Career Readiness Score</p>
 
       <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
@@ -429,7 +429,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
         </div>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 flex flex-1 flex-col justify-center gap-4">
         <Part label="Personal Development" c={personal} tone="personal" entered={entered} delay={150} />
         <Part label="Professional Development" c={professional} tone="professional" entered={entered} delay={300} />
         <Part label="Internship" c={internship} tone="internship" entered={entered} delay={450} />
