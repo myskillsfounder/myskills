@@ -17,6 +17,7 @@ import { useAuthUser } from '@/lib/useAuth'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import career from '@/content/career-readiness.json'
 import { setAfterOnboarding } from '@/lib/afterOnboarding'
+import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -71,15 +72,20 @@ const HUMANS: { icon: IconType; title: string; body: string }[] = [
 
 /* -- start CTA ------------------------------------------------------------ */
 
-/** The way in: straight to the first module for a signed-in learner, to
- *  sign-up for a visitor. There's no waiting list any more — the programme is open. */
+/** The way in: the Personal aptitude assessment (through sign-up for a
+ *  visitor), or the modules for someone who has already taken it. */
 function StartCta({ dark = false }: { dark?: boolean }) {
   const { user } = useAuthUser()
+  const { result } = useMyAssessmentResult()
+  const taken = result != null
   const tone = dark
     ? 'bg-white text-ink-900 shadow-e2 hover:bg-brand-50'
     : 'bg-brand-600 text-white hover:bg-brand-700'
   const cls = `press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition-colors ${tone}`
-  if (user) {
+  // The Personal aptitude is the programme's first step, so it is what the
+  // button offers — to a visitor (after sign-up) and to a signed-in student who
+  // hasn't taken it. Only someone who already has goes straight to the modules.
+  if (user && taken) {
     return (
       <Link
         to="/career-module/$slug"
@@ -87,14 +93,22 @@ function StartCta({ dark = false }: { dark?: boolean }) {
         onClick={() => rememberProgramme(2)}
         className={cls}
       >
-        Start the programme
+        Continue the programme
+        <ArrowRight size={16} />
+      </Link>
+    )
+  }
+  if (user) {
+    return (
+      <Link to="/career-readiness-assessment" onClick={() => rememberProgramme(2)} className={cls}>
+        Take the Personal aptitude
         <ArrowRight size={16} />
       </Link>
     )
   }
   return (
     <Link to="/signup" onClick={() => setAfterOnboarding('/career-readiness-assessment')} className={cls}>
-      Create a free account to start
+      Take the Personal aptitude
       <ArrowRight size={16} />
     </Link>
   )
@@ -194,7 +208,7 @@ function CareerReadinessPage() {
               </div>
 
               <ul className="mt-6 space-y-2.5 text-sm text-white/70">
-                {['Five short modules, about four hours', 'Written practice you can revisit', 'Mentor feedback, not just scores'].map((t) => (
+                {['A 5-minute aptitude, then five short modules', 'Written practice you can revisit', 'Mentor feedback, not just scores'].map((t) => (
                   <li key={t} className="flex items-center gap-2">
                     <BadgeCheck size={16} className="shrink-0 text-brand-200" />
                     {t}
