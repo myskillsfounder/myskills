@@ -6,6 +6,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
+import { forgetStarted } from './startedCache'
 import type { SkillKey } from './careerReadinessAssessment'
 import { PROJECT_SUBMISSIONS, type ProjectStanding } from './readinessScore'
 
@@ -102,6 +103,7 @@ export async function submitProject(programme: ReviewProgramme, p: ProjectSubmis
     p_note: p.note,
   })
   if (error) fail(error)
+  forgetStarted()
 }
 
 export async function cancelMyMentorReview(programme: ReviewProgramme): Promise<void> {

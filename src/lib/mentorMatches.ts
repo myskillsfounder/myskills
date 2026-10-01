@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { forgetStarted } from './startedCache'
 import type { Mentor } from './mentors'
 
 export type MatchProgramme = 'digital-marketing' | 'career-readiness'
@@ -83,6 +84,7 @@ export async function fetchMatchableMentors(): Promise<Mentor[]> {
 export async function requestMentor(programme: MatchProgramme, mentorId: string, note: string): Promise<void> {
   const { error } = await supabase.rpc('request_mentor', { p_programme: programme, p_mentor_id: mentorId, p_note: note })
   if (error) fail(error)
+  forgetStarted()
 }
 
 /** Withdraw a waiting request, or end an active match (either side). */
