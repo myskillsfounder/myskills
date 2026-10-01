@@ -9,7 +9,7 @@ import {
   RESOURCE_LABEL,
   fetchMyCommunityAccess,
   type CommunityAccess,
-  type GrantedResource,
+  type CommunityResource,
 } from '@/lib/communityPortal'
 import { MentorPortalContext, PortalAccessContext } from '@/components/mentoring/MentorPortalContext'
 import { MentorShell, type PortalTab } from '@/components/mentoring/MentorShell'
@@ -21,7 +21,8 @@ export const Route = createFileRoute('/community-portal/_layout')({
   component: MentorPortalLayout,
 })
 
-const RESOURCE_ICON: Record<GrantedResource, PortalTab['icon']> = {
+const RESOURCE_ICON: Record<CommunityResource, PortalTab['icon']> = {
+  mentors: GraduationCap,
   wellness: HeartHandshake,
   guidance: Compass,
   internships: Briefcase,
@@ -48,7 +49,9 @@ function MentorPortalLayout() {
       // Only a mentor has requests to load; asking for anyone else is an error.
       const mentees = mine ? await fetchMyMentees() : []
       // Before the SQL is run there are no grants to read: mentors only, as before.
-      const others = (granted ?? []).filter((a) => a.resource !== 'mentors')
+      // A mentor's own section comes from their profile, above; 'mentors' stays in
+      // this list only as an overview (every mentor's students).
+      const others = (granted ?? []).filter((a) => a.resource !== 'mentors' || a.sees_all)
       setProfile(mine)
       setRows(mentees)
       setAccess(others)
@@ -85,14 +88,14 @@ function MentorPortalLayout() {
   const tabs: PortalTab[] = [
     ...(profile
       ? [
-          { to: '/community-portal', label: 'Students & requests', short: 'Students', icon: Users, count: waiting, exact: true },
+          { to: '/community-portal', label: 'My students', short: 'My students', icon: Users, count: waiting, exact: true },
         ]
       : []),
     ...access.map((a) => ({
       to: `/community-portal/${a.resource}`,
       label: RESOURCE_LABEL[a.resource],
       short: RESOURCE_LABEL[a.resource],
-      icon: RESOURCE_ICON[a.resource as GrantedResource],
+      icon: RESOURCE_ICON[a.resource],
     })),
     ...(profile
       ? [{ to: '/community-portal/profile', label: 'My profile', short: 'Profile', icon: User, dot: !profile.ready }]

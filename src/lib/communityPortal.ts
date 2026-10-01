@@ -39,6 +39,9 @@ export interface CommunityAccess {
   resource: CommunityResource
   /** The company or institution this account acts for, when it is one. */
   organisation: string | null
+  /** An overview grant: every student in this resource, whoever they are with
+   *  (read-only). Absent until docs/supabase-community-portal-overview.sql is run. */
+  sees_all?: boolean
 }
 
 function fail(error: { message?: string }): never {
@@ -69,6 +72,30 @@ export interface CommunityStudent {
   student_email: string
   sessions: number
   last_session: string | null
+  /** Who the student is with: shown in an overview. */
+  provider_name?: string | null
+  /** False when this is someone else's student, seen through an overview. */
+  mine?: boolean
+}
+
+/** A student working with, or waiting on, a mentor: the Mentors overview. */
+export interface MentorStudent {
+  id: string
+  status: 'requested' | 'active' | 'ended'
+  programme: 'digital-marketing' | 'career-readiness'
+  started_on: string
+  student_id: string
+  student_name: string | null
+  student_email: string
+  mentor_name: string
+  sessions: number
+  last_session: string | null
+}
+
+export async function fetchCommunityMentorStudents(): Promise<MentorStudent[]> {
+  const { data, error } = await supabase.rpc('community_mentor_students')
+  if (error) fail(error)
+  return (data ?? []) as MentorStudent[]
 }
 
 export async function fetchMyCommunityStudents(resource: GrantedResource): Promise<CommunityStudent[]> {
@@ -98,12 +125,13 @@ export interface AdminCommunityAccess {
   user_id: string
   email: string | null
   full_name: string | null
-  resource: GrantedResource
+  resource: CommunityResource
   organisation: string | null
   created_at: string
   /** Students currently with them. */
   active: number
   sessions: number
+  sees_all?: boolean
 }
 
 export async function fetchAdminCommunityAccess(): Promise<AdminCommunityAccess[]> {
@@ -117,16 +145,28 @@ export async function fetchAdminCommunityAccess(): Promise<AdminCommunityAccess[
   return (data ?? []) as AdminCommunityAccess[]
 }
 
-export async function grantCommunityAccess(email: string, resource: GrantedResource, organisation: string): Promise<void> {
+/** `seesAll` grants an overview: every student in the resource, read-only. */
+export async function grantCommunityAccess(
+  email: string,
+  resource: CommunityResource,
+  organisation: string,
+  seesAll: boolean,
+): Promise<void> {
   const { error } = await supabase.rpc('admin_grant_community_access', {
     p_email: email,
     p_resource: resource,
     p_organisation: organisation,
+    p_sees_all: seesAll,
   })
-  if (error) fail(error)
+  if (error) {
+    if (error.code === 'PGRST202') {
+      throw new Error('Run docs/supabase-community-portal-overview.sql in Supabase to grant access from here.')
+    }
+    fail(error)
+  }
 }
 
-export async function revokeCommunityAccess(userId: string, resource: GrantedResource): Promise<void> {
+export async function revokeCommunityAccess(userId: string, resource: CommunityResource): Promise<void> {
   const { error } = await supabase.rpc('admin_revoke_community_access', { p_user: userId, p_resource: resource })
   if (error) fail(error)
 }
