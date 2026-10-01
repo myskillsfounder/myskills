@@ -59,6 +59,7 @@ import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as CommunityPortalLayoutIndexRouteImport } from './routes/community-portal/_layout/index'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
 import { Route as CommunityPortalLayoutProfileRouteImport } from './routes/community-portal/_layout/profile'
+import { Route as CommunityPortalLayoutResourceRouteImport } from './routes/community-portal/_layout/$resource'
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
 import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
 import { Route as AdminLayoutPracticeRouteImport } from './routes/admin/_layout/practice'
@@ -74,6 +75,7 @@ import { Route as AdminLayoutDmAptitudeRouteImport } from './routes/admin/_layou
 import { Route as AdminLayoutDemoRequestsRouteImport } from './routes/admin/_layout/demo-requests'
 import { Route as AdminLayoutCrLeadsRouteImport } from './routes/admin/_layout/cr-leads'
 import { Route as AdminLayoutCrAptitudeRouteImport } from './routes/admin/_layout/cr-aptitude'
+import { Route as AdminLayoutCommunityPortalRouteImport } from './routes/admin/_layout/community-portal'
 import { Route as AdminLayoutCertificatesRouteImport } from './routes/admin/_layout/certificates'
 import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog'
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
@@ -336,6 +338,12 @@ const CommunityPortalLayoutProfileRoute =
     path: '/profile',
     getParentRoute: () => CommunityPortalLayoutRoute,
   } as any)
+const CommunityPortalLayoutResourceRoute =
+  CommunityPortalLayoutResourceRouteImport.update({
+    id: '/$resource',
+    path: '/$resource',
+    getParentRoute: () => CommunityPortalLayoutRoute,
+  } as any)
 const AdminLayoutWellnessRoute = AdminLayoutWellnessRouteImport.update({
   id: '/wellness',
   path: '/wellness',
@@ -414,6 +422,12 @@ const AdminLayoutCrAptitudeRoute = AdminLayoutCrAptitudeRouteImport.update({
   path: '/cr-aptitude',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutCommunityPortalRoute =
+  AdminLayoutCommunityPortalRouteImport.update({
+    id: '/community-portal',
+    path: '/community-portal',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
 const AdminLayoutCertificatesRoute = AdminLayoutCertificatesRouteImport.update({
   id: '/certificates',
   path: '/certificates',
@@ -498,6 +512,7 @@ export interface FileRoutesByFullPath {
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
   '/admin/certificates': typeof AdminLayoutCertificatesRoute
+  '/admin/community-portal': typeof AdminLayoutCommunityPortalRoute
   '/admin/cr-aptitude': typeof AdminLayoutCrAptitudeRoute
   '/admin/cr-leads': typeof AdminLayoutCrLeadsRoute
   '/admin/demo-requests': typeof AdminLayoutDemoRequestsRoute
@@ -513,6 +528,7 @@ export interface FileRoutesByFullPath {
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
+  '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/admin/': typeof AdminLayoutIndexRoute
   '/community-portal/': typeof CommunityPortalLayoutIndexRoute
@@ -568,6 +584,7 @@ export interface FileRoutesByTo {
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
   '/admin/certificates': typeof AdminLayoutCertificatesRoute
+  '/admin/community-portal': typeof AdminLayoutCommunityPortalRoute
   '/admin/cr-aptitude': typeof AdminLayoutCrAptitudeRoute
   '/admin/cr-leads': typeof AdminLayoutCrLeadsRoute
   '/admin/demo-requests': typeof AdminLayoutDemoRequestsRoute
@@ -583,6 +600,7 @@ export interface FileRoutesByTo {
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
+  '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/admin': typeof AdminLayoutIndexRoute
   '/community-portal': typeof CommunityPortalLayoutIndexRoute
@@ -642,6 +660,7 @@ export interface FileRoutesById {
   '/admin/_layout/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/_layout/blog': typeof AdminLayoutBlogRoute
   '/admin/_layout/certificates': typeof AdminLayoutCertificatesRoute
+  '/admin/_layout/community-portal': typeof AdminLayoutCommunityPortalRoute
   '/admin/_layout/cr-aptitude': typeof AdminLayoutCrAptitudeRoute
   '/admin/_layout/cr-leads': typeof AdminLayoutCrLeadsRoute
   '/admin/_layout/demo-requests': typeof AdminLayoutDemoRequestsRoute
@@ -657,6 +676,7 @@ export interface FileRoutesById {
   '/admin/_layout/practice': typeof AdminLayoutPracticeRoute
   '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
+  '/community-portal/_layout/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/_layout/profile': typeof CommunityPortalLayoutProfileRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
   '/community-portal/_layout/': typeof CommunityPortalLayoutIndexRoute
@@ -717,6 +737,7 @@ export interface FileRouteTypes {
     | '/admin/assessment-questions'
     | '/admin/blog'
     | '/admin/certificates'
+    | '/admin/community-portal'
     | '/admin/cr-aptitude'
     | '/admin/cr-leads'
     | '/admin/demo-requests'
@@ -732,6 +753,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/verification'
     | '/admin/wellness'
+    | '/community-portal/$resource'
     | '/community-portal/profile'
     | '/admin/'
     | '/community-portal/'
@@ -787,6 +809,7 @@ export interface FileRouteTypes {
     | '/admin/assessment-questions'
     | '/admin/blog'
     | '/admin/certificates'
+    | '/admin/community-portal'
     | '/admin/cr-aptitude'
     | '/admin/cr-leads'
     | '/admin/demo-requests'
@@ -802,6 +825,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/verification'
     | '/admin/wellness'
+    | '/community-portal/$resource'
     | '/community-portal/profile'
     | '/admin'
     | '/community-portal'
@@ -860,6 +884,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/assessment-questions'
     | '/admin/_layout/blog'
     | '/admin/_layout/certificates'
+    | '/admin/_layout/community-portal'
     | '/admin/_layout/cr-aptitude'
     | '/admin/_layout/cr-leads'
     | '/admin/_layout/demo-requests'
@@ -875,6 +900,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/practice'
     | '/admin/_layout/verification'
     | '/admin/_layout/wellness'
+    | '/community-portal/_layout/$resource'
     | '/community-portal/_layout/profile'
     | '/admin/_layout/'
     | '/community-portal/_layout/'
@@ -1279,6 +1305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityPortalLayoutProfileRouteImport
       parentRoute: typeof CommunityPortalLayoutRoute
     }
+    '/community-portal/_layout/$resource': {
+      id: '/community-portal/_layout/$resource'
+      path: '/$resource'
+      fullPath: '/community-portal/$resource'
+      preLoaderRoute: typeof CommunityPortalLayoutResourceRouteImport
+      parentRoute: typeof CommunityPortalLayoutRoute
+    }
     '/admin/_layout/wellness': {
       id: '/admin/_layout/wellness'
       path: '/wellness'
@@ -1384,6 +1417,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutCrAptitudeRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/community-portal': {
+      id: '/admin/_layout/community-portal'
+      path: '/community-portal'
+      fullPath: '/admin/community-portal'
+      preLoaderRoute: typeof AdminLayoutCommunityPortalRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/certificates': {
       id: '/admin/_layout/certificates'
       path: '/certificates'
@@ -1474,6 +1514,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutAssessmentQuestionsRoute: typeof AdminLayoutAssessmentQuestionsRoute
   AdminLayoutBlogRoute: typeof AdminLayoutBlogRoute
   AdminLayoutCertificatesRoute: typeof AdminLayoutCertificatesRoute
+  AdminLayoutCommunityPortalRoute: typeof AdminLayoutCommunityPortalRoute
   AdminLayoutCrAptitudeRoute: typeof AdminLayoutCrAptitudeRoute
   AdminLayoutCrLeadsRoute: typeof AdminLayoutCrLeadsRoute
   AdminLayoutDemoRequestsRoute: typeof AdminLayoutDemoRequestsRoute
@@ -1499,6 +1540,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutAssessmentQuestionsRoute: AdminLayoutAssessmentQuestionsRoute,
   AdminLayoutBlogRoute: AdminLayoutBlogRoute,
   AdminLayoutCertificatesRoute: AdminLayoutCertificatesRoute,
+  AdminLayoutCommunityPortalRoute: AdminLayoutCommunityPortalRoute,
   AdminLayoutCrAptitudeRoute: AdminLayoutCrAptitudeRoute,
   AdminLayoutCrLeadsRoute: AdminLayoutCrLeadsRoute,
   AdminLayoutDemoRequestsRoute: AdminLayoutDemoRequestsRoute,
@@ -1524,11 +1566,13 @@ const AdminLayoutRouteWithChildren = AdminLayoutRoute._addFileChildren(
 )
 
 interface CommunityPortalLayoutRouteChildren {
+  CommunityPortalLayoutResourceRoute: typeof CommunityPortalLayoutResourceRoute
   CommunityPortalLayoutProfileRoute: typeof CommunityPortalLayoutProfileRoute
   CommunityPortalLayoutIndexRoute: typeof CommunityPortalLayoutIndexRoute
 }
 
 const CommunityPortalLayoutRouteChildren: CommunityPortalLayoutRouteChildren = {
+  CommunityPortalLayoutResourceRoute: CommunityPortalLayoutResourceRoute,
   CommunityPortalLayoutProfileRoute: CommunityPortalLayoutProfileRoute,
   CommunityPortalLayoutIndexRoute: CommunityPortalLayoutIndexRoute,
 }

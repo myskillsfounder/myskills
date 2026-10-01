@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PageHeader } from '@/components/ui'
-import { useMentorPortal } from '@/components/mentoring/MentorPortalContext'
+import { useMentorPortalOptional } from '@/components/mentoring/MentorPortalContext'
 import { MentorProfilePanel } from '@/components/mentoring/MentorProfilePanel'
 
 export const Route = createFileRoute('/community-portal/_layout/profile')({
@@ -8,7 +8,9 @@ export const Route = createFileRoute('/community-portal/_layout/profile')({
 })
 
 function ProfilePage() {
-  const { profile, reload } = useMentorPortal()
+  const mentor = useMentorPortalOptional()
+  if (!mentor) return null
+  const { profile, reload } = mentor
   return (
     <>
       <PageHeader

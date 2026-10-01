@@ -9,6 +9,12 @@ import {
   type WellnessRequestStatus,
   type WellnessRequestType,
 } from '@/lib/admin'
+import {
+  assignSupportRequest,
+  fetchRequestAssignments,
+  fetchSupportProviders,
+  type SupportProvider,
+} from '@/lib/communityPortal'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
@@ -59,13 +65,22 @@ function RequestCard({
   req,
   busy,
   onAdvance,
+  providers,
+  assignedTo,
+  onAssign,
 }: {
   req: AdminWellnessRequest
   busy: boolean
   onAdvance: () => void
+  /** Counsellors (or career guides) with Community portal access for this kind of request. */
+  providers: SupportProvider[]
+  /** Who this request has already been handed to. */
+  assignedTo?: string
+  onAssign: (providerId: string) => void
 }) {
   const next = NEXT[req.status]
   const Icon = TYPE_ICON[req.type]
+  const [pick, setPick] = useState('')
 
   return (
     <article className="card p-5 sm:p-6">
@@ -106,6 +121,31 @@ function RequestCard({
         </div>
       )}
 
+      {/* Hand the request to one person. They see the student in their Community
+          portal and log session dates there; the message stays here with the team. */}
+      {assignedTo ? (
+        <p className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          Assigned to <span className="font-semibold">{assignedTo}</span>
+        </p>
+      ) : providers.length > 0 && req.status !== 'closed' ? (
+        <div className="mt-4 flex flex-wrap items-end gap-2">
+          <label className="min-w-0 flex-1 text-xs font-medium text-ink-600 sm:max-w-xs">
+            Assign to
+            <select value={pick} onChange={(e) => setPick(e.target.value)} className="field mt-1 block w-full">
+              <option value="">Choose a person…</option>
+              {providers.map((p) => (
+                <option key={p.user_id} value={p.user_id}>
+                  {p.full_name || p.email} ({p.active} now)
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button size="sm" disabled={busy || !pick} onClick={() => onAssign(pick)}>
+            Assign
+          </Button>
+        </div>
+      ) : null}
+
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-200 pt-4">
         <time className="text-xs text-ink-500" dateTime={req.created_at}>
           Requested {new Date(req.created_at).toLocaleDateString()}
@@ -127,12 +167,21 @@ function WellnessRequestsPage() {
   const [statusFilter, setStatusFilter] = useState<WellnessRequestStatus | 'all'>('pending')
   const [typeFilter, setTypeFilter] = useState<WellnessRequestType | 'all'>('all')
   const [busyId, setBusyId] = useState<string>()
+  const [providers, setProviders] = useState<SupportProvider[]>([])
+  const [assigned, setAssigned] = useState<Record<string, string>>({})
 
   async function load() {
     setLoading(true)
     setError(undefined)
     try {
-      setRequests(await fetchWellnessRequests())
+      const [reqs, people, done] = await Promise.all([
+        fetchWellnessRequests(),
+        fetchSupportProviders(),
+        fetchRequestAssignments(),
+      ])
+      setRequests(reqs)
+      setProviders(people)
+      setAssigned(done)
     } catch (e) {
       setError(errorMessage(e))
     } finally {
@@ -150,6 +199,18 @@ function WellnessRequestsPage() {
     setBusyId(req.id)
     try {
       await setWellnessRequestStatus(req.id, next)
+      await load()
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setBusyId(undefined)
+    }
+  }
+
+  async function assign(req: AdminWellnessRequest, providerId: string) {
+    setBusyId(req.id)
+    try {
+      await assignSupportRequest(req.id, providerId)
       await load()
     } catch (e) {
       setError(errorMessage(e))
@@ -231,6 +292,9 @@ function WellnessRequestsPage() {
               req={req}
               busy={busyId === req.id}
               onAdvance={() => advance(req)}
+              providers={providers.filter((p) => p.resource === (req.type === 'psychologist' ? 'wellness' : 'guidance'))}
+              assignedTo={assigned[req.id]}
+              onAssign={(providerId) => void assign(req, providerId)}
             />
           ))}
         </div>
