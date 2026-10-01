@@ -51,9 +51,9 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   [career.path]: { title: career.seoTitle, description: career.seoDescription },
   '/blog': {
-    title: 'Digital Marketing Blog — Guides & Insights | MySkills',
+    title: 'MySkills Blog — Learning, Careers and Skills in the Age of AI',
     description:
-      'Practical guides on SEO, paid ads, analytics and content marketing, written for people building real marketing skills.',
+      'Clear, practical articles on how people learn, how careers are changing and how to build real skills with AI, from the MySkills team.',
   },
   '/login': {
     title: 'Sign in | MySkills',

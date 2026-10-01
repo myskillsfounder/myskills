@@ -123,9 +123,9 @@ const STATIC_PAGES = [
     path: '/blog',
     changefreq: 'daily',
     priority: '0.9',
-    title: 'Digital Marketing Blog — Guides & Insights | MySkills',
+    title: 'MySkills Blog — Learning, Careers and Skills in the Age of AI',
     description:
-      'Practical guides on SEO, paid ads, analytics and content marketing, written for people building real marketing skills.',
+      'Clear, practical articles on how people learn, how careers are changing and how to build real skills with AI, from the MySkills team.',
   },
   {
     path: '/community',
@@ -409,9 +409,10 @@ function buildRobots() {
 User-agent: *
 Allow: /
 
-# Signed-in app pages: nothing useful for a search visitor, and they'd hit a
-# login wall. Kept out of the index so crawl budget goes to public content.
-${PRIVATE_ROUTES.map((r) => `Disallow: ${r}`).join('\n')}
+# The signed-in app pages (/practice, /dashboard and so on) are NOT listed
+# here on purpose. Each one is served with a "noindex" tag, and Google can
+# only see that tag if it is allowed to fetch the page. Blocking them here
+# kept them out of the crawl but left their bare URLs showing in results.
 
 # Never index bare asset bundles.
 Disallow: /assets/
@@ -456,6 +457,20 @@ function sanitizeHtmlForPrerender(html = '') {
   out = out.replace(/\s(href|src)\s*=\s*"\s*javascript:[^"]*"/gi, '')
   out = out.replace(/\s(href|src)\s*=\s*'\s*javascript:[^']*'/gi, '')
   return out
+}
+
+/**
+ * The head for a signed-in app page: the shell, marked noindex. The app pages
+ * used to be blocked in robots.txt instead, which stops Google reading a page
+ * but not listing its URL — /practice was showing in results with no
+ * description and a login wall behind it. Served like this, Google can fetch
+ * the page, read the tag and drop it. React replaces these tags when the app
+ * mounts, and lib/seo.ts keeps app pages noindex at runtime too.
+ */
+function noindexHead(path) {
+  return `    <title>${SITE_NAME}</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="${SITE_URL}${path}" />`
 }
 
 function head({ title, description, url, image, type = 'website', jsonLd }) {
@@ -552,6 +567,11 @@ async function main() {
       }),
     }),
   )
+
+  // Signed-in app pages: the plain shell with a noindex tag (see noindexHead).
+  for (const route of PRIVATE_ROUTES) {
+    write(`${route.slice(1)}/index.html`, renderPage(shell, { headHtml: noindexHead(route) }))
+  }
 
   const blog = STATIC_PAGES.find((p) => p.path === '/blog')
   write(
