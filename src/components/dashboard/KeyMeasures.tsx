@@ -154,60 +154,46 @@ export function KeyMeasures({
 
         {courses.length > 0 && (
           <div className="mt-4 border-t border-ink-900/[0.06] pt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
-              Courses in progress
-            </p>
-            <ul className="mt-2.5 space-y-2.5">
-              {courses.map((c) => (
-                <li key={c.name}>
-                  <Link
-                    to={c.path}
-                    onClick={() => c.programme && rememberProgramme(c.programme)}
-                    className="group block rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
-                  >
-                    <div className="flex items-center gap-3">
-                      {(() => {
-                        const look = c.programme ? COURSE_LOOK[c.programme] : null
-                        const Icon = look?.icon ?? BookOpen
-                        return (
-                          <span
-                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/40 ${
-                              look?.tile ?? 'from-brand-500 to-brand-700'
-                            }`}
-                          >
-                            <Icon size={18} strokeWidth={2.2} />
-                          </span>
-                        )
-                      })()}
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-ink-900">{c.name}</p>
-                        <p className="text-[11px] leading-snug text-ink-500">{c.detail}</p>
-                      </div>
-                      <ArrowRight
-                        size={15}
-                        className="shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brand-600"
-                      />
-                    </div>
-                    <div className="mt-2.5 flex items-center gap-2">
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-100">
-                        <div
-                          className={`h-full rounded-full bg-gradient-to-r ${
-                            (c.programme && COURSE_LOOK[c.programme].bar) || 'from-brand-500 to-brand-700'
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Your courses</p>
+            {/* Badges, not rows: a mark, the name and the percent, side by side, so
+                the card stays short however many courses there are. */}
+            <ul className={`mt-2.5 grid gap-2 ${courses.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              {courses.map((c) => {
+                const look = c.programme ? COURSE_LOOK[c.programme] : null
+                const Icon = look?.icon ?? BookOpen
+                return (
+                  <li key={c.name}>
+                    <Link
+                      to={c.path}
+                      onClick={() => c.programme && rememberProgramme(c.programme)}
+                      title={`${c.name} — ${c.detail}`}
+                      className="group block h-full rounded-xl border border-ink-900/[0.08] p-2.5 transition-colors hover:border-brand-300"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/40 ${
+                            look?.tile ?? 'from-brand-500 to-brand-700'
                           }`}
+                        >
+                          <Icon size={17} strokeWidth={2.2} />
+                        </span>
+                        <span className={`text-sm font-semibold tabular-nums ${look?.text ?? 'text-brand-700'}`}>
+                          {c.percent}%
+                        </span>
+                      </div>
+                      <p className="mt-2 text-[13px] font-semibold leading-tight text-ink-900">
+                        {c.name.replace(/ Programme$/, '')}
+                      </p>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink-100">
+                        <div
+                          className={`h-full rounded-full bg-gradient-to-r ${look?.bar ?? 'from-brand-500 to-brand-700'}`}
                           style={{ width: c.percent > 0 ? `${Math.max(c.percent, 4)}%` : '0%' }}
                         />
                       </div>
-                      <span
-                        className={`shrink-0 text-[11px] font-semibold tabular-nums ${
-                          (c.programme && COURSE_LOOK[c.programme].text) || 'text-brand-700'
-                        }`}
-                      >
-                        {c.status === 'Not started' ? c.status : `${c.percent}%`}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
+                    </Link>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         )}
