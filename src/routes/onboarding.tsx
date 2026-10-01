@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ArrowRight, Briefcase, Laptop, Rocket, Sparkles, TrendingUp, Users } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { ensureProfile } from '@/lib/profile'
@@ -12,10 +12,11 @@ import {
   careerStageStep,
   focusStep,
   goalStep,
+  goalsFor,
   planFor,
-  type PrimaryGoal,
   type StartKey,
 } from '@/lib/onboardingContent'
+import { GOAL_ICONS } from '@/lib/goalIcons'
 import { InlineSelect } from '@/components/onboarding/InlineSelect'
 import { AnswerPanel } from '@/components/onboarding/AnswerPanel'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
@@ -24,15 +25,6 @@ export const Route = createFileRoute('/onboarding')({
   beforeLoad: requireSession,
   component: OnboardingPage,
 })
-
-const GOAL_ICONS: Record<PrimaryGoal['icon'], typeof Briefcase> = {
-  briefcase: Briefcase,
-  rocket: Rocket,
-  sparkles: Sparkles,
-  'trending-up': TrendingUp,
-  laptop: Laptop,
-  users: Users,
-}
 
 /** The same concentric rings as the landing hero, faint, top right. */
 const Rings = () => (
@@ -80,6 +72,14 @@ function OnboardingPage() {
       setAsked(false)
       setError(undefined)
     }
+  }
+
+  // The goals on offer depend on where they are. Changing the stage drops a goal
+  // the new stage isn't offered, rather than keeping one that no longer fits.
+  const goalOptions = goalsFor(stage)
+  function pickStage(id: string) {
+    if (goal && !goalsFor(id).some((o) => o.id === goal)) setGoal('')
+    pick(setStage)(id)
   }
 
   useEffect(() => {
@@ -177,14 +177,14 @@ function OnboardingPage() {
               <InlineSelect
                 value={stage}
                 options={careerStageStep.options}
-                onChange={pick(setStage)}
+                onChange={pickStage}
                 placeholder="where you are"
                 label="Where you are right now"
               />{' '}
               and I want to{' '}
               <InlineSelect
                 value={goal}
-                options={goalStep.options}
+                options={goalOptions}
                 onChange={pick(setGoal)}
                 placeholder="your goal"
                 label="The one goal you want to work towards"

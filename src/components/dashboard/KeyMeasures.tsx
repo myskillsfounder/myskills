@@ -1,22 +1,9 @@
 import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import {
-  ArrowRight,
-  BookOpen,
-  Briefcase,
-  Clock,
-  Compass,
-  Flame,
-  Laptop,
-  Megaphone,
-  Rocket,
-  Sparkles,
-  Target,
-  TrendingUp,
-  Users,
-} from 'lucide-react'
+import { ArrowRight, BookOpen, Clock, Compass, Flame, Megaphone, Target } from 'lucide-react'
 import type { CourseProgress } from '@/lib/programmes'
-import { goalLabel, resolveGoal, type PrimaryGoal } from '@/lib/onboardingContent'
+import { goalLabel, resolveGoal } from '@/lib/onboardingContent'
+import { GOAL_ICONS } from '@/lib/goalIcons'
 import { timeSeries } from '@/lib/timeTracker'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 
@@ -37,20 +24,11 @@ const COURSE_LOOK: Record<1 | 2, { icon: typeof BookOpen; tile: string; bar: str
   },
 }
 
-const GOAL_ICON: Record<PrimaryGoal['icon'], typeof Target> = {
-  briefcase: Briefcase,
-  rocket: Rocket,
-  sparkles: Sparkles,
-  'trending-up': TrendingUp,
-  laptop: Laptop,
-  users: Users,
-}
-
 /** The goal the LaunchPad is built around: it leads the objective card, large,
  *  with its mark and what it means, since everything else answers to it. */
 function GoalHero({ goal }: { goal: string }) {
   const resolved = resolveGoal(goal)
-  const Icon = resolved ? GOAL_ICON[resolved.icon] : Target
+  const Icon = resolved ? GOAL_ICONS[resolved.icon] : Target
   return (
     <div className="surface-wood-dark relative mt-3.5 overflow-hidden rounded-2xl p-4 shadow-e2">
       <div
