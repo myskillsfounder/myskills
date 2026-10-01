@@ -67,16 +67,16 @@ export async function requireGuestForStaff(): Promise<void> {
 }
 
 /**
- * The mentor portal (/mentor-portal) is its own sign-in, like /admin: a mentor
+ * The mentor portal (/community-portal) is its own sign-in, like /admin: a mentor
  * never needs the student sign-up, Google OAuth or onboarding wizard. Whether
  * the signed-in account is actually a linked mentor is decided by the portal
  * itself, which shows a clear message if it isn't.
  */
 export async function requireMentorSession(): Promise<void> {
-  if (!(await currentSession())) throw redirect({ to: '/mentor-portal/login' })
+  if (!(await currentSession())) throw redirect({ to: '/community-portal/login' })
 }
 
-/** Guest-only for /mentor-portal/login: someone already signed in goes straight in. */
+/** Guest-only for /community-portal/login: someone already signed in goes straight in. */
 export async function requireGuestForMentor(): Promise<void> {
-  if (await currentSession()) throw redirect({ to: '/mentor-portal' })
+  if (await currentSession()) throw redirect({ to: '/community-portal' })
 }

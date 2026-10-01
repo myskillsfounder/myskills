@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/ui'
 import { useMentorPortal } from '@/components/mentoring/MentorPortalContext'
 import { StudentsPanel } from '@/components/mentoring/StudentsPanel'
 
-export const Route = createFileRoute('/mentor-portal/_layout/')({
+export const Route = createFileRoute('/community-portal/_layout/')({
   component: StudentsPage,
 })
 
@@ -13,7 +13,7 @@ function StudentsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Mentor portal"
+        eyebrow="Community portal"
         title="Students & requests"
         subtitle="Students who asked you to mentor them, and the ones you’re working with. Arrange sessions your own way, then log each one here."
       />
@@ -21,7 +21,7 @@ function StudentsPage() {
         rows={rows}
         profile={profile}
         onChanged={() => void reload()}
-        onOpenProfile={() => router.navigate({ to: '/mentor-portal/profile' })}
+        onOpenProfile={() => router.navigate({ to: '/community-portal/profile' })}
       />
     </>
   )

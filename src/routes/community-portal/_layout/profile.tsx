@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/ui'
 import { useMentorPortal } from '@/components/mentoring/MentorPortalContext'
 import { MentorProfilePanel } from '@/components/mentoring/MentorProfilePanel'
 
-export const Route = createFileRoute('/mentor-portal/_layout/profile')({
+export const Route = createFileRoute('/community-portal/_layout/profile')({
   component: ProfilePage,
 })
 
@@ -12,7 +12,7 @@ function ProfilePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Mentor portal"
+        eyebrow="Community portal"
         title="My profile"
         subtitle="What students see, how we reach you, and whether you’re taking new students."
       />

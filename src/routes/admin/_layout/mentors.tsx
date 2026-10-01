@@ -254,7 +254,7 @@ function ListedMentorCard({
           {mentor.ready === false && mentor.missing && mentor.missing.length > 0 && (
             <p className="w-full text-sm text-amber-800">
               Students can’t see them until they add: {mentor.missing.map((k) => MISSING_LABEL[k] ?? k).join(', ')}. They
-              do this in their Mentor portal.
+              do this in their Community portal.
             </p>
           )}
           {confirming ? (

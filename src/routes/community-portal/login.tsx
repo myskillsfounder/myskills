@@ -11,7 +11,7 @@ import { Button } from '@/components/ui'
  * listing, and lands straight in the portal: no student onboarding, no Google
  * redirect into the learner app.
  */
-export const Route = createFileRoute('/mentor-portal/login')({
+export const Route = createFileRoute('/community-portal/login')({
   beforeLoad: requireGuestForMentor,
   component: MentorLoginPage,
 })
@@ -41,7 +41,7 @@ function MentorLoginPage() {
     setSubmitting(true)
     try {
       await signIn({ email, password })
-      router.navigate({ to: '/mentor-portal' })
+      router.navigate({ to: '/community-portal' })
     } catch (err) {
       if (err instanceof AuthError && err.field) {
         setErrors((prev) => ({ ...prev, [err.field!]: err.message }))
@@ -58,7 +58,7 @@ function MentorLoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
           <img src="/logo-mark.png" alt="" className="h-10 w-10" />
-          <h1 className="mt-3 font-display text-xl font-semibold text-ink-900">Mentor sign in</h1>
+          <h1 className="mt-3 font-display text-xl font-semibold text-ink-900">Community Portal sign in</h1>
           <p className="mt-1 text-sm text-ink-600">Your profile, student requests and sessions, in one place.</p>
         </div>
 
@@ -95,9 +95,9 @@ function MentorLoginPage() {
           </Link>
         </p>
         <p className="mt-2 text-center text-xs text-ink-500">
-          Not a mentor yet?{' '}
-          <Link to="/become-a-mentor" className="font-medium text-brand-700 hover:underline">
-            Apply to mentor
+          Not a partner yet?{' '}
+          <Link to="/community" className="font-medium text-brand-700 hover:underline">
+            Partner with MySkills
           </Link>
         </p>
       </div>
