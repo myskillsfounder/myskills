@@ -138,7 +138,11 @@ begin
   v_personal     := least(v_module_pts + least(v_live * c_live_pts, 10)
                           + (case when v_cr_signed then c_cr_pts else 0 end), 40);
   v_professional := least(least(v_tracks, 8) * c_track_pts
-                          + coalesce(round(least(v_foundation / 10.0, 10), 1), 0)
+                          -- Not coalesce(round(least(x / 10.0, 10), 1), 0): LEAST ignores NULLs, so
+                          -- with no Foundation result that is least(NULL, 10) = 10, and every
+                          -- student started with 10 points.
+                          + (case when v_foundation is null then 0
+                                  else round(least(v_foundation / 10.0, 10), 1) end)
                           + least(v_live_dm * c_live_pts, 10)
                           + (case when v_dm_signed then c_dm_pts else 0 end), 40);
 
@@ -202,6 +206,22 @@ $$;
 
 revoke execute on function public.refresh_my_career_readiness_score() from public, anon;
 grant execute on function public.refresh_my_career_readiness_score() to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- One-off after fixing the Foundation line above: re-issue every stored score
+-- (the dashboard does this for a student the next time they open it, but the
+-- admin lists read the stored rows).
+-- ---------------------------------------------------------------------------
+update public.career_readiness_scores s
+   set score = (d.d ->> 'score')::int,
+       verified_points = (d.d ->> 'verified_points')::numeric,
+       self_reported_points = (d.d ->> 'self_reported_points')::numeric,
+       detail = d.d,
+       method_version = d.d ->> 'method_version',
+       computed_at = now()
+  from (select user_id, public.compute_career_readiness_score(user_id) as d
+          from public.career_readiness_scores) d
+ where s.user_id = d.user_id and d.d is not null;
 
 -- ---------------------------------------------------------------------------
 -- Check it: open the dashboard as a learner, then as admin
