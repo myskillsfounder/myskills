@@ -44,6 +44,7 @@ import { MentorReviewPanel } from '@/components/practice/MentorReviewPanel'
 import { useMentorReview } from '@/lib/mentorReview'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
+import { useHasStarted } from '@/lib/firstRun'
 import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
 
 export const Route = createFileRoute('/practice')({
@@ -121,8 +122,13 @@ function PracticePage() {
   const crAptitude = useMyAssessmentResult()
   const dmUnlocked = aptitude != null || assessment != null
   const crUnlocked = crAptitude.result != null
-  const unlocked = dmUnlocked || crUnlocked
-  const gateLoading = assessmentLoading || aptitudeLoading || crAptitude.loading
+  // An account from before the aptitude assessments existed has practised or
+  // had live sessions without taking one. It keeps Practice, with its progress,
+  // rather than being sent back to the start.
+  const started = useHasStarted()
+  const unlocked = dmUnlocked || crUnlocked || started === true
+  const gateLoading =
+    assessmentLoading || aptitudeLoading || crAptitude.loading || (!dmUnlocked && !crUnlocked && started === null)
 
   const { user } = useAuthUser()
   const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
@@ -199,6 +205,8 @@ function PracticePage() {
   // Platform internships aren't built yet, so no programme can show
   // Complete; the mentor review is real for Digital Marketing.
   const practisedTracks = skillTracks.filter((t) => practice[t.slug])
+  // Digital Marketing shows its progress once there is any of it, aptitude or not.
+  const dmOpen = dmUnlocked || practisedTracks.length > 0 || dmSessions.length > 0
   const practiceAvg = practisedTracks.length
     ? Math.round(practisedTracks.reduce((sum, t) => sum + practice[t.slug].percent, 0) / practisedTracks.length)
     : 0
@@ -265,9 +273,9 @@ function PracticePage() {
 
               {/* Programme 1 is everything from the aptitude assessment through the
                   Foundation assessment, all 8 tracks and vocabulary. */}
-              {programme === 1 && !dmUnlocked && <AptitudeCard result={null} gate />}
+              {programme === 1 && !dmOpen && <AptitudeCard result={null} gate />}
 
-              {programme === 1 && dmUnlocked && (
+              {programme === 1 && dmOpen && (
                 <>
                   <AptitudeCard result={aptitude} />
 
