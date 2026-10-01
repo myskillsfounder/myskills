@@ -1,7 +1,8 @@
-import type { ComponentType, ReactNode } from 'react'
+import { useState, type ComponentType, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   ArrowRight,
+  ChevronDown,
   BadgeCheck,
   Briefcase,
   Building2,
@@ -79,7 +80,7 @@ export function MarketSection({
   )
 }
 
-export const marketGrid = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
+export const marketGrid = 'grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3'
 
 /* ------------------------------------------------------ support services */
 
@@ -161,12 +162,30 @@ export interface MentorListing {
   avatar: string | null
   location: string | null
   expertise: string[]
+  bio: string
+  linkedin: string | null
 }
 
-export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
-  const extra = mentor.expertise.length - 3
+function LinkedInIcon({ size = 16 }: { size?: number }) {
   return (
-    <Link to="/community/mentors" className="card lift group flex flex-col p-5">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    </svg>
+  )
+}
+
+/**
+ * A mentor's card. The profile opens in place — their bio, every area of
+ * expertise and the way to reach them — so there is no separate mentors page
+ * to go to and come back from.
+ */
+export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
+  const [open, setOpen] = useState(false)
+  const shown = open ? mentor.expertise : mentor.expertise.slice(0, 3)
+  const extra = mentor.expertise.length - shown.length
+  const panelId = `mentor-${mentor.id}`
+  return (
+    <div className={`card flex flex-col p-5 transition-shadow ${open ? 'shadow-e2 ring-1 ring-brand-200' : ''}`}>
       <div className="flex items-center gap-3.5">
         {mentor.avatar ? (
           <img src={mentor.avatar} alt="" className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-brand-100" />
@@ -191,7 +210,7 @@ export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
 
       {mentor.expertise.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {mentor.expertise.slice(0, 3).map((e) => (
+          {shown.map((e) => (
             <span key={e} className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700">
               {e}
             </span>
@@ -202,15 +221,48 @@ export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
         </div>
       )}
 
+      {open && (
+        <div id={panelId} className="mt-4 border-t border-ink-900/[0.06] pt-4">
+          {mentor.bio ? (
+            <p className="whitespace-pre-line text-sm leading-relaxed text-ink-600">{mentor.bio}</p>
+          ) : (
+            <p className="text-sm text-ink-500">This mentor hasn’t written a bio yet.</p>
+          )}
+          {mentor.linkedin && (
+            <a
+              href={mentor.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="press mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+            >
+              <LinkedInIcon size={16} /> Connect on LinkedIn
+            </a>
+          )}
+          <Link
+            to="/practice"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+          >
+            Choose Your Mentor in Practice
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+      )}
+
       <div className="flex-1" />
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
         <span className="text-xs font-medium text-ink-500">Live Chat</span>
-        <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
-          View Profile
-          <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
-        </span>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+        >
+          {open ? 'Hide Profile' : 'View Profile'}
+          <ChevronDown size={15} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+        </button>
       </div>
-    </Link>
+    </div>
   )
 }
 
@@ -219,7 +271,7 @@ export function toMentorListing(
   db?: { full_name: string | null; headline: string | null; avatar_url: string | null; location: string | null; skills: string[] | null },
 ): MentorListing {
   // A mentor who is also a user keeps their listing in sync with their own
-  // profile — same rule as the full mentors page.
+  // profile.
   return {
     id: m.id,
     name: db?.full_name?.trim() || m.full_name,
@@ -227,6 +279,8 @@ export function toMentorListing(
     avatar: db?.avatar_url || m.avatar_url,
     location: db?.location?.trim() || m.location,
     expertise: db?.skills?.length ? db.skills : m.expertise,
+    bio: m.bio ?? '',
+    linkedin: m.linkedin_url || null,
   }
 }
 
@@ -236,7 +290,7 @@ export function JoinCard({ icon: Icon, title, body, to }: { icon: IconType; titl
   return (
     <Link
       to={to}
-      className="group flex flex-col items-start justify-center rounded-2xl border-2 border-dashed border-ink-900/[0.12] p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
+      className="group flex min-h-[11.5rem] flex-col items-start justify-center rounded-2xl border-2 border-dashed border-ink-900/[0.12] p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-700 transition-colors group-hover:bg-brand-600 group-hover:text-white">
         <Icon size={19} />
