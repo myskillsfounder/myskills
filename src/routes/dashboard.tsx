@@ -12,6 +12,7 @@ import { computeReadiness } from '@/lib/readinessScore'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { refreshMyScore, withServerScore, type ServerScore } from '@/lib/scoreService'
+import { anyHistory } from '@/lib/firstRun'
 import { careerReadinessProgress, digitalMarketingProgress, type CourseProgress } from '@/lib/programmes'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { useMyAptitudeResult } from '@/lib/dmAptitude'
@@ -114,15 +115,6 @@ function DashboardPage() {
   const crReview = useMentorReview('career-readiness')
   const crAptitude = useMyAssessmentResult()
   const dmAptitude = useMyAptitudeResult()
-  // No aptitude assessment taken yet (the old Foundation assessment counts too).
-  // Wait until all three answers are in so the card never flashes in and out.
-  const startHere =
-    !assessmentLoading &&
-    !crAptitude.loading &&
-    !dmAptitude.loading &&
-    assessment == null &&
-    crAptitude.result == null &&
-    dmAptitude.result == null
   const foundationUnlock = useFoundationUnlock()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
@@ -187,16 +179,31 @@ function DashboardPage() {
   // They see their path instead of a 0/100 score, and nothing that only matters
   // once they're under way (hours, the mentor chat, the skills showcase).
   const dataLoaded =
-    practiceLoaded && serverScore !== null && !crLoading && !liveLoading && !dmMatch.loading && !crMatch.loading
-  const hasHistory =
-    readiness.score > 0 ||
-    crProgress.modulesDone > 0 ||
-    practicedCount > 0 ||
-    dmMatch.match != null ||
-    crMatch.match != null ||
-    liveSessions.length > 0 ||
-    dmSessions.length > 0
-  const firstRun = startHere && dataLoaded && !hasHistory
+    practiceLoaded &&
+    serverScore !== null &&
+    !assessmentLoading &&
+    !crAptitude.loading &&
+    !dmAptitude.loading &&
+    !crLoading &&
+    !liveLoading &&
+    !dmMatch.loading &&
+    !crMatch.loading &&
+    !dmReview.loading &&
+    !crReview.loading
+  // The same rule as everywhere else (lib/firstRun.ts), fed with what this
+  // page has already loaded.
+  const hasHistory = anyHistory({
+    dmAptitude: dmAptitude.result != null,
+    crAssessment: crAptitude.result != null,
+    foundation: assessment != null,
+    practicedTracks: practicedCount,
+    moduleAnswers: crProgress.itemsDone,
+    liveSessions: liveSessions.length + dmSessions.length,
+    mentorMatch: dmMatch.match != null || crMatch.match != null,
+    projects: (dmReview.review ? 1 : 0) + (crReview.review ? 1 : 0),
+    score: readiness.score,
+  })
+  const firstRun = dataLoaded && !hasHistory
 
   return (
     <AppShell wide>

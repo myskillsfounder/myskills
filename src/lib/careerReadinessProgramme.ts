@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
+import { forgetStarted } from './startedCache'
 import { PERSONAL_DEVELOPMENT_MODULES, type ModuleSlug } from './programmes'
 import { ITEM_KEYS, MODULE_CONTENT, type ItemKey } from './careerReadinessContent'
 
@@ -43,6 +44,7 @@ export async function saveResponse(module: ModuleSlug, item: ItemKey, response: 
     p_response: response,
   })
   if (error) fail(error)
+  forgetStarted()
 }
 
 /* -- progress ------------------------------------------------------------- */

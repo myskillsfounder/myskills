@@ -1,36 +1,89 @@
-/**
- * Has this student started yet? A new student hasn't taken any aptitude
- * assessment (marketing, personal, or the older Foundation one) and hasn't
- * practised or had a live session, so the things
- * that only make sense once they're under way — profile nags, the verification
- * checklist — wait for that first step.
- *
- * The LaunchPad works this out from data it already loads. Everywhere else
- * (the sidebar, the Profile page) uses this hook, which shares one lookup per
- * 20 seconds instead of querying on every page.
- */
 import { useEffect, useState } from 'react'
 import { fetchMyAptitudeResult } from './dmAptitude'
 import { fetchMyAssessmentResult } from './careerReadinessAssessment'
 import { fetchInitialAssessment } from './assessmentResults'
 import { fetchPracticeSummary } from './practiceResults'
 import { fetchMyLiveSessions } from './liveSessions'
+import { fetchMyResponses } from './careerReadinessProgramme'
+import { fetchMyMatch } from './mentorMatches'
+import { fetchMyMentorReview } from './mentorReview'
 import { startedVersion } from './startedCache'
+
+/**
+ * Has this account started yet? ONE definition, used by every screen so an
+ * account is never "new" on one page and "under way" on another: the LaunchPad
+ * (first-run welcome vs. the full view), Practice (start choice vs. progress),
+ * the sidebar and Profile (the nags that wait for a first step).
+ *
+ * An account has started if it has done ANYTHING: taken either aptitude or the
+ * Foundation assessment, practised a track, written a module answer, had a
+ * live session, been matched with (or asked for) a mentor, or submitted a
+ * project. Accounts from before the aptitude assessments existed have usually
+ * done some of those without ever taking one, so an assessment alone can't be
+ * the test.
+ *
+ * `anyHistory` is the rule. The LaunchPad calls it with data it has already
+ * loaded; everywhere else uses `useHasStarted`, which looks the same things up
+ * once per 20 seconds instead of on every page.
+ */
+export interface StartSignals {
+  dmAptitude: boolean
+  crAssessment: boolean
+  foundation: boolean
+  practicedTracks: number
+  /** Module answers written (any, not only finished modules). */
+  moduleAnswers: number
+  liveSessions: number
+  /** Asked for, or has, a mentor on either programme. */
+  mentorMatch: boolean
+  /** A project submitted on either programme. */
+  projects: number
+  /** The server's score, when known. */
+  score?: number
+}
+
+export function anyHistory(s: StartSignals): boolean {
+  return (
+    s.dmAptitude ||
+    s.crAssessment ||
+    s.foundation ||
+    s.practicedTracks > 0 ||
+    s.moduleAnswers > 0 ||
+    s.liveSessions > 0 ||
+    s.mentorMatch ||
+    s.projects > 0 ||
+    (s.score ?? 0) > 0
+  )
+}
 
 let cache: { at: number; version: number; result: Promise<boolean> } | null = null
 
 export function hasStarted(): Promise<boolean> {
   if (cache && cache.version === startedVersion() && Date.now() - cache.at < 20_000) return cache.result
-  // An assessment, or any practice or live session: an account from before the
-  // aptitude assessments existed has done things without taking one.
   const result = Promise.all([
     fetchMyAptitudeResult(),
     fetchMyAssessmentResult(),
     fetchInitialAssessment(),
-    fetchPracticeSummary().then((p) => (Object.keys(p).length > 0 ? p : null)),
-    fetchMyLiveSessions().then((l) => (l.length > 0 ? l : null)),
+    fetchPracticeSummary(),
+    fetchMyLiveSessions(),
+    fetchMyResponses(),
+    fetchMyMatch('digital-marketing'),
+    fetchMyMatch('career-readiness'),
+    fetchMyMentorReview('digital-marketing'),
+    fetchMyMentorReview('career-readiness'),
   ])
-    .then((rows) => rows.some((r) => r != null))
+    .then(([dm, cr, foundation, practice, live, answers, dmMatch, crMatch, dmReview, crReview]) =>
+      anyHistory({
+        dmAptitude: dm != null,
+        crAssessment: cr != null,
+        foundation: foundation != null,
+        practicedTracks: Object.keys(practice).length,
+        moduleAnswers: Object.keys(answers).length,
+        liveSessions: live.length,
+        mentorMatch: dmMatch != null || crMatch != null,
+        projects: (dmReview.review ? 1 : 0) + (crReview.review ? 1 : 0),
+      }),
+    )
     // If we can't tell, say "started": better to show a nag than hide something.
     .catch(() => true)
   cache = { at: Date.now(), version: startedVersion(), result }

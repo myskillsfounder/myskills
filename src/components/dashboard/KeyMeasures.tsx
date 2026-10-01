@@ -124,6 +124,10 @@ export function KeyMeasures({
 }) {
   const hours = useMemo(() => timeSeries('month').totalHours, [])
   const [primary, ...rest] = goals
+  // Goals saved by the older multi-select onboarding can map onto the same
+  // current goal (two interview goals both read "Find a new job"), so the
+  // "Also" line lists each one once and never repeats the main goal.
+  const also = [...new Set(rest.map(goalLabel))].filter((label) => !primary || label !== goalLabel(primary))
 
   return (
     <>
@@ -140,9 +144,9 @@ export function KeyMeasures({
         {primary ? (
           <>
             <GoalHero goal={primary} />
-            {rest.length > 0 && (
+            {also.length > 0 && (
               <p className="mt-2.5 text-xs leading-relaxed text-ink-500">
-                Also: {rest.map(goalLabel).join(' · ')}
+                Also: {also.join(' · ')}
               </p>
             )}
           </>
