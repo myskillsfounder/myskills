@@ -34,8 +34,8 @@ const HIDE_EXACT = new Set([
   '/aptitude-assessment',
   '/foundation-assessment',
 ])
-// /mentor-portal is a separate product for mentors, with its own header.
-const HIDE_PREFIX = ['/blog', '/admin', '/mentor-portal', '/mentoring']
+// /community-portal is a separate product for mentors and partners, with its own header.
+const HIDE_PREFIX = ['/blog', '/admin', '/community-portal', '/mentor-portal', '/mentoring']
 
 /** Row height in px. Labels + icon, comfortably above the 44px touch minimum. */
 export const BOTTOM_NAV_H = 58

@@ -26,7 +26,7 @@ export function RequestsLine({ rows }: { rows: MentorSideMatch[] }) {
 
   return (
     <Link
-      to="/mentor-portal"
+      to="/community-portal"
       hash="requests"
       className={`mb-6 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
         days >= 3

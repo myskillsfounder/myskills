@@ -22,6 +22,7 @@ import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MentoringRouteImport } from './routes/mentoring'
+import { Route as MentorPortalRouteImport } from './routes/mentor-portal'
 import { Route as MentorRouteImport } from './routes/mentor'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearningRouteImport } from './routes/learning'
@@ -46,17 +47,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
-import { Route as MentorPortalLoginRouteImport } from './routes/mentor-portal/login'
-import { Route as MentorPortalLayoutRouteImport } from './routes/mentor-portal/_layout'
+import { Route as MentorPortalSplatRouteImport } from './routes/mentor-portal.$'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
+import { Route as CommunityPortalLoginRouteImport } from './routes/community-portal/login'
+import { Route as CommunityPortalLayoutRouteImport } from './routes/community-portal/_layout'
 import { Route as CareerModuleSlugRouteImport } from './routes/career-module.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
-import { Route as MentorPortalLayoutIndexRouteImport } from './routes/mentor-portal/_layout/index'
+import { Route as CommunityPortalLayoutIndexRouteImport } from './routes/community-portal/_layout/index'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
-import { Route as MentorPortalLayoutProfileRouteImport } from './routes/mentor-portal/_layout/profile'
+import { Route as CommunityPortalLayoutProfileRouteImport } from './routes/community-portal/_layout/profile'
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
 import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
 import { Route as AdminLayoutPracticeRouteImport } from './routes/admin/_layout/practice'
@@ -142,6 +144,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const MentoringRoute = MentoringRouteImport.update({
   id: '/mentoring',
   path: '/mentoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorPortalRoute = MentorPortalRouteImport.update({
+  id: '/mentor-portal',
+  path: '/mentor-portal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentorRoute = MentorRouteImport.update({
@@ -267,15 +274,10 @@ const PartnershipsLoginRoute = PartnershipsLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => PartnershipsRoute,
 } as any)
-const MentorPortalLoginRoute = MentorPortalLoginRouteImport.update({
-  id: '/mentor-portal/login',
-  path: '/mentor-portal/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MentorPortalLayoutRoute = MentorPortalLayoutRouteImport.update({
-  id: '/mentor-portal/_layout',
-  path: '/mentor-portal',
-  getParentRoute: () => rootRouteImport,
+const MentorPortalSplatRoute = MentorPortalSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => MentorPortalRoute,
 } as any)
 const CommunityMentorsRoute = CommunityMentorsRouteImport.update({
   id: '/mentors',
@@ -286,6 +288,16 @@ const CommunityInstitutionsRoute = CommunityInstitutionsRouteImport.update({
   id: '/institutions',
   path: '/institutions',
   getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityPortalLoginRoute = CommunityPortalLoginRouteImport.update({
+  id: '/community-portal/login',
+  path: '/community-portal/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityPortalLayoutRoute = CommunityPortalLayoutRouteImport.update({
+  id: '/community-portal/_layout',
+  path: '/community-portal',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CareerModuleSlugRoute = CareerModuleSlugRouteImport.update({
   id: '/career-module/$slug',
@@ -307,21 +319,22 @@ const AdminLayoutRoute = AdminLayoutRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MentorPortalLayoutIndexRoute = MentorPortalLayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => MentorPortalLayoutRoute,
-} as any)
+const CommunityPortalLayoutIndexRoute =
+  CommunityPortalLayoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => CommunityPortalLayoutRoute,
+  } as any)
 const AdminLayoutIndexRoute = AdminLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
-const MentorPortalLayoutProfileRoute =
-  MentorPortalLayoutProfileRouteImport.update({
+const CommunityPortalLayoutProfileRoute =
+  CommunityPortalLayoutProfileRouteImport.update({
     id: '/profile',
     path: '/profile',
-    getParentRoute: () => MentorPortalLayoutRoute,
+    getParentRoute: () => CommunityPortalLayoutRoute,
   } as any)
 const AdminLayoutWellnessRoute = AdminLayoutWellnessRouteImport.update({
   id: '/wellness',
@@ -455,6 +468,7 @@ export interface FileRoutesByFullPath {
   '/learning': typeof LearningRoute
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
+  '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
@@ -472,10 +486,11 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/career-module/$slug': typeof CareerModuleSlugRoute
+  '/community-portal': typeof CommunityPortalLayoutRouteWithChildren
+  '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
-  '/mentor-portal': typeof MentorPortalLayoutRouteWithChildren
-  '/mentor-portal/login': typeof MentorPortalLoginRoute
+  '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
@@ -498,9 +513,9 @@ export interface FileRoutesByFullPath {
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
-  '/mentor-portal/profile': typeof MentorPortalLayoutProfileRoute
+  '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/admin/': typeof AdminLayoutIndexRoute
-  '/mentor-portal/': typeof MentorPortalLayoutIndexRoute
+  '/community-portal/': typeof CommunityPortalLayoutIndexRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
   '/admin/users/': typeof AdminLayoutUsersIndexRoute
 }
@@ -525,6 +540,7 @@ export interface FileRoutesByTo {
   '/learning': typeof LearningRoute
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
+  '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
@@ -541,9 +557,10 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/career-module/$slug': typeof CareerModuleSlugRoute
+  '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
-  '/mentor-portal/login': typeof MentorPortalLoginRoute
+  '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
@@ -566,9 +583,9 @@ export interface FileRoutesByTo {
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
-  '/mentor-portal/profile': typeof MentorPortalLayoutProfileRoute
+  '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/admin': typeof AdminLayoutIndexRoute
-  '/mentor-portal': typeof MentorPortalLayoutIndexRoute
+  '/community-portal': typeof CommunityPortalLayoutIndexRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
   '/admin/users': typeof AdminLayoutUsersIndexRoute
 }
@@ -595,6 +612,7 @@ export interface FileRoutesById {
   '/learning': typeof LearningRoute
   '/login': typeof LoginRoute
   '/mentor': typeof MentorRoute
+  '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
@@ -612,10 +630,11 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/career-module/$slug': typeof CareerModuleSlugRoute
+  '/community-portal/_layout': typeof CommunityPortalLayoutRouteWithChildren
+  '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
-  '/mentor-portal/_layout': typeof MentorPortalLayoutRouteWithChildren
-  '/mentor-portal/login': typeof MentorPortalLoginRoute
+  '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
@@ -638,9 +657,9 @@ export interface FileRoutesById {
   '/admin/_layout/practice': typeof AdminLayoutPracticeRoute
   '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
-  '/mentor-portal/_layout/profile': typeof MentorPortalLayoutProfileRoute
+  '/community-portal/_layout/profile': typeof CommunityPortalLayoutProfileRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
-  '/mentor-portal/_layout/': typeof MentorPortalLayoutIndexRoute
+  '/community-portal/_layout/': typeof CommunityPortalLayoutIndexRoute
   '/admin/_layout/users/$id': typeof AdminLayoutUsersIdRoute
   '/admin/_layout/users/': typeof AdminLayoutUsersIndexRoute
 }
@@ -668,6 +687,7 @@ export interface FileRouteTypes {
     | '/learning'
     | '/login'
     | '/mentor'
+    | '/mentor-portal'
     | '/mentoring'
     | '/onboarding'
     | '/partnerships'
@@ -685,10 +705,11 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/blog/$slug'
     | '/career-module/$slug'
+    | '/community-portal'
+    | '/community-portal/login'
     | '/community/institutions'
     | '/community/mentors'
-    | '/mentor-portal'
-    | '/mentor-portal/login'
+    | '/mentor-portal/$'
     | '/partnerships/login'
     | '/blog/'
     | '/community/'
@@ -711,9 +732,9 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/verification'
     | '/admin/wellness'
-    | '/mentor-portal/profile'
+    | '/community-portal/profile'
     | '/admin/'
-    | '/mentor-portal/'
+    | '/community-portal/'
     | '/admin/users/$id'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
@@ -738,6 +759,7 @@ export interface FileRouteTypes {
     | '/learning'
     | '/login'
     | '/mentor'
+    | '/mentor-portal'
     | '/mentoring'
     | '/onboarding'
     | '/partnerships'
@@ -754,9 +776,10 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/blog/$slug'
     | '/career-module/$slug'
+    | '/community-portal/login'
     | '/community/institutions'
     | '/community/mentors'
-    | '/mentor-portal/login'
+    | '/mentor-portal/$'
     | '/partnerships/login'
     | '/blog'
     | '/community'
@@ -779,9 +802,9 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/verification'
     | '/admin/wellness'
-    | '/mentor-portal/profile'
+    | '/community-portal/profile'
     | '/admin'
-    | '/mentor-portal'
+    | '/community-portal'
     | '/admin/users/$id'
     | '/admin/users'
   id:
@@ -807,6 +830,7 @@ export interface FileRouteTypes {
     | '/learning'
     | '/login'
     | '/mentor'
+    | '/mentor-portal'
     | '/mentoring'
     | '/onboarding'
     | '/partnerships'
@@ -824,10 +848,11 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/blog/$slug'
     | '/career-module/$slug'
+    | '/community-portal/_layout'
+    | '/community-portal/login'
     | '/community/institutions'
     | '/community/mentors'
-    | '/mentor-portal/_layout'
-    | '/mentor-portal/login'
+    | '/mentor-portal/$'
     | '/partnerships/login'
     | '/blog/'
     | '/community/'
@@ -850,9 +875,9 @@ export interface FileRouteTypes {
     | '/admin/_layout/practice'
     | '/admin/_layout/verification'
     | '/admin/_layout/wellness'
-    | '/mentor-portal/_layout/profile'
+    | '/community-portal/_layout/profile'
     | '/admin/_layout/'
-    | '/mentor-portal/_layout/'
+    | '/community-portal/_layout/'
     | '/admin/_layout/users/$id'
     | '/admin/_layout/users/'
   fileRoutesById: FileRoutesById
@@ -879,6 +904,7 @@ export interface RootRouteChildren {
   LearningRoute: typeof LearningRoute
   LoginRoute: typeof LoginRoute
   MentorRoute: typeof MentorRoute
+  MentorPortalRoute: typeof MentorPortalRouteWithChildren
   MentoringRoute: typeof MentoringRoute
   OnboardingRoute: typeof OnboardingRoute
   PartnershipsRoute: typeof PartnershipsRouteWithChildren
@@ -896,8 +922,8 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CareerModuleSlugRoute: typeof CareerModuleSlugRoute
-  MentorPortalLayoutRoute: typeof MentorPortalLayoutRouteWithChildren
-  MentorPortalLoginRoute: typeof MentorPortalLoginRoute
+  CommunityPortalLayoutRoute: typeof CommunityPortalLayoutRouteWithChildren
+  CommunityPortalLoginRoute: typeof CommunityPortalLoginRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -992,6 +1018,13 @@ declare module '@tanstack/react-router' {
       path: '/mentoring'
       fullPath: '/mentoring'
       preLoaderRoute: typeof MentoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentor-portal': {
+      id: '/mentor-portal'
+      path: '/mentor-portal'
+      fullPath: '/mentor-portal'
+      preLoaderRoute: typeof MentorPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentor': {
@@ -1162,19 +1195,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnershipsLoginRouteImport
       parentRoute: typeof PartnershipsRoute
     }
-    '/mentor-portal/login': {
-      id: '/mentor-portal/login'
-      path: '/mentor-portal/login'
-      fullPath: '/mentor-portal/login'
-      preLoaderRoute: typeof MentorPortalLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mentor-portal/_layout': {
-      id: '/mentor-portal/_layout'
-      path: '/mentor-portal'
-      fullPath: '/mentor-portal'
-      preLoaderRoute: typeof MentorPortalLayoutRouteImport
-      parentRoute: typeof rootRouteImport
+    '/mentor-portal/$': {
+      id: '/mentor-portal/$'
+      path: '/$'
+      fullPath: '/mentor-portal/$'
+      preLoaderRoute: typeof MentorPortalSplatRouteImport
+      parentRoute: typeof MentorPortalRoute
     }
     '/community/mentors': {
       id: '/community/mentors'
@@ -1189,6 +1215,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/community/institutions'
       preLoaderRoute: typeof CommunityInstitutionsRouteImport
       parentRoute: typeof CommunityRoute
+    }
+    '/community-portal/login': {
+      id: '/community-portal/login'
+      path: '/community-portal/login'
+      fullPath: '/community-portal/login'
+      preLoaderRoute: typeof CommunityPortalLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community-portal/_layout': {
+      id: '/community-portal/_layout'
+      path: '/community-portal'
+      fullPath: '/community-portal'
+      preLoaderRoute: typeof CommunityPortalLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/career-module/$slug': {
       id: '/career-module/$slug'
@@ -1218,12 +1258,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mentor-portal/_layout/': {
-      id: '/mentor-portal/_layout/'
+    '/community-portal/_layout/': {
+      id: '/community-portal/_layout/'
       path: '/'
-      fullPath: '/mentor-portal/'
-      preLoaderRoute: typeof MentorPortalLayoutIndexRouteImport
-      parentRoute: typeof MentorPortalLayoutRoute
+      fullPath: '/community-portal/'
+      preLoaderRoute: typeof CommunityPortalLayoutIndexRouteImport
+      parentRoute: typeof CommunityPortalLayoutRoute
     }
     '/admin/_layout/': {
       id: '/admin/_layout/'
@@ -1232,12 +1272,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/mentor-portal/_layout/profile': {
-      id: '/mentor-portal/_layout/profile'
+    '/community-portal/_layout/profile': {
+      id: '/community-portal/_layout/profile'
       path: '/profile'
-      fullPath: '/mentor-portal/profile'
-      preLoaderRoute: typeof MentorPortalLayoutProfileRouteImport
-      parentRoute: typeof MentorPortalLayoutRoute
+      fullPath: '/community-portal/profile'
+      preLoaderRoute: typeof CommunityPortalLayoutProfileRouteImport
+      parentRoute: typeof CommunityPortalLayoutRoute
     }
     '/admin/_layout/wellness': {
       id: '/admin/_layout/wellness'
@@ -1405,6 +1445,18 @@ const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
   CommunityRouteChildren,
 )
 
+interface MentorPortalRouteChildren {
+  MentorPortalSplatRoute: typeof MentorPortalSplatRoute
+}
+
+const MentorPortalRouteChildren: MentorPortalRouteChildren = {
+  MentorPortalSplatRoute: MentorPortalSplatRoute,
+}
+
+const MentorPortalRouteWithChildren = MentorPortalRoute._addFileChildren(
+  MentorPortalRouteChildren,
+)
+
 interface PartnershipsRouteChildren {
   PartnershipsLoginRoute: typeof PartnershipsLoginRoute
 }
@@ -1471,18 +1523,20 @@ const AdminLayoutRouteWithChildren = AdminLayoutRoute._addFileChildren(
   AdminLayoutRouteChildren,
 )
 
-interface MentorPortalLayoutRouteChildren {
-  MentorPortalLayoutProfileRoute: typeof MentorPortalLayoutProfileRoute
-  MentorPortalLayoutIndexRoute: typeof MentorPortalLayoutIndexRoute
+interface CommunityPortalLayoutRouteChildren {
+  CommunityPortalLayoutProfileRoute: typeof CommunityPortalLayoutProfileRoute
+  CommunityPortalLayoutIndexRoute: typeof CommunityPortalLayoutIndexRoute
 }
 
-const MentorPortalLayoutRouteChildren: MentorPortalLayoutRouteChildren = {
-  MentorPortalLayoutProfileRoute: MentorPortalLayoutProfileRoute,
-  MentorPortalLayoutIndexRoute: MentorPortalLayoutIndexRoute,
+const CommunityPortalLayoutRouteChildren: CommunityPortalLayoutRouteChildren = {
+  CommunityPortalLayoutProfileRoute: CommunityPortalLayoutProfileRoute,
+  CommunityPortalLayoutIndexRoute: CommunityPortalLayoutIndexRoute,
 }
 
-const MentorPortalLayoutRouteWithChildren =
-  MentorPortalLayoutRoute._addFileChildren(MentorPortalLayoutRouteChildren)
+const CommunityPortalLayoutRouteWithChildren =
+  CommunityPortalLayoutRoute._addFileChildren(
+    CommunityPortalLayoutRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -1506,6 +1560,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearningRoute: LearningRoute,
   LoginRoute: LoginRoute,
   MentorRoute: MentorRoute,
+  MentorPortalRoute: MentorPortalRouteWithChildren,
   MentoringRoute: MentoringRoute,
   OnboardingRoute: OnboardingRoute,
   PartnershipsRoute: PartnershipsRouteWithChildren,
@@ -1523,8 +1578,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   BlogSlugRoute: BlogSlugRoute,
   CareerModuleSlugRoute: CareerModuleSlugRoute,
-  MentorPortalLayoutRoute: MentorPortalLayoutRouteWithChildren,
-  MentorPortalLoginRoute: MentorPortalLoginRoute,
+  CommunityPortalLayoutRoute: CommunityPortalLayoutRouteWithChildren,
+  CommunityPortalLoginRoute: CommunityPortalLoginRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport

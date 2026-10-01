@@ -30,27 +30,27 @@ export function MentorShell({
 
   async function handleSignOut() {
     await signOut()
-    router.navigate({ to: '/mentor-portal/login' })
+    router.navigate({ to: '/community-portal/login' })
   }
 
   const tabs = [
-    { to: '/mentor-portal', label: 'Students & requests', icon: Users, active: pathname === '/mentor-portal' || pathname === '/mentor-portal/', count: waiting, dot: false },
-    { to: '/mentor-portal/profile', label: 'My profile', icon: User, active: pathname.startsWith('/mentor-portal/profile'), count: 0, dot: needsProfile },
+    { to: '/community-portal', label: 'Students & requests', icon: Users, active: pathname === '/community-portal' || pathname === '/community-portal/', count: waiting, dot: false },
+    { to: '/community-portal/profile', label: 'My profile', icon: User, active: pathname.startsWith('/community-portal/profile'), count: 0, dot: needsProfile },
   ]
 
   return (
     <div className="min-h-screen bg-ink-50">
       <header className="sticky top-0 z-30 border-b border-ink-900/[0.06] bg-white/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4 sm:px-6">
-          <Link to="/mentor-portal" className="flex shrink-0 items-center gap-2">
+          <Link to="/community-portal" className="flex shrink-0 items-center gap-2">
             <img src="/logo-mark.png" alt="" className="h-8 w-8" />
             <span className="font-display text-lg font-semibold tracking-tight text-ink-900">MySkills</span>
             <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-brand-700">
-              Mentors
+              Community Portal
             </span>
           </Link>
 
-          <nav aria-label="Mentor portal" className="ml-4 hidden items-center gap-1 sm:flex">
+          <nav aria-label="Community portal" className="ml-4 hidden items-center gap-1 sm:flex">
             {tabs.map((t) => (
               <Link
                 key={t.to}
@@ -91,7 +91,7 @@ export function MentorShell({
         </div>
 
         {/* Phones: the two sections as tabs under the bar, not a hamburger. */}
-        <nav aria-label="Mentor portal" className="flex border-t border-ink-900/[0.06] sm:hidden">
+        <nav aria-label="Community portal" className="flex border-t border-ink-900/[0.06] sm:hidden">
           {tabs.map((t) => (
             <Link
               key={t.to}

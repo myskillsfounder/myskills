@@ -10,7 +10,7 @@ import { MentorShell } from '@/components/mentoring/MentorShell'
 import { RequestsLine } from '@/components/mentoring/RequestsLine'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
-export const Route = createFileRoute('/mentor-portal/_layout')({
+export const Route = createFileRoute('/community-portal/_layout')({
   beforeLoad: requireMentorSession,
   component: MentorPortalLayout,
 })
@@ -46,8 +46,8 @@ function MentorPortalLayout() {
   // load — saving the profile mustn't move them anywhere.
   useEffect(() => {
     void load().then((mine) => {
-      const atHome = window.location.pathname.replace(/\/$/, '') === '/mentor-portal'
-      if (mine && !mine.ready && atHome) router.navigate({ to: '/mentor-portal/profile', replace: true })
+      const atHome = window.location.pathname.replace(/\/$/, '') === '/community-portal'
+      if (mine && !mine.ready && atHome) router.navigate({ to: '/community-portal/profile', replace: true })
     })
     // First load only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,14 +68,14 @@ function MentorPortalLayout() {
           <Skeleton className="mt-4 h-48 w-full" />
         </>
       ) : error ? (
-        <Alert tone="danger" title="Couldn’t load the mentor portal">
+        <Alert tone="danger" title="Couldn’t load the Community portal">
           <p>{error}</p>
         </Alert>
       ) : !profile ? (
         <EmptyState
           icon={GraduationCap}
           title="This account isn’t set up as a mentor yet"
-          description="The mentor portal is for approved MySkills mentors. If you’ve applied, we’ll link this account to your mentor listing once you’re approved — you’ll get an email when it’s ready."
+          description="The Community portal is for approved MySkills mentors and partners. If you’ve applied, we’ll link this account to your mentor listing once you’re approved — you’ll get an email when it’s ready."
           action={
             <Link to="/become-a-mentor" className="text-sm font-semibold text-brand-700 hover:underline">
               Apply to become a mentor
