@@ -2,11 +2,16 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
 import {
-  CR_SIGNOFF_POINTS,
+  ACTIVITY_HELD_CAP,
   LIVE_SESSIONS_MAX_POINTS,
   PERSONAL_MAX,
+  POINTS_PER_LIVE_SESSION,
   POINTS_PER_MODULE,
+  PROJECT_MAX,
+  countedActivity,
+  personalActivity,
   personalPoints,
+  type ProjectStanding,
 } from '@/lib/readinessScore'
 
 const Rings = () => (
@@ -31,17 +36,21 @@ const CIRC = 2 * Math.PI * R
  */
 export function CareerReadinessOverview({
   progress,
-  mentorApproved,
+  project,
   liveSessions,
 }: {
   progress: ProgrammeProgress
-  mentorApproved: boolean
+  /** Where the programme's project stands with its mentor, and its best grade. */
+  project: ProjectStanding
   /** Live sessions with a trainer, mentor or institution, confirmed by them. */
   liveSessions: number
 }) {
   const { modules, modulesDone, modulesTotal, itemsDone, itemsTotal, next, started } = progress
   const percent = itemsTotal ? Math.round((itemsDone / itemsTotal) * 100) : 0
-  const points = personalPoints({ modulesDone, liveSessions, crSignedOff: mentorApproved })
+  const standing = { modulesDone, liveSessions, crProject: project }
+  const points = Math.round(personalPoints(standing))
+  const activity = personalActivity(standing)
+  const held = Math.round(activity - countedActivity(activity, project))
   const target = next ?? modules[0]
   const targetIndex = modules.findIndex((m) => m.slug === target.slug)
 
@@ -85,8 +94,10 @@ export function CareerReadinessOverview({
             </p>
             <p className="mt-1 text-xs leading-relaxed text-white/70">
               {POINTS_PER_MODULE} points for every module you finish, up to {LIVE_SESSIONS_MAX_POINTS} for live
-              sessions with a trainer, mentor or institution, and {CR_SIGNOFF_POINTS} when a mentor signs off your
-              practice.
+              sessions with a trainer, mentor or institution, and up to {PROJECT_MAX} for your project, graded by a
+              mentor.
+              {held > 0 &&
+                ` ${held} of your earned points are held until your project passes (only ${ACTIVITY_HELD_CAP} count before then).`}
             </p>
           </div>
 
@@ -123,7 +134,7 @@ export function CareerReadinessOverview({
             <p className="text-[11px] font-medium text-white/60">Live sessions</p>
             <p className="mt-0.5 font-display text-lg font-semibold text-white">
               {liveSessions}
-              <span className="text-sm font-normal text-white/50">/{LIVE_SESSIONS_MAX_POINTS / 2}</span>
+              <span className="text-sm font-normal text-white/50">/{LIVE_SESSIONS_MAX_POINTS / POINTS_PER_LIVE_SESSION}</span>
             </p>
           </div>
           <div>

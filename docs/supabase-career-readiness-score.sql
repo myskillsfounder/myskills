@@ -13,25 +13,39 @@
 -- (docs/supabase-practice-server-grading.sql), initial_assessment_results,
 -- public.is_admin().
 --
--- THE METHOD (v5), the same rules as src/lib/readinessScore.ts. Only what a
--- student does ON MySkills counts; education, outside work and projects are
--- part of the profile, not the score.
---   Personal development      40   2 per Career Readiness module finished (5 = 10)
---                                  + 2 per confirmed live session (5 = 10)
---                                  + 20 when a mentor signs the programme off
---   Professional development  40   1.25 per Digital Marketing track whose best
---                                  of the last 3 SERVER-GRADED attempts is 60%+
---                                  (8 = 10) + the Foundation assessment (% / 10,
---                                  up to 10) + 2 per confirmed live training
---                                  (5 = 10) + 10 when a mentor signs off
---   Internship                20   an internship through MySkills, not open yet
--- The most that can be earned today is 80.
+-- THE METHOD (v6), the same rules as src/lib/readinessScore.ts. Only what a
+-- student does ON MySkills counts; education, outside work and aptitude
+-- assessments are not part of the score.
+--
+-- Each programme is worth 40: a mentor-graded project (20) and activity (20).
+--   Personal development      40   Career Readiness Programme
+--     activity 20                   3 per module finished (5 = 15)
+--                                   + 1 per confirmed live session (5 = 5)
+--     project  20                   the mentor's rubric total, 0-20
+--   Professional development  40   Digital Marketing Programme
+--     activity 20                   per track, best of the last 3 SERVER-GRADED
+--                                   attempts: 0 below 60%, then 0.25 at 60%
+--                                   rising to 1.25 at 100% (8 tracks = 10)
+--                                   + the Foundation assessment (% / 20, up to 5)
+--                                   + 1 per confirmed live training (5 = 5)
+--     project  20                   the mentor's rubric total, 0-20
+--   Internship                20   the FIRST internship signed off by its host
+--                                   organisation (later ones are badges, no points)
+--
+-- THE HOLD: until a programme's project has passed (8 of 20 or more), only the
+-- first 8 of its 20 activity points count; the rest are held and released when
+-- it passes. Project points always count as graded. A sign-off alone, with no
+-- work behind it, is worth nothing.
+--
+-- Nobody earns the internship part yet, so 80 is the most today.
 --
 -- VERIFIED vs SELF-REPORTED: practice and the Foundation assessment are graded
--- by the server, live sessions and sign-offs confirmed by a person. Module
--- answers are self-reported until the Career Readiness sign-off.
+-- by the server, live sessions and project grades by a person. Module answers
+-- are self-reported until the Career Readiness project has passed.
 -- Stored scores from earlier methods are replaced the next time the student
--- opens the dashboard.
+-- opens the dashboard, and the update at the foot of this file re-issues them all.
+--
+-- Run docs/supabase-programme-projects.sql FIRST: this reads its columns.
 
 create table if not exists public.career_readiness_scores (
   user_id              uuid primary key references auth.users (id) on delete cascade,
@@ -68,25 +82,37 @@ security definer
 set search_path = public
 as $$
 declare
-  c_method constant text := 'v5';
-  c_mod_pts constant numeric := 2;
-  c_live_pts constant numeric := 2;
-  c_cr_pts constant numeric := 20;
-  c_track_pts constant numeric := 1.25;
-  c_dm_pts constant numeric := 10;
+  c_method constant text := 'v6';
+  c_mod_pts constant numeric := 3;
+  c_live_pts constant numeric := 1;
+  c_held_cap constant numeric := 8;   -- activity points that count before the project passes
+  c_proj_max constant numeric := 20;
+  c_intern_pts constant numeric := 20;
 
   v_modules int := 0;
   v_live int := 0;
   v_live_dm int := 0;
   v_cr_signed boolean := false;
   v_dm_signed boolean := false;
+  v_cr_proj numeric := 0;
+  v_dm_proj numeric := 0;
+  v_cr_status text;
+  v_dm_status text;
   v_tracks int := 0;
+  v_track_pts numeric := 0;
   v_foundation int;
   v_identity boolean := false;
+  v_interns int := 0;
 
   v_module_pts numeric;
+  v_cr_act numeric;
+  v_dm_act numeric;
+  v_cr_counted numeric;
+  v_dm_counted numeric;
   v_personal numeric;
   v_professional numeric;
+  v_internship numeric;
+  v_self numeric;
 begin
   if not exists (select 1 from public.profiles where id = p_user) then
     return null;
@@ -108,24 +134,39 @@ begin
     into v_live, v_live_dm
     from public.live_session_attendance a where a.student_id = p_user;
 
-  -- Mentor sign-offs.
+  -- Projects: passed (approved) or not, and the best grade across submissions.
   select exists (select 1 from public.mentor_reviews mr
                   where mr.user_id = p_user and mr.programme = 'career-readiness' and mr.status = 'approved'),
          exists (select 1 from public.mentor_reviews mr
-                  where mr.user_id = p_user and mr.programme = 'digital-marketing' and mr.status = 'approved')
-    into v_cr_signed, v_dm_signed;
+                  where mr.user_id = p_user and mr.programme = 'digital-marketing' and mr.status = 'approved'),
+         coalesce((select max(mr.project_points) from public.mentor_reviews mr
+                    where mr.user_id = p_user and mr.programme = 'career-readiness'
+                      and mr.project_points is not null), 0),
+         coalesce((select max(mr.project_points) from public.mentor_reviews mr
+                    where mr.user_id = p_user and mr.programme = 'digital-marketing'
+                      and mr.project_points is not null), 0),
+         (select mr.status::text from public.mentor_reviews mr
+           where mr.user_id = p_user and mr.programme = 'career-readiness' and mr.status <> 'cancelled'
+           order by mr.created_at desc limit 1),
+         (select mr.status::text from public.mentor_reviews mr
+           where mr.user_id = p_user and mr.programme = 'digital-marketing' and mr.status <> 'cancelled'
+           order by mr.created_at desc limit 1)
+    into v_cr_signed, v_dm_signed, v_cr_proj, v_dm_proj, v_cr_status, v_dm_status;
 
-  -- Tracks whose best of the last 3 server-graded attempts is 60%+.
-  select count(*) into v_tracks from (
-    select t.track_slug
-      from (select pa.track_slug, pa.percent,
-                   row_number() over (partition by pa.track_slug order by pa.attempted_at desc) as rn
-              from public.practice_attempts pa
-             where pa.profile_id = p_user and pa.server_graded) t
-     where t.rn <= 3
-     group by t.track_slug
-    having max(t.percent) >= 60
-  ) passed;
+  -- Tracks: the best of the last 3 server-graded attempts. 0 below 60%, then
+  -- 0.25 at 60% rising to 1.25 at 100%.
+  select count(*) filter (where b.best >= 60),
+         coalesce(sum(case when b.best >= 60 then 0.25 + (least(b.best, 100) - 60) / 40.0 else 0 end), 0)
+    into v_tracks, v_track_pts
+    from (
+      select t.track_slug, max(t.percent) as best
+        from (select pa.track_slug, pa.percent,
+                     row_number() over (partition by pa.track_slug order by pa.attempted_at desc) as rn
+                from public.practice_attempts pa
+               where pa.profile_id = p_user and pa.server_graded) t
+       where t.rn <= 3
+       group by t.track_slug
+    ) b;
 
   select r.percent into v_foundation from public.initial_assessment_results r where r.profile_id = p_user;
 
@@ -134,32 +175,43 @@ begin
                   where vi.user_id = p_user and vi.item_type = 'identity')
     into v_identity;
 
-  v_module_pts   := least(v_modules, 5) * c_mod_pts;
-  v_personal     := least(v_module_pts + least(v_live * c_live_pts, 10)
-                          + (case when v_cr_signed then c_cr_pts else 0 end), 40);
-  v_professional := least(least(v_tracks, 8) * c_track_pts
-                          -- Not coalesce(round(least(x / 10.0, 10), 1), 0): LEAST ignores NULLs, so
-                          -- with no Foundation result that is least(NULL, 10) = 10, and every
-                          -- student started with 10 points.
-                          + (case when v_foundation is null then 0
-                                  else round(least(v_foundation / 10.0, 10), 1) end)
-                          + least(v_live_dm * c_live_pts, 10)
-                          + (case when v_dm_signed then c_dm_pts else 0 end), 40);
+  -- Internships signed off by their host. The first one scores; all are badges.
+  select count(*) into v_interns from public.internship_signoffs where student_id = p_user;
+
+  v_module_pts := least(v_modules, 5) * c_mod_pts;
+  v_cr_act := v_module_pts + least(v_live, 5) * c_live_pts;
+  -- Not coalesce(round(least(x, ...))): LEAST ignores NULLs, so a student with
+  -- no Foundation result would get the maximum.
+  v_dm_act := least(v_track_pts, 10)
+              + (case when v_foundation is null then 0 else round(least(v_foundation, 100) / 20.0, 1) end)
+              + least(v_live_dm, 5) * c_live_pts;
+
+  -- The hold: only c_held_cap of the activity counts until the project passes.
+  v_cr_counted := case when v_cr_signed then v_cr_act else least(v_cr_act, c_held_cap) end;
+  v_dm_counted := case when v_dm_signed then v_dm_act else least(v_dm_act, c_held_cap) end;
+
+  v_personal     := least(v_cr_counted + least(v_cr_proj, c_proj_max), 40);
+  v_professional := least(v_dm_counted + least(v_dm_proj, c_proj_max), 40);
+  v_internship   := case when v_interns > 0 then c_intern_pts else 0 end;
+  -- Module answers are self-reported until the project has passed.
+  v_self := case when v_cr_signed then 0 else least(v_module_pts, v_cr_counted) end;
 
   return jsonb_build_object(
     'method_version', c_method,
-    'score', round(v_personal + v_professional)::int,
-    -- Once a mentor has signed the programme off they have read the modules.
-    'verified_points', round(v_personal + v_professional - (case when v_cr_signed then 0 else v_module_pts end), 1),
-    'self_reported_points', (case when v_cr_signed then 0 else v_module_pts end),
+    'score', round(v_personal + v_professional + v_internship)::int,
+    'verified_points', round(v_personal + v_professional + v_internship - v_self, 1),
+    'self_reported_points', round(v_self, 1),
     'identity_verified', v_identity,
     'personal', jsonb_build_object(
-      'points', v_personal, 'max', 40, 'modules_done', least(v_modules, 5), 'live_sessions', v_live,
-      'mentor_approved', v_cr_signed),
+      'points', round(v_personal, 2), 'max', 40, 'modules_done', least(v_modules, 5), 'live_sessions', v_live,
+      'mentor_approved', v_cr_signed, 'activity', round(v_cr_act, 2), 'held', round(v_cr_act - v_cr_counted, 2),
+      'project_points', v_cr_proj, 'project_max', 20, 'project_status', v_cr_status),
     'professional', jsonb_build_object(
-      'points', v_professional, 'max', 40, 'tracks_passed', v_tracks, 'foundation_percent', v_foundation,
-      'live_sessions', v_live_dm, 'mentor_approved', v_dm_signed),
-    'internship', jsonb_build_object('points', 0, 'max', 20)
+      'points', round(v_professional, 2), 'max', 40, 'tracks_passed', v_tracks, 'foundation_percent', v_foundation,
+      'live_sessions', v_live_dm, 'mentor_approved', v_dm_signed, 'activity', round(v_dm_act, 2),
+      'held', round(v_dm_act - v_dm_counted, 2), 'project_points', v_dm_proj, 'project_max', 20,
+      'project_status', v_dm_status),
+    'internship', jsonb_build_object('points', v_internship, 'max', 20, 'signed_off', v_interns)
   );
 end;
 $$;
@@ -208,7 +260,7 @@ revoke execute on function public.refresh_my_career_readiness_score() from publi
 grant execute on function public.refresh_my_career_readiness_score() to authenticated;
 
 -- ---------------------------------------------------------------------------
--- One-off after fixing the Foundation line above: re-issue every stored score
+-- One-off after changing the method: re-issue every stored score
 -- (the dashboard does this for a student the next time they open it, but the
 -- admin lists read the stored rows).
 -- ---------------------------------------------------------------------------

@@ -285,7 +285,7 @@ function PracticePage() {
                         practice={practice}
                         foundationDone={assessment != null}
                         aptitudeDone={aptitude != null}
-                        mentorApproved={dmReview.state === 'approved'}
+                        project={dmReview.project}
                         foundationPercent={assessment?.overall.percent ?? null}
                         liveSessions={dmSessions.length}
                       />
@@ -301,6 +301,7 @@ function PracticePage() {
                       practiceDone={practisedTracks.length === skillTracks.length}
                       review={dmReview.review}
                       state={dmReview.state}
+                      submissionsLeft={dmReview.submissionsLeft}
                       onChange={() => void dmReview.reload()}
                     />
                   </ProgrammeCompletion>
@@ -334,7 +335,7 @@ function PracticePage() {
                   <AssessmentCard />
                   <CareerReadinessOverview
                     progress={crProgress}
-                    mentorApproved={crReview.state === 'approved'}
+                    project={crReview.project}
                     liveSessions={liveSessions.length}
                   />
                   <ProgrammeCompletion stages={crStages}>
@@ -343,6 +344,7 @@ function PracticePage() {
                       practiceDone={crProgress.complete}
                       review={crReview.review}
                       state={crReview.state}
+                      submissionsLeft={crReview.submissionsLeft}
                       onChange={() => void crReview.reload()}
                     />
                   </ProgrammeCompletion>

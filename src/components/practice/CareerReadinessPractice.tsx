@@ -16,7 +16,7 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
       <SectionHeader
         eyebrow="Career Readiness"
         title="The five modules"
-        description="Learn it, practise it in writing, then reflect. A mentor reviews your work."
+        description="Learn it, practise it in writing, then reflect. Then you’ll build a project, and a mentor grades it."
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => {
