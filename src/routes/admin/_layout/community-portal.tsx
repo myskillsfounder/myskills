@@ -11,8 +11,8 @@ import {
   grantCommunityAccess,
   revokeCommunityAccess,
   type AdminCommunityAccess,
+  type CommunityResource,
   type CommunityUsage,
-  type GrantedResource,
 } from '@/lib/communityPortal'
 import { RequireAdmin } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
@@ -27,7 +27,8 @@ export const Route = createFileRoute('/admin/_layout/community-portal')({
   ),
 })
 
-const needsOrganisation = (r: GrantedResource) => !LOGS_SESSIONS[r]
+const isOrganisation = (r: CommunityResource) => r === 'internships' || r === 'institutions'
+const logsSessions = (r: CommunityResource) => r !== 'mentors' && LOGS_SESSIONS[r]
 
 function CommunityPortalAdminPage() {
   const [access, setAccess] = useState<AdminCommunityAccess[]>([])
@@ -36,8 +37,14 @@ function CommunityPortalAdminPage() {
   const [error, setError] = useState<string>()
 
   const [email, setEmail] = useState('')
-  const [resource, setResource] = useState<GrantedResource>('wellness')
+  const [resource, setResource] = useState<CommunityResource>('wellness')
   const [organisation, setOrganisation] = useState('')
+  // An overview: every student in the resource, whoever they are with.
+  const [seesAll, setSeesAll] = useState(false)
+  // Mentors can only be granted as an overview; a company or institution
+  // account needs its name unless it is one.
+  const overview = seesAll || resource === 'mentors'
+  const needsName = isOrganisation(resource) && !overview
   const [busy, setBusy] = useState(false)
   const [formError, setFormError] = useState<string>()
   const [confirm, setConfirm] = useState<string>()
@@ -63,7 +70,7 @@ function CommunityPortalAdminPage() {
     setBusy(true)
     setFormError(undefined)
     try {
-      await grantCommunityAccess(email, resource, needsOrganisation(resource) ? organisation : '')
+      await grantCommunityAccess(email, resource, needsName ? organisation : '', overview)
       setEmail('')
       setOrganisation('')
       await load()
@@ -89,7 +96,7 @@ function CommunityPortalAdminPage() {
   }
 
   const canGrant =
-    /^\S+@\S+\.\S+$/.test(email.trim()) && (!needsOrganisation(resource) || organisation.trim().length >= 2)
+    /^\S+@\S+\.\S+$/.test(email.trim()) && (!needsName || organisation.trim().length >= 2)
 
   return (
     <>
@@ -119,17 +126,17 @@ function CommunityPortalAdminPage() {
             Resource
             <select
               value={resource}
-              onChange={(e) => setResource(e.target.value as GrantedResource)}
+              onChange={(e) => setResource(e.target.value as CommunityResource)}
               className="field mt-1.5 block w-full"
             >
-              {GRANTED_RESOURCES.map((r) => (
+              {(['mentors', ...GRANTED_RESOURCES] as CommunityResource[]).map((r) => (
                 <option key={r} value={r}>
                   {RESOURCE_LABEL[r]}
                 </option>
               ))}
             </select>
           </label>
-          {needsOrganisation(resource) && (
+          {needsName && (
             <Input
               label={resource === 'internships' ? 'Company' : 'Institution'}
               value={organisation}
@@ -144,6 +151,22 @@ function CommunityPortalAdminPage() {
             </Button>
           </div>
         </div>
+        <label className="mt-4 flex items-start gap-2.5 text-sm text-ink-700">
+          <input
+            type="checkbox"
+            checked={overview}
+            disabled={resource === 'mentors'}
+            onChange={(e) => setSeesAll(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-ink-300"
+          />
+          <span>
+            <span className="font-medium text-ink-900">Sees everything in this resource</span>
+            <span className="block text-xs text-ink-500">
+              An overview for the MySkills team: every student, whoever they are working with, read-only.
+              {resource === 'mentors' && ' Mentors is always granted this way — a mentor gets their own section from their listing.'}
+            </span>
+          </span>
+        </label>
         {formError && <p className="mt-3 text-sm text-red-700">{formError}</p>}
       </section>
 
@@ -178,9 +201,10 @@ function CommunityPortalAdminPage() {
                       </td>
                       <td className="px-4 py-3">
                         <Badge tone="brand">{RESOURCE_LABEL[a.resource]}</Badge>
+                        {a.sees_all && <span className="ml-2 text-xs font-medium text-ink-500">sees everything</span>}
                       </td>
-                      <td className="px-4 py-3 tabular-nums text-ink-800">{a.active}</td>
-                      <td className="px-4 py-3 tabular-nums text-ink-800">{LOGS_SESSIONS[a.resource] ? a.sessions : '—'}</td>
+                      <td className="px-4 py-3 tabular-nums text-ink-800">{a.sees_all ? '—' : a.active}</td>
+                      <td className="px-4 py-3 tabular-nums text-ink-800">{logsSessions(a.resource) && !a.sees_all ? a.sessions : '—'}</td>
                       <td className="px-4 py-3 text-right">
                         {confirm === key ? (
                           <span className="inline-flex items-center gap-2 text-xs text-ink-700">

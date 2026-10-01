@@ -44,6 +44,15 @@ const COPY: Record<GrantedResource, { intro: string; empty: string; active: stri
   },
 }
 
+/** What an overview says at the top: the same list, across everyone. */
+const OVERVIEW: Record<GrantedResource, string> = {
+  wellness:
+    'Every student working with a counsellor, and who with. You see dates and session counts only — never what was discussed.',
+  guidance: 'Every student working with a career guide, and who with, with the sessions logged so far.',
+  internships: 'Every student interning with a partner company right now, and the ones who have finished.',
+  institutions: 'Every student enrolled with a partner institution right now, and the ones who have finished.',
+}
+
 /** One student's row: who they are, since when, and the one or two things the provider can do. */
 function StudentRow({
   s,
@@ -81,6 +90,9 @@ function StudentRow({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-display text-lg font-semibold text-ink-900">{s.student_name || 'A MySkills student'}</p>
+          {s.provider_name && s.mine === false && (
+            <p className="text-sm font-medium text-brand-700">With {s.provider_name}</p>
+          )}
           <a
             href={`mailto:${s.student_email}`}
             className="mt-0.5 inline-flex items-center gap-1.5 text-sm text-ink-600 hover:text-brand-700"
@@ -108,7 +120,7 @@ function StudentRow({
         )}
       </p>
 
-      {active && (
+      {active && s.mine !== false && (
         <div className="mt-3 flex flex-wrap items-end gap-2 border-t border-ink-900/[0.06] pt-3">
           {logs && (
             <>
@@ -159,7 +171,16 @@ function StudentRow({
  * session dates; companies and institutions keep the list of students who are
  * with them now.
  */
-export function ResourcePanel({ resource, organisation }: { resource: GrantedResource; organisation: string | null }) {
+export function ResourcePanel({
+  resource,
+  organisation,
+  seesAll = false,
+}: {
+  resource: GrantedResource
+  organisation: string | null
+  /** An overview: every student in this resource, whoever they are with. Read-only. */
+  seesAll?: boolean
+}) {
   const [students, setStudents] = useState<CommunityStudent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
@@ -168,6 +189,8 @@ export function ResourcePanel({ resource, organisation }: { resource: GrantedRes
   const [addError, setAddError] = useState<string>()
   const logs = LOGS_SESSIONS[resource]
   const copy = COPY[resource]
+  // In an overview the students aren't "with you".
+  const activeLabel = seesAll ? 'Active now' : copy.active
 
   const load = useCallback(async () => {
     try {
@@ -206,11 +229,11 @@ export function ResourcePanel({ resource, organisation }: { resource: GrantedRes
     <div className="space-y-5">
       <p className="max-w-2xl text-sm leading-relaxed text-ink-600">
         {organisation && <span className="font-semibold text-ink-900">{organisation}. </span>}
-        {copy.intro}
+        {seesAll ? OVERVIEW[resource] : copy.intro}
       </p>
 
       {/* Organisations add their own students; people are assigned theirs by the team. */}
-      {!logs && (
+      {!logs && !seesAll && (
         <div className="card p-4 sm:p-5">
           <p className="text-sm font-semibold text-ink-900">Add a student</p>
           <div className="mt-2 flex flex-wrap items-end gap-2">
@@ -240,17 +263,21 @@ export function ResourcePanel({ resource, organisation }: { resource: GrantedRes
       {loading ? (
         <Skeleton className="h-32 w-full" />
       ) : students.length === 0 && !error ? (
-        <EmptyState icon={Users} title="No students yet" description={copy.empty} />
+        <EmptyState
+          icon={Users}
+          title="No students yet"
+          description={seesAll ? 'Students appear here as soon as one is working with someone in this resource.' : copy.empty}
+        />
       ) : (
         <>
           {active.length > 0 && (
             <section>
               <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
-                {copy.active} · {active.length}
+                {activeLabel} · {active.length}
               </h2>
               <ul className="mt-2 space-y-3">
                 {active.map((s) => (
-                  <StudentRow key={s.id} s={s} logs={logs} activeLabel={copy.active} onChanged={() => void load()} />
+                  <StudentRow key={s.id} s={s} logs={logs} activeLabel={activeLabel} onChanged={() => void load()} />
                 ))}
               </ul>
             </section>
@@ -262,7 +289,7 @@ export function ResourcePanel({ resource, organisation }: { resource: GrantedRes
               </h2>
               <ul className="mt-2 space-y-3">
                 {finished.map((s) => (
-                  <StudentRow key={s.id} s={s} logs={logs} activeLabel={copy.active} onChanged={() => void load()} />
+                  <StudentRow key={s.id} s={s} logs={logs} activeLabel={activeLabel} onChanged={() => void load()} />
                 ))}
               </ul>
             </section>
