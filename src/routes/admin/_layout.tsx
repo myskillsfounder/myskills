@@ -76,7 +76,18 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     items: [
       { to: '/admin/users', label: 'All students', icon: Users, section: 'users' },
       { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
+    ],
+  },
+  // Everything a student sees on the Community page, in the same order as its
+  // category tiles, so the people running it find it all in one place.
+  {
+    label: 'Community',
+    items: [
+      { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
       { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
+      { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness' },
+      { to: '/admin/internship-partners', label: 'Internships', icon: Briefcase, section: null },
+      { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
     ],
   },
   {
@@ -111,11 +122,8 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     ],
   },
   {
-    label: 'Partners',
+    label: 'Leads',
     items: [
-      { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
-      { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
-      { to: '/admin/internship-partners', label: 'Internship partners', icon: Briefcase, section: null },
       { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
       { to: '/admin/cr-leads', label: 'Career Readiness leads', icon: Users, section: null },
     ],
@@ -126,7 +134,6 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/blog', label: 'Blog', icon: FileText, section: 'blog' },
       { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
       { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
-      { to: '/admin/wellness', label: 'Wellness', icon: HeartHandshake, section: 'wellness' },
     ],
   },
 ]
