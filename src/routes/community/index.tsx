@@ -22,13 +22,14 @@ import { supabase } from '@/lib/supabase'
 import { fetchMentors } from '@/lib/mentors'
 import { hubPage, partnerPage, PartnerFaq, type PartnerKey } from '@/components/partner/PartnerLanding'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
+import { SearchHeader } from '@/components/community/SearchHeader'
+import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
+import { rememberProgramme } from '@/lib/practiceProgramme'
 import {
-  CategoryBar,
   INTERNSHIP_TRACKS,
   InstitutionListingCard,
   InternshipCard,
   JoinCard,
-  MarketplaceHero,
   MarketSection,
   marketGrid,
   MentorListingCard,
@@ -296,11 +297,75 @@ function HowSupportWorks() {
   )
 }
 
+/** Searches worth suggesting, taken from what is actually listed so each one
+ *  finds something: the skills most mentors share, then the cities
+ *  institutions are in. */
+function popularSearches(mentors: MentorListing[], institutions: InstitutionPartner[]): string[] {
+  const tally = (words: (string | null | undefined)[]) => {
+    const n = new Map<string, number>()
+    for (const w of words) {
+      const t = (w ?? '').trim()
+      if (t.length >= 2 && t.length <= 24) n.set(t, (n.get(t) ?? 0) + 1)
+    }
+    return [...n.entries()].sort((a, b) => b[1] - a[1]).map(([w]) => w)
+  }
+  const skills = tally(mentors.flatMap((m) => m.expertise)).slice(0, 4)
+  const cities = tally(institutions.map((p) => p.city)).slice(0, 2)
+  return [...skills, ...cities, 'Internship']
+}
+
+/**
+ * The student's own mentor, ahead of the directory: who they're working with
+ * (or waiting to hear from) in each programme. Shown only when there is one —
+ * a student without a mentor gets the listings, which is the way to find one.
+ */
+function YourMentors({ matches }: { matches: { match: StudentMatch | null; programme: 1 | 2; label: string }[] }) {
+  const mine = matches.filter((m) => m.match && (m.match.status === 'active' || m.match.status === 'requested'))
+  if (mine.length === 0) return null
+  return (
+    <section className="card p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Your mentor</p>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+        {mine.map(({ match, programme, label }) => {
+          const name = match!.mentor?.full_name ?? 'Your mentor'
+          const waiting = match!.status === 'requested'
+          return (
+            <li key={programme}>
+              <Link
+                to="/practice"
+                onClick={() => rememberProgramme(programme)}
+                className="group flex items-center gap-3 rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
+              >
+                {match!.mentor?.avatar_url ? (
+                  <img src={match!.mentor.avatar_url} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover" />
+                ) : (
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-800">
+                    {name.slice(0, 1).toUpperCase()}
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-ink-900">{name}</span>
+                  <span className="block truncate text-xs text-ink-500">
+                    {label} · {waiting ? 'waiting for them to accept' : 'working with you'}
+                  </span>
+                </span>
+                <ArrowRight size={15} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-600" />
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
 function CommunityHub() {
   const { mentors, institutions, loading } = useMarketplaceData()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<Category>('all')
   const q = query.trim().toLowerCase()
+  const dmMatch = useMyMatch('digital-marketing')
+  const crMatch = useMyMatch('career-readiness')
 
   const services = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags))
   const wellness = services.filter((s) => s.category === 'wellness')
@@ -328,19 +393,33 @@ function CommunityHub() {
 
   return (
     <AppShell wide>
-      <div className="space-y-8">
-        <MarketplaceHero
+      <div className="space-y-7">
+        <header>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Community</p>
+          <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+            Find the right person for what you need next
+          </h1>
+        </header>
+
+        {/* Search and categories lead the page and stay in reach while scrolling. */}
+        <SearchHeader
           query={query}
           onQuery={setQuery}
-          stats={[
-            { label: 'Verified mentors', value: loading ? '—' : String(mentors.length) },
-            { label: 'Partner institutions', value: loading ? '—' : String(institutions.length) },
-            { label: 'Counsellors & career guides', value: 'Live' },
-            { label: 'Internships', value: 'Opening soon' },
-          ]}
+          category={category}
+          onCategory={setCategory}
+          counts={loading ? {} : counts}
+          popular={loading ? [] : popularSearches(mentors, institutions)}
+          resultCount={loading ? null : category === 'all' ? (counts.all ?? 0) : (counts[category] ?? 0)}
         />
 
-        <CategoryBar active={category} onChange={setCategory} counts={loading ? {} : counts} />
+        {!q && category === 'all' && (
+          <YourMentors
+            matches={[
+              { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
+              { match: crMatch.match, programme: 2, label: 'Career Readiness' },
+            ]}
+          />
+        )}
 
         {nothing && (
           <div className="card p-8 text-center">

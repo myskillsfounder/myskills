@@ -10,10 +10,8 @@ import {
   HeartHandshake,
   Lock,
   MapPin,
-  Search,
   ShieldCheck,
   Star,
-  X,
 } from 'lucide-react'
 import type { Mentor } from '@/lib/mentors'
 import type { InstitutionPartner } from '@/lib/institutionPartners'
@@ -38,119 +36,6 @@ export const initialsOf = (name: string) =>
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase())
     .join('')
-
-/* ------------------------------------------------------------------ hero */
-
-export function MarketplaceHero({
-  query,
-  onQuery,
-  stats,
-}: {
-  query: string
-  onQuery: (q: string) => void
-  stats: { label: string; value: string }[]
-}) {
-  return (
-    <section className="surface-wood-dark rise-in relative overflow-hidden rounded-3xl p-6 shadow-e2 sm:p-8">
-      <span aria-hidden className="pointer-events-none absolute -right-16 -top-16 opacity-[0.14]">
-        <svg width="280" height="280" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.5">
-          <circle cx="120" cy="80" r="76" />
-          <circle cx="120" cy="80" r="56" />
-          <circle cx="120" cy="80" r="36" />
-          <circle cx="120" cy="80" r="16" />
-        </svg>
-      </span>
-
-      <p className="relative text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
-        You’re not doing this alone
-      </p>
-      <h1 className="relative mt-2 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
-        Find the right person for what you need next
-      </h1>
-      <p className="relative mt-2 max-w-xl text-sm leading-relaxed text-white/70">
-        Mentors, counsellors, career guides, internships and partner institutions — every kind of
-        support in one place, all free for MySkills students.
-      </p>
-
-      <label className="relative mt-6 flex max-w-xl items-center gap-2.5 rounded-2xl bg-white px-4 py-3 shadow-e2 focus-within:ring-4 focus-within:ring-white/20">
-        <Search size={18} className="shrink-0 text-ink-400" />
-        <span className="sr-only">Search the community</span>
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => onQuery(e.target.value)}
-          placeholder="Search mentors, skills, cities…"
-          className="min-w-0 flex-1 bg-transparent text-sm text-ink-900 outline-none placeholder:text-ink-400 [&::-webkit-search-cancel-button]:hidden"
-        />
-        {query && (
-          <button
-            type="button"
-            onClick={() => onQuery('')}
-            aria-label="Clear search"
-            className="flex h-6 w-6 items-center justify-center rounded-full text-ink-400 hover:bg-ink-100 hover:text-ink-700"
-          >
-            <X size={14} />
-          </button>
-        )}
-      </label>
-
-      <dl className="relative mt-6 grid grid-cols-2 gap-x-6 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-8">
-        {stats.map((s) => (
-          <div key={s.label}>
-            <dt className="text-[11px] font-medium text-white/55">{s.label}</dt>
-            <dd className="font-display text-xl font-semibold text-white">{s.value}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  )
-}
-
-/* -------------------------------------------------------- category chips */
-
-export function CategoryBar({
-  active,
-  onChange,
-  counts,
-}: {
-  active: Category
-  onChange: (c: Category) => void
-  counts: Partial<Record<Category, number>>
-}) {
-  return (
-    <div
-      role="tablist"
-      aria-label="Browse by category"
-      className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0"
-    >
-      {CATEGORIES.map((c) => {
-        const on = c.id === active
-        const Icon = c.icon
-        const count = counts[c.id]
-        return (
-          <button
-            key={c.id}
-            type="button"
-            role="tab"
-            aria-selected={on}
-            onClick={() => onChange(c.id)}
-            className={`press inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-              on
-                ? 'border-ink-900 bg-ink-900 text-white'
-                : 'border-ink-900/[0.1] bg-white text-ink-700 hover:border-ink-300'
-            }`}
-          >
-            {Icon && <Icon size={15} />}
-            {c.label}
-            {count != null && (
-              <span className={`text-xs tabular-nums ${on ? 'text-white/60' : 'text-ink-400'}`}>{count}</span>
-            )}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
 
 /* ------------------------------------------------------- section shell */
 
