@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Mail, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { fetchCommunityMentorStudents, type MentorStudent } from '@/lib/communityPortal'
@@ -75,9 +76,13 @@ export function MentorsOverview() {
                 <li key={r.id} className="card p-4 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-display text-lg font-semibold text-ink-900">
+                      <Link
+                        to="/community-portal/student/$id"
+                        params={{ id: r.student_id }}
+                        className="font-display text-lg font-semibold text-ink-900 hover:text-brand-700 hover:underline"
+                      >
                         {r.student_name || 'A MySkills student'}
-                      </p>
+                      </Link>
                       <p className="text-sm font-medium text-brand-700">
                         With {r.mentor_name} · {PROGRAMME[r.programme]}
                       </p>

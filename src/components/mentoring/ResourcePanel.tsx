@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { CalendarCheck, CheckCircle2, Mail, UserPlus, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -89,7 +90,13 @@ function StudentRow({
     <li className="card p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-display text-lg font-semibold text-ink-900">{s.student_name || 'A MySkills student'}</p>
+          <Link
+            to="/community-portal/student/$id"
+            params={{ id: s.student_id }}
+            className="font-display text-lg font-semibold text-ink-900 hover:text-brand-700 hover:underline"
+          >
+            {s.student_name || 'A MySkills student'}
+          </Link>
           {s.provider_name && s.mine === false && (
             <p className="text-sm font-medium text-brand-700">With {s.provider_name}</p>
           )}

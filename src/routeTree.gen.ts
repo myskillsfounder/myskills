@@ -58,6 +58,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as CommunityPortalLayoutIndexRouteImport } from './routes/community-portal/_layout/index'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
+import { Route as CommunityPortalLayoutStudentsRouteImport } from './routes/community-portal/_layout/students'
 import { Route as CommunityPortalLayoutProfileRouteImport } from './routes/community-portal/_layout/profile'
 import { Route as CommunityPortalLayoutResourceRouteImport } from './routes/community-portal/_layout/$resource'
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
@@ -81,6 +82,7 @@ import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
 import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
+import { Route as CommunityPortalLayoutStudentIdRouteImport } from './routes/community-portal/_layout/student.$id'
 import { Route as AdminLayoutUsersIdRouteImport } from './routes/admin/_layout/users.$id'
 
 const WellnessRoute = WellnessRouteImport.update({
@@ -332,6 +334,12 @@ const AdminLayoutIndexRoute = AdminLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const CommunityPortalLayoutStudentsRoute =
+  CommunityPortalLayoutStudentsRouteImport.update({
+    id: '/students',
+    path: '/students',
+    getParentRoute: () => CommunityPortalLayoutRoute,
+  } as any)
 const CommunityPortalLayoutProfileRoute =
   CommunityPortalLayoutProfileRouteImport.update({
     id: '/profile',
@@ -454,6 +462,12 @@ const AdminLayoutUsersIndexRoute = AdminLayoutUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const CommunityPortalLayoutStudentIdRoute =
+  CommunityPortalLayoutStudentIdRouteImport.update({
+    id: '/student/$id',
+    path: '/student/$id',
+    getParentRoute: () => CommunityPortalLayoutRoute,
+  } as any)
 const AdminLayoutUsersIdRoute = AdminLayoutUsersIdRouteImport.update({
   id: '/users/$id',
   path: '/users/$id',
@@ -530,9 +544,11 @@ export interface FileRoutesByFullPath {
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
+  '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
   '/admin/': typeof AdminLayoutIndexRoute
   '/community-portal/': typeof CommunityPortalLayoutIndexRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
+  '/community-portal/student/$id': typeof CommunityPortalLayoutStudentIdRoute
   '/admin/users/': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -602,9 +618,11 @@ export interface FileRoutesByTo {
   '/admin/wellness': typeof AdminLayoutWellnessRoute
   '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
+  '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
   '/admin': typeof AdminLayoutIndexRoute
   '/community-portal': typeof CommunityPortalLayoutIndexRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
+  '/community-portal/student/$id': typeof CommunityPortalLayoutStudentIdRoute
   '/admin/users': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -678,9 +696,11 @@ export interface FileRoutesById {
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
   '/community-portal/_layout/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/_layout/profile': typeof CommunityPortalLayoutProfileRoute
+  '/community-portal/_layout/students': typeof CommunityPortalLayoutStudentsRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
   '/community-portal/_layout/': typeof CommunityPortalLayoutIndexRoute
   '/admin/_layout/users/$id': typeof AdminLayoutUsersIdRoute
+  '/community-portal/_layout/student/$id': typeof CommunityPortalLayoutStudentIdRoute
   '/admin/_layout/users/': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -755,9 +775,11 @@ export interface FileRouteTypes {
     | '/admin/wellness'
     | '/community-portal/$resource'
     | '/community-portal/profile'
+    | '/community-portal/students'
     | '/admin/'
     | '/community-portal/'
     | '/admin/users/$id'
+    | '/community-portal/student/$id'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -827,9 +849,11 @@ export interface FileRouteTypes {
     | '/admin/wellness'
     | '/community-portal/$resource'
     | '/community-portal/profile'
+    | '/community-portal/students'
     | '/admin'
     | '/community-portal'
     | '/admin/users/$id'
+    | '/community-portal/student/$id'
     | '/admin/users'
   id:
     | '__root__'
@@ -902,9 +926,11 @@ export interface FileRouteTypes {
     | '/admin/_layout/wellness'
     | '/community-portal/_layout/$resource'
     | '/community-portal/_layout/profile'
+    | '/community-portal/_layout/students'
     | '/admin/_layout/'
     | '/community-portal/_layout/'
     | '/admin/_layout/users/$id'
+    | '/community-portal/_layout/student/$id'
     | '/admin/_layout/users/'
   fileRoutesById: FileRoutesById
 }
@@ -1298,6 +1324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/community-portal/_layout/students': {
+      id: '/community-portal/_layout/students'
+      path: '/students'
+      fullPath: '/community-portal/students'
+      preLoaderRoute: typeof CommunityPortalLayoutStudentsRouteImport
+      parentRoute: typeof CommunityPortalLayoutRoute
+    }
     '/community-portal/_layout/profile': {
       id: '/community-portal/_layout/profile'
       path: '/profile'
@@ -1459,6 +1492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutUsersIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/community-portal/_layout/student/$id': {
+      id: '/community-portal/_layout/student/$id'
+      path: '/student/$id'
+      fullPath: '/community-portal/student/$id'
+      preLoaderRoute: typeof CommunityPortalLayoutStudentIdRouteImport
+      parentRoute: typeof CommunityPortalLayoutRoute
+    }
     '/admin/_layout/users/$id': {
       id: '/admin/_layout/users/$id'
       path: '/users/$id'
@@ -1568,13 +1608,17 @@ const AdminLayoutRouteWithChildren = AdminLayoutRoute._addFileChildren(
 interface CommunityPortalLayoutRouteChildren {
   CommunityPortalLayoutResourceRoute: typeof CommunityPortalLayoutResourceRoute
   CommunityPortalLayoutProfileRoute: typeof CommunityPortalLayoutProfileRoute
+  CommunityPortalLayoutStudentsRoute: typeof CommunityPortalLayoutStudentsRoute
   CommunityPortalLayoutIndexRoute: typeof CommunityPortalLayoutIndexRoute
+  CommunityPortalLayoutStudentIdRoute: typeof CommunityPortalLayoutStudentIdRoute
 }
 
 const CommunityPortalLayoutRouteChildren: CommunityPortalLayoutRouteChildren = {
   CommunityPortalLayoutResourceRoute: CommunityPortalLayoutResourceRoute,
   CommunityPortalLayoutProfileRoute: CommunityPortalLayoutProfileRoute,
+  CommunityPortalLayoutStudentsRoute: CommunityPortalLayoutStudentsRoute,
   CommunityPortalLayoutIndexRoute: CommunityPortalLayoutIndexRoute,
+  CommunityPortalLayoutStudentIdRoute: CommunityPortalLayoutStudentIdRoute,
 }
 
 const CommunityPortalLayoutRouteWithChildren =
