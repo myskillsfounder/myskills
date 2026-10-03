@@ -13,6 +13,7 @@ import {
   type GrantedResource,
 } from '@/lib/communityPortal'
 import { Alert, Button, EmptyState, Input, Skeleton } from '@/components/ui'
+import { ProvidersOverview } from '@/components/mentoring/ProvidersOverview'
 
 const today = () => new Date().toISOString().slice(0, 10)
 const day = (iso: string) =>
@@ -238,6 +239,12 @@ export function ResourcePanel({
         {organisation && <span className="font-semibold text-ink-900">{organisation}. </span>}
         {seesAll ? OVERVIEW[resource] : copy.intro}
       </p>
+
+      {/* An overview starts with who the students are working with. */}
+      {seesAll && <ProvidersOverview resource={resource} />}
+      {seesAll && (
+        <h2 className="-mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Students</h2>
+      )}
 
       {/* Organisations add their own students; people are assigned theirs by the team. */}
       {!logs && !seesAll && (
