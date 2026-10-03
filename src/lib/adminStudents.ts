@@ -99,6 +99,18 @@ export async function fetchStudents(search?: string): Promise<AdminStudent[]> {
   return (data ?? []) as AdminStudent[]
 }
 
+/** Who each student is working with: mentors, active or waiting. Empty (not an
+ *  error) until docs/supabase-admin-team-role.sql is run. Keyed by student id. */
+export async function fetchStudentMentors(): Promise<Record<string, { names: string; waiting: boolean }>> {
+  const { data, error } = await supabase.rpc('admin_student_mentors')
+  if (error) return {}
+  const out: Record<string, { names: string; waiting: boolean }> = {}
+  for (const r of (data ?? []) as { student_id: string; mentor_names: string; waiting: boolean }[]) {
+    out[r.student_id] = { names: r.mentor_names, waiting: r.waiting }
+  }
+  return out
+}
+
 /* -- one student ---------------------------------------------------------- */
 
 interface AptitudeRow<K extends string> {

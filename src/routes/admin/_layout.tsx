@@ -65,12 +65,12 @@ type NavItem = {
 
 // Grouped the way the work is: the students and their score, the two
 // programmes, the people and organisations MySkills works with, and the site
-// itself. `section: null` marks Overview — not a grantable slug, shown only to
-// full admins (see src/lib/staffAccess.ts).
+// itself. A section is something an admin grants one person at a time; `null`
+// (none left today) would mean full admins only (see src/lib/staffAccess.ts).
 const GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Overview',
-    items: [{ to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: null }],
+    items: [{ to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: 'overview' }],
   },
   {
     label: 'Students',
@@ -87,9 +87,9 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
       { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
       { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness' },
-      { to: '/admin/internship-partners', label: 'Internships', icon: Briefcase, section: null },
+      { to: '/admin/internship-partners', label: 'Internships', icon: Briefcase, section: 'partner-leads' },
       { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
-      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: null },
+      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access' },
     ],
   },
   {
@@ -127,7 +127,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     label: 'Leads',
     items: [
       { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
-      { to: '/admin/cr-leads', label: 'Career Readiness leads', icon: Users, section: null },
+      { to: '/admin/cr-leads', label: 'Career Readiness leads', icon: Users, section: 'partner-leads' },
     ],
   },
   {

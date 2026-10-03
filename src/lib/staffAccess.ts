@@ -20,6 +20,11 @@ export const STAFF_SECTIONS = [
   'wellness',
   'verification',
   'mentor-reviews',
+  // The internal team role (docs/supabase-admin-team-role.sql): pages that were
+  // for a full admin only, now grantable one at a time.
+  'overview',
+  'portal-access',
+  'partner-leads',
 ] as const
 
 export type StaffSection = (typeof STAFF_SECTIONS)[number]
