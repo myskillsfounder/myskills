@@ -4,6 +4,7 @@ import { Mail, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { fetchCommunityMentorStudents, type MentorStudent } from '@/lib/communityPortal'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
+import { ProvidersOverview } from '@/components/mentoring/ProvidersOverview'
 
 const day = (iso: string) =>
   new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
@@ -40,29 +41,33 @@ export function MentorsOverview() {
     }
   }, [])
 
-  if (loading) return <Skeleton className="h-32 w-full" />
-  if (error) {
-    return (
+  let students
+  if (loading) {
+    students = <Skeleton className="h-32 w-full" />
+  } else if (error) {
+    students = (
       <Alert tone="danger" title="Couldn’t load mentors’ students">
         <p>{error}</p>
       </Alert>
     )
-  }
-  if (rows.length === 0) {
-    return (
+  } else if (rows.length === 0) {
+    students = (
       <EmptyState
         icon={Users}
-        title="No students yet"
+        title="No students with a mentor yet"
         description="Students appear here as soon as one asks a mentor to work with them."
       />
     )
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <p className="max-w-2xl text-sm leading-relaxed text-ink-600">
-        Every student working with a mentor, which mentor, and the sessions logged so far.
+        Every mentor and how many students are working with each, then the students themselves and the sessions logged so far.
       </p>
+      <ProvidersOverview resource="mentors" />
+      <h2 className="-mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Students</h2>
+      {students}
       {GROUPS.map((g) => {
         const list = rows.filter((r) => r.status === g.status)
         if (list.length === 0) return null

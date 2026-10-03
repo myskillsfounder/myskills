@@ -293,3 +293,55 @@ export async function fetchStudentRecord(studentId: string): Promise<StudentReco
   }
   return data as StudentRecord
 }
+
+/* -- overview: the people and organisations behind each section ------------ */
+
+/** A mentor listing with its status and how many students are active with them. */
+export interface CommunityMentor {
+  id: string
+  full_name: string
+  headline: string
+  expertise: string[]
+  avatar_url: string | null
+  /** An account is linked, so they can sign in to the portal. */
+  linked: boolean
+  /** Profile complete, so students are offered them. */
+  ready: boolean
+  accepting: boolean
+  active: number
+  waiting: number
+  ended: number
+  sessions: number
+}
+
+/** Null (not an error) until docs/supabase-community-portal-providers.sql is run. */
+export async function fetchCommunityMentors(): Promise<CommunityMentor[] | null> {
+  const { data, error } = await supabase.rpc('community_mentors')
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as CommunityMentor[]
+}
+
+/** A counsellor, career guide, company or institution that has portal access. */
+export interface CommunityProvider {
+  user_id: string
+  full_name: string | null
+  email: string | null
+  organisation: string | null
+  since: string
+  active: number
+  ended: number
+  sessions: number
+  last_session: string | null
+}
+
+export async function fetchCommunityProviders(resource: GrantedResource): Promise<CommunityProvider[] | null> {
+  const { data, error } = await supabase.rpc('community_providers', { p_resource: resource })
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as CommunityProvider[]
+}
