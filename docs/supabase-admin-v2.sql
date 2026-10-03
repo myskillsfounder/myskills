@@ -29,7 +29,7 @@ as $$
 declare
   v_out json;
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('overview') then
     return null;
   end if;
 

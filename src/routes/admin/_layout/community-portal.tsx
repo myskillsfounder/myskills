@@ -14,16 +14,16 @@ import {
   type CommunityResource,
   type CommunityUsage,
 } from '@/lib/communityPortal'
-import { RequireAdmin } from '@/components/admin/AdminSectionGate'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
-// Admins only: this decides who can open which part of the Community portal,
-// and shows which students are using which resource.
+// Needs the portal-access section (a full admin has it): this decides who can
+// open which part of the Community portal, and shows which students use what.
 export const Route = createFileRoute('/admin/_layout/community-portal')({
   component: () => (
-    <RequireAdmin>
+    <RequireSection section="portal-access">
       <CommunityPortalAdminPage />
-    </RequireAdmin>
+    </RequireSection>
   ),
 })
 

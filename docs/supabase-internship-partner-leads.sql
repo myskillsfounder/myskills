@@ -51,14 +51,14 @@ drop policy if exists "admins read leads" on public.internship_partner_leads;
 create policy "admins read leads"
   on public.internship_partner_leads for select
   to authenticated
-  using (public.is_admin());
+  using (public.has_section_access('partner-leads'));
 
 drop policy if exists "admins update leads" on public.internship_partner_leads;
 create policy "admins update leads"
   on public.internship_partner_leads for update
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (public.has_section_access('partner-leads'))
+  with check (public.has_section_access('partner-leads'));
 
 -- ---------------------------------------------------------------------------
 -- Email notification — same shape as the other lead/application triggers.

@@ -3,7 +3,7 @@ import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2, ChevronRight, Search, Users as UsersIcon } from 'lucide-react'
 import { setMentorFlag } from '@/lib/admin'
-import { fetchStudents, type AdminStudent } from '@/lib/adminStudents'
+import { fetchStudentMentors, fetchStudents, type AdminStudent } from '@/lib/adminStudents'
 import { bandFor } from '@/lib/readinessScore'
 import { skillTracks } from '@/lib/skillTracks'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
@@ -40,6 +40,12 @@ function StudentsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
   const [busyId, setBusyId] = useState<string>()
+  // Who each student works with. Loaded beside the list; absent until the SQL for it is run.
+  const [mentors, setMentors] = useState<Record<string, { names: string; waiting: boolean }>>({})
+
+  useEffect(() => {
+    void fetchStudentMentors().then(setMentors)
+  }, [])
 
   const load = useCallback(async (term: string) => {
     setLoading(true)
@@ -131,15 +137,17 @@ function StudentsPage() {
         />
       ) : (
         <div className="card overflow-x-auto">
-          <table className="w-full min-w-[860px] text-left text-sm">
+          <table className="w-full min-w-[1000px] text-left text-sm">
             <thead className="border-b border-ink-200 text-xs uppercase tracking-wide text-ink-500">
               <tr>
                 <th scope="col" className="px-4 py-3 font-semibold">Student</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Score</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Digital Marketing</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Career Readiness</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Joined</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Working with</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Last login</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Mentor</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Mentor access</th>
                 <th scope="col" className="px-2 py-3" aria-label="Open" />
               </tr>
             </thead>
@@ -180,6 +188,19 @@ function StudentsPage() {
                         <span className="font-semibold text-ink-900">{s.cr_modules}</span>/5 modules
                       </p>
                       {s.cr_signed_off && <p className="font-semibold text-emerald-700">Signed off</p>}
+                    </td>
+                    <td className="px-4 py-3 text-ink-600">{fmtDate(s.created_at)}</td>
+                    <td className="px-4 py-3 text-xs text-ink-600">
+                      {mentors[s.id] ? (
+                        <>
+                          <p className="font-medium text-ink-900">{mentors[s.id].names}</p>
+                          <p className={mentors[s.id].waiting ? 'text-amber-700' : 'text-emerald-700'}>
+                            {mentors[s.id].waiting ? 'Waiting to be accepted' : 'Mentor'}
+                          </p>
+                        </>
+                      ) : (
+                        <span className="text-ink-400">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-ink-600">{fmtDate(s.last_login)}</td>
                     <td className="px-4 py-3">
