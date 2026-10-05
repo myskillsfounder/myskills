@@ -272,7 +272,7 @@ as $$
 declare
   v_user uuid;
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('portal-access') then
     raise exception 'Not authorised.';
   end if;
   if p_resource not in ('wellness', 'guidance', 'internships', 'institutions') then
@@ -302,7 +302,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('portal-access') then
     raise exception 'Not authorised.';
   end if;
   -- Their students stay on record (ended), so the usage history survives.
@@ -332,7 +332,7 @@ set search_path = public
 stable
 as $$
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('portal-access') then
     raise exception 'Not authorised.';
   end if;
   return query
@@ -464,7 +464,7 @@ set search_path = public
 stable
 as $$
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('portal-access') then
     raise exception 'Not authorised.';
   end if;
 

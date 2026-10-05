@@ -16,10 +16,9 @@ import { fetchOverviewV2, type AdminOverviewV2 } from '@/lib/adminStudents'
 import { STAFF_SECTIONS, useStaffAccessContext, type StaffSection } from '@/lib/staffAccess'
 import { Alert, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-// Overview is admin-only (it aggregates every section's stats in one call),
-// but a non-admin staff member with real section access shouldn't land here
-// and just see a wall — send them straight to their first granted section
-// instead. Only truly access-less accounts (unreachable in practice, the
+// Overview is its own section (it aggregates every section's stats in one
+// call). A staff member without it shouldn't land here and just see a wall —
+// send them straight to their first granted section instead. Only truly access-less accounts (unreachable in practice, the
 // parent layout already blocks those before this ever renders) see "Not
 // available" here.
 const SECTION_PATH: Record<StaffSection, string> = {
@@ -35,20 +34,24 @@ const SECTION_PATH: Record<StaffSection, string> = {
   'demo-requests': '/admin/demo-requests',
   blog: '/admin/blog',
   ads: '/admin/ads',
+  overview: '/admin',
+  'portal-access': '/admin/community-portal',
+  'partner-leads': '/admin/internship-partners',
 }
 
 function OverviewGate() {
   const router = useRouter()
   const { isAdmin, sections } = useStaffAccessContext()
-  const firstSection = sections ? STAFF_SECTIONS.find((s) => sections.includes(s)) : undefined
+  const canSee = isAdmin === true || (sections?.includes('overview') ?? false)
+  const firstSection = sections ? STAFF_SECTIONS.find((s) => s !== 'overview' && sections.includes(s)) : undefined
 
   useEffect(() => {
-    if (isAdmin === false && firstSection) {
+    if (isAdmin === false && !canSee && firstSection) {
       router.navigate({ to: SECTION_PATH[firstSection] })
     }
-  }, [isAdmin, firstSection, router])
+  }, [isAdmin, canSee, firstSection, router])
 
-  if (isAdmin === null || sections === null || (isAdmin === false && firstSection)) {
+  if (isAdmin === null || sections === null || (!canSee && firstSection)) {
     return (
       <>
         <Skeleton className="h-8 w-48" />
@@ -57,7 +60,7 @@ function OverviewGate() {
     )
   }
 
-  if (!isAdmin) {
+  if (!canSee) {
     return (
       <EmptyState
         icon={ShieldAlert}

@@ -169,7 +169,7 @@ as $$
 declare
   v_user uuid;
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('portal-access') then
     raise exception 'Not authorised.';
   end if;
   if p_resource not in ('mentors', 'wellness', 'guidance', 'internships', 'institutions') then
@@ -216,7 +216,7 @@ set search_path = public
 stable
 as $$
 begin
-  if not public.is_admin() then
+  if not public.has_section_access('portal-access') then
     raise exception 'Not authorised.';
   end if;
   return query

@@ -3,15 +3,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Briefcase, Mail, Phone } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { fetchInternshipLeads, setLeadContacted, type InternshipLead } from '@/lib/adminProgrammes'
-import { RequireAdmin } from '@/components/admin/AdminSectionGate'
+import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-// Admins only: the table's own RLS lets nobody else read these contacts.
+// Needs the partner-leads section (a full admin has it): the table's own RLS enforces the same.
 export const Route = createFileRoute('/admin/_layout/internship-partners')({
   component: () => (
-    <RequireAdmin>
+    <RequireSection section="partner-leads">
       <InternshipPartnersPage />
-    </RequireAdmin>
+    </RequireSection>
   ),
 })
 
