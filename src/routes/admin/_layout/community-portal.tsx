@@ -15,6 +15,7 @@ import {
   type CommunityUsage,
 } from '@/lib/communityPortal'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
 // Needs the portal-access section (a full admin has it): this decides who can
@@ -103,8 +104,10 @@ function CommunityPortalAdminPage() {
       <PageHeader
         eyebrow="Community"
         title="Portal access & usage"
-        subtitle="Who can open each part of the Community portal, and which students are using which resource. Mentors get access by being linked to a mentor listing (Community > Mentors)."
+        subtitle="Verify people who sign up for the Community portal, see who can open each part of it, and which students are using which resource. Mentors get access by being linked to a mentor listing (Community > Mentors)."
       />
+
+      <PortalRequestsPanel onChanged={() => void load()} />
 
       {error && (
         <div className="mb-5">

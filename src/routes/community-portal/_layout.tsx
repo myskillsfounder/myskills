@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { createFileRoute, Link, Outlet, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Outlet, useRouter } from '@tanstack/react-router'
 import { Briefcase, Building2, Compass, GraduationCap, HeartHandshake, LayoutDashboard, User, Users } from 'lucide-react'
 import { requireMentorSession } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
@@ -14,8 +14,9 @@ import {
 } from '@/lib/communityPortal'
 import { MentorPortalContext, PortalAccessContext, PortalNameContext } from '@/components/mentoring/MentorPortalContext'
 import { MentorShell, type PortalTab } from '@/components/mentoring/MentorShell'
+import { PortalRequestStatus } from '@/components/mentoring/PortalRequestStatus'
 import { RequestsLine } from '@/components/mentoring/RequestsLine'
-import { Alert, EmptyState, Skeleton } from '@/components/ui'
+import { Alert, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/community-portal/_layout')({
   beforeLoad: requireMentorSession,
@@ -91,7 +92,8 @@ function MentorPortalLayout() {
   const sections = [...access].sort((a, b) => ORDER.indexOf(a.resource) - ORDER.indexOf(b.resource))
   // Mentors first, as on the Community page: this account's own students if it is
   // a mentor, and the overview beside them if it can also see every mentor's.
-  const tabs: PortalTab[] = [
+  const verified = Boolean(profile) || access.length > 0
+  const tabs: PortalTab[] = !verified ? [] : [
     { to: '/community-portal', label: 'Home', icon: LayoutDashboard, exact: true },
     ...(profile
       ? [{ to: '/community-portal/students', label: 'My students', icon: Users, count: waiting, group: 'Community' }]
@@ -127,16 +129,9 @@ function MentorPortalLayout() {
           <p>{error}</p>
         </Alert>
       ) : !profile && access.length === 0 ? (
-        <EmptyState
-          icon={GraduationCap}
-          title="This account doesn’t have access yet"
-          description="The Community portal is for approved MySkills mentors, counsellors, career guides and partner organisations. Once the team gives this account access you’ll get an email, and your section will appear here."
-          action={
-            <Link to="/community" className="text-sm font-semibold text-brand-700 hover:underline">
-              Partner with MySkills
-            </Link>
-          }
-        />
+        // Signing up opens nothing: until the team verifies the request, this
+        // says it is waiting (or was turned down, or lets them ask).
+        <PortalRequestStatus name={displayName} email={user?.email} onCheck={async () => void (await load())} />
       ) : (
         <PortalAccessContext.Provider value={access}>
           <PortalNameContext.Provider value={displayName}>

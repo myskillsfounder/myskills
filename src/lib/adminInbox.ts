@@ -17,6 +17,7 @@ export type InboxKind =
   | 'internship-lead'
   | 'cr-lead'
   | 'unlinked-mentor'
+  | 'portal-request'
 
 export interface InboxItem {
   kind: InboxKind
@@ -41,6 +42,7 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
   'internship-lead': { label: 'Internship company', plural: 'Internship companies', to: '/admin/internship-partners' },
   'cr-lead': { label: 'Career Readiness lead', plural: 'Career Readiness leads', to: '/admin/cr-leads' },
   'unlinked-mentor': { label: 'Mentor to link', plural: 'Mentors to link', to: '/admin/mentors' },
+  'portal-request': { label: 'Portal sign-up', plural: 'Portal sign-ups to verify', to: '/admin/community-portal' },
 }
 
 const DAY = 24 * 60 * 60 * 1000

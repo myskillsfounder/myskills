@@ -65,11 +65,13 @@ export async function signUp(params: {
   name: string
   email: string
   password: string
+  /** Extra details kept with the account (the Community portal's access request). */
+  data?: Record<string, unknown>
 }): Promise<void> {
   const { error } = await supabase.auth.signUp({
     email: params.email,
     password: params.password,
-    options: { data: { name: params.name } },
+    options: { data: { name: params.name, ...params.data } },
   })
   if (error) throw mapAuthError(error)
 }
