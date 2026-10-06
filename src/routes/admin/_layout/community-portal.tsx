@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { KeyRound, Users } from 'lucide-react'
+import { Check, Copy, Eye, KeyRound, Mail, UserPlus, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   GRANTED_RESOURCES,
@@ -31,6 +31,62 @@ export const Route = createFileRoute('/admin/_layout/community-portal')({
 const isOrganisation = (r: CommunityResource) => r === 'internships' || r === 'institutions'
 const logsSessions = (r: CommunityResource) => r !== 'mentors' && LOGS_SESSIONS[r]
 
+/** The sign-up role that matches each section, for the invite link. */
+const SIGNUP_ROLE: Record<CommunityResource, string> = {
+  mentors: 'mentor',
+  wellness: 'wellness',
+  guidance: 'guidance',
+  internships: 'internships',
+  institutions: 'institutions',
+}
+const PARTNER_WORD: Record<CommunityResource, string> = {
+  mentors: 'mentor',
+  wellness: 'counsellor',
+  guidance: 'career guide',
+  internships: 'company',
+  institutions: 'institution',
+}
+
+const signupLink = (r: CommunityResource) => `${window.location.origin}/community-portal/signup?role=${SIGNUP_ROLE[r]}`
+
+/**
+ * The way in for someone with no account yet: the sign-up link with their role
+ * already chosen, to copy or to email. They sign up, confirm their email, and
+ * appear at the top of this page to be verified.
+ */
+function InviteLink({ resource, email }: { resource: CommunityResource; email?: string }) {
+  const [copied, setCopied] = useState(false)
+  const link = signupLink(resource)
+  const mail = `mailto:${email ?? ''}?subject=${encodeURIComponent('Your MySkills Community portal account')}&body=${encodeURIComponent(
+    `Hi,\n\nPlease create your MySkills partner account here:\n${link}\n\nUse this email address. Once you have confirmed it, we verify you and your portal opens.\n\nThanks,\nMySkills`,
+  )}`
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(link)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      /* the link is on screen to select by hand */
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <code className="min-w-0 flex-1 truncate rounded-lg bg-white px-3 py-2 text-xs text-ink-700 ring-1 ring-ink-900/[0.08]">{link}</code>
+      <Button size="sm" variant="secondary" icon={copied ? Check : Copy} onClick={() => void copy()}>
+        {copied ? 'Copied' : 'Copy link'}
+      </Button>
+      <a
+        href={mail}
+        className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-ink-300 bg-white px-3.5 text-[13px] font-semibold text-ink-800 hover:border-ink-400 hover:bg-ink-50"
+      >
+        <Mail size={14} /> Email it
+      </a>
+    </div>
+  )
+}
+
 function CommunityPortalAdminPage() {
   const [access, setAccess] = useState<AdminCommunityAccess[]>([])
   const [usage, setUsage] = useState<CommunityUsage[]>([])
@@ -40,15 +96,25 @@ function CommunityPortalAdminPage() {
   const [email, setEmail] = useState('')
   const [resource, setResource] = useState<CommunityResource>('wellness')
   const [organisation, setOrganisation] = useState('')
-  // An overview: every student in the resource, whoever they are with.
-  const [seesAll, setSeesAll] = useState(false)
-  // Mentors can only be granted as an overview; a company or institution
-  // account needs its name unless it is one.
-  const overview = seesAll || resource === 'mentors'
+  // Two different things that used to share one form and one tick-box: a
+  // partner's own section, or a team member's read-only view of everyone.
+  const [who, setWho] = useState<'partner' | 'team'>('partner')
+  const overview = who === 'team'
   const needsName = isOrganisation(resource) && !overview
   const [busy, setBusy] = useState(false)
   const [formError, setFormError] = useState<string>()
+  // The email that turned out to have no account, so the form can offer the invite.
+  const [noAccount, setNoAccount] = useState<string>()
+  const [inviteRole, setInviteRole] = useState<CommunityResource>('mentors')
   const [confirm, setConfirm] = useState<string>()
+
+  function pickWho(next: 'partner' | 'team') {
+    setWho(next)
+    setFormError(undefined)
+    setNoAccount(undefined)
+    // A mentor's own section comes from their listing, never from here.
+    if (next === 'partner' && resource === 'mentors') setResource('wellness')
+  }
 
   async function load() {
     try {
@@ -70,13 +136,17 @@ function CommunityPortalAdminPage() {
   async function grant() {
     setBusy(true)
     setFormError(undefined)
+    setNoAccount(undefined)
     try {
       await grantCommunityAccess(email, resource, needsName ? organisation : '', overview)
       setEmail('')
       setOrganisation('')
       await load()
     } catch (e) {
-      setFormError(errorMessage(e))
+      const message = errorMessage(e)
+      // Not a dead end: say what to do next, whatever wording the database used.
+      if (/no account uses/i.test(message)) setNoAccount(email.trim())
+      else setFormError(message)
     } finally {
       setBusy(false)
     }
@@ -104,7 +174,7 @@ function CommunityPortalAdminPage() {
       <PageHeader
         eyebrow="Community"
         title="Portal access & usage"
-        subtitle="Verify people who sign up for the Community portal, see who can open each part of it, and which students are using which resource. Mentors get access by being linked to a mentor listing (Community > Mentors)."
+        subtitle="Invite partners, verify the ones who sign up, see who can open each part of the Community portal, and which students are using which resource."
       />
 
       <PortalRequestsPanel onChanged={() => void load()} />
@@ -117,22 +187,79 @@ function CommunityPortalAdminPage() {
         </div>
       )}
 
+      {/* The usual way in: they sign up, and are verified at the top of this page. */}
       <section className="card p-5 sm:p-6">
-        <h2 className="font-display text-lg font-semibold text-ink-900">Give someone access</h2>
+        <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-ink-900">
+          <UserPlus size={18} className="text-brand-700" /> Invite a partner
+        </h2>
         <p className="mt-1 text-sm text-ink-600">
-          They need a MySkills account first (they can create one at the Community portal sign-in). Each resource is
-          granted separately; a person can hold more than one.
+          Someone new, with no account yet? Send them the sign-up link. They create their account and confirm their
+          email, then appear at the top of this page for you to verify. This is how a mentor gets in.
         </p>
+        <div className="mt-4 grid gap-3 lg:grid-cols-[14rem_minmax(0,1fr)] lg:items-end">
+          <label className="block text-sm font-medium text-ink-800">
+            They are a…
+            <select
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value as CommunityResource)}
+              className="field mt-1.5 block w-full"
+            >
+              {(['mentors', ...GRANTED_RESOURCES] as CommunityResource[]).map((r) => (
+                <option key={r} value={r}>
+                  {PARTNER_WORD[r].replace(/^./, (c) => c.toUpperCase())}
+                </option>
+              ))}
+            </select>
+          </label>
+          <InviteLink resource={inviteRole} />
+        </div>
+      </section>
+
+      <section className="card mt-6 p-5 sm:p-6">
+        <h2 className="font-display text-lg font-semibold text-ink-900">Give access to an existing account</h2>
+        <p className="mt-1 text-sm text-ink-600">
+          For someone who already has an account and didn’t come through the sign-up. Each section is given separately;
+          a person can hold more than one.
+        </p>
+
+        <div className="mt-4 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Who is this for">
+          {(
+            [
+              { id: 'partner', icon: KeyRound, title: 'A partner', body: 'A counsellor, career guide, company or institution. They see only their own students.' },
+              { id: 'team', icon: Eye, title: 'The MySkills team', body: 'A read-only overview of every student in a section, whoever they are working with.' },
+            ] as const
+          ).map(({ id, icon: Icon, title, body }) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={who === id}
+              onClick={() => pickWho(id)}
+              className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-colors ${
+                who === id ? 'border-brand-500 bg-brand-50/60 ring-1 ring-brand-500/30' : 'border-ink-200 bg-white hover:bg-ink-50'
+              }`}
+            >
+              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${who === id ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-600'}`}>
+                <Icon size={15} />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold text-ink-900">{title}</span>
+                <span className="block text-xs leading-relaxed text-ink-600">{body}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Input label="Their email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
           <label className="block text-sm font-medium text-ink-800">
-            Resource
+            {overview ? 'Section to oversee' : 'Section'}
             <select
               value={resource}
               onChange={(e) => setResource(e.target.value as CommunityResource)}
               className="field mt-1.5 block w-full"
             >
-              {(['mentors', ...GRANTED_RESOURCES] as CommunityResource[]).map((r) => (
+              {((overview ? ['mentors', ...GRANTED_RESOURCES] : GRANTED_RESOURCES) as CommunityResource[]).map((r) => (
                 <option key={r} value={r}>
                   {RESOURCE_LABEL[r]}
                 </option>
@@ -149,27 +276,34 @@ function CommunityPortalAdminPage() {
             />
           )}
           <div className="flex items-end">
-            <Button icon={KeyRound} disabled={busy || !canGrant} onClick={() => void grant()}>
-              {busy ? 'Saving…' : 'Give access'}
+            <Button icon={overview ? Eye : KeyRound} disabled={busy || !canGrant} onClick={() => void grant()}>
+              {busy ? 'Saving…' : overview ? 'Give overview' : 'Give access'}
             </Button>
           </div>
         </div>
-        <label className="mt-4 flex items-start gap-2.5 text-sm text-ink-700">
-          <input
-            type="checkbox"
-            checked={overview}
-            disabled={resource === 'mentors'}
-            onChange={(e) => setSeesAll(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-ink-300"
-          />
-          <span>
-            <span className="font-medium text-ink-900">Sees everything in this resource</span>
-            <span className="block text-xs text-ink-500">
-              An overview for the MySkills team: every student, whoever they are working with, read-only.
-              {resource === 'mentors' && ' Mentors is always granted this way — a mentor gets their own section from their listing.'}
-            </span>
-          </span>
-        </label>
+
+        {!overview && (
+          <p className="mt-3 text-xs text-ink-500">
+            Adding a mentor? Not here: a mentor’s section comes from their mentor listing. Invite them above, then verify
+            them and pick their listing when they appear.
+          </p>
+        )}
+
+        {noAccount && (
+          <div className="mt-4 rounded-xl bg-amber-50 p-4">
+            <p className="text-sm font-semibold text-amber-900">{noAccount} doesn’t have an account yet</p>
+            <p className="mt-0.5 text-sm text-amber-900/80">
+              {overview
+                ? 'A team member needs an account first. Ask them to sign up on the site with this email, then give the overview again.'
+                : `Send them the sign-up link below. Once they’ve signed up and confirmed their email, they appear at the top of this page for you to verify, and that gives them access.`}
+            </p>
+            {!overview && (
+              <div className="mt-3">
+                <InviteLink resource={resource} email={noAccount} />
+              </div>
+            )}
+          </div>
+        )}
         {formError && <p className="mt-3 text-sm text-red-700">{formError}</p>}
       </section>
 
