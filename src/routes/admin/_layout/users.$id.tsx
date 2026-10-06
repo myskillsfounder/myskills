@@ -9,7 +9,7 @@ import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
 import { SKILLS, levelFor as skillLevel } from '@/lib/careerReadinessAssessment'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
-import { Alert, Avatar, Badge, EmptyState, Skeleton } from '@/components/ui'
+import { Alert, Avatar, EmptyState, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/users/$id')({
   component: () => (
@@ -157,7 +157,6 @@ function StudentPage() {
               )}
               <span>Joined {fmtDate(p.created_at)}</span>
               <span>Last login {fmtDate(p.last_login)}</span>
-              {p.is_mentor && <Badge tone="brand">Mentor</Badge>}
             </div>
           </div>
         </div>

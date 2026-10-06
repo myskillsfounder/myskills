@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute, Link, Outlet, useRouter, useRouterState } from '@tanstack/react-router'
 import {
   Award,
@@ -10,7 +10,9 @@ import {
   ChevronDown,
   ClipboardCheck,
   ClipboardList,
+  Crown,
   Dumbbell,
+  ExternalLink,
   FileText,
   GraduationCap,
   HeartHandshake,
@@ -24,9 +26,13 @@ import {
   ShieldCheck,
   Sparkles,
   UserCheck,
+  UserCog,
   Users,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
+import { useAuthUser } from '@/lib/useAuth'
+import { fetchMyCommunityAccess } from '@/lib/communityPortal'
+import { fetchMyMentorProfile } from '@/lib/mentorPortal'
 import { useInboxCount } from '@/lib/adminInbox'
 import type { ReviewProgramme } from '@/lib/mentorReview'
 import { requireStaffSession } from '@/lib/guards'
@@ -69,12 +75,13 @@ type NavItem = {
 // Grouped the way the work is: the students and their score, the two
 // programmes, the people and organisations MySkills works with, and the site
 // itself. A section is something an admin grants one person at a time; `null`
-// (none left today) would mean full admins only (see src/lib/staffAccess.ts).
+// means full admins only (see src/lib/staffAccess.ts).
 const GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Home',
     items: [
-      { to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: 'overview' },
+      // Everyone starts on the Dashboard; its numbers need the 'overview' section.
+      { to: '/admin', label: 'Dashboard', icon: BarChart3, exact: true, section: 'any' },
       { to: '/admin/inbox', label: 'Inbox', icon: Inbox, section: 'any' },
     ],
   },
@@ -128,6 +135,11 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
       { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
     ],
+  },
+  // Who on the internal team can open this panel. Full admins only.
+  {
+    label: 'Team',
+    items: [{ to: '/admin/team', label: 'Team & access', icon: UserCog, section: null }],
   },
 ]
 
@@ -243,15 +255,36 @@ function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSect
   )
 }
 
+/** Whether this account can also open the Community portal (a mentor, or
+ *  someone given a section of it), so the header can offer the way across.
+ *  Quietly false if anything fails: it only decides whether a link shows. */
+function usePortalAccess(enabled: boolean): boolean {
+  const [has, setHas] = useState(false)
+  useEffect(() => {
+    if (!enabled) return
+    let active = true
+    Promise.all([fetchMyMentorProfile().catch(() => null), fetchMyCommunityAccess().catch(() => null)]).then(
+      ([mentor, access]) => active && setHas(Boolean(mentor) || (access ?? []).length > 0),
+    )
+    return () => {
+      active = false
+    }
+  }, [enabled])
+  return has
+}
+
 /**
- * Its own minimal shell, deliberately NOT the shared AppShell — this is a
- * staff tool, not a student surface, so it drops the Dashboard/Practice/
- * Community/Feedback sidebar, the ad slider, and the profile-completion
- * nudge entirely. No link back to the main app either — admin/staff users
- * shouldn't need it. Just a logo, a sign-out button, and the content.
+ * Its own shell, deliberately NOT the shared AppShell — this is a staff tool,
+ * not a student surface. The bar is dark and says "Admin · Internal team" so
+ * it can't be mistaken for the Community portal (a white sidebar, for
+ * partners) at a glance; it also says who is signed in and with what access,
+ * because one person can hold several sign-ins.
  */
-function StaffShell({ children }: { children: ReactNode }) {
+function StaffShell({ children, isAdmin }: { children: ReactNode; isAdmin?: boolean | null }) {
   const router = useRouter()
+  const { user } = useAuthUser()
+  const known = isAdmin !== undefined && isAdmin !== null
+  const portal = usePortalAccess(known)
 
   async function handleSignOut() {
     await signOut()
@@ -260,22 +293,42 @@ function StaffShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="surface-paper min-h-screen">
-      <header className="surface-paper sticky top-0 z-30 border-b border-ink-900/[0.06] backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2.5">
+      <header className="sticky top-0 z-30 bg-ink-900 text-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+          <Link to="/admin" className="flex min-w-0 items-center gap-2.5">
             <img src="/logo-mark.png" alt="" className="h-8 w-8 shrink-0" />
-            <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
-              MySkills <span className="text-ink-400">·</span> Admin
+            <span className="font-display text-lg font-semibold tracking-tight">MySkills Admin</span>
+            <span className="hidden rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/80 sm:inline">
+              Internal team
             </span>
+          </Link>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {known && (
+              <div className="hidden text-right leading-tight md:block">
+                <p className="max-w-[16rem] truncate text-xs text-white/70">{user?.email}</p>
+                <p className={`inline-flex items-center gap-1 text-[11px] font-semibold ${isAdmin ? 'text-gold-300' : 'text-brand-200'}`}>
+                  {isAdmin && <Crown size={11} />}
+                  {isAdmin ? 'Full admin' : 'Team member'}
+                </p>
+              </div>
+            )}
+            {portal && (
+              <Link
+                to="/community-portal"
+                className="hidden items-center gap-1.5 rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20 sm:inline-flex"
+              >
+                Community portal <ExternalLink size={13} />
+              </Link>
+            )}
+            <button
+              type="button"
+              onClick={() => void handleSignOut()}
+              className="group flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-sm font-medium text-ink-900 transition-colors hover:bg-ink-100"
+            >
+              <LogOut size={15} className="text-ink-500 transition-transform duration-300 group-hover:-translate-x-0.5" />
+              Sign out
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => void handleSignOut()}
-            className="group flex items-center gap-2 rounded-xl border border-ink-900/[0.08] bg-white px-3.5 py-2 text-sm font-medium text-ink-700 shadow-e1 transition-colors hover:bg-ink-100"
-          >
-            <LogOut size={15} className="text-ink-500 transition-transform duration-300 group-hover:-translate-x-0.5" />
-            Sign out
-          </button>
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-8">{children}</main>
@@ -310,7 +363,7 @@ function AdminLayout() {
 
   return (
     <StaffAccessContext.Provider value={access}>
-      <StaffShell>
+      <StaffShell isAdmin={isAdmin}>
         <div className="lg:flex lg:gap-8">
           <AdminNav isAdmin={isAdmin} sections={sections} />
           <div className="min-w-0 flex-1">

@@ -4,6 +4,7 @@ import { Briefcase, Building2, Compass, GraduationCap, HeartHandshake, LayoutDas
 import { requireMentorSession } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { errorMessage } from '@/lib/errors'
+import { myStaffSections } from '@/lib/staffAccess'
 import { fetchMyMentees, type MentorSideMatch } from '@/lib/mentorMatches'
 import { fetchMyMentorProfile, type MyMentorProfile } from '@/lib/mentorPortal'
 import {
@@ -48,6 +49,15 @@ function MentorPortalLayout() {
   const { user } = useAuthUser()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
+  // Someone on the MySkills team gets a way back to the admin panel.
+  const [staff, setStaff] = useState(false)
+  useEffect(() => {
+    let active = true
+    void myStaffSections().then((s) => active && setStaff(s.length > 0))
+    return () => {
+      active = false
+    }
+  }, [])
 
   const load = useCallback(async () => {
     try {
@@ -104,20 +114,25 @@ function MentorPortalLayout() {
       icon: RESOURCE_ICON[a.resource],
       group: !profile && i === 0 ? 'Community' : undefined,
     })),
-    // Everyone verified has a profile page: their verification, and how they show up.
-    { to: '/community-portal/profile', label: 'My profile', icon: User, dot: profile ? !profile.ready : false, group: 'Account' },
+    // Every verified partner has a profile page: their verification, and how they
+    // show up. A team account that only looks across (an overview) is not a partner.
+    ...(profile || access.some((a) => !a.sees_all)
+      ? [{ to: '/community-portal/profile', label: 'My profile', icon: User, dot: profile ? !profile.ready : false, group: 'Account' }]
+      : []),
   ]
 
   const roles = [
     profile ? 'Mentor' : null,
     ...sections.filter((a) => a.resource !== 'mentors' || !profile).map((a) => RESOURCE_LABEL[a.resource]),
   ].filter(Boolean) as string[]
+  // A team account looking across every partner, not a partner's own portal.
+  const overview = sections.some((a) => a.sees_all)
   const subtitle =
     sections.find((a) => a.organisation)?.organisation ||
-    (sections.some((a) => a.sees_all) ? 'Overview · all sections' : roles.slice(0, 2).join(' · '))
+    (overview ? 'MySkills team · sees every section' : roles.slice(0, 2).join(' · '))
 
   return (
-    <MentorShell name={displayName} photo={profile?.avatar_url} subtitle={subtitle} tabs={tabs}>
+    <MentorShell name={displayName} photo={profile?.avatar_url} subtitle={subtitle} tabs={tabs} overview={overview} adminLink={staff}>
       {loading ? (
         <>
           <Skeleton className="h-8 w-56" />
