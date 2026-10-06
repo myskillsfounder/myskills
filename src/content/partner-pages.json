@@ -2,11 +2,20 @@
   "hub": {
     "path": "/community",
     "seoTitle": "Partner with MySkills — Mentors, Institutes & Internships",
-    "seoDescription": "Mentor students, list your training institute, or offer internships. Every way to partner with MySkills starts with a short application — a real person reads each one.",
+    "seoDescription": "Mentor students, counsel or guide them, list your training institute, or offer internships. Create a partner account and the MySkills team verifies you before any access is given.",
     "eyebrow": "Partner with MySkills",
     "h1": "Partner with MySkills",
     "h1Accent": "and help students get job-ready",
-    "intro": "MySkills helps students across India build personal and professional skills — practising with AI, working with real mentors, and proving it with internships. We partner with mentors, training institutes and companies. Applying takes a few minutes, and a real person reads every application.",
+    "intro": "MySkills helps students across India build personal and professional skills — practising with AI, working with real mentors, and proving it with internships. We partner with mentors, counsellors, career guides, training institutes and companies. Create a partner account in a few minutes; a real person verifies every one before it gets any access.",
+    "primaryCta": "Partner with MySkills",
+    "secondaryCta": "Sign in to the portal",
+    "howTitle": "How partnering works",
+    "howSteps": [
+      { "title": "Create your account", "body": "Choose what you do and tell us a little about you." },
+      { "title": "Confirm your email", "body": "We send a 6-digit code to the address you gave." },
+      { "title": "The team verifies you", "body": "A real person checks every request. We email you the outcome." },
+      { "title": "Your portal opens", "body": "You see only what your role needs, and students only what they choose to share." }
+    ],
     "sections": [
       {
         "key": "mentors",
@@ -19,7 +28,10 @@
           "Sessions on your schedule — pause new requests any time",
           "Award skill badges and verify projects with your name on them"
         ],
-        "cta": "Become a mentor"
+        "cta": "Become a mentor",
+        "role": "mentor",
+        "joinCta": "Partner as a mentor",
+        "learnCta": "How mentoring works"
       },
       {
         "key": "institutions",
@@ -32,7 +44,10 @@
           "Enquiries from students who already know what they want to learn",
           "Student ratings that build trust with future students"
         ],
-        "cta": "Partner your institution"
+        "cta": "Partner your institution",
+        "role": "institutions",
+        "joinCta": "Partner as an institution",
+        "learnCta": "How listing works"
       },
       {
         "key": "companies",
@@ -45,32 +60,53 @@
           "Skills and projects vouched for by mentors",
           "Tell us the roles you offer and we'll be in touch"
         ],
-        "cta": "Offer internships"
+        "cta": "Offer internships",
+        "role": "internships",
+        "joinCta": "Partner as a company",
+        "learnCta": "How internships work"
+      },
+      {
+        "key": "guides",
+        "anchor": "counsellors",
+        "eyebrow": "For counsellors and career guides",
+        "title": "Counsellors & career guides — support students privately",
+        "summary": "Some students need more than practice: someone to talk to, or someone to help them choose a track. The MySkills team connects them with you, and you keep the conversation private.",
+        "bullets": [
+          "The MySkills team assigns students to you, so you never have to find them",
+          "You log only the date of each session — what you discuss is never recorded",
+          "See a student's score, certificates and progress when it helps you guide them"
+        ],
+        "cta": "Partner as a counsellor or guide",
+        "joinCta": "Partner as a counsellor or guide"
       }
     ],
     "faqs": [
       {
         "q": "Who can partner with MySkills?",
-        "a": "Three kinds of partner: mentors who want to guide students, training institutes that teach digital marketing or related career skills, and companies that can offer internships."
+        "a": "Mentors who want to guide students, counsellors and career guides who support them, training institutes that teach digital marketing or related career skills, and companies that can offer internships."
       },
       {
         "q": "Does it cost anything to apply?",
-        "a": "No. Each application is a short form, and there is nothing to pay to submit it. We review every application by hand and reply by email."
+        "a": "No. Creating a partner account is free, and there is nothing to pay at any step. We review every request by hand and reply by email."
       },
       {
         "q": "Who are the students?",
         "a": "Students and early-career learners across India working through the MySkills Digital Marketing Programme and Career Readiness Programme."
       },
       {
-        "q": "Do I need a MySkills account to apply?",
-        "a": "No. All three applications work without an account."
+        "q": "What happens after I create a partner account?",
+        "a": "You confirm your email with a 6-digit code, then the MySkills team verifies your request. Until they approve it you can't see any student and no student sees you. Once approved, the Community portal opens with only what your role needs."
+      },
+      {
+        "q": "I already filled in an application form. Do I still need an account?",
+        "a": "Yes. The application tells us about you; the account is how you sign in. Use the same email address and the team will match them, so verification is quicker."
       }
     ]
   },
   "mentors": {
     "path": "/become-a-mentor",
     "seoTitle": "Become an Online Mentor for Students in India | MySkills",
-    "seoDescription": "Mentor students in digital marketing and career skills. See their aptitude report, run sessions your own way and award skill badges. Apply in minutes — no account needed.",
+    "seoDescription": "Mentor students in digital marketing and career skills. See their aptitude report, run sessions your own way and award skill badges. Apply in minutes, then create your partner account.",
     "eyebrow": "For mentors",
     "h1": "Become a mentor and help students build real skills",
     "intro": "MySkills students practise digital marketing and career-readiness skills with AI, then work with a real mentor who knows the field. If you've done the work, a little of your time changes how a student starts their career.",
@@ -96,9 +132,9 @@
     ],
     "stepsTitle": "How it works",
     "steps": [
-      { "title": "Apply", "body": "Tell us about your experience. It takes a few minutes and you don't need a MySkills account." },
-      { "title": "We review", "body": "A real person reads every application and replies by email." },
-      { "title": "Set up your profile", "body": "Once approved, sign in to the mentor portal and finish your profile so students can find you." },
+      { "title": "Apply", "body": "Tell us about your experience, then create your partner account. It takes a few minutes." },
+      { "title": "We review", "body": "A real person reads every application, verifies your account and replies by email." },
+      { "title": "Set up your profile", "body": "Once verified, sign in to the Community portal and finish your profile so students can find you." },
       { "title": "Meet your students", "body": "Accept requests, hold sessions your way and log each one." }
     ],
     "lookingForTitle": "Who we're looking for",
@@ -111,7 +147,7 @@
     "faqs": [
       {
         "q": "Do I need a MySkills account to apply?",
-        "a": "No. Apply with the form below. Once you're approved we link your mentor profile to an account so you can sign in to the mentor portal."
+        "a": "Not to apply. Once your application is in, you create a partner account with the same email address. The team verifies it and links it to your mentor profile, and that is how you sign in to the Community portal."
       },
       {
         "q": "Who are the students?",
@@ -123,7 +159,7 @@
       },
       {
         "q": "What happens in a session?",
-        "a": "Whatever helps the student most — reviewing their practice work, answering questions or coaching them toward their goals. You arrange the sessions yourselves and log each one in the mentor portal."
+        "a": "Whatever helps the student most — reviewing their practice work, answering questions or coaching them toward their goals. You arrange the sessions yourselves and log each one in the Community portal."
       },
       {
         "q": "What do students see about me?",
@@ -131,7 +167,7 @@
       },
       {
         "q": "What happens after I apply?",
-        "a": "We review every application by hand and email you. If it's a fit, your profile goes live in the Community and we set you up with the mentor portal."
+        "a": "We review every application by hand and email you. If it's a fit, your profile goes live in the Community and your partner account opens the Community portal."
       }
     ]
   },
@@ -164,7 +200,7 @@
     ],
     "stepsTitle": "How it works",
     "steps": [
-      { "title": "Apply", "body": "Tell us about your institution and the courses you run. It takes a few minutes and needs no MySkills account." },
+      { "title": "Apply", "body": "Tell us about your institution and the courses you run, then create your partner account. It takes a few minutes." },
       { "title": "We verify", "body": "We check your details — legal name, years in education, website and Google profile — before anything goes live." },
       { "title": "Get listed", "body": "Your partner listing appears in the MySkills Community for signed-in students." },
       { "title": "Hear from students", "body": "Interested students send enquiries through MySkills." }
@@ -228,7 +264,7 @@
     ],
     "stepsTitle": "How it works",
     "steps": [
-      { "title": "Tell us about your company", "body": "Your company, the kinds of internships you can offer and who to contact. No MySkills account needed." },
+      { "title": "Tell us about your company", "body": "Your company, the kinds of internships you can offer and who to contact. Then create your partner account." },
       { "title": "We get in touch", "body": "A real person reads every submission and reaches out to understand the roles." },
       { "title": "Meet students who've shown their skills", "body": "Interns come from students with a track record on MySkills, not a blank page." }
     ],
@@ -253,7 +289,7 @@
       },
       {
         "q": "Do we need a MySkills account?",
-        "a": "No. Tell us about your company with the form below and we'll be in touch."
+        "a": "Not to tell us about your company. Once the form is in, you create a partner account with the same email address; the team verifies it, and that is how you sign in to the Community portal."
       },
       {
         "q": "What happens after we submit?",

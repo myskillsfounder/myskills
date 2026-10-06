@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Clock, Send, ShieldAlert } from 'lucide-react'
+import { Check, Clock, Lock, Send, ShieldAlert } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   fetchMyPortalRequest,
@@ -15,6 +15,44 @@ import { Alert, Button, Skeleton } from '@/components/ui'
 
 const day = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+
+/** Where a request stands, in the order it happens. */
+function Timeline({ rejected }: { rejected: boolean }) {
+  const steps: { label: string; note: string; state: 'done' | 'current' | 'stopped' | 'locked' }[] = [
+    { label: 'Account created', note: 'Your login is ready.', state: 'done' },
+    { label: 'Email confirmed', note: 'Your address is verified.', state: 'done' },
+    rejected
+      ? { label: 'Team verification', note: 'The team couldn’t approve this request.', state: 'stopped' }
+      : { label: 'Team verification', note: 'The MySkills team is checking your request. We email you the outcome.', state: 'current' },
+    { label: 'Portal access', note: 'Opens once you are verified.', state: 'locked' },
+  ]
+  return (
+    <ol className="mt-5 space-y-0">
+      {steps.map((st, i) => (
+        <li key={st.label} className="relative flex gap-3 pb-4 last:pb-0">
+          {i < steps.length - 1 && <span className="absolute left-[13px] top-7 h-[calc(100%-1.75rem)] w-px bg-ink-200" />}
+          <span
+            className={`z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+              st.state === 'done'
+                ? 'bg-emerald-500 text-white'
+                : st.state === 'current'
+                  ? 'bg-amber-100 text-amber-700 ring-4 ring-amber-50'
+                  : st.state === 'stopped'
+                    ? 'bg-red-100 text-red-600'
+                    : 'bg-ink-100 text-ink-400'
+            }`}
+          >
+            {st.state === 'done' ? <Check size={14} strokeWidth={3} /> : st.state === 'locked' ? <Lock size={12} /> : <Clock size={13} />}
+          </span>
+          <span className="min-w-0 pt-0.5">
+            <span className={`block text-sm font-semibold ${st.state === 'locked' ? 'text-ink-500' : 'text-ink-900'}`}>{st.label}</span>
+            <span className="block text-xs text-ink-500">{st.note}</span>
+          </span>
+        </li>
+      ))}
+    </ol>
+  )
+}
 
 /**
  * What an account with no portal access sees. Signing up opens nothing by
@@ -159,6 +197,8 @@ export function PortalRequestStatus({
           </>
         )}
       </p>
+
+      <Timeline rejected={rejected} />
 
       <dl className="mt-5 space-y-2 rounded-xl bg-ink-50 p-4 text-sm">
         <div className="flex justify-between gap-4">

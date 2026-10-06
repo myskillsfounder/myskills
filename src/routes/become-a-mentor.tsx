@@ -7,6 +7,7 @@ import { submitMentorApplication } from '@/lib/mentors'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
+import { NextStepAccount } from '@/components/partner/NextStepAccount'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 // Public on purpose: a mentor is an outside party, and making them create a
@@ -161,14 +162,7 @@ function BecomeAMentorPage() {
                 fit, you'll hear from us by email and your profile will go live in the
                 Community.
               </p>
-              <div className="mt-6">
-                <Link
-                  to="/"
-                  className="press inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
-                >
-                  Back to home
-                </Link>
-              </div>
+              <NextStepAccount role="mentor" back={{ to: '/', label: 'Back to home' }} />
             </div>
           ) : (
             <>

@@ -30,9 +30,13 @@ function RequestCard({
 }) {
   const isMentor = req.role === 'mentor'
   // Suggest the listing with the same name, so the usual case is one click.
+  // Their approved application's listing comes first; the same name is the fallback.
   const suggested = useMemo(
-    () => unlinked?.find((m) => m.full_name.trim().toLowerCase() === (req.full_name ?? '').trim().toLowerCase())?.id ?? '',
-    [unlinked, req.full_name],
+    () =>
+      unlinked?.find((m) => m.id === req.suggested_mentor)?.id ??
+      unlinked?.find((m) => m.full_name.trim().toLowerCase() === (req.full_name ?? '').trim().toLowerCase())?.id ??
+      '',
+    [unlinked, req.full_name, req.suggested_mentor],
   )
   const [mentorId, setMentorId] = useState(suggested)
   const [rejecting, setRejecting] = useState(false)
@@ -63,6 +67,11 @@ function RequestCard({
         <Badge tone="success" icon={Check}>
           Email confirmed
         </Badge>
+        {req.application_status && (
+          <Badge tone={req.application_status === 'rejected' ? 'danger' : req.application_status === 'pending' || req.application_status === 'new' ? 'warning' : 'success'}>
+            Applied{req.application_on ? ` ${day(req.application_on)}` : ''} · {req.application_status}
+          </Badge>
+        )}
       </div>
 
       {req.message && (
