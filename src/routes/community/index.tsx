@@ -11,7 +11,6 @@ import {
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
 import { Skeleton } from '@/components/ui'
-import { supabase } from '@/lib/supabase'
 import { fetchMentors } from '@/lib/mentors'
 import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
@@ -74,7 +73,6 @@ function CommunityIndexRoute() {
  * are real listings; wellness and guidance are requests read by the team;
  * internships show the roles they'll open in, never invented companies.
  */
-type MentorProfileRow = NonNullable<Parameters<typeof toMentorListing>[1]> & { id: string }
 
 function useMarketplaceData() {
   const [mentors, setMentors] = useState<MentorListing[]>([])
@@ -83,17 +81,8 @@ function useMarketplaceData() {
 
   useEffect(() => {
     let active = true
-    const loadMentors = fetchMentors().then(async (list) => {
-      const ids = list.map((m) => m.profile_id).filter((id): id is string => Boolean(id))
-      const byId: Record<string, MentorProfileRow> = {}
-      if (ids.length) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('id, full_name, headline, avatar_url, location, skills')
-          .in('id', ids)
-        for (const r of (data ?? []) as MentorProfileRow[]) byId[r.id] = r
-      }
-      if (active) setMentors(list.map((m) => toMentorListing(m, m.profile_id ? byId[m.profile_id] : undefined)))
+    const loadMentors = fetchMentors().then((list) => {
+      if (active) setMentors(list.map(toMentorListing))
     })
     const loadInstitutions = fetchInstitutionPartners().then((list) => {
       if (active) setInstitutions(list)
