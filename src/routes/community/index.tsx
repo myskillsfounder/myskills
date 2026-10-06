@@ -302,6 +302,7 @@ function CommunityHub() {
                     title={mentors.length ? 'Become a Mentor' : 'Be Our First Mentor'}
                     body="Done the work? Share what you know with students starting out."
                     to="/become-a-mentor"
+                    after={mentorHits.length}
                   />
                 )}
               </div>
@@ -358,6 +359,7 @@ function CommunityHub() {
                     title="List Your Institution"
                     body="Run digital marketing courses? Apply to become a verified partner."
                     to="/become-a-partner-institution"
+                    after={institutionHits.length}
                   />
                 )}
               </div>
