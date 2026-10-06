@@ -284,7 +284,7 @@ begin
 
   select u.id into v_user from auth.users u where lower(u.email) = lower(btrim(p_email));
   if v_user is null then
-    raise exception 'No account uses that email. Ask them to create one at the Community portal sign-in, then grant access.';
+    raise exception 'No account uses that email. Ask them to request access at the Community portal sign-up (myskills.org.in/community-portal/signup), then approve them in Portal access & usage.';
   end if;
 
   insert into public.community_access (user_id, resource, organisation, granted_by)

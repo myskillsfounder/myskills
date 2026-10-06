@@ -50,6 +50,7 @@ import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/log
 import { Route as MentorPortalSplatRouteImport } from './routes/mentor-portal.$'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
+import { Route as CommunityPortalSignupRouteImport } from './routes/community-portal/signup'
 import { Route as CommunityPortalLoginRouteImport } from './routes/community-portal/login'
 import { Route as CommunityPortalLayoutRouteImport } from './routes/community-portal/_layout'
 import { Route as CareerModuleSlugRouteImport } from './routes/career-module.$slug'
@@ -295,6 +296,11 @@ const CommunityInstitutionsRoute = CommunityInstitutionsRouteImport.update({
   path: '/institutions',
   getParentRoute: () => CommunityRoute,
 } as any)
+const CommunityPortalSignupRoute = CommunityPortalSignupRouteImport.update({
+  id: '/community-portal/signup',
+  path: '/community-portal/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityPortalLoginRoute = CommunityPortalLoginRouteImport.update({
   id: '/community-portal/login',
   path: '/community-portal/login',
@@ -528,6 +534,7 @@ export interface FileRoutesByFullPath {
   '/career-module/$slug': typeof CareerModuleSlugRoute
   '/community-portal': typeof CommunityPortalLayoutRouteWithChildren
   '/community-portal/login': typeof CommunityPortalLoginRoute
+  '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
@@ -604,6 +611,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/career-module/$slug': typeof CareerModuleSlugRoute
   '/community-portal/login': typeof CommunityPortalLoginRoute
+  '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
@@ -684,6 +692,7 @@ export interface FileRoutesById {
   '/career-module/$slug': typeof CareerModuleSlugRoute
   '/community-portal/_layout': typeof CommunityPortalLayoutRouteWithChildren
   '/community-portal/login': typeof CommunityPortalLoginRoute
+  '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
@@ -765,6 +774,7 @@ export interface FileRouteTypes {
     | '/career-module/$slug'
     | '/community-portal'
     | '/community-portal/login'
+    | '/community-portal/signup'
     | '/community/institutions'
     | '/community/mentors'
     | '/mentor-portal/$'
@@ -841,6 +851,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/career-module/$slug'
     | '/community-portal/login'
+    | '/community-portal/signup'
     | '/community/institutions'
     | '/community/mentors'
     | '/mentor-portal/$'
@@ -920,6 +931,7 @@ export interface FileRouteTypes {
     | '/career-module/$slug'
     | '/community-portal/_layout'
     | '/community-portal/login'
+    | '/community-portal/signup'
     | '/community/institutions'
     | '/community/mentors'
     | '/mentor-portal/$'
@@ -1000,6 +1012,7 @@ export interface RootRouteChildren {
   CareerModuleSlugRoute: typeof CareerModuleSlugRoute
   CommunityPortalLayoutRoute: typeof CommunityPortalLayoutRouteWithChildren
   CommunityPortalLoginRoute: typeof CommunityPortalLoginRoute
+  CommunityPortalSignupRoute: typeof CommunityPortalSignupRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -1291,6 +1304,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/community/institutions'
       preLoaderRoute: typeof CommunityInstitutionsRouteImport
       parentRoute: typeof CommunityRoute
+    }
+    '/community-portal/signup': {
+      id: '/community-portal/signup'
+      path: '/community-portal/signup'
+      fullPath: '/community-portal/signup'
+      preLoaderRoute: typeof CommunityPortalSignupRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/community-portal/login': {
       id: '/community-portal/login'
@@ -1710,6 +1730,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareerModuleSlugRoute: CareerModuleSlugRoute,
   CommunityPortalLayoutRoute: CommunityPortalLayoutRouteWithChildren,
   CommunityPortalLoginRoute: CommunityPortalLoginRoute,
+  CommunityPortalSignupRoute: CommunityPortalSignupRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport

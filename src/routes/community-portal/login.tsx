@@ -94,6 +94,12 @@ function MentorLoginPage() {
             Forgot your password?
           </Link>
         </p>
+        <p className="mt-4 text-center text-sm text-ink-600">
+          New here?{' '}
+          <Link to="/community-portal/signup" className="font-semibold text-brand-700 hover:underline">
+            Request access
+          </Link>
+        </p>
         <p className="mt-2 text-center text-xs text-ink-500">
           Not a partner yet?{' '}
           <Link to="/community" className="font-medium text-brand-700 hover:underline">
