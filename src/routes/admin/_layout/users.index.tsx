@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2, ChevronRight, Search, Users as UsersIcon } from 'lucide-react'
-import { setMentorFlag } from '@/lib/admin'
 import { fetchStudentMentors, fetchStudents, type AdminStudent } from '@/lib/adminStudents'
 import { bandFor } from '@/lib/readinessScore'
 import { skillTracks } from '@/lib/skillTracks'
@@ -39,7 +38,6 @@ function StudentsPage() {
   const [students, setStudents] = useState<AdminStudent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
-  const [busyId, setBusyId] = useState<string>()
   // Who each student works with. Loaded beside the list; absent until the SQL for it is run.
   const [mentors, setMentors] = useState<Record<string, { names: string; waiting: boolean }>>({})
 
@@ -69,19 +67,6 @@ function StudentsPage() {
     () => (sort === 'score' ? [...students].sort((a, b) => b.score - a.score) : students),
     [students, sort],
   )
-
-  async function toggleMentor(s: AdminStudent) {
-    setBusyId(s.id)
-    setError(undefined)
-    try {
-      await setMentorFlag(s.id, !s.is_mentor)
-      setStudents((prev) => prev.map((u) => (u.id === s.id ? { ...u, is_mentor: !u.is_mentor } : u)))
-    } catch (e) {
-      setError(errorMessage(e))
-    } finally {
-      setBusyId(undefined)
-    }
-  }
 
   return (
     <>
@@ -147,7 +132,6 @@ function StudentsPage() {
                 <th scope="col" className="px-4 py-3 font-semibold">Joined</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Working with</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Last login</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Mentor access</th>
                 <th scope="col" className="px-2 py-3" aria-label="Open" />
               </tr>
             </thead>
@@ -203,18 +187,6 @@ function StudentsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-ink-600">{fmtDate(s.last_login)}</td>
-                    <td className="px-4 py-3">
-                      <label className="inline-flex cursor-pointer items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={s.is_mentor}
-                          disabled={busyId === s.id}
-                          onChange={() => void toggleMentor(s)}
-                          className="h-4 w-4 accent-brand-600"
-                        />
-                        <span className="text-xs text-ink-600">{s.is_mentor ? 'Mentor' : 'Grant'}</span>
-                      </label>
-                    </td>
                     <td className="px-2 py-3">
                       <Link
                         to="/admin/users/$id"

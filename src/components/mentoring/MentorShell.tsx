@@ -1,6 +1,6 @@
 import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
-import { LogOut, Menu, X } from 'lucide-react'
+import { Eye, LogOut, Menu, ShieldCheck, X } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { Avatar } from '@/components/ui'
 
@@ -24,6 +24,10 @@ export interface PortalTab {
  * slide-in menu on a phone. Deliberately shares nothing with the student app —
  * no LaunchPad, Practice or Community — so a mentor, counsellor or partner
  * sees a workspace built for them, the way /admin is for staff.
+ *
+ * The MySkills team can open it too, to see every partner's students. That is
+ * a different thing from a partner's own portal, so it is marked as one: a
+ * gold "Team overview" label and a bar across the top saying it is read-only.
  */
 export function MentorShell({
   children,
@@ -31,6 +35,8 @@ export function MentorShell({
   photo,
   subtitle,
   tabs: tabList,
+  overview = false,
+  adminLink = false,
 }: {
   children: ReactNode
   /** The signed-in person, once known. */
@@ -40,6 +46,10 @@ export function MentorShell({
   subtitle?: string
   /** The sections this account may open: only the resources it was given. */
   tabs: PortalTab[]
+  /** A MySkills team account looking across every partner (read-only). */
+  overview?: boolean
+  /** This account can also open the admin panel: offer the way across. */
+  adminLink?: boolean
 }) {
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
@@ -108,6 +118,14 @@ export function MentorShell({
           </div>
         </div>
       )}
+      {adminLink && (
+        <Link
+          to="/admin"
+          className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900"
+        >
+          <ShieldCheck size={17} /> MySkills Admin
+        </Link>
+      )}
       <button
         type="button"
         onClick={() => void handleSignOut()}
@@ -123,7 +141,9 @@ export function MentorShell({
       <img src="/logo-mark.png" alt="" className="h-8 w-8" />
       <span className="min-w-0">
         <span className="block font-display text-lg font-semibold leading-tight tracking-tight text-ink-900">MySkills</span>
-        <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-700">Community Portal</span>
+        <span className={`block text-[11px] font-semibold uppercase tracking-[0.14em] ${overview ? 'text-gold-600' : 'text-brand-700'}`}>
+          {overview ? 'Team overview' : 'Community Portal'}
+        </span>
       </span>
     </Link>
   )
@@ -142,8 +162,12 @@ export function MentorShell({
         <Link to="/community-portal" className="flex items-center gap-2">
           <img src="/logo-mark.png" alt="" className="h-7 w-7" />
           <span className="font-display text-base font-semibold text-ink-900">MySkills</span>
-          <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-700">
-            Community Portal
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+              overview ? 'bg-gold-50 text-gold-700' : 'bg-brand-50 text-brand-700'
+            }`}
+          >
+            {overview ? 'Team overview' : 'Community Portal'}
           </span>
         </Link>
         <button
@@ -184,6 +208,15 @@ export function MentorShell({
       )}
 
       <main className="lg:pl-64">
+        {overview && (
+          <div className="flex items-center gap-2.5 border-b border-gold-200 bg-gold-50 px-4 py-2.5 text-sm text-gold-700 sm:px-6 lg:px-10">
+            <Eye size={15} className="shrink-0" />
+            <p className="min-w-0">
+              <span className="font-semibold">Team overview.</span> You’re seeing every partner’s students, read-only.
+              Partners only ever see their own.
+            </p>
+          </div>
+        )}
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-10 lg:pt-10">{children}</div>
       </main>
     </div>

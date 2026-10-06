@@ -23,22 +23,9 @@ function raise(error: { message?: string; hint?: string | null } | null): never 
 
 // The overview and the student list live in lib/adminStudents.ts (admin v2).
 
-/** Grants or revokes support-chat mentor powers (profiles.is_mentor), which is
- *  separate from being listed publicly in Community.
- *
- *  Goes through admin_set_mentor_flag rather than a plain `.update()` —
- *  is_mentor is locked down at the database level (a trigger reverts it for
- *  everyone except this security-definer function; see
- *  docs/supabase-fix-mentor-self-escalation.sql) so a user can't grant
- *  themselves mentor powers, which also grant access to other users'
- *  pending support chats. */
-export async function setMentorFlag(profileId: string, isMentor: boolean): Promise<void> {
-  const { error } = await supabase.rpc('admin_set_mentor_flag', {
-    target_id: profileId,
-    flag: isMentor,
-  })
-  if (error) raise(error)
-}
+// Mentors are no longer made by ticking a student in the list: they join
+// through Partner with MySkills and are verified under Community > Portal
+// access & usage (docs/supabase-portal-signup.sql).
 
 /* ========================================================================== */
 /* FEEDBACK                                                                   */
