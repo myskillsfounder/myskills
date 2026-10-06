@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
-import { Check, Inbox, Link2, Mail, MapPin, Phone, Unlink, UserCheck, X } from 'lucide-react'
+import { Check, Inbox, Link2, Mail, MapPin, Pencil, Phone, Plus, Unlink, UserCheck, X } from 'lucide-react'
 import {
   approveMentorApplication,
   fetchListedMentors,
@@ -14,6 +14,7 @@ import {
   type MentorApplication,
 } from '@/lib/mentors'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { MentorEditor } from '@/components/admin/MentorEditor'
 import { Alert, Badge, Button, Chip, EmptyState, Input, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/mentors')({
@@ -202,14 +203,18 @@ function ListedMentorCard({
   busy,
   onLink,
   onUnlink,
+  onEdited,
 }: {
   mentor: ListedMentor
   busy: boolean
   onLink: (email: string) => void
   onUnlink: () => void
+  /** The profile was saved: reload the list. */
+  onEdited: () => void
 }) {
   const [email, setEmail] = useState('')
   const [confirming, setConfirming] = useState(false)
+  const [editing, setEditing] = useState(false)
 
   return (
     <article className="card p-5 sm:p-6">
@@ -218,18 +223,34 @@ function ListedMentorCard({
           <h2 className="font-display text-xl font-semibold text-ink-900">{mentor.full_name}</h2>
           <p className="mt-0.5 text-sm font-medium text-brand-600">{mentor.headline}</p>
         </div>
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
+          <Button size="sm" variant="secondary" icon={Pencil} onClick={() => setEditing((e) => !e)}>
+            {editing ? 'Close' : 'Edit profile'}
+          </Button>
         {mentor.linked ? (
-          <div className="flex flex-wrap justify-end gap-1.5">
+          <>
             <Badge tone="success" icon={Check}>
               Linked
             </Badge>
             {mentor.ready === false && <Badge tone="warning">Profile incomplete</Badge>}
             {mentor.ready && mentor.accepting === false && <Badge tone="neutral">Paused</Badge>}
-          </div>
+          </>
         ) : (
           <Badge tone="warning">Not linked yet</Badge>
         )}
+        </div>
       </div>
+
+      {editing && (
+        <MentorEditor
+          mentorId={mentor.id}
+          onCancel={() => setEditing(false)}
+          onSaved={() => {
+            setEditing(false)
+            onEdited()
+          }}
+        />
+      )}
 
       {mentor.expertise.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
@@ -319,12 +340,67 @@ function ListedMentors({
   busyId,
   onLink,
   onUnlink,
+  onChanged,
 }: {
   mentors: ListedMentor[]
   loading: boolean
   busyId?: string
   onLink: (id: string, email: string) => void
   onUnlink: (id: string) => void
+  onChanged: () => void
+}) {
+  const [adding, setAdding] = useState(false)
+  // The Add button and form sit above whatever the list is showing, including
+  // the empty state: that is when a first mentor most needs adding.
+  const add = (
+    <div className="mb-4">
+      {adding ? (
+        <div className="card p-1">
+          <MentorEditor
+            mentorId={null}
+            onCancel={() => setAdding(false)}
+            onSaved={() => {
+              setAdding(false)
+              onChanged()
+            }}
+          />
+        </div>
+      ) : (
+        <Button icon={Plus} onClick={() => setAdding(true)}>
+          Add a mentor
+        </Button>
+      )}
+    </div>
+  )
+  return (
+    <>
+      {add}
+      <ListedMentorList
+        mentors={mentors}
+        loading={loading}
+        busyId={busyId}
+        onLink={onLink}
+        onUnlink={onUnlink}
+        onChanged={onChanged}
+      />
+    </>
+  )
+}
+
+function ListedMentorList({
+  mentors,
+  loading,
+  busyId,
+  onLink,
+  onUnlink,
+  onChanged,
+}: {
+  mentors: ListedMentor[]
+  loading: boolean
+  busyId?: string
+  onLink: (id: string, email: string) => void
+  onUnlink: (id: string) => void
+  onChanged: () => void
 }) {
   if (loading && mentors.length === 0) {
     return (
@@ -339,7 +415,7 @@ function ListedMentors({
       <EmptyState
         icon={UserCheck}
         title="No mentors are listed yet"
-        description="Approve an application and the mentor will appear here."
+        description="Approve an application, or add a mentor yourself, and they will appear here."
       />
     )
   }
@@ -354,6 +430,7 @@ function ListedMentors({
           busy={busyId === m.id}
           onLink={(email) => onLink(m.id, email)}
           onUnlink={() => onUnlink(m.id)}
+          onEdited={onChanged}
         />
       ))}
     </div>
@@ -487,6 +564,7 @@ function MentorReviewQueue() {
             busyId={busyId}
             onLink={(id, email) => void actListed(id, () => linkMentorAccount(id, email))}
             onUnlink={(id) => void actListed(id, () => unlinkMentorAccount(id))}
+            onChanged={() => void loadListed()}
           />
         </>
       ) : (
