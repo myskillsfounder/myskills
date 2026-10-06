@@ -303,6 +303,7 @@ function MentorReviewsPage() {
   }, [])
 
   const { programme } = Route.useSearch()
+  const navigate = Route.useNavigate()
   const visible = reviews.filter(
     (r) => (filter === 'all' || r.status === filter) && (!programme || r.programme === programme),
   )
@@ -311,9 +312,24 @@ function MentorReviewsPage() {
     <>
       <PageHeader
         eyebrow={programme ? PROGRAMME[programme] : 'Both programmes'}
-        title="Mentor reviews"
+        title="Projects to grade"
         subtitle="Projects students submitted after finishing a programme's practice. Grade each on four criteria: 8 of 20 passes and releases the student's held activity points."
       />
+
+      <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Programme">
+        {([undefined, 'digital-marketing', 'career-readiness'] as (ReviewProgramme | undefined)[]).map((p) => (
+          <button
+            key={p ?? 'all'}
+            type="button"
+            onClick={() => void navigate({ search: { programme: p }, replace: true })}
+            className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+              programme === p ? 'border-ink-500 bg-ink-100 text-ink-900' : 'border-ink-200 text-ink-500 hover:bg-ink-50'
+            }`}
+          >
+            {p ? PROGRAMME[p] : 'Both programmes'}
+          </button>
+        ))}
+      </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
         {FILTERS.map((f) => (

@@ -14,6 +14,7 @@ import {
   FileText,
   GraduationCap,
   HeartHandshake,
+  Inbox,
   KeyRound,
   LogOut,
   Menu,
@@ -26,6 +27,7 @@ import {
   Users,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
+import { useInboxCount } from '@/lib/adminInbox'
 import type { ReviewProgramme } from '@/lib/mentorReview'
 import { requireStaffSession } from '@/lib/guards'
 import { StaffAccessContext, useStaffAccess, type StaffSection } from '@/lib/staffAccess'
@@ -59,8 +61,9 @@ type NavItem = {
   label: string
   icon: typeof BarChart3
   exact?: boolean
-  /** null = full admins only (Overview, and the lead lists, whose tables only admins can read). */
-  section: StaffSection | null
+  /** 'any' = every staff member (the Inbox lists only what their sections allow);
+   *  null = full admins only. */
+  section: StaffSection | null | 'any'
 }
 
 // Grouped the way the work is: the students and their score, the two
@@ -69,8 +72,11 @@ type NavItem = {
 // (none left today) would mean full admins only (see src/lib/staffAccess.ts).
 const GROUPS: { label: string; items: NavItem[] }[] = [
   {
-    label: 'Overview',
-    items: [{ to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: 'overview' }],
+    label: 'Home',
+    items: [
+      { to: '/admin', label: 'Overview', icon: BarChart3, exact: true, section: 'overview' },
+      { to: '/admin/inbox', label: 'Inbox', icon: Inbox, section: 'any' },
+    ],
   },
   {
     label: 'Students',
@@ -79,8 +85,24 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
     ],
   },
+  // Both programmes together: the results, the projects mentors grade, and the
+  // content. (Digital Marketing and Career Readiness were two groups of mostly
+  // the same pages.)
+  {
+    label: 'Programmes',
+    items: [
+      { to: '/admin/aptitude', label: 'Aptitude results', icon: Sparkles, section: 'users' },
+      { to: '/admin/practice', label: 'Practice (Marketing)', icon: Dumbbell, section: 'users' },
+      { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
+      { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
+      { to: '/admin/mentor-reviews', label: 'Projects to grade', icon: UserCheck, section: 'mentor-reviews' },
+      { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
+      { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
+    ],
+  },
   // Everything a student sees on the Community page, in the same order as its
-  // category tiles, so the people running it find it all in one place.
+  // category tiles. The day-to-day work with these people happens in the
+  // Community portal; this is where they are approved, given access and overseen.
   {
     label: 'Community',
     items: [
@@ -90,37 +112,6 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/internship-partners', label: 'Internships', icon: Briefcase, section: 'partner-leads' },
       { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
       { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access' },
-    ],
-  },
-  {
-    label: 'Digital Marketing',
-    items: [
-      { to: '/admin/dm-aptitude', label: 'Aptitude results', icon: Sparkles, section: 'users' },
-      { to: '/admin/practice', label: 'Practice', icon: Dumbbell, section: 'users' },
-      { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
-      { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
-      { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
-      {
-        to: '/admin/mentor-reviews',
-        search: { programme: 'digital-marketing' },
-        label: 'Mentor reviews',
-        icon: UserCheck,
-        section: 'mentor-reviews',
-      },
-    ],
-  },
-  {
-    label: 'Career Readiness',
-    items: [
-      { to: '/admin/cr-aptitude', label: 'Personal aptitude', icon: Sparkles, section: 'users' },
-      { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
-      {
-        to: '/admin/mentor-reviews',
-        search: { programme: 'career-readiness' },
-        label: 'Mentor reviews',
-        icon: UserCheck,
-        section: 'mentor-reviews',
-      },
     ],
   },
   {
@@ -143,7 +134,9 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
 function visibleGroups(isAdmin: boolean, sections: StaffSection[]) {
   return GROUPS.map((g) => ({
     ...g,
-    items: g.items.filter((t) => (t.section === null ? isAdmin : isAdmin || sections.includes(t.section))),
+    items: g.items.filter((t) =>
+      t.section === 'any' ? true : t.section === null ? isAdmin : isAdmin || sections.includes(t.section),
+    ),
   })).filter((g) => g.items.length > 0)
 }
 
@@ -160,7 +153,18 @@ function useLocationParts() {
   return { pathname, programme }
 }
 
-function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: StaffSection[]; onPick?: () => void }) {
+function NavLinks({
+  isAdmin,
+  sections,
+  onPick,
+  badges = {},
+}: {
+  isAdmin: boolean
+  sections: StaffSection[]
+  onPick?: () => void
+  /** A count to show beside an item, keyed by its address. */
+  badges?: Record<string, number>
+}) {
   const { pathname, programme } = useLocationParts()
   return (
     <div className="space-y-5">
@@ -185,7 +189,12 @@ function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: S
                     }`}
                   >
                     <Icon size={16} className={active ? 'text-brand-600' : 'text-ink-400'} />
-                    {label}
+                    <span className="min-w-0 flex-1 truncate">{label}</span>
+                    {(badges[to] ?? 0) > 0 && (
+                      <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
+                        {badges[to]}
+                      </span>
+                    )}
                   </Link>
                 </li>
               )
@@ -201,12 +210,15 @@ function NavLinks({ isAdmin, sections, onPick }: { isAdmin: boolean; sections: S
 function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSection[] }) {
   const [open, setOpen] = useState(false)
   const { pathname, programme } = useLocationParts()
+  // What is waiting, shown beside the Inbox so it is visible from every page.
+  const inbox = useInboxCount()
+  const badges = { '/admin/inbox': inbox ?? 0 }
   const current = GROUPS.flatMap((g) => g.items).find((t) => isActive(t, pathname, programme))?.label ?? 'Menu'
   return (
     <>
       <nav aria-label="Admin sections" className="hidden w-56 shrink-0 lg:block">
         <div className="sticky top-24">
-          <NavLinks isAdmin={isAdmin} sections={sections} />
+          <NavLinks isAdmin={isAdmin} sections={sections} badges={badges} />
         </div>
       </nav>
       <nav aria-label="Admin sections" className="mb-5 lg:hidden">
@@ -223,7 +235,7 @@ function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSect
         </button>
         {open && (
           <div className="mt-2 rounded-2xl border border-ink-900/[0.08] bg-white p-3 shadow-e2">
-            <NavLinks isAdmin={isAdmin} sections={sections} onPick={() => setOpen(false)} />
+            <NavLinks isAdmin={isAdmin} sections={sections} badges={badges} onPick={() => setOpen(false)} />
           </div>
         )}
       </nav>

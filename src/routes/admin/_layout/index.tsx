@@ -98,7 +98,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
 /** Things waiting on the team, busiest first; quiet ones stay visible but muted. */
 function NeedsAction({ n }: { n: AdminOverviewV2['needs_action'] }) {
   const items: { label: string; count: number; to?: string }[] = [
-    { label: 'Mentor reviews waiting', count: n.mentor_reviews, to: '/admin/mentor-reviews' },
+    { label: 'Projects waiting to be graded', count: n.mentor_reviews, to: '/admin/mentor-reviews' },
     { label: 'Verification requests', count: n.verification, to: '/admin/verification' },
     { label: 'Mentor applications', count: n.mentor_applications, to: '/admin/mentors' },
     { label: 'Institution applications', count: n.institution_applications, to: '/admin/institution-partners' },
@@ -262,8 +262,8 @@ function OverviewPage() {
                 { label: 'Practising', count: stats.digital_marketing.practising },
                 { label: 'All 8 tracks practised', count: stats.digital_marketing.all_tracks },
                 { label: 'Foundation assessment done', count: stats.digital_marketing.foundation },
-                { label: 'Asked for a mentor review', count: stats.digital_marketing.review_asked },
-                { label: 'Signed off by a mentor', count: stats.digital_marketing.signed_off },
+                { label: 'Submitted a project', count: stats.digital_marketing.review_asked },
+                { label: 'Project passed', count: stats.digital_marketing.signed_off },
               ]}
             />
             <Funnel
@@ -272,8 +272,8 @@ function OverviewPage() {
                 { label: 'Took the personal aptitude assessment', count: stats.career_readiness.aptitude },
                 { label: 'Started the modules', count: stats.career_readiness.started },
                 { label: 'All 5 modules written', count: stats.career_readiness.all_modules },
-                { label: 'Asked for a mentor review', count: stats.career_readiness.review_asked },
-                { label: 'Signed off by a mentor', count: stats.career_readiness.signed_off },
+                { label: 'Submitted a project', count: stats.career_readiness.review_asked },
+                { label: 'Project passed', count: stats.career_readiness.signed_off },
               ]}
             />
           </div>

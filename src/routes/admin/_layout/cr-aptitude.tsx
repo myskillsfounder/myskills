@@ -1,20 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SKILLS, levelFor } from '@/lib/careerReadinessAssessment'
-import { RequireSection } from '@/components/admin/AdminSectionGate'
-import { AptitudeResults } from '@/components/admin/AptitudeResults'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Both aptitude results now live on /admin/aptitude; this keeps old links working.
 export const Route = createFileRoute('/admin/_layout/cr-aptitude')({
-  component: () => (
-    <RequireSection section="users">
-      <AptitudeResults
-        programme="career-readiness"
-        eyebrow="Career Readiness"
-        title="Personal aptitude results"
-        subtitle="Where students start on the five skills the programme builds. Each skill is scored 4–16."
-        dimensions={SKILLS}
-        levelFor={levelFor}
-        reflectionLabel="Skill they most want to improve"
-      />
-    </RequireSection>
-  ),
+  beforeLoad: () => {
+    throw redirect({ to: '/admin/aptitude', search: { programme: 'career-readiness' }, replace: true })
+  },
 })
