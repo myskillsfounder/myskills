@@ -6,7 +6,24 @@
     "eyebrow": "Partner with MySkills",
     "h1": "Partner with MySkills",
     "h1Accent": "and help students get job-ready",
-    "intro": "MySkills helps students across India build personal and professional skills — practising with AI, working with real mentors, and proving it with internships. We partner with mentors, counsellors, career guides, training institutes and companies. Create a partner account in a few minutes; a real person verifies every one before it gets any access.",
+    "intro": "A community of mentors, counsellors, career guides, training institutes and companies, working with students across India who have practised, scored and earned certificates. Join in a few minutes; a real person verifies every partner.",
+    "trust": ["Free to join", "Verified by a real person", "Your own partner portal"],
+    "boardTitle": "MySkills Community",
+    "boardNote": "Every partner is verified by the MySkills team",
+    "rolesTitle": "Choose how you partner",
+    "rolesIntro": "One community, several ways to be part of it. Pick the one that fits, read how it works, then create your account.",
+    "communityTitle": "Who is already here",
+    "communityIntro": "Verified partners students can find in the MySkills Community today.",
+    "proofTitle": "Students arrive with proof, not a blank page",
+    "proofIntro": "Every student you meet has already put in the work on MySkills. You see it before you say yes.",
+    "proof": [
+      { "title": "An aptitude report", "body": "Strengths, gaps and what they want help with, from a scored assessment." },
+      { "title": "A Career Readiness Score", "body": "Out of 100, built only from verified activity on MySkills." },
+      { "title": "Certificates across 8 skill tracks", "body": "SEO, Google Ads, Meta Ads, analytics and more, earned by practising real scenarios." },
+      { "title": "Mentor-verified projects", "body": "Work a mentor has seen and signed off, with their name on it." }
+    ],
+    "ctaTitle": "Ready to partner with MySkills?",
+    "ctaBody": "Create your partner account in a few minutes. It is free, and a real person verifies every one.",
     "primaryCta": "Partner with MySkills",
     "secondaryCta": "Sign in to the portal",
     "howTitle": "How partnering works",
@@ -21,6 +38,8 @@
         "key": "mentors",
         "anchor": "mentors",
         "eyebrow": "For mentors",
+        "name": "Mentors",
+        "tagline": "Guide students one to one",
         "title": "Mentors — guide students one to one",
         "summary": "Share what you know with students who are just starting out. Accept the students you want to work with, hold sessions your way and vouch for the skills they earn.",
         "bullets": [
@@ -37,6 +56,8 @@
         "key": "institutions",
         "anchor": "academies",
         "eyebrow": "For partner academies",
+        "name": "Training institutes",
+        "tagline": "Get listed for classroom learning",
         "title": "Partner academies — get listed for classroom learning",
         "summary": "Training institutes that teach digital marketing and career skills are verified and listed in the MySkills Community, where students looking for classroom learning can find them.",
         "bullets": [
@@ -53,6 +74,8 @@
         "key": "companies",
         "anchor": "internships",
         "eyebrow": "For internship companies",
+        "name": "Companies",
+        "tagline": "Hire interns who can show their work",
         "title": "Internship companies — hire students with proof",
         "summary": "Offer internships to students who have practised real scenarios, worked with mentors and earned a Career Readiness Score.",
         "bullets": [
@@ -69,6 +92,8 @@
         "key": "guides",
         "anchor": "counsellors",
         "eyebrow": "For counsellors and career guides",
+        "name": "Counsellors & career guides",
+        "tagline": "Support students privately",
         "title": "Counsellors & career guides — support students privately",
         "summary": "Some students need more than practice: someone to talk to, or someone to help them choose a track. The MySkills team connects them with you, and you keep the conversation private.",
         "bullets": [
@@ -77,7 +102,11 @@
           "See a student's score, certificates and progress when it helps you guide them"
         ],
         "cta": "Partner as a counsellor or guide",
-        "joinCta": "Partner as a counsellor or guide"
+        "joinCta": "Partner as a counsellor or guide",
+        "joins": [
+          { "role": "wellness", "label": "Partner as a counsellor" },
+          { "role": "guidance", "label": "Partner as a career guide" }
+        ]
       }
     ],
     "faqs": [
