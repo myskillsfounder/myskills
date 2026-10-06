@@ -1,8 +1,9 @@
-import { useState, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  ChevronDown,
+  ChevronRight,
   BadgeCheck,
   Briefcase,
   Building2,
@@ -10,6 +11,7 @@ import {
   GraduationCap,
   HeartHandshake,
   Lock,
+  X,
   MapPin,
   ShieldCheck,
   Star,
@@ -80,7 +82,7 @@ export function MarketSection({
   )
 }
 
-export const marketGrid = 'grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3'
+export const marketGrid = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
 
 /* ------------------------------------------------------ support services */
 
@@ -174,94 +176,175 @@ function LinkedInIcon({ size = 16 }: { size?: number }) {
   )
 }
 
+/** The avatar: their photo, or their initials on the brand colour. */
+function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 'large' }) {
+  const box = size === 'card' ? 'h-14 w-14 text-lg' : 'h-20 w-20 text-2xl'
+  return mentor.avatar ? (
+    <img src={mentor.avatar} alt="" className={`${box} shrink-0 rounded-full object-cover ring-2 ring-brand-100`} />
+  ) : (
+    <span
+      className={`${box} flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 font-semibold text-white`}
+    >
+      {initialsOf(mentor.name)}
+    </span>
+  )
+}
+
 /**
- * A mentor's card. The profile opens in place — their bio, every area of
- * expertise and the way to reach them — so there is no separate mentors page
- * to go to and come back from.
+ * A mentor's full profile, in a pop-up over the page. The card itself never
+ * grows, so every card in a row stays the same size however much a mentor has
+ * written; this is where the whole bio and every area of expertise live.
  */
-export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
-  const [open, setOpen] = useState(false)
-  const shown = open ? mentor.expertise : mentor.expertise.slice(0, 3)
-  const extra = mentor.expertise.length - shown.length
-  const panelId = `mentor-${mentor.id}`
-  return (
-    <div className={`card flex flex-col p-5 transition-shadow ${open ? 'shadow-e2 ring-1 ring-brand-200' : ''}`}>
-      <div className="flex items-center gap-3.5">
-        {mentor.avatar ? (
-          <img src={mentor.avatar} alt="" className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-brand-100" />
-        ) : (
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-lg font-semibold text-white">
-            {initialsOf(mentor.name)}
-          </span>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 truncate font-display text-lg font-semibold text-ink-900">
-            <span className="truncate">{mentor.name}</span>
-            <BadgeCheck size={16} className="shrink-0 text-emerald-600" aria-label="Verified mentor" />
-          </p>
-          <p className="truncate text-sm text-brand-700">{mentor.role}</p>
-          {mentor.location && (
-            <p className="mt-0.5 inline-flex items-center gap-1 text-xs text-ink-500">
-              <MapPin size={11} /> {mentor.location}
-            </p>
-          )}
-        </div>
-      </div>
+function MentorProfileDialog({ mentor, onClose }: { mentor: MentorListing; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null)
 
-      {mentor.expertise.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {shown.map((e) => (
-            <span key={e} className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700">
-              {e}
-            </span>
-          ))}
-          {extra > 0 && (
-            <span className="rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">+{extra}</span>
-          )}
-        </div>
-      )}
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    // The page behind doesn't scroll while the profile is open.
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = overflow
+      previous?.focus()
+    }
+  }, [onClose])
 
-      {open && (
-        <div id={panelId} className="mt-4 border-t border-ink-900/[0.06] pt-4">
-          {mentor.bio ? (
-            <p className="whitespace-pre-line text-sm leading-relaxed text-ink-600">{mentor.bio}</p>
-          ) : (
-            <p className="text-sm text-ink-500">This mentor hasn’t written a bio yet.</p>
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label={`${mentor.name}’s profile`}>
+      <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-ink-900/50" />
+      <div className="relative flex max-h-[90vh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-e2 sm:max-w-lg sm:rounded-3xl">
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label="Close profile"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-900"
+        >
+          <X size={18} />
+        </button>
+        <div className="overflow-y-auto p-6 sm:p-8">
+          <div className="flex items-center gap-4 pr-8">
+            <MentorAvatar mentor={mentor} size="large" />
+            <div className="min-w-0">
+              <p className="flex items-center gap-1.5 font-display text-2xl font-semibold leading-tight text-ink-900">
+                {mentor.name}
+                <BadgeCheck size={18} className="shrink-0 text-emerald-600" aria-label="Verified mentor" />
+              </p>
+              <p className="text-sm font-medium text-brand-700">{mentor.role}</p>
+              {mentor.location && (
+                <p className="mt-0.5 inline-flex items-center gap-1 text-xs text-ink-500">
+                  <MapPin size={12} /> {mentor.location}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {mentor.expertise.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-1.5">
+              {mentor.expertise.map((e) => (
+                <span key={e} className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+                  {e}
+                </span>
+              ))}
+            </div>
           )}
+
+          <div className="mt-5">
+            {mentor.bio ? (
+              <p className="whitespace-pre-line text-sm leading-relaxed text-ink-700">{mentor.bio}</p>
+            ) : (
+              <p className="text-sm text-ink-500">This mentor hasn’t written a bio yet.</p>
+            )}
+          </div>
+
           {mentor.linkedin && (
             <a
               href={mentor.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="press mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+              className="press mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
             >
-              <LinkedInIcon size={16} /> Connect on LinkedIn
+              <LinkedInIcon size={17} /> Connect on LinkedIn
             </a>
           )}
           <Link
             to="/practice"
-            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
           >
             Choose Your Mentor in Practice
             <ArrowRight size={14} />
           </Link>
         </div>
-      )}
+      </div>
+    </div>,
+    document.body,
+  )
+}
 
-      <div className="flex-1" />
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
+/**
+ * A mentor's card: always the same size. Every part has a fixed place and room
+ * (one line each for name, role and location; one row of up to two skills; two
+ * lines of bio), and anything longer is trimmed. Tap View Profile for the lot.
+ */
+export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
+  const [open, setOpen] = useState(false)
+  const shown = mentor.expertise.slice(0, 2)
+  const extra = mentor.expertise.length - shown.length
+  return (
+    <div className="card flex h-full flex-col p-5">
+      <div className="flex items-center gap-3.5">
+        <MentorAvatar mentor={mentor} size="card" />
+        <div className="min-w-0 flex-1">
+          <p className="flex items-center gap-1.5 font-display text-lg font-semibold leading-snug text-ink-900">
+            <span className="truncate">{mentor.name}</span>
+            <BadgeCheck size={16} className="shrink-0 text-emerald-600" aria-label="Verified mentor" />
+          </p>
+          <p className="truncate text-sm leading-snug text-brand-700">{mentor.role}</p>
+          {/* Always a line, so a mentor without a location doesn't make a shorter card. */}
+          <p className="mt-0.5 flex h-4 items-center gap-1 truncate text-xs text-ink-500">
+            {mentor.location && (
+              <>
+                <MapPin size={11} className="shrink-0" /> <span className="truncate">{mentor.location}</span>
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex h-7 flex-nowrap items-center gap-1.5 overflow-hidden">
+        {shown.map((e) => (
+          <span
+            key={e}
+            className="min-w-0 max-w-[9rem] truncate rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700"
+          >
+            {e}
+          </span>
+        ))}
+        {extra > 0 && (
+          <span className="shrink-0 rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">+{extra}</span>
+        )}
+      </div>
+
+      <p className="mt-3 line-clamp-2 min-h-[2.75rem] text-sm leading-snug text-ink-600">{mentor.bio}</p>
+
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
         <span className="text-xs font-medium text-ink-500">Live Chat</span>
         <button
           type="button"
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={open}
-          aria-controls={panelId}
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
           className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
         >
-          {open ? 'Hide Profile' : 'View Profile'}
-          <ChevronDown size={15} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+          View Profile
+          <ChevronRight size={15} />
         </button>
       </div>
+
+      {open && <MentorProfileDialog mentor={mentor} onClose={() => setOpen(false)} />}
     </div>
   )
 }
@@ -290,7 +373,7 @@ export function JoinCard({ icon: Icon, title, body, to }: { icon: IconType; titl
   return (
     <Link
       to={to}
-      className="group flex min-h-[11.5rem] flex-col items-start justify-center rounded-2xl border-2 border-dashed border-ink-900/[0.12] p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
+      className="group flex flex-col items-start justify-center rounded-2xl border-2 border-dashed border-ink-900/[0.12] p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-700 transition-colors group-hover:bg-brand-600 group-hover:text-white">
         <Icon size={19} />
