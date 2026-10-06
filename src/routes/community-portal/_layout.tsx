@@ -104,9 +104,8 @@ function MentorPortalLayout() {
       icon: RESOURCE_ICON[a.resource],
       group: !profile && i === 0 ? 'Community' : undefined,
     })),
-    ...(profile
-      ? [{ to: '/community-portal/profile', label: 'My profile', icon: User, dot: !profile.ready, group: 'Account' }]
-      : []),
+    // Everyone verified has a profile page: their verification, and how they show up.
+    { to: '/community-portal/profile', label: 'My profile', icon: User, dot: profile ? !profile.ready : false, group: 'Account' },
   ]
 
   const roles = [

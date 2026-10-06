@@ -161,6 +161,8 @@ export interface MyPortalRequest {
   organisation: string | null
   created_at: string
   note: string | null
+  /** When the team decided. Absent until docs/supabase-portal-profile.sql is run. */
+  reviewed_at?: string | null
 }
 
 /**

@@ -195,7 +195,7 @@ function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 
  * grows, so every card in a row stays the same size however much a mentor has
  * written; this is where the whole bio and every area of expertise live.
  */
-function MentorProfileDialog({ mentor, onClose }: { mentor: MentorListing; onClose: () => void }) {
+function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListing; preview?: boolean; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -271,13 +271,18 @@ function MentorProfileDialog({ mentor, onClose }: { mentor: MentorListing; onClo
               <LinkedInIcon size={17} /> Connect on LinkedIn
             </a>
           )}
-          <Link
-            to="/practice"
-            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-          >
-            Choose Your Mentor in Practice
-            <ArrowRight size={14} />
-          </Link>
+          {/* A mentor previewing their own profile has no Practice to go to. */}
+          {preview ? (
+            <p className="mt-4 text-xs text-ink-500">Students also get a link here to choose you in Practice.</p>
+          ) : (
+            <Link
+              to="/practice"
+              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+            >
+              Choose Your Mentor in Practice
+              <ArrowRight size={14} />
+            </Link>
+          )}
         </div>
       </div>
     </div>,
@@ -289,8 +294,9 @@ function MentorProfileDialog({ mentor, onClose }: { mentor: MentorListing; onClo
  * A mentor's card: always the same size. Every part has a fixed place and room
  * (one line each for name, role and location; one row of up to two skills; two
  * lines of bio), and anything longer is trimmed. Tap View Profile for the lot.
+ * `preview` is the mentor looking at their own card in the Community portal.
  */
-export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
+export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; preview?: boolean }) {
   const [open, setOpen] = useState(false)
   const shown = mentor.expertise.slice(0, 2)
   const extra = mentor.expertise.length - shown.length
@@ -344,24 +350,28 @@ export function MentorListingCard({ mentor }: { mentor: MentorListing }) {
         </button>
       </div>
 
-      {open && <MentorProfileDialog mentor={mentor} onClose={() => setOpen(false)} />}
+      {open && <MentorProfileDialog mentor={mentor} preview={preview} onClose={() => setOpen(false)} />}
     </div>
   )
 }
 
+/**
+ * A mentor's card is their listing and nothing else. It used to be overlaid
+ * with the linked account's student profile (name, title, photo, skills), which
+ * meant a mentor could change their listing in the Community portal and see no
+ * change here. The portal is where a mentor edits what students see, so the
+ * listing is the one source.
+ */
 export function toMentorListing(
-  m: Mentor,
-  db?: { full_name: string | null; headline: string | null; avatar_url: string | null; location: string | null; skills: string[] | null },
+  m: Pick<Mentor, 'id' | 'full_name' | 'headline' | 'avatar_url' | 'location' | 'expertise' | 'bio' | 'linkedin_url'>,
 ): MentorListing {
-  // A mentor who is also a user keeps their listing in sync with their own
-  // profile.
   return {
     id: m.id,
-    name: db?.full_name?.trim() || m.full_name,
-    role: db?.headline?.trim() || m.headline,
-    avatar: db?.avatar_url || m.avatar_url,
-    location: db?.location?.trim() || m.location,
-    expertise: db?.skills?.length ? db.skills : m.expertise,
+    name: m.full_name,
+    role: m.headline,
+    avatar: m.avatar_url,
+    location: m.location,
+    expertise: m.expertise,
     bio: m.bio ?? '',
     linkedin: m.linkedin_url || null,
   }
