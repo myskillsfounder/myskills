@@ -1,32 +1,23 @@
-import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
   Briefcase,
   Building2,
-  CheckCircle2,
-  Compass,
   GraduationCap,
   HeartHandshake,
-  Lock,
   UserPlus,
-  Users,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
 import { Skeleton } from '@/components/ui'
-import { Navbar } from '@/components/landing/Navbar'
-import { Footer } from '@/components/landing/Footer'
-import { Eyebrow } from '@/components/landing/Eyebrow'
-import { GridBackdrop } from '@/components/landing/GridBackdrop'
 import { supabase } from '@/lib/supabase'
 import { fetchMentors } from '@/lib/mentors'
-import { hubPage, partnerPage, PartnerFaq, type PartnerKey } from '@/components/partner/PartnerLanding'
+import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import { SearchHeader } from '@/components/community/SearchHeader'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
-import type { PortalRole } from '@/lib/portalAccess'
 import {
   CATEGORIES,
   INTERNSHIP_TRACKS,
@@ -43,7 +34,6 @@ import {
   type MentorListing,
 } from '@/components/community/Marketplace'
 
-type IconType = ComponentType<{ size?: number; className?: string }>
 
 // ?category=mentors (or wellness, guidance, internships, institutions) opens
 // the hub already filtered, so a link elsewhere in the app can point at one
@@ -56,10 +46,10 @@ export const Route = createFileRoute('/community/')({
 })
 
 /**
- * /community is dual-purpose: signed-out visitors get this public B2B
- * onboarding page below (its whole job is funnelling mentors, institutions
- * and companies to one of the three partner-application forms — there is no
- * student-facing content here); onboarded users get the in-app hub below.
+ * /community is dual-purpose: signed-out visitors get the public partner
+ * page (PartnerHub: its whole job is bringing mentors, counsellors, career
+ * guides, institutions and companies to the partner sign-up — there is no
+ * student-facing content there); onboarded users get the in-app hub below.
  *
  * Defaults to the public page immediately, even while auth is still
  * resolving, and only swaps to the hub once a session is confirmed. A
@@ -74,214 +64,7 @@ export const Route = createFileRoute('/community/')({
  */
 function CommunityIndexRoute() {
   const { user } = useAuthUser()
-  return user ? <CommunityHub /> : <PublicCommunityPage />
-}
-
-const primaryButton =
-  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
-const ghostButton =
-  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20'
-
-/** Full-width deep-dive section shared by all three pillars. `live` swaps the
- *  colorful, actionable treatment for the honest muted "coming soon" one —
- *  same structure either way, so nothing feels like an afterthought. */
-function PillarSection({
-  id,
-  icon: Icon,
-  live,
-  reverse = false,
-  eyebrow,
-  title,
-  description,
-  bullets,
-  actions,
-  gridMask,
-}: {
-  id?: string
-  icon: IconType
-  live: boolean
-  /** Alternates which side the text sits on down the page, so three
-   *  back-to-back sections don't read as one repeated block. */
-  reverse?: boolean
-  eyebrow: string
-  title: string
-  description: string
-  bullets: string[]
-  actions: ReactNode
-  gridMask: string
-}) {
-  return (
-    <section id={id} className="relative scroll-mt-16 overflow-hidden border-t border-white/[0.06] px-4 py-10 sm:px-6 lg:px-8">
-      <div className="card-glass-dark relative mx-auto grid max-w-6xl items-center gap-10 overflow-hidden p-8 lg:grid-cols-2 lg:p-12">
-        <GridBackdrop mask={gridMask} />
-        <div className={`relative ${reverse ? 'lg:order-2' : ''}`}>
-          <div className="flex items-center gap-3">
-            <span
-              className={`flex h-12 w-12 items-center justify-center rounded-lg text-white shadow-e1 ${
-                live ? 'bg-gradient-to-br from-brand-500 to-brand-700' : 'bg-white/10 opacity-70 grayscale'
-              }`}
-            >
-              <Icon size={22} />
-            </span>
-            {!live && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/60">
-                <Lock size={10} />
-                Coming soon
-              </span>
-            )}
-          </div>
-
-          <Eyebrow dark>{eyebrow}</Eyebrow>
-          <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            {title}
-          </h2>
-          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/70">{description}</p>
-
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">{actions}</div>
-        </div>
-
-        <ul className={`relative space-y-3.5 ${reverse ? 'lg:order-1' : ''}`}>
-          {bullets.map((line) => (
-            <li key={line} className="flex items-start gap-2.5 text-sm text-white/80">
-              <CheckCircle2
-                size={18}
-                className={`mt-0.5 shrink-0 ${live ? 'text-brand-200' : 'text-white/30'}`}
-              />
-              {line}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )
-}
-
-function PublicCommunityPage() {
-  const icons: Record<string, IconType> = {
-    mentors: GraduationCap,
-    institutions: Building2,
-    companies: Briefcase,
-    guides: Compass,
-  }
-  const gridMasks = [
-    'ellipse 55% 60% at 10% 20%',
-    'ellipse 55% 60% at 90% 80%',
-    'ellipse 55% 60% at 10% 20%',
-    'ellipse 55% 60% at 90% 80%',
-  ]
-
-  return (
-    <div className="min-h-screen bg-ink-900">
-      <Navbar />
-
-      <main>
-        {/* Hero: who this page is for, in the order the sections follow. */}
-        <section className="surface-wood-dark relative overflow-hidden">
-          <GridBackdrop mask="ellipse 75% 65% at 50% 0%" />
-          <div className="relative mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
-            <div className="rise-in mx-auto max-w-3xl text-center">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
-                <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
-                <Users size={13} />
-                {hubPage.eyebrow}
-              </span>
-              <h1 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-                {hubPage.h1} <span className="text-brand-200">{hubPage.h1Accent}</span>
-              </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">{hubPage.intro}</p>
-              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link to="/community-portal/signup" className={primaryButton}>
-                  {hubPage.primaryCta}
-                  <ArrowRight size={16} />
-                </Link>
-                <Link to="/community-portal/login" className={ghostButton}>
-                  {hubPage.secondaryCta}
-                </Link>
-              </div>
-              <nav aria-label="Ways to partner" className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-                {hubPage.sections.map((s) => (
-                  <a
-                    key={s.key}
-                    href={`#${s.anchor}`}
-                    className="inline-flex h-10 items-center gap-2 rounded-full bg-white/10 px-4 text-sm font-medium text-white/85 transition-colors hover:bg-white/20 hover:text-white"
-                  >
-                    {s.eyebrow.replace(/^For /, '').replace(/^./, (c) => c.toUpperCase())}
-                    <ArrowRight size={14} />
-                  </a>
-                ))}
-              </nav>
-            </div>
-          </div>
-        </section>
-
-        {/* Mentors, then partner academies, then internship companies. */}
-        {hubPage.sections.map((s, i) => (
-          <PillarSection
-            key={s.key}
-            id={s.anchor}
-            icon={icons[s.key]}
-            live
-            reverse={i === 1}
-            eyebrow={s.eyebrow}
-            title={s.title}
-            gridMask={gridMasks[i]}
-            description={s.summary}
-            bullets={s.bullets}
-            actions={
-              <>
-                {/* Every way in goes through the same verification: the role only presets the first step. */}
-                <Link to="/community-portal/signup" search={s.role ? { role: s.role as PortalRole } : {}} className={primaryButton}>
-                  {s.joinCta}
-                  <ArrowRight size={16} />
-                </Link>
-                {s.learnCta && (
-                  <Link to={partnerPage(s.key as PartnerKey).path} className={ghostButton}>
-                    {s.learnCta}
-                  </Link>
-                )}
-              </>
-            }
-          />
-        ))}
-
-        <HowPartnering />
-
-        <PartnerFaq faqs={hubPage.faqs} title="Common questions" />
-      </main>
-
-      <Footer />
-    </div>
-  )
-}
-
-/** The four steps from "Partner with MySkills" to an open portal, so nobody
- *  wonders what verification means before they start. */
-function HowPartnering() {
-  return (
-    <section className="border-t border-white/[0.06] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <Eyebrow dark>Verified, every time</Eyebrow>
-        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{hubPage.howTitle}</h2>
-        <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {hubPage.howSteps.map((step, i) => (
-            <li key={step.title} className="card-glass-dark p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500/25 text-sm font-semibold text-brand-200">
-                {i + 1}
-              </span>
-              <h3 className="mt-4 text-base font-semibold text-white">{step.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-white/65">{step.body}</p>
-            </li>
-          ))}
-        </ol>
-        <div className="mt-8">
-          <Link to="/community-portal/signup" className={primaryButton}>
-            {hubPage.primaryCta}
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  )
+  return user ? <CommunityHub /> : <PartnerHub />
 }
 
 /**

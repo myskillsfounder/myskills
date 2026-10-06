@@ -274,7 +274,10 @@ ${hub.sections
       `<section id="${esc(sec.anchor)}"><h2>${esc(sec.title)}</h2><p>${esc(sec.summary)}</p>${list(sec.bullets)}<p><a href="${PARTNERS[sec.key]?.path ?? '/community-portal/signup'}">${esc(sec.cta)}</a></p></section>`,
   )
   .join('')}
+<section><h2>${esc(hub.proofTitle)}</h2><p>${esc(hub.proofIntro)}</p><ul>${hub.proof.map((x) => `<li><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></li>`).join('')}</ul></section>
+<section><h2>${esc(hub.howTitle)}</h2><ol>${hub.howSteps.map((x) => `<li><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></li>`).join('')}</ol></section>
 ${faqHtml(hub.faqs)}
+<p><a href="/community-portal/signup">${esc(hub.primaryCta)}</a></p>
 </main>`
 }
 
