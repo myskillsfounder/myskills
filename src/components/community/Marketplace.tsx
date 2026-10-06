@@ -13,6 +13,7 @@ import {
   Lock,
   X,
   MapPin,
+  MessageCircle,
   ShieldCheck,
   Star,
 } from 'lucide-react'
@@ -178,9 +179,12 @@ function LinkedInIcon({ size = 16 }: { size?: number }) {
 
 /** The avatar: their photo, or their initials on the brand colour. */
 function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 'large' }) {
-  const box = size === 'card' ? 'h-14 w-14 text-lg' : 'h-20 w-20 text-2xl'
+  // On the card the avatar sits over the coloured band, so it carries a white
+  // ring to lift it off both the band and the card.
+  const box =
+    size === 'card' ? 'h-[4.5rem] w-[4.5rem] text-xl ring-4 ring-white shadow-e1' : 'h-20 w-20 text-2xl ring-2 ring-brand-100'
   return mentor.avatar ? (
-    <img src={mentor.avatar} alt="" className={`${box} shrink-0 rounded-full object-cover ring-2 ring-brand-100`} />
+    <img src={mentor.avatar} alt="" className={`${box} shrink-0 rounded-full bg-white object-cover`} />
   ) : (
     <span
       className={`${box} flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 font-semibold text-white`}
@@ -292,8 +296,8 @@ function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListi
 
 /**
  * A mentor's card: always the same size. Every part has a fixed place and room
- * (one line each for name, role and location; one row of up to two skills; two
- * lines of bio), and anything longer is trimmed. Tap View Profile for the lot.
+ * (one line each for name, role and location; three lines of bio; one row of up
+ * to two skills), and anything longer is trimmed. Tap View Profile for the lot.
  * `preview` is the mentor looking at their own card in the Community portal.
  */
 export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; preview?: boolean }) {
@@ -301,53 +305,65 @@ export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; 
   const shown = mentor.expertise.slice(0, 2)
   const extra = mentor.expertise.length - shown.length
   return (
-    <div className="card flex h-full flex-col p-5">
-      <div className="flex items-center gap-3.5">
-        <MentorAvatar mentor={mentor} size="card" />
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 font-display text-lg font-semibold leading-snug text-ink-900">
-            <span className="truncate">{mentor.name}</span>
-            <BadgeCheck size={16} className="shrink-0 text-emerald-600" aria-label="Verified mentor" />
-          </p>
-          <p className="truncate text-sm leading-snug text-brand-700">{mentor.role}</p>
-          {/* Always a line, so a mentor without a location doesn't make a shorter card. */}
-          <p className="mt-0.5 flex h-4 items-center gap-1 truncate text-xs text-ink-500">
-            {mentor.location && (
-              <>
-                <MapPin size={11} className="shrink-0" /> <span className="truncate">{mentor.location}</span>
-              </>
-            )}
-          </p>
+    <div className="card lift flex h-full flex-col overflow-hidden">
+      {/* A band of colour with the photo set over its edge: the card reads as
+          a person's profile rather than a row of text. */}
+      <div className="relative h-16 bg-gradient-to-br from-brand-300/70 via-brand-200/60 to-gold-200/70">
+        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 shadow-e1">
+          <BadgeCheck size={13} />
+          Verified
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col px-5 pb-5">
+        <div className="-mt-9">
+          <MentorAvatar mentor={mentor} size="card" />
         </div>
-      </div>
 
-      <div className="mt-4 flex h-7 flex-nowrap items-center gap-1.5 overflow-hidden">
-        {shown.map((e) => (
-          <span
-            key={e}
-            className="min-w-0 max-w-[9rem] truncate rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700"
-          >
-            {e}
+        <p className="mt-3 truncate font-display text-lg font-semibold leading-snug text-ink-900">{mentor.name}</p>
+        <p className="truncate text-sm font-medium leading-snug text-brand-700">{mentor.role}</p>
+        {/* Always a line, so a mentor without a location doesn't make a shorter card. */}
+        <p className="mt-1 flex h-4 items-center gap-1 text-xs text-ink-500">
+          {mentor.location && (
+            <>
+              <MapPin size={11} className="shrink-0" /> <span className="truncate">{mentor.location}</span>
+            </>
+          )}
+        </p>
+
+        {/* Exactly three lines tall: a taller box would let a fourth line peek out under the clamp. */}
+        <p className="mt-3 line-clamp-3 h-[3.75rem] text-sm leading-5 text-ink-600">{mentor.bio}</p>
+
+        <div className="mt-3 flex h-7 flex-nowrap items-center gap-1.5 overflow-hidden">
+          {shown.map((e) => (
+            <span
+              key={e}
+              className="min-w-0 truncate rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700"
+            >
+              {e}
+            </span>
+          ))}
+          {extra > 0 && (
+            <span className="shrink-0 rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">+{extra}</span>
+          )}
+        </div>
+
+        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
+            <MessageCircle size={14} className="text-ink-400" />
+            1:1 Live Chat
           </span>
-        ))}
-        {extra > 0 && (
-          <span className="shrink-0 rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">+{extra}</span>
-        )}
-      </div>
-
-      <p className="mt-3 line-clamp-2 min-h-[2.75rem] text-sm leading-snug text-ink-600">{mentor.bio}</p>
-
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
-        <span className="text-xs font-medium text-ink-500">Live Chat</span>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-haspopup="dialog"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-        >
-          View Profile
-          <ChevronRight size={15} />
-        </button>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-haspopup="dialog"
+            aria-label={`View ${mentor.name}’s profile`}
+            className="press inline-flex items-center gap-1 rounded-full bg-brand-50 py-2 pl-4 pr-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-600 hover:text-white"
+          >
+            View Profile
+            <ChevronRight size={15} />
+          </button>
+        </div>
       </div>
 
       {open && <MentorProfileDialog mentor={mentor} preview={preview} onClose={() => setOpen(false)} />}
@@ -379,18 +395,46 @@ export function toMentorListing(
 
 /** The "add yourself" tile that closes a row — dashed, so it reads as an
  *  invitation rather than another listing. */
-export function JoinCard({ icon: Icon, title, body, to }: { icon: IconType; title: string; body: string; to: string }) {
+// Spelled out so Tailwind sees each class. How many columns the tile takes at
+// each width, and whether that is wide enough to lay it out as a strip.
+const JOIN_SM: Record<number, string> = {
+  1: 'sm:col-span-1 sm:flex-col sm:items-start',
+  2: 'sm:col-span-2 sm:flex-row sm:items-center',
+}
+const JOIN_LG: Record<number, string> = {
+  1: 'lg:col-span-1 lg:flex-col lg:items-start',
+  2: 'lg:col-span-2 lg:flex-row lg:items-center',
+  3: 'lg:col-span-3 lg:flex-row lg:items-center',
+}
+
+export function JoinCard({
+  icon: Icon,
+  title,
+  body,
+  to,
+  after = 0,
+}: {
+  icon: IconType
+  title: string
+  body: string
+  to: string
+  /** How many listings come before it in the grid. The tile takes whatever the
+   *  last row has left, so it never sits alone in a column beside empty space. */
+  after?: number
+}) {
   return (
     <Link
       to={to}
-      className="group flex flex-col items-start justify-center rounded-2xl border-2 border-dashed border-ink-900/[0.12] p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
+      className={`group flex flex-col items-start gap-4 rounded-2xl border-2 border-dashed border-ink-900/[0.12] p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/40 ${JOIN_SM[2 - (after % 2)]} ${JOIN_LG[3 - (after % 3)]}`}
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-700 transition-colors group-hover:bg-brand-600 group-hover:text-white">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink-100 text-ink-700 transition-colors group-hover:bg-brand-600 group-hover:text-white">
         <Icon size={19} />
       </span>
-      <p className="mt-3 font-display text-lg font-semibold text-ink-900">{title}</p>
-      <p className="mt-1 text-sm leading-relaxed text-ink-600">{body}</p>
-      <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
+      <span className="min-w-0 flex-1">
+        <span className="block font-display text-lg font-semibold text-ink-900">{title}</span>
+        <span className="mt-0.5 block text-sm leading-relaxed text-ink-600">{body}</span>
+      </span>
+      <span className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-brand-700">
         Apply <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
       </span>
     </Link>
