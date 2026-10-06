@@ -8,14 +8,89 @@ import { supabase } from './supabase'
 
 export type PortalRole = 'mentor' | 'wellness' | 'guidance' | 'internships' | 'institutions'
 
+export interface PortalRoleInfo {
+  value: PortalRole
+  /** "A mentor": completes "I am…". */
+  label: string
+  /** "Mentor": a heading. */
+  short: string
+  /** One line under the heading on the role card. */
+  blurb: string
+  /** The name field for a company or institution; absent for a person. */
+  organisation?: string
+  /** What to put in "about you", for this role. */
+  introHint: string
+  /** What working with MySkills students looks like, for the side panel. */
+  perks: string[]
+}
+
 /** What someone can ask to be. Same keys as the portal's sections. */
-export const PORTAL_ROLES: { value: PortalRole; label: string; organisation?: string }[] = [
-  { value: 'mentor', label: 'A mentor' },
-  { value: 'wellness', label: 'A counsellor' },
-  { value: 'guidance', label: 'A career guide' },
-  { value: 'internships', label: 'A company offering internships', organisation: 'Company name' },
-  { value: 'institutions', label: 'A training institution', organisation: 'Institution name' },
+export const PORTAL_ROLES: PortalRoleInfo[] = [
+  {
+    value: 'mentor',
+    label: 'A mentor',
+    short: 'Mentor',
+    blurb: 'Guide students one to one and vouch for the skills they earn.',
+    introHint: 'Your experience, and a LinkedIn link if you have one. It helps us verify you quickly.',
+    perks: [
+      'See a student’s aptitude report before you say yes',
+      'Sessions on your schedule; pause new requests any time',
+      'Award skill badges and verify projects with your name on them',
+    ],
+  },
+  {
+    value: 'wellness',
+    label: 'A counsellor',
+    short: 'Counsellor',
+    blurb: 'Support students privately when practice alone can’t fix it.',
+    introHint: 'Your qualifications and registration, and how you work with students.',
+    perks: [
+      'The MySkills team assigns students to you',
+      'You log only the date of each session: what you discuss is never recorded',
+      'You see a student’s contact details and nothing more',
+    ],
+  },
+  {
+    value: 'guidance',
+    label: 'A career guide',
+    short: 'Career guide',
+    blurb: 'Help students work out which track to take and what comes next.',
+    introHint: 'Your background in careers or hiring, and a LinkedIn link if you have one.',
+    perks: [
+      'The MySkills team assigns students to you',
+      'See a student’s score, certificates and progress to guide them well',
+      'Log each session by date, nothing more',
+    ],
+  },
+  {
+    value: 'internships',
+    label: 'A company offering internships',
+    short: 'Company',
+    blurb: 'Offer internships to students who can show what they’ve done.',
+    organisation: 'Company name',
+    introHint: 'What the company does, the kinds of roles you could offer, and your website.',
+    perks: [
+      'Meet students who have practised real scenarios and earned a score',
+      'See each student’s Career Readiness Score and certificates',
+      'A signed-off internship earns the student points in their score',
+    ],
+  },
+  {
+    value: 'institutions',
+    label: 'A training institution',
+    short: 'Institution',
+    blurb: 'Be listed for students looking for classroom learning.',
+    organisation: 'Institution name',
+    introHint: 'The courses you run, your city, and your website or Google listing.',
+    perks: [
+      'A verified partner listing that students can find',
+      'Keep track of the students enrolled with you',
+      'Student ratings that build trust with future students',
+    ],
+  },
 ]
+
+export const isPortalRole = (v: unknown): v is PortalRole => PORTAL_ROLES.some((r) => r.value === v)
 
 export const roleLabel = (r: PortalRole) => PORTAL_ROLES.find((x) => x.value === r)?.label.replace(/^An? /, '') ?? r
 
@@ -127,6 +202,12 @@ export interface AdminPortalRequest {
   status: RequestStatus
   note: string | null
   reviewed_at: string | null
+  /** An application with the same email: mentor/institution pending|approved|rejected, company new|contacted.
+   *  Absent until docs/supabase-portal-signup-links.sql is run. */
+  application_status?: string | null
+  application_on?: string | null
+  /** For a mentor: the listing their approved application created. */
+  suggested_mentor?: string | null
 }
 
 /** Null (not an error) until the SQL is run. */

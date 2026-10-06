@@ -264,14 +264,14 @@ ${faqHtml(p.faqs)}
 </main>`
 }
 
-/** The hub: an intro, the three ways to partner, each linking to its page. */
+/** The hub: an intro, the ways to partner, each linking to its page (or the sign-up, for those with no page). */
 function hubBodyHtml(hub) {
   return `<main>
 <h1>${esc(hub.h1)} ${esc(hub.h1Accent)}</h1><p>${esc(hub.intro)}</p>
 ${hub.sections
   .map(
     (sec) =>
-      `<section id="${esc(sec.anchor)}"><h2>${esc(sec.title)}</h2><p>${esc(sec.summary)}</p>${list(sec.bullets)}<p><a href="${PARTNERS[sec.key].path}">${esc(sec.cta)}</a></p></section>`,
+      `<section id="${esc(sec.anchor)}"><h2>${esc(sec.title)}</h2><p>${esc(sec.summary)}</p>${list(sec.bullets)}<p><a href="${PARTNERS[sec.key]?.path ?? '/community-portal/signup'}">${esc(sec.cta)}</a></p></section>`,
   )
   .join('')}
 ${faqHtml(hub.faqs)}

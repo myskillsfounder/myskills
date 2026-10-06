@@ -7,6 +7,7 @@ import { submitInstitutionPartnerApplication } from '@/lib/institutionPartners'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
+import { NextStepAccount } from '@/components/partner/NextStepAccount'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 // Public on purpose: an applying institution is an outside party, and making
@@ -189,14 +190,7 @@ function BecomeAPartnerInstitutionPage() {
                 Thanks for your interest. We review every application by hand — if it's a fit,
                 you'll hear from us by email and your institution will go live in the Community.
               </p>
-              <div className="mt-6">
-                <Link
-                  to="/community/institutions"
-                  className="press inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
-                >
-                  Back to Institutions
-                </Link>
-              </div>
+              <NextStepAccount role="institutions" back={{ to: '/community/institutions', label: 'Back to Institutions' }} />
             </div>
           ) : (
             <>

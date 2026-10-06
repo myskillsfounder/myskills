@@ -7,6 +7,7 @@ import { submitInternshipPartnerLead } from '@/lib/internshipPartners'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
+import { NextStepAccount } from '@/components/partner/NextStepAccount'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 // Public on purpose: an interested company is an outside party, and making
@@ -148,14 +149,7 @@ function BecomeAnInternshipPartnerPage() {
                 Thanks — a real person on the team will reach out to set up internship roles for
                 MySkills students.
               </p>
-              <div className="mt-6">
-                <Link
-                  to="/community"
-                  className="press inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
-                >
-                  Back to Community
-                </Link>
-              </div>
+              <NextStepAccount role="internships" back={{ to: '/community', label: 'Back to Community' }} />
             </div>
           ) : (
             <>

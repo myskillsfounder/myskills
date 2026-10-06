@@ -5,6 +5,7 @@ import {
   Briefcase,
   Building2,
   CheckCircle2,
+  Compass,
   GraduationCap,
   HeartHandshake,
   Lock,
@@ -25,6 +26,7 @@ import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institu
 import { SearchHeader } from '@/components/community/SearchHeader'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
+import type { PortalRole } from '@/lib/portalAccess'
 import {
   CATEGORIES,
   INTERNSHIP_TRACKS,
@@ -77,6 +79,8 @@ function CommunityIndexRoute() {
 
 const primaryButton =
   'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
+const ghostButton =
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20'
 
 /** Full-width deep-dive section shared by all three pillars. `live` swaps the
  *  colorful, actionable treatment for the honest muted "coming soon" one —
@@ -153,11 +157,17 @@ function PillarSection({
 }
 
 function PublicCommunityPage() {
-  const icons: Record<string, IconType> = { mentors: GraduationCap, institutions: Building2, companies: Briefcase }
+  const icons: Record<string, IconType> = {
+    mentors: GraduationCap,
+    institutions: Building2,
+    companies: Briefcase,
+    guides: Compass,
+  }
   const gridMasks = [
     'ellipse 55% 60% at 10% 20%',
     'ellipse 55% 60% at 90% 80%',
     'ellipse 55% 60% at 10% 20%',
+    'ellipse 55% 60% at 90% 80%',
   ]
 
   return (
@@ -179,7 +189,16 @@ function PublicCommunityPage() {
                 {hubPage.h1} <span className="text-brand-200">{hubPage.h1Accent}</span>
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">{hubPage.intro}</p>
-              <nav aria-label="Ways to partner" className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link to="/community-portal/signup" className={primaryButton}>
+                  {hubPage.primaryCta}
+                  <ArrowRight size={16} />
+                </Link>
+                <Link to="/community-portal/login" className={ghostButton}>
+                  {hubPage.secondaryCta}
+                </Link>
+              </div>
+              <nav aria-label="Ways to partner" className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
                 {hubPage.sections.map((s) => (
                   <a
                     key={s.key}
@@ -209,19 +228,59 @@ function PublicCommunityPage() {
             description={s.summary}
             bullets={s.bullets}
             actions={
-              <Link to={partnerPage(s.key as PartnerKey).path} className={primaryButton}>
-                {s.cta}
-                <ArrowRight size={16} />
-              </Link>
+              <>
+                {/* Every way in goes through the same verification: the role only presets the first step. */}
+                <Link to="/community-portal/signup" search={s.role ? { role: s.role as PortalRole } : {}} className={primaryButton}>
+                  {s.joinCta}
+                  <ArrowRight size={16} />
+                </Link>
+                {s.learnCta && (
+                  <Link to={partnerPage(s.key as PartnerKey).path} className={ghostButton}>
+                    {s.learnCta}
+                  </Link>
+                )}
+              </>
             }
           />
         ))}
+
+        <HowPartnering />
 
         <PartnerFaq faqs={hubPage.faqs} title="Common questions" />
       </main>
 
       <Footer />
     </div>
+  )
+}
+
+/** The four steps from "Partner with MySkills" to an open portal, so nobody
+ *  wonders what verification means before they start. */
+function HowPartnering() {
+  return (
+    <section className="border-t border-white/[0.06] px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <Eyebrow dark>Verified, every time</Eyebrow>
+        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{hubPage.howTitle}</h2>
+        <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {hubPage.howSteps.map((step, i) => (
+            <li key={step.title} className="card-glass-dark p-5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500/25 text-sm font-semibold text-brand-200">
+                {i + 1}
+              </span>
+              <h3 className="mt-4 text-base font-semibold text-white">{step.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-white/65">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-8">
+          <Link to="/community-portal/signup" className={primaryButton}>
+            {hubPage.primaryCta}
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
+    </section>
   )
 }
 
