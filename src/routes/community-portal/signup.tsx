@@ -87,6 +87,8 @@ function PortalSignupPage() {
   const [formError, setFormError] = useState<string>()
   const [notice, setNotice] = useState<string>()
   const [submitting, setSubmitting] = useState(false)
+  // The email they typed already has a MySkills account: they sign in instead.
+  const [hasAccount, setHasAccount] = useState(false)
 
   const role = PORTAL_ROLES.find((r) => r.value === request.role)
   const set = <K extends keyof PortalRequestDetails>(key: K, v: PortalRequestDetails[K]) =>
@@ -108,6 +110,7 @@ function PortalSignupPage() {
   }
 
   function applyError(err: unknown) {
+    setHasAccount(err instanceof AuthError && err.alreadyRegistered)
     if (err instanceof AuthError && err.field) setErrors((p) => ({ ...p, [err.field!]: err.message }))
     else setFormError(err instanceof Error ? err.message : 'Something went wrong.')
   }
@@ -119,6 +122,7 @@ function PortalSignupPage() {
     if (!PASSWORD_RULES.every((r) => r.test(password))) next.password = 'Meet every point on the list below.'
     setErrors(next)
     setFormError(undefined)
+    setHasAccount(false)
     if (Object.keys(next).length) return
     setSubmitting(true)
     try {
@@ -345,6 +349,21 @@ function PortalSignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 error={errors.email}
               />
+              {hasAccount && (
+                <div className="rounded-xl bg-amber-50 p-4">
+                  <p className="text-sm font-semibold text-amber-900">You already have a MySkills account</p>
+                  <p className="mt-0.5 text-sm text-amber-900/80">
+                    No code was sent, because {email.trim()} is already registered. Sign in with that account instead: if
+                    it has no portal access yet, you can ask for it there and the team will verify you.
+                  </p>
+                  <Link
+                    to="/community-portal/login"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-900 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-800"
+                  >
+                    Sign in to the portal <ArrowRight size={15} />
+                  </Link>
+                </div>
+              )}
               <div>
                 <TextField
                   label="Password"
@@ -438,7 +457,7 @@ function PortalSignupPage() {
           </p>
 
           <p className="mt-6 text-center text-sm text-ink-600">
-            Already verified?{' '}
+            Already have an account?{' '}
             <Link to="/community-portal/login" className="font-semibold text-brand-700 hover:text-brand-800">
               Sign in
             </Link>
