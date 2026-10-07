@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
-import { Check, Inbox, Link2, Mail, MapPin, Pencil, Phone, Plus, Unlink, UserCheck, X } from 'lucide-react'
+import { Check, Clock, Inbox, Link2, Mail, MapPin, Pencil, Phone, Plus, Unlink, UserCheck, X } from 'lucide-react'
 import {
   approveMentorApplication,
   fetchListedMentors,
   fetchMentorApplications,
-  linkMentorAccount,
+  cancelMentorInvite,
+  fetchMentorInvites,
+  reserveMentorEmail,
   rejectMentorApplication,
   unlinkMentorAccount,
   type ApplicationStatus,
@@ -14,6 +16,7 @@ import {
   type MentorApplication,
 } from '@/lib/mentors'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { InviteLink } from '@/components/admin/InviteLink'
 import { MentorEditor } from '@/components/admin/MentorEditor'
 import { Alert, Badge, Button, Chip, EmptyState, Input, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
@@ -200,19 +203,26 @@ function ApplicationCard({
  */
 function ListedMentorCard({
   mentor,
+  invited,
   busy,
   onLink,
+  onCancelInvite,
   onUnlink,
   onEdited,
 }: {
   mentor: ListedMentor
+  /** The email being held for this listing until its owner signs up. */
+  invited?: string
   busy: boolean
   onLink: (email: string) => void
+  onCancelInvite: () => void
   onUnlink: () => void
   /** The profile was saved: reload the list. */
   onEdited: () => void
 }) {
   const [email, setEmail] = useState('')
+  // Changing a held email reuses the form below.
+  const [changing, setChanging] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [editing, setEditing] = useState(false)
 
@@ -235,6 +245,10 @@ function ListedMentorCard({
             {mentor.ready === false && <Badge tone="warning">Profile incomplete</Badge>}
             {mentor.ready && mentor.accepting === false && <Badge tone="neutral">Paused</Badge>}
           </>
+        ) : invited ? (
+          <Badge tone="brand" icon={Clock}>
+            Waiting for them to sign up
+          </Badge>
         ) : (
           <Badge tone="warning">Not linked yet</Badge>
         )}
@@ -301,17 +315,41 @@ function ListedMentorCard({
             </Button>
           )}
         </div>
+      ) : invited && !changing ? (
+        // Nothing left for the team to do: the link happens when they sign up.
+        <div className="mt-4 rounded-xl border border-brand-200 bg-brand-50/60 p-4">
+          <p className="text-sm text-ink-800">
+            Reserved for <span className="break-all font-semibold text-ink-900">{invited}</span>. As soon as they sign up
+            with this email and confirm it, they are linked to this listing automatically and can finish their profile.
+          </p>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">Send them the sign-up link</p>
+          <div className="mt-1.5">
+            <InviteLink role="mentor" email={invited} />
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" variant="ghost" icon={Pencil} disabled={busy} onClick={() => (setEmail(invited), setChanging(true))}>
+              Change email
+            </Button>
+            <Button size="sm" variant="ghost" icon={X} disabled={busy} onClick={onCancelInvite}>
+              Remove
+            </Button>
+          </div>
+        </div>
       ) : (
         <form
           className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4"
           onSubmit={(e) => {
             e.preventDefault()
-            if (email.trim()) onLink(email)
+            if (email.trim()) {
+              onLink(email)
+              setChanging(false)
+            }
           }}
         >
           <p className="text-sm text-amber-900">
-            Students can’t ask this mentor yet, and they don’t get a My students page. Link the account they signed
-            up to MySkills with.
+            Students can’t ask this mentor yet, and they don’t get a My students page. Enter their email: if they
+            already have an account it is linked now; if not, the email is held and they are linked the moment they
+            sign up with it.
           </p>
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
             <div className="min-w-0 flex-1">
@@ -319,14 +357,19 @@ function ListedMentorCard({
                 type="email"
                 required={false}
                 aria-label={`MySkills account email for ${mentor.full_name}`}
-                placeholder="Their sign-up email"
+                placeholder="Their email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <Button type="submit" icon={Link2} disabled={busy || !email.trim()}>
-              {busy ? 'Linking…' : 'Link account'}
+              {busy ? 'Saving…' : 'Link this email'}
             </Button>
+            {changing && (
+              <Button type="button" variant="ghost" disabled={busy} onClick={() => setChanging(false)}>
+                Cancel
+              </Button>
+            )}
           </div>
         </form>
       )}
@@ -336,16 +379,20 @@ function ListedMentorCard({
 
 function ListedMentors({
   mentors,
+  invites,
   loading,
   busyId,
   onLink,
+  onCancelInvite,
   onUnlink,
   onChanged,
 }: {
   mentors: ListedMentor[]
+  invites: Record<string, string>
   loading: boolean
   busyId?: string
   onLink: (id: string, email: string) => void
+  onCancelInvite: (id: string) => void
   onUnlink: (id: string) => void
   onChanged: () => void
 }) {
@@ -377,9 +424,11 @@ function ListedMentors({
       {add}
       <ListedMentorList
         mentors={mentors}
+        invites={invites}
         loading={loading}
         busyId={busyId}
         onLink={onLink}
+        onCancelInvite={onCancelInvite}
         onUnlink={onUnlink}
         onChanged={onChanged}
       />
@@ -389,16 +438,20 @@ function ListedMentors({
 
 function ListedMentorList({
   mentors,
+  invites,
   loading,
   busyId,
   onLink,
+  onCancelInvite,
   onUnlink,
   onChanged,
 }: {
   mentors: ListedMentor[]
+  invites: Record<string, string>
   loading: boolean
   busyId?: string
   onLink: (id: string, email: string) => void
+  onCancelInvite: (id: string) => void
   onUnlink: (id: string) => void
   onChanged: () => void
 }) {
@@ -427,8 +480,10 @@ function ListedMentorList({
         <ListedMentorCard
           key={m.id}
           mentor={m}
+          invited={invites[m.id]}
           busy={busyId === m.id}
           onLink={(email) => onLink(m.id, email)}
+          onCancelInvite={() => onCancelInvite(m.id)}
           onUnlink={() => onUnlink(m.id)}
           onEdited={onChanged}
         />
@@ -449,7 +504,10 @@ function MentorReviewQueue() {
   const [listed, setListed] = useState<ListedMentor[]>([])
   const [listedLoading, setListedLoading] = useState(true)
   const [listedError, setListedError] = useState<string>()
-  const unlinked = listed.filter((m) => !m.linked).length
+  // Emails held for listings whose owner has no account yet.
+  const [invites, setInvites] = useState<Record<string, string>>({})
+  // Still needing the team: not linked, and no email held for them either.
+  const unlinked = listed.filter((m) => !m.linked && !invites[m.id]).length
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -465,7 +523,9 @@ function MentorReviewQueue() {
 
   const loadListed = useCallback(async () => {
     try {
-      setListed(await fetchListedMentors())
+      const [mentors, held] = await Promise.all([fetchListedMentors(), fetchMentorInvites()])
+      setListed(mentors)
+      setInvites(held)
       setListedError(undefined)
     } catch (e) {
       setListedError(errorMessage(e))
@@ -514,7 +574,7 @@ function MentorReviewQueue() {
       <PageHeader
         eyebrow="Admin"
         title="Mentors"
-        subtitle="Approve applications to publish a mentor, then link their MySkills account so students can ask them."
+        subtitle="Approve applications to publish a mentor, then put their email on the listing so students can ask them."
       />
 
       <div role="tablist" aria-label="Mentors" className="mb-5 flex gap-1 border-b border-ink-200">
@@ -560,9 +620,11 @@ function MentorReviewQueue() {
           )}
           <ListedMentors
             mentors={listed}
+            invites={invites}
             loading={listedLoading}
             busyId={busyId}
-            onLink={(id, email) => void actListed(id, () => linkMentorAccount(id, email))}
+            onLink={(id, email) => void actListed(id, async () => void (await reserveMentorEmail(id, email)))}
+            onCancelInvite={(id) => void actListed(id, () => cancelMentorInvite(id))}
             onUnlink={(id) => void actListed(id, () => unlinkMentorAccount(id))}
             onChanged={() => void loadListed()}
           />

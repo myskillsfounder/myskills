@@ -43,6 +43,16 @@ export async function fetchMyMentorProfile(): Promise<MyMentorProfile | null> {
   return row ?? null
 }
 
+/**
+ * If the team reserved this account's email on a mentor listing, link the two
+ * now — see docs/supabase-mentor-invite.sql. True when it did. Never throws:
+ * it runs as the portal opens, and "nothing to claim" is the usual answer.
+ */
+export async function claimMentorInvite(): Promise<boolean> {
+  const { data, error } = await supabase.rpc('claim_mentor_invite')
+  return !error && data === true
+}
+
 export interface MentorProfileInput {
   headline: string
   bio: string

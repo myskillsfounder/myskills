@@ -6,7 +6,7 @@ import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { errorMessage } from '@/lib/errors'
 import { myStaffSections } from '@/lib/staffAccess'
 import { fetchMyMentees, type MentorSideMatch } from '@/lib/mentorMatches'
-import { fetchMyMentorProfile, type MyMentorProfile } from '@/lib/mentorPortal'
+import { claimMentorInvite, fetchMyMentorProfile, type MyMentorProfile } from '@/lib/mentorPortal'
 import {
   RESOURCE_LABEL,
   fetchMyCommunityAccess,
@@ -61,7 +61,14 @@ function MentorPortalLayout() {
 
   const load = useCallback(async () => {
     try {
-      const [mine, granted] = await Promise.all([fetchMyMentorProfile(), fetchMyCommunityAccess()])
+      const [found, granted] = await Promise.all([fetchMyMentorProfile(), fetchMyCommunityAccess()])
+      let mine = found
+      // No access at all: the team may have reserved this email on a mentor
+      // listing before the account existed. If so they are linked now, and go
+      // straight to their profile instead of waiting to be verified again.
+      if (!mine && (granted ?? []).length === 0 && (await claimMentorInvite())) {
+        mine = await fetchMyMentorProfile()
+      }
       // Only a mentor has requests to load; asking for anyone else is an error.
       const mentees = mine ? await fetchMyMentees() : []
       // Before the SQL is run there are no grants to read: mentors only, as before.
