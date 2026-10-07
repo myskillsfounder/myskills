@@ -41,7 +41,7 @@
         "name": "Mentors",
         "tagline": "Guide students one to one",
         "title": "Mentors — guide students one to one",
-        "summary": "Share what you know with students who are just starting out. Accept the students you want to work with, hold sessions your way and vouch for the skills they earn.",
+        "summary": "Share what you know with students who are just starting out. Accept the students you want to work with, hold sessions your way and vouch for the skills they earn. Every mentor is verified by the team before students see them.",
         "bullets": [
           "See a student's aptitude report before you say yes",
           "Sessions on your schedule — pause new requests any time",
@@ -135,11 +135,11 @@
   "mentors": {
     "path": "/become-a-mentor",
     "seoTitle": "Become an Online Mentor for Students in India | MySkills",
-    "seoDescription": "Mentor students in digital marketing and career skills. See their aptitude report, run sessions your own way and award skill badges. Apply in minutes, then create your partner account.",
+    "seoDescription": "Mentor students in digital marketing and career skills. See their aptitude report, run sessions your own way and award skill badges. Create your mentor account in minutes; the team verifies every mentor.",
     "eyebrow": "For mentors",
     "h1": "Become a mentor and help students build real skills",
     "intro": "MySkills students practise digital marketing and career-readiness skills with AI, then work with a real mentor who knows the field. If you've done the work, a little of your time changes how a student starts their career.",
-    "cta": "Apply to mentor",
+    "cta": "Become a mentor",
     "benefitsTitle": "What mentoring on MySkills looks like",
     "benefits": [
       {
@@ -161,9 +161,10 @@
     ],
     "stepsTitle": "How it works",
     "steps": [
-      { "title": "Apply", "body": "Tell us about your experience, then create your partner account. It takes a few minutes." },
-      { "title": "We review", "body": "A real person reads every application, verifies your account and replies by email." },
-      { "title": "Set up your profile", "body": "Once verified, sign in to the Community portal and finish your profile so students can find you." },
+      { "title": "Create your account", "body": "Sign up as a mentor and tell us a little about your experience. It takes a few minutes." },
+      { "title": "Confirm your email", "body": "Enter the 6-digit code we send to the address you signed up with." },
+      { "title": "The team verifies you", "body": "A real person checks every mentor before they are one, and emails you the outcome." },
+      { "title": "Set up your profile", "body": "Sign in to the Community portal and finish your profile. Students can find you once it is complete." },
       { "title": "Meet your students", "body": "Accept requests, hold sessions your way and log each one." }
     ],
     "lookingForTitle": "Who we're looking for",
@@ -175,8 +176,8 @@
     ],
     "faqs": [
       {
-        "q": "Do I need a MySkills account to apply?",
-        "a": "Not to apply. Once your application is in, you create a partner account with the same email address. The team verifies it and links it to your mentor profile, and that is how you sign in to the Community portal."
+        "q": "How do I become a mentor?",
+        "a": "Create a mentor account, confirm your email with the code we send, and the MySkills team verifies you. There is no separate application form: nobody is listed as a mentor until their email is confirmed and the team has verified them."
       },
       {
         "q": "Who are the students?",
@@ -195,8 +196,8 @@
         "a": "Your name, photo, title, bio, areas of expertise and LinkedIn link. Your phone number and email stay private and are used only by the MySkills team to reach you."
       },
       {
-        "q": "What happens after I apply?",
-        "a": "We review every application by hand and email you. If it's a fit, your profile goes live in the Community and your partner account opens the Community portal."
+        "q": "What happens after I sign up?",
+        "a": "The team verifies every mentor by hand and emails you. Once verified, your Community portal opens and you finish your profile there. Students see you when it is complete."
       }
     ]
   },

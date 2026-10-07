@@ -101,7 +101,7 @@ export function VerificationCard({
               icon={Clock}
               tone="wait"
               title="Profile not finished"
-              detail="Your card is listed, but students can’t ask you until the items below are done and saved."
+              detail="Students can’t see or ask you yet. Finish and save the items below and your card goes live."
             />
           ))}
         {mentor &&

@@ -260,7 +260,7 @@ function insights(stats: AdminOverviewV2, extra: DashboardExtra | null, inbox: I
     if (c.mentors_listed > 0 && c.mentors_taking < c.mentors_listed) {
       out.push({
         tone: 'info',
-        text: `${c.mentors_taking} of ${c.mentors_listed} listed mentors can be asked right now. The rest have no account, an unfinished profile, or are paused.`,
+        text: `${c.mentors_taking} of ${c.mentors_listed} mentors can be asked right now. The rest haven’t finished their profile, or are paused.`,
         to: '/admin/mentors',
       })
     }
@@ -562,7 +562,7 @@ function DashboardPage() {
                 Community &amp; partners
               </SectionLabel>
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <StatCard label={`Mentors listed · ${c.mentors_taking} taking students`} value={c.mentors_listed} icon={Users} />
+                <StatCard label={`Mentors · ${c.mentors_taking} taking students`} value={c.mentors_listed} icon={Users} />
                 <StatCard label="Students working with a mentor" value={c.students_with_mentor} icon={Star} />
                 <StatCard label="Institutions listed" value={c.institutions_listed} icon={Award} />
                 <StatCard label="Partner accounts in the portal" value={c.partner_accounts} icon={ShieldCheck} />
