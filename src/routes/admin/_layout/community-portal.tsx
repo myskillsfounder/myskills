@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Check, Copy, Eye, KeyRound, Mail, UserPlus, Users } from 'lucide-react'
+import { Eye, KeyRound, UserPlus, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   GRANTED_RESOURCES,
@@ -15,6 +15,7 @@ import {
   type CommunityUsage,
 } from '@/lib/communityPortal'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { InviteLink, SIGNUP_ROLE } from '@/components/admin/InviteLink'
 import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
@@ -31,60 +32,13 @@ export const Route = createFileRoute('/admin/_layout/community-portal')({
 const isOrganisation = (r: CommunityResource) => r === 'internships' || r === 'institutions'
 const logsSessions = (r: CommunityResource) => r !== 'mentors' && LOGS_SESSIONS[r]
 
-/** The sign-up role that matches each section, for the invite link. */
-const SIGNUP_ROLE: Record<CommunityResource, string> = {
-  mentors: 'mentor',
-  wellness: 'wellness',
-  guidance: 'guidance',
-  internships: 'internships',
-  institutions: 'institutions',
-}
+/** What each section's partner is called, for the invite. */
 const PARTNER_WORD: Record<CommunityResource, string> = {
   mentors: 'mentor',
   wellness: 'counsellor',
   guidance: 'career guide',
   internships: 'company',
   institutions: 'institution',
-}
-
-const signupLink = (r: CommunityResource) => `${window.location.origin}/community-portal/signup?role=${SIGNUP_ROLE[r]}`
-
-/**
- * The way in for someone with no account yet: the sign-up link with their role
- * already chosen, to copy or to email. They sign up, confirm their email, and
- * appear at the top of this page to be verified.
- */
-function InviteLink({ resource, email }: { resource: CommunityResource; email?: string }) {
-  const [copied, setCopied] = useState(false)
-  const link = signupLink(resource)
-  const mail = `mailto:${email ?? ''}?subject=${encodeURIComponent('Your MySkills Community portal account')}&body=${encodeURIComponent(
-    `Hi,\n\nPlease create your MySkills partner account here:\n${link}\n\nUse this email address. Once you have confirmed it, we verify you and your portal opens.\n\nThanks,\nMySkills`,
-  )}`
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(link)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      /* the link is on screen to select by hand */
-    }
-  }
-
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <code className="min-w-0 flex-1 truncate rounded-lg bg-white px-3 py-2 text-xs text-ink-700 ring-1 ring-ink-900/[0.08]">{link}</code>
-      <Button size="sm" variant="secondary" icon={copied ? Check : Copy} onClick={() => void copy()}>
-        {copied ? 'Copied' : 'Copy link'}
-      </Button>
-      <a
-        href={mail}
-        className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-ink-300 bg-white px-3.5 text-[13px] font-semibold text-ink-800 hover:border-ink-400 hover:bg-ink-50"
-      >
-        <Mail size={14} /> Email it
-      </a>
-    </div>
-  )
 }
 
 function CommunityPortalAdminPage() {
@@ -211,8 +165,14 @@ function CommunityPortalAdminPage() {
               ))}
             </select>
           </label>
-          <InviteLink resource={inviteRole} />
+          <InviteLink role={SIGNUP_ROLE[inviteRole]} />
         </div>
+        {inviteRole === 'mentors' && (
+          <p className="mt-3 text-xs text-ink-500">
+            Already listed in Community? Put their email on their listing under Community &gt; Mentors first. Then they
+            are linked to it the moment they sign up, with nothing left for you to do.
+          </p>
+        )}
       </section>
 
       <section className="card mt-6 p-5 sm:p-6">
@@ -299,7 +259,7 @@ function CommunityPortalAdminPage() {
             </p>
             {!overview && (
               <div className="mt-3">
-                <InviteLink resource={resource} email={noAccount} />
+                <InviteLink role={SIGNUP_ROLE[resource]} email={noAccount} />
               </div>
             )}
           </div>

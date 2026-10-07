@@ -161,6 +161,39 @@ export async function fetchListedMentors(): Promise<ListedMentor[]> {
   return (data ?? []) as ListedMentor[]
 }
 
+/**
+ * Put an email on a mentor's listing — see docs/supabase-mentor-invite.sql.
+ * 'linked' when an account with that email existed and is now linked;
+ * 'reserved' when there is none yet, and the email is held until they sign up.
+ * Before that SQL is run it can only link an account that exists, as it did.
+ */
+export async function reserveMentorEmail(mentorId: string, email: string): Promise<'linked' | 'reserved'> {
+  const { data, error } = await supabase.rpc('admin_reserve_mentor_email', { p_mentor: mentorId, p_email: email.trim() })
+  if (error) {
+    if (error.code === 'PGRST202') {
+      await linkMentorAccount(mentorId, email)
+      return 'linked'
+    }
+    raise(error)
+  }
+  return data === 'linked' ? 'linked' : 'reserved'
+}
+
+/** The emails being held for listings with no account yet, by mentor id. */
+export async function fetchMentorInvites(): Promise<Record<string, string>> {
+  const { data, error } = await supabase.rpc('admin_mentor_invites')
+  // Absent until the SQL is run: there are simply none to show.
+  if (error) return {}
+  const out: Record<string, string> = {}
+  for (const r of (data ?? []) as { mentor_id: string; email: string }[]) out[r.mentor_id] = r.email
+  return out
+}
+
+export async function cancelMentorInvite(mentorId: string): Promise<void> {
+  const { error } = await supabase.rpc('admin_cancel_mentor_invite', { p_mentor: mentorId })
+  if (error) raise(error)
+}
+
 /** Point a mentor's listing at the MySkills account with this email. */
 export async function linkMentorAccount(mentorId: string, email: string): Promise<void> {
   const { error } = await supabase.rpc('link_mentor_account', { p_mentor: mentorId, p_email: email.trim() })
