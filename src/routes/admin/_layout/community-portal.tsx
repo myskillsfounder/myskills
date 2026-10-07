@@ -148,7 +148,7 @@ function CommunityPortalAdminPage() {
         </h2>
         <p className="mt-1 text-sm text-ink-600">
           Someone new, with no account yet? Send them the sign-up link. They create their account and confirm their
-          email, then appear at the top of this page for you to verify. This is how a mentor gets in.
+          email, then appear at the top of this page for you to verify.
         </p>
         <div className="mt-4 grid gap-3 lg:grid-cols-[14rem_minmax(0,1fr)] lg:items-end">
           <label className="block text-sm font-medium text-ink-800">
@@ -169,8 +169,8 @@ function CommunityPortalAdminPage() {
         </div>
         {inviteRole === 'mentors' && (
           <p className="mt-3 text-xs text-ink-500">
-            Already listed in Community? Put their email on their listing under Community &gt; Mentors first. Then they
-            are linked to it the moment they sign up, with nothing left for you to do.
+            Nobody is a mentor until they have signed up, confirmed their email and been verified by the team. If they
+            already have an account, add them under Community &gt; Mentors instead.
           </p>
         )}
       </section>
@@ -244,8 +244,8 @@ function CommunityPortalAdminPage() {
 
         {!overview && (
           <p className="mt-3 text-xs text-ink-500">
-            Adding a mentor? Not here: a mentor’s section comes from their mentor listing. Invite them above, then verify
-            them and pick their listing when they appear.
+            Adding a mentor? Not here: invite them above and verify them when they appear, or add an existing account
+            under Community &gt; Mentors.
           </p>
         )}
 

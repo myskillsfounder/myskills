@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, Mail, Phone, ShieldCheck, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
-import { fetchListedMentors, type ListedMentor } from '@/lib/mentors'
 import {
   fetchPortalRequests,
   reviewPortalRequest,
   roleLabel,
   type AdminPortalRequest,
+  type PortalRole,
 } from '@/lib/portalAccess'
 import { Alert, Badge, Button, Skeleton, Textarea } from '@/components/ui'
 
@@ -16,29 +16,17 @@ const day = (iso: string) =>
 /** One sign-up: who they say they are, and the two decisions. */
 function RequestCard({
   req,
-  unlinked,
   busy,
   onApprove,
   onReject,
 }: {
   req: AdminPortalRequest
-  /** Mentor listings with no account, to link a mentor sign-up to. */
-  unlinked: ListedMentor[] | null
   busy: boolean
-  onApprove: (mentorId?: string) => void
+  onApprove: () => void
   onReject: (note: string) => void
 }) {
   const isMentor = req.role === 'mentor'
   // Suggest the listing with the same name, so the usual case is one click.
-  // Their approved application's listing comes first; the same name is the fallback.
-  const suggested = useMemo(
-    () =>
-      unlinked?.find((m) => m.id === req.suggested_mentor)?.id ??
-      unlinked?.find((m) => m.full_name.trim().toLowerCase() === (req.full_name ?? '').trim().toLowerCase())?.id ??
-      '',
-    [unlinked, req.full_name, req.suggested_mentor],
-  )
-  const [mentorId, setMentorId] = useState(suggested)
   const [rejecting, setRejecting] = useState(false)
   const [note, setNote] = useState('')
 
@@ -79,26 +67,10 @@ function RequestCard({
       )}
 
       {isMentor && (
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-ink-800">
-            Which mentor listing is this?
-            <select value={mentorId} onChange={(e) => setMentorId(e.target.value)} className="field mt-1.5 block w-full sm:max-w-sm">
-              <option value="">Choose a listing…</option>
-              {(unlinked ?? []).map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.full_name} — {m.headline}
-                </option>
-              ))}
-            </select>
-          </label>
-          <p className="mt-1.5 text-xs text-ink-500">
-            {unlinked === null
-              ? 'You need the Mentors section to link a mentor.'
-              : unlinked.length === 0
-                ? 'No unlinked listings. Add them first: Mentors > Listed mentors > Add a mentor.'
-                : 'Approving links their account to this listing, so they can sign in and accept students.'}
-          </p>
-        </div>
+        <p className="mt-4 rounded-xl bg-brand-50 px-3.5 py-3 text-sm text-ink-800">
+          Verifying makes them a mentor: their listing is created for this account, and they finish their profile in the
+          portal. Students see them once it is complete.
+        </p>
       )}
 
       {rejecting ? (
@@ -125,10 +97,10 @@ function RequestCard({
           <Button
             size="sm"
             icon={ShieldCheck}
-            disabled={busy || (isMentor && !mentorId)}
-            onClick={() => onApprove(isMentor ? mentorId : undefined)}
+            disabled={busy}
+            onClick={onApprove}
           >
-            Verify and give access
+            {isMentor ? 'Verify as a mentor' : 'Verify and give access'}
           </Button>
           <Button size="sm" variant="secondary" icon={X} disabled={busy} onClick={() => setRejecting(true)}>
             Reject
@@ -141,13 +113,13 @@ function RequestCard({
 
 /**
  * Sign-ups waiting for the team to verify. Nobody gets any access from signing
- * up; approving here is what gives it (a mentor is linked to their listing,
- * anyone else is granted their section). Hidden when nothing is waiting, and
- * quiet if the SQL for sign-up hasn't been run.
+ * up; approving here is what gives it (a mentor's listing is created for their
+ * account, anyone else is granted their section). Hidden when nothing is
+ * waiting, and quiet if the SQL for sign-up hasn't been run or the signed-in
+ * person can't verify. `only` narrows it to one kind of partner.
  */
-export function PortalRequestsPanel({ onChanged }: { onChanged: () => void }) {
+export function PortalRequestsPanel({ onChanged, only }: { onChanged: () => void; only?: PortalRole }) {
   const [requests, setRequests] = useState<AdminPortalRequest[] | null | undefined>(undefined)
-  const [unlinked, setUnlinked] = useState<ListedMentor[] | null>(null)
   const [busyId, setBusyId] = useState<string>()
   const [error, setError] = useState<string>()
 
@@ -158,10 +130,6 @@ export function PortalRequestsPanel({ onChanged }: { onChanged: () => void }) {
       setError(errorMessage(e))
       setRequests(null)
     }
-    // Listings with no account, for linking a mentor. Needs the Mentors section.
-    fetchListedMentors()
-      .then((list) => setUnlinked(list.filter((m) => !m.linked)))
-      .catch(() => setUnlinked(null))
   }
 
   useEffect(() => {
@@ -183,17 +151,18 @@ export function PortalRequestsPanel({ onChanged }: { onChanged: () => void }) {
   }
 
   if (requests === undefined) return <Skeleton className="mb-6 h-32 w-full" />
-  const waiting = (requests ?? []).filter((r) => r.status === 'pending')
+  const waiting = (requests ?? []).filter((r) => r.status === 'pending' && (!only || r.role === only))
   if (!error && waiting.length === 0) return null
 
   return (
     <section className="mb-8">
       <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
-        Waiting for verification · {waiting.length}
+        {only === 'mentor' ? 'Mentors waiting to be verified' : 'Waiting for verification'} · {waiting.length}
       </h2>
       <p className="mt-1 text-sm text-ink-600">
-        People who signed up for the Community portal and confirmed their email. They have no access until you verify
-        them here.
+        {only === 'mentor'
+          ? 'People who signed up as a mentor and confirmed their email. Nobody is a mentor until you verify them here.'
+          : 'People who signed up for the Community portal and confirmed their email. They have no access until you verify them here.'}
       </p>
       {error && (
         <div className="mt-3">
@@ -207,9 +176,8 @@ export function PortalRequestsPanel({ onChanged }: { onChanged: () => void }) {
           <RequestCard
             key={r.id}
             req={r}
-            unlinked={unlinked}
             busy={busyId === r.id}
-            onApprove={(mentorId) => void decide(r.id, () => reviewPortalRequest(r.id, 'approved', { mentorId }))}
+            onApprove={() => void decide(r.id, () => reviewPortalRequest(r.id, 'approved'))}
             onReject={(note) => void decide(r.id, () => reviewPortalRequest(r.id, 'rejected', { note }))}
           />
         ))}

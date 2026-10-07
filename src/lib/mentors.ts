@@ -36,23 +36,6 @@ export interface MentorApplication extends Omit<Mentor, 'id' | 'profile_id' | 'a
   motivation: string | null
 }
 
-export interface MentorApplicationInput {
-  full_name: string
-  headline: string
-  bio: string
-  location?: string
-  expertise: string[]
-  linkedin_url?: string
-  email: string
-  phone?: string
-  motivation?: string
-}
-
-const blankToNull = (v: string | undefined) => {
-  const t = (v ?? '').trim()
-  return t === '' ? null : t
-}
-
 /**
  * Supabase rejects with a plain `{ message, details, hint, code }` object, not
  * an Error. Callers that do the usual `e instanceof Error ? e.message : String(e)`
@@ -67,35 +50,31 @@ function raise(error: { message?: string; hint?: string | null } | null): never 
 }
 
 /**
- * Submit an application. Works signed out — mentors are outside parties who
- * shouldn't need a learner account first.
- *
- * No `.select()` on the way out: the insert policy lets anyone write, but only
- * admins can read the table back, so asking for the inserted row would fail.
+ * The mentors students (and the public pages) are shown: an account behind
+ * the listing, and a profile the mentor has finished. A mentor the team has
+ * just verified isn't shown until they've written their profile in the portal.
  */
-export async function submitMentorApplication(input: MentorApplicationInput): Promise<void> {
-  const { error } = await supabase.from('mentor_applications').insert({
-    full_name: input.full_name.trim(),
-    headline: input.headline.trim(),
-    bio: input.bio.trim(),
-    location: blankToNull(input.location),
-    expertise: input.expertise.map((e) => e.trim()).filter(Boolean).slice(0, 10),
-    linkedin_url: blankToNull(input.linkedin_url),
-    email: input.email.trim(),
-    phone: blankToNull(input.phone),
-    motivation: blankToNull(input.motivation),
-  })
-  if (error) raise(error)
-}
-
 export async function fetchMentors(): Promise<Mentor[]> {
+  const cols = 'id, full_name, headline, bio, location, expertise, linkedin_url, avatar_url, profile_id'
   const { data, error } = await supabase
     .from('mentors')
-    .select('id, full_name, headline, bio, location, expertise, linkedin_url, avatar_url, profile_id')
+    .select(cols)
+    .not('profile_id', 'is', null)
+    .eq('ready', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: true })
-  if (error) raise(error)
-  return (data ?? []) as Mentor[]
+  if (!error) return (data ?? []) as Mentor[]
+
+  // 42703: no `ready` column yet (the portal SQL isn't run). Fall back to
+  // every mentor with an account rather than showing nobody.
+  if (error.code !== '42703') raise(error)
+  const legacy = await supabase
+    .from('mentors')
+    .select(cols)
+    .not('profile_id', 'is', null)
+    .order('sort_order', { ascending: true })
+  if (legacy.error) raise(legacy.error)
+  return (legacy.data ?? []) as Mentor[]
 }
 
 /** Admin only — returns nothing for everyone else, since RLS filters the rows. */
@@ -115,23 +94,8 @@ export async function fetchMentorApplications(
   return (data ?? []) as MentorApplication[]
 }
 
-/** Flips the status and publishes the listing in one transaction. */
-export async function approveMentorApplication(id: string): Promise<void> {
-  const { error } = await supabase.rpc('approve_mentor_application', { app_id: id })
-  if (error) raise(error)
-}
-
-/** Also unpublishes, so reversing an approval is a single action. */
-export async function rejectMentorApplication(id: string, note?: string): Promise<void> {
-  const { error } = await supabase.rpc('reject_mentor_application', {
-    app_id: id,
-    note: blankToNull(note),
-  })
-  if (error) raise(error)
-}
-
-/** A published mentor, as staff see them: whether their listing is linked to
- *  a MySkills account (needed to receive student requests) and to which. */
+/** A mentor, as staff see them: the account behind them, and whether their
+ *  profile is finished (students only see them once it is). */
 export interface ListedMentor {
   id: string
   full_name: string
@@ -162,47 +126,30 @@ export async function fetchListedMentors(): Promise<ListedMentor[]> {
 }
 
 /**
- * Put an email on a mentor's listing — see docs/supabase-mentor-invite.sql.
- * 'linked' when an account with that email existed and is now linked;
- * 'reserved' when there is none yet, and the email is held until they sign up.
- * Before that SQL is run it can only link an account that exists, as it did.
+ * Make an existing account a mentor — see docs/supabase-mentors-verified-only.sql.
+ * The account must already exist with a confirmed email; the team doing this
+ * is the verification. Their listing is created now, belonging to that account,
+ * and they finish it in the portal.
  */
-export async function reserveMentorEmail(mentorId: string, email: string): Promise<'linked' | 'reserved'> {
-  const { data, error } = await supabase.rpc('admin_reserve_mentor_email', { p_mentor: mentorId, p_email: email.trim() })
+export async function addMentor(email: string): Promise<void> {
+  const { error } = await supabase.rpc('admin_add_mentor', { p_email: email.trim() })
   if (error) {
     if (error.code === 'PGRST202') {
-      await linkMentorAccount(mentorId, email)
-      return 'linked'
+      throw new Error('Run docs/supabase-mentors-verified-only.sql in Supabase to add mentors from here.')
     }
     raise(error)
   }
-  return data === 'linked' ? 'linked' : 'reserved'
 }
 
-/** The emails being held for listings with no account yet, by mentor id. */
-export async function fetchMentorInvites(): Promise<Record<string, string>> {
-  const { data, error } = await supabase.rpc('admin_mentor_invites')
-  // Absent until the SQL is run: there are simply none to show.
-  if (error) return {}
-  const out: Record<string, string> = {}
-  for (const r of (data ?? []) as { mentor_id: string; email: string }[]) out[r.mentor_id] = r.email
-  return out
-}
-
-export async function cancelMentorInvite(mentorId: string): Promise<void> {
-  const { error } = await supabase.rpc('admin_cancel_mentor_invite', { p_mentor: mentorId })
-  if (error) raise(error)
-}
-
-/** Point a mentor's listing at the MySkills account with this email. */
-export async function linkMentorAccount(mentorId: string, email: string): Promise<void> {
-  const { error } = await supabase.rpc('link_mentor_account', { p_mentor: mentorId, p_email: email.trim() })
-  if (error) raise(error)
-}
-
-export async function unlinkMentorAccount(mentorId: string): Promise<void> {
-  const { error } = await supabase.rpc('unlink_mentor_account', { p_mentor: mentorId })
-  if (error) raise(error)
+/** Removes the listing and the account's mentor section. Refused while they have students. */
+export async function removeMentor(mentorId: string): Promise<void> {
+  const { error } = await supabase.rpc('admin_remove_mentor', { p_mentor: mentorId })
+  if (error) {
+    if (error.code === 'PGRST202') {
+      throw new Error('Run docs/supabase-mentors-verified-only.sql in Supabase to remove mentors from here.')
+    }
+    raise(error)
+  }
 }
 
 export async function isAdmin(): Promise<boolean> {

@@ -14,8 +14,11 @@ const AREAS_ON_CARD = 2
 
 /** What a student needs before they can be offered this mentor. Mirrors
  *  public.mentor_missing in docs/supabase-mentor-portal.sql. */
-function checklist(f: { bio: string; expertise: string[]; linkedin: string; phone: string; avatar: string | null }) {
+function checklist(f: { headline: string; bio: string; expertise: string[]; linkedin: string; phone: string; avatar: string | null }) {
+  // A mentor starts with the placeholder title "Mentor" until they write their own.
+  const title = f.headline.trim()
   return [
+    { key: 'headline', label: 'Professional title', done: title.length >= 2 && title.toLowerCase() !== 'mentor', required: false },
     { key: 'bio', label: 'About you', done: f.bio.trim().length >= 20, required: true },
     { key: 'expertise', label: 'Areas of expertise', done: f.expertise.length > 0, required: true },
     { key: 'linkedin', label: 'LinkedIn profile', done: LINKEDIN.test(f.linkedin.trim()), required: true },
@@ -222,7 +225,7 @@ export function MentorProfilePanel({ profile, onSaved }: { profile: MyMentorProf
   const [saved, setSaved] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const items = checklist({ bio, expertise, linkedin, phone, avatar })
+  const items = checklist({ headline, bio, expertise, linkedin, phone, avatar })
   const required = items.filter((i) => i.required)
   const doneCount = required.filter((i) => i.done).length
   const complete = doneCount === required.length
