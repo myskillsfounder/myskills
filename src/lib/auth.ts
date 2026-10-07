@@ -16,6 +16,8 @@ import { clearFeedbackCache } from './feedback'
 export class AuthError extends Error {
   field?: 'email' | 'password' | 'name' | 'code'
   needsConfirmation: boolean
+  /** The address already has an account: the way forward is to sign in. */
+  alreadyRegistered = false
 
   constructor(message: string, field?: AuthError['field'], needsConfirmation = false) {
     super(message)
@@ -25,12 +27,18 @@ export class AuthError extends Error {
   }
 }
 
+function alreadyRegistered(): AuthError {
+  const e = new AuthError('An account with this email already exists.', 'email')
+  e.alreadyRegistered = true
+  return e
+}
+
 function mapAuthError(error: SupabaseAuthError): AuthError {
   const code = 'code' in error ? (error.code ?? '') : ''
   switch (code) {
     case 'user_already_exists':
     case 'email_exists':
-      return new AuthError('An account with this email already exists.', 'email')
+      return alreadyRegistered()
     case 'invalid_credentials':
       return new AuthError('Incorrect email or password.', 'password')
     case 'email_not_confirmed':
@@ -49,7 +57,7 @@ function mapAuthError(error: SupabaseAuthError): AuthError {
     default:
       // Fallback for gotrue versions that don't set `code`.
       if (/already registered/i.test(error.message)) {
-        return new AuthError('An account with this email already exists.', 'email')
+        return alreadyRegistered()
       }
       if (/invalid login credentials/i.test(error.message)) {
         return new AuthError('Incorrect email or password.', 'password')
@@ -68,12 +76,17 @@ export async function signUp(params: {
   /** Extra details kept with the account (the Community portal's access request). */
   data?: Record<string, unknown>
 }): Promise<void> {
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: params.email,
     password: params.password,
     options: { data: { name: params.name, ...params.data } },
   })
   if (error) throw mapAuthError(error)
+  // An address that already has a confirmed account doesn't come back as an
+  // error (so sign-up can't be used to test who has one): it comes back as a
+  // look-alike user with no identities, and NO email is sent. Without this the
+  // person is left waiting for a code that will never arrive.
+  if (data.user && (data.user.identities?.length ?? 0) === 0) throw alreadyRegistered()
 }
 
 /** Confirm a new account with the emailed 6-digit code. */
