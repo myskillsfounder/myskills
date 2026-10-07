@@ -14,18 +14,22 @@ export const SIGNUP_ROLE: Record<CommunityResource, PortalRole> = {
 }
 
 export const signupLink = (role: PortalRole) => `${window.location.origin}/community-portal/signup?role=${role}`
+export const signinLink = () => `${window.location.origin}/community-portal/login`
 
 /**
- * The way in for someone with no account yet: the partner sign-up with their
- * role already chosen, to copy or to email. Only the role is in the link; the
- * person types their own email when they sign up.
+ * The way in, to copy or to email. For someone with no account: the partner
+ * sign-up with their role already chosen. For someone who already has a
+ * MySkills account (`existing`): the portal sign-in, where they are asked what
+ * they do. Either way they then wait to be verified like everyone else. Only
+ * the role is ever in the link; the person types their own email.
  */
-export function InviteLink({ role, email }: { role: PortalRole; email?: string }) {
+export function InviteLink({ role, email, existing = false }: { role?: PortalRole; email?: string; existing?: boolean }) {
   const [copied, setCopied] = useState(false)
-  const link = signupLink(role)
-  const mail = `mailto:${email ?? ''}?subject=${encodeURIComponent('Your MySkills Community portal account')}&body=${encodeURIComponent(
-    `Hi,\n\nPlease create your MySkills partner account here:\n${link}\n\nSign up with this email address and confirm it with the code we send you.\n\nThanks,\nMySkills`,
-  )}`
+  const link = existing || !role ? signinLink() : signupLink(role)
+  const body = existing
+    ? `Hi,\n\nTo partner with MySkills, sign in to the Community portal with the MySkills account you already have:\n${link}\n\nYou will be asked what you do. We then verify you and your portal opens.\n\nThanks,\nMySkills`
+    : `Hi,\n\nPlease create your MySkills partner account here:\n${link}\n\nSign up with this email address and confirm it with the code we send you. We then verify you and your portal opens.\n\nThanks,\nMySkills`
+  const mail = `mailto:${email ?? ''}?subject=${encodeURIComponent('Partner with MySkills')}&body=${encodeURIComponent(body)}`
 
   async function copy() {
     try {

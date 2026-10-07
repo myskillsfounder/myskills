@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { BadgeCheck, Check, Mail, MailCheck, Pencil, ShieldCheck, Trash2, UserCheck, UserPlus } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
-  addMentor,
   fetchListedMentors,
   fetchMentorApplications,
   removeMentor,
@@ -15,7 +14,7 @@ import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { InviteLink } from '@/components/admin/InviteLink'
 import { MentorEditor } from '@/components/admin/MentorEditor'
 import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
-import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
+import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
 /**
  * Mentors — and the one way to become one. A mentor is an account with a
@@ -65,97 +64,40 @@ function TheRule() {
   )
 }
 
-/** Add a mentor: someone who already has an account, or the link for someone who doesn't. */
-function AddMentor({ onAdded }: { onAdded: () => void }) {
-  const [email, setEmail] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string>()
-  // The email that turned out to have no account, so the invite can be offered.
-  const [noAccount, setNoAccount] = useState<string>()
-  const [added, setAdded] = useState<string>()
-  const valid = /^\S+@\S+\.\S+$/.test(email.trim())
-
-  async function add() {
-    setBusy(true)
-    setError(undefined)
-    setNoAccount(undefined)
-    setAdded(undefined)
-    try {
-      await addMentor(email)
-      setAdded(email.trim())
-      setEmail('')
-      onAdded()
-    } catch (e) {
-      const message = errorMessage(e)
-      if (/no account uses/i.test(message)) setNoAccount(email.trim())
-      else setError(message)
-    } finally {
-      setBusy(false)
-    }
-  }
-
+/** Inviting a mentor: the link for someone new, or for someone who already has
+ *  an account. Both lead to the same place: the queue at the top of this page. */
+function InviteMentor() {
   return (
     <section className="card p-5 sm:p-6">
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-ink-900">
-        <UserPlus size={18} className="text-brand-700" /> Add a mentor
+        <UserPlus size={18} className="text-brand-700" /> Invite a mentor
       </h2>
+      <p className="mt-1 text-sm text-ink-600">
+        Nobody is made a mentor directly. Whoever they are, they ask, and you verify them at the top of this page.
+      </p>
 
-      <div className="mt-4 grid gap-5 lg:grid-cols-2">
+      <div className="mt-4 grid gap-6 lg:grid-cols-2">
         <div>
-          <p className="text-sm font-semibold text-ink-900">They don’t have an account yet</p>
+          <p className="text-sm font-semibold text-ink-900">They don’t have an account</p>
           <p className="mt-0.5 text-sm text-ink-600">
-            Send them the sign-up link. Once they’ve signed up and confirmed their email, they appear at the top of this
-            page for you to verify.
+            Send the sign-up link. Once they’ve signed up and confirmed their email, they appear here to verify.
           </p>
           <div className="mt-3">
             <InviteLink role="mentor" />
           </div>
         </div>
 
-        <form
-          className="lg:border-l lg:border-ink-900/[0.06] lg:pl-5"
-          onSubmit={(e) => {
-            e.preventDefault()
-            if (valid) void add()
-          }}
-        >
-          <p className="text-sm font-semibold text-ink-900">They already have an account</p>
+        <div className="lg:border-l lg:border-ink-900/[0.06] lg:pl-6">
+          <p className="text-sm font-semibold text-ink-900">They already have a MySkills account</p>
           <p className="mt-0.5 text-sm text-ink-600">
-            Enter the email they signed up with. If it is confirmed, they become a mentor now and are emailed to finish
-            their profile.
-          </p>
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
-            <div className="min-w-0 flex-1">
-              <Input
-                type="email"
-                required={false}
-                aria-label="The account’s email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <Button type="submit" icon={ShieldCheck} disabled={busy || !valid}>
-              {busy ? 'Verifying…' : 'Verify as a mentor'}
-            </Button>
-          </div>
-          {added && <p className="mt-2 text-sm font-medium text-emerald-700">{added} is now a mentor. They’ve been emailed.</p>}
-          {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
-        </form>
-      </div>
-
-      {noAccount && (
-        <div className="mt-5 rounded-xl bg-amber-50 p-4">
-          <p className="text-sm font-semibold text-amber-900">{noAccount} doesn’t have an account yet</p>
-          <p className="mt-0.5 text-sm text-amber-900/80">
-            Nobody can be made a mentor before they have signed up and confirmed their email. Send them the link; they
-            will appear at the top of this page to verify.
+            Send the portal sign-in. They sign in with the account they have, choose Mentor, and appear here to verify.
+            They can’t sign up again with the same email.
           </p>
           <div className="mt-3">
-            <InviteLink role="mentor" email={noAccount} />
+            <InviteLink existing />
           </div>
         </div>
-      )}
+      </div>
     </section>
   )
 }
@@ -351,7 +293,7 @@ function MentorsPage() {
         </p>
       )}
 
-      <AddMentor onAdded={() => void load()} />
+      <InviteMentor />
 
       {error && (
         <div className="mt-5">
@@ -374,7 +316,7 @@ function MentorsPage() {
         <EmptyState
           icon={UserCheck}
           title="No mentors yet"
-          description="Verify a mentor who has signed up, or add someone who already has an account. They appear here."
+          description="Invite a mentor above. Once they have asked and you have verified them, they appear here."
         />
       ) : (
         <div className="space-y-4">

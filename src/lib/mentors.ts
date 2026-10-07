@@ -125,22 +125,6 @@ export async function fetchListedMentors(): Promise<ListedMentor[]> {
   return (data ?? []) as ListedMentor[]
 }
 
-/**
- * Make an existing account a mentor — see docs/supabase-mentors-verified-only.sql.
- * The account must already exist with a confirmed email; the team doing this
- * is the verification. Their listing is created now, belonging to that account,
- * and they finish it in the portal.
- */
-export async function addMentor(email: string): Promise<void> {
-  const { error } = await supabase.rpc('admin_add_mentor', { p_email: email.trim() })
-  if (error) {
-    if (error.code === 'PGRST202') {
-      throw new Error('Run docs/supabase-mentors-verified-only.sql in Supabase to add mentors from here.')
-    }
-    raise(error)
-  }
-}
-
 /** Removes the listing and the account's mentor section. Refused while they have students. */
 export async function removeMentor(mentorId: string): Promise<void> {
   const { error } = await supabase.rpc('admin_remove_mentor', { p_mentor: mentorId })
