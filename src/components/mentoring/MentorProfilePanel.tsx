@@ -13,12 +13,12 @@ const MAX_AREAS = 10
 const AREAS_ON_CARD = 2
 
 /** What a student needs before they can be offered this mentor. Mirrors
- *  public.mentor_missing in docs/supabase-mentor-portal.sql. */
+ *  public.mentor_missing (docs/supabase-mentor-title-required.sql). */
 function checklist(f: { headline: string; bio: string; expertise: string[]; linkedin: string; phone: string; avatar: string | null }) {
   // A mentor starts with the placeholder title "Mentor" until they write their own.
   const title = f.headline.trim()
   return [
-    { key: 'headline', label: 'Professional title', done: title.length >= 2 && title.toLowerCase() !== 'mentor', required: false },
+    { key: 'headline', label: 'Professional title', done: title.length >= 2 && title.toLowerCase() !== 'mentor', required: true },
     { key: 'bio', label: 'About you', done: f.bio.trim().length >= 20, required: true },
     { key: 'expertise', label: 'Areas of expertise', done: f.expertise.length > 0, required: true },
     { key: 'linkedin', label: 'LinkedIn profile', done: LINKEDIN.test(f.linkedin.trim()), required: true },
@@ -104,24 +104,30 @@ function ExpertiseEditor({ value, onChange }: { value: string[]; onChange: (next
           ))}
         </ul>
       )}
-      <input
-        value={draft}
-        disabled={full}
-        onChange={(e) => (e.target.value.includes(',') ? add(e.target.value) : setDraft(e.target.value))}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault()
-            add(draft)
-          } else if (e.key === 'Backspace' && !draft && value.length) {
-            onChange(value.slice(0, -1))
-          }
-        }}
-        onBlur={() => add(draft)}
-        maxLength={60}
-        aria-label="Add an area of expertise"
-        placeholder={full ? `That’s the most you can add (${MAX_AREAS}).` : 'Type one and press Enter, e.g. Interview coaching'}
-        className="field"
-      />
+      <div className="flex gap-2">
+        <input
+          value={draft}
+          disabled={full}
+          onChange={(e) => (e.target.value.includes(',') ? add(e.target.value) : setDraft(e.target.value))}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              add(draft)
+            } else if (e.key === 'Backspace' && !draft && value.length) {
+              onChange(value.slice(0, -1))
+            }
+          }}
+          onBlur={() => add(draft)}
+          maxLength={60}
+          aria-label="Add an area of expertise"
+          placeholder={full ? `That’s the most you can add (${MAX_AREAS}).` : 'e.g. Interview coaching'}
+          className="field min-w-0 flex-1"
+        />
+        {/* Typing alone adds nothing until Enter: the button makes that step visible. */}
+        <Button type="button" variant="secondary" disabled={full || !draft.trim()} onClick={() => add(draft)}>
+          Add
+        </Button>
+      </div>
     </Field>
   )
 }
@@ -229,6 +235,8 @@ export function MentorProfilePanel({ profile, onSaved }: { profile: MyMentorProf
   const required = items.filter((i) => i.required)
   const doneCount = required.filter((i) => i.done).length
   const complete = doneCount === required.length
+  // In plain words, for the save bar: saving is not the same as being visible.
+  const stillNeeded = required.filter((i) => !i.done)
 
   const errors = {
     headline: headline.trim().length < 2 ? 'A short professional title.' : undefined,
@@ -438,7 +446,11 @@ export function MentorProfilePanel({ profile, onSaved }: { profile: MyMentorProf
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
                 error={errors.headline}
-                hint={`Shown under your name everywhere. ${headline.trim().length}/120`}
+                hint={
+                  headline.trim().toLowerCase() === 'mentor'
+                    ? 'Replace “Mentor” with what you do, like “SEO Lead” or “Communicative English Trainer”. Students see this under your name.'
+                    : `Shown under your name everywhere. ${headline.trim().length}/120`
+                }
                 maxLength={120}
                 placeholder="e.g. Communicative English Trainer"
               />
@@ -526,10 +538,27 @@ export function MentorProfilePanel({ profile, onSaved }: { profile: MyMentorProf
               <span className="text-red-600">Fix the highlighted fields to save.</span>
             ) : dirty ? (
               <span className="text-amber-700">You have changes that aren’t saved.</span>
+            ) : stillNeeded.length > 0 ? (
+              // Saved, but not finished: say so, or "saved" reads as "you're live".
+              <span className="text-amber-800">
+                {saved ? 'Saved, but students can’t see you yet. ' : 'Students can’t see you yet. '}
+                Still needed:{' '}
+                {stillNeeded.map((i, n) => (
+                  <span key={i.key}>
+                    {n > 0 && ', '}
+                    <button type="button" onClick={() => focusField(i.key)} className="font-semibold underline underline-offset-2">
+                      {i.label.toLowerCase()}
+                    </button>
+                  </span>
+                ))}
+                .
+              </span>
+            ) : !profile.accepting ? (
+              <span className="text-ink-600">{saved ? 'Saved. ' : ''}Your profile is complete, but you’re paused.</span>
             ) : saved ? (
               <span className="font-medium text-emerald-700">Saved. Students see this now.</span>
             ) : (
-              <span className="text-ink-500">Everything is saved.</span>
+              <span className="text-emerald-700">Your profile is complete and students can see it.</span>
             )}
           </span>
         </div>

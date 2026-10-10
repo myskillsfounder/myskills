@@ -31,6 +31,7 @@ export const Route = createFileRoute('/admin/_layout/mentors')({
 })
 
 const MISSING_LABEL: Record<string, string> = {
+  headline: 'a professional title',
   bio: 'a bio',
   expertise: 'areas of expertise',
   linkedin: 'their LinkedIn',
