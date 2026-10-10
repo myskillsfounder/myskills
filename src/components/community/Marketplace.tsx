@@ -14,11 +14,13 @@ import {
   X,
   MapPin,
   MessageCircle,
+  Send,
   ShieldCheck,
   Star,
 } from 'lucide-react'
 import type { Mentor } from '@/lib/mentors'
 import type { InstitutionPartner } from '@/lib/institutionPartners'
+import { RequestMentoring } from '@/components/community/RequestMentoring'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -167,6 +169,8 @@ export interface MentorListing {
   expertise: string[]
   bio: string
   linkedin: string | null
+  /** False when they have paused new requests. */
+  accepting?: boolean
 }
 
 function LinkedInIcon({ size = 16 }: { size?: number }) {
@@ -265,27 +269,30 @@ function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListi
             )}
           </div>
 
+          {/* What the profile is for: asking this mentor. A mentor previewing
+              their own profile sees where the button sits, but can't ask themselves. */}
+          {preview ? (
+            <div className="mt-6">
+              <span className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600/50 px-5 py-3 text-sm font-semibold text-white">
+                <Send size={16} /> Request mentoring from {mentor.name.split(' ')[0]}
+              </span>
+              <p className="mt-2 text-center text-xs text-ink-500">
+                Students ask you from here: they pick what they want help with and send you a message.
+              </p>
+            </div>
+          ) : (
+            <RequestMentoring mentor={mentor} />
+          )}
+
           {mentor.linkedin && (
             <a
               href={mentor.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="press mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+              className="press mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-ink-300 bg-white px-5 py-2.5 text-sm font-semibold text-ink-800 transition-colors hover:border-ink-400 hover:bg-ink-50"
             >
-              <LinkedInIcon size={17} /> Connect on LinkedIn
+              <LinkedInIcon size={16} /> Connect on LinkedIn
             </a>
-          )}
-          {/* A mentor previewing their own profile has no Practice to go to. */}
-          {preview ? (
-            <p className="mt-4 text-xs text-ink-500">Students also get a link here to choose you in Practice.</p>
-          ) : (
-            <Link
-              to="/practice"
-              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-            >
-              Choose Your Mentor in Practice
-              <ArrowRight size={14} />
-            </Link>
           )}
         </div>
       </div>
@@ -379,7 +386,7 @@ export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; 
  * listing is the one source.
  */
 export function toMentorListing(
-  m: Pick<Mentor, 'id' | 'full_name' | 'headline' | 'avatar_url' | 'location' | 'expertise' | 'bio' | 'linkedin_url'>,
+  m: Pick<Mentor, 'id' | 'full_name' | 'headline' | 'avatar_url' | 'location' | 'expertise' | 'bio' | 'linkedin_url' | 'accepting'>,
 ): MentorListing {
   return {
     id: m.id,
@@ -390,6 +397,7 @@ export function toMentorListing(
     expertise: m.expertise,
     bio: m.bio ?? '',
     linkedin: m.linkedin_url || null,
+    accepting: m.accepting,
   }
 }
 
