@@ -57,15 +57,21 @@ const primary =
  */
 export function RequestMentoring({
   mentor,
+  autoOpen = false,
+  onSent,
 }: {
   mentor: { id: string; name: string; expertise: string[]; accepting?: boolean }
+  /** They pressed "Request mentoring" on the card: go straight to the message. */
+  autoOpen?: boolean
+  /** A request went through, so whatever lists mentors can show it. */
+  onSent?: () => void
 }) {
   const dmAptitude = useMyAptitudeResult()
   const crAptitude = useMyAssessmentResult()
   const dm = useMyMatch('digital-marketing')
   const cr = useMyMatch('career-readiness')
 
-  const [composing, setComposing] = useState(false)
+  const [composing, setComposing] = useState(autoOpen)
   const [programme, setProgramme] = useState<MatchProgramme | null>(null)
   const [areas, setAreas] = useState<string[]>([])
   const [note, setNote] = useState('')
@@ -130,6 +136,7 @@ export function RequestMentoring({
       setSent(true)
       void dm.reload()
       void cr.reload()
+      onSent?.()
     } catch (e) {
       setError(errorMessage(e))
     } finally {

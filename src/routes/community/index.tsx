@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Briefcase,
   Building2,
+  Check,
   GraduationCap,
   HeartHandshake,
   UserPlus,
@@ -16,6 +17,8 @@ import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import { SearchHeader } from '@/components/community/SearchHeader'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
+import { useMyAptitudeResult } from '@/lib/dmAptitude'
+import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import {
   CATEGORIES,
@@ -26,6 +29,7 @@ import {
   MarketSection,
   marketGrid,
   MentorListingCard,
+  type MentorRelation,
   SERVICES,
   ServiceCard,
   toMentorListing,
@@ -197,6 +201,56 @@ function YourMentors({ matches }: { matches: { match: StudentMatch | null; progr
   )
 }
 
+/**
+ * The three steps to having a mentor, with the student's own place in them:
+ * the first is ticked once they have taken an aptitude assessment, and is a
+ * link to one until then (a mentor starts from that report, so nothing else
+ * can happen first). Gone once they have a mentor or a request out.
+ */
+function MentoringSteps({ aptitudeDone }: { aptitudeDone: boolean }) {
+  const steps = [
+    { title: 'Take an aptitude assessment', body: 'Your mentor starts from that report.', done: aptitudeDone },
+    { title: 'Ask a mentor', body: 'Pick what you want help with; we draft the message.', done: false },
+    { title: 'They accept, and you start', body: 'You arrange sessions together. It’s free.', done: false },
+  ]
+  // The step they are on: the first one not done.
+  const current = steps.findIndex((s) => !s.done)
+  return (
+    <ol className="mb-4 grid gap-2 sm:grid-cols-3">
+      {steps.map((s, i) => (
+        <li
+          key={s.title}
+          className={`flex items-start gap-3 rounded-xl border p-3 ${
+            i === current ? 'border-brand-300 bg-brand-50/60' : 'border-ink-900/[0.07] bg-white'
+          }`}
+        >
+          <span
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+              s.done ? 'bg-emerald-500 text-white' : i === current ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-500'
+            }`}
+          >
+            {s.done ? <Check size={13} strokeWidth={3} /> : i + 1}
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-ink-900">{s.title}</p>
+            <p className="text-xs leading-relaxed text-ink-600">{s.body}</p>
+            {i === 0 && !s.done && (
+              <p className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs font-semibold">
+                <Link to="/aptitude-assessment" className="text-brand-700 hover:underline">
+                  Digital Marketing
+                </Link>
+                <Link to="/career-readiness-assessment" className="text-brand-700 hover:underline">
+                  Career Readiness
+                </Link>
+              </p>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
 function CommunityHub() {
   const { mentors, institutions, loading } = useMarketplaceData()
   const [query, setQuery] = useState('')
@@ -210,6 +264,21 @@ function CommunityHub() {
   const q = query.trim().toLowerCase()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
+  const dmAptitude = useMyAptitudeResult()
+  const crAptitude = useMyAssessmentResult()
+
+  // Where the student stands with each mentor, so a card can say "Your mentor"
+  // or "Request sent" instead of offering to ask again.
+  const relations: Record<string, MentorRelation> = {}
+  for (const m of [dmMatch.match, crMatch.match]) {
+    if (m?.mentor && (m.status === 'active' || m.status === 'requested')) relations[m.mentor.id] = m.status
+  }
+  const hasMentor = Object.keys(relations).length > 0
+  const aptitudeKnown = !dmAptitude.loading && !crAptitude.loading
+  const reloadMatches = () => {
+    void dmMatch.reload()
+    void crMatch.reload()
+  }
 
   const services = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags))
   const wellness = services.filter((s) => s.category === 'wellness')
@@ -287,14 +356,18 @@ function CommunityHub() {
           <MarketSection
             icon={GraduationCap}
             title="Mentors"
-            subtitle="Marketers who’ve done the work — get feedback on yours and unblock your next step."
+            subtitle="People who’ve done the work. Ask one to mentor you: they see your aptitude report and take you on."
           >
+            {/* How it works, until they have a mentor; out of the way while searching. */}
+            {!q && !hasMentor && aptitudeKnown && mentors.length > 0 && (
+              <MentoringSteps aptitudeDone={dmAptitude.result != null || crAptitude.result != null} />
+            )}
             {loading ? (
               <ListingSkeletons />
             ) : (
               <div className={marketGrid}>
                 {mentorHits.map((m) => (
-                  <MentorListingCard key={m.id} mentor={m} />
+                  <MentorListingCard key={m.id} mentor={m} relation={relations[m.id]} onRequested={reloadMatches} />
                 ))}
                 {!q && (
                   <JoinCard

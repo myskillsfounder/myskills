@@ -173,7 +173,7 @@ function LivePreview({
           <>
             <MentorListingCard mentor={toMentorListing(listing)} preview />
             <p className="mt-2.5 text-xs leading-relaxed text-ink-500">
-              This is your real card. Press <span className="font-semibold text-ink-700">View Profile</span> on it to see
+              This is your real card. Press <span className="font-semibold text-ink-700">View profile</span> on it to see
               your full profile as a student does. The card shows your first {AREAS_ON_CARD} areas and two lines of your
               bio.
             </p>

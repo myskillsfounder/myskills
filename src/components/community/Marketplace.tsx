@@ -7,13 +7,13 @@ import {
   BadgeCheck,
   Briefcase,
   Building2,
+  Clock,
   Compass,
   GraduationCap,
   HeartHandshake,
   Lock,
   X,
   MapPin,
-  MessageCircle,
   Send,
   ShieldCheck,
   Star,
@@ -203,7 +203,20 @@ function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 
  * grows, so every card in a row stays the same size however much a mentor has
  * written; this is where the whole bio and every area of expertise live.
  */
-function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListing; preview?: boolean; onClose: () => void }) {
+function MentorProfileDialog({
+  mentor,
+  preview,
+  startRequest,
+  onRequested,
+  onClose,
+}: {
+  mentor: MentorListing
+  preview?: boolean
+  /** Opened from the card's "Request mentoring": the request is already open. */
+  startRequest?: boolean
+  onRequested?: () => void
+  onClose: () => void
+}) {
   const closeRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -281,7 +294,7 @@ function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListi
               </p>
             </div>
           ) : (
-            <RequestMentoring mentor={mentor} />
+            <RequestMentoring mentor={mentor} autoOpen={startRequest} onSent={onRequested} />
           )}
 
           {mentor.linkedin && (
@@ -301,16 +314,33 @@ function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListi
   )
 }
 
+/** Where the student stands with this mentor, when they stand anywhere. */
+export type MentorRelation = 'active' | 'requested'
+
 /**
  * A mentor's card: always the same size. Every part has a fixed place and room
- * (one line each for name, role and location; three lines of bio; one row of up
- * to two skills), and anything longer is trimmed. Tap View Profile for the lot.
+ * (one line each for name, role and location; two lines of bio; one row of up
+ * to two skills), and anything longer is trimmed. The card's own button is the
+ * thing a student came to do, ask this mentor; View profile is beside it.
  * `preview` is the mentor looking at their own card in the Community portal.
  */
-export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; preview?: boolean }) {
-  const [open, setOpen] = useState(false)
+export function MentorListingCard({
+  mentor,
+  preview,
+  relation,
+  onRequested,
+}: {
+  mentor: MentorListing
+  preview?: boolean
+  /** Already this student's mentor, or already asked: shown instead of the button. */
+  relation?: MentorRelation
+  /** A request was sent from this card: the page can refresh what it shows. */
+  onRequested?: () => void
+}) {
+  const [open, setOpen] = useState<false | 'profile' | 'request'>(false)
   const shown = mentor.expertise.slice(0, 2)
   const extra = mentor.expertise.length - shown.length
+  const first = mentor.name.trim().split(' ')[0]
   return (
     <div className="card lift flex h-full flex-col overflow-hidden">
       {/* A band of colour with the photo set over its edge: the card reads as
@@ -338,8 +368,8 @@ export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; 
           )}
         </p>
 
-        {/* Exactly three lines tall: a taller box would let a fourth line peek out under the clamp. */}
-        <p className="mt-3 line-clamp-3 h-[3.75rem] text-sm leading-5 text-ink-600">{mentor.bio}</p>
+        {/* Exactly two lines tall: a taller box would let a third line peek out under the clamp. */}
+        <p className="mt-3 line-clamp-2 h-10 text-sm leading-5 text-ink-600">{mentor.bio}</p>
 
         <div className="mt-3 flex h-7 flex-nowrap items-center gap-1.5 overflow-hidden">
           {shown.map((e) => (
@@ -355,25 +385,53 @@ export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; 
           )}
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
-            <MessageCircle size={14} className="text-ink-400" />
-            1:1 Live Chat
-          </span>
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-ink-900/[0.06] pt-4">
           <button
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={() => setOpen('profile')}
             aria-haspopup="dialog"
             aria-label={`View ${mentor.name}’s profile`}
-            className="press inline-flex items-center gap-1 rounded-full bg-brand-50 py-2 pl-4 pr-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-600 hover:text-white"
+            className="inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-full py-2 pr-2 text-sm font-semibold text-ink-600 hover:text-brand-700"
           >
-            View Profile
+            View profile
             <ChevronRight size={15} />
           </button>
+
+          {relation === 'active' ? (
+            <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">
+              <BadgeCheck size={15} /> Your mentor
+            </span>
+          ) : relation === 'requested' ? (
+            <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+              <Clock size={15} /> Request sent
+            </span>
+          ) : mentor.accepting === false ? (
+            <span className="shrink-0 whitespace-nowrap rounded-full bg-ink-100 px-3 py-2 text-sm font-medium text-ink-500" title="Not taking new students right now">
+              Paused
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setOpen('request')}
+              aria-haspopup="dialog"
+              aria-label={`Request mentoring from ${mentor.name}`}
+              className="press inline-flex min-w-0 items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+            >
+              <Send size={14} className="shrink-0" /> <span className="truncate">Ask {first}</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {open && <MentorProfileDialog mentor={mentor} preview={preview} onClose={() => setOpen(false)} />}
+      {open && (
+        <MentorProfileDialog
+          mentor={mentor}
+          preview={preview}
+          startRequest={open === 'request'}
+          onRequested={onRequested}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </div>
   )
 }
