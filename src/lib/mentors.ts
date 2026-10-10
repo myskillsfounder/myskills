@@ -20,6 +20,8 @@ export interface Mentor {
   linkedin_url: string | null
   avatar_url: string | null
   profile_id: string | null
+  /** False when they have paused new requests. Absent before the portal SQL. */
+  accepting?: boolean
 }
 
 export type ApplicationStatus = 'pending' | 'approved' | 'rejected'
@@ -58,7 +60,7 @@ export async function fetchMentors(): Promise<Mentor[]> {
   const cols = 'id, full_name, headline, bio, location, expertise, linkedin_url, avatar_url, profile_id'
   const { data, error } = await supabase
     .from('mentors')
-    .select(cols)
+    .select(`${cols}, accepting`)
     .not('profile_id', 'is', null)
     .eq('ready', true)
     .order('sort_order', { ascending: true })

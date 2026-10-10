@@ -547,6 +547,7 @@ export function MentorProfilePanel({ profile, onSaved }: { profile: MyMentorProf
           expertise,
           bio: bio.trim(),
           linkedin_url: LINKEDIN.test(linkedin.trim()) ? linkedin.trim() : null,
+          accepting: profile.accepting,
         }}
       />
     </div>
