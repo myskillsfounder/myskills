@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WellnessRouteImport } from './routes/wellness'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
@@ -92,6 +93,11 @@ import { Route as AdminLayoutUsersIdRouteImport } from './routes/admin/_layout/u
 const WellnessRoute = WellnessRouteImport.update({
   id: '/wellness',
   path: '/wellness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestsRoute = TestsRouteImport.update({
@@ -533,6 +539,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
+  '/welcome': typeof WelcomeRoute
   '/wellness': typeof WellnessRoute
   '/admin': typeof AdminLayoutRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -613,6 +620,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
+  '/welcome': typeof WelcomeRoute
   '/wellness': typeof WellnessRoute
   '/admin/login': typeof AdminLoginRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -693,6 +701,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
+  '/welcome': typeof WelcomeRoute
   '/wellness': typeof WellnessRoute
   '/admin/_layout': typeof AdminLayoutRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -776,6 +785,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/tests'
+    | '/welcome'
     | '/wellness'
     | '/admin'
     | '/admin/login'
@@ -856,6 +866,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/tests'
+    | '/welcome'
     | '/wellness'
     | '/admin/login'
     | '/blog/$slug'
@@ -935,6 +946,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/tests'
+    | '/welcome'
     | '/wellness'
     | '/admin/_layout'
     | '/admin/login'
@@ -1017,6 +1029,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   TestsRoute: typeof TestsRoute
+  WelcomeRoute: typeof WelcomeRoute
   WellnessRoute: typeof WellnessRoute
   AdminLayoutRoute: typeof AdminLayoutRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
@@ -1035,6 +1048,13 @@ declare module '@tanstack/react-router' {
       path: '/wellness'
       fullPath: '/wellness'
       preLoaderRoute: typeof WellnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tests': {
@@ -1744,6 +1764,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   TestsRoute: TestsRoute,
+  WelcomeRoute: WelcomeRoute,
   WellnessRoute: WellnessRoute,
   AdminLayoutRoute: AdminLayoutRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,

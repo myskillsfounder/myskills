@@ -28,7 +28,7 @@ function Breadcrumb({ current }: { current: string }) {
         </li>
         <li aria-hidden>›</li>
         <li>
-          <Link to="/community" className="hover:text-white">
+          <Link to="/community" search={{ partners: true }} className="hover:text-white">
             Partner with MySkills
           </Link>
         </li>

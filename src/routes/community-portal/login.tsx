@@ -102,7 +102,7 @@ function MentorLoginPage() {
         </p>
         <p className="mt-2 text-center text-xs text-ink-500">
           Not a partner yet?{' '}
-          <Link to="/community" className="font-medium text-brand-700 hover:underline">
+          <Link to="/community" search={{ partners: true }} className="font-medium text-brand-700 hover:underline">
             Partner with MySkills
           </Link>
         </p>

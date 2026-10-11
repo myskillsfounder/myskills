@@ -41,8 +41,11 @@ import {
 // the hub already filtered, so a link elsewhere in the app can point at one
 // kind of support. Anything else is ignored and shows everything.
 export const Route = createFileRoute('/community/')({
-  validateSearch: (s: Record<string, unknown>): { category?: Category } => ({
+  validateSearch: (s: Record<string, unknown>): { category?: Category; partners?: true } => ({
     category: CATEGORIES.some((c) => c.id === s.category && c.id !== 'all') ? (s.category as Category) : undefined,
+    // Someone who asked for the partner page by name. Only matters on a phone,
+    // where a signed-out visitor is otherwise taken to the phone's welcome.
+    partners: s.partners === true || s.partners === 'true' || s.partners === 1 ? true : undefined,
   }),
   component: CommunityIndexRoute,
 })
@@ -65,8 +68,21 @@ export const Route = createFileRoute('/community/')({
  * a much smaller cost than a page with no working navigation.
  */
 function CommunityIndexRoute() {
-  const { user } = useAuthUser()
-  return user ? <CommunityHub /> : <PartnerHub />
+  const { user, loading } = useAuthUser()
+  const { partners } = Route.useSearch()
+  const navigate = Route.useNavigate()
+  // On a phone this address is the marketplace, the app itself. Someone signed
+  // out is not shown the partner page in its place (they came for the app):
+  // they go to the phone's welcome, unless the partner page is what they asked for.
+  const toWelcome = isPhone() && !partners && !loading && !user
+  useEffect(() => {
+    if (toWelcome) void navigate({ to: '/welcome', replace: true })
+  }, [toWelcome, navigate])
+
+  if (user) return <CommunityHub />
+  // A phone waits for the answer instead of flashing the partner page first.
+  if (isPhone() && !partners) return <div className="surface-paper min-h-screen" aria-busy="true" />
+  return <PartnerHub />
 }
 
 /**

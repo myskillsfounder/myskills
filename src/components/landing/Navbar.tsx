@@ -39,6 +39,7 @@ export function Navbar() {
           ))}
           <Link
             to="/community"
+            search={{ partners: true }}
             className="text-sm font-medium text-ink-500 transition-colors hover:text-ink-900"
           >
             Partner with us
@@ -106,6 +107,7 @@ export function Navbar() {
             ))}
             <Link
               to="/community"
+            search={{ partners: true }}
               onClick={() => setOpen(false)}
               className="rounded-md px-2 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
             >

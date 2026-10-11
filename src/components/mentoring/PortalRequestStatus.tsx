@@ -165,7 +165,7 @@ export function PortalRequestStatus({
         </p>
         {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
         <div className="mt-4 flex gap-4 text-sm font-semibold">
-          <Link to="/community" className="text-brand-700 hover:underline">
+          <Link to="/community" search={{ partners: true }} className="text-brand-700 hover:underline">
             Partner with MySkills
           </Link>
         </div>

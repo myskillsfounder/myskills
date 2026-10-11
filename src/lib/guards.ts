@@ -25,35 +25,53 @@ export async function requireGuest(): Promise<void> {
   if (await currentSession()) throw redirect({ to: homePath() })
 }
 
-/** Signed-in required (/onboarding). */
+/** Where a signed-in account that hasn't onboarded yet is sent: the computer's
+ *  onboarding, or the phone's own (routes/welcome.tsx). */
+const onboardingPath = (): '/onboarding' | '/welcome' => (isPhone() ? '/welcome' : '/onboarding')
+
+/** Signed-in required (/onboarding). A phone has its own onboarding instead. */
 export async function requireSession(): Promise<void> {
   if (!(await currentSession())) throw redirect({ to: '/login' })
+  if (isPhone()) throw redirect({ to: '/welcome' })
 }
 
 /**
  * Signed-in AND onboarded (/profile, app pages).
  *
- * A new account is onboarded first, on a phone as on a computer: the same
- * welcome, the same sentence to complete, the same plan. After that, on a
- * phone the app is the marketplace only (see lib/device.ts), so any other
- * app page sends them there.
+ * A new account is onboarded first: on a computer by the sentence and the
+ * plan, on a phone by its own three taps. After that, on a phone the app is
+ * the marketplace only (see lib/device.ts), so any other app page sends them
+ * there.
  */
 export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
   if (!session) throw redirect({ to: '/login' })
   if (session.user.user_metadata?.onboarded !== true) {
-    throw redirect({ to: '/onboarding' })
+    throw redirect({ to: onboardingPath() })
   }
   if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
 }
 
 /**
- * The home page on a phone: someone already signed in is taken to the
- * marketplace, the way opening an app takes you to the app. Everyone else
- * (signed out, or on a computer) sees the home page as usual.
+ * The phone's front door (/welcome): the welcome for someone signed out, the
+ * three questions for a new account. A computer has no use for it, and an
+ * account that has already answered goes to the marketplace.
+ */
+export async function requirePhoneWelcome(): Promise<void> {
+  const session = await currentSession()
+  if (!isPhone()) throw redirect({ to: session ? '/dashboard' : '/' })
+  if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: '/community' })
+}
+
+/**
+ * The home page on a phone is the app's front door, not the website's: someone
+ * signed in is taken to the marketplace, the way opening an app takes you to
+ * the app, and someone signed out to the phone's own welcome. On a computer
+ * the home page is the home page.
  */
 export async function phoneHome(): Promise<void> {
-  if (isPhone() && (await currentSession())) throw redirect({ to: '/community' })
+  if (!isPhone()) return
+  throw redirect({ to: (await currentSession()) ? '/community' : '/welcome' })
 }
 
 /**
@@ -67,7 +85,7 @@ export async function phoneHome(): Promise<void> {
 export async function requireOnboardedIfSignedIn(): Promise<void> {
   const session = await currentSession()
   if (session && session.user.user_metadata?.onboarded !== true) {
-    throw redirect({ to: '/onboarding' })
+    throw redirect({ to: onboardingPath() })
   }
 }
 

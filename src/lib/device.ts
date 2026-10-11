@@ -4,9 +4,9 @@
  * The full app (LaunchPad, Practice, the programmes, the profile) is for a
  * computer. A phone gets the one thing people do on the move: find a mentor,
  * a counsellor or guide, an internship or an institution. The two aptitude
- * assessments come along because asking a mentor needs one. A new account is
- * welcomed with the same onboarding as on a computer, then lands in the
- * marketplace; after that, sign-in goes straight there.
+ * assessments come along because asking a mentor needs one. A phone has its
+ * own front door and its own short onboarding (routes/welcome.tsx); after
+ * that, sign-in goes straight to the marketplace.
  *
  * "A phone" is the device, not the window: a narrow browser window on a
  * computer is still a computer, a tablet keeps the full app, and turning a
@@ -19,6 +19,9 @@ export function isPhone(): boolean {
   if (cached !== undefined) return cached
   if (typeof navigator === 'undefined' || typeof window === 'undefined') return false
   const ua = navigator.userAgent
+  // A search engine reading the site as a phone would is not a person on a
+  // phone: it gets the same pages as everyone, so what is indexed is the site.
+  if (/bot|crawl|spider|slurp|bingpreview|lighthouse|headless/i.test(ua)) return (cached = false)
   // Phones say so; tablets don't ("Android" without "Mobile", "iPad").
   const saysPhone = /Android.+Mobile|iPhone|iPod|Windows Phone/i.test(ua)
   // A touch-first device whose shorter side is phone-sized, for the ones that don't.
