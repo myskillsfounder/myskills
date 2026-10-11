@@ -1,7 +1,4 @@
 import { useState } from 'react'
-import { isPhone } from '@/lib/device'
-import { takeAfterOnboarding } from '@/lib/afterOnboarding'
-import { trackSignUp } from '@/lib/analytics'
 import { Zap } from 'lucide-react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { AuthShell } from '@/components/auth/AuthShell'
@@ -89,15 +86,8 @@ function SignupPage() {
     setSubmitting(true)
     try {
       await confirmSignUp(email, code.trim())
-      // Account confirmed — sign the user straight in, then onboard. A phone has
-      // no onboarding: it goes to the marketplace (or the aptitude assessment
-      // they signed up to take), so the sign-up is counted here instead.
+      // Account confirmed — sign the user straight in, then onboard.
       await signIn({ email, password })
-      if (isPhone()) {
-        trackSignUp('email')
-        router.navigate({ to: takeAfterOnboarding() ?? '/community' })
-        return
-      }
       router.navigate({ to: '/onboarding' })
     } catch (err) {
       applyError(err)

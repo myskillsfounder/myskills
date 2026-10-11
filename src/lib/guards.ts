@@ -25,30 +25,26 @@ export async function requireGuest(): Promise<void> {
   if (await currentSession()) throw redirect({ to: homePath() })
 }
 
-/** Signed-in required (/onboarding). A phone has no onboarding: it goes
- *  straight to the marketplace. */
+/** Signed-in required (/onboarding). */
 export async function requireSession(): Promise<void> {
   if (!(await currentSession())) throw redirect({ to: '/login' })
-  if (isPhone()) throw redirect({ to: '/community' })
 }
 
 /**
  * Signed-in AND onboarded (/profile, app pages).
  *
- * On a phone the app is the marketplace only (see lib/device.ts): any other
- * app page sends them there, and the pages a phone does have don't ask for
- * onboarding first, so signing in lands straight in the marketplace.
+ * A new account is onboarded first, on a phone as on a computer: the same
+ * welcome, the same sentence to complete, the same plan. After that, on a
+ * phone the app is the marketplace only (see lib/device.ts), so any other
+ * app page sends them there.
  */
 export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
   if (!session) throw redirect({ to: '/login' })
-  if (isPhone()) {
-    if (ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
-    return
-  }
   if (session.user.user_metadata?.onboarded !== true) {
     throw redirect({ to: '/onboarding' })
   }
+  if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
 }
 
 /**
@@ -69,8 +65,6 @@ export async function phoneHome(): Promise<void> {
  * finish onboarding, matching what they'd hit anywhere else in the app.
  */
 export async function requireOnboardedIfSignedIn(): Promise<void> {
-  // A phone goes straight in: no onboarding stands between sign-in and the marketplace.
-  if (isPhone()) return
   const session = await currentSession()
   if (session && session.user.user_metadata?.onboarded !== true) {
     throw redirect({ to: '/onboarding' })

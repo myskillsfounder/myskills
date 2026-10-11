@@ -4,8 +4,9 @@
  * The full app (LaunchPad, Practice, the programmes, the profile) is for a
  * computer. A phone gets the one thing people do on the move: find a mentor,
  * a counsellor or guide, an internship or an institution. The two aptitude
- * assessments come along because asking a mentor needs one. Sign-in lands
- * straight in the marketplace, with no onboarding in between.
+ * assessments come along because asking a mentor needs one. A new account is
+ * welcomed with the same onboarding as on a computer, then lands in the
+ * marketplace; after that, sign-in goes straight there.
  *
  * "A phone" is the device, not the window: a narrow browser window on a
  * computer is still a computer, a tablet keeps the full app, and turning a

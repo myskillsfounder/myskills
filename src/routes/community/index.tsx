@@ -17,7 +17,6 @@ import { SearchHeader } from '@/components/community/SearchHeader'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { isPhone } from '@/lib/device'
-import { ensureProfile } from '@/lib/profile'
 import {
   BrowseTiles,
   CATEGORIES,
@@ -275,12 +274,7 @@ function CommunityHub() {
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
 
-  // A phone signs in straight to here, with no onboarding to create their
-  // profile row; a mentor request and a support request both need one.
   const phone = isPhone()
-  useEffect(() => {
-    if (phone) void ensureProfile().catch(() => {})
-  }, [phone])
 
   // A link that asked for career guidance gets that card first.
   const support = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags)).sort(

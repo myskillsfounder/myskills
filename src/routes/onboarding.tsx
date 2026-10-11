@@ -5,6 +5,7 @@ import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { ensureProfile } from '@/lib/profile'
 import { requireSession } from '@/lib/guards'
+import { homePath } from '@/lib/device'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { peekAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
 import {
@@ -97,7 +98,8 @@ function OnboardingPage() {
   }
 
   /** Saves the answers, then goes to `to` — the assessment they picked, where
-   *  they were already heading, or the LaunchPad. */
+   *  they were already heading, or home: the LaunchPad, or on a phone the
+   *  marketplace (the assessments are on a phone too, so those go as picked). */
   async function finish(to: string | undefined, how: string) {
     setSubmitting(true)
     setError(undefined)
@@ -113,7 +115,7 @@ function OnboardingPage() {
       trackSignUp(method)
       trackEvent('onboarding_finish', { start: how, goal })
       const remembered = takeAfterOnboarding()
-      router.navigate({ to: to ?? remembered ?? '/dashboard' })
+      router.navigate({ to: to ?? remembered ?? homePath() })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save your profile. Please try again.')
       setSubmitting(false)
@@ -250,7 +252,7 @@ function OnboardingPage() {
                 plan={plan}
                 busy={submitting}
                 onPick={(start: StartKey) => void finish(ASSESSMENT_ROUTE[start], start)}
-                onSkip={() => void finish('/dashboard', 'later')}
+                onSkip={() => void finish(homePath(), 'later')}
               />
             )}
           </div>
