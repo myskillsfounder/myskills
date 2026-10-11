@@ -1,18 +1,14 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react'
-import { Clock, LayoutGrid, Search, TrendingUp, X } from 'lucide-react'
-import { CATEGORIES, type Category } from './Marketplace'
+import { Clock, Search, TrendingUp, X } from 'lucide-react'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
-/** Each category gets its own colour, so the row reads at a glance the way a
- *  shopping app's category strip does. */
-const TILE: Record<Category, string> = {
-  all: 'from-ink-700 to-ink-900',
-  wellness: 'from-rose-400 to-pink-600',
-  guidance: 'from-amber-400 to-orange-600',
-  mentors: 'from-brand-400 to-brand-700',
-  internships: 'from-emerald-400 to-teal-600',
-  institutions: 'from-sky-400 to-blue-600',
+/** One filter in the row under the search box. */
+export interface BrowseTab {
+  id: string
+  label: string
+  icon?: IconType
+  count?: number
 }
 
 const RECENT_KEY = 'myskills.communitySearches'
@@ -37,9 +33,11 @@ function writeRecent(list: string[]) {
 }
 
 /**
- * Search first, the way a shopping or food app opens: a large search box that
- * stays at the top as you scroll, the categories as a row of tiles under it,
- * and, when the box is focused and empty, recent and popular searches to tap.
+ * Search first, the way a shopping or food app opens: a search box that stays
+ * at the top as you scroll, one slim row of filters under it, and, when the
+ * box is focused and empty, recent and popular searches to tap. It is kept
+ * short on purpose: it follows you down the page, so every pixel it takes is
+ * taken from what you are browsing.
  *
  * Results filter as you type (the page does the filtering); a search is
  * remembered once the person presses Enter or leaves the box with text in it.
@@ -47,17 +45,17 @@ function writeRecent(list: string[]) {
 export function SearchHeader({
   query,
   onQuery,
-  category,
-  onCategory,
-  counts,
+  tabs,
+  active,
+  onTab,
   popular,
   resultCount,
 }: {
   query: string
   onQuery: (q: string) => void
-  category: Category
-  onCategory: (c: Category) => void
-  counts: Partial<Record<Category, number>>
+  tabs: BrowseTab[]
+  active: string
+  onTab: (id: string) => void
   /** Suggested searches, drawn from what is actually listed. */
   popular: string[]
   /** Matches for the current search and category; null while loading. */
@@ -102,7 +100,7 @@ export function SearchHeader({
     // Sits under the phone header (56px) and at the very top on desktop.
     <div className="surface-paper sticky top-14 z-20 -mx-4 border-b border-ink-900/[0.06] px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0 lg:-mx-8 lg:px-8">
       <div className="relative">
-        <label className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3.5 shadow-e2 ring-1 ring-ink-900/[0.08] transition-shadow focus-within:ring-2 focus-within:ring-brand-500">
+        <label className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-e1 ring-1 ring-ink-900/[0.08] transition-shadow focus-within:ring-2 focus-within:ring-brand-500">
           <Search size={20} className="shrink-0 text-brand-600" />
           <span className="sr-only">Search mentors, support, internships and institutions</span>
           <input
@@ -181,36 +179,33 @@ export function SearchHeader({
         )}
       </div>
 
-      {/* Categories as tiles: an icon in its own colour over a short label. */}
+      {/* The filters: one row of pills, scrolling sideways on a phone. */}
       <div
         role="tablist"
         aria-label="Browse by category"
-        className="-mx-4 mt-3 flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:gap-2 sm:px-0"
+        className="-mx-4 mt-2.5 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0"
       >
-        {CATEGORIES.map((c) => {
-          const on = c.id === category
-          const Icon = (c.icon ?? LayoutGrid) as IconType
-          const count = counts[c.id]
+        {tabs.map((tab) => {
+          const on = tab.id === active
+          const Icon = tab.icon
           return (
             <button
-              key={c.id}
+              key={tab.id}
               type="button"
               role="tab"
               aria-selected={on}
-              onClick={() => onCategory(c.id)}
-              className="press group flex w-[76px] shrink-0 flex-col items-center gap-1.5 rounded-xl px-1 py-1.5 sm:w-24"
+              onClick={() => onTab(tab.id)}
+              className={`press inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors ${
+                on
+                  ? 'border-ink-900 bg-ink-900 text-white'
+                  : 'border-ink-900/[0.1] bg-white text-ink-700 hover:border-ink-900/25 hover:text-ink-900'
+              }`}
             >
-              <span
-                className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 transition-transform duration-300 group-hover:-translate-y-0.5 ${TILE[c.id]} ${
-                  on ? 'ring-2 ring-brand-600 ring-offset-2 ring-offset-[var(--color-paper,#faf9f7)]' : 'opacity-90'
-                }`}
-              >
-                <Icon size={20} />
-              </span>
-              <span className={`text-center text-[11px] leading-tight ${on ? 'font-semibold text-ink-900' : 'font-medium text-ink-600'}`}>
-                {c.label}
-                {count != null && <span className="ml-1 tabular-nums text-ink-400">{count}</span>}
-              </span>
+              {Icon && <Icon size={15} className={on ? 'text-white/80' : 'text-ink-400'} />}
+              {tab.label}
+              {tab.count != null && (
+                <span className={`tabular-nums text-xs font-medium ${on ? 'text-white/60' : 'text-ink-400'}`}>{tab.count}</span>
+              )}
             </button>
           )
         })}
