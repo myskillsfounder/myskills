@@ -1,5 +1,9 @@
 import { redirect } from '@tanstack/react-router'
 import { supabase } from './supabase'
+import { homePath, inPhoneApp, isPhone } from './device'
+
+/** What a route guard is handed: enough to know which page is being opened. */
+type GuardContext = { location: { pathname: string } }
 
 /**
  * Fast auth check from the cached session — NO server round-trip, so in-app
@@ -15,23 +19,45 @@ async function currentSession() {
   return data.session
 }
 
-/** Guest-only routes (/login, /signup): send signed-in users to the dashboard. */
+/** Guest-only routes (/login, /signup): send signed-in users home (the
+ *  LaunchPad, or the marketplace on a phone). */
 export async function requireGuest(): Promise<void> {
-  if (await currentSession()) throw redirect({ to: '/dashboard' })
+  if (await currentSession()) throw redirect({ to: homePath() })
 }
 
-/** Signed-in required (/onboarding). */
+/** Signed-in required (/onboarding). A phone has no onboarding: it goes
+ *  straight to the marketplace. */
 export async function requireSession(): Promise<void> {
   if (!(await currentSession())) throw redirect({ to: '/login' })
+  if (isPhone()) throw redirect({ to: '/community' })
 }
 
-/** Signed-in AND onboarded (/profile, app pages). */
-export async function requireOnboarded(): Promise<void> {
+/**
+ * Signed-in AND onboarded (/profile, app pages).
+ *
+ * On a phone the app is the marketplace only (see lib/device.ts): any other
+ * app page sends them there, and the pages a phone does have don't ask for
+ * onboarding first, so signing in lands straight in the marketplace.
+ */
+export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
   if (!session) throw redirect({ to: '/login' })
+  if (isPhone()) {
+    if (ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
+    return
+  }
   if (session.user.user_metadata?.onboarded !== true) {
     throw redirect({ to: '/onboarding' })
   }
+}
+
+/**
+ * The home page on a phone: someone already signed in is taken to the
+ * marketplace, the way opening an app takes you to the app. Everyone else
+ * (signed out, or on a computer) sees the home page as usual.
+ */
+export async function phoneHome(): Promise<void> {
+  if (isPhone() && (await currentSession())) throw redirect({ to: '/community' })
 }
 
 /**
@@ -43,6 +69,8 @@ export async function requireOnboarded(): Promise<void> {
  * finish onboarding, matching what they'd hit anywhere else in the app.
  */
 export async function requireOnboardedIfSignedIn(): Promise<void> {
+  // A phone goes straight in: no onboarding stands between sign-in and the marketplace.
+  if (isPhone()) return
   const session = await currentSession()
   if (session && session.user.user_metadata?.onboarded !== true) {
     throw redirect({ to: '/onboarding' })

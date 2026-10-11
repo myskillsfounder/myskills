@@ -1,6 +1,7 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { Dumbbell, Rocket, Star, User, Users } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
+import { isPhone } from '@/lib/device'
 
 const TABS = [
   { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
@@ -70,6 +71,8 @@ export function MobileBottomNav() {
   const onPublicForSignedOut =
     onCommunity || pathname === '/career-readiness' || pathname === '/digital-marketing'
   const hidden =
+    // A phone has the marketplace and nothing else: no tabs to switch between.
+    isPhone() ||
     HIDE_EXACT.has(pathname) ||
     HIDE_PREFIX.some((p) => pathname.startsWith(p)) ||
     (onPublicForSignedOut && !user)

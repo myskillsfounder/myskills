@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { homePath } from '@/lib/device'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { AuthShell } from '@/components/auth/AuthShell'
 import { TextField } from '@/components/auth/TextField'
@@ -38,7 +39,8 @@ function LoginPage() {
     try {
       await signIn({ email, password })
       // /dashboard redirects to /onboarding if the user hasn't onboarded yet.
-      router.navigate({ to: '/dashboard' })
+      // On a phone, home is the marketplace.
+      router.navigate({ to: homePath() })
     } catch (err) {
       if (err instanceof AuthError && err.field) {
         setErrors((prev) => ({ ...prev, [err.field!]: err.message }))
