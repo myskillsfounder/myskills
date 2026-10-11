@@ -511,8 +511,13 @@ export function MentorProfilePanel({ profile, onSaved }: { profile: MyMentorProf
           </Alert>
         )}
 
-        {/* Stays in reach however far down the form they are. */}
-        <div className="sticky bottom-3 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-ink-900/[0.08] bg-white/95 p-3 shadow-e2 backdrop-blur">
+        {/* Stays in reach however far down the form they are, but only when there
+            is something to save or to say: otherwise it just sits over the page. */}
+        <div
+          className={`sticky bottom-3 z-10 flex-wrap items-center gap-3 rounded-2xl border border-ink-900/[0.08] bg-white/95 p-3 shadow-e2 backdrop-blur ${
+            dirty || saved || hasErrors ? 'flex' : 'hidden'
+          }`}
+        >
           <Button disabled={saving || uploading || hasErrors || !dirty} onClick={() => void save()}>
             {saving ? 'Saving…' : 'Save profile'}
           </Button>
