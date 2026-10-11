@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { phoneHome } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
@@ -26,6 +27,7 @@ import { GridBackdrop } from '@/components/landing/GridBackdrop'
 type IconType = ComponentType<{ size?: number; className?: string }>
 
 export const Route = createFileRoute('/')({
+  beforeLoad: phoneHome,
   component: HomePage,
 })
 

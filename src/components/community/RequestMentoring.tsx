@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { isPhone } from '@/lib/device'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, Check, CheckCircle2, Clock, Lock, PauseCircle, Send, UserCheck } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
@@ -150,9 +151,12 @@ export function RequestMentoring({
           We’ve emailed {first}. They’ll look at your aptitude report and accept or decline, and you’ll get an email
           either way.
         </p>
-        <Link to="/practice" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-emerald-900 underline underline-offset-2">
-          See it in Practice <ArrowRight size={14} />
-        </Link>
+        {/* Practice isn't on a phone: the request shows on this page instead. */}
+        {!isPhone() && (
+          <Link to="/practice" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-emerald-900 underline underline-offset-2">
+            See it in Practice <ArrowRight size={14} />
+          </Link>
+        )}
       </div>
     )
   }
@@ -163,9 +167,13 @@ export function RequestMentoring({
         <p className="flex items-center gap-2 text-sm font-semibold text-brand-900">
           <UserCheck size={17} /> {first} is your {PROGRAMME[state.withThis.programme].label} mentor
         </p>
-        <Link to="/practice" className="mt-1.5 inline-flex items-center gap-1 text-sm font-semibold text-brand-800 underline underline-offset-2">
-          Go to your sessions in Practice <ArrowRight size={14} />
-        </Link>
+        {isPhone() ? (
+          <p className="mt-1 text-sm text-brand-900/80">You arrange sessions together; they are logged in MySkills on a computer.</p>
+        ) : (
+          <Link to="/practice" className="mt-1.5 inline-flex items-center gap-1 text-sm font-semibold text-brand-800 underline underline-offset-2">
+            Go to your sessions in Practice <ArrowRight size={14} />
+          </Link>
+        )}
       </div>
     )
   }
@@ -211,11 +219,13 @@ export function RequestMentoring({
         <p className="text-sm font-semibold text-ink-900">You already have a mentor, or a request waiting</p>
         <p className="mt-1 text-sm text-ink-600">
           You can work with one mentor per programme ({state.taken.map((p) => PROGRAMME[p].label).join(' and ')}). End or
-          withdraw that one in Practice to ask {first} instead.
+          withdraw that one {isPhone() ? 'from MySkills on a computer' : 'in Practice'} to ask {first} instead.
         </p>
-        <Link to="/practice" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-          Open Practice <ArrowRight size={14} />
-        </Link>
+        {!isPhone() && (
+          <Link to="/practice" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
+            Open Practice <ArrowRight size={14} />
+          </Link>
+        )}
       </div>
     )
   }

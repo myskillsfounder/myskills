@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isPhone } from '@/lib/device'
 import { Link } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
@@ -55,10 +56,10 @@ export function Navbar() {
           {!loading &&
             (user ? (
               <Link
-                to="/profile"
+                to={isPhone() ? '/community' : '/profile'}
                 className="press inline-flex h-10 items-center rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
               >
-                Go to profile
+                {isPhone() ? 'Open Community' : 'Go to profile'}
               </Link>
             ) : (
               <>
@@ -122,11 +123,11 @@ export function Navbar() {
             {!loading &&
               (user ? (
                 <Link
-                  to="/profile"
+                  to={isPhone() ? '/community' : '/profile'}
                   onClick={() => setOpen(false)}
                   className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                 >
-                  Go to profile
+                  {isPhone() ? 'Open Community' : 'Go to profile'}
                 </Link>
               ) : (
                 <>
