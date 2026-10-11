@@ -1,12 +1,12 @@
 /**
- * On a phone, MySkills is the Community marketplace and nothing else.
+ * On a phone, MySkills is three things: the Community marketplace, the
+ * LaunchPad and Practice, each laid out for a phone.
  *
- * The full app (LaunchPad, Practice, the programmes, the profile) is for a
- * computer. A phone gets the one thing people do on the move: find a mentor,
- * a counsellor or guide, an internship or an institution. The two aptitude
- * assessments come along because asking a mentor needs one. A phone has its
- * own front door and its own short onboarding (routes/welcome.tsx); after
- * that, sign-in goes straight to the marketplace.
+ * The Community comes first: it is where a phone signs in to, and the first
+ * tab. The LaunchPad and Practice follow, trimmed to what is done on a phone
+ * (where you stand, and the next thing to practise). The rest of the app, the
+ * profile, reviews and the like, stays on a computer. A phone also has its own
+ * front door and its own short onboarding (routes/welcome.tsx).
  *
  * "A phone" is the device, not the window: a narrow browser window on a
  * computer is still a computer, a tablet keeps the full app, and turning a
@@ -31,10 +31,22 @@ export function isPhone(): boolean {
   return cached
 }
 
-/** What a phone may open inside the app. Everything else in the student app sends them to the marketplace. */
-const PHONE_APP = ['/community', '/wellness', '/aptitude-assessment', '/career-readiness-assessment']
+/** What a phone may open inside the app: the Community, the LaunchPad, and
+ *  Practice with everything practising leads to. Anything else in the student
+ *  app sends them to the Community. */
+const PHONE_APP = [
+  '/community',
+  '/wellness',
+  '/dashboard',
+  '/practice',
+  '/career-module',
+  '/aptitude-assessment',
+  '/career-readiness-assessment',
+  '/foundation-assessment',
+  '/certificate',
+]
 
 export const inPhoneApp = (pathname: string) => PHONE_APP.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
-/** Where a signed-in student belongs: the marketplace on a phone, the LaunchPad on a computer. */
+/** Where a signed-in student lands: the Community on a phone, the LaunchPad on a computer. */
 export const homePath = (): '/community' | '/dashboard' => (isPhone() ? '/community' : '/dashboard')

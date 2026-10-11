@@ -8,7 +8,7 @@ const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
 /** True from the first frame after mount — so bars and the ring grow in from
  *  zero instead of appearing already full. */
-function useEntered() {
+export function useEntered() {
   const [entered, setEntered] = useState(false)
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
@@ -18,7 +18,7 @@ function useEntered() {
 }
 
 /** Counts up to `target` alongside the ring, easing out like it does. */
-function useCountUp(target: number, run: boolean, ms = 1200) {
+export function useCountUp(target: number, run: boolean, ms = 1200) {
   const [value, setValue] = useState(0)
   const current = useRef(0)
   useEffect(() => {
@@ -53,7 +53,7 @@ const PART_TONE = {
 
 /** One part of the score: its name, points and a bar — and, when some of what
  *  the student earned is waiting on their project, how much. */
-function Part({
+export function Part({
   label,
   c,
   tone,
@@ -150,7 +150,7 @@ const TONE: Record<Tone, { icon: string; eyebrow: string }> = {
 const ADVANCE_MS = 3000
 
 /** Three things worth working toward: the certificate, a mentor, an internship. */
-function slidesFor(h: Highlights): Slide[] {
+export function slidesFor(h: Highlights): Slide[] {
   const cert: Slide =
     h.certificate === 'earned'
       ? { key: 'cert', eyebrow: 'Your certificate', title: 'Certificate in Foundational Progress in Digital Marketing', cta: 'Download', to: '/certificate', icon: Award, tone: 'gold' }

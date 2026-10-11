@@ -178,7 +178,6 @@ function popularSearches(mentors: MentorListing[], institutions: InstitutionPart
  */
 function YourMentors({ matches }: { matches: { match: StudentMatch | null; programme: 1 | 2; label: string }[] }) {
   const mine = matches.filter((m) => m.match && (m.match.status === 'active' || m.match.status === 'requested'))
-  const phone = isPhone()
   if (mine.length === 0) return null
   return (
     <section className="card p-5">
@@ -187,13 +186,11 @@ function YourMentors({ matches }: { matches: { match: StudentMatch | null; progr
         {mine.map(({ match, programme, label }) => {
           const name = match!.mentor?.full_name ?? 'Your mentor'
           const waiting = match!.status === 'requested'
-          // Practice isn't on a phone, so there the row is information, not a way in.
-          const Row = phone ? 'div' : Link
-          const rowProps = phone ? {} : { to: '/practice', onClick: () => rememberProgramme(programme) }
           return (
             <li key={programme}>
-              <Row
-                {...(rowProps as { to: '/practice' })}
+              <Link
+                to="/practice"
+                onClick={() => rememberProgramme(programme)}
                 className="group flex items-center gap-3 rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
               >
                 {match!.mentor?.avatar_url ? (
@@ -209,55 +206,13 @@ function YourMentors({ matches }: { matches: { match: StudentMatch | null; progr
                     {label} · {waiting ? 'waiting for them to accept' : 'working with you'}
                   </span>
                 </span>
-                {!phone && (
-                  <ArrowRight size={15} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-600" />
-                )}
-              </Row>
+                <ArrowRight size={15} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-600" />
+              </Link>
             </li>
           )
         })}
       </ul>
     </section>
-  )
-}
-
-const PHONE_NOTE_KEY = 'myskills.phoneNoteSeen'
-
-/**
- * Said once, on a phone: this is the marketplace, and the rest of MySkills is
- * on a computer. Someone who practises on a laptop and opens the site on their
- * phone would otherwise wonder where everything went.
- */
-function PhoneNote() {
-  const [shown, setShown] = useState(() => {
-    try {
-      return localStorage.getItem(PHONE_NOTE_KEY) !== '1'
-    } catch {
-      return true
-    }
-  })
-  if (!shown) return null
-  return (
-    <div className="flex items-start gap-3 rounded-2xl bg-brand-50 p-4">
-      <p className="min-w-0 flex-1 text-sm leading-relaxed text-brand-900">
-        <span className="font-semibold">On your phone, MySkills is the Community.</span> Find a mentor, a counsellor, an
-        internship or an institution here. LaunchPad and Practice are on a computer at myskills.org.in.
-      </p>
-      <button
-        type="button"
-        onClick={() => {
-          setShown(false)
-          try {
-            localStorage.setItem(PHONE_NOTE_KEY, '1')
-          } catch {
-            /* it will show again next time, which is fine */
-          }
-        }}
-        className="shrink-0 rounded-full px-2 py-1 text-sm font-semibold text-brand-800 hover:bg-brand-100"
-      >
-        Got it
-      </button>
-    </div>
   )
 }
 
@@ -289,8 +244,6 @@ function CommunityHub() {
   const q = query.trim().toLowerCase()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
-
-  const phone = isPhone()
 
   // A link that asked for career guidance gets that card first.
   const support = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags)).sort(
@@ -342,8 +295,6 @@ function CommunityHub() {
           popular={loading ? [] : popularSearches(mentors, institutions)}
           resultCount={loading ? null : group === null ? total : counts[group]}
         />
-
-        {front && phone && <PhoneNote />}
 
         {front && (
           <>

@@ -15,9 +15,9 @@ import type { Category } from '@/components/community/Marketplace'
 /**
  * The phone's front door, and its own onboarding.
  *
- * On a phone MySkills is the Community marketplace (lib/device.ts), so a phone
- * doesn't get the website's home page or the computer's onboarding, which is
- * about choosing a programme to practise. It gets this: what the marketplace
+ * A phone opens on the Community marketplace (lib/device.ts), so it doesn't get
+ * the website's home page or the computer's onboarding, which is about
+ * choosing a programme to practise. It gets this: what the marketplace
  * is, a way in, and, for a new account, three taps that say who they are, what
  * they want, and what they came to find. Then the marketplace, already open
  * on that.

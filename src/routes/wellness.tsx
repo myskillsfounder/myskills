@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { isPhone } from '@/lib/device'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, CheckCircle2, Compass, HeartHandshake, Send, Sparkles } from 'lucide-react'
@@ -207,10 +206,10 @@ function WellnessPage() {
     <AppShell>
       <div className="mx-auto max-w-2xl">
         <Link
-          to={isPhone() ? '/community' : '/dashboard'}
+          to="/dashboard"
           className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
         >
-          <ArrowLeft size={16} /> {isPhone() ? 'Back to Community' : 'Back to LaunchPad'}
+          <ArrowLeft size={16} /> Back to LaunchPad
         </Link>
 
         <PageHeader

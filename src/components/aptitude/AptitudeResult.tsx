@@ -1,4 +1,3 @@
-import { isPhone } from '@/lib/device'
 import {
   APTITUDE_MAX,
   APTITUDE_MIN,
@@ -34,11 +33,8 @@ export function AptitudeResult({ result }: { result: Result }) {
       levelTone={LEVEL_TONE_DARK}
       start={{
         title: top.name,
-        // On a phone the app is the marketplace: the next step there is a mentor.
-        body: isPhone()
-          ? `It’s your strongest pull, so these skill tracks should feel the most natural: ${tracks.join(' and ')}. You can now ask a mentor to work with you.`
-          : `It’s your strongest pull, so these skill tracks should feel the most natural: ${tracks.join(' and ')}. A good place to begin. Practice is now unlocked.`,
-        cta: isPhone() ? { to: '/community', label: 'Find a mentor' } : { to: '/practice', label: 'Start practising' },
+        body: `It’s your strongest pull, so these skill tracks should feel the most natural: ${tracks.join(' and ')}. A good place to begin. Practice is now unlocked.`,
+        cta: { to: '/practice', label: 'Start practising' },
       }}
       detail={{
         title: 'How marketing comes to you',

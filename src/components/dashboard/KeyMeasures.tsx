@@ -9,7 +9,7 @@ import { rememberProgramme } from '@/lib/practiceProgramme'
 
 /** Each programme gets its own mark, so the two courses read apart at a
  *  glance: a megaphone for marketing, a compass for finding your direction. */
-const COURSE_LOOK: Record<1 | 2, { icon: typeof BookOpen; tile: string; bar: string; text: string }> = {
+export const COURSE_LOOK: Record<1 | 2, { icon: typeof BookOpen; tile: string; bar: string; text: string }> = {
   1: {
     icon: Megaphone,
     tile: 'from-brand-400 to-brand-700 shadow-[0_6px_14px_-6px_rgba(111,99,226,0.7)]',
