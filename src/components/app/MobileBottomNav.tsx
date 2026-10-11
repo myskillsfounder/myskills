@@ -1,5 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Dumbbell, Rocket, Star, User, Users } from 'lucide-react'
+import { Briefcase, Building2, Dumbbell, GraduationCap, HeartHandshake, LayoutGrid, Rocket, Star, User, Users } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { isPhone } from '@/lib/device'
 
@@ -10,6 +10,29 @@ const TABS = [
   { to: '/feedback', label: 'Review', icon: Star },
   { to: '/profile', label: 'Profile', icon: User },
 ] as const
+
+/**
+ * A phone's tabs. On a phone the app is the Community marketplace alone
+ * (lib/device.ts), so its bar moves between the marketplace's own sections
+ * rather than the app's: everything, then each of the four groups.
+ */
+const PHONE_TABS = [
+  { id: 'all', label: 'Home', icon: LayoutGrid },
+  { id: 'mentors', label: 'Mentors', icon: GraduationCap },
+  { id: 'wellness', label: 'Support', icon: HeartHandshake },
+  { id: 'internships', label: 'Internships', icon: Briefcase },
+  { id: 'institutions', label: 'Institutes', icon: Building2 },
+] as const
+
+type PhoneTab = (typeof PHONE_TABS)[number]['id']
+
+/** Which phone tab the current address belongs to. */
+function phoneTabFor(pathname: string, category: string | undefined): PhoneTab {
+  if (pathname === '/wellness') return 'wellness'
+  if (pathname.startsWith('/community/institutions')) return 'institutions'
+  if (category === 'guidance') return 'wellness'
+  return (PHONE_TABS.find((t) => t.id === category)?.id ?? 'all') as PhoneTab
+}
 
 /**
  * The bar is part of the app layout, so it shows EVERYWHERE by default and we
@@ -26,6 +49,7 @@ const HIDE_EXACT = new Set([
   '/',
   '/login',
   '/signup',
+  '/welcome',
   '/onboarding',
   '/assessment',
   '/certificate',
@@ -59,7 +83,9 @@ export const BOTTOM_NAV_CLEARANCE = `calc(${BOTTOM_NAV_H + 12}px + env(safe-area
  */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const category = useRouterState({ select: (s) => (s.location.search as { category?: string } | undefined)?.category })
   const { user } = useAuthUser()
+  const phone = isPhone()
 
   // /community is dual-purpose: a public marketing page for signed-out
   // visitors and the authenticated hub for onboarded users. The tabs below
@@ -71,12 +97,33 @@ export function MobileBottomNav() {
   const onPublicForSignedOut =
     onCommunity || pathname === '/career-readiness' || pathname === '/digital-marketing'
   const hidden =
-    // A phone has the marketplace and nothing else: no tabs to switch between.
-    isPhone() ||
     HIDE_EXACT.has(pathname) ||
     HIDE_PREFIX.some((p) => pathname.startsWith(p)) ||
-    (onPublicForSignedOut && !user)
+    (onPublicForSignedOut && !user) ||
+    // A phone's tabs are all inside the marketplace: nothing to show a visitor
+    // who isn't signed in, wherever they are.
+    (phone && !user)
   if (hidden) return null
+
+  // On a phone: the marketplace's sections. Elsewhere: the app's.
+  const active = phone ? phoneTabFor(pathname, category) : undefined
+  const tabs = phone
+    ? PHONE_TABS.map((t) => ({
+        key: t.id,
+        to: '/community' as const,
+        search: t.id === 'all' ? {} : { category: t.id },
+        label: t.label,
+        icon: t.icon,
+        active: t.id === active,
+      }))
+    : TABS.map((t) => ({
+        key: t.to,
+        to: t.to,
+        search: undefined,
+        label: t.label,
+        icon: t.icon,
+        active: pathname === t.to || pathname.startsWith(`${t.to}/`),
+      }))
 
   return (
     <nav
@@ -85,12 +132,15 @@ export function MobileBottomNav() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="mx-auto flex max-w-lg items-stretch">
-        {TABS.map(({ to, label, icon: Icon }) => {
-          const active = pathname === to || pathname.startsWith(`${to}/`)
+        {tabs.map(({ key, to, search, label, icon: Icon, active }) => {
           return (
-            <li key={to} className="flex-1">
+            <li key={key} className="flex-1">
               <Link
                 to={to}
+                search={search}
+                // A phone's tabs share one address and differ only in what follows
+                // the "?", so the link is the current page only on an exact match.
+                activeOptions={phone ? { exact: true, includeSearch: true } : undefined}
                 aria-label={label}
                 aria-current={active ? 'page' : undefined}
                 className="relative flex select-none flex-col items-center justify-center gap-0.5 outline-none transition-transform duration-100 active:scale-95"
