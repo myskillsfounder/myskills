@@ -12,13 +12,14 @@ const TABS = [
 ] as const
 
 /**
- * A phone's tabs: the Community first (it is where a phone lands), then the
- * LaunchPad and Practice. Review and Profile are for a computer.
+ * A phone's tabs: the same first three, in the same order, as everywhere else.
+ * Review and Profile are for a computer. (A phone still lands on the
+ * Community after sign-in, see lib/device.ts; the order here is the bar's.)
  */
 const PHONE_TABS = [
-  { to: '/community', label: 'Community', icon: Users },
   { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
+  { to: '/community', label: 'Community', icon: Users },
 ] as const
 
 /**

@@ -187,7 +187,7 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  // A phone has the Community, the LaunchPad and Practice (lib/device.ts), all in the bottom bar: no menu.
+  // A phone has the LaunchPad, Practice and the Community (lib/device.ts), all in the bottom bar: no menu.
   const phone = isPhone()
   async function phoneSignOut() {
     await signOut()
