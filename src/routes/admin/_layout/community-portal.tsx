@@ -15,6 +15,7 @@ import {
   type CommunityUsage,
 } from '@/lib/communityPortal'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { fetchPartnerProfiles, type AdminPartnerProfile } from '@/lib/partnerProfile'
 import { InviteLink, SIGNUP_ROLE } from '@/components/admin/InviteLink'
 import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
@@ -43,6 +44,8 @@ const PARTNER_WORD: Record<CommunityResource, string> = {
 function CommunityPortalAdminPage() {
   const [access, setAccess] = useState<AdminCommunityAccess[]>([])
   const [usage, setUsage] = useState<CommunityUsage[]>([])
+  // What each partner has told us about themselves in the portal.
+  const [profiles, setProfiles] = useState<Record<string, AdminPartnerProfile>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
 
@@ -57,9 +60,10 @@ function CommunityPortalAdminPage() {
 
   async function load() {
     try {
-      const [a, u] = await Promise.all([fetchAdminCommunityAccess(), fetchCommunityUsage()])
+      const [a, u, p] = await Promise.all([fetchAdminCommunityAccess(), fetchCommunityUsage(), fetchPartnerProfiles()])
       setAccess(a)
       setUsage(u)
+      setProfiles(p)
       setError(undefined)
     } catch (e) {
       setError(errorMessage(e))
@@ -234,11 +238,20 @@ function CommunityPortalAdminPage() {
               <tbody className="divide-y divide-ink-100">
                 {access.map((a) => {
                   const key = `${a.user_id}:${a.resource}`
+                  const prof = profiles[a.user_id]
                   return (
                     <tr key={key}>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-ink-900">{a.organisation || a.full_name || '—'}</p>
-                        <p className="text-xs text-ink-500">{a.email}</p>
+                        <p className="font-medium text-ink-900">{prof?.display_name || a.organisation || a.full_name || '—'}</p>
+                        {prof?.title && <p className="text-xs font-medium text-brand-700">{prof.title}</p>}
+                        <p className="text-xs text-ink-500">
+                          {a.email}
+                          {prof?.contact_name ? ` · ${prof.contact_name}` : ''}
+                          {prof?.phone ? ` · ${prof.phone}` : ''}
+                          {prof?.city ? ` · ${prof.city}` : ''}
+                        </p>
+                        {/* A partner (not the team's overview) who hasn't filled theirs in yet. */}
+                        {!prof && !a.sees_all && <p className="text-xs text-amber-700">Profile not filled in yet</p>}
                       </td>
                       <td className="px-4 py-3">
                         <Badge tone="brand">{RESOURCE_LABEL[a.resource]}</Badge>
