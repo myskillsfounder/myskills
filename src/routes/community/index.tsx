@@ -6,7 +6,6 @@ import {
   Building2,
   GraduationCap,
   HeartHandshake,
-  LayoutGrid,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
@@ -255,11 +254,8 @@ function CommunityHub() {
   const some = <T,>(list: T[], n = PREVIEW) => (front ? list.slice(0, n) : list)
   const nothing = Boolean(q) && !loading && (group === null ? total === 0 : counts[group] === 0)
 
-  const tabs = [
-    { id: 'all', label: 'All', icon: LayoutGrid, count: loading ? undefined : total },
-    ...GROUPS.map((g) => ({ id: g.category, label: g.label, icon: g.icon, count: loading ? undefined : counts[g.id] })),
-  ]
-  const activeTab = group === null ? 'all' : (GROUPS.find((g) => g.id === group)?.category ?? 'all')
+  // The group on show, if any: named beside the search, with a way back to everything.
+  const openGroup = GROUPS.find((g) => g.id === group)
 
   return (
     <AppShell wide>
@@ -269,15 +265,16 @@ function CommunityHub() {
           <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
             Find the Right Person for What You Need Next
           </h1>
+          <p className="mt-1.5 text-sm text-ink-600">
+            One search across mentors, counsellors and career guides, internships and institutions.
+          </p>
         </header>
 
-        {/* Search and the filters lead the page and stay in reach while scrolling. */}
+        {/* Search is the way in: it leads the page and stays in reach while scrolling. */}
         <SearchHeader
           query={query}
           onQuery={setQuery}
-          tabs={tabs}
-          active={activeTab}
-          onTab={(id) => setCategory(id as Category)}
+          filter={openGroup ? { label: openGroup.label, onClear: () => setCategory('all') } : undefined}
           popular={loading ? [] : popularSearches(mentors, institutions)}
           resultCount={loading ? null : group === null ? total : counts[group]}
         />

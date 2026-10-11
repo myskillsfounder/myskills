@@ -3,14 +3,6 @@ import { Clock, Search, TrendingUp, X } from 'lucide-react'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
-/** One filter in the row under the search box. */
-export interface BrowseTab {
-  id: string
-  label: string
-  icon?: IconType
-  count?: number
-}
-
 const RECENT_KEY = 'myskills.communitySearches'
 const RECENT_MAX = 5
 
@@ -33,11 +25,11 @@ function writeRecent(list: string[]) {
 }
 
 /**
- * Search first, the way a shopping or food app opens: a search box that stays
- * at the top as you scroll, one slim row of filters under it, and, when the
- * box is focused and empty, recent and popular searches to tap. It is kept
- * short on purpose: it follows you down the page, so every pixel it takes is
- * taken from what you are browsing.
+ * Search is the page's main control: one large box, nothing beside it, that
+ * stays at the top as you scroll. Focused and empty it offers recent and
+ * popular searches; under it, popular searches are a tap away before anything
+ * is typed. There is no row of filters: a group is opened from its tile on the
+ * page, and while one is open it shows here as a single tag to clear.
  *
  * Results filter as you type (the page does the filtering); a search is
  * remembered once the person presses Enter or leaves the box with text in it.
@@ -45,17 +37,14 @@ function writeRecent(list: string[]) {
 export function SearchHeader({
   query,
   onQuery,
-  tabs,
-  active,
-  onTab,
+  filter,
   popular,
   resultCount,
 }: {
   query: string
   onQuery: (q: string) => void
-  tabs: BrowseTab[]
-  active: string
-  onTab: (id: string) => void
+  /** The group being looked at, when there is one: named, and cleared, here. */
+  filter?: { label: string; onClear: () => void }
   /** Suggested searches, drawn from what is actually listed. */
   popular: string[]
   /** Matches for the current search and category; null while loading. */
@@ -97,11 +86,14 @@ export function SearchHeader({
   const showSuggestions = focused && !q && (recent.length > 0 || popular.length > 0)
 
   return (
-    // Sits under the phone header (56px) and at the very top on desktop.
-    <div className="surface-paper sticky top-14 z-20 -mx-4 border-b border-ink-900/[0.06] px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0 lg:-mx-8 lg:px-8">
+    <>
+    {/* Sits under the phone header (56px) and at the very top on desktop. */}
+    <div className="surface-paper sticky top-14 z-20 -mx-4 px-4 pb-3 pt-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0 lg:-mx-8 lg:px-8">
       <div className="relative">
-        <label className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-e1 ring-1 ring-ink-900/[0.08] transition-shadow focus-within:ring-2 focus-within:ring-brand-500">
-          <Search size={20} className="shrink-0 text-brand-600" />
+        <label className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3.5 shadow-e2 ring-1 ring-ink-900/[0.1] transition-shadow focus-within:ring-2 focus-within:ring-brand-500 sm:gap-4 sm:px-5 sm:py-4">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">
+            <Search size={18} />
+          </span>
           <span className="sr-only">Search mentors, support, internships and institutions</span>
           <input
             ref={inputRef}
@@ -124,10 +116,10 @@ export function SearchHeader({
                 inputRef.current?.blur()
               }
             }}
-            placeholder="Search mentors, skills, cities, support…"
+            placeholder={filter ? `Search ${filter.label.toLowerCase()}…` : 'Search a mentor, a skill, a city, or what you need help with…'}
             // The label draws the focus ring, so the box inside it has none of its own.
             style={{ outline: 'none', boxShadow: 'none' }}
-            className="min-w-0 flex-1 border-0 bg-transparent text-base text-ink-900 placeholder:text-ink-400 [&::-webkit-search-cancel-button]:hidden"
+            className="min-w-0 flex-1 border-0 bg-transparent text-base text-ink-900 placeholder:text-ink-400 sm:text-lg [&::-webkit-search-cancel-button]:hidden"
           />
           {query ? (
             <button
@@ -179,44 +171,47 @@ export function SearchHeader({
         )}
       </div>
 
-      {/* The filters: one row of pills, scrolling sideways on a phone. */}
-      <div
-        role="tablist"
-        aria-label="Browse by category"
-        className="-mx-4 mt-2.5 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0"
-      >
-        {tabs.map((tab) => {
-          const on = tab.id === active
-          const Icon = tab.icon
-          return (
+      {(filter || (q && resultCount != null)) && (
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          {/* The one group being shown, as a tag that clears back to everything. */}
+          {filter && (
             <button
-              key={tab.id}
               type="button"
-              role="tab"
-              aria-selected={on}
-              onClick={() => onTab(tab.id)}
-              className={`press inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors ${
-                on
-                  ? 'border-ink-900 bg-ink-900 text-white'
-                  : 'border-ink-900/[0.1] bg-white text-ink-700 hover:border-ink-900/25 hover:text-ink-900'
-              }`}
+              onClick={filter.onClear}
+              aria-label={`Showing ${filter.label}. Show everything instead.`}
+              className="press inline-flex items-center gap-1.5 rounded-full bg-ink-900 py-1.5 pl-3.5 pr-2.5 text-sm font-semibold text-white hover:bg-ink-800"
             >
-              {Icon && <Icon size={15} className={on ? 'text-white/80' : 'text-ink-400'} />}
-              {tab.label}
-              {tab.count != null && (
-                <span className={`tabular-nums text-xs font-medium ${on ? 'text-white/60' : 'text-ink-400'}`}>{tab.count}</span>
-              )}
+              {filter.label}
+              <X size={14} className="text-white/70" />
             </button>
-          )
-        })}
-      </div>
-
-      {q && resultCount != null && (
-        <p className="mt-2 text-xs text-ink-500" aria-live="polite">
-          {resultCount === 0 ? 'No results' : `${resultCount} ${resultCount === 1 ? 'result' : 'results'}`} for “{q}”
-        </p>
+          )}
+          {q && resultCount != null && (
+            <p className="text-sm text-ink-600" aria-live="polite">
+              {resultCount === 0 ? 'No results' : `${resultCount} ${resultCount === 1 ? 'result' : 'results'}`} for “{q}”
+            </p>
+          )}
+        </div>
       )}
     </div>
+
+    {/* Before anything is typed: searches that will find something, one tap each. */}
+    {!q && !filter && popular.length > 0 && (
+      <div className="-mt-5 flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">Popular</span>
+        {popular.map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => pick(s)}
+            className="press inline-flex items-center gap-1.5 rounded-full border border-ink-900/[0.1] bg-white px-3 py-1.5 text-sm text-ink-700 hover:border-brand-300 hover:text-brand-800"
+          >
+            <TrendingUp size={13} className="text-ink-400" />
+            {s}
+          </button>
+        ))}
+      </div>
+    )}
+    </>
   )
 }
 
