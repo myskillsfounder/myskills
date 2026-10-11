@@ -6,7 +6,7 @@ import {
   Building2,
   GraduationCap,
   HeartHandshake,
-  UserPlus,
+  LayoutGrid,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { AppShell } from '@/components/app/AppShell'
@@ -18,11 +18,13 @@ import { SearchHeader } from '@/components/community/SearchHeader'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import {
+  BrowseTiles,
   CATEGORIES,
+  GROUPS,
+  groupOf,
   INTERNSHIP_TRACKS,
   InstitutionListingCard,
   InternshipCard,
-  JoinCard,
   MarketSection,
   marketGrid,
   MentorListingCard,
@@ -30,6 +32,7 @@ import {
   ServiceCard,
   toMentorListing,
   type Category,
+  type Group,
   type MentorListing,
 } from '@/components/community/Marketplace'
 
@@ -197,6 +200,17 @@ function YourMentors({ matches }: { matches: { match: StudentMatch | null; progr
   )
 }
 
+/** How many of a kind the front page shows before "See all". */
+const PREVIEW = 3
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
+
+/**
+ * The signed-in Community. It opens on the four things a student comes for,
+ * given equal weight, with a short row of each beneath; choosing one (a tile,
+ * a filter, or "See all") shows only that, in full. Searching looks across all
+ * of them at once.
+ */
 function CommunityHub() {
   const { mentors, institutions, loading } = useMarketplaceData()
   const [query, setQuery] = useState('')
@@ -205,39 +219,51 @@ function CommunityHub() {
   const { category: fromUrl } = Route.useSearch()
   const navigate = Route.useNavigate()
   const category: Category = fromUrl ?? 'all'
-  const setCategory = (next: Category) =>
+  const setCategory = (next: Category) => {
     void navigate({ search: { category: next === 'all' ? undefined : next }, replace: true })
+    window.scrollTo({ top: 0 })
+  }
+  // Wellness and career guidance are browsed as one group.
+  const group = groupOf(category)
   const q = query.trim().toLowerCase()
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
 
-  const services = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags))
-  const wellness = services.filter((s) => s.category === 'wellness')
-  const guidance = services.filter((s) => s.category === 'guidance')
+  // A link that asked for career guidance gets that card first.
+  const support = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags)).sort(
+    (a, b) => Number(b.category === category) - Number(a.category === category),
+  )
   const mentorHits = mentors.filter((m) => matches(q, m.name, m.role, m.location, m.expertise, m.bio))
   const internshipHits = INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
   const institutionHits = institutions.filter((p) => matches(q, p.legal_name, p.city, p.courses_offered))
 
-  const counts: Partial<Record<Category, number>> = {
-    wellness: wellness.length,
-    guidance: guidance.length,
+  const counts: Record<Group, number> = {
     mentors: mentorHits.length,
+    support: support.length,
     internships: internshipHits.length,
     institutions: institutionHits.length,
   }
-  counts.all = Object.values(counts).reduce((a, b) => a + (b ?? 0), 0)
+  const total = counts.mentors + counts.support + counts.internships + counts.institutions
 
-  const show = (c: Category) => category === 'all' || category === c
-  // While searching, a section with nothing to show gets out of the way;
+  // The front page: no group chosen and nothing being searched. It shows a
+  // few of each; a chosen group, or a search, shows everything that matches.
+  const front = group === null && !q
+  const show = (g: Group) => group === null || group === g
+  // While searching, a group with nothing to show gets out of the way;
   // without a search it stays, so an empty list reads as "none yet".
-  const visible = (c: Category, n: number) => show(c) && (!q || n > 0)
-  const supportServices = [...(show('wellness') ? wellness : []), ...(show('guidance') ? guidance : [])]
-  const nothing =
-    Boolean(q) && !loading && (category === 'all' ? counts.all === 0 : (counts[category] ?? 0) === 0)
+  const visible = (g: Group) => show(g) && (!q || counts[g] > 0)
+  const some = <T,>(list: T[], n = PREVIEW) => (front ? list.slice(0, n) : list)
+  const nothing = Boolean(q) && !loading && (group === null ? total === 0 : counts[group] === 0)
+
+  const tabs = [
+    { id: 'all', label: 'All', icon: LayoutGrid, count: loading ? undefined : total },
+    ...GROUPS.map((g) => ({ id: g.category, label: g.label, icon: g.icon, count: loading ? undefined : counts[g.id] })),
+  ]
+  const activeTab = group === null ? 'all' : (GROUPS.find((g) => g.id === group)?.category ?? 'all')
 
   return (
     <AppShell wide>
-      <div className="space-y-7">
+      <div className="space-y-8">
         <header>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Community</p>
           <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
@@ -245,24 +271,40 @@ function CommunityHub() {
           </h1>
         </header>
 
-        {/* Search and categories lead the page and stay in reach while scrolling. */}
+        {/* Search and the filters lead the page and stay in reach while scrolling. */}
         <SearchHeader
           query={query}
           onQuery={setQuery}
-          category={category}
-          onCategory={setCategory}
-          counts={loading ? {} : counts}
+          tabs={tabs}
+          active={activeTab}
+          onTab={(id) => setCategory(id as Category)}
           popular={loading ? [] : popularSearches(mentors, institutions)}
-          resultCount={loading ? null : category === 'all' ? (counts.all ?? 0) : (counts[category] ?? 0)}
+          resultCount={loading ? null : group === null ? total : counts[group]}
         />
 
-        {!q && category === 'all' && (
-          <YourMentors
-            matches={[
-              { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
-              { match: crMatch.match, programme: 2, label: 'Career Readiness' },
-            ]}
-          />
+        {front && (
+          <>
+            <YourMentors
+              matches={[
+                { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
+                { match: crMatch.match, programme: 2, label: 'Career Readiness' },
+              ]}
+            />
+            {/* The four ways in, side by side: none is buried under another's listings. */}
+            <BrowseTiles
+              onPick={setCategory}
+              meta={
+                loading
+                  ? {}
+                  : {
+                      mentors: mentors.length ? plural(mentors.length, 'mentor', 'mentors') : 'Coming soon',
+                      support: 'Ask privately',
+                      internships: 'Opening soon',
+                      institutions: institutions.length ? plural(institutions.length, 'institution', 'institutions') : 'Coming soon',
+                    }
+              }
+            />
+          </>
         )}
 
         {nothing && (
@@ -282,87 +324,99 @@ function CommunityHub() {
           </div>
         )}
 
-        {/* Mentors lead: a person to work with is what most students come here for. */}
-        {visible('mentors', mentorHits.length) && (
+        {visible('mentors') && (
           <MarketSection
             icon={GraduationCap}
             title="Mentors"
-            subtitle="Marketers who’ve done the work — get feedback on yours and unblock your next step."
+            subtitle="People who’ve done the work. Open a profile to ask them to mentor you."
+            seeAll={front && mentorHits.length > PREVIEW ? { onClick: () => setCategory('mentors'), label: `All ${mentorHits.length} mentors` } : undefined}
           >
             {loading ? (
               <ListingSkeletons />
+            ) : mentorHits.length === 0 ? (
+              <p className="card p-6 text-sm text-ink-600">No mentors are listed yet. Check back soon.</p>
             ) : (
               <div className={marketGrid}>
-                {mentorHits.map((m) => (
+                {some(mentorHits).map((m) => (
                   <MentorListingCard key={m.id} mentor={m} />
                 ))}
-                {!q && (
-                  <JoinCard
-                    icon={UserPlus}
-                    title={mentors.length ? 'Become a Mentor' : 'Be Our First Mentor'}
-                    body="Done the work? Share what you know with students starting out."
-                    to="/become-a-mentor"
-                    after={mentorHits.length}
-                  />
-                )}
+              </div>
+            )}
+            {group === 'mentors' && !q && (
+              <p className="mt-5 text-sm text-ink-600">
+                Done the work yourself?{' '}
+                <Link to="/become-a-mentor" className="font-semibold text-brand-700 hover:underline">
+                  Become a mentor
+                </Link>
+              </p>
+            )}
+          </MarketSection>
+        )}
+
+        {visible('support') && (
+          <MarketSection
+            icon={HeartHandshake}
+            title="Wellness & Guidance"
+            subtitle="For the moments practice alone can’t fix: overwhelm, self-doubt, or not knowing what’s next."
+          >
+            <div className="grid gap-4 lg:grid-cols-2">
+              {support.map((s) => (
+                <ServiceCard key={s.id} service={s} />
+              ))}
+            </div>
+            {/* The detail of how it works belongs to the group's own page, not the front. */}
+            {group === 'support' && (
+              <div className="mt-4">
+                <HowSupportWorks />
               </div>
             )}
           </MarketSection>
         )}
 
-        {supportServices.length > 0 && (
-          <MarketSection
-            icon={HeartHandshake}
-            title="Wellness & Career Guidance"
-            subtitle="For the moments practice alone can’t fix — overwhelm, self-doubt, or not knowing what’s next."
-          >
-            <div className={marketGrid}>
-              {supportServices.map((s) => (
-                <ServiceCard key={s.id} service={s} />
-              ))}
-              <HowSupportWorks />
-            </div>
-          </MarketSection>
-        )}
-
-        {visible('internships', internshipHits.length) && (
+        {visible('internships') && (
           <MarketSection
             icon={Briefcase}
-            title="Upcoming Internships"
-            subtitle="Real work with partner companies — the step that turns practice into experience you can show."
+            title="Internships"
+            subtitle="Real work with partner companies: the step that turns practice into experience you can show."
+            seeAll={front && internshipHits.length > PREVIEW ? { onClick: () => setCategory('internships'), label: `All ${internshipHits.length} roles` } : undefined}
           >
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {internshipHits.map((t) => (
+            <div className={marketGrid}>
+              {some(internshipHits).map((t) => (
                 <InternshipCard key={t.title} track={t} />
               ))}
             </div>
           </MarketSection>
         )}
 
-        {visible('institutions', institutionHits.length) && (
+        {visible('institutions') && (
           <MarketSection
             icon={Building2}
-            title="Partner Institutions"
+            title="Institutions"
             subtitle="Verified training institutions for classroom and offline learning."
-            seeAll={institutions.length ? { to: '/community/institutions', label: 'All Institutions' } : undefined}
+            seeAll={
+              front && institutionHits.length > PREVIEW
+                ? { onClick: () => setCategory('institutions'), label: `All ${institutionHits.length} institutions` }
+                : undefined
+            }
           >
             {loading ? (
               <ListingSkeletons />
+            ) : institutionHits.length === 0 ? (
+              <p className="card p-6 text-sm text-ink-600">No institutions are listed yet. Check back soon.</p>
             ) : (
               <div className={marketGrid}>
-                {institutionHits.map((p) => (
+                {some(institutionHits).map((p) => (
                   <InstitutionListingCard key={p.id} partner={p} />
                 ))}
-                {!q && (
-                  <JoinCard
-                    icon={Building2}
-                    title="List Your Institution"
-                    body="Run digital marketing courses? Apply to become a verified partner."
-                    to="/become-a-partner-institution"
-                    after={institutionHits.length}
-                  />
-                )}
               </div>
+            )}
+            {group === 'institutions' && !q && (
+              <p className="mt-5 text-sm text-ink-600">
+                Run courses yourself?{' '}
+                <Link to="/become-a-partner-institution" className="font-semibold text-brand-700 hover:underline">
+                  List your institution
+                </Link>
+              </p>
             )}
           </MarketSection>
         )}

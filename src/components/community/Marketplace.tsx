@@ -7,13 +7,13 @@ import {
   BadgeCheck,
   Briefcase,
   Building2,
+  Check,
   Compass,
   GraduationCap,
   HeartHandshake,
   Lock,
   X,
   MapPin,
-  MessageCircle,
   Send,
   ShieldCheck,
   Star,
@@ -35,6 +35,80 @@ export const CATEGORIES: { id: Category; label: string; icon?: IconType }[] = [
   { id: 'institutions', label: 'Institutions', icon: Building2 },
 ]
 
+/**
+ * What a student comes to the Community for, as the page presents it: four
+ * groups, each given the same weight. Wellness and career guidance are one
+ * group here (both are "talk to someone on the team's side"); the address
+ * still accepts either, so older links keep working.
+ */
+export type Group = 'mentors' | 'support' | 'internships' | 'institutions'
+
+export const groupOf = (c: Category): Group | null => (c === 'all' ? null : c === 'wellness' || c === 'guidance' ? 'support' : c)
+
+export const GROUPS: { id: Group; category: Category; label: string; blurb: string; icon: IconType; tile: string }[] = [
+  {
+    id: 'mentors',
+    category: 'mentors',
+    label: 'Mentors',
+    blurb: 'Work one to one with someone who has done it.',
+    icon: GraduationCap,
+    tile: 'from-brand-400 to-brand-700',
+  },
+  {
+    id: 'support',
+    category: 'wellness',
+    label: 'Wellness & Guidance',
+    blurb: 'Talk privately to a counsellor or a career guide.',
+    icon: HeartHandshake,
+    tile: 'from-rose-400 to-pink-600',
+  },
+  {
+    id: 'internships',
+    category: 'internships',
+    label: 'Internships',
+    blurb: 'Real work with partner companies.',
+    icon: Briefcase,
+    tile: 'from-emerald-400 to-teal-600',
+  },
+  {
+    id: 'institutions',
+    category: 'institutions',
+    label: 'Institutions',
+    blurb: 'Verified places for classroom learning.',
+    icon: Building2,
+    tile: 'from-sky-400 to-blue-600',
+  },
+]
+
+/**
+ * The four groups as large tiles: the first thing on the page after search, so
+ * each of them is one tap away and none is buried under another's listings.
+ */
+export function BrowseTiles({ meta, onPick }: { meta: Partial<Record<Group, string>>; onPick: (c: Category) => void }) {
+  return (
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {GROUPS.map((g) => (
+        <button
+          key={g.id}
+          type="button"
+          onClick={() => onPick(g.category)}
+          className="card lift group flex flex-col items-start p-4 text-left sm:p-5"
+        >
+          <span className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${g.tile}`}>
+            <g.icon size={20} />
+          </span>
+          <span className="mt-3 font-display text-lg font-semibold leading-tight text-ink-900">{g.label}</span>
+          <span className="mt-1 flex-1 text-sm leading-snug text-ink-600">{g.blurb}</span>
+          <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand-700">
+            {meta[g.id] ?? 'Browse'}
+            <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export const initialsOf = (name: string) =>
   name
     .split(' ')
@@ -55,30 +129,36 @@ export function MarketSection({
   icon: IconType
   title: string
   subtitle: string
-  seeAll?: { to: string; label: string }
+  /** A way to the rest: a page (`to`) or a filter on this one (`onClick`). */
+  seeAll?: { to?: string; onClick?: () => void; label: string }
   children: ReactNode
 }) {
+  const more = 'group inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800'
+  const arrow = <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
   return (
     <section className="rise-in">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div className="flex items-start gap-3">
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
             <Icon size={19} />
           </span>
-          <div>
+          <div className="min-w-0">
             <h2 className="font-display text-xl font-semibold tracking-tight text-ink-900">{title}</h2>
             <p className="mt-0.5 text-sm text-ink-600">{subtitle}</p>
           </div>
         </div>
-        {seeAll && (
-          <Link
-            to={seeAll.to}
-            className="group inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-          >
-            {seeAll.label}
-            <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        )}
+        {seeAll &&
+          (seeAll.to ? (
+            <Link to={seeAll.to} className={more}>
+              {seeAll.label}
+              {arrow}
+            </Link>
+          ) : (
+            <button type="button" onClick={seeAll.onClick} className={more}>
+              {seeAll.label}
+              {arrow}
+            </button>
+          ))}
       </div>
       {children}
     </section>
@@ -111,7 +191,7 @@ export const SERVICES: Service[] = [
     body: 'Exam pressure, stress, self-doubt, or something you can’t name yet — talk it through privately with someone who listens without judging.',
     tags: ['Private', 'At Your Pace'],
     cta: 'Talk to a Counsellor',
-    tint: 'from-rose-100 via-brand-50 to-white',
+    tint: 'from-rose-400 to-pink-600',
   },
   {
     id: 'career_mentor',
@@ -122,37 +202,32 @@ export const SERVICES: Service[] = [
     body: 'Which track to focus on, how to read a job description, what to do after your certificate — plan your next step with a career guide.',
     tags: ['1:1', 'Any Stage'],
     cta: 'Get Career Guidance',
-    tint: 'from-amber-100 via-brand-50 to-white',
+    tint: 'from-amber-400 to-orange-600',
   },
 ]
 
+/** One line of icon, what it is and what to do: quiet enough to sit beside the
+ *  listings without competing with them. */
 export function ServiceCard({ service }: { service: Service }) {
   const Icon = service.icon
   return (
-    <Link to="/wellness" className="card lift group flex flex-col overflow-hidden">
-      <div className={`relative flex h-28 items-end bg-gradient-to-br p-5 ${service.tint}`}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e2 transition-transform duration-300 group-hover:scale-105">
-          <Icon size={26} />
-        </span>
-        <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-medium text-ink-700 backdrop-blur">
-          <ShieldCheck size={12} className="text-emerald-600" /> Only our team sees it
-        </span>
-      </div>
-      <div className="flex flex-1 flex-col p-5">
+    <Link to="/wellness" className="card lift group flex items-start gap-4 p-5">
+      <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${service.tint}`}>
+        <Icon size={22} />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-700">{service.who}</p>
-        <h3 className="mt-1 font-display text-xl font-semibold text-ink-900">{service.title}</h3>
-        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{service.body}</p>
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {service.tags.map((t) => (
-            <span key={t} className="rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-700">
-              {t}
-            </span>
-          ))}
+        <h3 className="mt-0.5 font-display text-lg font-semibold leading-snug text-ink-900">{service.title}</h3>
+        <p className="mt-1 text-sm leading-relaxed text-ink-600">{service.body}</p>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-ink-500">
+            <ShieldCheck size={13} className="text-emerald-600" /> Private: only our team sees it
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
+            {service.cta}
+            <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </span>
         </div>
-        <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
-          {service.cta}
-          <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
-        </span>
       </div>
     </Link>
   )
@@ -183,10 +258,7 @@ function LinkedInIcon({ size = 16 }: { size?: number }) {
 
 /** The avatar: their photo, or their initials on the brand colour. */
 function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 'large' }) {
-  // On the card the avatar sits over the coloured band, so it carries a white
-  // ring to lift it off both the band and the card.
-  const box =
-    size === 'card' ? 'h-[4.5rem] w-[4.5rem] text-xl ring-4 ring-white shadow-e1' : 'h-20 w-20 text-2xl ring-2 ring-brand-100'
+  const box = size === 'card' ? 'h-20 w-20 text-2xl ring-4 ring-white shadow-e1' : 'h-20 w-20 text-2xl ring-2 ring-brand-100'
   return mentor.avatar ? (
     <img src={mentor.avatar} alt="" className={`${box} shrink-0 rounded-full bg-white object-cover`} />
   ) : (
@@ -302,9 +374,11 @@ function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListi
 }
 
 /**
- * A mentor's card: always the same size. Every part has a fixed place and room
- * (one line each for name, role and location; three lines of bio; one row of up
- * to two skills), and anything longer is trimmed. Tap View Profile for the lot.
+ * A mentor's card: a face first. The photo (or initials) sits in the middle
+ * with the verified tick on it, then who they are, a line about them and what
+ * they know, and one button. Always the same size: every part has a fixed
+ * place and room, and anything longer is trimmed; View profile has the lot,
+ * and is where a student asks them to be their mentor.
  * `preview` is the mentor looking at their own card in the Community portal.
  */
 export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; preview?: boolean }) {
@@ -312,66 +386,59 @@ export function MentorListingCard({ mentor, preview }: { mentor: MentorListing; 
   const shown = mentor.expertise.slice(0, 2)
   const extra = mentor.expertise.length - shown.length
   return (
-    <div className="card lift flex h-full flex-col overflow-hidden">
-      {/* A band of colour with the photo set over its edge: the card reads as
-          a person's profile rather than a row of text. */}
-      <div className="relative h-16 bg-gradient-to-br from-brand-300/70 via-brand-200/60 to-gold-200/70">
-        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 shadow-e1">
-          <BadgeCheck size={13} />
-          Verified
+    <div className="card lift relative flex h-full flex-col items-center overflow-hidden px-5 pb-5 pt-6 text-center">
+      {/* A soft wash behind the photo, fading out: warmth without a hard band. */}
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-brand-50 to-transparent" />
+
+      <div className="relative">
+        <MentorAvatar mentor={mentor} size="card" />
+        <span
+          title="Verified by MySkills"
+          aria-label="Verified mentor"
+          className="absolute -bottom-0.5 -right-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white"
+        >
+          <Check size={13} strokeWidth={3.5} />
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col px-5 pb-5">
-        <div className="-mt-9">
-          <MentorAvatar mentor={mentor} size="card" />
-        </div>
+      <p className="relative mt-3 w-full truncate font-display text-lg font-semibold leading-snug text-ink-900">{mentor.name}</p>
+      <p className="w-full truncate text-sm font-medium leading-snug text-brand-700">{mentor.role}</p>
+      {/* Always a line, so a mentor without a location doesn't make a shorter card. */}
+      <p className="mt-1 flex h-4 w-full items-center justify-center gap-1 text-xs text-ink-500">
+        {mentor.location && (
+          <>
+            <MapPin size={11} className="shrink-0" /> <span className="truncate">{mentor.location}</span>
+          </>
+        )}
+      </p>
 
-        <p className="mt-3 truncate font-display text-lg font-semibold leading-snug text-ink-900">{mentor.name}</p>
-        <p className="truncate text-sm font-medium leading-snug text-brand-700">{mentor.role}</p>
-        {/* Always a line, so a mentor without a location doesn't make a shorter card. */}
-        <p className="mt-1 flex h-4 items-center gap-1 text-xs text-ink-500">
-          {mentor.location && (
-            <>
-              <MapPin size={11} className="shrink-0" /> <span className="truncate">{mentor.location}</span>
-            </>
-          )}
-        </p>
+      {/* Exactly two lines tall: a taller box would let a third line peek out under the clamp. */}
+      <p className="mt-3 line-clamp-2 h-10 w-full text-sm leading-5 text-ink-600">{mentor.bio}</p>
 
-        {/* Exactly three lines tall: a taller box would let a fourth line peek out under the clamp. */}
-        <p className="mt-3 line-clamp-3 h-[3.75rem] text-sm leading-5 text-ink-600">{mentor.bio}</p>
-
-        <div className="mt-3 flex h-7 flex-nowrap items-center gap-1.5 overflow-hidden">
-          {shown.map((e) => (
-            <span
-              key={e}
-              className="min-w-0 truncate rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700"
-            >
-              {e}
-            </span>
-          ))}
-          {extra > 0 && (
-            <span className="shrink-0 rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">+{extra}</span>
-          )}
-        </div>
-
-        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500">
-            <MessageCircle size={14} className="text-ink-400" />
-            1:1 Live Chat
-          </span>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-haspopup="dialog"
-            aria-label={`View ${mentor.name}’s profile`}
-            className="press inline-flex items-center gap-1 rounded-full bg-brand-50 py-2 pl-4 pr-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-600 hover:text-white"
+      <div className="mt-3 flex h-7 w-full flex-nowrap items-center justify-center gap-1.5 overflow-hidden">
+        {shown.map((e) => (
+          <span
+            key={e}
+            className="min-w-0 truncate rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700"
           >
-            View Profile
-            <ChevronRight size={15} />
-          </button>
-        </div>
+            {e}
+          </span>
+        ))}
+        {extra > 0 && (
+          <span className="shrink-0 rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-600">+{extra}</span>
+        )}
       </div>
+
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-label={`View ${mentor.name}’s profile`}
+        className="press mt-4 inline-flex w-full items-center justify-center gap-1 rounded-full bg-brand-50 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-600 hover:text-white"
+      >
+        View profile
+        <ChevronRight size={15} />
+      </button>
 
       {open && <MentorProfileDialog mentor={mentor} preview={preview} onClose={() => setOpen(false)} />}
     </div>
@@ -488,13 +555,9 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
 export function InternshipCard({ track }: { track: InternshipTrack }) {
   return (
     <div aria-disabled="true" className="card relative flex flex-col overflow-hidden p-5">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink-100/80 to-transparent"
-      />
       <div className="relative flex items-start justify-between gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-ink-700 to-ink-900 text-white shadow-e1">
-          <Briefcase size={21} />
+        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-e1">
+          <Briefcase size={20} />
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-ink-50 px-2.5 py-1 text-[11px] font-medium text-ink-600">
           <Lock size={11} /> Opening Soon
