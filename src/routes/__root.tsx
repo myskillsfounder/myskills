@@ -16,7 +16,7 @@ export const Route = createRootRoute({
   component: RootComponent,
 })
 
-const PUBLIC_AUTH_PATHS = new Set(['/login', '/signup'])
+const PUBLIC_AUTH_PATHS = new Set(['/login', '/signup', '/welcome'])
 
 function RootComponent() {
   const navigate = useNavigate()

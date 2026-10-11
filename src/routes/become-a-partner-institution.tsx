@@ -171,6 +171,7 @@ function BecomeAPartnerInstitutionPage() {
           {done && (
           <Link
               to="/community"
+              search={{ partners: true }}
               className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
             >
               <ArrowLeft size={16} />
