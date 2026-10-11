@@ -2,9 +2,9 @@
  * On a phone, MySkills is three things: the Community marketplace, the
  * LaunchPad and Practice, each laid out for a phone.
  *
- * The Community comes first: it is where a phone signs in to, and the first
- * tab. The LaunchPad and Practice follow, trimmed to what is done on a phone
- * (where you stand, and the next thing to practise). The rest of the app, the
+ * The Community is where a phone signs in to. The LaunchPad and Practice are
+ * trimmed to what is done on a phone (where you stand, and the next thing to
+ * practise); in the bottom bar they come first, then the Community. The rest of the app, the
  * profile, reviews and the like, stays on a computer. A phone also has its own
  * front door and its own short onboarding (routes/welcome.tsx).
  *
