@@ -169,14 +169,15 @@ export function PortalHome({
         to: `/community-portal/${a.resource}`,
         overview,
         active: rows.filter((r) => r.status === 'active').length,
-        finished: rows.filter((r) => r.status !== 'active').length,
+        finished: rows.filter((r) => r.status === 'ended').length,
         sessions: rows.reduce((n, r) => n + r.sessions, 0),
         seenRecently: rows.filter((r) => r.last_session && daysSince(r.last_session) <= 30).length,
         waiting: 0,
       })
       // Only a person's own students are theirs to chase.
       if (!overview && LOGS_SESSIONS[a.resource as Exclude<CommunityResource, 'mentors'>]) {
-        for (const r of rows.filter((x) => x.status === 'active' && x.mine !== false)) {
+        for (const r of rows) {
+          if (r.status !== 'active' || r.mine === false || !r.student_id) continue
           const since = r.last_session ?? r.started_on
           const d = daysSince(since)
           if (d >= 21) {

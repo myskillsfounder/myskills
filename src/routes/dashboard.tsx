@@ -27,6 +27,7 @@ import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
 import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
 import { PhoneLaunchPad } from '@/components/dashboard/PhoneLaunchPad'
+import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { isPhone } from '@/lib/device'
 import { Skeleton } from '@/components/ui'
 
@@ -249,6 +250,7 @@ function DashboardPage() {
   if (isPhone()) {
     return (
       <AppShell wide>
+        <PartnerRequests pendingOnly className="mb-5" />
         <PhoneLaunchPad
           greeting={`${greet()}, ${name}`}
           // Wait for the first-run answer too: a new account would otherwise
@@ -274,6 +276,8 @@ function DashboardPage() {
       <PageHeader eyebrow="LaunchPad" title={<>{greet()}, {name}</>} />
 
       <div className="space-y-6">
+        {/* A partner asking to see this student's record is answered before anything else. */}
+        <PartnerRequests pendingOnly />
         {/* Order is deliberate: the score (where you stand), then the
             programme (the structured way to raise it), then everything else. */}
         {profileLoading || !readiness ? (

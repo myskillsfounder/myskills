@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { CalendarCheck, CheckCircle2, Mail, UserPlus, Users } from 'lucide-react'
+import { CalendarCheck, CheckCircle2, Clock, Mail, UserPlus, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   LOGS_SESSIONS,
   RESOURCE_LABEL,
   addCommunityStudent,
+  cancelCommunityInvite,
   endCommunityEngagement,
   fetchMyCommunityStudents,
   logCommunitySession,
@@ -34,14 +35,14 @@ const COPY: Record<GrantedResource, { intro: string; empty: string; active: stri
   },
   internships: {
     intro:
-      'The students interning with you right now. Add a student by the email they use on MySkills, and mark them finished when the internship ends.',
-    empty: 'Add your first intern by their MySkills email.',
+      'The students interning with you right now. Ask a student by the email they use on MySkills; they join your list once they accept. Mark them finished when the internship ends.',
+    empty: 'Ask your first intern by their MySkills email.',
     active: 'Interning now',
   },
   institutions: {
     intro:
-      'The students enrolled with you right now. Add a student by the email they use on MySkills, and mark them finished when they complete or leave.',
-    empty: 'Add your first student by their MySkills email.',
+      'The students enrolled with you right now. Ask a student by the email they use on MySkills; they join your list once they accept. Mark them finished when they complete or leave.',
+    empty: 'Ask your first student by their MySkills email.',
     active: 'Enrolled now',
   },
 }
@@ -53,6 +54,58 @@ const OVERVIEW: Record<GrantedResource, string> = {
   guidance: 'Every student working with a career guide, and who with, with the sessions logged so far.',
   internships: 'Every student interning with a partner company right now, and the ones who have finished.',
   institutions: 'Every student enrolled with a partner institution right now, and the ones who have finished.',
+}
+
+/**
+ * A student who has been asked and hasn't joined the list: the email that was
+ * typed, and nothing else. Whether an account even uses it isn't the partner's
+ * to know until the student accepts.
+ */
+function RequestRow({ s, onChanged }: { s: CommunityStudent; onChanged: () => void }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string>()
+  const declined = s.status === 'declined'
+
+  async function withdraw() {
+    setBusy(true)
+    setError(undefined)
+    try {
+      await cancelCommunityInvite(s.id)
+      onChanged()
+    } catch (e) {
+      setError(errorMessage(e))
+      setBusy(false)
+    }
+  }
+
+  return (
+    <li className="card flex flex-wrap items-center justify-between gap-x-4 gap-y-2 p-4">
+      <div className="min-w-0">
+        <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-900">
+          <Mail size={13} className="shrink-0 text-ink-400" />
+          <span className="truncate">{s.student_email}</span>
+        </p>
+        <p className="mt-0.5 text-xs text-ink-500">
+          {declined
+            ? 'Chose not to share their MySkills record with you.'
+            : `Asked on ${day(s.started_on)}. They’ll join your list when they accept in MySkills.`}
+        </p>
+        {error && <p className="mt-1 text-sm text-red-700">{error}</p>}
+      </div>
+      {declined ? (
+        <span className="rounded-full bg-ink-100 px-2.5 py-1 text-xs font-semibold text-ink-600">Declined</span>
+      ) : (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void withdraw()}
+          className="text-sm font-medium text-ink-600 hover:text-ink-900 disabled:opacity-60"
+        >
+          Withdraw
+        </button>
+      )}
+    </li>
+  )
 }
 
 /** One student's row: who they are, since when, and the one or two things the provider can do. */
@@ -72,6 +125,11 @@ function StudentRow({
   const [error, setError] = useState<string>()
   const [confirming, setConfirming] = useState(false)
   const active = s.status === 'active'
+  // A company or institution can open a student's record only while the
+  // student is sharing with it; an overview, and the people the team assigns
+  // students to, keep the link.
+  const canOpen = s.student_id != null && (active || logs || s.mine === false)
+  const name = s.student_name || 'A MySkills student'
 
   async function run(fn: () => Promise<void>) {
     setBusy(true)
@@ -91,13 +149,19 @@ function StudentRow({
     <li className="card p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <Link
-            to="/community-portal/student/$id"
-            params={{ id: s.student_id }}
-            className="font-display text-lg font-semibold text-ink-900 hover:text-brand-700 hover:underline"
-          >
-            {s.student_name || 'A MySkills student'}
-          </Link>
+          <p className="font-display text-lg font-semibold text-ink-900">
+            {canOpen && s.student_id ? (
+              <Link
+                to="/community-portal/student/$id"
+                params={{ id: s.student_id }}
+                className="hover:text-brand-700 hover:underline"
+              >
+                {name}
+              </Link>
+            ) : (
+              name
+            )}
+          </p>
           {s.provider_name && s.mine === false && (
             <p className="text-sm font-medium text-brand-700">With {s.provider_name}</p>
           )}
@@ -195,6 +259,7 @@ export function ResourcePanel({
   const [email, setEmail] = useState('')
   const [adding, setAdding] = useState(false)
   const [addError, setAddError] = useState<string>()
+  const [asked, setAsked] = useState<string>()
   const logs = LOGS_SESSIONS[resource]
   const copy = COPY[resource]
   // In an overview the students aren't "with you".
@@ -219,8 +284,10 @@ export function ResourcePanel({
   async function add() {
     setAdding(true)
     setAddError(undefined)
+    setAsked(undefined)
     try {
       await addCommunityStudent(resource, email)
+      setAsked(email.trim())
       setEmail('')
       await load()
     } catch (e) {
@@ -231,7 +298,9 @@ export function ResourcePanel({
   }
 
   const active = students.filter((s) => s.status === 'active')
-  const finished = students.filter((s) => s.status !== 'active')
+  const finished = students.filter((s) => s.status === 'ended')
+  // Asked, and not (or not yet) on the list.
+  const requests = students.filter((s) => s.status === 'invited' || s.status === 'declined')
 
   return (
     <div className="space-y-5">
@@ -249,8 +318,12 @@ export function ResourcePanel({
       {/* Organisations add their own students; people are assigned theirs by the team. */}
       {!logs && !seesAll && (
         <div className="card p-4 sm:p-5">
-          <p className="text-sm font-semibold text-ink-900">Add a student</p>
-          <div className="mt-2 flex flex-wrap items-end gap-2">
+          <p className="text-sm font-semibold text-ink-900">Ask a student to join your list</p>
+          <p className="mt-1 max-w-xl text-xs leading-relaxed text-ink-500">
+            We ask them in MySkills. You see their name, contact, progress and certificates once they accept, and
+            for as long as they keep sharing.
+          </p>
+          <div className="mt-3 flex flex-wrap items-end gap-2">
             <div className="min-w-0 flex-1 sm:max-w-sm">
               <Input
                 label="Their MySkills email"
@@ -261,10 +334,15 @@ export function ResourcePanel({
               />
             </div>
             <Button size="sm" icon={UserPlus} disabled={adding || !/^\S+@\S+\.\S+$/.test(email.trim())} onClick={() => void add()}>
-              {adding ? 'Adding…' : 'Add'}
+              {adding ? 'Asking…' : 'Ask'}
             </Button>
           </div>
           {addError && <p className="mt-2 text-sm text-red-700">{addError}</p>}
+          {asked && !addError && (
+            <p className="mt-2 text-sm text-emerald-700">
+              Asked {asked}. If they have a MySkills account, the request is waiting for them there.
+            </p>
+          )}
         </div>
       )}
 
@@ -292,6 +370,18 @@ export function ResourcePanel({
               <ul className="mt-2 space-y-3">
                 {active.map((s) => (
                   <StudentRow key={s.id} s={s} logs={logs} activeLabel={activeLabel} onChanged={() => void load()} />
+                ))}
+              </ul>
+            </section>
+          )}
+          {requests.length > 0 && (
+            <section>
+              <h2 className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+                <Clock size={12} /> Asked · {requests.length}
+              </h2>
+              <ul className="mt-2 space-y-2">
+                {requests.map((s) => (
+                  <RequestRow key={s.id} s={s} onChanged={() => void load()} />
                 ))}
               </ul>
             </section>
