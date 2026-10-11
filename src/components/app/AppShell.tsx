@@ -187,7 +187,7 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  // On a phone the app is the marketplace alone (lib/device.ts): no menu, no bottom bar.
+  // On a phone the app is the marketplace alone (lib/device.ts): no menu, and the bottom bar is the marketplace's own.
   const phone = isPhone()
   async function phoneSignOut() {
     await signOut()
@@ -204,7 +204,8 @@ export function AppShell({
       {/* Mobile top bar. Primary navigation lives in the bottom bar
           (components/app/MobileBottomNav.tsx, mounted in __root); this menu
           holds the overflow — Community, Feedback, Sign out. On a phone the app
-          is the marketplace alone, so there is no menu to open: just the way out. */}
+          is the marketplace alone and its sections are in the bottom bar, so
+          there is no menu to open here: just the way out. */}
       <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] px-4 backdrop-blur lg:hidden">
         <Link to={phone ? '/community' : '/dashboard'} className="flex items-center gap-2">
           <img src="/logo-mark.png" alt="" className="h-8 w-8" />
@@ -254,12 +255,12 @@ export function AppShell({
         Skip to content
       </a>
 
-      {/* bottom padding clears the mobile nav bar; desktop, and a phone, have no bar */}
+      {/* bottom padding clears the mobile nav bar; desktop has no bar */}
       <main id="main" className="lg:pl-64">
         <div
-          className={`mx-auto px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 ${
-            phone ? 'pb-[calc(1.5rem+env(safe-area-inset-bottom))]' : 'pb-[calc(1.5rem+58px+env(safe-area-inset-bottom))]'
-          } ${wide ? 'max-w-6xl' : 'max-w-4xl'}`}
+          className={`mx-auto px-4 pb-[calc(1.5rem+58px+env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pb-10 ${
+            wide ? 'max-w-6xl' : 'max-w-4xl'
+          }`}
         >
           {children}
         </div>
