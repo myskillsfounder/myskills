@@ -46,6 +46,7 @@ import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { useHasStarted } from '@/lib/firstRun'
 import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
+import { isPhone } from '@/lib/device'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -67,12 +68,39 @@ function MigrationError({ message }: { message: string }) {
 }
 
 /** The two programmes, side by side: one tap switches between them. Only the
- *  chosen programme's content is on the page, so neither buries the other. */
+ *  chosen programme's content is on the page, so neither buries the other.
+ *  On a phone they are a switch that stays at the top while the page scrolls:
+ *  two full cards would take a third of the screen before any practice. */
 function ProgrammeTabs({ active, onChange }: { active: Programme; onChange: (p: Programme) => void }) {
   const items: { step: Programme; name: string }[] = [
     { step: 1, name: DIGITAL_MARKETING.name },
     { step: 2, name: CAREER_READINESS.name },
   ]
+  if (isPhone()) {
+    return (
+      <div className="surface-paper sticky top-14 z-20 -mx-4 px-4 py-2">
+        <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-1 rounded-full bg-ink-900/[0.06] p-1">
+          {items.map((it) => {
+            const on = it.step === active
+            return (
+              <button
+                key={it.step}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                onClick={() => onChange(it.step)}
+                className={`h-10 rounded-full px-3 text-[13px] font-semibold transition-colors ${
+                  on ? 'bg-ink-900 text-white shadow-e1' : 'text-ink-600'
+                }`}
+              >
+                {it.name.replace(/ Programme$/, '')}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
   return (
     <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-3">
       {items.map((it) => {
@@ -241,6 +269,75 @@ function PracticePage() {
     internshipDone: false,
   })
 
+  const phone = isPhone()
+
+  // Each block of the Practice home, named, so the two layouts below are a
+  // matter of order and not of two copies.
+  const dmAptitudeCard = <AptitudeCard result={aptitude} />
+  const dmStats = (
+    <PracticeStats
+      practice={practice}
+      foundationDone={assessment != null}
+      aptitudeDone={aptitude != null}
+      project={dmReview.project}
+      foundationPercent={assessment?.overall.percent ?? null}
+      liveSessions={dmSessions.length}
+    />
+  )
+  const dmNextUp = <NextUpCard practice={practice} onSelect={setSelected} />
+  const dmCompletion = (
+    <ProgrammeCompletion stages={dmStages}>
+      <MentorReviewPanel
+        programme="digital-marketing"
+        practiceDone={practisedTracks.length === skillTracks.length}
+        review={dmReview.review}
+        state={dmReview.state}
+        submissionsLeft={dmReview.submissionsLeft}
+        onChange={() => void dmReview.reload()}
+      />
+    </ProgrammeCompletion>
+  )
+  const dmModes = (
+    <ModePicker practice={practice} vocabLearned={vocabLearned} vocabTotal={vocabularyTerms.length} onSelect={setMode} />
+  )
+  const dmFoundation = (
+    <FoundationCard assessment={assessment} unlock={foundationUnlock} onOpenVocabulary={() => setMode('vocabulary')} />
+  )
+  // After the self-paced practice: live sessions with a mentor the student and
+  // mentor both agreed on.
+  const dmLive = (
+    <LiveMentorCard
+      programme="digital-marketing"
+      aptitudeDone={aptitude != null}
+      aptitudeTo="/aptitude-assessment"
+      sessions={dmSessions.length}
+    />
+  )
+  const crOverview = (
+    <CareerReadinessOverview progress={crProgress} project={crReview.project} liveSessions={liveSessions.length} />
+  )
+  const crCompletion = (
+    <ProgrammeCompletion stages={crStages}>
+      <MentorReviewPanel
+        programme="career-readiness"
+        practiceDone={crProgress.complete}
+        review={crReview.review}
+        state={crReview.state}
+        submissionsLeft={crReview.submissionsLeft}
+        onChange={() => void crReview.reload()}
+      />
+    </ProgrammeCompletion>
+  )
+  const crModules = <CareerReadinessPractice progress={crProgress} />
+  const crLive = (
+    <LiveMentorCard
+      programme="career-readiness"
+      aptitudeDone={crAptitude.result != null}
+      aptitudeTo="/career-readiness-assessment"
+      sessions={liveSessions.length}
+    />
+  )
+
   return (
     <AppShell wide>
       {gateLoading && <p className="text-sm text-ink-600">Loading…</p>}
@@ -275,86 +372,55 @@ function PracticePage() {
                   Foundation assessment, all 8 tracks and vocabulary. */}
               {programme === 1 && !dmOpen && <AptitudeCard result={null} gate />}
 
-              {programme === 1 && dmOpen && (
+              {/* On a computer: where you stand, then what to do. */}
+              {programme === 1 && dmOpen && !phone && (
                 <>
-                  <AptitudeCard result={aptitude} />
-
+                  {dmAptitudeCard}
                   <div className="grid gap-5 lg:grid-cols-3">
-                    <div className="lg:col-span-2">
-                      <PracticeStats
-                        practice={practice}
-                        foundationDone={assessment != null}
-                        aptitudeDone={aptitude != null}
-                        project={dmReview.project}
-                        foundationPercent={assessment?.overall.percent ?? null}
-                        liveSessions={dmSessions.length}
-                      />
-                    </div>
-                    <div className="lg:col-span-1">
-                      <NextUpCard practice={practice} onSelect={setSelected} />
-                    </div>
+                    <div className="lg:col-span-2">{dmStats}</div>
+                    <div className="lg:col-span-1">{dmNextUp}</div>
                   </div>
-
-                  <ProgrammeCompletion stages={dmStages}>
-                    <MentorReviewPanel
-                      programme="digital-marketing"
-                      practiceDone={practisedTracks.length === skillTracks.length}
-                      review={dmReview.review}
-                      state={dmReview.state}
-                      submissionsLeft={dmReview.submissionsLeft}
-                      onChange={() => void dmReview.reload()}
-                    />
-                  </ProgrammeCompletion>
-
-                  <ModePicker
-                    practice={practice}
-                    vocabLearned={vocabLearned}
-                    vocabTotal={vocabularyTerms.length}
-                    onSelect={setMode}
-                  />
-
-                  <FoundationCard
-                    assessment={assessment}
-                    unlock={foundationUnlock}
-                    onOpenVocabulary={() => setMode('vocabulary')}
-                  />
-
-                  {/* After the self-paced practice: live sessions with a mentor
-                      the student and mentor both agreed on. */}
-                  <LiveMentorCard
-                    programme="digital-marketing"
-                    aptitudeDone={aptitude != null}
-                    aptitudeTo="/aptitude-assessment"
-                    sessions={dmSessions.length}
-                  />
+                  {dmCompletion}
+                  {dmModes}
+                  {dmFoundation}
+                  {dmLive}
                 </>
               )}
 
-              {programme === 2 && (
+              {/* On a phone the order turns round: the thing to practise now is
+                  first, under the thumb, and the standing comes after it. The
+                  aptitude assessment leads only while it is still to be taken. */}
+              {programme === 1 && dmOpen && phone && (
+                <>
+                  {aptitude == null && dmAptitudeCard}
+                  {dmNextUp}
+                  {dmModes}
+                  {dmFoundation}
+                  {dmStats}
+                  {dmCompletion}
+                  {dmLive}
+                  {aptitude != null && dmAptitudeCard}
+                </>
+              )}
+
+              {programme === 2 && !phone && (
                 <>
                   <AssessmentCard />
-                  <CareerReadinessOverview
-                    progress={crProgress}
-                    project={crReview.project}
-                    liveSessions={liveSessions.length}
-                  />
-                  <ProgrammeCompletion stages={crStages}>
-                    <MentorReviewPanel
-                      programme="career-readiness"
-                      practiceDone={crProgress.complete}
-                      review={crReview.review}
-                      state={crReview.state}
-                      submissionsLeft={crReview.submissionsLeft}
-                      onChange={() => void crReview.reload()}
-                    />
-                  </ProgrammeCompletion>
-                  <CareerReadinessPractice progress={crProgress} />
-                  <LiveMentorCard
-                    programme="career-readiness"
-                    aptitudeDone={crAptitude.result != null}
-                    aptitudeTo="/career-readiness-assessment"
-                    sessions={liveSessions.length}
-                  />
+                  {crOverview}
+                  {crCompletion}
+                  {crModules}
+                  {crLive}
+                </>
+              )}
+
+              {programme === 2 && phone && (
+                <>
+                  {crAptitude.result == null && <AssessmentCard />}
+                  {crModules}
+                  {crOverview}
+                  {crCompletion}
+                  {crLive}
+                  {crAptitude.result != null && <AssessmentCard />}
                 </>
               )}
             </>

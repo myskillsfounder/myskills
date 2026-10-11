@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight, Award } from 'lucide-react'
 import type { AssessmentResult } from '@/lib/assessmentResults'
 import { assessmentCategories } from '@/lib/initialAssessment'
+import { isPhone } from '@/lib/device'
 import { Eyebrow } from '@/components/landing/Eyebrow'
 
 /**
@@ -54,15 +55,18 @@ export function FoundationResult({ assessment }: { assessment: AssessmentResult 
               Foundational Progress in Digital Marketing
             </p>
             <p className="mt-2 max-w-md text-sm leading-relaxed text-white/70">
-              Awarded for completing the Foundation assessment. You’ll find it, with its ID and a download, in
-              your profile.
+              Awarded for completing the Foundation assessment.{' '}
+              {isPhone()
+                ? 'It’s ready, with its ID and a download.'
+                : 'You’ll find it, with its ID and a download, in your profile.'}
             </p>
           </div>
+          {/* The profile is for a computer: a phone opens the certificate itself. */}
           <Link
-            to="/profile"
+            to={isPhone() ? '/certificate' : '/profile'}
             className="press relative mt-6 inline-flex w-fit items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
           >
-            See it in your profile
+            {isPhone() ? 'See your certificate' : 'See it in your profile'}
             <ArrowRight size={16} />
           </Link>
         </section>

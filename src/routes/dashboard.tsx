@@ -26,6 +26,8 @@ import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
 import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
+import { PhoneLaunchPad } from '@/components/dashboard/PhoneLaunchPad'
+import { isPhone } from '@/lib/device'
 import { Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -211,6 +213,59 @@ function DashboardPage() {
   })
   const firstRun = dataLoaded && !hasHistory
 
+  const highlights = {
+    certificate: assessment ? ('earned' as const) : foundationUnlock.unlocked ? ('ready' as const) : ('locked' as const),
+    hasMentor: dmMatch.match?.status === 'active' || crMatch.match?.status === 'active',
+    tracksPractised: practicedCount,
+    totalTracks: skillTracks.length,
+    modulesDone: crProgress.modulesDone,
+    totalModules: crProgress.modulesTotal,
+  }
+  // A course appears once the student has started it — taken its aptitude
+  // assessment or done any work — never before, so a new student's objective
+  // isn't a row of "Not started".
+  const courses = [
+    dmStarted &&
+      digitalMarketingProgress(
+        assessment != null,
+        practicedCount,
+        skillTracks.length,
+        dmReview.state === 'approved',
+        false,
+        dmAptitude.result != null,
+      ),
+    crStarted &&
+      careerReadinessProgress(
+        crAptitude.result != null,
+        crProgress.modulesDone,
+        crProgress.modulesTotal,
+        crReview.state === 'approved',
+      ),
+  ].filter((c): c is CourseProgress => c !== false)
+
+  // A phone gets its own LaunchPad (components/dashboard/PhoneLaunchPad.tsx):
+  // the same score and the same next steps, in one column, without the parts
+  // that lead to pages a phone doesn't have.
+  if (isPhone()) {
+    return (
+      <AppShell wide>
+        <PhoneLaunchPad
+          greeting={`${greet()}, ${name}`}
+          // Wait for the first-run answer too: a new account would otherwise
+          // see a 0 score for a moment before its path replaces it.
+          loading={profileLoading || !dataLoaded}
+          firstRun={firstRun}
+          name={name}
+          goals={goals}
+          streak={streak}
+          readiness={readiness}
+          highlights={highlights}
+          courses={courses}
+        />
+      </AppShell>
+    )
+  }
+
   return (
     <AppShell wide>
       {/* "LaunchPad" is the page; the greeting stays, but as the subtitle —
@@ -239,17 +294,7 @@ function DashboardPage() {
               {firstRun ? (
                 <FirstRunPath name={name} goal={goals[0]} />
               ) : (
-                <ReadinessScoreCard
-                  readiness={readiness}
-                  highlights={{
-                    certificate: assessment ? 'earned' : foundationUnlock.unlocked ? 'ready' : 'locked',
-                    hasMentor: dmMatch.match?.status === 'active' || crMatch.match?.status === 'active',
-                    tracksPractised: practicedCount,
-                    totalTracks: skillTracks.length,
-                    modulesDone: crProgress.modulesDone,
-                    totalModules: crProgress.modulesTotal,
-                  }}
-                />
+                <ReadinessScoreCard readiness={readiness} highlights={highlights} />
               )}
             </div>
             <KeyMeasures
@@ -257,27 +302,7 @@ function DashboardPage() {
               streak={streak}
               startHere={firstRun}
               showHours={!firstRun}
-              courses={[
-                // A course appears once the student has started it — taken its
-                // aptitude assessment or done any work — never before, so a new
-                // student's objective isn't a row of "Not started".
-                dmStarted &&
-                  digitalMarketingProgress(
-                    assessment != null,
-                    practicedCount,
-                    skillTracks.length,
-                    dmReview.state === 'approved',
-                    false,
-                    dmAptitude.result != null,
-                  ),
-                crStarted &&
-                  careerReadinessProgress(
-                    crAptitude.result != null,
-                    crProgress.modulesDone,
-                    crProgress.modulesTotal,
-                    crReview.state === 'approved',
-                  ),
-              ].filter((c): c is CourseProgress => c !== false)}
+              courses={courses}
             />
           </div>
         )}

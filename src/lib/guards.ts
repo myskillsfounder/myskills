@@ -39,9 +39,9 @@ export async function requireSession(): Promise<void> {
  * Signed-in AND onboarded (/profile, app pages).
  *
  * A new account is onboarded first: on a computer by the sentence and the
- * plan, on a phone by its own three taps. After that, on a phone the app is
- * the marketplace only (see lib/device.ts), so any other app page sends them
- * there.
+ * plan, on a phone by its own three taps. After that, a phone has the
+ * Community, the LaunchPad and Practice (see lib/device.ts); any other app
+ * page sends them to the Community.
  */
 export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()

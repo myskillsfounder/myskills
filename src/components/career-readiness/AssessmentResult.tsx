@@ -1,4 +1,3 @@
-import { isPhone } from '@/lib/device'
 import {
   LEVEL_TONE_DARK,
   READOUT,
@@ -32,7 +31,7 @@ export function AssessmentResult({ result }: { result: Result }) {
       start={{
         title: start.module,
         body: 'It’s your lowest starting point, so it’s where the programme will move the needle most. The Career Readiness Programme is open — start here.',
-        cta: isPhone() ? { to: '/community', label: 'Find a mentor' } : { to: '/practice', label: 'Open the programme' },
+        cta: { to: '/practice', label: 'Open the programme' },
       }}
       detail={{
         title: 'Where you are today',

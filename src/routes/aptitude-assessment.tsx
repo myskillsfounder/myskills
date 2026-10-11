@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { isPhone } from '@/lib/device'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -54,7 +53,7 @@ function AptitudeAssessmentPage() {
 
   return (
     <DarkShell
-      back={isPhone() ? { to: '/community', label: 'Back to Community' } : { to: '/practice', label: 'Back to Practice' }}
+      back={{ to: '/practice', label: 'Back to Practice' }}
       eyebrow="Digital Marketing"
       title={taken ? 'Your marketing aptitude' : 'Aptitude assessment'}
       description={
