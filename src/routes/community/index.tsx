@@ -15,6 +15,7 @@ import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import { SearchHeader } from '@/components/community/SearchHeader'
 import { PartnerRequests } from '@/components/community/PartnerRequests'
+import { InternshipRoleCard, InternshipRoleDialog, YourInternships, useInternships } from '@/components/community/Internships'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { isPhone } from '@/lib/device'
@@ -230,6 +231,11 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
  */
 function CommunityHub() {
   const { mentors, institutions, loading } = useMarketplaceData()
+  const internships = useInternships()
+  // The role open in the pop-up, by id, so it shows the application's new
+  // state as soon as the lists reload.
+  const [openRoleId, setOpenRoleId] = useState<string | null>(null)
+  const openRole = internships.roles.find((r) => r.id === openRoleId)
   const [query, setQuery] = useState('')
   // The category lives in the address, so a filtered view can be linked to,
   // shared, and survives a refresh; "All" is the bare /community.
@@ -251,13 +257,18 @@ function CommunityHub() {
     (a, b) => Number(b.category === category) - Number(a.category === category),
   )
   const mentorHits = mentors.filter((m) => matches(q, m.name, m.role, m.location, m.expertise, m.bio))
-  const internshipHits = INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
+  // Real roles once a company has one live; until then, the kinds of role
+  // partner companies offer, marked as not open yet.
+  const roleHits = internships.roles.filter((r) => matches(q, r.title, r.organisation, r.skills, r.description, r.location))
+  const hasRoles = internships.roles.length > 0
+  const trackHits = hasRoles ? [] : INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
+  const internshipCount = hasRoles ? roleHits.length : trackHits.length
   const institutionHits = institutions.filter((p) => matches(q, p.legal_name, p.city, p.courses_offered))
 
   const counts: Record<Group, number> = {
     mentors: mentorHits.length,
     support: support.length,
-    internships: internshipHits.length,
+    internships: internshipCount,
     institutions: institutionHits.length,
   }
   const total = counts.mentors + counts.support + counts.internships + counts.institutions
@@ -301,6 +312,7 @@ function CommunityHub() {
           <>
             {/* A partner asking to see this student's record, and who sees it now. */}
             <PartnerRequests />
+            <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
             <YourMentors
               matches={[
                 { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
@@ -316,7 +328,7 @@ function CommunityHub() {
                   : {
                       mentors: mentors.length ? plural(mentors.length, 'mentor', 'mentors') : 'Coming soon',
                       support: 'Ask privately',
-                      internships: 'Opening soon',
+                      internships: hasRoles ? plural(internships.roles.length, 'open role', 'open roles') : 'Opening soon',
                       institutions: institutions.length ? plural(institutions.length, 'institution', 'institutions') : 'Coming soon',
                     }
               }
@@ -395,10 +407,19 @@ function CommunityHub() {
             icon={Briefcase}
             title="Internships"
             subtitle="Real work with partner companies: the step that turns practice into experience you can show."
-            seeAll={front && internshipHits.length > PREVIEW ? { onClick: () => setCategory('internships'), label: `All ${internshipHits.length} roles` } : undefined}
+            seeAll={front && internshipCount > PREVIEW ? { onClick: () => setCategory('internships'), label: `All ${internshipCount} roles` } : undefined}
           >
+            {/* With the section opened on its own, the student's applications lead it. */}
+            {group === 'internships' && internships.applications.length > 0 && (
+              <div className="mb-4">
+                <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
+              </div>
+            )}
             <div className={marketGrid}>
-              {some(internshipHits).map((t) => (
+              {some(roleHits).map((r) => (
+                <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
+              ))}
+              {some(trackHits).map((t) => (
                 <InternshipCard key={t.title} track={t} />
               ))}
             </div>
@@ -438,6 +459,9 @@ function CommunityHub() {
           </MarketSection>
         )}
       </div>
+      {openRole && (
+        <InternshipRoleDialog role={openRole} onClose={() => setOpenRoleId(null)} onChanged={() => void internships.reload()} />
+      )}
     </AppShell>
   )
 }

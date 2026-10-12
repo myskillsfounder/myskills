@@ -4,6 +4,7 @@ import { RESOURCE_LABEL, isGrantedResource } from '@/lib/communityPortal'
 import { usePortalAccess } from '@/components/mentoring/MentorPortalContext'
 import { ResourcePanel } from '@/components/mentoring/ResourcePanel'
 import { MentorsOverview } from '@/components/mentoring/MentorsOverview'
+import { InternshipRoles } from '@/components/mentoring/InternshipRoles'
 import { EmptyState, PageHeader } from '@/components/ui'
 
 // /community-portal/wellness, /guidance, /internships, /institutions — and
@@ -41,6 +42,12 @@ function ResourcePage() {
   return (
     <>
       <PageHeader eyebrow="Community portal" title={RESOURCE_LABEL[resource]} />
+      {/* A company's own roles and applicants. An overview account posts none. */}
+      {resource === 'internships' && mine.sees_all !== true && (
+        <div className="mb-8">
+          <InternshipRoles />
+        </div>
+      )}
       <ResourcePanel
         key={resource}
         resource={resource}

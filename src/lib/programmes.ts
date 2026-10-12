@@ -87,8 +87,8 @@ export interface CourseProgress {
  * score but never finishes the programme — the proof has to come from a person
  * and from real work.
  *
- * Platform internships don't exist yet, so every caller passes false and
- * nothing can reach "Complete".
+ * An internship counts once its company has signed it off and the team has
+ * confirmed that (src/lib/internships.ts).
  */
 export type StageState = 'done' | 'active' | 'todo' | 'locked'
 
@@ -150,12 +150,15 @@ export function completionStages(c: CompletionInput): ProgrammeStage[] {
     {
       key: 'internship',
       title: 'Internship through MySkills',
+      // Roles are open to apply for at any point (the company weighs the score);
+      // as a stage of the programme it becomes the thing to do once the
+      // project has passed.
       detail: c.internshipDone
-        ? 'Completed and verified'
+        ? 'Completed and confirmed'
         : reviewed
-          ? 'Coming soon — real briefs with partner companies'
-          : 'Opens after your mentor signs you off',
-      state: c.internshipDone ? 'done' : 'locked',
+          ? 'Apply for a role with a partner company, in Community'
+          : 'Roles are in Community. It counts here once your project has passed',
+      state: c.internshipDone ? 'done' : reviewed ? 'active' : 'locked',
     },
   ]
 }
