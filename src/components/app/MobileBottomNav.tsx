@@ -13,7 +13,7 @@ const TABS = [
 
 /**
  * A phone's tabs: the same first three, in the same order, as everywhere else.
- * Review and Profile are for a computer. (A phone still lands on the
+ * The profile is in the top bar, and Review is for a computer. (A phone still lands on the
  * Community after sign-in, see lib/device.ts; the order here is the bar's.)
  */
 const PHONE_TABS = [
