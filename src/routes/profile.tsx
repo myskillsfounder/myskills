@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Award, Check, Copy, ExternalLink } from 'lucide-react'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { Award, Check, Copy, ExternalLink, LogOut } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
+import { signOut } from '@/lib/auth'
+import { isPhone } from '@/lib/device'
 import { useProfile } from '@/lib/useProfile'
 import { useHasStarted } from '@/lib/firstRun'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
@@ -112,6 +114,11 @@ function ProfilePage() {
   const started = useHasStarted()
   const projects = useMyProjects()
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
+  const router = useRouter()
+  async function leave() {
+    await signOut()
+    router.navigate({ to: '/' })
+  }
 
   return (
     <AppShell wide>
@@ -174,6 +181,18 @@ function ProfilePage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* A phone has no menu: this is where it signs out. Outside the profile
+          itself, so it is there even if the profile couldn't load. */}
+      {isPhone() && !loading && (
+        <button
+          type="button"
+          onClick={() => void leave()}
+          className="press mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-ink-900/10 bg-white text-sm font-semibold text-ink-700"
+        >
+          <LogOut size={16} /> Sign out
+        </button>
       )}
     </AppShell>
   )

@@ -3,7 +3,6 @@ import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Check, Copy, Download, Loader2, Printer } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
-import { isPhone } from '@/lib/device'
 import { fetchMyCertificate, type Certificate as Cert } from '@/lib/certificates'
 import { saveCertificate } from '@/lib/certificateExport'
 import { trackCertificateDownload } from '@/lib/analytics'
@@ -61,12 +60,11 @@ function CertificatePage() {
     <div className="min-h-screen surface-paper py-6">
       <div className="mx-auto max-w-4xl px-4">
         <div className="no-print mb-5 flex flex-wrap items-center justify-between gap-3">
-          {/* The profile is for a computer; a phone came here from the LaunchPad. */}
           <Link
-            to={isPhone() ? '/dashboard' : '/profile'}
+            to="/profile"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
           >
-            <ArrowLeft size={16} /> {isPhone() ? 'Back to LaunchPad' : 'Back to profile'}
+            <ArrowLeft size={16} /> Back to profile
           </Link>
 
           {cert && (

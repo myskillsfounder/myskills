@@ -129,6 +129,38 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
  * not-annoying reminder, right where someone is already looking for their
  * account. Disappears once the profile is complete.
  */
+/**
+ * A phone's way to the profile, in the top bar: the student's photo (or a
+ * plain mark), with a dot while details a mentor or a company would look for
+ * are still missing. The same rule as the sidebar's card: no nagging before
+ * the first aptitude assessment.
+ */
+function PhoneProfileLink() {
+  const { profile } = useProfile()
+  const started = useHasStarted()
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const incomplete = profile != null && started === true && missingDetails(profile).length > 0
+  const here = pathname === '/profile'
+  return (
+    <Link
+      to="/profile"
+      aria-label={incomplete ? 'Your profile (details missing)' : 'Your profile'}
+      aria-current={here ? 'page' : undefined}
+      className="relative flex h-10 items-center gap-2 rounded-full pl-1 pr-3 text-sm font-medium text-ink-700"
+    >
+      {profile?.avatar_url ? (
+        <img src={profile.avatar_url} alt="" className={`h-8 w-8 rounded-full object-cover ${here ? 'ring-2 ring-brand-600' : ''}`} />
+      ) : (
+        <span className={`flex h-8 w-8 items-center justify-center rounded-full bg-ink-200 text-ink-800 ${here ? 'ring-2 ring-brand-600' : ''}`}>
+          <User size={16} />
+        </span>
+      )}
+      Profile
+      {incomplete && <span aria-hidden className="absolute left-7 top-1 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-white" />}
+    </Link>
+  )
+}
+
 function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; active: boolean }) {
   const { profile } = useProfile()
   // The "finish your profile" nag waits for the first step: a student who
@@ -186,13 +218,8 @@ export function AppShell({
   wide?: boolean
 }) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
   // A phone has the LaunchPad, Practice and the Community (lib/device.ts), all in the bottom bar: no menu.
   const phone = isPhone()
-  async function phoneSignOut() {
-    await signOut()
-    router.navigate({ to: '/' })
-  }
 
   return (
     <div className="surface-paper min-h-screen">
@@ -205,7 +232,7 @@ export function AppShell({
           (components/app/MobileBottomNav.tsx, mounted in __root); this menu
           holds the overflow — Community, Feedback, Sign out. A phone's three
           areas are all in the bottom bar, so there is no menu to open here:
-          just the way out. */}
+          just the way to the student's own profile, where signing out is. */}
       <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] px-4 backdrop-blur lg:hidden">
         <Link to={phone ? '/community' : '/dashboard'} className="flex items-center gap-2">
           <img src="/logo-mark.png" alt="" className="h-8 w-8" />
@@ -214,13 +241,7 @@ export function AppShell({
           </span>
         </Link>
         {phone ? (
-          <button
-            type="button"
-            onClick={() => void phoneSignOut()}
-            className="flex h-10 items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-ink-600 hover:text-ink-900"
-          >
-            <LogOut size={17} /> Sign out
-          </button>
+          <PhoneProfileLink />
         ) : (
           <button
             type="button"
