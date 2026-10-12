@@ -25,8 +25,8 @@ const PRESENCE: Record<Exclude<CommunityResource, 'mentors' | 'institutions'>, {
     body: 'Students ask for career guidance with a private request, and the MySkills team introduces you. Nothing about you is shown in the app, so there is no public profile to set up.',
   },
   internships: {
-    title: 'Companies aren’t listed publicly',
-    body: 'Students see the kinds of internship roles on offer, not a directory of companies. Your company is shared with a student only when the team places them with you.',
+    title: 'Students see your roles, under your company’s name',
+    body: 'There is no directory of companies. Each role you post shows your company’s name once the MySkills team has approved it, and students apply to the role. Post and manage roles under Internships.',
   },
 }
 

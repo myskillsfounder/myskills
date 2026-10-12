@@ -71,6 +71,7 @@ import { Route as AdminLayoutModulesRouteImport } from './routes/admin/_layout/m
 import { Route as AdminLayoutMentorsRouteImport } from './routes/admin/_layout/mentors'
 import { Route as AdminLayoutMentorReviewsRouteImport } from './routes/admin/_layout/mentor-reviews'
 import { Route as AdminLayoutLiveSessionsRouteImport } from './routes/admin/_layout/live-sessions'
+import { Route as AdminLayoutInternshipsRouteImport } from './routes/admin/_layout/internships'
 import { Route as AdminLayoutInternshipPartnersRouteImport } from './routes/admin/_layout/internship-partners'
 import { Route as AdminLayoutInstitutionPartnersRouteImport } from './routes/admin/_layout/institution-partners'
 import { Route as AdminLayoutInboxRouteImport } from './routes/admin/_layout/inbox'
@@ -408,6 +409,11 @@ const AdminLayoutLiveSessionsRoute = AdminLayoutLiveSessionsRouteImport.update({
   path: '/live-sessions',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutInternshipsRoute = AdminLayoutInternshipsRouteImport.update({
+  id: '/internships',
+  path: '/internships',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutInternshipPartnersRoute =
   AdminLayoutInternshipPartnersRouteImport.update({
     id: '/internship-partners',
@@ -569,6 +575,7 @@ export interface FileRoutesByFullPath {
   '/admin/inbox': typeof AdminLayoutInboxRoute
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/internship-partners': typeof AdminLayoutInternshipPartnersRoute
+  '/admin/internships': typeof AdminLayoutInternshipsRoute
   '/admin/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
@@ -648,6 +655,7 @@ export interface FileRoutesByTo {
   '/admin/inbox': typeof AdminLayoutInboxRoute
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/internship-partners': typeof AdminLayoutInternshipPartnersRoute
+  '/admin/internships': typeof AdminLayoutInternshipsRoute
   '/admin/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
@@ -731,6 +739,7 @@ export interface FileRoutesById {
   '/admin/_layout/inbox': typeof AdminLayoutInboxRoute
   '/admin/_layout/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/_layout/internship-partners': typeof AdminLayoutInternshipPartnersRoute
+  '/admin/_layout/internships': typeof AdminLayoutInternshipsRoute
   '/admin/_layout/live-sessions': typeof AdminLayoutLiveSessionsRoute
   '/admin/_layout/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/_layout/mentors': typeof AdminLayoutMentorsRoute
@@ -815,6 +824,7 @@ export interface FileRouteTypes {
     | '/admin/inbox'
     | '/admin/institution-partners'
     | '/admin/internship-partners'
+    | '/admin/internships'
     | '/admin/live-sessions'
     | '/admin/mentor-reviews'
     | '/admin/mentors'
@@ -894,6 +904,7 @@ export interface FileRouteTypes {
     | '/admin/inbox'
     | '/admin/institution-partners'
     | '/admin/internship-partners'
+    | '/admin/internships'
     | '/admin/live-sessions'
     | '/admin/mentor-reviews'
     | '/admin/mentors'
@@ -976,6 +987,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/inbox'
     | '/admin/_layout/institution-partners'
     | '/admin/_layout/internship-partners'
+    | '/admin/_layout/internships'
     | '/admin/_layout/live-sessions'
     | '/admin/_layout/mentor-reviews'
     | '/admin/_layout/mentors'
@@ -1477,6 +1489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutLiveSessionsRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/internships': {
+      id: '/admin/_layout/internships'
+      path: '/internships'
+      fullPath: '/admin/internships'
+      preLoaderRoute: typeof AdminLayoutInternshipsRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/internship-partners': {
       id: '/admin/_layout/internship-partners'
       path: '/internship-partners'
@@ -1662,6 +1681,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutInboxRoute: typeof AdminLayoutInboxRoute
   AdminLayoutInstitutionPartnersRoute: typeof AdminLayoutInstitutionPartnersRoute
   AdminLayoutInternshipPartnersRoute: typeof AdminLayoutInternshipPartnersRoute
+  AdminLayoutInternshipsRoute: typeof AdminLayoutInternshipsRoute
   AdminLayoutLiveSessionsRoute: typeof AdminLayoutLiveSessionsRoute
   AdminLayoutMentorReviewsRoute: typeof AdminLayoutMentorReviewsRoute
   AdminLayoutMentorsRoute: typeof AdminLayoutMentorsRoute
@@ -1691,6 +1711,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutInboxRoute: AdminLayoutInboxRoute,
   AdminLayoutInstitutionPartnersRoute: AdminLayoutInstitutionPartnersRoute,
   AdminLayoutInternshipPartnersRoute: AdminLayoutInternshipPartnersRoute,
+  AdminLayoutInternshipsRoute: AdminLayoutInternshipsRoute,
   AdminLayoutLiveSessionsRoute: AdminLayoutLiveSessionsRoute,
   AdminLayoutMentorReviewsRoute: AdminLayoutMentorReviewsRoute,
   AdminLayoutMentorsRoute: AdminLayoutMentorsRoute,

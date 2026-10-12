@@ -1,21 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Handshake } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
-import { AppShell, PagePlaceholder } from '@/components/app/AppShell'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Internships live in the Community, with the other things a student comes
+// for. This address is kept so an old link still lands on them.
 export const Route = createFileRoute('/internships')({
-  beforeLoad: requireOnboarded,
-  component: InternshipsPage,
+  beforeLoad: () => {
+    throw redirect({ to: '/community', search: { category: 'internships' } })
+  },
 })
-
-function InternshipsPage() {
-  return (
-    <AppShell>
-      <PagePlaceholder
-        title="Internships"
-        description="Apply your skills on real briefs with partner companies."
-        icon={Handshake}
-      />
-    </AppShell>
-  )
-}

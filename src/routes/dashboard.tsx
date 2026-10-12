@@ -29,6 +29,7 @@ import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
 import { PhoneLaunchPad } from '@/components/dashboard/PhoneLaunchPad'
 import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { isPhone } from '@/lib/device'
+import { useInternshipDone } from '@/lib/internships'
 import { Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -123,6 +124,7 @@ function DashboardPage() {
   const crMatch = useMyMatch('career-readiness')
   const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions, loading: liveLoading } = useMyLiveSessions()
+  const internshipDone = useInternshipDone()
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -148,9 +150,9 @@ function DashboardPage() {
         dmTrackPercents: skillTracks.flatMap((t) => (practice[t.slug] ? [practice[t.slug].percent] : [])),
         dmPracticeDone: practicedCount === skillTracks.length,
         foundationPercent: assessment?.overall.percent ?? null,
-        internshipSignedOff: false,
+        internshipSignedOff: internshipDone,
       }),
-    [crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.project, dmReview.project, practice, practicedCount, assessment],
+    [crProgress.modulesDone, liveSessions.length, dmSessions.length, crReview.project, dmReview.project, practice, practicedCount, assessment, internshipDone],
   )
   // The number itself is issued by the server; the estimate above is the guide
   // and the fallback. Re-ask whenever something the score depends on changes —
@@ -232,7 +234,7 @@ function DashboardPage() {
         practicedCount,
         skillTracks.length,
         dmReview.state === 'approved',
-        false,
+        internshipDone,
         dmAptitude.result != null,
       ),
     crStarted &&
@@ -241,6 +243,7 @@ function DashboardPage() {
         crProgress.modulesDone,
         crProgress.modulesTotal,
         crReview.state === 'approved',
+        internshipDone,
       ),
   ].filter((c): c is CourseProgress => c !== false)
 

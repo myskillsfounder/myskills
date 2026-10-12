@@ -47,6 +47,7 @@ import { useMyLiveSessions } from '@/lib/liveSessions'
 import { useHasStarted } from '@/lib/firstRun'
 import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
 import { isPhone } from '@/lib/device'
+import { useInternshipDone } from '@/lib/internships'
 
 export const Route = createFileRoute('/practice')({
   beforeLoad: requireOnboarded,
@@ -230,8 +231,9 @@ function PracticePage() {
   const dmMatch = useMyMatch('digital-marketing')
   const crMatch = useMyMatch('career-readiness')
 
-  // Platform internships aren't built yet, so no programme can show
-  // Complete; the mentor review is real for Digital Marketing.
+  // An internship signed off by its company and confirmed by the team is the
+  // last stage of either programme.
+  const internshipDone = useInternshipDone()
   const practisedTracks = skillTracks.filter((t) => practice[t.slug])
   // Digital Marketing shows its progress once there is any of it, aptitude or not.
   const dmOpen = dmUnlocked || practisedTracks.length > 0 || dmSessions.length > 0
@@ -251,7 +253,7 @@ function PracticePage() {
       mentorName: dmMatch.match?.mentor?.full_name ?? null,
       sessions: dmSessions.length,
     },
-    internshipDone: false,
+    internshipDone,
   })
   const crStages = completionStages({
     practiceDone: crProgress.complete,
@@ -266,7 +268,7 @@ function PracticePage() {
       mentorName: crMatch.match?.mentor?.full_name ?? null,
       sessions: liveSessions.length,
     },
-    internshipDone: false,
+    internshipDone,
   })
 
   const phone = isPhone()
