@@ -64,10 +64,14 @@ export async function fetchMyCommunityAccess(): Promise<CommunityAccess[] | null
 
 export interface CommunityStudent {
   id: string
-  status: 'active' | 'ended'
+  /** 'invited': a company or institution has asked the student, who hasn't
+   *  answered. 'declined': they said no. Until 'active' there is no student
+   *  here, only the email that was typed. */
+  status: 'invited' | 'declined' | 'active' | 'ended'
   started_on: string
   ended_on: string | null
-  student_id: string
+  /** Null until the student accepts. */
+  student_id: string | null
   student_name: string | null
   student_email: string
   sessions: number
@@ -116,6 +120,42 @@ export async function addCommunityStudent(resource: GrantedResource, email: stri
 
 export async function endCommunityEngagement(engagementId: string): Promise<void> {
   const { error } = await supabase.rpc('end_community_engagement', { p_engagement: engagementId })
+  if (error) fail(error)
+}
+
+/** Take back a request the student hasn't answered. */
+export async function cancelCommunityInvite(engagementId: string): Promise<void> {
+  const { error } = await supabase.rpc('cancel_community_invite', { p_engagement: engagementId })
+  if (error) fail(error)
+}
+
+/* -- the student's side ---------------------------------------------------- */
+
+/** A company or institution asking to see this student's record ('invited'),
+ *  or one they are sharing it with ('active'). */
+export interface CommunityConnection {
+  id: string
+  resource: 'internships' | 'institutions'
+  organisation: string
+  status: 'invited' | 'active'
+  since: string
+}
+
+/** Empty, not an error, when there is nothing or the SQL isn't in yet: this
+ *  sits at the top of pages that must load regardless. */
+export async function fetchMyCommunityConnections(): Promise<CommunityConnection[]> {
+  const { data, error } = await supabase.rpc('my_community_connections')
+  if (error) return []
+  return (data ?? []) as CommunityConnection[]
+}
+
+export async function respondCommunityInvite(engagementId: string, accept: boolean): Promise<void> {
+  const { error } = await supabase.rpc('respond_community_invite', { p_engagement: engagementId, p_accept: accept })
+  if (error) fail(error)
+}
+
+export async function stopCommunitySharing(engagementId: string): Promise<void> {
+  const { error } = await supabase.rpc('stop_community_sharing', { p_engagement: engagementId })
   if (error) fail(error)
 }
 

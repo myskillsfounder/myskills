@@ -14,6 +14,7 @@ import { fetchMentors } from '@/lib/mentors'
 import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import { SearchHeader } from '@/components/community/SearchHeader'
+import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { isPhone } from '@/lib/device'
@@ -298,6 +299,8 @@ function CommunityHub() {
 
         {front && (
           <>
+            {/* A partner asking to see this student's record, and who sees it now. */}
+            <PartnerRequests />
             <YourMentors
               matches={[
                 { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
