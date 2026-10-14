@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { sessionUser } from './sessionUser'
 
 /**
  * Internships through MySkills (docs/supabase-internships.sql).
@@ -127,17 +128,69 @@ export function useInternshipDone(): boolean {
   const [done, setDone] = useState(false)
   useEffect(() => {
     let active = true
-    void supabase
-      .from('internship_signoffs')
-      .select('id', { count: 'exact', head: true })
-      .then(({ count, error }) => {
-        if (active && !error) setDone((count ?? 0) > 0)
-      })
+    // The student's own: a team account may read everyone's, and its own
+    // LaunchPad mustn't count them.
+    void sessionUser().then(async (user) => {
+      if (!user) return
+      const { count, error } = await supabase
+        .from('internship_signoffs')
+        .select('id', { count: 'exact', head: true })
+        .eq('student_id', user.id)
+      if (active && !error) setDone((count ?? 0) > 0)
+    })
     return () => {
       active = false
     }
   }, [])
   return done
+}
+
+/** An internship MySkills has confirmed: the company signed it off and the
+ *  team checked it. Only these are the student's to show. */
+export interface ConfirmedInternship {
+  id: string
+  organisation: string
+  role_title: string | null
+  supervisor_name: string
+  started_on: string | null
+  ended_on: string | null
+  signed_off_on: string
+}
+
+/** The student's own confirmed internships, first one first (it is the one
+ *  the score counts). Empty before the SQL, or if it can't be read. */
+export async function fetchMyConfirmedInternships(): Promise<ConfirmedInternship[]> {
+  // Filtered to the student, not left to the table's rules: a team account can
+  // read every student's, and its own profile must show only its own.
+  const user = await sessionUser()
+  if (!user) return []
+  const { data, error } = await supabase
+    .from('internship_signoffs')
+    .select('id, organisation, role_title, supervisor_name, started_on, ended_on, signed_off_on')
+    .eq('student_id', user.id)
+    .order('signed_off_on', { ascending: true })
+    .order('created_at', { ascending: true })
+  if (error) return []
+  return (data ?? []) as ConfirmedInternship[]
+}
+
+/** For the profile: confirmed internships, and any a company has signed off
+ *  that MySkills is still confirming (shown as such, never as done). */
+export function useMyInternshipRecord() {
+  const [confirmed, setConfirmed] = useState<ConfirmedInternship[]>([])
+  const [confirming, setConfirming] = useState<MyApplication[]>([])
+  useEffect(() => {
+    let active = true
+    void Promise.all([fetchMyConfirmedInternships(), fetchMyApplications()]).then(([c, a]) => {
+      if (!active) return
+      setConfirmed(c)
+      setConfirming(a.filter((x) => x.status === 'signoff_pending'))
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+  return { confirmed, confirming }
 }
 
 /* -- the company ---------------------------------------------------------- */

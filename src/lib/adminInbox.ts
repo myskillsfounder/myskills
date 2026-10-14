@@ -18,6 +18,8 @@ export type InboxKind =
   | 'cr-lead'
   | 'unlinked-mentor'
   | 'portal-request'
+  | 'internship-role'
+  | 'internship-signoff'
 
 export interface InboxItem {
   kind: InboxKind
@@ -43,6 +45,8 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
   'cr-lead': { label: 'Career Readiness lead', plural: 'Career Readiness leads', to: '/admin/cr-leads' },
   'unlinked-mentor': { label: 'Mentor to link', plural: 'Mentors to link', to: '/admin/mentors' },
   'portal-request': { label: 'Portal sign-up', plural: 'Portal sign-ups to verify', to: '/admin/community-portal' },
+  'internship-role': { label: 'Internship role to approve', plural: 'Internship roles to approve', to: '/admin/internships' },
+  'internship-signoff': { label: 'Internship to confirm', plural: 'Internships to confirm', to: '/admin/internships' },
 }
 
 const DAY = 24 * 60 * 60 * 1000
@@ -72,7 +76,9 @@ export function fetchInbox(): Promise<InboxItem[] | null> {
       if (error.code === 'PGRST202') return null
       throw new Error(error.message?.trim() || 'Something went wrong.')
     }
-    return (data ?? []) as InboxItem[]
+    // A kind this page doesn't know yet (the SQL can run ahead of a deploy) is
+    // left out rather than breaking the Inbox and the Dashboard.
+    return ((data ?? []) as InboxItem[]).filter((i) => i.kind in INBOX_KINDS)
   })
 }
 
