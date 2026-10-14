@@ -9,6 +9,7 @@ import { useHasStarted } from '@/lib/firstRun'
 import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
 import { useMyBadges } from '@/lib/skillBadges'
 import { useMyProjects } from '@/lib/mentorProjects'
+import { useMyInternshipRecord } from '@/lib/internships'
 import { AppShell } from '@/components/app/AppShell'
 import { DistinctionBadge } from '@/components/certificate/Certificate'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
@@ -113,6 +114,7 @@ function ProfilePage() {
   // The verification checklist waits until they've begun (taken an aptitude assessment).
   const started = useHasStarted()
   const projects = useMyProjects()
+  const internships = useMyInternshipRecord()
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
   const router = useRouter()
   async function leave() {
@@ -173,7 +175,12 @@ function ProfilePage() {
               jobs. */}
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:items-start">
             <div className="lg:col-span-2">
-              <AchievementsSection certificate={<CertificateCard />} projects={projects} />
+              <AchievementsSection
+                certificate={<CertificateCard />}
+                projects={projects}
+                internships={internships.confirmed}
+                confirming={internships.confirming}
+              />
             </div>
             <div className="space-y-5">
               <SkillsSection badges={badges} />
