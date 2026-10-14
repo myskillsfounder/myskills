@@ -22,7 +22,6 @@ import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
-import { MentorPromoCard } from '@/components/dashboard/MentorPromoCard'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
 import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
@@ -313,10 +312,6 @@ function DashboardPage() {
             />
           </div>
         )}
-
-        {/* Talk to a mentor — promoted: a real person, one tap away. Not on day
-            one: mentor sessions come after the aptitude assessment. */}
-        {!firstRun && <MentorPromoCard />}
 
         {/* Rate & review — deliberately eye-catching, and only until they leave one */}
         {hasFeedback === false && eligibleForReviewNudge && !firstRun && (

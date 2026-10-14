@@ -133,9 +133,9 @@ const SUPPORT: {
   {
     icon: GraduationCap,
     title: 'Mentors',
-    body: 'Real marketers who answer questions and review your work in live chat.',
+    body: 'Verified professionals who work with you one to one and grade the project you build.',
     category: 'mentors',
-    tag: 'Live',
+    tag: 'Verified',
   },
   {
     icon: HeartHandshake,

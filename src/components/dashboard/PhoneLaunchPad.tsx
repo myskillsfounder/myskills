@@ -171,8 +171,8 @@ function Toward({ highlights }: { highlights: Highlights }) {
 /**
  * The LaunchPad on a phone: where you stand, then the way back into what you
  * were doing, then what is worth working toward. One column, nothing to read
- * through: the hours chart, the support chat and the skills showcase are for a
- * computer, and each row here leads somewhere a phone can open.
+ * through: the hours chart and the skills showcase are for a computer, and
+ * each row here leads somewhere a phone can open.
  */
 export function PhoneLaunchPad({
   greeting,

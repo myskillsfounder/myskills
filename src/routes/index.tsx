@@ -89,7 +89,7 @@ const CONCEPTS: {
   {
     icon: GraduationCap,
     title: 'Expert career mentors',
-    body: 'Working marketers and career professionals review your work, answer your questions in live chat, and tell you what a score alone can’t.',
+    body: 'Working marketers and career professionals meet you one to one, grade the project you build, and tell you what a score alone can’t.',
     tag: 'Live',
     live: true,
     to: '/community/mentors',
