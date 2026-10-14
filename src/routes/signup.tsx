@@ -9,6 +9,7 @@ import {
   confirmSignUp,
   resendCode,
   confirmLandsOn,
+  signInIfConfirmed,
   signIn,
   signInWithGoogle,
   signUp,
@@ -102,6 +103,12 @@ function SignupPage() {
     setFormError(undefined)
     setErrors((p) => ({ ...p, code: undefined }))
     try {
+      // Confirmed already (with the link, or in another tab): no code is coming,
+      // and none is needed. On to onboarding, signed in.
+      if (await signInIfConfirmed(email, password)) {
+        router.navigate({ to: '/onboarding' })
+        return
+      }
       await resendCode(email, confirmLandsOn('/onboarding'))
       setNotice(`New code sent to ${email}.`)
     } catch (err) {

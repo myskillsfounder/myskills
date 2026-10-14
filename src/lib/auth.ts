@@ -106,6 +106,20 @@ export async function confirmSignUp(email: string, token: string): Promise<void>
   if (error) throw mapAuthError(error)
 }
 
+/**
+ * Before resending: is this account confirmed already? Supabase answers a
+ * resend for a confirmed address with success and sends nothing (it won't say
+ * who is confirmed), so someone who confirmed with the link, or in another
+ * tab, would wait for a code that never comes. Signing in with the password
+ * they just chose tells us: if it works they are confirmed, and now signed in.
+ * Returns false for "not confirmed yet" and for any other answer, so the
+ * caller resends as before.
+ */
+export async function signInIfConfirmed(email: string, password: string): Promise<boolean> {
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  return !error
+}
+
 /** Resend the signup confirmation email (the code and the link). */
 export async function resendCode(email: string, redirectTo?: string): Promise<void> {
   const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectTo } })
