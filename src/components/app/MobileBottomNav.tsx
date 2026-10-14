@@ -2,6 +2,9 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import { Dumbbell, Rocket, Star, User, Users } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { isPhone } from '@/lib/device'
+import { useProfile } from '@/lib/useProfile'
+import { useHasStarted } from '@/lib/firstRun'
+import { missingDetails } from '@/components/profile/DetailsSection'
 
 const TABS = [
   { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
@@ -12,14 +15,16 @@ const TABS = [
 ] as const
 
 /**
- * A phone's tabs: the same first three, in the same order, as everywhere else.
- * The profile is in the top bar, and Review is for a computer. (A phone still lands on the
- * Community after sign-in, see lib/device.ts; the order here is the bar's.)
+ * A phone's tabs: the same first three, in the same order, as everywhere else,
+ * then the student's own profile. Review is for a computer. (A phone still
+ * lands on the Community after sign-in, see lib/device.ts; the order here is
+ * the bar's.)
  */
 const PHONE_TABS = [
   { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/community', label: 'Community', icon: Users },
+  { to: '/profile', label: 'Profile', icon: User },
 ] as const
 
 /**
@@ -60,6 +65,25 @@ export const BOTTOM_NAV_H = 58
  * Usage: `style={{ bottom: BOTTOM_NAV_CLEARANCE }}` on a `fixed` element.
  */
 export const BOTTOM_NAV_CLEARANCE = `calc(${BOTTOM_NAV_H + 12}px + env(safe-area-inset-bottom))`
+
+/**
+ * A dot on a phone's Profile tab while details a mentor or a company would
+ * look for are still missing. The same rule as the computer's sidebar card: no
+ * nagging before the first aptitude assessment. Its own component so the
+ * lookups behind it run only where the tab is drawn (a signed-in phone), not
+ * on every page for everyone.
+ */
+function ProfileDot() {
+  const { profile } = useProfile()
+  const started = useHasStarted()
+  if (!profile || started !== true || missingDetails(profile).length === 0) return null
+  return (
+    <>
+      <span aria-hidden className="absolute right-3.5 top-0.5 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-white" />
+      <span className="sr-only">(details missing)</span>
+    </>
+  )
+}
 
 /**
  * Standard mobile bottom navigation: edge-to-edge, anchored to the bottom,
@@ -109,7 +133,6 @@ export function MobileBottomNav() {
             <li key={to} className="flex-1">
               <Link
                 to={to}
-                aria-label={label}
                 aria-current={active ? 'page' : undefined}
                 className="relative flex select-none flex-col items-center justify-center gap-0.5 outline-none transition-transform duration-100 active:scale-95"
                 style={{ height: BOTTOM_NAV_H, WebkitTapHighlightColor: 'transparent' }}
@@ -122,10 +145,11 @@ export function MobileBottomNav() {
                 />
                 {/* icon pill */}
                 <span
-                  className={`flex h-7 w-14 items-center justify-center rounded-full transition-all duration-300 ${
+                  className={`relative flex h-7 w-14 items-center justify-center rounded-full transition-all duration-300 ${
                     active ? 'scale-105 bg-brand-50' : 'bg-transparent'
                   }`}
                 >
+                  {to === '/profile' && <ProfileDot />}
                   <Icon
                     size={21}
                     className={`transition-colors duration-200 ${active ? 'text-brand-700' : 'text-ink-500'}`}

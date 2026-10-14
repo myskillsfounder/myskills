@@ -5,7 +5,7 @@
  * The Community is where a phone signs in to. The LaunchPad and Practice are
  * trimmed to what is done on a phone (where you stand, and the next thing to
  * practise); in the bottom bar they come first, then the Community. The
- * profile is on a phone too, reached from the top bar: it is where a student's
+ * profile is on a phone too, the last tab of the bottom bar: it is where a student's
  * own details are kept, and those are what a mentor or a company sees. The
  * rest of the app (reviews and the like) stays on a computer. A phone also has
  * its own front door and its own short onboarding (routes/welcome.tsx).
