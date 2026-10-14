@@ -52,9 +52,9 @@ const steps: StepDef[] = [
     icon: GraduationCap,
     title: 'Get 1:1 mentor feedback',
     description:
-      'Stuck on something? Ask a real, working marketer in live chat — free, one-on-one, no scheduling needed.',
+      'Ask a verified mentor to work with you. They see your results, meet you one to one, and grade the project you build.',
     cta: 'Meet the mentors',
-    badge: { label: 'Mentors live', tone: 'success' },
+    badge: { label: 'Verified mentors', tone: 'success' },
   },
   {
     icon: Briefcase,

@@ -7,8 +7,8 @@
  * practise); in the bottom bar they come first, then the Community. The
  * profile is on a phone too, reached from the top bar: it is where a student's
  * own details are kept, and those are what a mentor or a company sees. The
- * rest of the app (reviews, the support chat and the like) stays on a computer. A phone also has its own
- * front door and its own short onboarding (routes/welcome.tsx).
+ * rest of the app (reviews and the like) stays on a computer. A phone also has
+ * its own front door and its own short onboarding (routes/welcome.tsx).
  *
  * "A phone" is the device, not the window: a narrow browser window on a
  * computer is still a computer, a tablet keeps the full app, and turning a
