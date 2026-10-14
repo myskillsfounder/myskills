@@ -8,6 +8,7 @@ import {
   AuthError,
   confirmSignUp,
   resendCode,
+  confirmLandsOn,
   signIn,
   signInWithGoogle,
   signUp,
@@ -66,8 +67,9 @@ function SignupPage() {
     if (!validateForm()) return
     setSubmitting(true)
     try {
-      await signUp({ name, email, password })
-      setNotice(`We sent a 6-digit code to ${email}.`)
+      // The email's link lands on onboarding, signed in (a phone is sent on to its own).
+      await signUp({ name, email, password, redirectTo: confirmLandsOn('/onboarding') })
+      setNotice(`We emailed ${email} a 6-digit code. You can also use the link in that email.`)
       setPhase('confirm')
     } catch (err) {
       applyError(err)
@@ -100,7 +102,7 @@ function SignupPage() {
     setFormError(undefined)
     setErrors((p) => ({ ...p, code: undefined }))
     try {
-      await resendCode(email)
+      await resendCode(email, confirmLandsOn('/onboarding'))
       setNotice(`New code sent to ${email}.`)
     } catch (err) {
       applyError(err)
@@ -131,7 +133,7 @@ function SignupPage() {
     return (
       <AuthShell
         title="Verify your email"
-        subtitle={notice ?? `We sent a 6-digit code to ${email}.`}
+        subtitle={notice ?? `We emailed ${email} a 6-digit code. You can also use the link in that email.`}
         footer={
           <button
             type="button"

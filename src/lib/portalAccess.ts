@@ -3,7 +3,7 @@
  * docs/supabase-portal-signup.sql. An account on its own opens nothing: the
  * email has to be confirmed, then a member of the team approves the request.
  */
-import { confirmSignUp, resendCode, signIn, signUp } from './auth'
+import { confirmLandsOn, confirmSignUp, resendCode, signIn, signUp } from './auth'
 import { supabase } from './supabase'
 
 export type PortalRole = 'mentor' | 'wellness' | 'guidance' | 'internships' | 'institutions'
@@ -134,6 +134,9 @@ export async function portalSignUp(params: {
     name: params.name,
     email: params.email,
     password: params.password,
+    // The link in the email lands in the portal, signed in, which files the
+    // request from what they typed here (components/mentoring/PortalRequestStatus).
+    redirectTo: confirmLandsOn('/community-portal'),
     data: {
       portal_request: {
         role: params.request.role,
@@ -151,7 +154,7 @@ export async function portalConfirm(email: string, password: string, code: strin
   await signIn({ email, password })
 }
 
-export { resendCode as portalResendCode }
+export const portalResendCode = (email: string) => resendCode(email, confirmLandsOn('/community-portal'))
 
 export type RequestStatus = 'pending' | 'approved' | 'rejected'
 

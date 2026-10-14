@@ -127,7 +127,7 @@ function PortalSignupPage() {
     setSubmitting(true)
     try {
       await portalSignUp({ name, email, password, request })
-      setNotice(`We sent a 6-digit code to ${email}.`)
+      setNotice(`We emailed ${email} a 6-digit code. You can also use the link in that email.`)
       setStep(3)
     } catch (err) {
       applyError(err)
@@ -412,7 +412,7 @@ function PortalSignupPage() {
                 </span>
                 <div>
                   <h2 className="font-display text-xl font-semibold text-ink-900">Confirm your email</h2>
-                  <p className="text-xs text-ink-500">{notice ?? `We sent a 6-digit code to ${email}.`}</p>
+                  <p className="text-xs text-ink-500">{notice ?? `We emailed ${email} a 6-digit code. You can also use the link in that email.`}</p>
                 </div>
               </div>
               <TextField

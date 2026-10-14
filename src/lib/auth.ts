@@ -69,17 +69,28 @@ function mapAuthError(error: SupabaseAuthError): AuthError {
   }
 }
 
+/**
+ * Where the confirmation email's link lands. The email carries both the
+ * 6-digit code and a link (whichever the person uses); the link signs them in
+ * on that page, so it has to be the page that carries on from sign-up, not the
+ * home page. The address must be allowed in Supabase (Authentication > URL
+ * Configuration > Redirect URLs).
+ */
+export const confirmLandsOn = (path: '/onboarding' | '/community-portal') => `${window.location.origin}${path}`
+
 export async function signUp(params: {
   name: string
   email: string
   password: string
   /** Extra details kept with the account (the Community portal's access request). */
   data?: Record<string, unknown>
+  /** Where the email's confirm link lands (see confirmLandsOn). */
+  redirectTo?: string
 }): Promise<void> {
   const { data, error } = await supabase.auth.signUp({
     email: params.email,
     password: params.password,
-    options: { data: { name: params.name, ...params.data } },
+    options: { data: { name: params.name, ...params.data }, emailRedirectTo: params.redirectTo },
   })
   if (error) throw mapAuthError(error)
   // An address that already has a confirmed account doesn't come back as an
@@ -95,9 +106,9 @@ export async function confirmSignUp(email: string, token: string): Promise<void>
   if (error) throw mapAuthError(error)
 }
 
-/** Resend the signup confirmation code. */
-export async function resendCode(email: string): Promise<void> {
-  const { error } = await supabase.auth.resend({ type: 'signup', email })
+/** Resend the signup confirmation email (the code and the link). */
+export async function resendCode(email: string, redirectTo?: string): Promise<void> {
+  const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectTo } })
   if (error) throw mapAuthError(error)
 }
 
