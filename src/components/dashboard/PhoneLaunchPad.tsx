@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BookOpen, ChevronRight, Flame, Target } from 'lucide-react'
 import type { Readiness } from '@/lib/readinessScore'
@@ -184,6 +185,7 @@ export function PhoneLaunchPad({
   readiness,
   highlights,
   courses,
+  findMentor,
 }: {
   greeting: string
   loading: boolean
@@ -194,6 +196,8 @@ export function PhoneLaunchPad({
   readiness: Readiness
   highlights: Highlights
   courses: CourseProgress[]
+  /** The way to a mentor, when the student is still without one. */
+  findMentor?: ReactNode
 }) {
   const goal = goals[0]
   return (
@@ -232,6 +236,7 @@ export function PhoneLaunchPad({
         <>
           <Score readiness={readiness} />
           <Continue courses={courses} />
+          {findMentor}
           <Toward highlights={highlights} />
         </>
       )}

@@ -25,6 +25,7 @@ import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
 import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
+import { FindMentorCard } from '@/components/dashboard/FindMentorCard'
 import { PhoneLaunchPad } from '@/components/dashboard/PhoneLaunchPad'
 import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { isPhone } from '@/lib/device'
@@ -215,6 +216,12 @@ function DashboardPage() {
   })
   const firstRun = dataLoaded && !hasHistory
 
+  // A mentor is asked for per programme. The "Find a mentor" card stays until
+  // both have one (working with them, or asked and waiting), and waits for the
+  // first step like the rest: a new student is asked to begin elsewhere.
+  const withMentor = [dmMatch.match, crMatch.match].filter((m) => m && (m.status === 'active' || m.status === 'requested')).length
+  const findMentor = !firstRun && !dmMatch.loading && !crMatch.loading && withMentor < 2 ? <FindMentorCard hasOne={withMentor === 1} /> : null
+
   const highlights = {
     certificate: assessment ? ('earned' as const) : foundationUnlock.unlocked ? ('ready' as const) : ('locked' as const),
     hasMentor: dmMatch.match?.status === 'active' || crMatch.match?.status === 'active',
@@ -265,6 +272,7 @@ function DashboardPage() {
           readiness={readiness}
           highlights={highlights}
           courses={courses}
+          findMentor={findMentor}
         />
       </AppShell>
     )
@@ -312,6 +320,8 @@ function DashboardPage() {
             />
           </div>
         )}
+
+        {findMentor}
 
         {/* Rate & review — deliberately eye-catching, and only until they leave one */}
         {hasFeedback === false && eligibleForReviewNudge && !firstRun && (
