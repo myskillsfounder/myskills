@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from 'lucide-react'
-import { AuthError } from '@/lib/auth'
+import { AuthError, signInIfConfirmed } from '@/lib/auth'
 import {
   isPortalRole,
   PORTAL_ROLES,
@@ -158,6 +158,12 @@ function PortalSignupPage() {
   async function handleResend() {
     setFormError(undefined)
     try {
+      // Confirmed already (with the link, or in another tab): no code is coming,
+      // and none is needed. On into the portal, which files the request.
+      if (await signInIfConfirmed(email, password)) {
+        router.navigate({ to: '/community-portal' })
+        return
+      }
       await portalResendCode(email)
       setNotice(`New code sent to ${email}.`)
     } catch (err) {
