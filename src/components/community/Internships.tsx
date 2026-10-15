@@ -233,7 +233,7 @@ function ApplyForm({ role, onApplied }: { role: OpenRole; onApplied: () => void 
             Marketing aptitude <ArrowRight size={14} />
           </Link>
           <Link to="/career-readiness-assessment" className="press inline-flex h-10 items-center gap-1.5 rounded-full border border-ink-300 bg-white px-4 text-sm font-semibold text-ink-800">
-            Life aptitude test
+            Leadership Aptitude Test
           </Link>
         </div>
       </div>
@@ -253,7 +253,7 @@ function ApplyForm({ role, onApplied }: { role: OpenRole; onApplied: () => void 
       <p className="mt-3 flex items-start gap-2 text-xs leading-relaxed text-ink-600">
         <ShieldCheck size={14} className="mt-0.5 shrink-0 text-brand-600" />
         <span>
-          When you apply, {role.organisation} sees your name, headline, Career Readiness Score, certificates and this
+          When you apply, {role.organisation} sees your name, headline, Global Readiness Score, certificates and this
           note. Your email and phone are shared only if they shortlist you.
         </span>
       </p>

@@ -107,7 +107,7 @@ const STATIC_PAGES = [
     path: '/career-readiness',
     changefreq: 'weekly',
     priority: '0.9',
-    title: 'Life Readiness Programme: Learn with AI & Mentors | MySkills',
+    title: 'Global Leadership Programme: Learn with AI & Mentors | MySkills',
     description:
       'Learn goal setting, communication, leadership, agile and growth mindset in five short modules. Practise with an AI coach and get mentor feedback. Free to start.',
   },
@@ -179,7 +179,7 @@ const STATIC_PAGES = [
  * (src/content/partner-pages.json), so the prerendered text and the visible
  * text can't drift apart. */
 const PARTNERS = JSON.parse(readFileSync(join(ROOT, 'src/content/partner-pages.json'), 'utf8'))
-/* Likewise the Life Readiness Programme page (src/content/career-readiness.json). */
+/* Likewise the Global Leadership Programme page (src/content/career-readiness.json). */
 const CAREER = JSON.parse(readFileSync(join(ROOT, 'src/content/career-readiness.json'), 'utf8'))
 {
   const page = STATIC_PAGES.find((p) => p.path === CAREER.path)
@@ -315,7 +315,7 @@ function partnerJsonLd({ page, url, name, crumb, faqs }) {
   }
 }
 
-/** Life Readiness Programme: the page's text, and Course + breadcrumb data. */
+/** Global Leadership Programme: the page's text, and Course + breadcrumb data. */
 function careerReadinessExtras() {
   const url = `${SITE_URL}${CAREER.path}`
   const bodyHtml = `<main>

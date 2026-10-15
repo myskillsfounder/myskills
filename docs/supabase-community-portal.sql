@@ -24,7 +24,7 @@
 -- stored. Admins see that a student is using a resource and how many sessions
 -- there have been, not what was said.
 --
--- THE SCORE: nothing here feeds the Career Readiness Score. Mentor sessions
+-- THE SCORE: nothing here feeds the Global Readiness Score. Mentor sessions
 -- keep counting through live_session_attendance, as before.
 --
 -- Run once in the Supabase SQL editor. Safe to re-run. No ordering against the

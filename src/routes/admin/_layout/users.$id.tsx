@@ -76,7 +76,7 @@ function AptitudeList({
 }
 
 /**
- * Everything about one student in one place: the Career Readiness Score and
+ * Everything about one student in one place: the Global Readiness Score and
  * what it's made of, both programmes, live sessions, mentor reviews and
  * verification. Read-only — each action still lives on its own page.
  */
@@ -171,7 +171,7 @@ function StudentPage() {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         {/* Score */}
-        <Panel title="Career Readiness Score">
+        <Panel title="Global Readiness Score">
           {score ? (
             <div className="space-y-4">
               <Bar label="Personal Development" points={score.personal.points} max={score.personal.max} />
@@ -202,7 +202,7 @@ function StudentPage() {
             {d.mentor_reviews.map((r) => (
               <li key={`${r.programme}-${r.created_at}`} className="rounded-xl bg-ink-100 p-3 text-sm">
                 <p className="font-medium text-ink-900">
-                  {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Life Readiness'} ·{' '}
+                  {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Global Leadership'} ·{' '}
                   {r.status === 'approved' ? 'Signed off' : r.status === 'requested' ? 'Waiting' : 'Sent back'}
                 </p>
                 <p className="text-xs text-ink-500">
@@ -264,8 +264,8 @@ function StudentPage() {
           </div>
         </Panel>
 
-        {/* Life Readiness */}
-        <Panel title="Life Readiness">
+        {/* Global Leadership */}
+        <Panel title="Global Leadership">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-500">Modules</p>
           <ul className="mt-2 space-y-1.5 text-sm">
             {PERSONAL_DEVELOPMENT_MODULES.map((m) => {
@@ -282,7 +282,7 @@ function StudentPage() {
               )
             })}
           </ul>
-          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Life aptitude test</p>
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Leadership Aptitude Test</p>
           <div className="mt-2">
             {cr.aptitude ? (
               <AptitudeList
@@ -308,7 +308,7 @@ function StudentPage() {
                     {l.title} <span className="text-ink-500">· {l.host_name} ({l.host_kind})</span>
                   </span>
                   <span className="text-xs text-ink-500">
-                    {l.programme === 'digital-marketing' ? 'Digital Marketing' : 'Life Readiness'} · {fmtDate(l.held_on)}
+                    {l.programme === 'digital-marketing' ? 'Digital Marketing' : 'Global Leadership'} · {fmtDate(l.held_on)}
                   </span>
                 </li>
               ))}

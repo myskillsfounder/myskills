@@ -1,12 +1,12 @@
 {
   "path": "/career-readiness",
-  "seoTitle": "Life Readiness Programme: Learn with AI & Mentors | MySkills",
+  "seoTitle": "Global Leadership Programme: Learn with AI & Mentors | MySkills",
   "seoDescription": "Fourteen short modules on the life skills employers look for, from self-awareness and empathy to leadership and coping with stress. Practise in writing and get mentor feedback. Free to start.",
-  "name": "Life Readiness Programme",
+  "name": "Global Leadership Programme",
   "tagline": "Use AI the way employers now expect you to.",
   "intro": "Skills get you shortlisted; how you know yourself, think, decide, work with people and handle pressure gets you hired. Learn and practise all fourteen in writing — and get a human’s honest feedback before an interviewer gives you theirs.",
   "insideTitle": "Fourteen modules, one for each skill.",
-  "insideIntro": "One module for each skill in the Life aptitude test. The first five are the core of the programme; the other nine build the rest of WHO’s life skills.",
+  "insideIntro": "One module for each skill in the Leadership Aptitude Test. The first five are the core of the programme; the other nine build the rest of WHO’s life skills.",
   "modules": [
     {
       "slug": "goal-setting",

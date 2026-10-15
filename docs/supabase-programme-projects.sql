@@ -1,5 +1,5 @@
 -- Capstone project for both programmes — graded by a mentor — and internship
--- sign-offs. This is the data behind Career Readiness Score method v6.
+-- sign-offs. This is the data behind Global Readiness Score method v6.
 --
 -- A student who has finished a programme's practice submits a project (a title,
 -- a summary and links). A reviewer scores it on a four-part rubric, 0-5 each,
@@ -277,7 +277,7 @@ begin
   select p.full_name into v_name from public.profiles p where p.id = new.user_id;
   select u.email into v_email from auth.users u where u.id = new.user_id;
   v_prog := case new.programme when 'digital-marketing' then 'Digital Marketing Programme'
-                               else 'Life Readiness Programme' end;
+                               else 'Global Leadership Programme' end;
 
   if tg_op = 'INSERT' then
     perform public.notify_email(
@@ -307,7 +307,7 @@ begin
         || public.notify_row('Grade', new.project_points::text || ' out of 20')
         || public.notify_row('Mentor''s note', new.reviewer_note)
         || public.notify_row('Next step', case new.status
-             when 'approved' then 'Your earned points are released into your Career Readiness Score.'
+             when 'approved' then 'Your earned points are released into your Global Readiness Score.'
              else 'Improve the project using the notes above, then submit it again from Practice.' end),
         'Open Practice',
         'https://myskills.org.in/practice'

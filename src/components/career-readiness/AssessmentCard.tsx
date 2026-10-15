@@ -17,8 +17,8 @@ const cta =
   'press inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
 
 /**
- * Practice's entry to the Life Readiness assessment, in the same dark
- * feature-card treatment as the Life Readiness cards around it: an
+ * Practice's entry to the Global Leadership assessment, in the same dark
+ * feature-card treatment as the Global Leadership cards around it: an
  * invitation until it's taken, then just a heading and a way to the result,
  * which lives on the result page. Renders nothing while loading so the page doesn't flash the
  * wrong state.
@@ -34,7 +34,7 @@ export function AssessmentCard() {
         <div className="relative min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Start here</p>
           <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-            Life aptitude test
+            Leadership Aptitude Test
           </h3>
           <p className="mt-1.5 text-sm text-white/70">The 14 skills the programme builds. 42 statements, about 11 minutes. No right or wrong answers.</p>
         </div>
@@ -50,10 +50,10 @@ export function AssessmentCard() {
     <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between">
       <Rings />
       <div className="relative min-w-0">
-        <h3 className="font-display text-2xl font-semibold leading-tight text-white">Your life aptitude</h3>
+        <h3 className="font-display text-2xl font-semibold leading-tight text-white">Your leadership aptitude</h3>
         {/* Taken before the fourteen-skill test: the new one is there to take, once. */}
         {!isLifeSkills(result.scores) && (
-          <p className="mt-1.5 text-sm text-white/70">New: the Life aptitude test covers all fourteen skills. Take it once more.</p>
+          <p className="mt-1.5 text-sm text-white/70">New: the Leadership Aptitude Test covers all fourteen skills. Take it once more.</p>
         )}
       </div>
       <Link to="/career-readiness-assessment" className={`relative ${cta}`}>

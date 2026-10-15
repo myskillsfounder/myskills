@@ -12,7 +12,7 @@
 --   activity_days   one row per day the student used MySkills, with the
 --                   seconds spent that day
 --
--- Neither feeds the Career Readiness Score.
+-- Neither feeds the Global Readiness Score.
 --
 -- The app keeps working before this is run (it falls back to the browser), and
 -- the first time a student opens it afterwards, what that browser already

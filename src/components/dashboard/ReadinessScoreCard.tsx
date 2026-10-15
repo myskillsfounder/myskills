@@ -44,7 +44,7 @@ export function useCountUp(target: number, run: boolean, ms = 1200) {
 }
 
 /** Each part in the colour of the programme behind it — the same violet
- *  (Digital Marketing) and green (Life Readiness) as the course tiles. */
+ *  (Digital Marketing) and green (Global Leadership) as the course tiles. */
 const PART_TONE = {
   personal: { dot: 'bg-emerald-500', bar: 'from-emerald-400 to-teal-600', glow: 'shadow-[0_0_10px_-2px_rgba(16,185,129,0.6)]' },
   professional: { dot: 'bg-brand-600', bar: 'from-brand-400 to-brand-700', glow: 'shadow-[0_0_10px_-2px_rgba(111,99,226,0.6)]' },
@@ -160,7 +160,7 @@ export function slidesFor(h: Highlights): Slide[] {
   const mentor: Slide = {
     key: 'mentor',
     eyebrow: 'Capstone project',
-    title: 'Your project, graded by a mentor, is worth up to 20 points in Digital Marketing and 15 in Life Readiness',
+    title: 'Your project, graded by a mentor, is worth up to 20 points in Digital Marketing and 15 in Global Leadership',
     note: 'A passing grade also releases the points you’ve already earned.',
     cta: h.hasMentor ? 'See your mentor' : 'Find your mentor',
     to: '/practice',
@@ -377,7 +377,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
 
   return (
     <section className="card flex h-full flex-col p-6 sm:p-7">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Career Readiness Score</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Global Readiness Score</p>
 
       <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
         <div className="relative mx-auto h-36 w-36 shrink-0 sm:mx-0">
@@ -415,7 +415,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
           <div
             className="absolute inset-0 flex flex-col items-center justify-center"
             role="img"
-            aria-label={`Career Readiness Score ${score} out of 100`}
+            aria-label={`Global Readiness Score ${score} out of 100`}
           >
             <span className="font-display text-5xl font-semibold leading-none tabular-nums text-ink-900">{shownScore}</span>
             <span className="mt-1 text-xs font-medium text-ink-500">out of 100</span>

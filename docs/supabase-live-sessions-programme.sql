@@ -7,7 +7,7 @@
 -- Each confirmed session now belongs to a programme:
 --   'career-readiness'  -> Personal Development (2 each, up to 10)
 --   'digital-marketing' -> Professional Development (2 each, up to 10)
--- Sessions recorded before this change were Life Readiness ones and keep
+-- Sessions recorded before this change were Global Leadership ones and keep
 -- counting there.
 
 alter table public.live_session_attendance

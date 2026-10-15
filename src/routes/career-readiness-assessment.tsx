@@ -27,7 +27,7 @@ const COPY: QuizCopy = {
   // version's statements can't be mixed into it.
   draftPrefix: 'myskills.lifeSkillsDraft',
   intro:
-    'You’ll see one statement at a time. Say how often it’s true for you — it’s a starting point, not a test, so answer as you really are. It doesn’t change your Career Readiness Score, and only you and your mentor see it.',
+    'You’ll see one statement at a time. Say how often it’s true for you — it’s a starting point, not a test, so answer as you really are. It doesn’t change your Global Readiness Score, and only you and your mentor see it.',
   closing: {
     title: 'Which one skill would you most like to get better at?',
     hint: 'In your own words. It’s optional and isn’t scored — a mentor will see it when they review your progress.',
@@ -43,14 +43,14 @@ function CareerReadinessAssessmentPage() {
   const [questions, setQuestions] = useState<AssessmentQuestion[] | null>(null)
   const [testReady, setTestReady] = useState(false)
   const [error, setError] = useState<string>()
-  // A result from the earlier, five-skill test: the Life aptitude test is
+  // A result from the earlier, five-skill test: the Leadership Aptitude Test is
   // offered in its place, once (the server allows that one retake).
   const earlier = result != null && !isLifeSkills(result.scores)
   const [retaking, setRetaking] = useState(false)
   const asking = !result || retaking
 
   // The statements, when there is something to take: no result yet, or only
-  // the earlier test's (to know the Life aptitude test is there to offer).
+  // the earlier test's (to know the Leadership Aptitude Test is there to offer).
   useEffect(() => {
     if (loading || (result && !earlier)) return
     let active = true
@@ -71,12 +71,12 @@ function CareerReadinessAssessmentPage() {
   return (
     <DarkShell
       back={{ to: '/practice', label: 'Back to Practice' }}
-      eyebrow="Life Readiness"
-      title={taken ? 'Your life aptitude' : 'Life aptitude test'}
+      eyebrow="Global Leadership"
+      title={taken ? 'Your leadership aptitude' : 'Leadership Aptitude Test'}
       description={
         taken
           ? 'What you told us about how you work and relate to people today, and where the programme can help most.'
-          : 'A quick, honest look at the 14 skills the Life Readiness Programme builds: self-awareness, empathy, critical and creative thinking, decision-making, problem-solving, communication, relationships, coping with stress and emotions, goal setting, leadership, agile working and a growth mindset.'
+          : 'A quick, honest look at the 14 skills the Global Leadership Programme builds: self-awareness, empathy, critical and creative thinking, decision-making, problem-solving, communication, relationships, coping with stress and emotions, goal setting, leadership, agile working and a growth mindset.'
       }
     >
       {error && <DarkError title="The assessment isn’t available right now." message={error} />}
@@ -90,7 +90,7 @@ function CareerReadinessAssessmentPage() {
       {taken && earlier && testReady && (
         <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.06] p-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-200">New</p>
-          <p className="mt-1.5 font-display text-xl font-semibold text-white">Take the Life aptitude test</p>
+          <p className="mt-1.5 font-display text-xl font-semibold text-white">Take the Leadership Aptitude Test</p>
           <p className="mt-1 text-sm leading-relaxed text-white/70">
             The programme now has fourteen modules, one for each skill in the test. Your result below is from the earlier,
             five-skill test. The new one takes about eleven minutes and replaces it, so each module can show where you

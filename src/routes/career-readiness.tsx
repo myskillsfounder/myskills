@@ -72,7 +72,7 @@ const HUMANS: { icon: IconType; title: string; body: string }[] = [
 
 /* -- start CTA ------------------------------------------------------------ */
 
-/** The way in: the Life aptitude test (through sign-up for a
+/** The way in: the Leadership Aptitude Test (through sign-up for a
  *  visitor), or the modules for someone who has already taken it. */
 function StartCta({ dark = false }: { dark?: boolean }) {
   const { user } = useAuthUser()
@@ -82,7 +82,7 @@ function StartCta({ dark = false }: { dark?: boolean }) {
     ? 'bg-white text-ink-900 shadow-e2 hover:bg-brand-50'
     : 'bg-brand-600 text-white hover:bg-brand-700'
   const cls = `press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition-colors ${tone}`
-  // The Life aptitude test is the programme's first step, so it is what the
+  // The Leadership Aptitude Test is the programme's first step, so it is what the
   // button offers — to a visitor (after sign-up) and to a signed-in student who
   // hasn't taken it. Only someone who already has goes straight to the modules.
   if (user && taken) {
@@ -101,14 +101,14 @@ function StartCta({ dark = false }: { dark?: boolean }) {
   if (user) {
     return (
       <Link to="/career-readiness-assessment" onClick={() => rememberProgramme(2)} className={cls}>
-        Take the Life aptitude test
+        Take the Leadership Aptitude Test
         <ArrowRight size={16} />
       </Link>
     )
   }
   return (
     <Link to="/signup" onClick={() => setAfterOnboarding('/career-readiness-assessment')} className={cls}>
-      Take the Life aptitude test
+      Take the Leadership Aptitude Test
       <ArrowRight size={16} />
     </Link>
   )

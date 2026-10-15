@@ -1,5 +1,5 @@
 /**
- * Career Readiness Score — the number the LaunchPad dashboard is built around,
+ * Global Readiness Score — the number the LaunchPad dashboard is built around,
  * and the one a company can rely on when choosing interns.
  *
  * It measures only what a student has done INSIDE MySkills, checked by the
@@ -9,7 +9,7 @@
  * Each programme is worth 40: a project graded by a mentor and the student's
  * own activity.
  *
- *   40  Personal development     — the Life Readiness Programme
+ *   40  Personal development     — the Global Leadership Programme
  *         activity 25  its fourteen modules share 25 points (about 1.8 each).
  *                      Live sessions are on the record, not scored.
  *         project  15  the mentor's rubric total, 0-20, counted as 0-15
@@ -41,7 +41,7 @@
  *
  * VERIFIED vs SELF-REPORTED: practice and the Foundation assessment are graded
  * by the server; live sessions and project grades are confirmed by a person.
- * Module answers are self-reported until the Life Readiness project passes.
+ * Module answers are self-reported until the Global Leadership project passes.
  */
 
 /** Bump when the rules change, so a stored score says which rules made it. */
@@ -66,7 +66,7 @@ export const ACTIVITY_MAX = 20
 export const PROGRAMME_MODULES = 14
 export const MODULES_MAX_POINTS = 25
 export const POINTS_PER_MODULE = MODULES_MAX_POINTS / PROGRAMME_MODULES
-/** The Life Readiness project: graded out of PROJECT_MAX, worth this many points. */
+/** The Global Leadership project: graded out of PROJECT_MAX, worth this many points. */
 export const PERSONAL_PROJECT_POINTS = 15
 export const POINTS_PER_LIVE_SESSION = 1
 export const LIVE_SESSIONS_MAX_POINTS = 5
@@ -91,11 +91,11 @@ export const NO_PROJECT: ProjectStanding = { status: 'none', points: 0 }
 
 /** Where a learner stands in the two programmes. */
 export interface ProgrammeStanding {
-  /** Life Readiness modules with all four items written. */
+  /** Global Leadership modules with all four items written. */
   modulesDone: number
-  /** The five core modules are done: the Life Readiness project can be submitted. */
+  /** The five core modules are done: the Global Leadership project can be submitted. */
   crCoreDone: boolean
-  /** Life Readiness live sessions whose attendance was confirmed by whoever ran them. */
+  /** Global Leadership live sessions whose attendance was confirmed by whoever ran them. */
   liveSessions: number
   /** Digital Marketing live training sessions, confirmed the same way. */
   dmLiveSessions: number
@@ -149,12 +149,12 @@ export function practicePoints(percents: number[]): number {
   )
 }
 
-/** Life Readiness activity before the hold: the modules. Out of 25. */
+/** Global Leadership activity before the hold: the modules. Out of 25. */
 export function personalActivity(p: Pick<ProgrammeStanding, 'modulesDone'>): number {
   return Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE
 }
 
-/** A Life Readiness project's points: its grade out of 20, counted out of 15. */
+/** A Global Leadership project's points: its grade out of 20, counted out of 15. */
 export function personalProjectPoints(grade: number): number {
   return (Math.min(grade, PROJECT_MAX) * PERSONAL_PROJECT_POINTS) / PROJECT_MAX
 }
@@ -285,7 +285,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
   const canSubmitDm = s.dmPracticeDone && s.dmProject.status !== 'approved' && s.dmProject.status !== 'requested'
   const journey: (NextAction | null)[] = [
     modulesDone < PROGRAMME_MODULES
-      ? { label: 'Finish a Life Readiness module', upTo: round1(POINTS_PER_MODULE), to: '/practice', programme: 2 }
+      ? { label: 'Finish a Global Leadership module', upTo: round1(POINTS_PER_MODULE), to: '/practice', programme: 2 }
       : null,
     tracksPassed < PRACTICE_TRACKS
       ? { label: 'Score 60% or more on a Digital Marketing track', upTo: TRACK_POINTS_MAX, to: '/practice', programme: 1 }
@@ -294,7 +294,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       ? { label: 'Take the Foundation assessment', upTo: FOUNDATION_MAX_POINTS, to: '/foundation-assessment' }
       : null,
     canSubmitCr
-      ? { label: 'Submit your Life Readiness project', upTo: PERSONAL_PROJECT_POINTS, to: '/practice', programme: 2 }
+      ? { label: 'Submit your Global Leadership project', upTo: PERSONAL_PROJECT_POINTS, to: '/practice', programme: 2 }
       : null,
     canSubmitDm
       ? { label: 'Submit your Digital Marketing project', upTo: PROJECT_MAX, to: '/practice', programme: 1 }
@@ -308,7 +308,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
 
   const modulePts = modulesDone * POINTS_PER_MODULE
   const crCounted = countedActivity(crActivity, s.crProject)
-  // Once the Life Readiness project has passed a mentor has read the modules,
+  // Once the Global Leadership project has passed a mentor has read the modules,
   // so those points stop being self-reported.
   const selfReported = s.crProject.status === 'approved' ? 0 : Math.min(modulePts, crCounted)
   return {

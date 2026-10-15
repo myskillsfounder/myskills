@@ -3,7 +3,7 @@
  * mentor to work with them on one programme; the mentor sees the student's
  * aptitude report, accepts or declines, and logs each session they hold
  * (arranged outside the app). Logged sessions count as confirmed live
- * sessions in the Career Readiness Score.
+ * sessions in the Global Readiness Score.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'

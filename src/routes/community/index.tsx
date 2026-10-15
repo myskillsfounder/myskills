@@ -316,7 +316,7 @@ function CommunityHub() {
             <YourMentors
               matches={[
                 { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
-                { match: crMatch.match, programme: 2, label: 'Life Readiness' },
+                { match: crMatch.match, programme: 2, label: 'Global Leadership' },
               ]}
             />
             {/* The four ways in, side by side: none is buried under another's listings. */}

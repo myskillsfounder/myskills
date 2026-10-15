@@ -28,7 +28,7 @@ const R = 34
 const CIRC = 2 * Math.PI * R
 
 /**
- * The Life Readiness half of /practice, built to mirror the Digital
+ * The Global Leadership half of /practice, built to mirror the Digital
  * Marketing half (PracticeStats + NextUpCard) card for card, so the two
  * programmes read as one system: a score card with the learner's progress, and
  * a "start here" card that takes them to the next module.

@@ -427,7 +427,7 @@ function ExampleStudent() {
         </div>
         <div className="min-w-0">
           <p className="text-base font-semibold text-white">A MySkills student</p>
-          <p className="text-sm text-white/60">Career Readiness Score</p>
+          <p className="text-sm text-white/60">Global Readiness Score</p>
           <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">
             <BadgeCheck size={12} />
             Built from verified activity

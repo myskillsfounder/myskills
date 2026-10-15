@@ -1,6 +1,6 @@
 -- Profile verification ("KYC") — students request a video call; the MySkills
 -- team checks identity and each credential live, then marks what it saw proof
--- for. Only verified entries count toward the Career Readiness Score.
+-- for. Only verified entries count toward the Global Readiness Score.
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
 -- Depends on: public.is_admin(), public.has_section_access() and

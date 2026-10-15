@@ -1,6 +1,6 @@
 /**
  * Onboarding content — edit copy, options, and placeholders here (no JSX changes
- * needed). Covers both programmes: Digital Marketing and Life Readiness.
+ * needed). Covers both programmes: Digital Marketing and Global Leadership.
  *
  * Consumed by routes/onboarding.tsx (the sentence: stage, goal and where to
  * start, then the plan built from them) and by the profile
@@ -198,7 +198,7 @@ export const ASSESSMENT_ROUTE: Record<StartKey, '/aptitude-assessment' | '/caree
 
 export const START_LABEL: Record<StartKey, string> = {
   marketing: 'Marketing aptitude',
-  personal: 'Life aptitude test',
+  personal: 'Leadership Aptitude Test',
 }
 
 /* ------------------------------------------------------------------ The answer */
@@ -231,7 +231,7 @@ const STEPS: Record<StartKey, Plan['steps']> = {
   ],
   personal: [
     {
-      title: 'Take the Life aptitude test',
+      title: 'Take the Leadership Aptitude Test',
       body: '42 statements, about eleven minutes. It shows your starting point on the 14 skills the programme builds, from self-awareness to coping with stress.',
     },
     {

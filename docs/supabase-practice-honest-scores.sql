@@ -3,7 +3,7 @@
 -- WHAT WAS WRONG
 --   In the Decision Labs answer key, 87 of the 100 right answers were the
 --   second option ("B"). Always picking B scored 88% overall, and 100% on five
---   of the eight tracks, and those scores feed the Career Readiness Score that
+--   of the eight tracks, and those scores feed the Global Readiness Score that
 --   companies now see. The Foundation assessment leaned the same way, less
 --   strongly. A track could also be retaken straight away, with the same
 --   questions in the same order, right after the review showed the answers.

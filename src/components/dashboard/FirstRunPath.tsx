@@ -17,7 +17,7 @@ const STEPS = [
     body: 'Ask a mentor to work with you. They see your results and help you build proof you can show.',
   },
   {
-    title: 'Grow your Career Readiness Score',
+    title: 'Grow your Global Readiness Score',
     body: 'A score out of 100 built from what you do here. It’s what employers see.',
   },
 ]

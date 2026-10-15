@@ -19,7 +19,7 @@ const day = (iso: string) =>
     year: 'numeric',
   })
 
-const PROGRAMME = { 'digital-marketing': 'Digital Marketing', 'career-readiness': 'Life Readiness' } as const
+const PROGRAMME = { 'digital-marketing': 'Digital Marketing', 'career-readiness': 'Global Leadership' } as const
 
 const STATUS: Record<RecordRelationship['status'], { label: string; tone: 'success' | 'warning' | 'neutral' }> = {
   active: { label: 'Active', tone: 'success' },
@@ -206,7 +206,7 @@ export function StudentRecord({ studentId }: { studentId: string }) {
             <div className="card mt-3 grid gap-6 p-5 sm:grid-cols-[auto,1fr] sm:p-6">
               <div className="text-center sm:text-left">
                 <p className="font-display text-5xl font-semibold tabular-nums text-ink-900">{progress.score}</p>
-                <p className="text-xs text-ink-500">Career Readiness Score, out of 100</p>
+                <p className="text-xs text-ink-500">Global Readiness Score, out of 100</p>
                 <p className="mt-2 inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">{band.label}</p>
               </div>
               <div className="space-y-4">
@@ -219,7 +219,7 @@ export function StudentRecord({ studentId }: { studentId: string }) {
                     progress.personal?.modules_done != null && `${progress.personal.modules_done} of 14 modules finished`,
                     progress.professional?.tracks_passed != null && `${progress.professional.tracks_passed} of 8 practice tracks passed`,
                     progress.professional?.foundation_percent != null && `Foundation assessment ${progress.professional.foundation_percent}%`,
-                    progress.personal?.project_status === 'approved' && 'Life Readiness project passed',
+                    progress.personal?.project_status === 'approved' && 'Global Leadership project passed',
                     progress.professional?.project_status === 'approved' && 'Digital Marketing project passed',
                   ]
                     .filter(Boolean)

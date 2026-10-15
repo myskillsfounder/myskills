@@ -1,4 +1,4 @@
--- Life Readiness initial assessment: question bank, one result per learner,
+-- Global Leadership initial assessment: question bank, one result per learner,
 -- server-side scoring, and the summary mentors see when reviewing.
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
@@ -177,7 +177,7 @@ revoke execute on function public.submit_career_readiness_assessment(jsonb, text
 grant execute on function public.submit_career_readiness_assessment(jsonb, text) to authenticated;
 
 -- ---------------------------------------------------------------------------
--- Mentor summary: the review queue now carries the learner's Life Readiness
+-- Mentor summary: the review queue now carries the learner's Global Leadership
 -- result too. A function's return columns can't be changed in place, so it's
 -- dropped and recreated — same body as docs/supabase-mentor-reviews.sql, plus
 -- one column. career_readiness is null until the learner has taken it.

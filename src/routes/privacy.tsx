@@ -64,7 +64,7 @@ function PrivacyPage() {
           <p>
             <strong className="font-semibold text-ink-800">People you choose to work with.</strong> When you ask a mentor
             to work with you, that mentor sees your name, contact details, progress and aptitude results. When you apply
-            for an internship, the company sees your name, headline, Career Readiness Score, certificates and your note;
+            for an internship, the company sees your name, headline, Global Readiness Score, certificates and your note;
             your email and phone only if they shortlist you. A company or institution sees your record only after you
             accept its request, and you can stop sharing at any time. Counsellors and career guides see what they need to
             help with a request you sent.

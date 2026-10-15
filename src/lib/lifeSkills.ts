@@ -1,5 +1,5 @@
 /**
- * What the Life Readiness Programme measures and builds: WHO's ten life
+ * What the Global Leadership Programme measures and builds: WHO's ten life
  * skills, and four of the programme's own that WHO doesn't list (goal setting,
  * leadership, agile working, growth mindset; communication is in both, as
  * WHO's "effective communication"). The Life Skills Profile, the programme's
@@ -9,7 +9,7 @@
  * way round. A skill scores 3-12.
  *
  * The five modules between them build all ten (MODULE_LIFE_SKILLS). A
- * self-rating, so it never counts toward the Career Readiness Score; the
+ * self-rating, so it never counts toward the Global Readiness Score; the
  * student and their mentor see it, companies don't.
  */
 import type { ModuleSlug } from './programmes'

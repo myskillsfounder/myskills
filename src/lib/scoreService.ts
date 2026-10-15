@@ -1,5 +1,5 @@
 /**
- * The Career Readiness Score as the server issued it — see docs/supabase-
+ * The Global Readiness Score as the server issued it — see docs/supabase-
  * career-readiness-score.sql. The dashboard asks for it on load; the server
  * recomputes it from verified records, stores it with a date and the method
  * version, and hands it back. Resolves null when the SQL hasn't been run, so
@@ -44,7 +44,7 @@ export async function refreshMyScore(): Promise<ServerScore | null> {
 export function withServerScore(local: Readiness, server: ServerScore): Readiness {
   if (server.score !== local.score) {
     console.warn(
-      `Career Readiness Score: the server says ${server.score}, this browser calculated ${local.score}.`,
+      `Global Readiness Score: the server says ${server.score}, this browser calculated ${local.score}.`,
     )
   }
   return {

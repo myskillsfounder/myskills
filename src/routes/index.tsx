@@ -34,7 +34,7 @@ export const Route = createFileRoute('/')({
 /*
  * The homepage is MySkills as a whole: personal and professional skills,
  * built together with AI, so nothing is impossible for a student who's
- * ready to work for it. It shares the Life Readiness page's dark theme.
+ * ready to work for it. It shares the Global Leadership page's dark theme.
  * Each programme has its own page — /digital-marketing (live) and
  * /career-readiness (both live) — and this page routes to both, then
  * makes room for the three things beyond the skill tracks: mentors,
@@ -98,7 +98,7 @@ const CONCEPTS: {
   {
     icon: Briefcase,
     title: 'Land your first internship',
-    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Career Readiness Score — proof that turns practice into a resume.',
+    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Global Readiness Score — proof that turns practice into a resume.',
     tag: 'Open now',
     live: true,
     to: '/community',
@@ -356,7 +356,7 @@ function HomePage() {
                 items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
                 live
                 to={CAREER_READINESS.path}
-                cta="Explore Life Readiness"
+                cta="Explore Global Leadership"
               />
             </div>
             <CompletionPath />

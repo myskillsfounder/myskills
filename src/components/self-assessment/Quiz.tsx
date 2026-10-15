@@ -71,7 +71,7 @@ const panel = 'card-glass-dark glow-edge relative overflow-hidden rounded-xl p-6
 /**
  * The self-assessment quiz, on the site's dark theme: one statement per
  * screen, rated Never / Sometimes / Often / Always, then an optional closing
- * question. Shared by the Life Readiness and Digital Marketing aptitude
+ * question. Shared by the Global Leadership and Digital Marketing aptitude
  * assessments. Scoring happens on the server (see onSubmit), so nothing here
  * knows which statements are reverse-scored.
  */

@@ -156,7 +156,7 @@ begin
           public.notify_row('From', coalesce(v_org, 'A MySkills partner'))
           || public.notify_row('They say', case p_resource when 'internships' then 'You are interning with them.'
                                                            else 'You are studying with them.' end)
-          || public.notify_row('If you accept', 'They can see your name, contact details, Career Readiness Score and certificates, until you stop sharing.')
+          || public.notify_row('If you accept', 'They can see your name, contact details, Global Readiness Score and certificates, until you stop sharing.')
           || public.notify_row('If you don''t know them', 'Decline, or ignore this. Nothing is shared unless you accept.'),
           'Review the request',
           'https://myskills.org.in/community'

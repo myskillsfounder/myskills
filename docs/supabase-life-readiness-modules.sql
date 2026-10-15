@@ -1,5 +1,5 @@
--- The Life Readiness Programme: fourteen modules, one for each skill in the
--- Life aptitude test, and the Career Readiness Score's method v7.
+-- The Global Leadership Programme: fourteen modules, one for each skill in the
+-- Leadership Aptitude Test, and the Global Readiness Score's method v7.
 --
 -- MODULES
 --   The five core modules stay as they are (three written tasks and a
@@ -9,17 +9,17 @@
 --   (career_readiness_core_items); the nine count toward finishing the
 --   programme and toward the score.
 --
--- THE SCORE, method v7 (Life Readiness only; Digital Marketing is unchanged)
+-- THE SCORE, method v7 (Global Leadership only; Digital Marketing is unchanged)
 --   Personal development stays out of 40:
 --     modules 25   the fourteen modules share 25 points (about 1.8 each)
 --     project 15   the mentor's rubric grade, 0-20, counted out of 15
---   Life Readiness live sessions stay on the record but no longer score.
+--   Global Leadership live sessions stay on the record but no longer score.
 --   The hold is unchanged: until the project passes, 8 activity points count.
 --   Every stored score is re-issued at the end, so the admin lists match.
 --
--- THE LIFE APTITUDE TEST
+-- THE LEADERSHIP APTITUDE TEST
 --   A student whose result is from the earlier, five-skill test may take the
---   Life aptitude test once; it replaces the result and the earlier scores
+--   Leadership Aptitude Test once; it replaces the result and the earlier scores
 --   are kept beside it (previous_scores).
 --
 -- ORDER: run this BEFORE deploying. The app this goes with saves answers to
@@ -94,7 +94,7 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------
--- 3. The Career Readiness Score, method v7
+-- 3. The Global Readiness Score, method v7
 -- ---------------------------------------------------------------------------
 create or replace function public.compute_career_readiness_score(p_user uuid)
 returns jsonb
@@ -106,7 +106,7 @@ declare
   c_method constant text := 'v7';
   c_mod_total constant numeric := 25;   -- shared by the fourteen modules
   c_modules constant int := 14;
-  c_cr_proj_pts constant numeric := 15; -- the Life Readiness project: its grade (0-20) counts out of 15
+  c_cr_proj_pts constant numeric := 15; -- the Global Leadership project: its grade (0-20) counts out of 15
   c_live_pts constant numeric := 1;
   c_held_cap constant numeric := 8;   -- activity points that count before the project passes
   c_proj_max constant numeric := 20;
@@ -141,7 +141,7 @@ begin
     return null;
   end if;
 
-  -- Life Readiness modules with all their items written (three or four each).
+  -- Global Leadership modules with all their items written (three or four each).
   select count(*) into v_modules from (
     select c.module
       from public.career_readiness_items() c
@@ -202,7 +202,7 @@ begin
   select count(*) into v_interns from public.internship_signoffs where student_id = p_user;
 
   v_module_pts := least(v_modules, c_modules) * c_mod_total / c_modules;
-  -- Life Readiness live sessions are on the record, not scored (v7).
+  -- Global Leadership live sessions are on the record, not scored (v7).
   v_cr_act := v_module_pts;
   -- Not coalesce(round(least(x, ...))): LEAST ignores NULLs, so a student with
   -- no Foundation result would get the maximum.
@@ -332,7 +332,7 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------
--- 6. The Life aptitude test: an earlier, five-skill result may be replaced once
+-- 6. The Leadership Aptitude Test: an earlier, five-skill result may be replaced once
 -- ---------------------------------------------------------------------------
 create or replace function public.submit_career_readiness_assessment(
   p_answers    jsonb,

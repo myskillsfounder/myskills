@@ -8,7 +8,7 @@ import { sessionUser } from './sessionUser'
  * A verified company posts a role; the team approves it; a student applies;
  * the company shortlists and offers; the student accepts; when it ends the
  * company signs it off and the team confirms. Only that last step reaches the
- * Career Readiness Score. Every rule is enforced on the server: these are the
+ * Global Readiness Score. Every rule is enforced on the server: these are the
  * calls, and the words for each state.
  */
 

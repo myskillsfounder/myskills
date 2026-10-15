@@ -77,7 +77,7 @@ function LiveSessionsPage() {
       <PageHeader
         eyebrow="Admin"
         title="Live sessions"
-        subtitle="Confirm that a student attended a live session with a trainer, mentor or institution. Each confirmed session is worth 2 points of their Career Readiness Score, up to 10 per programme."
+        subtitle="Confirm that a student attended a live session with a trainer, mentor or institution. Each confirmed session is worth 2 points of their Global Readiness Score, up to 10 per programme."
       />
 
       <form onSubmit={submit} className="card mb-6 space-y-4 p-5 sm:p-6">
@@ -172,7 +172,7 @@ function LiveSessionsPage() {
                   </td>
                   <td className="px-4 py-3 text-ink-800">{r.title}</td>
                   <td className="px-4 py-3 text-ink-600">
-                    {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Life Readiness'}
+                    {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Global Leadership'}
                   </td>
                   <td className="px-4 py-3 text-ink-700">
                     {r.host_name} <span className="text-xs text-ink-500">· {r.host_kind}</span>

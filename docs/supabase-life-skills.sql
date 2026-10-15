@@ -2,7 +2,7 @@
 -- the programme's own four skills, re-orders the statements and makes it one
 -- attempt per student. Don't re-run this file after that one.
 --
--- The Life Skills Profile: WHO's ten life skills as the Life Readiness
+-- The Life Skills Profile: WHO's ten life skills as the Global Leadership
 -- Programme's starting assessment.
 --
 -- It takes the place of the earlier five-skill assessment (goal setting,
@@ -16,7 +16,7 @@
 --     once. Taking it replaces the result; the earlier scores are kept beside
 --     it (previous_scores).
 --
--- Unchanged: it never counts toward the Career Readiness Score, and only the
+-- Unchanged: it never counts toward the Global Readiness Score, and only the
 -- student, their mentor and the team see it (companies don't).
 --
 -- Run once; either order with the deploy (until it's run, the app keeps

@@ -17,7 +17,7 @@
 --      starting point — and accepts or declines. Accepted = matched.
 --   3. They arrange sessions themselves (email, WhatsApp, a call). After each
 --      one the mentor logs it here; it becomes a confirmed live session, worth
---      2 points of the Career Readiness Score (up to 5 per programme).
+--      2 points of the Global Readiness Score (up to 5 per programme).
 --   One open request or match per student per programme. Either side can end
 --   a match; the student can then ask someone else.
 
@@ -256,7 +256,7 @@ begin
   select m.full_name into v_mentor from public.mentors m where m.id = new.mentor_id;
   select u.email into v_mentor_email from auth.users u where u.id = new.mentor_user;
   v_prog := case new.programme when 'digital-marketing' then 'Digital Marketing Programme'
-                               else 'Life Readiness Programme' end;
+                               else 'Global Leadership Programme' end;
 
   if tg_op = 'INSERT' then
     perform public.notify_email_address(

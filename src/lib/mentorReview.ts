@@ -151,7 +151,7 @@ export interface AdminMentorReview extends MentorReview {
   email: string | null
   assessment_percent: number | null
   tracks: { track: string; percent: number; attempts: number }[]
-  /** The learner's Life Readiness assessment, or null if not taken yet. */
+  /** The learner's Global Leadership assessment, or null if not taken yet. */
   career_readiness: {
     scores: Record<SkillKey, number>
     reflection: string | null

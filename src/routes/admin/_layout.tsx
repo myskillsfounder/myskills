@@ -93,7 +93,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     ],
   },
   // Both programmes together: the results, the projects mentors grade, and the
-  // content. (Digital Marketing and Life Readiness were two groups of mostly
+  // content. (Digital Marketing and Global Leadership were two groups of mostly
   // the same pages.)
   {
     label: 'Programmes',
@@ -126,7 +126,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
     label: 'Leads',
     items: [
       { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
-      { to: '/admin/cr-leads', label: 'Life Readiness leads', icon: Users, section: 'partner-leads' },
+      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'partner-leads' },
     ],
   },
   {

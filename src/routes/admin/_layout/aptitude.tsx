@@ -23,7 +23,7 @@ export const Route = createFileRoute('/admin/_layout/aptitude')({
 
 const TABS: { id: Programme; label: string }[] = [
   { id: 'digital-marketing', label: 'Marketing aptitude' },
-  { id: 'career-readiness', label: 'Life aptitude' },
+  { id: 'career-readiness', label: 'Leadership aptitude' },
 ]
 
 function AptitudePage() {
@@ -62,9 +62,9 @@ function AptitudePage() {
         <AptitudeResults
           key="cr"
           programme="career-readiness"
-          eyebrow="Life Readiness"
-          title="Life aptitude results"
-          subtitle="Where students start on the 14 skills the Life Readiness Programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
+          eyebrow="Global Leadership"
+          title="Leadership aptitude results"
+          subtitle="Where students start on the 14 skills the Global Leadership Programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
           dimensions={[...LIFE_SKILLS, ...PROGRAMME_SKILLS]}
           levelFor={(s) => personalLevel(s, LIFE_SKILL_MAX)}
           min={LIFE_SKILL_MIN}

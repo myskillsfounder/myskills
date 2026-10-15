@@ -28,7 +28,7 @@ const BAND_TONE: Record<string, string> = {
 }
 
 /**
- * Every student with their Career Readiness Score (recomputed by the server
+ * Every student with their Global Readiness Score (recomputed by the server
  * when the list loads) and where they are in both programmes. A row opens the
  * student's page with everything behind those numbers.
  */
@@ -73,7 +73,7 @@ function StudentsPage() {
       <PageHeader
         eyebrow="Students"
         title="All students"
-        subtitle="Career Readiness Score and progress in both programmes. Open a student to see everything behind the number."
+        subtitle="Global Readiness Score and progress in both programmes. Open a student to see everything behind the number."
       />
 
       <div className="mb-5 flex flex-wrap items-end gap-3">
@@ -128,7 +128,7 @@ function StudentsPage() {
                 <th scope="col" className="px-4 py-3 font-semibold">Student</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Score</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Digital Marketing</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Life Readiness</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Global Leadership</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Joined</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Working with</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Last login</th>

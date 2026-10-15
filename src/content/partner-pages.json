@@ -18,7 +18,7 @@
     "proofIntro": "Every student you meet has already put in the work on MySkills. You see it before you say yes.",
     "proof": [
       { "title": "An aptitude report", "body": "Strengths, gaps and what they want help with, from a scored assessment." },
-      { "title": "A Career Readiness Score", "body": "Out of 100, built only from verified activity on MySkills." },
+      { "title": "A Global Readiness Score", "body": "Out of 100, built only from verified activity on MySkills." },
       { "title": "Certificates across 8 skill tracks", "body": "SEO, Google Ads, Meta Ads, analytics and more, earned by practising real scenarios." },
       { "title": "Mentor-verified projects", "body": "Work a mentor has seen and signed off, with their name on it." }
     ],
@@ -77,9 +77,9 @@
         "name": "Companies",
         "tagline": "Hire interns who can show their work",
         "title": "Internship companies — hire students with proof",
-        "summary": "Offer internships to students who have practised real scenarios, worked with mentors and earned a Career Readiness Score.",
+        "summary": "Offer internships to students who have practised real scenarios, worked with mentors and earned a Global Readiness Score.",
         "bullets": [
-          "A Career Readiness Score out of 100, built from verified MySkills activity",
+          "A Global Readiness Score out of 100, built from verified MySkills activity",
           "Skills and projects vouched for by mentors",
           "Tell us the roles you offer and we'll be in touch"
         ],
@@ -120,7 +120,7 @@
       },
       {
         "q": "Who are the students?",
-        "a": "Students and early-career learners across India working through the MySkills Digital Marketing Programme and Life Readiness Programme."
+        "a": "Students and early-career learners across India working through the MySkills Digital Marketing Programme and Global Leadership Programme."
       },
       {
         "q": "What happens after I create a partner account?",
@@ -181,7 +181,7 @@
       },
       {
         "q": "Who are the students?",
-        "a": "Students and early-career learners across India working through the Digital Marketing Programme (eight skill tracks) and the Life Readiness Programme (five modules). They practise with AI first, then ask a mentor to work with them."
+        "a": "Students and early-career learners across India working through the Digital Marketing Programme (eight skill tracks) and the Global Leadership Programme (five modules). They practise with AI first, then ask a mentor to work with them."
       },
       {
         "q": "How much time will mentoring take?",
@@ -268,16 +268,16 @@
   "companies": {
     "path": "/become-an-internship-partner",
     "seoTitle": "Offer Internships to Skilled Students in India | MySkills",
-    "seoDescription": "Hire interns who've practised real scenarios, worked with mentors and earned a Career Readiness Score. Tell us the roles you're offering and we'll be in touch.",
+    "seoDescription": "Hire interns who've practised real scenarios, worked with mentors and earned a Global Readiness Score. Tell us the roles you're offering and we'll be in touch.",
     "eyebrow": "For companies",
     "h1": "Offer internships to students who've shown their skills",
-    "intro": "Hire interns who've practised real scenarios, worked with mentors and built a Career Readiness Score — not just sent a résumé. Tell us about your company and the roles you're offering, and we'll be in touch.",
+    "intro": "Hire interns who've practised real scenarios, worked with mentors and built a Global Readiness Score — not just sent a résumé. Tell us about your company and the roles you're offering, and we'll be in touch.",
     "cta": "Offer internships",
     "benefitsTitle": "Why companies partner with MySkills",
     "benefits": [
       {
         "title": "Evidence, not just a CV",
-        "body": "Every student builds a Career Readiness Score out of 100 from what they do on MySkills: learning, practice, live mentor sessions and mentor sign-off."
+        "body": "Every student builds a Global Readiness Score out of 100 from what they do on MySkills: learning, practice, live mentor sessions and mentor sign-off."
       },
       {
         "title": "Skills a mentor has vouched for",
@@ -285,7 +285,7 @@
       },
       {
         "title": "Students across India",
-        "body": "A growing pool of students working through the Digital Marketing and Life Readiness programmes."
+        "body": "A growing pool of students working through the Digital Marketing and Global Leadership programmes."
       },
       {
         "title": "You describe the role",
@@ -306,7 +306,7 @@
     ],
     "faqs": [
       {
-        "q": "What is the Career Readiness Score?",
+        "q": "What is the Global Readiness Score?",
         "a": "A score out of 100 that counts only what a student does on MySkills: learning and practice across their programmes, live sessions with mentors, and mentor sign-off. It is worked out on our servers, not typed in by the student."
       },
       {
