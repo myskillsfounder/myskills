@@ -8,6 +8,7 @@ import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
+import { lifeSkillsForModule } from '@/lib/lifeSkills'
 import { ModuleFlow } from '@/components/career-readiness/ModuleFlow'
 
 // Not in PAGE_SEO on purpose — it's behind sign-in.
@@ -42,7 +43,14 @@ function CareerModulePage() {
           <PageHeader
             eyebrow={`Career Readiness · Module ${index + 1} of ${PERSONAL_DEVELOPMENT_MODULES.length}`}
             title={meta.title}
-            description={content.outcome}
+            description={
+              <>
+                {content.outcome}
+                <span className="mt-1 block text-xs text-ink-500">
+                  Life skills it builds: {lifeSkillsForModule(content.slug).join(' · ')}
+                </span>
+              </>
+            }
           />
           {loading ? (
             <p className="text-sm text-ink-600">Loading…</p>

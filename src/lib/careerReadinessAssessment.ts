@@ -1,6 +1,11 @@
 /**
- * Career Readiness initial assessment — a self-awareness baseline for the five
- * programme modules. See docs/supabase-career-readiness-assessment.sql.
+ * Career Readiness starting assessment: since 2026-10 the Life Skills Profile,
+ * WHO's ten life skills (lib/lifeSkills.ts, docs/supabase-life-skills.sql).
+ * Students who took the earlier version keep that result, five skills of the
+ * programme's own, until they take the profile; both kinds of result are read
+ * here, told apart by their keys (skillsFor).
+ *
+ * The earlier version, as it was:
  *
  * Not a test: 20 statements, each rated Never / Sometimes / Often / Always
  * (1-4). One statement per skill is worded negatively and scored in reverse.
@@ -15,12 +20,15 @@ import { shared } from './shared'
 import { sessionUser } from './sessionUser'
 import { forgetStarted } from './startedCache'
 import { ensureProfile } from './profile'
+import { LIFE_READOUT, LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN, type LifeSkillKey } from './lifeSkills'
 
-export type SkillKey = 'communication' | 'goal-setting' | 'growth-mindset' | 'leadership' | 'agile'
+/** The earlier version's five skills. */
+export type LegacySkillKey = 'communication' | 'goal-setting' | 'growth-mindset' | 'leadership' | 'agile'
+export type SkillKey = LegacySkillKey | LifeSkillKey
 
 /** In the order the assessment cycles through them. `module` is the title in
  *  PERSONAL_DEVELOPMENT_MODULES (lib/programmes.ts) that trains the skill. */
-export const SKILLS: { key: SkillKey; name: string; module: string }[] = [
+export const SKILLS: { key: LegacySkillKey; name: string; module: string }[] = [
   { key: 'communication', name: 'Communication', module: 'Communication' },
   { key: 'goal-setting', name: 'Goal setting', module: 'Goal Setting' },
   { key: 'growth-mindset', name: 'Growth mindset', module: 'Growth Mindset' },
@@ -46,7 +54,8 @@ export interface AssessmentQuestion {
 }
 
 export interface AssessmentResult {
-  scores: Record<SkillKey, number>
+  /** Per skill: the ten life skills, or the earlier version's five. */
+  scores: Partial<Record<SkillKey, number>>
   reflection: string | null
   completedAt: string | null
 }
@@ -55,10 +64,14 @@ export type Level = 'Emerging' | 'Developing' | 'Established' | 'Standout'
 
 export const LEVELS: Level[] = ['Emerging', 'Developing', 'Established', 'Standout']
 
-export function levelFor(score: number): Level {
-  if (score >= 14) return 'Standout'
-  if (score >= 11) return 'Established'
-  if (score >= 8) return 'Developing'
+/** The level for a score on a scale up to `max` (16 for the earlier version's
+ *  four statements, 12 for the profile's three): the same shares of the scale
+ *  as the earlier 14 / 11 / 8 out of 16. */
+export function levelFor(score: number, max = SKILL_MAX): Level {
+  const share = score / max
+  if (share >= 14 / 16) return 'Standout'
+  if (share >= 11 / 16) return 'Established'
+  if (share >= 8 / 16) return 'Developing'
   return 'Emerging'
 }
 
@@ -78,13 +91,51 @@ export const LEVEL_TONE: Record<Level, string> = {
   Standout: 'bg-emerald-50 text-emerald-700',
 }
 
-/** Where to start: the lowest-scoring skill, ties broken by SKILLS order. */
-export function suggestedStart(scores: Record<SkillKey, number>) {
-  return SKILLS.reduce((low, s) => ((scores[s.key] ?? 0) < (scores[low.key] ?? 0) ? s : low), SKILLS[0])
+/** Is this a Life Skills Profile (as opposed to the earlier version)? */
+export const isLifeSkills = (scores: Partial<Record<string, number>>) => 'self-awareness' in scores
+
+/** The range a skill is scored on, for this kind of result. */
+export const scaleFor = (scores: Partial<Record<string, number>>) =>
+  isLifeSkills(scores) ? { min: LIFE_SKILL_MIN, max: LIFE_SKILL_MAX } : { min: SKILL_MIN, max: SKILL_MAX }
+
+const MODULE_TITLE: Record<string, string> = {
+  'goal-setting': 'Goal Setting',
+  communication: 'Communication',
+  leadership: 'Leadership',
+  agile: 'Agile Methodology',
+  'growth-mindset': 'Growth Mindset',
 }
 
-/** Plain-language read-out for each skill at each level. */
-export const READOUT: Record<SkillKey, Record<Level, string>> = {
+/**
+ * Each skill in a result, in the order it's shown, with its score, level and
+ * read-out, and the module(s) that build it. Works for both kinds of result.
+ */
+export function skillsFor(scores: Partial<Record<SkillKey, number>>) {
+  const { max } = scaleFor(scores)
+  if (isLifeSkills(scores)) {
+    return LIFE_SKILLS.map((s) => {
+      const score = scores[s.key] ?? 0
+      const level = levelFor(score, max)
+      return { key: s.key as SkillKey, name: s.name, score, level, max, readout: LIFE_READOUT[s.key][level], modules: s.modules.map((m) => MODULE_TITLE[m]) }
+    })
+  }
+  return SKILLS.map((s) => {
+    const score = scores[s.key] ?? 0
+    const level = levelFor(score, max)
+    return { key: s.key as SkillKey, name: s.name, score, level, max, readout: READOUT[s.key][level], modules: [s.module] }
+  })
+}
+
+/** Where to start: the module that builds the lowest-scoring skill (ties go to
+ *  the skill shown first). */
+export function suggestedStart(scores: Partial<Record<SkillKey, number>>) {
+  const skills = skillsFor(scores)
+  const low = skills.reduce((a, b) => (b.score < a.score ? b : a), skills[0])
+  return { skill: low.name, module: low.modules[0] }
+}
+
+/** Plain-language read-out for each of the earlier version's skills at each level. */
+export const READOUT: Record<LegacySkillKey, Record<Level, string>> = {
   communication: {
     Emerging:
       'You don’t yet spend much time noticing or practising how you communicate. That’s a normal starting point — small habits, like watching how good speakers structure what they say, move this quickly.',
@@ -141,14 +192,24 @@ function fail(error: { message?: string }): never {
   throw new Error(error.message?.trim() || 'Something went wrong.')
 }
 
-/** The 20 statements, in the order they're asked. */
-export async function fetchAssessmentQuestions(): Promise<AssessmentQuestion[]> {
-  const { data, error } = await supabase
+/**
+ * The statements to ask, in order: the Life Skills Profile's (version 2).
+ * Before docs/supabase-life-skills.sql is run there is no version to choose
+ * by, so the earlier statements are asked and `lifeSkills` is false.
+ */
+export async function fetchAssessmentQuestions(): Promise<{ questions: AssessmentQuestion[]; lifeSkills: boolean }> {
+  const v2 = await supabase
+    .from('career_readiness_assessment_questions')
+    .select('id, skill, statement')
+    .eq('version', 2)
+    .order('sort_order', { ascending: true })
+  if (!v2.error && (v2.data ?? []).length > 0) return { questions: v2.data as AssessmentQuestion[], lifeSkills: true }
+  const all = await supabase
     .from('career_readiness_assessment_questions')
     .select('id, skill, statement')
     .order('sort_order', { ascending: true })
-  if (error) fail(error)
-  return (data ?? []) as AssessmentQuestion[]
+  if (all.error) fail(all.error)
+  return { questions: (all.data ?? []) as AssessmentQuestion[], lifeSkills: false }
 }
 
 /** The signed-in learner's result, or null if they haven't taken it. Before
@@ -168,13 +229,14 @@ async function fetchMyAssessmentResultOnce(): Promise<AssessmentResult | null> {
     .maybeSingle()
   if (error || !data) return null
   return {
-    scores: data.scores as Record<SkillKey, number>,
+    scores: data.scores as Partial<Record<SkillKey, number>>,
     reflection: data.reflection ?? null,
     completedAt: data.completed_at ?? null,
   }
 }
 
-/** Scores and saves server-side; rejects a second attempt. */
+/** Scores and saves server-side; rejects a second attempt (someone with only
+ *  the earlier version's result may take the Life Skills Profile once). */
 export async function submitAssessment(
   answers: Record<string, number>,
   reflection: string,
@@ -186,18 +248,10 @@ export async function submitAssessment(
   })
   if (error) fail(error)
   forgetStarted()
-  const r = data as { scores: Record<SkillKey, number>; reflection: string | null }
+  const r = data as { scores: Partial<Record<SkillKey, number>>; reflection: string | null }
   return { scores: r.scores, reflection: r.reflection ?? null, completedAt: null }
 }
 
-/** Each skill with its score and level, in the order they were asked. */
-export function orderedSkills(scores: Record<SkillKey, number>) {
-  return SKILLS.map((s) => ({
-    ...s,
-    score: scores[s.key] ?? 0,
-    level: levelFor(scores[s.key] ?? 0),
-  }))
-}
 
 /** Has the learner taken it? null while loading. */
 export function useMyAssessmentResult() {

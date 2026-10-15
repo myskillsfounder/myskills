@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
+import { isLifeSkills, useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -34,9 +34,9 @@ export function AssessmentCard() {
         <div className="relative min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">Start here</p>
           <h3 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white">
-            Personal aptitude assessment
+            Life skills profile
           </h3>
-          <p className="mt-1.5 text-sm text-white/70">20 statements, about 5 minutes. Not a test.</p>
+          <p className="mt-1.5 text-sm text-white/70">WHO’s ten life skills. 30 statements, about 8 minutes. Not a test.</p>
         </div>
         <Link to="/career-readiness-assessment" className={`relative ${cta}`}>
           Take the assessment
@@ -49,11 +49,15 @@ export function AssessmentCard() {
   return (
     <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between">
       <Rings />
-      <h3 className="relative min-w-0 font-display text-2xl font-semibold leading-tight text-white">
-        Your personal aptitude
-      </h3>
+      <div className="relative min-w-0">
+        <h3 className="font-display text-2xl font-semibold leading-tight text-white">Your life skills profile</h3>
+        {/* Taken before the profile existed: it's there to take now. */}
+        {!isLifeSkills(result.scores) && (
+          <p className="mt-1.5 text-sm text-white/70">New: the programme now measures WHO’s ten life skills. Take the profile.</p>
+        )}
+      </div>
       <Link to="/career-readiness-assessment" className={`relative ${cta}`}>
-        View your results
+        {isLifeSkills(result.scores) ? 'View your results' : 'Take the profile'}
         <ArrowRight size={16} />
       </Link>
     </section>

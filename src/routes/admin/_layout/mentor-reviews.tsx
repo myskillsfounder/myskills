@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ClipboardCheck, Mail } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { skillTracks } from '@/lib/skillTracks'
-import { LEVEL_TONE, SKILL_MAX, orderedSkills } from '@/lib/careerReadinessAssessment'
+import { LEVEL_TONE, isLifeSkills, skillsFor } from '@/lib/careerReadinessAssessment'
 import {
   RUBRIC_CRITERIA,
   fetchMentorReviewQueue,
@@ -108,18 +108,20 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
         // learner's self-awareness baseline, not their Digital Marketing scores.
         <div className="mt-4 border-t border-ink-200 pt-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-            Personal aptitude assessment · baseline
+            {review.career_readiness && !isLifeSkills(review.career_readiness.scores)
+              ? 'Starting assessment (earlier five-skill version) · baseline'
+              : 'Life skills profile · baseline'}
           </p>
           {review.career_readiness ? (
             <>
               <ul className="mt-2 space-y-1.5 text-sm">
-                {orderedSkills(review.career_readiness.scores).map((s) => (
+                {skillsFor(review.career_readiness.scores).map((s) => (
                   <li key={s.key} className="flex items-center justify-between gap-3">
                     <span className="truncate text-ink-700">{s.name}</span>
                     <span className="flex shrink-0 items-center gap-2">
                       <span className="tabular-nums font-semibold text-ink-900">
                         {s.score}
-                        <span className="font-normal text-ink-400"> / {SKILL_MAX}</span>
+                        <span className="font-normal text-ink-400"> / {s.max}</span>
                       </span>
                       <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${LEVEL_TONE[s.level]}`}>
                         {s.level}

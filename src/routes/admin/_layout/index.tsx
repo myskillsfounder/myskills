@@ -397,7 +397,7 @@ function DashboardPage() {
     : []
   const cr: Step[] = stats
     ? [
-        { label: 'Took the personal aptitude assessment', count: stats.career_readiness.aptitude },
+        { label: 'Took the life skills profile', count: stats.career_readiness.aptitude },
         { label: 'Started the modules', count: stats.career_readiness.started },
         { label: 'All 5 modules written', count: stats.career_readiness.all_modules },
         { label: 'Submitted a project', count: stats.career_readiness.review_asked },

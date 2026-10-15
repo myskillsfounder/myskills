@@ -6,7 +6,7 @@ import { fetchStudentDetail, type StudentDetail } from '@/lib/adminStudents'
 import { bandFor } from '@/lib/readinessScore'
 import { skillTracks } from '@/lib/skillTracks'
 import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
-import { SKILLS, levelFor as skillLevel } from '@/lib/careerReadinessAssessment'
+import { skillsFor } from '@/lib/careerReadinessAssessment'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Avatar, EmptyState, Skeleton } from '@/components/ui'
@@ -53,7 +53,7 @@ function AptitudeList({
   reflection,
   completedAt,
 }: {
-  rows: { name: string; score: number; level: string }[]
+  rows: { name: string; score: number; level: string; max?: number }[]
   reflection: string | null
   completedAt: string
 }) {
@@ -64,7 +64,7 @@ function AptitudeList({
           <li key={r.name} className="flex items-center justify-between gap-3">
             <span className="truncate text-ink-700">{r.name}</span>
             <span className="shrink-0 text-ink-500">
-              <span className="font-semibold tabular-nums text-ink-900">{r.score}</span>/16 · {r.level}
+              <span className="font-semibold tabular-nums text-ink-900">{r.score}</span>/{r.max ?? 16} · {r.level}
             </span>
           </li>
         ))}
@@ -282,14 +282,11 @@ function StudentPage() {
               )
             })}
           </ul>
-          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Personal aptitude</p>
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Life skills profile</p>
           <div className="mt-2">
             {cr.aptitude ? (
               <AptitudeList
-                rows={SKILLS.map((s) => {
-                  const sc = cr.aptitude!.scores[s.key] ?? 0
-                  return { name: s.name, score: sc, level: skillLevel(sc) }
-                })}
+                rows={skillsFor(cr.aptitude.scores).map((s) => ({ name: s.name, score: s.score, level: s.level, max: s.max }))}
                 reflection={cr.aptitude.reflection}
                 completedAt={cr.aptitude.completed_at}
               />

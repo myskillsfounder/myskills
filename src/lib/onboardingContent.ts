@@ -198,7 +198,7 @@ export const ASSESSMENT_ROUTE: Record<StartKey, '/aptitude-assessment' | '/caree
 
 export const START_LABEL: Record<StartKey, string> = {
   marketing: 'Marketing aptitude',
-  personal: 'Personal aptitude',
+  personal: 'Life skills profile',
 }
 
 /* ------------------------------------------------------------------ The answer */
@@ -231,8 +231,8 @@ const STEPS: Record<StartKey, Plan['steps']> = {
   ],
   personal: [
     {
-      title: 'Take the Personal aptitude',
-      body: '20 statements, about five minutes. It shows your starting point in goal setting, communication, leadership, agile and growth mindset.',
+      title: 'Take the Life skills profile',
+      body: '30 statements, about eight minutes. It shows your starting point on WHO’s ten life skills, from self-awareness to coping with stress.',
     },
     {
       title: 'Work through five modules',

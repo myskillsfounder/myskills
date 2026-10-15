@@ -9,7 +9,7 @@ import {
   type MentorSideMatch,
 } from '@/lib/mentorMatches'
 import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
-import { SKILLS, levelFor as skillLevel } from '@/lib/careerReadinessAssessment'
+import { skillsFor } from '@/lib/careerReadinessAssessment'
 import { LIVE_SESSIONS_MAX_POINTS, POINTS_PER_LIVE_SESSION } from '@/lib/readinessScore'
 import { awardBadge, fetchMenteeSkills, removeBadge, skillName, type MenteeSkill } from '@/lib/skillBadges'
 import { addMenteeProject, fetchMenteeProjects, removeMenteeProject, type MentorProject } from '@/lib/mentorProjects'
@@ -28,8 +28,9 @@ function AptitudeReport({ m }: { m: MentorSideMatch }) {
   if (!m.aptitude) return <p className="text-sm text-ink-500">No aptitude report.</p>
   const dims =
     m.programme === 'digital-marketing'
-      ? APTITUDES.map((a) => ({ name: a.name, score: m.aptitude!.scores[a.key] ?? 0, level: aptitudeLevel(m.aptitude!.scores[a.key] ?? 0) }))
-      : SKILLS.map((s) => ({ name: s.name, score: m.aptitude!.scores[s.key] ?? 0, level: skillLevel(m.aptitude!.scores[s.key] ?? 0) }))
+      ? APTITUDES.map((a) => ({ name: a.name, score: m.aptitude!.scores[a.key] ?? 0, max: 16, level: aptitudeLevel(m.aptitude!.scores[a.key] ?? 0) }))
+      : // The life skills profile, or the earlier five-skill version for someone who took that.
+        skillsFor(m.aptitude.scores).map((s) => ({ name: s.name, score: s.score, max: s.max, level: s.level }))
   return (
     <div>
       <ul className="space-y-1 text-sm">
@@ -37,7 +38,7 @@ function AptitudeReport({ m }: { m: MentorSideMatch }) {
           <li key={d.name} className="flex items-center justify-between gap-3">
             <span className="truncate text-ink-700">{d.name}</span>
             <span className="shrink-0 text-ink-500">
-              <span className="font-semibold tabular-nums text-ink-900">{d.score}</span>/16 · {d.level}
+              <span className="font-semibold tabular-nums text-ink-900">{d.score}</span>/{d.max} · {d.level}
             </span>
           </li>
         ))}

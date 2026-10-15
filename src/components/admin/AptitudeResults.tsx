@@ -20,6 +20,8 @@ export function AptitudeResults({
   dimensions,
   levelFor,
   reflectionLabel,
+  min = 4,
+  max = 16,
 }: {
   programme: 'digital-marketing' | 'career-readiness'
   eyebrow: string
@@ -28,6 +30,9 @@ export function AptitudeResults({
   dimensions: { key: string; name: string }[]
   levelFor: (score: number) => string
   reflectionLabel: string
+  /** The range each dimension is scored on. */
+  min?: number
+  max?: number
 }) {
   const [rows, setRows] = useState<AptitudeRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -44,10 +49,13 @@ export function AptitudeResults({
     }
   }, [programme])
 
+  // Averages over the results that have these dimensions: results of an
+  // earlier version (scored on other ones) are listed, but left out of them.
+  const scored = rows.filter((r) => dimensions.some((d) => d.key in r.scores))
   const averages = dimensions
     .map((d) => ({
       ...d,
-      avg: rows.length ? rows.reduce((s, r) => s + (r.scores[d.key] ?? 0), 0) / rows.length : 0,
+      avg: scored.length ? scored.reduce((s, r) => s + (r.scores[d.key] ?? 0), 0) / scored.length : 0,
     }))
     .sort((a, b) => a.avg - b.avg)
 
@@ -80,11 +88,11 @@ export function AptitudeResults({
                   <div className="flex items-baseline justify-between gap-3 text-sm">
                     <span className="text-ink-700">{a.name}</span>
                     <span className="shrink-0 text-ink-500">
-                      <span className="font-semibold tabular-nums text-ink-900">{a.avg.toFixed(1)}</span>/16 · {levelFor(Math.round(a.avg))}
+                      <span className="font-semibold tabular-nums text-ink-900">{a.avg.toFixed(1)}</span>/{max} · {levelFor(Math.round(a.avg))}
                     </span>
                   </div>
                   <div className="mt-1 h-2 overflow-hidden rounded-full bg-ink-100">
-                    <div className="h-full rounded-full bg-brand-500" style={{ width: `${((a.avg - 4) / 12) * 100}%` }} />
+                    <div className="h-full rounded-full bg-brand-500" style={{ width: `${Math.max(0, ((a.avg - min) / (max - min)) * 100)}%` }} />
                   </div>
                 </li>
               ))}
