@@ -9,7 +9,7 @@
 -- would just add friction to a chat that's about to start. When no mentor
 -- is online, the request sits in a queue nobody may see soon, so the bot
 -- now also asks for a name, phone and city before queueing, the same way
--- the Life Readiness and internship-partner lead forms do. These three
+-- the Global Leadership and internship-partner lead forms do. These three
 -- columns are nullable and only ever populated on that branch.
 
 alter table public.support_sessions add column if not exists contact_name text

@@ -62,9 +62,9 @@ function AptitudePage() {
         <AptitudeResults
           key="cr"
           programme="career-readiness"
-          eyebrow="Life Readiness"
+          eyebrow="Global Leadership"
           title="Life aptitude results"
-          subtitle="Where students start on the 14 skills the Life Readiness Programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
+          subtitle="Where students start on the 14 skills the Global Leadership Programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
           dimensions={[...LIFE_SKILLS, ...PROGRAMME_SKILLS]}
           levelFor={(s) => personalLevel(s, LIFE_SKILL_MAX)}
           min={LIFE_SKILL_MIN}

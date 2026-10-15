@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui'
 
 const PROGRAMME: Record<MatchProgramme, { label: string; aptitude: string; aptitudeTo: '/aptitude-assessment' | '/career-readiness-assessment' }> = {
   'digital-marketing': { label: 'Digital Marketing', aptitude: 'Digital Marketing aptitude assessment', aptitudeTo: '/aptitude-assessment' },
-  'career-readiness': { label: 'Life Readiness', aptitude: 'life aptitude test', aptitudeTo: '/career-readiness-assessment' },
+  'career-readiness': { label: 'Global Leadership', aptitude: 'life aptitude test', aptitudeTo: '/career-readiness-assessment' },
 }
 
 /** What students most often want from a mentor, per programme, each with the

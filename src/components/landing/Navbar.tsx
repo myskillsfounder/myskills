@@ -10,7 +10,7 @@ import { useAuthUser } from '@/lib/useAuth'
 const navLinks = [
   { label: 'Home', href: '/', exact: true },
   { label: 'Digital Marketing', href: '/digital-marketing' },
-  { label: 'Life Readiness', href: '/career-readiness' },
+  { label: 'Global Leadership', href: '/career-readiness' },
 ]
 
 export function Navbar() {

@@ -1,7 +1,7 @@
 /**
  * Skill badges, awarded by mentors — see docs/supabase-skill-badges.sql. A
  * mentor can award a badge for one of their programme's skills (a Digital
- * Marketing track or a Life Readiness module) to a student they mentor,
+ * Marketing track or a Global Leadership module) to a student they mentor,
  * once the student has earned it in practice.
  */
 import { useEffect, useState } from 'react'

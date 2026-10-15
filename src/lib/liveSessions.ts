@@ -3,7 +3,7 @@
  * live-sessions.sql. Attendance is confirmed by the person who ran the session
  * (or the team on their behalf), never added by the student, and is worth 2
  * points each toward the Career Readiness Score, up to 10 per programme:
- * Life Readiness sessions count toward Personal Development, Digital
+ * Global Leadership sessions count toward Personal Development, Digital
  * Marketing training toward Professional Development.
  */
 import { useEffect, useState } from 'react'
@@ -22,7 +22,7 @@ export type SessionProgramme = 'career-readiness' | 'digital-marketing'
 
 export const SESSION_PROGRAMMES: { value: SessionProgramme; label: string }[] = [
   { value: 'digital-marketing', label: 'Digital Marketing (Professional)' },
-  { value: 'career-readiness', label: 'Life Readiness (Personal)' },
+  { value: 'career-readiness', label: 'Global Leadership (Personal)' },
 ]
 
 export interface LiveSession {
@@ -63,7 +63,7 @@ export function useMyLiveSessions() {
   }, [])
   return {
     sessions,
-    /** Life Readiness sessions (Personal Development). */
+    /** Global Leadership sessions (Personal Development). */
     crSessions: sessions.filter((s) => (s.programme ?? 'career-readiness') === 'career-readiness'),
     /** Digital Marketing training (Professional Development). */
     dmSessions: sessions.filter((s) => s.programme === 'digital-marketing'),

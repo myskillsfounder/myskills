@@ -9,7 +9,7 @@ import { CORE_MODULES } from '@/lib/careerReadinessContent'
 import { isLifeSkills, levelFor, scaleFor, useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 
 /**
- * The Life Readiness Programme's fourteen modules, live on /practice beside
+ * The Global Leadership Programme's fourteen modules, live on /practice beside
  * Digital Marketing's. Each card shows how far the learner is through that
  * module and opens it. The list is shared with /career-readiness.
  */
@@ -26,7 +26,7 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
   return (
     <section>
       <SectionHeader
-        eyebrow="Life Readiness"
+        eyebrow="Global Leadership"
         title="The fourteen modules"
         description="One for each skill in the Life aptitude test. Learn it, practise it in writing, then reflect. The first five are the core: finish them and you can build your project, which a mentor grades."
       />

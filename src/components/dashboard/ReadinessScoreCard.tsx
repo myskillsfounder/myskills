@@ -44,7 +44,7 @@ export function useCountUp(target: number, run: boolean, ms = 1200) {
 }
 
 /** Each part in the colour of the programme behind it — the same violet
- *  (Digital Marketing) and green (Life Readiness) as the course tiles. */
+ *  (Digital Marketing) and green (Global Leadership) as the course tiles. */
 const PART_TONE = {
   personal: { dot: 'bg-emerald-500', bar: 'from-emerald-400 to-teal-600', glow: 'shadow-[0_0_10px_-2px_rgba(16,185,129,0.6)]' },
   professional: { dot: 'bg-brand-600', bar: 'from-brand-400 to-brand-700', glow: 'shadow-[0_0_10px_-2px_rgba(111,99,226,0.6)]' },
@@ -160,7 +160,7 @@ export function slidesFor(h: Highlights): Slide[] {
   const mentor: Slide = {
     key: 'mentor',
     eyebrow: 'Capstone project',
-    title: 'Your project, graded by a mentor, is worth up to 20 points in Digital Marketing and 15 in Life Readiness',
+    title: 'Your project, graded by a mentor, is worth up to 20 points in Digital Marketing and 15 in Global Leadership',
     note: 'A passing grade also releases the points you’ve already earned.',
     cta: h.hasMentor ? 'See your mentor' : 'Find your mentor',
     to: '/practice',

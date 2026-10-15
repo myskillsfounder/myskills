@@ -1,5 +1,5 @@
 /**
- * What each Life Readiness module teaches and asks for — the words on the
+ * What each Global Leadership module teaches and asks for — the words on the
  * module pages. This is the file to edit to change the programme: every module
  * is Learn (short cards), Practise (written tasks) and Reflect (one prompt),
  * and the app builds the rest from it.

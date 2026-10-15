@@ -113,7 +113,7 @@ begin
   end if;
 
   if p_programme = 'career-readiness' then
-    raise exception 'The Life Readiness Programme hasn''t opened yet.';
+    raise exception 'The Global Leadership Programme hasn''t opened yet.';
   elsif p_programme is distinct from 'digital-marketing' then
     raise exception 'Unknown programme.';
   end if;
@@ -261,7 +261,7 @@ begin
   select p.full_name into v_name from public.profiles p where p.id = new.user_id;
   select u.email into v_email from auth.users u where u.id = new.user_id;
   v_prog := case new.programme when 'digital-marketing' then 'Digital Marketing Programme'
-                               else 'Life Readiness Programme' end;
+                               else 'Global Leadership Programme' end;
 
   if tg_op = 'INSERT' then
     perform public.notify_email(

@@ -18,7 +18,7 @@ import { Alert, Avatar, Badge, Button, EmptyState, Input, Textarea } from '@/com
 
 const PROGRAMME: Record<string, string> = {
   'digital-marketing': 'Digital Marketing',
-  'career-readiness': 'Life Readiness',
+  'career-readiness': 'Global Leadership',
 }
 const MAX_SESSIONS = LIVE_SESSIONS_MAX_POINTS / POINTS_PER_LIVE_SESSION
 const today = () => new Date().toISOString().slice(0, 10)

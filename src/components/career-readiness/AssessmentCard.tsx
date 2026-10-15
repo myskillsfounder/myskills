@@ -17,8 +17,8 @@ const cta =
   'press inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
 
 /**
- * Practice's entry to the Life Readiness assessment, in the same dark
- * feature-card treatment as the Life Readiness cards around it: an
+ * Practice's entry to the Global Leadership assessment, in the same dark
+ * feature-card treatment as the Global Leadership cards around it: an
  * invitation until it's taken, then just a heading and a way to the result,
  * which lives on the result page. Renders nothing while loading so the page doesn't flash the
  * wrong state.

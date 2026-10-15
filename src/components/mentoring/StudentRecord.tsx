@@ -19,7 +19,7 @@ const day = (iso: string) =>
     year: 'numeric',
   })
 
-const PROGRAMME = { 'digital-marketing': 'Digital Marketing', 'career-readiness': 'Life Readiness' } as const
+const PROGRAMME = { 'digital-marketing': 'Digital Marketing', 'career-readiness': 'Global Leadership' } as const
 
 const STATUS: Record<RecordRelationship['status'], { label: string; tone: 'success' | 'warning' | 'neutral' }> = {
   active: { label: 'Active', tone: 'success' },
@@ -219,7 +219,7 @@ export function StudentRecord({ studentId }: { studentId: string }) {
                     progress.personal?.modules_done != null && `${progress.personal.modules_done} of 14 modules finished`,
                     progress.professional?.tracks_passed != null && `${progress.professional.tracks_passed} of 8 practice tracks passed`,
                     progress.professional?.foundation_percent != null && `Foundation assessment ${progress.professional.foundation_percent}%`,
-                    progress.personal?.project_status === 'approved' && 'Life Readiness project passed',
+                    progress.personal?.project_status === 'approved' && 'Global Leadership project passed',
                     progress.professional?.project_status === 'approved' && 'Digital Marketing project passed',
                   ]
                     .filter(Boolean)

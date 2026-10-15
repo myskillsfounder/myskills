@@ -9,7 +9,7 @@ import {
 import { SkillProfile } from '@/components/self-assessment/Profile'
 
 /**
- * A learner's Life Readiness starting point, in the shared dark result view:
+ * A learner's Global Leadership starting point, in the shared dark result view:
  * their Life aptitude test (the 14 skills the programme builds), or, for someone who took
  * it before the profile existed, the earlier five skills. Where to start is
  * the module that builds their lowest skill: it's where the programme will
@@ -34,8 +34,8 @@ export function AssessmentResult({ result }: { result: Result }) {
       start={{
         title: start.module,
         body: life
-          ? `Your lowest starting point is ${start.skill}, and the ${start.module} module builds it, so it’s where the programme will move the needle most. The Life Readiness Programme is open — start here.`
-          : 'It’s your lowest starting point, so it’s where the programme will move the needle most. The Life Readiness Programme is open — start here.',
+          ? `Your lowest starting point is ${start.skill}, and the ${start.module} module builds it, so it’s where the programme will move the needle most. The Global Leadership Programme is open — start here.`
+          : 'It’s your lowest starting point, so it’s where the programme will move the needle most. The Global Leadership Programme is open — start here.',
         cta: { to: '/practice', label: 'Open the programme' },
       }}
       detail={{

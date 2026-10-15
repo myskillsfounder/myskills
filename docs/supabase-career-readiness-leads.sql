@@ -1,4 +1,4 @@
--- Life Readiness Programme — hero lead capture (name, phone, city).
+-- Global Leadership Programme — hero lead capture (name, phone, city).
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
 -- Depends on public.is_admin() (docs/supabase-mentor-onboarding.sql) and the
@@ -75,9 +75,9 @@ begin
   select count(*) into v_total from public.career_readiness_leads;
 
   perform public.notify_email(
-    format('[MySkills · Lead] %s — Life Readiness Programme (%s total)', new.full_name, v_total),
+    format('[MySkills · Lead] %s — Global Leadership Programme (%s total)', new.full_name, v_total),
     public.notify_layout(
-      'New Life Readiness lead',
+      'New Global Leadership lead',
       public.notify_row('Name', new.full_name)
       || public.notify_row('Phone', new.phone)
       || public.notify_row('City', new.city)

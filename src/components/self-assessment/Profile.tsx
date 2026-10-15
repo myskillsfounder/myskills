@@ -108,7 +108,7 @@ function Radar({ skills, min, max }: { skills: ProfileSkill[]; min: number; max:
 /**
  * A self-assessment result on the site's dark theme: the scores as one shape,
  * a "start here" panel, then a level and read-out per dimension. Shared by
- * the Life Readiness and Digital Marketing aptitude assessments, so both
+ * the Global Leadership and Digital Marketing aptitude assessments, so both
  * read as the same experience. Framed as a baseline, never a grade.
  */
 export function SkillProfile({

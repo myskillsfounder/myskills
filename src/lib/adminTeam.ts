@@ -43,7 +43,7 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
     label: 'Leads',
     sections: [
       { id: 'demo-requests', label: 'Demo requests', opens: 'Institutions asking for a demo' },
-      { id: 'partner-leads', label: 'Partner leads', opens: 'Internship companies and Life Readiness leads' },
+      { id: 'partner-leads', label: 'Partner leads', opens: 'Internship companies and Global Leadership leads' },
     ],
   },
   {

@@ -1,6 +1,6 @@
 /**
  * Onboarding content — edit copy, options, and placeholders here (no JSX changes
- * needed). Covers both programmes: Digital Marketing and Life Readiness.
+ * needed). Covers both programmes: Digital Marketing and Global Leadership.
  *
  * Consumed by routes/onboarding.tsx (the sentence: stage, goal and where to
  * start, then the plan built from them) and by the profile

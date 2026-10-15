@@ -240,7 +240,7 @@ function insights(stats: AdminOverviewV2, extra: DashboardExtra | null, inbox: I
   if (crDrop) {
     out.push({
       tone: 'watch',
-      text: `Life Readiness loses the most students between “${crDrop.from.label}” and “${crDrop.to.label}”: ${crDrop.lost} stop there.`,
+      text: `Global Leadership loses the most students between “${crDrop.from.label}” and “${crDrop.to.label}”: ${crDrop.lost} stop there.`,
       to: '/admin/modules',
     })
   }
@@ -547,7 +547,7 @@ function DashboardPage() {
           <SectionLabel>Programmes</SectionLabel>
           <div className="grid gap-4 lg:grid-cols-2">
             <Funnel title="Digital Marketing" steps={dm} />
-            <Funnel title="Life Readiness" steps={cr} />
+            <Funnel title="Global Leadership" steps={cr} />
           </div>
 
           {c && (

@@ -35,7 +35,7 @@ const OPTIONS: Option[] = [
   {
     key: 'personal',
     to: '/career-readiness-assessment',
-    programme: 'Life Readiness Programme',
+    programme: 'Global Leadership Programme',
     title: 'Life aptitude test',
     blurb: 'Your starting point on the 14 skills the programme builds, from self-awareness and empathy to leadership and coping with stress.',
     unlocks: [

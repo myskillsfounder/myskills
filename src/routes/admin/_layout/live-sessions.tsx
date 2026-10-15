@@ -172,7 +172,7 @@ function LiveSessionsPage() {
                   </td>
                   <td className="px-4 py-3 text-ink-800">{r.title}</td>
                   <td className="px-4 py-3 text-ink-600">
-                    {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Life Readiness'}
+                    {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Global Leadership'}
                   </td>
                   <td className="px-4 py-3 text-ink-700">
                     {r.host_name} <span className="text-xs text-ink-500">· {r.host_kind}</span>

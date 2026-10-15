@@ -1,4 +1,4 @@
--- Life Readiness assessment: 25 statements -> 20.
+-- Global Leadership assessment: 25 statements -> 20.
 --
 -- Run once against Supabase Cloud (SQL editor), AFTER
 -- docs/supabase-career-readiness-assessment.sql, and just before deploying the
