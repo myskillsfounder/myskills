@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { APTITUDES, levelFor as marketingLevel } from '@/lib/dmAptitude'
 import { levelFor as personalLevel } from '@/lib/careerReadinessAssessment'
-import { LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN } from '@/lib/lifeSkills'
+import { LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN, PROGRAMME_SKILLS } from '@/lib/lifeSkills'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { AptitudeResults } from '@/components/admin/AptitudeResults'
 
@@ -64,8 +64,8 @@ function AptitudePage() {
           programme="career-readiness"
           eyebrow="Career Readiness"
           title="Life skills profiles"
-          subtitle="Where students start on WHO’s ten life skills, which the programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
-          dimensions={LIFE_SKILLS}
+          subtitle="Where students start on WHO’s ten life skills and the programme’s own four. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
+          dimensions={[...LIFE_SKILLS, ...PROGRAMME_SKILLS]}
           levelFor={(s) => personalLevel(s, LIFE_SKILL_MAX)}
           min={LIFE_SKILL_MIN}
           max={LIFE_SKILL_MAX}

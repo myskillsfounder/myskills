@@ -1,3 +1,7 @@
+-- NOTE: docs/supabase-life-skills-combined.sql comes after this file: it adds
+-- the programme's own four skills, re-orders the statements and makes it one
+-- attempt per student. Don't re-run this file after that one.
+--
 -- The Life Skills Profile: WHO's ten life skills as the Career Readiness
 -- Programme's starting assessment.
 --

@@ -20,7 +20,7 @@ import { shared } from './shared'
 import { sessionUser } from './sessionUser'
 import { forgetStarted } from './startedCache'
 import { ensureProfile } from './profile'
-import { LIFE_READOUT, LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN, type LifeSkillKey } from './lifeSkills'
+import { LIFE_READOUT, LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN, PROGRAMME_SKILLS, type LifeSkillKey } from './lifeSkills'
 
 /** The earlier version's five skills. */
 export type LegacySkillKey = 'communication' | 'goal-setting' | 'growth-mindset' | 'leadership' | 'agile'
@@ -113,11 +113,19 @@ const MODULE_TITLE: Record<string, string> = {
 export function skillsFor(scores: Partial<Record<SkillKey, number>>) {
   const { max } = scaleFor(scores)
   if (isLifeSkills(scores)) {
-    return LIFE_SKILLS.map((s) => {
+    const who = LIFE_SKILLS.map((s) => {
       const score = scores[s.key] ?? 0
       const level = levelFor(score, max)
       return { key: s.key as SkillKey, name: s.name, score, level, max, readout: LIFE_READOUT[s.key][level], modules: s.modules.map((m) => MODULE_TITLE[m]) }
     })
+    // The programme's own four, when the result has them (a profile taken
+    // before they were added has the ten only).
+    const own = PROGRAMME_SKILLS.filter((s) => s.key in scores).map((s) => {
+      const score = scores[s.key] ?? 0
+      const level = levelFor(score, max)
+      return { key: s.key as SkillKey, name: s.name, score, level, max, readout: READOUT[s.key][level], modules: [MODULE_TITLE[s.module]] }
+    })
+    return [...who, ...own]
   }
   return SKILLS.map((s) => {
     const score = scores[s.key] ?? 0
