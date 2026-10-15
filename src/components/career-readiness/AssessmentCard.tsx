@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
+import { isLifeSkills, useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 
 const Rings = () => (
   <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
@@ -49,11 +49,15 @@ export function AssessmentCard() {
   return (
     <section className="surface-wood-dark rise-in relative flex flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center sm:justify-between">
       <Rings />
-      <h3 className="relative min-w-0 font-display text-2xl font-semibold leading-tight text-white">
-        Your life aptitude
-      </h3>
+      <div className="relative min-w-0">
+        <h3 className="font-display text-2xl font-semibold leading-tight text-white">Your life aptitude</h3>
+        {/* Taken before the fourteen-skill test: the new one is there to take, once. */}
+        {!isLifeSkills(result.scores) && (
+          <p className="mt-1.5 text-sm text-white/70">New: the Life aptitude test covers all fourteen skills. Take it once more.</p>
+        )}
+      </div>
       <Link to="/career-readiness-assessment" className={`relative ${cta}`}>
-        View your results
+        {isLifeSkills(result.scores) ? 'View your results' : 'Take the test'}
         <ArrowRight size={16} />
       </Link>
     </section>

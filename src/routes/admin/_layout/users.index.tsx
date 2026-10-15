@@ -169,7 +169,7 @@ function StudentsPage() {
                     </td>
                     <td className="px-4 py-3 text-xs text-ink-600">
                       <p>
-                        <span className="font-semibold text-ink-900">{s.cr_modules}</span>/5 modules
+                        <span className="font-semibold text-ink-900">{s.cr_modules}</span>/14 modules
                       </p>
                       {s.cr_signed_off && <p className="font-semibold text-emerald-700">Signed off</p>}
                     </td>

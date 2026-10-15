@@ -1,12 +1,12 @@
 {
   "path": "/career-readiness",
   "seoTitle": "Life Readiness Programme: Learn with AI & Mentors | MySkills",
-  "seoDescription": "Learn goal setting, communication, leadership, agile and growth mindset in five short modules. Practise with an AI coach and get mentor feedback. Free to start.",
+  "seoDescription": "Fourteen short modules on the life skills employers look for, from self-awareness and empathy to leadership and coping with stress. Practise in writing and get mentor feedback. Free to start.",
   "name": "Life Readiness Programme",
   "tagline": "Use AI the way employers now expect you to.",
-  "intro": "Skills get you shortlisted; how you set goals, communicate, lead, adapt and keep growing gets you hired. Learn and practise all five in writing — and get a human’s honest feedback before an interviewer gives you theirs.",
-  "insideTitle": "Five modules. AI in every one of them.",
-  "insideIntro": "Each module pairs a real career skill with a specific way of using AI to do it better — never as a shortcut around learning it.",
+  "intro": "Skills get you shortlisted; how you know yourself, think, decide, work with people and handle pressure gets you hired. Learn and practise all fourteen in writing — and get a human’s honest feedback before an interviewer gives you theirs.",
+  "insideTitle": "Fourteen modules, one for each skill.",
+  "insideIntro": "One module for each skill in the Life aptitude test. The first five are the core of the programme; the other nine build the rest of WHO’s life skills.",
   "modules": [
     {
       "slug": "goal-setting",
@@ -37,6 +37,51 @@
       "title": "Growth Mindset",
       "body": "Treat setbacks as information, and build the habits that keep you learning when things get hard.",
       "ai": "Reflect on wins and setbacks with an AI coach, and spot the patterns in how you grow."
+    },
+    {
+      "slug": "self-awareness",
+      "title": "Self-Awareness",
+      "body": "Know what you’re good at, what you find hard and what throws you, so you can plan around it instead of being surprised."
+    },
+    {
+      "slug": "empathy",
+      "title": "Empathy",
+      "body": "Listen to understand rather than to reply, and see a situation from the other person’s side, even when you disagree."
+    },
+    {
+      "slug": "critical-thinking",
+      "title": "Critical Thinking",
+      "body": "Check where a claim comes from, weigh the evidence, and test your own views before you act on them or share them."
+    },
+    {
+      "slug": "creative-thinking",
+      "title": "Creative Thinking",
+      "body": "Generate lots of ideas before judging them, borrow what works elsewhere, and find another way when the usual one fails."
+    },
+    {
+      "slug": "decision-making",
+      "title": "Decision-Making",
+      "body": "Lay out your options and what each leads to, choose by a date, and learn from how it turns out."
+    },
+    {
+      "slug": "problem-solving",
+      "title": "Problem-Solving",
+      "body": "Get to the real cause of a problem, weigh the possible fixes, and take the first small step today."
+    },
+    {
+      "slug": "relationships",
+      "title": "Interpersonal Relationships",
+      "body": "Build trust with the people you work and study with, and handle disagreements without damaging the relationship."
+    },
+    {
+      "slug": "coping-stress",
+      "title": "Coping with Stress",
+      "body": "Spot the early signs of stress, plan and prioritise when there’s too much to do, and build habits that help you reset."
+    },
+    {
+      "slug": "coping-emotions",
+      "title": "Coping with Emotions",
+      "body": "Name strong feelings as they come, pause before you respond, and handle other people’s emotions with care."
     }
   ],
   "outcomesTitle": "Not a certificate of attendance. Evidence.",

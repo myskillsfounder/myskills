@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { trackCareerAssessmentComplete } from '@/lib/analytics'
 import {
   fetchAssessmentQuestions,
+  isLifeSkills,
   submitAssessment,
   useMyAssessmentResult,
   type AssessmentQuestion,
@@ -40,22 +41,32 @@ function CareerReadinessAssessmentPage() {
   // "Back to Practice" returns to this programme's tab.
   useEffect(() => rememberProgramme(2), [])
   const [questions, setQuestions] = useState<AssessmentQuestion[] | null>(null)
+  const [testReady, setTestReady] = useState(false)
   const [error, setError] = useState<string>()
+  // A result from the earlier, five-skill test: the Life aptitude test is
+  // offered in its place, once (the server allows that one retake).
+  const earlier = result != null && !isLifeSkills(result.scores)
+  const [retaking, setRetaking] = useState(false)
+  const asking = !result || retaking
 
-  // Only fetch the statements once we know the learner hasn't taken it. One
-  // attempt, whichever version they took: an earlier result stays theirs.
+  // The statements, when there is something to take: no result yet, or only
+  // the earlier test's (to know the Life aptitude test is there to offer).
   useEffect(() => {
-    if (loading || result) return
+    if (loading || (result && !earlier)) return
     let active = true
     fetchAssessmentQuestions()
-      .then((q) => active && setQuestions(q.questions))
+      .then((q) => {
+        if (!active) return
+        setQuestions(q.questions)
+        setTestReady(q.lifeSkills)
+      })
       .catch((e) => active && setError(errorMessage(e)))
     return () => {
       active = false
     }
-  }, [loading, result])
+  }, [loading, result, earlier])
 
-  const taken = Boolean(result)
+  const taken = Boolean(result) && !retaking
 
   return (
     <DarkShell
@@ -70,15 +81,37 @@ function CareerReadinessAssessmentPage() {
     >
       {error && <DarkError title="The assessment isn’t available right now." message={error} />}
 
-      {(loading || (!result && !questions && !error)) && (
+      {(loading || (asking && !questions && !error)) && (
         <p className="flex items-center gap-2 text-sm text-white/60">
           <Loader2 size={15} className="animate-spin" /> Loading…
         </p>
       )}
 
-      {result && <AssessmentResult result={result} />}
+      {taken && earlier && testReady && (
+        <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-200">New</p>
+          <p className="mt-1.5 font-display text-xl font-semibold text-white">Take the Life aptitude test</p>
+          <p className="mt-1 text-sm leading-relaxed text-white/70">
+            The programme now has fourteen modules, one for each skill in the test. Your result below is from the earlier,
+            five-skill test. The new one takes about eleven minutes and replaces it, so each module can show where you
+            started.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setRetaking(true)
+              window.scrollTo({ top: 0 })
+            }}
+            className="press mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2"
+          >
+            Take the test <ArrowRight size={16} />
+          </button>
+        </div>
+      )}
 
-      {!result && questions && questions.length > 0 && (
+      {taken && result && <AssessmentResult result={result} />}
+
+      {asking && questions && questions.length > 0 && (
         <SelfAssessmentQuiz
           questions={questions}
           copy={COPY}
@@ -86,6 +119,7 @@ function CareerReadinessAssessmentPage() {
             const r = await submitAssessment(answers, reflection)
             trackCareerAssessmentComplete()
             setResult(r)
+            setRetaking(false)
             window.scrollTo({ top: 0 })
           }}
         />

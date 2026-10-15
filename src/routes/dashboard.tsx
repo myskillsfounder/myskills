@@ -149,6 +149,7 @@ function DashboardPage() {
     () =>
       computeReadiness({
         modulesDone: crProgress.modulesDone,
+        crCoreDone: crProgress.coreComplete,
         liveSessions: liveSessions.length,
         dmLiveSessions: dmSessions.length,
         crProject: crReview.project,

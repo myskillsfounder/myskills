@@ -39,7 +39,7 @@ const OPTIONS: Option[] = [
     title: 'Life aptitude test',
     blurb: 'Your starting point on the 14 skills the programme builds, from self-awareness and empathy to leadership and coping with stress.',
     unlocks: [
-      'Five modules practised with an AI coach',
+      'Fourteen modules, one for each skill',
       'Mentor feedback on your written work',
       'Live sessions with a mentor',
     ],

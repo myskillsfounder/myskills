@@ -235,8 +235,8 @@ const STEPS: Record<StartKey, Plan['steps']> = {
       body: '42 statements, about eleven minutes. It shows your starting point on the 14 skills the programme builds, from self-awareness to coping with stress.',
     },
     {
-      title: 'Work through five modules',
-      body: 'Practise each one in writing with an AI coach, at your own pace.',
+      title: 'Work through the modules',
+      body: 'One for each skill in the test, fourteen in all. Practise each one in writing, at your own pace.',
     },
     {
       title: 'Get a mentor’s feedback',

@@ -4,15 +4,15 @@
  *
  * It measures only what a student has done INSIDE MySkills, checked by the
  * server or by a person. Education, outside work and aptitude assessments
- * belong to the profile (and its completion), not to this number. Method v6:
+ * belong to the profile (and its completion), not to this number. Method v7:
  *
- * Each programme is worth 40: a project graded by a mentor (20) and the
- * student's own activity (20).
+ * Each programme is worth 40: a project graded by a mentor and the student's
+ * own activity.
  *
  *   40  Personal development     — the Life Readiness Programme
- *         activity 20  3 per module finished (5 = 15), 1 per confirmed live
- *                      session (5 = 5)
- *         project  20  the mentor's rubric total, 0-20
+ *         activity 25  its fourteen modules share 25 points (about 1.8 each).
+ *                      Live sessions are on the record, not scored.
+ *         project  15  the mentor's rubric total, 0-20, counted as 0-15
  *   40  Professional development — the Digital Marketing Programme
  *         activity 20  per track (best of the last 3 attempts): 0 below 60%,
  *                      0.25 at 60% rising to 1.25 at 100% (8 tracks = 10);
@@ -24,7 +24,7 @@
  *                      yet, so nobody can earn it today.
  *
  * THE HOLD: until a programme's project has passed (8 of 20 or more), only the
- * first 8 of its 20 activity points count. The rest are held and released when
+ * first 8 of its activity points count. The rest are held and released when
  * the project passes. A project's own points always count as graded. A
  * mentor's signature on its own is worth nothing: they release work the student
  * has already done, and grade the project.
@@ -45,7 +45,7 @@
  */
 
 /** Bump when the rules change, so a stored score says which rules made it. */
-export const METHOD_VERSION = 'v6'
+export const METHOD_VERSION = 'v7'
 
 export const PERSONAL_MAX = 40
 export const PROFESSIONAL_MAX = 40
@@ -62,9 +62,12 @@ export const PROJECT_SUBMISSIONS = 3
 export const ACTIVITY_HELD_CAP = 8
 export const ACTIVITY_MAX = 20
 
-/** Personal activity: modules and live sessions. */
-export const POINTS_PER_MODULE = 3
-export const PROGRAMME_MODULES = 5
+/** Personal activity: the modules share 25 points (method v7). */
+export const PROGRAMME_MODULES = 14
+export const MODULES_MAX_POINTS = 25
+export const POINTS_PER_MODULE = MODULES_MAX_POINTS / PROGRAMME_MODULES
+/** The Life Readiness project: graded out of PROJECT_MAX, worth this many points. */
+export const PERSONAL_PROJECT_POINTS = 15
 export const POINTS_PER_LIVE_SESSION = 1
 export const LIVE_SESSIONS_MAX_POINTS = 5
 
@@ -90,6 +93,8 @@ export const NO_PROJECT: ProjectStanding = { status: 'none', points: 0 }
 export interface ProgrammeStanding {
   /** Life Readiness modules with all four items written. */
   modulesDone: number
+  /** The five core modules are done: the Life Readiness project can be submitted. */
+  crCoreDone: boolean
   /** Life Readiness live sessions whose attendance was confirmed by whoever ran them. */
   liveSessions: number
   /** Digital Marketing live training sessions, confirmed the same way. */
@@ -107,6 +112,7 @@ export interface ProgrammeStanding {
 }
 export const NO_STANDING: ProgrammeStanding = {
   modulesDone: 0,
+  crCoreDone: false,
   liveSessions: 0,
   dmLiveSessions: 0,
   crProject: NO_PROJECT,
@@ -143,9 +149,14 @@ export function practicePoints(percents: number[]): number {
   )
 }
 
-/** Life Readiness activity before the hold: modules and live sessions. Out of 20. */
-export function personalActivity(p: Pick<ProgrammeStanding, 'modulesDone' | 'liveSessions'>): number {
-  return Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE + livePoints(p.liveSessions)
+/** Life Readiness activity before the hold: the modules. Out of 25. */
+export function personalActivity(p: Pick<ProgrammeStanding, 'modulesDone'>): number {
+  return Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE
+}
+
+/** A Life Readiness project's points: its grade out of 20, counted out of 15. */
+export function personalProjectPoints(grade: number): number {
+  return (Math.min(grade, PROJECT_MAX) * PERSONAL_PROJECT_POINTS) / PROJECT_MAX
 }
 
 /** Digital Marketing activity before the hold: tracks, Foundation, live training. Out of 20. */
@@ -162,13 +173,10 @@ export function countedActivity(activity: number, project: ProjectStanding): num
 
 /** The Personal Development points a learner has earned so far. */
 export function personalPoints(
-  p: Pick<ProgrammeStanding, 'modulesDone' | 'liveSessions' | 'crProject'>,
+  p: Pick<ProgrammeStanding, 'modulesDone' | 'crProject'>,
 ): number {
   return round2(
-    Math.min(
-      countedActivity(personalActivity(p), p.crProject) + Math.min(p.crProject.points, PROJECT_MAX),
-      PERSONAL_MAX,
-    ),
+    Math.min(countedActivity(personalActivity(p), p.crProject) + personalProjectPoints(p.crProject.points), PERSONAL_MAX),
   )
 }
 
@@ -246,12 +254,12 @@ export interface Readiness {
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 
-/** What a programme's project is up to, in a few words. */
-function projectDetail(p: ProjectStanding): string {
-  if (p.status === 'approved') return `project passed (${p.points} of ${PROJECT_MAX})`
+/** What a programme's project is up to, in a few words (its points out of `worth`). */
+function projectDetail(p: ProjectStanding, points = p.points, worth = PROJECT_MAX): string {
+  if (p.status === 'approved') return `project passed (${round1(points)} of ${worth})`
   if (p.status === 'requested') return 'project with a mentor'
-  if (p.status === 'changes_requested') return `project needs changes (${p.points} of ${PROJECT_MAX} so far)`
-  return `project worth ${PROJECT_MAX}`
+  if (p.status === 'changes_requested') return `project needs changes (${round1(points)} of ${worth} so far)`
+  return `project worth ${worth}`
 }
 
 export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Readiness {
@@ -272,11 +280,12 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
   // happens to be worth the most. Learn and practise first, then the
   // assessment, then the project, and live sessions last. The first step
   // that still applies is the one shown.
-  const canSubmitCr = modulesDone >= PROGRAMME_MODULES && s.crProject.status !== 'approved' && s.crProject.status !== 'requested'
+  // The project opens once the five core modules are done.
+  const canSubmitCr = s.crCoreDone && s.crProject.status !== 'approved' && s.crProject.status !== 'requested'
   const canSubmitDm = s.dmPracticeDone && s.dmProject.status !== 'approved' && s.dmProject.status !== 'requested'
   const journey: (NextAction | null)[] = [
     modulesDone < PROGRAMME_MODULES
-      ? { label: 'Finish a Life Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 }
+      ? { label: 'Finish a Life Readiness module', upTo: round1(POINTS_PER_MODULE), to: '/practice', programme: 2 }
       : null,
     tracksPassed < PRACTICE_TRACKS
       ? { label: 'Score 60% or more on a Digital Marketing track', upTo: TRACK_POINTS_MAX, to: '/practice', programme: 1 }
@@ -285,16 +294,13 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       ? { label: 'Take the Foundation assessment', upTo: FOUNDATION_MAX_POINTS, to: '/foundation-assessment' }
       : null,
     canSubmitCr
-      ? { label: 'Submit your Life Readiness project', upTo: PROJECT_MAX, to: '/practice', programme: 2 }
+      ? { label: 'Submit your Life Readiness project', upTo: PERSONAL_PROJECT_POINTS, to: '/practice', programme: 2 }
       : null,
     canSubmitDm
       ? { label: 'Submit your Digital Marketing project', upTo: PROJECT_MAX, to: '/practice', programme: 1 }
       : null,
     livePoints(s.dmLiveSessions) < LIVE_SESSIONS_MAX_POINTS
       ? { label: 'Work with a mentor on Digital Marketing', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 1 }
-      : null,
-    livePoints(s.liveSessions) < LIVE_SESSIONS_MAX_POINTS
-      ? { label: 'Work with a mentor on Life Readiness', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 2 }
       : null,
   ]
   const nextActions = journey.filter((step): step is NextAction => step !== null)
@@ -316,12 +322,11 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       max: PERSONAL_MAX,
       detail: [
         `${modulesDone} of ${PROGRAMME_MODULES} modules`,
-        plural(s.liveSessions, 'live session'),
-        projectDetail(s.crProject),
+        projectDetail(s.crProject, personalProjectPoints(s.crProject.points), PERSONAL_PROJECT_POINTS),
       ].join(' · '),
       held: crHeld,
-      projectPoints: s.crProject.points,
-      projectMax: PROJECT_MAX,
+      projectPoints: round2(personalProjectPoints(s.crProject.points)),
+      projectMax: PERSONAL_PROJECT_POINTS,
       projectStatus: s.crProject.status,
     },
     professional: {
