@@ -10,7 +10,7 @@
 -- second click a no-op, which the frontend treats as success.
 --
 -- The stored slug is 'career-launchpad' (the programme's working name) even
--- though it's now the Career Readiness Programme — changing it would mean
+-- though it's now the Life Readiness Programme — changing it would mean
 -- migrating the check constraint for no user-visible gain.
 
 create table if not exists public.programme_interest (
@@ -59,11 +59,11 @@ begin
   select count(*) into v_total from public.programme_interest where programme = new.programme;
 
   perform public.notify_email(
-    format('[MySkills · Programme] %s joined the Career Readiness Programme list (%s total)',
+    format('[MySkills · Programme] %s joined the Life Readiness Programme list (%s total)',
            new.full_name, v_total),
     public.notify_layout(
       'New programme interest',
-      public.notify_row('Programme', 'Career Readiness Programme')
+      public.notify_row('Programme', 'Life Readiness Programme')
       || public.notify_row('Name', new.full_name)
       || public.notify_row('Email', new.email)
       || public.notify_row('Total on list', v_total::text),

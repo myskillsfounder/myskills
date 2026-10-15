@@ -44,7 +44,7 @@ export function useCountUp(target: number, run: boolean, ms = 1200) {
 }
 
 /** Each part in the colour of the programme behind it — the same violet
- *  (Digital Marketing) and green (Career Readiness) as the course tiles. */
+ *  (Digital Marketing) and green (Life Readiness) as the course tiles. */
 const PART_TONE = {
   personal: { dot: 'bg-emerald-500', bar: 'from-emerald-400 to-teal-600', glow: 'shadow-[0_0_10px_-2px_rgba(16,185,129,0.6)]' },
   professional: { dot: 'bg-brand-600', bar: 'from-brand-400 to-brand-700', glow: 'shadow-[0_0_10px_-2px_rgba(111,99,226,0.6)]' },

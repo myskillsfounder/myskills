@@ -1,5 +1,5 @@
 /**
- * The Career Readiness Programme, live: a learner's written responses to the
+ * The Life Readiness Programme, live: a learner's written responses to the
  * five modules and the progress made from them. Storage and the save rules are
  * in docs/supabase-career-readiness-programme.sql; what each module asks is in
  * careerReadinessContent.ts.

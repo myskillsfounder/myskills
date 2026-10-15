@@ -4,7 +4,7 @@
 -- that programme, once the student has earned it in practice:
 --   Digital Marketing  — one badge per skill track, once the student's score on
 --                        that track (best of the last 3 attempts) is 60%+
---   Career Readiness   — one badge per module, once all 4 of its items are written
+--   Life Readiness   — one badge per module, once all 4 of its items are written
 -- The badge carries the mentor's name and the date, and shows on the student's
 -- profile. It's proof twice over: the student did the work, and a person who
 -- knows them vouched for it.

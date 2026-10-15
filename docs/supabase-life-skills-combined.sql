@@ -1,4 +1,4 @@
--- One Career Readiness assessment: WHO's ten life skills and the programme's
+-- One Life Readiness assessment: WHO's ten life skills and the programme's
 -- own four, together.
 --
 -- docs/supabase-life-skills.sql made the Life Skills Profile (WHO's ten,

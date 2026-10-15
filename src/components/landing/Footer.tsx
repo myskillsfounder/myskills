@@ -6,7 +6,7 @@ const columns = [
     links: [
       { label: 'Home', href: '/' },
       { label: 'Digital Marketing', href: '/digital-marketing' },
-      { label: 'Career Readiness', href: '/career-readiness' },
+      { label: 'Life Readiness', href: '/career-readiness' },
     ],
   },
   {

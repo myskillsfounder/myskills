@@ -1,5 +1,5 @@
 /**
- * What each Career Readiness module teaches and asks for — the words on the
+ * What each Life Readiness module teaches and asks for — the words on the
  * module pages. This is the file to edit to change the programme: every module
  * is Learn (three short cards), Practise (three written tasks) and Reflect
  * (one prompt), and the app builds the rest from it.

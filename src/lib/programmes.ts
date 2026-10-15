@@ -1,5 +1,5 @@
 /**
- * Programmes — structured courses, starting with the Career Readiness
+ * Programmes — structured courses, starting with the Life Readiness
  * Programme. Interest is captured as a row in programme_interest (docs/
  * supabase-programme-interest.sql) rather than an enrolment: there's no
  * price, schedule or cohort yet, so the landing page collects intent instead
@@ -32,7 +32,7 @@ const MODULE_ICONS: Record<ModuleSlug, ProgrammeModule['icon']> = {
 }
 
 /**
- * The Career Readiness Programme's curriculum — personal development, the
+ * The Life Readiness Programme's curriculum — personal development, the
  * programme's foundation. One list, read by both the landing page
  * (/career-readiness) and the Practice page, so they always promise the same
  * five modules.
@@ -53,7 +53,7 @@ export const CAREER_READINESS = {
   // the table's check constraint may already be live. Display name and URL
   // are free to change; this isn't.
   slug: 'career-launchpad',
-  name: 'Career Readiness Programme',
+  name: 'Life Readiness Programme',
   subtitle: 'Powered by AI · Reviewed by people',
   path: '/career-readiness',
 } as const
@@ -181,7 +181,7 @@ export function digitalMarketingProgress(
   aptitudeDone = false,
 ): CourseProgress {
   // The aptitude assessment is a step of its own (it opens Practice), as in the
-  // Career Readiness Programme; then the Foundation assessment, the tracks, the
+  // Life Readiness Programme; then the Foundation assessment, the tracks, the
   // mentor review and the internship.
   const steps = 1 + 1 + totalTracks + 2
   const done =
@@ -215,7 +215,7 @@ export function digitalMarketingProgress(
 }
 
 /**
- * Progress toward finishing the Career Readiness Programme, built the same way
+ * Progress toward finishing the Life Readiness Programme, built the same way
  * as digitalMarketingProgress: one step for the personal aptitude assessment,
  * one per module finished, plus the mentor review and the internship.
  */
@@ -291,7 +291,7 @@ export interface CareerReadinessLead {
 }
 
 /**
- * The Career Readiness waitlist form — name, phone and email, no account
+ * The Life Readiness waitlist form — name, phone and email, no account
  * needed. Distinct from registerProgrammeInterest above: that one is the
  * signed-in waitlist join further down the page, tied to the learner's
  * account and reachable by email. This is the above-the-fold form for a

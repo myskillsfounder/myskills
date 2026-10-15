@@ -1,4 +1,4 @@
--- Career Readiness waitlist: collect an email instead of a city.
+-- Life Readiness waitlist: collect an email instead of a city.
 --
 -- Run once against Supabase Cloud (SQL editor), BEFORE deploying the matching
 -- frontend. Safe to re-run. Follows docs/supabase-career-readiness-leads.sql.
@@ -28,9 +28,9 @@ begin
   select count(*) into v_total from public.career_readiness_leads;
 
   perform public.notify_email(
-    format('[MySkills · Lead] %s — Career Readiness Programme (%s total)', new.full_name, v_total),
+    format('[MySkills · Lead] %s — Life Readiness Programme (%s total)', new.full_name, v_total),
     public.notify_layout(
-      'New Career Readiness lead',
+      'New Life Readiness lead',
       public.notify_row('Name', new.full_name)
       || public.notify_row('Phone', new.phone)
       || public.notify_row('Email', new.email)

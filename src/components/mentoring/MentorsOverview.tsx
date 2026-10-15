@@ -11,7 +11,7 @@ const day = (iso: string) =>
 
 const PROGRAMME: Record<MentorStudent['programme'], string> = {
   'digital-marketing': 'Digital Marketing',
-  'career-readiness': 'Career Readiness',
+  'career-readiness': 'Life Readiness',
 }
 
 const GROUPS: { status: MentorStudent['status']; title: string; tone: string; label: string }[] = [

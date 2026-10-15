@@ -58,7 +58,7 @@ function projectLinks(text: string | null): string[] {
 
 const PROGRAMME: Record<string, string> = {
   'digital-marketing': 'Digital Marketing Programme',
-  'career-readiness': 'Career Readiness Programme',
+  'career-readiness': 'Life Readiness Programme',
 }
 
 function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () => void }) {
@@ -104,13 +104,13 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
       )}
 
       {review.programme === 'career-readiness' ? (
-        // A Career Readiness review is about the personal skills, so show the
+        // A Life Readiness review is about the personal skills, so show the
         // learner's self-awareness baseline, not their Digital Marketing scores.
         <div className="mt-4 border-t border-ink-200 pt-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
             {review.career_readiness && !isLifeSkills(review.career_readiness.scores)
               ? 'Starting assessment (earlier five-skill version) · baseline'
-              : 'Life skills profile · baseline'}
+              : 'Life aptitude test · baseline'}
           </p>
           {review.career_readiness ? (
             <>

@@ -168,7 +168,7 @@ export async function fetchAptitudeQuestions(): Promise<AptitudeQuestion[]> {
 
 /** The signed-in learner's result, or null if they haven't taken it. Before
  *  the SQL is run the table doesn't exist — that reads as "not taken", the
- *  same way the Career Readiness assessment does. */
+ *  same way the Life Readiness assessment does. */
 export function fetchMyAptitudeResult(): Promise<AptitudeResult | null> {
   return shared('fetchMyAptitudeResult', fetchMyAptitudeResultOnce)
 }

@@ -7,7 +7,7 @@ import { SectionHeader } from '@/components/app/SectionHeader'
 import { lifeSkillsForModule } from '@/lib/lifeSkills'
 
 /**
- * The Career Readiness Programme's five modules, live on /practice beside
+ * The Life Readiness Programme's five modules, live on /practice beside
  * Digital Marketing's. Each card shows how far the learner is through that
  * module and opens it. The list is shared with /career-readiness.
  */
@@ -15,7 +15,7 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
   return (
     <section>
       <SectionHeader
-        eyebrow="Career Readiness"
+        eyebrow="Life Readiness"
         title="The five modules"
         description="Learn it, practise it in writing, then reflect. Then you’ll build a project, and a mentor grades it."
       />

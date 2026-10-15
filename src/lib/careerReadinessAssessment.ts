@@ -1,5 +1,5 @@
 /**
- * Career Readiness starting assessment: since 2026-10 the Life Skills Profile,
+ * Life Readiness starting assessment: since 2026-10 the Life Skills Profile,
  * WHO's ten life skills (lib/lifeSkills.ts, docs/supabase-life-skills.sql).
  * Students who took the earlier version keep that result, five skills of the
  * programme's own, until they take the profile; both kinds of result are read

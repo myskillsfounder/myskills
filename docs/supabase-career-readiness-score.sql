@@ -18,7 +18,7 @@
 -- assessments are not part of the score.
 --
 -- Each programme is worth 40: a mentor-graded project (20) and activity (20).
---   Personal development      40   Career Readiness Programme
+--   Personal development      40   Life Readiness Programme
 --     activity 20                   3 per module finished (5 = 15)
 --                                   + 1 per confirmed live session (5 = 5)
 --     project  20                   the mentor's rubric total, 0-20
@@ -41,7 +41,7 @@
 --
 -- VERIFIED vs SELF-REPORTED: practice and the Foundation assessment are graded
 -- by the server, live sessions and project grades by a person. Module answers
--- are self-reported until the Career Readiness project has passed.
+-- are self-reported until the Life Readiness project has passed.
 -- Stored scores from earlier methods are replaced the next time the student
 -- opens the dashboard, and the update at the foot of this file re-issues them all.
 --
@@ -118,7 +118,7 @@ begin
     return null;
   end if;
 
-  -- Career Readiness modules with all four items written.
+  -- Life Readiness modules with all four items written.
   select count(*) into v_modules from (
     select c.module
       from public.career_readiness_items() c

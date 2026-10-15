@@ -12,7 +12,7 @@ import { SkillProfile } from '@/components/self-assessment/Profile'
 
 /**
  * A learner's Digital Marketing aptitude profile — the shared dark result
- * view fed with the five aptitudes. Unlike Career Readiness it leads with the
+ * view fed with the five aptitudes. Unlike Life Readiness it leads with the
  * strongest aptitude: this is about finding where marketing fits, so it
  * points at the skill tracks that lean on it.
  */

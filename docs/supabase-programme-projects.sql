@@ -277,7 +277,7 @@ begin
   select p.full_name into v_name from public.profiles p where p.id = new.user_id;
   select u.email into v_email from auth.users u where u.id = new.user_id;
   v_prog := case new.programme when 'digital-marketing' then 'Digital Marketing Programme'
-                               else 'Career Readiness Programme' end;
+                               else 'Life Readiness Programme' end;
 
   if tg_op = 'INSERT' then
     perform public.notify_email(

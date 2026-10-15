@@ -78,7 +78,7 @@ export function trackAssessmentComplete(percent: number) {
   trackEvent('assessment_complete', { score: percent, passed: percent >= 60 })
 }
 
-/** The one-attempt Career Readiness assessment was scored and saved. */
+/** The one-attempt Life Readiness assessment was scored and saved. */
 export function trackCareerAssessmentComplete() {
   trackEvent('career_assessment_complete')
 }

@@ -6,7 +6,7 @@ import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 
 /**
  * A focused, full-screen dark page for an assessment: the same surface, grid
- * and glow as the Career Readiness landing page, with a way back and nothing
+ * and glow as the Life Readiness landing page, with a way back and nothing
  * else in the chrome. Shared by every assessment so they read as one system
  * instead of a card dropped into the light app shell.
  */

@@ -41,7 +41,7 @@ function CareerModulePage() {
       ) : (
         <div className="mx-auto max-w-3xl">
           <PageHeader
-            eyebrow={`Career Readiness · Module ${index + 1} of ${PERSONAL_DEVELOPMENT_MODULES.length}`}
+            eyebrow={`Life Readiness · Module ${index + 1} of ${PERSONAL_DEVELOPMENT_MODULES.length}`}
             title={meta.title}
             description={
               <>

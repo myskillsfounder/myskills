@@ -1,5 +1,5 @@
 -- Admin v2, part 2: a page set per programme — aptitude results, practice,
--- Foundation results, Career Readiness modules and answers.
+-- Foundation results, Life Readiness modules and answers.
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
 -- Depends on: docs/supabase-admin-v2.sql and the tables it reads
@@ -11,7 +11,7 @@
 --   aptitude results, practice            -> 'users' section
 --   Foundation results                    -> 'users' or 'assessment'
 --   modules & answers                     -> 'users' or 'mentor-reviews'
--- The two lead lists (internship partners, Career Readiness leads) need no
+-- The two lead lists (internship partners, Life Readiness leads) need no
 -- function: their tables already let admins read and mark them contacted.
 
 -- ---------------------------------------------------------------------------
@@ -171,7 +171,7 @@ revoke execute on function public.admin_foundation_categories() from public, ano
 grant execute on function public.admin_foundation_categories() to authenticated;
 
 -- ---------------------------------------------------------------------------
--- Career Readiness modules: who started and finished each, then the answers
+-- Life Readiness modules: who started and finished each, then the answers
 -- ---------------------------------------------------------------------------
 create or replace function public.admin_cr_modules()
 returns table (module text, started int, finished int)
