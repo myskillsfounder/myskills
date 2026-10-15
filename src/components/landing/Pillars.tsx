@@ -45,8 +45,8 @@ const pillars: Pillar[] = [
     icon: Briefcase,
     title: 'Internships for Freshers',
     description:
-      'Real internship briefs from partner companies, so your practice turns into work experience you can actually show.',
-    live: false,
+      'Internship roles posted by partner companies: apply with your score, so your practice turns into work experience you can actually show.',
+    live: true,
   },
 ]
 

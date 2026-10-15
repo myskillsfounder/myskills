@@ -154,9 +154,9 @@ const SUPPORT: {
   {
     icon: Briefcase,
     title: 'Internships',
-    body: 'Real briefs with partner companies — the last step to completing a programme.',
+    body: 'Roles posted by partner companies. Apply with your score — the last step to completing a programme.',
     category: 'internships',
-    tag: 'Opening soon',
+    tag: 'Open',
   },
 ]
 

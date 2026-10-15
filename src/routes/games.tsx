@@ -1,21 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Gamepad2 } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
-import { AppShell, PagePlaceholder } from '@/components/app/AppShell'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// This page was only ever a placeholder; Practice is where the practising is. The address is kept so an old link still
+// lands somewhere useful.
 export const Route = createFileRoute('/games')({
-  beforeLoad: requireOnboarded,
-  component: GamesPage,
+  beforeLoad: () => {
+    throw redirect({ to: '/practice' })
+  },
 })
-
-function GamesPage() {
-  return (
-    <AppShell>
-      <PagePlaceholder
-        title="Games"
-        description="Play quick marketing games to build instincts and speed."
-        icon={Gamepad2}
-      />
-    </AppShell>
-  )
-}

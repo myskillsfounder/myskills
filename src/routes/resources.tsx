@@ -1,21 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Library } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
-import { AppShell, PagePlaceholder } from '@/components/app/AppShell'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// This page was only ever a placeholder; Practice has the material. The address is kept so an old link still
+// lands somewhere useful.
 export const Route = createFileRoute('/resources')({
-  beforeLoad: requireOnboarded,
-  component: ResourcesPage,
+  beforeLoad: () => {
+    throw redirect({ to: '/practice' })
+  },
 })
-
-function ResourcesPage() {
-  return (
-    <AppShell>
-      <PagePlaceholder
-        title="Resources"
-        description="Guides, templates, and references for every marketing track."
-        icon={Library}
-      />
-    </AppShell>
-  )
-}
