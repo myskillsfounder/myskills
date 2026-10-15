@@ -6,7 +6,7 @@ export const Route = createFileRoute('/privacy')({
   component: PrivacyPage,
 })
 
-const UPDATED = 'September 6, 2026'
+const UPDATED = 'October 16, 2026'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -38,7 +38,7 @@ function PrivacyPage() {
           <p><strong className="font-semibold text-ink-800">Account information.</strong> When you sign up, we collect your name and email address, either directly or from your Google account if you sign in with Google.</p>
           <p><strong className="font-semibold text-ink-800">Profile information you add.</strong> Phone number, date of birth, gender, location, career stage, goals, skills, work experience, education, and any profile photo or banner image you upload. All of this is optional and entered at your own pace.</p>
           <p><strong className="font-semibold text-ink-800">Assessment and practice activity.</strong> Your answers, scores, and progress across skill tracks, used to generate your certificate and personalise what we recommend to you.</p>
-          <p><strong className="font-semibold text-ink-800">Mentor and community activity.</strong> If you apply to become a mentor, we collect the details in that application. If you use &ldquo;Talk to a mentor&rdquo;, your chat messages are stored only for the duration of that conversation and are permanently deleted once the session ends.</p>
+          <p><strong className="font-semibold text-ink-800">Mentor and community activity.</strong> If you apply to become a mentor or partner, we collect the details in that application. If you ask a mentor to work with you, apply for an internship, or send a request for counselling or career guidance, we keep that request and what you wrote in it.</p>
           <p><strong className="font-semibold text-ink-800">Usage data.</strong> We use Google Analytics to understand how the product is used (pages visited, time spent, general device/location information). This is aggregated and not used to identify you individually.</p>
         </Section>
 
@@ -58,14 +58,25 @@ function PrivacyPage() {
             <li><strong className="font-semibold text-ink-800">Supabase</strong> — hosts our database, authentication, and file storage.</li>
             <li><strong className="font-semibold text-ink-800">Google</strong> — powers &ldquo;Sign in with Google&rdquo; (if you use it) and Google Analytics.</li>
           </ul>
-          <p>We don't share your personal information with anyone else except where required by law.</p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li><strong className="font-semibold text-ink-800">Resend</strong> — sends our emails, such as sign-up codes and notifications.</li>
+          </ul>
+          <p>
+            <strong className="font-semibold text-ink-800">People you choose to work with.</strong> When you ask a mentor
+            to work with you, that mentor sees your name, contact details, progress and aptitude results. When you apply
+            for an internship, the company sees your name, headline, Career Readiness Score, certificates and your note;
+            your email and phone only if they shortlist you. A company or institution sees your record only after you
+            accept its request, and you can stop sharing at any time. Counsellors and career guides see what they need to
+            help with a request you sent.
+          </p>
+          <p>Otherwise we don't share your personal information with anyone, except where required by law.</p>
         </Section>
 
         <Section title="Cookies and local storage">
           <p>
-            We use your browser's local storage to keep you signed in, remember an
-            in-progress assessment so you don't lose your answers, and track a simple
-            daily practice streak. We use Google Analytics' cookies to understand
+            We use your browser's local storage to keep you signed in and to remember an
+            in-progress assessment so you don't lose your answers. Your practice streak,
+            time spent and vocabulary progress are saved with your account. We use Google Analytics' cookies to understand
             product usage in aggregate.
           </p>
         </Section>
@@ -73,9 +84,8 @@ function PrivacyPage() {
         <Section title="Data retention">
           <p>
             We keep your account and profile information for as long as your account is
-            active. Live mentor-chat messages are deleted automatically when a
-            conversation ends. If you'd like your account and associated data deleted
-            entirely, contact us using the details below.
+            active. If you'd like your account and associated data deleted entirely,
+            contact us using the details below.
           </p>
         </Section>
 

@@ -65,8 +65,8 @@ const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
   {
     icon: Briefcase,
     title: 'Complete an internship',
-    body: 'Real briefs with partner companies — the last step, and work experience you can show.',
-    tag: 'Opening soon',
+    body: 'Roles posted by partner companies — the last step, and work experience you can show.',
+    tag: 'Open',
   },
 ]
 
@@ -98,11 +98,11 @@ const CONCEPTS: {
   {
     icon: Briefcase,
     title: 'Land your first internship',
-    body: 'Most students never get real, hands-on experience before their first job. We’re building direct paths to internships with partner companies — proof that turns practice into a resume.',
-    tag: 'Opening soon',
-    live: false,
+    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Career Readiness Score — proof that turns practice into a resume.',
+    tag: 'Open now',
+    live: true,
     to: '/community',
-    cta: 'See what’s coming',
+    cta: 'See open roles',
   },
 ]
 

@@ -256,26 +256,3 @@ export function AppShell({
   )
 }
 
-/** Simple placeholder for sections that aren't built yet. */
-export function PagePlaceholder({
-  title,
-  description,
-  icon: Icon,
-}: {
-  title: string
-  description: string
-  icon: IconType
-}) {
-  return (
-    <div className="card px-6 py-14 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-ink-500">
-        <Icon size={26} />
-      </div>
-      <h1 className="mt-4 font-display text-2xl font-semibold text-ink-900">{title}</h1>
-      <p className="mx-auto mt-1.5 max-w-sm text-sm text-ink-600">{description}</p>
-      <span className="mt-5 inline-block rounded-full border border-ink-300 bg-ink-100 px-3 py-1 text-xs font-medium text-ink-600">
-        Coming soon
-      </span>
-    </div>
-  )
-}

@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
 import { setAfterOnboarding } from '@/lib/afterOnboarding'
-import { ArrowRight, Briefcase, ClipboardCheck, Dumbbell, GraduationCap, Lock } from 'lucide-react'
+import { ArrowRight, Briefcase, ClipboardCheck, Dumbbell, GraduationCap } from 'lucide-react'
 import { Eyebrow } from './Eyebrow'
 import { GridBackdrop } from './GridBackdrop'
 
@@ -60,9 +60,9 @@ const steps: StepDef[] = [
     icon: Briefcase,
     title: 'Land a real internship',
     description:
-      'Once your skills are proven, apply for an internship with a partner company and work real briefs — experience for your resume, not just a certificate.',
-    cta: 'See what’s coming',
-    badge: { label: 'Coming soon', tone: 'neutral', icon: Lock },
+      'Apply for internship roles posted by partner companies, with your Career Readiness Score behind you, and work real briefs — experience for your resume, not just a certificate.',
+    cta: 'See open roles',
+    badge: { label: 'Open now', tone: 'success' },
   },
 ]
 

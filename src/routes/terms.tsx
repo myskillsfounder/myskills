@@ -6,7 +6,7 @@ export const Route = createFileRoute('/terms')({
   component: TermsPage,
 })
 
-const UPDATED = 'September 6, 2026'
+const UPDATED = 'October 16, 2026'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -64,11 +64,12 @@ function TermsPage() {
 
         <Section title="Mentors and community features">
           <p>
-            Mentors volunteer their time and are not MySkills employees. Advice given in
-            mentor chats or applications is offered in good faith but isn't professional,
+            Mentors and partners volunteer their time and are not MySkills employees.
+            Advice given in mentor sessions is offered in good faith but isn't professional,
             legal, or financial advice, and MySkills isn't responsible for the content of
-            that advice. Mentor chat messages are deleted permanently once a conversation
-            ends, so keep your own notes on anything you want to remember.
+            that advice. Internships are offered and run by partner companies; MySkills
+            checks each role before it is listed and confirms each internship when it ends,
+            but isn't a party to the internship itself.
           </p>
         </Section>
 

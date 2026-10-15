@@ -560,7 +560,7 @@ export function InternshipCard({ track }: { track: InternshipTrack }) {
           <Briefcase size={20} />
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-ink-50 px-2.5 py-1 text-[11px] font-medium text-ink-600">
-          <Lock size={11} /> Opening Soon
+          <Lock size={11} /> Example
         </span>
       </div>
       <h3 className="relative mt-4 font-display text-lg font-semibold text-ink-900">{track.title}</h3>
@@ -572,7 +572,7 @@ export function InternshipCard({ track }: { track: InternshipTrack }) {
           </span>
         ))}
       </div>
-      <p className="relative mt-4 text-xs text-ink-500">Remote · with MySkills partner companies</p>
+      <p className="relative mt-4 text-xs text-ink-500">The kind of role partner companies post. None is open right now.</p>
     </div>
   )
 }
