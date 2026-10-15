@@ -171,7 +171,7 @@ export function AiSkillsShowcase() {
     title: t.name,
     body: t.description,
   }))
-  const personal = PERSONAL_DEVELOPMENT_MODULES.map((m) => ({ icon: m.icon, title: m.title, body: m.ai }))
+  const personal = PERSONAL_DEVELOPMENT_MODULES.map((m) => ({ icon: m.icon, title: m.title, body: m.ai ?? m.body }))
 
   return (
     <section className="space-y-5">
@@ -197,7 +197,7 @@ export function AiSkillsShowcase() {
         <SkillPillar
           eyebrow="Personal skills"
           title={CAREER_READINESS.name}
-          intro="The skills that decide whether you get the job and grow in it — goals, communication, leadership, agile working and a growth mindset."
+          intro="The skills that decide whether you get the job and grow in it: fourteen of them, from self-awareness and empathy to leadership and coping with stress."
           aiNote="AI is your practice partner: rehearse, get instant feedback, then a mentor reviews your growth."
           status="Live"
           live

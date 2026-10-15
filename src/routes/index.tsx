@@ -352,7 +352,7 @@ function HomePage() {
               <PillarCard
                 kind="Personal skills"
                 title={CAREER_READINESS.name}
-                body="Five modules on the skills that decide careers, each practised with AI as your coach and reviewed by a mentor."
+                body="Fourteen modules on the life skills that decide careers, each practised in writing and reviewed by a mentor."
                 items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
                 live
                 to={CAREER_READINESS.path}

@@ -4,20 +4,31 @@ import { MODULE_CONTENT } from '@/lib/careerReadinessContent'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { SectionHeader } from '@/components/app/SectionHeader'
-import { lifeSkillsForModule } from '@/lib/lifeSkills'
+import { lifeSkillsForModule, skillKeyForModule } from '@/lib/lifeSkills'
+import { CORE_MODULES } from '@/lib/careerReadinessContent'
+import { isLifeSkills, levelFor, scaleFor, useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 
 /**
- * The Life Readiness Programme's five modules, live on /practice beside
+ * The Life Readiness Programme's fourteen modules, live on /practice beside
  * Digital Marketing's. Each card shows how far the learner is through that
  * module and opens it. The list is shared with /career-readiness.
  */
 export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgress }) {
+  // The student's starting level in each module's skill, from their Life
+  // aptitude test (not shown for the earlier, five-skill version).
+  const { result } = useMyAssessmentResult()
+  const levelIn = (slug: (typeof CORE_MODULES)[number] | string) => {
+    if (!result || !isLifeSkills(result.scores)) return null
+    const key = skillKeyForModule(slug as (typeof CORE_MODULES)[number])
+    const score = key ? (result.scores as Record<string, number>)[key] : undefined
+    return score == null ? null : levelFor(score, scaleFor(result.scores).max)
+  }
   return (
     <section>
       <SectionHeader
         eyebrow="Life Readiness"
-        title="The five modules"
-        description="Learn it, practise it in writing, then reflect. Then you’ll build a project, and a mentor grades it."
+        title="The fourteen modules"
+        description="One for each skill in the Life aptitude test. Learn it, practise it in writing, then reflect. The first five are the core: finish them and you can build your project, which a mentor grades."
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => {
@@ -53,9 +64,11 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
               <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">Module {i + 1}</p>
               <h3 className="mt-1 font-display text-xl font-semibold tracking-tight text-ink-900">{m.title}</h3>
               <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{content?.outcome ?? m.body}</p>
-              {/* The WHO life skills it builds (lib/lifeSkills.ts). */}
+              {/* The skill it builds, and where the student started on it. */}
               <p className="mt-2 text-xs leading-relaxed text-ink-500">
                 <span className="font-semibold text-ink-700">Builds:</span> {lifeSkillsForModule(m.slug).join(' · ')}
+                {levelIn(m.slug) && <> · you started at <span className="font-semibold text-ink-700">{levelIn(m.slug)}</span></>}
+                {CORE_MODULES.includes(m.slug) && <> · <span className="font-semibold text-brand-700">Core</span></>}
               </p>
 
               <div className="mt-4">

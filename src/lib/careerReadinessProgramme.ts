@@ -1,11 +1,11 @@
 /**
  * The Life Readiness Programme, live: a learner's written responses to the
- * five modules and the progress made from them. Storage and the save rules are
+ * fourteen modules and the progress made from them. Storage and the save rules are
  * in docs/supabase-career-readiness-programme.sql; what each module asks is in
  * careerReadinessContent.ts.
  *
- * A module is done when all four of its items (three tasks and a reflection)
- * have a saved response. There is no machine grading — the responses are what
+ * A module is done when all its items (its tasks and the reflection) have a
+ * saved response. The project opens once the five core modules are done. There is no machine grading — the responses are what
  * a mentor reads in the review stage.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -13,7 +13,7 @@ import { supabase } from './supabase'
 import { shared } from './shared'
 import { forgetStarted } from './startedCache'
 import { PERSONAL_DEVELOPMENT_MODULES, type ModuleSlug } from './programmes'
-import { ITEM_KEYS, MODULE_CONTENT, type ItemKey } from './careerReadinessContent'
+import { CORE_MODULES, itemsFor, type ItemKey } from './careerReadinessContent'
 
 /** `${module}:${item}` -> the saved text. */
 export type ResponseMap = Record<string, string>
@@ -57,7 +57,7 @@ export async function saveResponse(module: ModuleSlug, item: ItemKey, response: 
 export interface ModuleProgress {
   slug: ModuleSlug
   title: string
-  /** Items saved, of ITEM_KEYS.length. */
+  /** Items saved, of the module's own (itemsFor). */
   done: number
   total: number
   complete: boolean
@@ -70,8 +70,12 @@ export interface ProgrammeProgress {
   modulesTotal: number
   itemsDone: number
   itemsTotal: number
-  /** Every item of every module is in — what the mentor review needs. */
+  /** Every module is done: the programme's practice is finished. */
   complete: boolean
+  /** The five core modules are done: what the project needs. */
+  coreComplete: boolean
+  coreDone: number
+  coreTotal: number
   started: boolean
   /** The first module not yet complete, or null when all are. */
   next: ModuleProgress | null
@@ -79,25 +83,30 @@ export interface ProgrammeProgress {
 
 export function progressFrom(responses: ResponseMap): ProgrammeProgress {
   const modules = PERSONAL_DEVELOPMENT_MODULES.map((m): ModuleProgress => {
-    const done = ITEM_KEYS.filter((k) => Boolean(responses[responseKey(m.slug, k)])).length
+    const items = itemsFor(m.slug)
+    const done = items.filter((k) => Boolean(responses[responseKey(m.slug, k)])).length
     return {
       slug: m.slug,
       title: m.title,
       done,
-      total: ITEM_KEYS.length,
-      complete: done === ITEM_KEYS.length,
+      total: items.length,
+      complete: done === items.length,
       started: done > 0,
     }
   })
   const modulesDone = modules.filter((m) => m.complete).length
   const itemsDone = modules.reduce((s, m) => s + m.done, 0)
+  const coreDone = modules.filter((m) => m.complete && CORE_MODULES.includes(m.slug)).length
   return {
     modules,
     modulesDone,
     modulesTotal: modules.length,
     itemsDone,
-    itemsTotal: MODULE_CONTENT.length * ITEM_KEYS.length,
+    itemsTotal: modules.reduce((s, m) => s + m.total, 0),
     complete: modulesDone === modules.length,
+    coreComplete: coreDone === CORE_MODULES.length,
+    coreDone,
+    coreTotal: CORE_MODULES.length,
     started: itemsDone > 0,
     next: modules.find((m) => !m.complete) ?? null,
   }

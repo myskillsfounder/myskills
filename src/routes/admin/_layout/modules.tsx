@@ -3,7 +3,8 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { fetchCrModules, fetchModuleAnswers, type ModuleAnswerRow } from '@/lib/adminProgrammes'
-import { ITEM_KEYS, MODULE_CONTENT } from '@/lib/careerReadinessContent'
+import { MODULE_CONTENT, itemsFor } from '@/lib/careerReadinessContent'
+import type { ModuleSlug } from '@/lib/programmes'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, EmptyState, PageHeader, Skeleton } from '@/components/ui'
@@ -138,11 +139,11 @@ function ModuleAnswers({ slug, onBack }: { slug: string; onBack: () => void }) {
                   {s.name}
                 </Link>
                 <span className="text-xs text-ink-500">
-                  {s.email} · {s.answers.size}/{ITEM_KEYS.length} written
+                  {s.email} · {s.answers.size}/{itemsFor(slug as ModuleSlug).length} written
                 </span>
               </div>
               <div className="mt-3 space-y-3">
-                {ITEM_KEYS.filter((k) => s.answers.has(k)).map((k) => (
+                {itemsFor(slug as ModuleSlug).filter((k) => s.answers.has(k)).map((k) => (
                   <div key={k} className="rounded-xl bg-ink-100 p-3.5">
                     <p className="text-xs font-semibold text-ink-700">{title(k)}</p>
                     <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink-800">{s.answers.get(k)!.response}</p>

@@ -10,30 +10,30 @@ import {
   type ModuleContent,
 } from '@/lib/careerReadinessContent'
 import { responseKey, type ProgrammeProgress, type ResponseMap } from '@/lib/careerReadinessProgramme'
-import type { ModuleSlug } from '@/lib/programmes'
 import { Alert, Button, Textarea } from '@/components/ui'
 
-/** The five steps of a module, in order. */
+/** A module's steps, in order: Learn, each task, Reflect. */
 type Step = 'learn' | ItemKey
 
-const STEP_ORDER: { key: Step; label: string }[] = [
-  { key: 'learn', label: 'Learn' },
-  { key: 't1', label: 'Task 1' },
-  { key: 't2', label: 'Task 2' },
-  { key: 't3', label: 'Task 3' },
-  { key: 'reflect', label: 'Reflect' },
-]
+function stepsFor(content: ModuleContent): { key: Step; label: string }[] {
+  return [
+    { key: 'learn', label: 'Learn' },
+    ...content.tasks.map((task, i) => ({ key: task.key as Step, label: `Task ${i + 1}` })),
+    { key: 'reflect', label: 'Reflect' },
+  ]
+}
 
 /** Where to open: Learn on a first visit, otherwise the first item not yet saved. */
-function firstOpenStep(slug: ModuleSlug, responses: ResponseMap): Step {
-  const item = (['t1', 't2', 't3', 'reflect'] as ItemKey[]).find((k) => !responses[responseKey(slug, k)])
-  const anySaved = (['t1', 't2', 't3', 'reflect'] as ItemKey[]).some((k) => responses[responseKey(slug, k)])
+function firstOpenStep(content: ModuleContent, responses: ResponseMap): Step {
+  const items = [...content.tasks.map((x) => x.key), 'reflect'] as ItemKey[]
+  const item = items.find((k) => !responses[responseKey(content.slug, k)])
+  const anySaved = items.some((k) => responses[responseKey(content.slug, k)])
   return anySaved ? (item ?? 'reflect') : 'learn'
 }
 
 /**
- * One module: Learn (three short cards), Practise (three written tasks) and
- * Reflect (one prompt). Each response is saved on its own so nothing is lost
+ * One module: Learn (short cards), Practise (its written tasks) and Reflect
+ * (one prompt). Each response is saved on its own so nothing is lost
  * leaving halfway, and any of them can be reopened and edited. The server
  * enforces the same minimum lengths; this is just so the button says why it
  * isn't ready.
@@ -55,7 +55,8 @@ export function ModuleFlow({
   onSave: (item: ItemKey, text: string) => Promise<void>
 }) {
   const slug = content.slug
-  const [step, setStep] = useState<Step>(() => firstOpenStep(slug, responses))
+  const STEP_ORDER = stepsFor(content)
+  const [step, setStep] = useState<Step>(() => firstOpenStep(content, responses))
   const saved = (k: ItemKey) => Boolean(responses[responseKey(slug, k)])
   const mine = progress.modules.find((m) => m.slug === slug)
   const complete = Boolean(mine?.complete)
@@ -66,7 +67,7 @@ export function ModuleFlow({
   return (
     <div className="space-y-5">
       {/* Steps */}
-      <ol className="grid grid-cols-5 gap-2" aria-label="Module steps">
+      <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${STEP_ORDER.length}, minmax(0, 1fr))` }} aria-label="Module steps">
         {STEP_ORDER.map((s, i) => {
           const done = s.key === 'learn' ? saved('t1') || i < stepIndex : saved(s.key)
           const on = s.key === step
@@ -264,7 +265,7 @@ function ItemCard({
           <p className="mt-1 text-sm text-emerald-800/90">
             {next
               ? `Up next: ${next.title}.`
-              : 'That’s all five modules. Ask a mentor to review your work from Practice.'}
+              : 'That’s every module. Ask a mentor to review your work from Practice.'}
           </p>
           <div className="mt-3 flex flex-wrap gap-3">
             {next ? (

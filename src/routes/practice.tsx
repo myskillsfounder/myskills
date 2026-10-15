@@ -328,7 +328,8 @@ function PracticePage() {
     <ProgrammeCompletion stages={crStages}>
       <MentorReviewPanel
         programme="career-readiness"
-        practiceDone={crProgress.complete}
+        // The project opens once the five core modules are done.
+        practiceDone={crProgress.coreComplete}
         review={crReview.review}
         state={crReview.state}
         submissionsLeft={crReview.submissionsLeft}

@@ -20,6 +20,7 @@ import { shared } from './shared'
 import { sessionUser } from './sessionUser'
 import { forgetStarted } from './startedCache'
 import { ensureProfile } from './profile'
+import { PERSONAL_DEVELOPMENT_MODULES } from './programmes'
 import { LIFE_READOUT, LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN, PROGRAMME_SKILLS, type LifeSkillKey } from './lifeSkills'
 
 /** The earlier version's five skills. */
@@ -98,13 +99,10 @@ export const isLifeSkills = (scores: Partial<Record<string, number>>) => 'self-a
 export const scaleFor = (scores: Partial<Record<string, number>>) =>
   isLifeSkills(scores) ? { min: LIFE_SKILL_MIN, max: LIFE_SKILL_MAX } : { min: SKILL_MIN, max: SKILL_MAX }
 
-const MODULE_TITLE: Record<string, string> = {
-  'goal-setting': 'Goal Setting',
-  communication: 'Communication',
-  leadership: 'Leadership',
-  agile: 'Agile Methodology',
-  'growth-mindset': 'Growth Mindset',
-}
+/** Module titles by slug, for "built in" and "where to start". */
+const MODULE_TITLE: Record<string, string> = Object.fromEntries(
+  PERSONAL_DEVELOPMENT_MODULES.map((m) => [m.slug, m.title]),
+)
 
 /**
  * Each skill in a result, in the order it's shown, with its score, level and

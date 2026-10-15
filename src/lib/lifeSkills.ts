@@ -32,37 +32,37 @@ export const LIFE_SKILLS: { key: LifeSkillKey; name: string; what: string; modul
     key: 'self-awareness',
     name: 'Self-awareness',
     what: 'Knowing your strengths, weaknesses, values and emotions.',
-    modules: ['goal-setting', 'growth-mindset'],
+    modules: ['self-awareness'],
   },
   {
     key: 'empathy',
     name: 'Empathy',
     what: 'Understanding how other people feel and see things.',
-    modules: ['communication', 'leadership'],
+    modules: ['empathy'],
   },
   {
     key: 'critical-thinking',
     name: 'Critical thinking',
     what: 'Weighing evidence and questioning assumptions before you decide.',
-    modules: ['agile'],
+    modules: ['critical-thinking'],
   },
   {
     key: 'creative-thinking',
     name: 'Creative thinking',
     what: 'Coming up with new ideas and other ways to approach a problem.',
-    modules: ['agile'],
+    modules: ['creative-thinking'],
   },
   {
     key: 'decision-making',
     name: 'Decision-making',
     what: 'Choosing a course of action after weighing the options and what they lead to.',
-    modules: ['goal-setting', 'leadership'],
+    modules: ['decision-making'],
   },
   {
     key: 'problem-solving',
     name: 'Problem-solving',
     what: 'Finding the cause of a problem, weighing fixes and acting on one.',
-    modules: ['agile', 'goal-setting'],
+    modules: ['problem-solving'],
   },
   {
     key: 'effective-communication',
@@ -74,19 +74,19 @@ export const LIFE_SKILLS: { key: LifeSkillKey; name: string; what: string; modul
     key: 'relationships',
     name: 'Interpersonal relationships',
     what: 'Building good relationships, working together and handling disagreements well.',
-    modules: ['communication', 'leadership'],
+    modules: ['relationships'],
   },
   {
     key: 'coping-stress',
     name: 'Coping with stress',
     what: 'Noticing what causes stress and managing it in healthy ways.',
-    modules: ['growth-mindset'],
+    modules: ['coping-stress'],
   },
   {
     key: 'coping-emotions',
     name: 'Coping with emotions',
     what: 'Recognising emotions in yourself and others, and responding well.',
-    modules: ['growth-mindset'],
+    modules: ['coping-emotions'],
   },
 ]
 
@@ -104,12 +104,17 @@ export const PROGRAMME_SKILLS: { key: 'goal-setting' | 'leadership' | 'agile' | 
 export const LIFE_SKILL_MIN = 3
 export const LIFE_SKILL_MAX = 12
 
-/** The skills a module builds: its own (if it has one), then WHO's, in order. */
+/** The skill a module builds: one module for each of the fourteen. */
 export function lifeSkillsForModule(slug: ModuleSlug): string[] {
   return [
     ...PROGRAMME_SKILLS.filter((s) => s.module === slug).map((s) => s.name),
     ...LIFE_SKILLS.filter((s) => s.modules.includes(slug)).map((s) => s.name),
   ]
+}
+
+/** The skill key a module builds, to look up a student's level in it. */
+export function skillKeyForModule(slug: ModuleSlug): string | undefined {
+  return PROGRAMME_SKILLS.find((s) => s.module === slug)?.key ?? LIFE_SKILLS.find((s) => s.modules.includes(slug))?.key
 }
 
 type Level = 'Emerging' | 'Developing' | 'Established' | 'Standout'

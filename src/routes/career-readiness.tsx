@@ -280,13 +280,15 @@ function CareerReadinessPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm leading-relaxed text-white/75">{m.body}</p>
-                    <p className="mt-3 flex items-start gap-2 rounded-lg bg-white/[0.07] px-3.5 py-2.5 text-sm leading-relaxed text-white/85">
-                      <Bot size={16} className="mt-0.5 shrink-0 text-brand-200" />
-                      <span>
-                        <span className="font-mono text-xs font-bold tracking-wide text-brand-200">AI_ASSIST — </span>
-                        {m.ai}
-                      </span>
-                    </p>
+                    {m.ai && (
+                      <p className="mt-3 flex items-start gap-2 rounded-lg bg-white/[0.07] px-3.5 py-2.5 text-sm leading-relaxed text-white/85">
+                        <Bot size={16} className="mt-0.5 shrink-0 text-brand-200" />
+                        <span>
+                          <span className="font-mono text-xs font-bold tracking-wide text-brand-200">AI_ASSIST — </span>
+                          {m.ai}
+                        </span>
+                      </p>
+                    )}
                   </div>
                 </li>
               ))}

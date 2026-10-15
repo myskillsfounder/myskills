@@ -9,7 +9,7 @@ import {
   type ReviewProgramme,
   type ReviewState,
 } from '@/lib/mentorReview'
-import { PROJECT_CRITERIA_MAX, PROJECT_MAX, PROJECT_PASS, PROJECT_SUBMISSIONS } from '@/lib/readinessScore'
+import { PERSONAL_PROJECT_POINTS, PROJECT_CRITERIA_MAX, PROJECT_MAX, PROJECT_PASS, PROJECT_SUBMISSIONS } from '@/lib/readinessScore'
 import { Alert, Button, Input, Textarea } from '@/components/ui'
 
 /** What a mentor said about a graded project: the four scores and the note. */
@@ -169,11 +169,12 @@ export function MentorReviewPanel({
       ) : (
         <>
           <p className="text-sm font-semibold text-ink-900">
-            {isCareer ? 'Modules done — submit your project' : 'Practice done — submit your project'}
+            {isCareer ? 'Core modules done — submit your project' : 'Practice done — submit your project'}
           </p>
           <p className="mt-0.5 text-sm text-ink-600">
             A mentor grades your project out of {PROJECT_MAX} on relevance, quality, how you applied the skills, and how
             you present it. {PROJECT_PASS} or more passes and releases the points you’ve earned in this programme.
+            {isCareer && ` It counts for up to ${PERSONAL_PROJECT_POINTS} points of your score.`}
           </p>
         </>
       )}

@@ -6,12 +6,41 @@
  * of promising either.
  */
 import type { ComponentType } from 'react'
-import { MessageSquare, Sprout, Target, Users, Workflow } from 'lucide-react'
+import {
+  Eye,
+  Handshake,
+  HeartHandshake,
+  Lightbulb,
+  MessageSquare,
+  Puzzle,
+  Scale,
+  Signpost,
+  Smile,
+  Sprout,
+  Target,
+  Users,
+  Wind,
+  Workflow,
+} from 'lucide-react'
 import { supabase } from './supabase'
 import { sessionUser } from './sessionUser'
 import careerContent from '@/content/career-readiness.json'
 
-export type ModuleSlug = 'goal-setting' | 'communication' | 'leadership' | 'agile' | 'growth-mindset'
+export type ModuleSlug =
+  | 'goal-setting'
+  | 'communication'
+  | 'leadership'
+  | 'agile'
+  | 'growth-mindset'
+  | 'self-awareness'
+  | 'empathy'
+  | 'critical-thinking'
+  | 'creative-thinking'
+  | 'decision-making'
+  | 'problem-solving'
+  | 'relationships'
+  | 'coping-stress'
+  | 'coping-emotions'
 
 export interface ProgrammeModule {
   /** Stored with a learner's responses (docs/supabase-career-readiness-programme.sql). */
@@ -20,7 +49,8 @@ export interface ProgrammeModule {
   title: string
   body: string
   /** How AI is used in this module specifically. */
-  ai: string
+  /** How the module was pitched with AI on the programme page; only the original five have one. */
+  ai?: string
 }
 
 const MODULE_ICONS: Record<ModuleSlug, ProgrammeModule['icon']> = {
@@ -29,13 +59,22 @@ const MODULE_ICONS: Record<ModuleSlug, ProgrammeModule['icon']> = {
   leadership: Users,
   agile: Workflow,
   'growth-mindset': Sprout,
+  'self-awareness': Eye,
+  empathy: HeartHandshake,
+  'critical-thinking': Scale,
+  'creative-thinking': Lightbulb,
+  'decision-making': Signpost,
+  'problem-solving': Puzzle,
+  relationships: Handshake,
+  'coping-stress': Wind,
+  'coping-emotions': Smile,
 }
 
 /**
  * The Life Readiness Programme's curriculum — personal development, the
  * programme's foundation. One list, read by both the landing page
  * (/career-readiness) and the Practice page, so they always promise the same
- * five modules.
+ * fourteen modules.
  *
  * The words live in src/content/career-readiness.json, which the build-time
  * prerender (scripts/generate-seo.mjs) also reads — so the text search

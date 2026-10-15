@@ -399,7 +399,7 @@ function DashboardPage() {
     ? [
         { label: 'Took the life aptitude test', count: stats.career_readiness.aptitude },
         { label: 'Started the modules', count: stats.career_readiness.started },
-        { label: 'All 5 modules written', count: stats.career_readiness.all_modules },
+        { label: 'All 14 modules written', count: stats.career_readiness.all_modules },
         { label: 'Submitted a project', count: stats.career_readiness.review_asked },
         { label: 'Project passed', count: stats.career_readiness.signed_off },
       ]

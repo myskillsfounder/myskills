@@ -7,7 +7,8 @@ import {
   PERSONAL_MAX,
   POINTS_PER_LIVE_SESSION,
   POINTS_PER_MODULE,
-  PROJECT_MAX,
+  MODULES_MAX_POINTS,
+  PERSONAL_PROJECT_POINTS,
   countedActivity,
   personalActivity,
   personalPoints,
@@ -93,9 +94,9 @@ export function CareerReadinessOverview({
               <span className="text-base font-normal text-white/50"> / {PERSONAL_MAX} points</span>
             </p>
             <p className="mt-1 text-xs leading-relaxed text-white/70">
-              {POINTS_PER_MODULE} points for every module you finish, up to {LIVE_SESSIONS_MAX_POINTS} for live
-              sessions with a trainer, mentor or institution, and up to {PROJECT_MAX} for your project, graded by a
-              mentor.
+              Your modules share {MODULES_MAX_POINTS} points (about {POINTS_PER_MODULE.toFixed(1)} each), and your project,
+              graded by a mentor, is worth up to {PERSONAL_PROJECT_POINTS}. Live sessions are on your record but don’t
+              add points.
               {held > 0 &&
                 ` ${held} of your earned points are held until your project passes (only ${ACTIVITY_HELD_CAP} count before then).`}
             </p>

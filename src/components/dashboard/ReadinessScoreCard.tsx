@@ -160,7 +160,7 @@ export function slidesFor(h: Highlights): Slide[] {
   const mentor: Slide = {
     key: 'mentor',
     eyebrow: 'Capstone project',
-    title: 'Your project, graded by a mentor, is worth up to 20 points in each programme',
+    title: 'Your project, graded by a mentor, is worth up to 20 points in Digital Marketing and 15 in Life Readiness',
     note: 'A passing grade also releases the points you’ve already earned.',
     cta: h.hasMentor ? 'See your mentor' : 'Find your mentor',
     to: '/practice',

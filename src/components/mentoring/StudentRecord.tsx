@@ -216,7 +216,7 @@ export function StudentRecord({ studentId }: { studentId: string }) {
                 )}
                 <p className="text-xs leading-relaxed text-ink-500">
                   {[
-                    progress.personal?.modules_done != null && `${progress.personal.modules_done} of 5 modules finished`,
+                    progress.personal?.modules_done != null && `${progress.personal.modules_done} of 14 modules finished`,
                     progress.professional?.tracks_passed != null && `${progress.professional.tracks_passed} of 8 practice tracks passed`,
                     progress.professional?.foundation_percent != null && `Foundation assessment ${progress.professional.foundation_percent}%`,
                     progress.personal?.project_status === 'approved' && 'Life Readiness project passed',

@@ -1,20 +1,26 @@
 /**
  * What each Life Readiness module teaches and asks for — the words on the
  * module pages. This is the file to edit to change the programme: every module
- * is Learn (three short cards), Practise (three written tasks) and Reflect
- * (one prompt), and the app builds the rest from it.
+ * is Learn (short cards), Practise (written tasks) and Reflect (one prompt),
+ * and the app builds the rest from it.
  *
- * Keep the structure fixed: exactly three tasks (keys t1-t3) and one
- * reflection per module. The server counts those 4 items x 5 modules when it
- * decides a learner may ask for a mentor review, so adding or removing an item
- * here means changing career_readiness_items() in
- * docs/supabase-career-readiness-programme.sql too. The wording is free.
+ * Fourteen modules, one per skill in the Life aptitude test. The first five
+ * (CORE_MODULES) have three tasks; finishing them opens the mentor-graded
+ * project. The other nine, one per WHO life skill that had no module, have two.
+ *
+ * Keep each module's tasks as they are (keys t1-t3, and one reflection): the
+ * server's career_readiness_items() (docs/supabase-life-readiness-modules.sql)
+ * lists the same items, to count a module as done. The wording is free.
  */
 import type { ModuleSlug } from './programmes'
 
 export type ItemKey = 't1' | 't2' | 't3' | 'reflect'
 export const TASK_KEYS: ItemKey[] = ['t1', 't2', 't3']
+/** The core modules' items. A module's own are itemsFor(slug). */
 export const ITEM_KEYS: ItemKey[] = ['t1', 't2', 't3', 'reflect']
+
+/** The original five: finishing them opens the programme's project. */
+export const CORE_MODULES: ModuleSlug[] = ['goal-setting', 'communication', 'leadership', 'agile', 'growth-mindset']
 
 /** Fewest characters a response needs (the server enforces the same). */
 export const MIN_TASK_CHARS = 40
@@ -281,8 +287,313 @@ export const MODULE_CONTENT: ModuleContent[] = [
       hint: 'Look back at your answers. What stood out?',
     },
   },
+  // The life skills that had no module of their own (lib/lifeSkills.ts): shorter,
+  // two written tasks and a reflection each.
+  {
+    slug: 'self-awareness',
+    outcome: 'Know your strengths, your weak spots and what throws you, and use them on purpose.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Strengths are habits, not talents',
+        body: 'A strength is something you do well that also gives you energy. Notice what you do easily that others find hard, and what you lose track of time doing.',
+      },
+      {
+        title: 'Know what throws you',
+        body: 'Everyone has triggers: deadlines, criticism, being watched. Knowing yours lets you plan around them instead of being caught out every time.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Name your strengths',
+        prompt: 'List three things you do well, with one real example of each from the last few months.',
+        hint: 'e.g. “I explain things simply: friends ask me to go over topics before exams.”',
+      },
+      {
+        key: 't2',
+        title: 'Name what throws you',
+        prompt: 'Describe one situation that regularly throws you off: what happens, how you react, and what it costs you.',
+        hint: 'Be specific: “When I’m asked a question in class without warning, I go blank.”',
+      },
+    ],
+    reflection: {
+      prompt: 'Ask one person you trust what they think your biggest strength is. How does it compare with your own list, and what surprised you?',
+      hint: 'If you can’t ask anyone yet, write what you think they would say.',
+    },
+  },
+  {
+    slug: 'empathy',
+    outcome: 'Understand how someone else sees things, and show them you do.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Listen to understand, not to reply',
+        body: 'Most of us listen while planning our answer. Empathy starts with listening to the end, then checking you understood before you respond.',
+      },
+      {
+        title: 'Name the feeling',
+        body: 'Saying “That sounds frustrating” shows someone you heard more than their words. You don’t have to agree with someone to understand them.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Tell it from their side',
+        prompt: 'Think of a recent disagreement. Describe it as the other person would: what they wanted, what they felt, and why it made sense to them.',
+        hint: 'Write it in their voice: “I felt ignored because…”',
+      },
+      {
+        key: 't2',
+        title: 'Write a listening reply',
+        prompt: 'A friend tells you they failed an interview and feel useless. Write what you would say: first showing you understood, then, only if they want it, a suggestion.',
+        hint: 'Start with their feeling, not your advice.',
+      },
+    ],
+    reflection: {
+      prompt: 'Where do you find empathy hardest — with whom, or in what kind of moment — and what will you try differently next time?',
+      hint: 'Most people find it hardest when they’re tired, stressed or sure they’re right.',
+    },
+  },
+  {
+    slug: 'critical-thinking',
+    outcome: 'Check claims, weigh evidence and spot weak arguments before you act on them.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Who says so, and how do they know?',
+        body: 'Before you believe or share something, ask where it came from, what evidence backs it, and what the person gains if you believe it.',
+      },
+      {
+        title: 'Look for the other side',
+        body: 'A strong view survives its best counter-argument. Find the strongest case against what you think, then decide.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Check a claim',
+        prompt: 'Pick a claim you saw recently (a forward, a post, an ad). Check it: where did it come from, what evidence supports it, and is it true, false or unclear?',
+        hint: 'e.g. “This course guarantees a job in 30 days.”',
+      },
+      {
+        key: 't2',
+        title: 'Argue against yourself',
+        prompt: 'Write one opinion you hold about your career or studies, then the strongest argument against it. Has your view changed, and why or why not?',
+        hint: 'Make the counter-argument as good as you can, not a weak version.',
+      },
+    ],
+    reflection: {
+      prompt: 'What kind of claim are you most likely to believe without checking, and why?',
+      hint: 'Think about claims from people you admire, or things you want to be true.',
+    },
+  },
+  {
+    slug: 'creative-thinking',
+    outcome: 'Come up with more and better ideas, and find another way when the usual one fails.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Quantity first, judge later',
+        body: 'Good ideas usually come after many ordinary ones. List ideas quickly without judging them, then pick the best.',
+      },
+      {
+        title: 'Borrow and combine',
+        body: 'Most new ideas mix existing ones: something that works in one place, used in another. Ask: who has solved a problem like this before?',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Ten ideas in ten minutes',
+        prompt: 'A small tea shop near a college wants more students to visit. Write at least ten ideas to help, without judging any of them.',
+        hint: 'Include a few silly ones: they often lead to good ones.',
+      },
+      {
+        key: 't2',
+        title: 'Pick one and improve it',
+        prompt: 'Choose your best idea from Task 1. Explain why it could work, what it would cost, and one way to test it cheaply this week.',
+        hint: 'A test is small: one post, one offer, one conversation.',
+      },
+    ],
+    reflection: {
+      prompt: 'When did you last solve something in an unusual way? What helped you think differently that time?',
+      hint: 'It can be anything: a study trick, a cheaper way to do something.',
+    },
+  },
+  {
+    slug: 'decision-making',
+    outcome: 'Make decisions by weighing options and consequences, and stand by them.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Options, consequences, choice',
+        body: 'List at least two real options, write what each would lead to, then choose and say why. Writing it down beats going round in circles.',
+      },
+      {
+        title: 'Decide, then review',
+        body: 'You rarely have all the information. Set a date to decide, choose the best option you have, and check later what you learned.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Lay out a decision',
+        prompt: 'Pick a real decision you face (a course, a job, a project). Write two or three options and what each would likely lead to in a year.',
+        hint: 'Include the option of doing nothing.',
+      },
+      {
+        key: 't2',
+        title: 'Choose and explain',
+        prompt: 'Choose one option from Task 1 and explain why, including what you are giving up. Set a date by which you will act on it.',
+        hint: '“I’m choosing X because… I’m giving up Y… I’ll start by 1 November.”',
+      },
+    ],
+    reflection: {
+      prompt: 'Think of a decision you put off or let someone else make. What would you do differently now?',
+      hint: 'Being honest about why you avoided it is the useful part.',
+    },
+  },
+  {
+    slug: 'problem-solving',
+    outcome: 'Find the real cause of a problem, weigh fixes and act on one.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Ask why, more than once',
+        body: 'The first cause you see is often a symptom. Keep asking “why?” until you reach something you can actually change.',
+      },
+      {
+        title: 'Small steps you can test',
+        body: 'Break the fix into steps, try the first one, and see what happens. A small fix you try today beats a perfect plan you never start.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Find the cause',
+        prompt: 'Describe a problem that keeps happening to you (missed deadlines, late mornings, low marks). Ask “why?” at least three times and write down each answer.',
+        hint: '“I miss deadlines → I start late → I don’t know where to start → the task feels too big.”',
+      },
+      {
+        key: 't2',
+        title: 'Plan a fix',
+        prompt: 'Based on Task 1, write two possible fixes, choose one, and list the first three steps you will take this week.',
+        hint: 'Make the first step something you can do in under 30 minutes.',
+      },
+    ],
+    reflection: {
+      prompt: 'Which problem in your life have you been treating only on the surface? What would fixing the cause look like?',
+      hint: 'Think of something that keeps coming back.',
+    },
+  },
+  {
+    slug: 'relationships',
+    outcome: 'Build good working relationships and handle disagreements without falling out.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Built in small moments',
+        body: 'Remembering what someone told you, thanking them, keeping a promise: these small things build the trust you need when work gets hard.',
+      },
+      {
+        title: 'Disagree with the idea, not the person',
+        body: 'In a conflict, describe the problem and how it affects you, ask for their view, and look for an option that works for both of you.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Plan a hard conversation',
+        prompt: 'Think of a disagreement with someone you study or work with. Write how you would open the conversation: the problem, how it affects you, and a question asking their view.',
+        hint: '“When the slides came in late, I had to rush my part. What made it hard for you?”',
+      },
+      {
+        key: 't2',
+        title: 'Strengthen one relationship',
+        prompt: 'Name one person whose relationship with you matters for your studies or work. Write two small things you will do in the next two weeks to strengthen it.',
+        hint: 'Small and specific: “Thank her for the notes”, “Ask how his interview went”.',
+      },
+    ],
+    reflection: {
+      prompt: 'What do you usually do when a disagreement starts: avoid it, push harder, or talk it through? What would you like to do instead?',
+      hint: 'There’s no right answer; noticing the pattern is the point.',
+    },
+  },
+  {
+    slug: 'coping-stress',
+    outcome: 'Notice what stresses you, and manage it with habits that work.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Know your signs',
+        body: 'Stress shows up before you notice it: poor sleep, snapping at people, scrolling instead of starting. Learn your early signs so you can act sooner.',
+      },
+      {
+        title: 'Plan, prioritise, recover',
+        body: 'When there’s too much to do, write everything down, pick the one thing that matters most, and do it first. Rest is part of the plan, not a reward at the end.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Map your stress',
+        prompt: 'Write your three biggest sources of stress right now, and the early signs that tell you stress is building.',
+        hint: 'e.g. “Exams in three weeks: I start sleeping late and avoiding my books.”',
+      },
+      {
+        key: 't2',
+        title: 'Build a reset',
+        prompt: 'Choose one source from Task 1. Write a plan for the next week: what you will do first, and one habit that helps you reset (a walk, a set bedtime, talking to someone).',
+        hint: 'Keep the habit small enough to do on a bad day.',
+      },
+    ],
+    reflection: {
+      prompt: 'What has helped you get through a stressful time before, and how can you use it now?',
+      hint: 'If stress feels too heavy to manage alone, you can ask a counsellor privately in the Community.',
+    },
+  },
+  {
+    slug: 'coping-emotions',
+    outcome: 'Recognise strong feelings in yourself and others, and respond rather than react.',
+    minutes: 25,
+    learn: [
+      {
+        title: 'Name it to tame it',
+        body: 'Putting a feeling into words (angry, worried, disappointed) makes it easier to handle. The more exactly you can name it, the better.',
+      },
+      {
+        title: 'Pause before you respond',
+        body: 'Between what happens and what you do, there is a moment. A breath, a short walk or waiting before you reply gives you room to choose.',
+      },
+    ],
+    tasks: [
+      {
+        key: 't1',
+        title: 'Replay a strong moment',
+        prompt: 'Describe a recent moment when a strong feeling took over (anger, worry, embarrassment). What happened, what did you feel, and what did you do?',
+        hint: 'Name the feeling as exactly as you can.',
+      },
+      {
+        key: 't2',
+        title: 'Rewrite the response',
+        prompt: 'Rewrite the moment from Task 1: what pause could you have taken, and what would you have said or done instead?',
+        hint: '“I would have waited until the evening to reply, and asked what they meant.”',
+      },
+    ],
+    reflection: {
+      prompt: 'Which emotion is hardest for you to handle, and what is one thing you will try next time it comes up?',
+      hint: 'If your feelings often feel overwhelming, talking to a counsellor in the Community can help.',
+    },
+  },
 ]
 
 export function moduleContent(slug: string): ModuleContent | undefined {
   return MODULE_CONTENT.find((m) => m.slug === slug)
+}
+
+/** What a module asks for, in order: its tasks, then the reflection. */
+export function itemsFor(slug: ModuleSlug): ItemKey[] {
+  const m = moduleContent(slug)
+  return m ? [...m.tasks.map((x) => x.key), 'reflect'] : ITEM_KEYS
 }
