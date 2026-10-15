@@ -22,7 +22,7 @@ import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { useMyMatch } from '@/lib/mentorMatches'
 import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
 import { StartChoice } from '@/components/practice/StartChoice'
-import { useMyAptitudeResult } from '@/lib/dmAptitude'
+import { strongestAptitude, suggestedTrackOrder, useMyAptitudeResult } from '@/lib/dmAptitude'
 import type { FoundationUnlock } from '@/lib/foundation'
 import { FoundationCard } from '@/components/assessment/FoundationCard'
 import { PracticeStats } from '@/components/practice/PracticeStats'
@@ -286,7 +286,13 @@ function PracticePage() {
       liveSessions={dmSessions.length}
     />
   )
-  const dmNextUp = <NextUpCard practice={practice} onSelect={setSelected} />
+  // The aptitude result decides where a new student starts: the tracks that
+  // lean on their strongest aptitude come first.
+  const suggested = aptitude ? suggestedTrackOrder(aptitude.scores) : []
+  const strongest = aptitude ? strongestAptitude(aptitude.scores) : null
+  const dmNextUp = (
+    <NextUpCard practice={practice} onSelect={setSelected} suggested={suggested} suitedTo={strongest?.name} />
+  )
   const dmCompletion = (
     <ProgrammeCompletion stages={dmStages}>
       <MentorReviewPanel
@@ -456,7 +462,7 @@ function PracticePage() {
           {practiceLoading ? (
             <p className="text-sm text-ink-600">Loading practice…</p>
           ) : (
-            <TrackList practice={practice} onSelect={setSelected} />
+            <TrackList practice={practice} onSelect={setSelected} suited={strongest?.tracks ?? []} />
           )}
         </div>
       )}

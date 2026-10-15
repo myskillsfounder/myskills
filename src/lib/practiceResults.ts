@@ -20,6 +20,27 @@ export interface PracticeTrackBest {
   last_attempt_at: string
 }
 
+/** A track opens again this long after it was last taken (the server holds the
+ *  same rule, in submit_practice_attempt). */
+export const RETAKE_AFTER_MS = 24 * 60 * 60 * 1000
+
+/** When a track can next be taken, or null if it can be taken now. */
+export function nextAttemptAt(row: Pick<PracticeTrackBest, 'last_attempt_at'> | undefined, now = Date.now()): Date | null {
+  if (!row?.last_attempt_at) return null
+  const at = new Date(row.last_attempt_at).getTime() + RETAKE_AFTER_MS
+  return at > now ? new Date(at) : null
+}
+
+/** "tomorrow at 4:30 pm", "today at 9:10 pm". */
+export function retakeLabel(at: Date): string {
+  const time = at.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+  const today = new Date()
+  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
+  if (at.toDateString() === today.toDateString()) return `today at ${time}`
+  if (at.toDateString() === tomorrow.toDateString()) return `tomorrow at ${time}`
+  return `${at.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })} at ${time}`
+}
+
 /** keyed by skill-track slug (see lib/skillTracks.ts) */
 export type PracticeSummary = Record<string, PracticeTrackBest>
 
@@ -64,6 +85,9 @@ export async function submitPracticeAttempt(
   const { data, error } = await supabase.rpc('submit_practice_attempt', {
     p_track: track,
     p_answers: answers,
+    // The version of the questions this page holds: the server grades only the
+    // one its answer key matches (docs/supabase-practice-honest-scores.sql).
+    p_version: 2,
   })
   if (error) throw new Error(error.message?.trim() || 'Something went wrong.')
   return data as PracticeResult

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { RETAKE_AFTER_MS, retakeLabel } from '@/lib/practiceResults'
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,6 +24,28 @@ const DIFFICULTY_TINT: Record<Difficulty, string> = {
   Expert: 'bg-rose-50 text-rose-700',
 }
 
+function shuffled<T>(items: T[]): T[] {
+  const out = [...items]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
+
+/**
+ * One attempt's running order: the questions in a fresh order, and each
+ * question's options in a fresh order. Answers are still recorded as the
+ * option's place in the question as written (lib/decisionLabs.ts), which is
+ * what the server grades, so the shuffle only changes what the student sees.
+ */
+function deal(questions: ScenarioQuestion[]) {
+  const order = shuffled(questions)
+  const optionOrder: Record<string, number[]> = {}
+  for (const q of order) optionOrder[q.id] = shuffled(q.options.map((_, i) => i))
+  return { order, optionOrder }
+}
+
 export function ScenarioQuiz({
   trackName,
   questions,
@@ -36,13 +59,15 @@ export function ScenarioQuiz({
   onSubmit: (answers: Record<string, number>) => Promise<PracticeResult>
   onBack: () => void
 }) {
+  // Dealt once per attempt, so the order holds still while they answer.
+  const [{ order, optionOrder }] = useState(() => deal(questions))
   const [index, setIndex] = useState(0)
   const [answers, setAnswers] = useState<(number | null)[]>(() => questions.map(() => null))
   const [result, setResult] = useState<PracticeResult | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string>()
 
-  const q = questions[index]
+  const q = order[index]
   const answered = answers.filter((a) => a !== null).length
   const progress = Math.round(((index + (answers[index] !== null ? 1 : 0)) / questions.length) * 100)
   const isLast = index === questions.length - 1
@@ -55,13 +80,6 @@ export function ScenarioQuiz({
     })
   }
 
-  function retake() {
-    setAnswers(questions.map(() => null))
-    setIndex(0)
-    setResult(null)
-    setError(undefined)
-  }
-
   // Graded and recorded by the server; nothing is scored in the browser, so
   // there is no result to look at — or to walk away from — before it counts.
   async function finish() {
@@ -69,7 +87,7 @@ export function ScenarioQuiz({
     setError(undefined)
     try {
       const payload: Record<string, number> = {}
-      questions.forEach((question, i) => {
+      order.forEach((question, i) => {
         payload[question.id] = answers[i] as number
       })
       setResult(await onSubmit(payload))
@@ -102,24 +120,19 @@ export function ScenarioQuiz({
           </p>
 
           <p className="mt-3 text-xs text-ink-500">
-            Saved. A track’s score is the best of your last three attempts.
+            Saved. A track’s score is the best of your last three attempts. You can take this track again{' '}
+            {retakeLabel(new Date(Date.now() + RETAKE_AFTER_MS))}, with the questions in a new order: read the review
+            below in the meantime.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={retake}
+              onClick={onBack}
               className="inline-flex items-center gap-2 press h-11 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
             >
-              Practice again
-              <ArrowRight size={16} />
-            </button>
-            <button
-              type="button"
-              onClick={onBack}
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
-            >
               Back to tracks
+              <ArrowRight size={16} />
             </button>
           </div>
         </div>
@@ -127,7 +140,7 @@ export function ScenarioQuiz({
         <div className="card p-5 sm:p-6">
           <h2 className="font-display text-lg font-semibold text-ink-900">Review scenarios</h2>
           <ul className="mt-4 space-y-5">
-            {questions.map((question, i) => {
+            {order.map((question, i) => {
               const r = review[question.id]
               const correct = r != null && answers[i] === r.correctIndex
               return (
@@ -237,7 +250,8 @@ export function ScenarioQuiz({
       <div className="card p-6">
         <h3 className="text-base font-semibold leading-snug text-ink-900">{q.question}</h3>
         <div className="mt-5 space-y-2.5">
-          {q.options.map((opt, i) => {
+          {optionOrder[q.id].map((i, shown) => {
+            const opt = q.options[i]
             const selected = answers[index] === i
             return (
               <button
@@ -255,7 +269,7 @@ export function ScenarioQuiz({
                     selected ? 'border-brand-600 bg-brand-600 text-white' : 'border-ink-300'
                   }`}
                 >
-                  {String.fromCharCode(65 + i)}
+                  {String.fromCharCode(65 + shown)}
                 </span>
                 {opt}
               </button>

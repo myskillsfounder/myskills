@@ -111,6 +111,7 @@ export function KeyMeasures({
   courses,
   startHere = false,
   showHours = true,
+  hours: accountHours,
 }: {
   goals: string[]
   streak: number
@@ -121,8 +122,12 @@ export function KeyMeasures({
   /** The hours card says nothing before they've begun, so a new student's
    *  LaunchPad leaves it out. */
   showHours?: boolean
+  /** Hours in the last 30 days, kept with the account (lib/activity.ts). This
+   *  browser's own count is used until it is known. */
+  hours?: number
 }) {
-  const hours = useMemo(() => timeSeries('month').totalHours, [])
+  const localHours = useMemo(() => timeSeries('month').totalHours, [])
+  const hours = accountHours ?? localHours
   const [primary, ...rest] = goals
   // Goals saved by the older multi-select onboarding can map onto the same
   // current goal (two interview goals both read "Find a new job"), so the
@@ -212,7 +217,9 @@ export function KeyMeasures({
             <Flame size={13} className="text-orange-500" />
             {streak}-day streak
           </p>
-          <p className="mt-2 text-[11px] leading-relaxed text-ink-400">Tracked on this device.</p>
+          <p className="mt-2 text-[11px] leading-relaxed text-ink-400">
+            {accountHours != null ? 'Across all your devices.' : 'Tracked on this device.'}
+          </p>
         </section>
       )}
     </>

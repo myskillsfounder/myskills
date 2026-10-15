@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
-import { ChevronRight, RotateCcw } from 'lucide-react'
+import { ChevronRight, Clock, RotateCcw, Sparkles } from 'lucide-react'
 import { skillTracks } from '@/lib/skillTracks'
 import { questionsForTrack } from '@/lib/decisionLabs'
-import type { PracticeSummary } from '@/lib/practiceResults'
+import { nextAttemptAt, retakeLabel, type PracticeSummary } from '@/lib/practiceResults'
 import { STATE_META, trackState, type TrackState } from './practiceStatus'
 import { SectionHeader } from '@/components/app/SectionHeader'
 
@@ -27,9 +27,12 @@ const FILTERS: { id: Filter; label: string }[] = [
 export function TrackList({
   practice,
   onSelect,
+  suited = [],
 }: {
   practice: PracticeSummary
   onSelect: (track: string) => void
+  /** Tracks that lean on the student's strongest aptitude: marked "Suits you". */
+  suited?: string[]
 }) {
   const [filter, setFilter] = useState<Filter>('all')
 
@@ -46,6 +49,8 @@ export function TrackList({
           attempts: r?.attempts ?? 0,
           scenarios: questionsForTrack(t.slug).length,
           state: trackState(started, percent),
+          // Taken in the last day: it opens again after that.
+          opensAt: nextAttemptAt(r),
         }
       }),
     [practice],
@@ -69,7 +74,7 @@ export function TrackList({
       <SectionHeader
         eyebrow="Digital Marketing"
         title="Skill tracks"
-        description="Your best score in each track is what counts."
+        description="Your best score in each track is what counts. A track can be taken once a day, and the questions and options are shuffled every time."
       />
 
       <div role="group" aria-label="Filter tracks" className="mb-4 flex gap-2 overflow-x-auto pb-1">
@@ -108,8 +113,11 @@ export function TrackList({
               <li key={t.slug}>
                 <button
                   type="button"
-                  onClick={() => onSelect(t.slug)}
-                  className="group flex w-full items-center gap-3.5 rounded-2xl border border-ink-200 bg-white p-3.5 text-left shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-e2 sm:gap-4 sm:p-4"
+                  onClick={() => !t.opensAt && onSelect(t.slug)}
+                  aria-disabled={t.opensAt ? true : undefined}
+                  className={`group flex w-full items-center gap-3.5 rounded-2xl border border-ink-200 bg-white p-3.5 text-left shadow-e1 transition-all duration-300 sm:gap-4 sm:p-4 ${
+                    t.opensAt ? 'cursor-default' : 'hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-e2'
+                  }`}
                 >
                   {/* score puck — the number people actually compare */}
                   <span
@@ -135,6 +143,11 @@ export function TrackList({
                       >
                         {meta.label}
                       </span>
+                      {suited.includes(t.slug) && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-700">
+                          <Sparkles size={10} /> Suits you
+                        </span>
+                      )}
                     </div>
 
                     <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-ink-200/60">
@@ -152,6 +165,15 @@ export function TrackList({
                           <span className="inline-flex items-center gap-1">
                             <RotateCcw size={10} />
                             {t.attempts} attempt{t.attempts === 1 ? '' : 's'}
+                          </span>
+                        </>
+                      )}
+                      {t.opensAt && (
+                        <>
+                          <span aria-hidden>·</span>
+                          <span className="inline-flex items-center gap-1 font-medium text-ink-700">
+                            <Clock size={10} />
+                            Opens {retakeLabel(t.opensAt)}
                           </span>
                         </>
                       )}
