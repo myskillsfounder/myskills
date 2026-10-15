@@ -3,9 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
 import {
   ACTIVITY_HELD_CAP,
-  LIVE_SESSIONS_MAX_POINTS,
   PERSONAL_MAX,
-  POINTS_PER_LIVE_SESSION,
   POINTS_PER_MODULE,
   MODULES_MAX_POINTS,
   PERSONAL_PROJECT_POINTS,
@@ -135,7 +133,7 @@ export function CareerReadinessOverview({
             <p className="text-[11px] font-medium text-white/60">Live sessions</p>
             <p className="mt-0.5 font-display text-lg font-semibold text-white">
               {liveSessions}
-              <span className="text-sm font-normal text-white/50">/{LIVE_SESSIONS_MAX_POINTS / POINTS_PER_LIVE_SESSION}</span>
+              <span className="text-sm font-normal text-white/50"> on record</span>
             </p>
           </div>
           <div>
