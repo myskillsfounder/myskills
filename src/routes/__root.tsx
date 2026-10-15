@@ -10,6 +10,7 @@ import { recordLoginEvent, validateSession } from '@/lib/auth'
 import { initAnalytics, trackPageView } from '@/lib/analytics'
 import { applySeo } from '@/lib/seo'
 import { startTimeTracking } from '@/lib/timeTracker'
+import { startActivitySync } from '@/lib/activity'
 import { MobileBottomNav } from '@/components/app/MobileBottomNav'
 
 export const Route = createRootRoute({
@@ -65,8 +66,10 @@ function RootComponent() {
     initAnalytics()
   }, [])
 
-  // Track active time on the app (device-local) for the dashboard chart.
+  // Track active time on the app: with the account (lib/activity.ts), and in
+  // the browser as before, which the LaunchPad falls back to.
   useEffect(() => startTimeTracking(), [])
+  useEffect(() => startActivitySync(), [])
 
   // Record a login event whenever the user actually signs in (admin analytics).
   useEffect(() => {

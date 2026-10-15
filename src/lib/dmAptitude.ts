@@ -77,6 +77,18 @@ export function trackNames(aptitude: { tracks: string[] }): string[] {
     .filter((n): n is string => Boolean(n))
 }
 
+/** The skill tracks in the order this result suggests: the tracks that lean on
+ *  the strongest aptitude first, then the next strongest, and so on. Ties keep
+ *  the order the aptitudes are asked in. */
+export function suggestedTrackOrder(scores: Record<AptitudeKey, number>): string[] {
+  const ranked = APTITUDES.map((a, i) => ({ a, i, score: scores[a.key] ?? 0 })).sort(
+    (x, y) => y.score - x.score || x.i - y.i,
+  )
+  const order: string[] = []
+  for (const { a } of ranked) for (const slug of a.tracks) if (!order.includes(slug)) order.push(slug)
+  return order
+}
+
 /** Each aptitude with its score and level, in the order they were asked. */
 export function orderedAptitudes(scores: Record<AptitudeKey, number>) {
   return APTITUDES.map((a) => ({

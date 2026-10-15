@@ -75,9 +75,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Limited team; Three-month deadline.",
     "question": "Which marketing channel should receive the highest initial investment?",
     "options": [
+      "Google Search Campaign",
       "SEO",
       "Meta Lead Campaign",
-      "Google Search Campaign",
       "Influencer Marketing"
     ]
   },
@@ -97,8 +97,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Cannot target everyone initially.",
     "question": "Which audience should be targeted first?",
     "options": [
-      "Everyone aged 18+",
       "Women 35–50 interested in premium skincare",
+      "Everyone aged 18+",
       "Teenagers",
       "Broad audience with no interests"
     ]
@@ -164,9 +164,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What is the best launch strategy?",
     "options": [
       "Target everyone",
-      "Choose one priority segment",
       "Ignore segmentation",
-      "Launch internationally"
+      "Launch internationally",
+      "Choose one priority segment"
     ]
   },
   {
@@ -207,8 +207,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Price cuts reduce margins.",
     "question": "What is the best strategic response?",
     "options": [
-      "Immediately reduce prices",
       "Strengthen differentiation and service quality",
+      "Immediately reduce prices",
       "Stop advertising",
       "Exit the market"
     ]
@@ -230,8 +230,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which allocation strategy is most appropriate?",
     "options": [
       "Spend everything on Meta",
-      "Use a balanced mix of Search, Social and Remarketing",
       "Only newspapers",
+      "Use a balanced mix of Search, Social and Remarketing",
       "Only television"
     ]
   },
@@ -252,9 +252,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should be prioritised?",
     "options": [
       "Acquire more customers",
-      "Launch retention campaigns and loyalty programme",
       "Increase prices",
-      "Pause marketing"
+      "Pause marketing",
+      "Launch retention campaigns and loyalty programme"
     ]
   },
   {
@@ -274,9 +274,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which strategy is most sustainable?",
     "options": [
       "Paid ads only",
-      "SEO + Content + Search Ads + Email Nurturing",
       "Social media only",
-      "Referral marketing only"
+      "Referral marketing only",
+      "SEO + Content + Search Ads + Email Nurturing"
     ]
   },
   {
@@ -317,8 +317,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "New domain.",
     "question": "Priority?",
     "options": [
-      "KD92",
       "KD28",
+      "KD92",
       "Both",
       "Neither"
     ]
@@ -340,8 +340,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Choose?",
     "options": [
       "Students",
-      "Freelancers",
       "Families",
+      "Freelancers",
       "Everyone"
     ]
   },
@@ -384,8 +384,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Priority?",
     "options": [
       "Old keyword",
-      "New trend keyword",
       "Ignore trends",
+      "New trend keyword",
       "Pause SEO"
     ]
   },
@@ -405,8 +405,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Limited backlinks.",
     "question": "Analyse?",
     "options": [
-      "Office",
       "SEO content",
+      "Office",
       "Logo",
       "Employees"
     ]
@@ -428,9 +428,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Recommendation?",
     "options": [
       "Reject",
-      "Launch niche",
       "Everyone",
-      "Reduce price"
+      "Reduce price",
+      "Launch niche"
     ]
   },
   {
@@ -450,9 +450,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Next?",
     "options": [
       "Ignore interviews",
-      "Validate quantitatively",
       "Follow sales",
-      "Target all"
+      "Target all",
+      "Validate quantitatively"
     ]
   },
   {
@@ -472,8 +472,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Allocate?",
     "options": [
       "Surveys only",
-      "Balanced research",
       "Brand redesign",
+      "Balanced research",
       "Social contests"
     ]
   },
@@ -493,8 +493,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Evidence required.",
     "question": "Recommend?",
     "options": [
-      "Reject",
       "Phased launch",
+      "Reject",
       "Wait",
       "Acquire competitor"
     ]
@@ -560,9 +560,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which audience should be tested first?",
     "options": [
       "Broad 18-65",
-      "Lookalike of existing patients",
       "Random interests",
-      "Worldwide"
+      "Worldwide",
+      "Lookalike of existing patients"
     ]
   },
   {
@@ -582,8 +582,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "How should budget be allocated?",
     "options": [
       "Equal split",
-      "Prioritize best-selling categories",
       "Spend on weakest products",
+      "Prioritize best-selling categories",
       "Random split"
     ]
   },
@@ -604,9 +604,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which placement strategy?",
     "options": [
       "Manual Feed only",
-      "Advantage+ Placements",
       "Stories only",
-      "Reels only"
+      "Reels only",
+      "Advantage+ Placements"
     ]
   },
   {
@@ -625,10 +625,10 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Budget unchanged.",
     "question": "What should be optimized first?",
     "options": [
-      "Creative",
       "Increase budget",
       "Pause account",
-      "Change logo"
+      "Change logo",
+      "Creative"
     ]
   },
   {
@@ -692,8 +692,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best action?",
     "options": [
       "Increase budget",
-      "Launch new creatives",
       "Reduce bids",
+      "Launch new creatives",
       "Delete pixel"
     ]
   },
@@ -713,8 +713,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Budget available.",
     "question": "What should you do?",
     "options": [
-      "Shift entire budget instantly",
       "Gradually increase Lookalike budget",
+      "Shift entire budget instantly",
       "Pause Lookalike",
       "Use interests only"
     ]
@@ -780,9 +780,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best recommendation?",
     "options": [
       "Remove Pixel",
-      "Implement Conversion API",
       "Stop tracking",
-      "Use manual reporting"
+      "Use manual reporting",
+      "Implement Conversion API"
     ]
   },
   {
@@ -801,9 +801,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "One week remaining.",
     "question": "First action?",
     "options": [
-      "Audit funnel before making changes",
       "Increase budget",
       "Launch new page only",
+      "Audit funnel before making changes",
       "Pause account"
     ]
   },
@@ -867,9 +867,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Need high relevance.",
     "question": "Which match type is best initially?",
     "options": [
+      "Exact + Phrase",
       "Broad",
       "Broad Match with no negatives",
-      "Exact + Phrase",
       "Display keywords"
     ]
   },
@@ -890,9 +890,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you do first?",
     "options": [
       "Increase bids",
-      "Add negative keywords",
       "Pause campaign",
-      "Raise budget"
+      "Raise budget",
+      "Add negative keywords"
     ]
   },
   {
@@ -934,8 +934,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best first action?",
     "options": [
       "Increase bids",
-      "Rewrite ad copy and headlines",
       "Pause keywords",
+      "Rewrite ad copy and headlines",
       "Change logo"
     ]
   },
@@ -978,8 +978,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Main optimization?",
     "options": [
       "Add keywords",
-      "Improve landing page speed and UX",
       "Increase budget",
+      "Improve landing page speed and UX",
       "Pause ads"
     ]
   },
@@ -999,8 +999,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Limited search term insights.",
     "question": "Recommendation?",
     "options": [
-      "Pause campaign",
       "Continue while measuring business KPIs",
+      "Pause campaign",
       "Move all budget to Display",
       "Disable tracking"
     ]
@@ -1022,8 +1022,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "First action?",
     "options": [
       "Increase bids",
-      "Review search terms and add negatives",
       "Duplicate campaign",
+      "Review search terms and add negatives",
       "Pause account"
     ]
   },
@@ -1066,8 +1066,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best approach?",
     "options": [
       "Double budget overnight",
-      "Gradually increase budget while monitoring CPA",
       "Restart campaign",
+      "Gradually increase budget while monitoring CPA",
       "Pause keywords"
     ]
   },
@@ -1087,10 +1087,10 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Traffic unchanged.",
     "question": "First investigation?",
     "options": [
-      "Conversion tag implementation",
       "Ad copy",
       "Keyword bids",
-      "Extensions"
+      "Extensions",
+      "Conversion tag implementation"
     ]
   },
   {
@@ -1110,9 +1110,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you do?",
     "options": [
       "Equal budget",
-      "Shift budget toward higher ROAS campaigns",
       "Pause all",
-      "Increase all budgets"
+      "Increase all budgets",
+      "Shift budget toward higher ROAS campaigns"
     ]
   },
   {
@@ -1131,8 +1131,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "One week remains.",
     "question": "First action?",
     "options": [
-      "Audit keywords, search terms and landing pages",
       "Increase budget",
+      "Audit keywords, search terms and landing pages",
       "Launch Display",
       "Pause account"
     ]
@@ -1154,9 +1154,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best recommendation?",
     "options": [
       "Increase spend everywhere",
-      "Invest more in top-performing campaigns while testing new opportunities",
       "Pause low performers immediately",
-      "Replace all keywords"
+      "Replace all keywords",
+      "Invest more in top-performing campaigns while testing new opportunities"
     ]
   },
   {
@@ -1198,8 +1198,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which keyword should be targeted first?",
     "options": [
       "Keyword A",
-      "Keyword B",
       "Both equally",
+      "Keyword B",
       "Neither"
     ]
   },
@@ -1220,8 +1220,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you do first?",
     "options": [
       "Copy competitor articles",
-      "Perform a content gap analysis and build a content plan",
       "Buy backlinks only",
+      "Perform a content gap analysis and build a content plan",
       "Ignore competitors"
     ]
   },
@@ -1263,8 +1263,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Development sprint available.",
     "question": "What should be prioritized?",
     "options": [
-      "Add more keywords",
       "Improve page speed and Core Web Vitals",
+      "Add more keywords",
       "Increase backlinks",
       "Run paid ads"
     ]
@@ -1285,8 +1285,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Limited outreach budget.",
     "question": "Best long-term strategy?",
     "options": [
-      "Buy hundreds of low-quality links",
       "Earn authoritative backlinks through partnerships and content",
+      "Buy hundreds of low-quality links",
       "Ignore backlinks",
       "Stuff keywords"
     ]
@@ -1329,8 +1329,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Content can be updated.",
     "question": "What should you do?",
     "options": [
-      "Increase PPC bids",
       "Restructure content with concise answers, headings and FAQs",
+      "Increase PPC bids",
       "Delete the page",
       "Reduce content length drastically"
     ]
@@ -1352,8 +1352,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which improvement is most valuable?",
     "options": [
       "Publish shorter ads",
-      "Create expert, structured content with FAQs and schema",
       "Pause SEO",
+      "Create expert, structured content with FAQs and schema",
       "Focus only on backlinks"
     ]
   },
@@ -1374,8 +1374,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What is the most critical preparation?",
     "options": [
       "Delete old URLs",
-      "Create redirect mapping and test indexing",
       "Launch without testing",
+      "Create redirect mapping and test indexing",
       "Pause Search Console"
     ]
   },
@@ -1396,9 +1396,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you do?",
     "options": [
       "Remove links",
-      "Build a strategic internal linking structure",
       "Reduce navigation",
-      "Duplicate pages"
+      "Duplicate pages",
+      "Build a strategic internal linking structure"
     ]
   },
   {
@@ -1440,9 +1440,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best action?",
     "options": [
       "Delete blogs",
-      "Refresh and expand existing content",
       "Ignore them",
-      "Only change titles"
+      "Only change titles",
+      "Refresh and expand existing content"
     ]
   },
   {
@@ -1462,9 +1462,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which KPI set is most useful?",
     "options": [
       "Followers and likes",
-      "Organic conversions, rankings, CTR and revenue",
       "Page colors",
-      "Bounce rate only"
+      "Bounce rate only",
+      "Organic conversions, rankings, CTR and revenue"
     ]
   },
   {
@@ -1483,8 +1483,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Highly competitive market.",
     "question": "Which roadmap is strongest?",
     "options": [
-      "Focus only on backlinks",
       "Combine technical SEO, content, authority building, local SEO and AEO",
+      "Focus only on backlinks",
       "Publish blogs only",
       "Depend entirely on paid ads"
     ]
@@ -1505,8 +1505,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Launch in one week.",
     "question": "What should be done first?",
     "options": [
-      "Launch ads immediately",
       "Configure key events and conversions",
+      "Launch ads immediately",
       "Change website colors",
       "Increase budget"
     ]
@@ -1528,8 +1528,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you investigate first?",
     "options": [
       "Increase ad spend",
-      "Landing page engagement and conversion funnel",
       "Logo redesign",
+      "Landing page engagement and conversion funnel",
       "Social media followers"
     ]
   },
@@ -1550,9 +1550,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What is the best explanation?",
     "options": [
       "One platform is broken",
-      "Different attribution windows and models produce different numbers",
       "GA4 lost all data",
-      "Meta inflates every conversion"
+      "Meta inflates every conversion",
+      "Different attribution windows and models produce different numbers"
     ]
   },
   {
@@ -1572,9 +1572,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Where should optimization efforts begin?",
     "options": [
       "Homepage redesign",
-      "Checkout process and payment experience",
       "Increase impressions",
-      "Pause campaigns"
+      "Pause campaigns",
+      "Checkout process and payment experience"
     ]
   },
   {
@@ -1616,8 +1616,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should be checked first?",
     "options": [
       "Campaign names",
-      "Conversion event implementation",
       "Ad headlines",
+      "Conversion event implementation",
       "Audience settings"
     ]
   },
@@ -1660,9 +1660,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What is the best recommendation?",
     "options": [
       "Ignore bounce rate",
-      "Improve landing pages and targeting for new visitors",
       "Pause remarketing",
-      "Increase prices"
+      "Increase prices",
+      "Improve landing pages and targeting for new visitors"
     ]
   },
   {
@@ -1681,8 +1681,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Budget increase limited.",
     "question": "What strategy is most appropriate?",
     "options": [
-      "Invest equally everywhere",
       "Increase investment in top-performing channels while maintaining diversification",
+      "Invest equally everywhere",
       "Pause SEO",
       "Remove email"
     ]
@@ -1747,8 +1747,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Limited production budget.",
     "question": "Which format should be created first?",
     "options": [
-      "Long PDF only",
       "Short educational videos with supporting articles",
+      "Long PDF only",
       "Radio ads",
       "Banner ads only"
     ]
@@ -1769,8 +1769,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Two writers available.",
     "question": "What should you implement first?",
     "options": [
-      "Daily random posts",
       "Monthly editorial calendar aligned with campaigns",
+      "Daily random posts",
       "Post only when sales drop",
       "Stop publishing"
     ]
@@ -1792,9 +1792,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you improve first?",
     "options": [
       "Publish fewer blogs",
-      "Improve readability, structure and user experience",
       "Increase ad spend",
-      "Delete all articles"
+      "Delete all articles",
+      "Improve readability, structure and user experience"
     ]
   },
   {
@@ -1836,9 +1836,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should be done next?",
     "options": [
       "Leave it unchanged",
-      "Repurpose into videos, infographics, email and social content",
       "Delete after campaign",
-      "Rewrite from scratch"
+      "Rewrite from scratch",
+      "Repurpose into videos, infographics, email and social content"
     ]
   },
   {
@@ -1858,8 +1858,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which strategy is strongest?",
     "options": [
       "Publish only company news",
-      "Publish expert insights, case studies and educational guides",
       "Focus only on paid ads",
+      "Publish expert insights, case studies and educational guides",
       "Use stock content"
     ]
   },
@@ -1880,8 +1880,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What should you recommend?",
     "options": [
       "Continue equal posting",
-      "Shift more resources toward high-performing video content while testing new ideas",
       "Stop image posts forever",
+      "Shift more resources toward high-performing video content while testing new ideas",
       "Ignore analytics"
     ]
   },
@@ -1902,8 +1902,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which KPI set is most valuable?",
     "options": [
       "Page views only",
-      "Leads, engagement, assisted conversions and revenue impact",
       "Followers only",
+      "Leads, engagement, assisted conversions and revenue impact",
       "Likes only"
     ]
   },
@@ -1924,9 +1924,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which campaign approach is strongest?",
     "options": [
       "Only paid social posts",
-      "Coordinate blogs, videos, email, SEO and social content around one campaign theme",
       "Only YouTube videos",
-      "Only email newsletters"
+      "Only email newsletters",
+      "Coordinate blogs, videos, email, SEO and social content around one campaign theme"
     ]
   },
   {
@@ -1968,8 +1968,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "What is the best solution?",
     "options": [
       "Call every lead",
-      "Automated nurturing workflow based on user actions",
       "Send one reminder email",
+      "Automated nurturing workflow based on user actions",
       "Pause free trials"
     ]
   },
@@ -1989,8 +1989,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Must comply with consent requirements.",
     "question": "What should be implemented?",
     "options": [
-      "Manual reminders",
       "Automated appointment reminders",
+      "Manual reminders",
       "Daily promotional messages",
       "SMS only"
     ]
@@ -2011,8 +2011,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Sales capacity is limited.",
     "question": "What should be introduced?",
     "options": [
-      "Random lead assignment",
       "Lead scoring model",
+      "Random lead assignment",
       "More cold calls",
       "Ignore website activity"
     ]
@@ -2033,8 +2033,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Limited discount budget.",
     "question": "Best first workflow?",
     "options": [
-      "Weekly newsletter",
       "Automated cart abandonment reminders",
+      "Weekly newsletter",
       "Mass promotional email",
       "Delete inactive carts"
     ]
@@ -2056,8 +2056,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "How should AI be used?",
     "options": [
       "Publish AI output without review",
-      "Generate first drafts and review before publishing",
       "Avoid AI completely",
+      "Generate first drafts and review before publishing",
       "Replace the content team"
     ]
   },
@@ -2078,9 +2078,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best approach?",
     "options": [
       "Manual spreadsheets",
-      "Use AI to identify audience patterns and validate findings",
       "Ignore older data",
-      "Random segmentation"
+      "Random segmentation",
+      "Use AI to identify audience patterns and validate findings"
     ]
   },
   {
@@ -2099,8 +2099,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "constraints": "Need reliable processes.",
     "question": "What should be implemented?",
     "options": [
-      "Continue manual exports",
       "Automated workflow integrations",
+      "Continue manual exports",
       "Hire more administrators",
       "Print spreadsheets"
     ]
@@ -2122,9 +2122,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best solution?",
     "options": [
       "Remove support",
-      "Deploy an AI chatbot with human escalation",
       "Use only email",
-      "Disable live chat"
+      "Disable live chat",
+      "Deploy an AI chatbot with human escalation"
     ]
   },
   {
@@ -2166,8 +2166,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Best improvement?",
     "options": [
       "Write shorter prompts only",
-      "Create structured prompts with context, goals and constraints",
       "Stop using AI",
+      "Create structured prompts with context, goals and constraints",
       "Generate random prompts"
     ]
   },
@@ -2188,9 +2188,9 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "First step?",
     "options": [
       "Create more workflows",
-      "Audit existing automations and optimize weak points",
       "Delete all workflows",
-      "Increase ad spend"
+      "Increase ad spend",
+      "Audit existing automations and optimize weak points"
     ]
   },
   {
@@ -2254,8 +2254,8 @@ export const decisionLabQuestions: ScenarioQuestion[] = [
     "question": "Which roadmap is strongest?",
     "options": [
       "Replace all marketers immediately",
-      "Implement AI in phases with training, governance, automation and continuous measurement",
       "Buy every AI tool available",
+      "Implement AI in phases with training, governance, automation and continuous measurement",
       "Delay AI adoption indefinitely"
     ]
   }

@@ -30,6 +30,7 @@ import { PhoneLaunchPad } from '@/components/dashboard/PhoneLaunchPad'
 import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { isPhone } from '@/lib/device'
 import { useInternshipDone } from '@/lib/internships'
+import { useActivity } from '@/lib/activity'
 import { Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/dashboard')({
@@ -109,8 +110,13 @@ function DashboardPage() {
   const goals = profile?.goals ?? []
   const { result: assessment, loading: assessmentLoading } = useInitialAssessment()
   const hasFeedback = useHasFeedback()
-  const streak = useStreak(userKey)
-  const visits = useVisitCount(userKey)
+  // The account's streak, visits and hours, the same on every device; the
+  // browser's own until the account has them (lib/activity.ts).
+  const activity = useActivity()
+  const localStreak = useStreak(userKey)
+  const localVisits = useVisitCount(userKey)
+  const streak = activity?.streak ?? localStreak
+  const visits = activity?.visits ?? localVisits
   const eligibleForReviewNudge = assessment != null || visits >= 5
 
   const [practice, setPractice] = useState<PracticeSummary>({})
@@ -316,6 +322,7 @@ function DashboardPage() {
               streak={streak}
               startHere={firstRun}
               showHours={!firstRun}
+              hours={activity?.hours30}
               courses={courses}
             />
           </div>
