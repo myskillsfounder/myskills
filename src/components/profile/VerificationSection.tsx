@@ -162,7 +162,7 @@ function Step({ label, state, detail }: { label: string; state: StepState; detai
  * usually are: one step per part of the profile, each with its own done /
  * in-progress / not-started mark, a ring for the overall share, and a single
  * call to action underneath. It completes the profile; it isn't part of the
- * Career Readiness Score, which only counts what's done on MySkills.
+ * Global Readiness Score, which only counts what's done on MySkills.
  */
 export function VerificationSection({
   view,

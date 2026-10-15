@@ -1,7 +1,7 @@
 /**
  * Days used and time spent, kept with the account (docs/supabase-learning-
  * progress.sql), so a student on a phone and a computer sees one streak and
- * one number of hours. Neither feeds the Career Readiness Score.
+ * one number of hours. Neither feeds the Global Readiness Score.
  *
  * Time is counted while the app is open and visible, a few seconds at a time,
  * and sent every few minutes and when the tab is hidden. Before the SQL is

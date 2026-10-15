@@ -170,7 +170,7 @@ function SignoffCard({ s, onChanged }: { s: AdminSignoff; onChanged: () => void 
         <p className="mt-3 inline-flex items-start gap-1.5 text-sm text-ink-700">
           <Star size={14} className="mt-0.5 shrink-0 text-brand-600" />
           {s.first_internship
-            ? 'This is their first internship: confirming it adds 20 points to their Career Readiness Score.'
+            ? 'This is their first internship: confirming it adds 20 points to their Global Readiness Score.'
             : 'They already have a confirmed internship: this one goes on their record, with no more points.'}
         </p>
       )}

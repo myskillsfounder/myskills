@@ -2,7 +2,7 @@
  * Live sessions with a trainer, mentor or institution — see docs/supabase-
  * live-sessions.sql. Attendance is confirmed by the person who ran the session
  * (or the team on their behalf), never added by the student, and is worth 2
- * points each toward the Career Readiness Score, up to 10 per programme:
+ * points each toward the Global Readiness Score, up to 10 per programme:
  * Global Leadership sessions count toward Personal Development, Digital
  * Marketing training toward Professional Development.
  */

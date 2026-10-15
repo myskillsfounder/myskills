@@ -301,7 +301,7 @@ export interface StudentRecord {
     joined_on: string
   }
   relationships: RecordRelationship[]
-  /** The Career Readiness Score as stored, with its parts. Null below 'progress' or before the student has one. */
+  /** The Global Readiness Score as stored, with its parts. Null below 'progress' or before the student has one. */
   progress: {
     score: number
     computed_at: string

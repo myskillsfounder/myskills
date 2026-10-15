@@ -115,7 +115,7 @@ export function AchievementsSection({
                     )}
                     <span>· supervised by {x.supervisor_name}</span>
                   </p>
-                  {i === 0 && <p className="mt-1 text-xs text-ink-500">Your first internship counts for 20 points of your Career Readiness Score.</p>}
+                  {i === 0 && <p className="mt-1 text-xs text-ink-500">Your first internship counts for 20 points of your Global Readiness Score.</p>}
                 </div>
               </li>
             ))}

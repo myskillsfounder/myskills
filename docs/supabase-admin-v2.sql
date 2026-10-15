@@ -1,5 +1,5 @@
 -- Admin panel v2: the overview, the student list and one page per student,
--- built around the two programmes and the Career Readiness Score.
+-- built around the two programmes and the Global Readiness Score.
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
 -- Depends on everything the score depends on
@@ -7,7 +7,7 @@
 -- docs/supabase-admin.sql, docs/supabase-dm-aptitude-assessment.sql,
 -- docs/supabase-career-readiness-assessment.sql, and the partner/lead tables.
 --
--- Every function here recomputes the Career Readiness Score with
+-- Every function here recomputes the Global Readiness Score with
 -- compute_career_readiness_score(), so the admin always sees today's number,
 -- not whatever was stored the last time the student opened their dashboard.
 -- At a few thousand students that's still quick; beyond that, switch the list

@@ -60,7 +60,7 @@ const steps: StepDef[] = [
     icon: Briefcase,
     title: 'Land a real internship',
     description:
-      'Apply for internship roles posted by partner companies, with your Career Readiness Score behind you, and work real briefs — experience for your resume, not just a certificate.',
+      'Apply for internship roles posted by partner companies, with your Global Readiness Score behind you, and work real briefs — experience for your resume, not just a certificate.',
     cta: 'See open roles',
     badge: { label: 'Open now', tone: 'success' },
   },

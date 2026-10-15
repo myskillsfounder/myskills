@@ -1,6 +1,6 @@
 /**
  * Admin v2 data: the overview, the student list and one student's page — see
- * docs/supabase-admin-v2.sql. Every Career Readiness Score here is recomputed
+ * docs/supabase-admin-v2.sql. Every Global Readiness Score here is recomputed
  * by the server when asked, so it's today's number.
  */
 import { supabase } from './supabase'

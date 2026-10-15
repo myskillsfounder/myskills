@@ -287,7 +287,7 @@ function ScoreDistribution({ s }: { s: AdminOverviewV2['score'] }) {
     <div className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Career Readiness Score</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Global Readiness Score</p>
           <p className="mt-1 font-display text-3xl font-semibold text-ink-900">
             {s.average ?? '—'}
             <span className="text-base font-normal text-ink-500"> average · {s.students} students</span>
@@ -397,7 +397,7 @@ function DashboardPage() {
     : []
   const cr: Step[] = stats
     ? [
-        { label: 'Took the life aptitude test', count: stats.career_readiness.aptitude },
+        { label: 'Took the Leadership Aptitude Test', count: stats.career_readiness.aptitude },
         { label: 'Started the modules', count: stats.career_readiness.started },
         { label: 'All 14 modules written', count: stats.career_readiness.all_modules },
         { label: 'Submitted a project', count: stats.career_readiness.review_asked },

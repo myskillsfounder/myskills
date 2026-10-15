@@ -103,7 +103,7 @@ export function MentorReviewPanel({
         </p>
         {review && <Grade review={review} />}
         <p className="mt-2 text-xs text-emerald-700">
-          Your earned points are released into your Career Readiness Score. Next: an internship through MySkills — we’ll
+          Your earned points are released into your Global Readiness Score. Next: an internship through MySkills — we’ll
           let you know when they open.
         </p>
       </div>

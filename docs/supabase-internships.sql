@@ -7,7 +7,7 @@
 --      students, or sends it back with a note.
 --   3. A student who has taken an aptitude assessment applies, with a short
 --      note. APPLYING IS THE STUDENT'S CONSENT: the company sees their name,
---      headline, Career Readiness Score, certificates and note. Their email and
+--      headline, Global Readiness Score, certificates and note. Their email and
 --      phone are shown only once the company shortlists or makes an offer.
 --   4. The company shortlists, offers, or says no. The student accepts or
 --      declines an offer. Accepting starts the internship and puts the student
@@ -15,7 +15,7 @@
 --      the student can stop sharing at any time.
 --   5. When it ends, the company marks it complete with the supervisor's name.
 --      The team confirms that, and only then is it written to
---      internship_signoffs, which is what the Career Readiness Score reads: the
+--      internship_signoffs, which is what the Global Readiness Score reads: the
 --      student's FIRST signed-off internship is worth 20 points.
 --
 -- Nothing here changes how the score is worked out.
@@ -784,7 +784,7 @@ begin
   perform public.internship_notify(v_student_email, 'Your internship is confirmed', 'Your internship is on your record',
     public.notify_row('Role', r.title) || public.notify_row('Company', v_org)
     || public.notify_row('Your score', case when v_first
-         then 'Your first signed-off internship adds 20 points to your Career Readiness Score.'
+         then 'Your first signed-off internship adds 20 points to your Global Readiness Score.'
          else 'It is added to your record. The score counts your first internship.' end),
     'Open your LaunchPad', 'https://myskills.org.in/dashboard');
 end;

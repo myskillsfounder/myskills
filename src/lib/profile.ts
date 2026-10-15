@@ -30,7 +30,7 @@ export type EducationLevel = 'class-10' | 'class-12' | 'diploma' | 'bachelors' |
 export interface Education {
   id: string
   school: string
-  /** Structured level, scored by the Career Readiness Score. Older entries
+  /** Structured level, scored by the Global Readiness Score. Older entries
    *  lack it; lib/careerProfile.ts infers one from `degree` for those. */
   level?: EducationLevel
   degree?: string

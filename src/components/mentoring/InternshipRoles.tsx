@@ -185,7 +185,7 @@ function ApplicantRow({ a, onChanged }: { a: Applicant; onChanged: () => void })
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
         <span className="inline-flex items-center gap-1.5 font-semibold text-ink-900">
           <Star size={14} className="text-brand-600" />
-          {a.score == null ? 'No score yet' : `Career Readiness Score ${a.score} / 100`}
+          {a.score == null ? 'No score yet' : `Global Readiness Score ${a.score} / 100`}
         </span>
         <span className="text-ink-500">Applied {day(a.applied_on)}</span>
       </div>
@@ -481,7 +481,7 @@ export function InternshipRoles() {
         <EmptyState
           icon={Briefcase}
           title="No roles yet"
-          description="Post your first internship role. Students apply with their Career Readiness Score, and you choose who to take."
+          description="Post your first internship role. Students apply with their Global Readiness Score, and you choose who to take."
         />
       ) : (
         <ul className="space-y-3">

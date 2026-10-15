@@ -10,7 +10,7 @@ import { SkillProfile } from '@/components/self-assessment/Profile'
 
 /**
  * A learner's Global Leadership starting point, in the shared dark result view:
- * their Life aptitude test (the 14 skills the programme builds), or, for someone who took
+ * their Leadership Aptitude Test (the 14 skills the programme builds), or, for someone who took
  * it before the profile existed, the earlier five skills. Where to start is
  * the module that builds their lowest skill: it's where the programme will
  * move the needle most.
@@ -41,8 +41,8 @@ export function AssessmentResult({ result }: { result: Result }) {
       detail={{
         title: 'Where you are today',
         intro: life
-          ? 'The 14 skills the programme builds, each read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Career Readiness Score.'
-          : 'Each skill is read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Career Readiness Score.',
+          ? 'The 14 skills the programme builds, each read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Global Readiness Score.'
+          : 'Each skill is read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Global Readiness Score.',
       }}
       reflection={result.reflection ? { label: 'The skill you want to improve', text: result.reflection } : null}
       footnote="Only you and the mentor working with you see this. Companies and institutions don’t."

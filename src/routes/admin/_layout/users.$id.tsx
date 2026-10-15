@@ -76,7 +76,7 @@ function AptitudeList({
 }
 
 /**
- * Everything about one student in one place: the Career Readiness Score and
+ * Everything about one student in one place: the Global Readiness Score and
  * what it's made of, both programmes, live sessions, mentor reviews and
  * verification. Read-only — each action still lives on its own page.
  */
@@ -171,7 +171,7 @@ function StudentPage() {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         {/* Score */}
-        <Panel title="Career Readiness Score">
+        <Panel title="Global Readiness Score">
           {score ? (
             <div className="space-y-4">
               <Bar label="Personal Development" points={score.personal.points} max={score.personal.max} />
@@ -282,7 +282,7 @@ function StudentPage() {
               )
             })}
           </ul>
-          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Life aptitude test</p>
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Leadership Aptitude Test</p>
           <div className="mt-2">
             {cr.aptitude ? (
               <AptitudeList

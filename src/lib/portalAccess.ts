@@ -71,7 +71,7 @@ export const PORTAL_ROLES: PortalRoleInfo[] = [
     introHint: 'What the company does, the kinds of roles you could offer, and your website.',
     perks: [
       'Meet students who have practised real scenarios and earned a score',
-      'See each student’s Career Readiness Score and certificates',
+      'See each student’s Global Readiness Score and certificates',
       'A signed-off internship earns the student points in their score',
     ],
   },

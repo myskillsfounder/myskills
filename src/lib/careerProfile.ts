@@ -1,5 +1,5 @@
 /**
- * Turns a free-form profile into facts the Career Readiness Score can use.
+ * Turns a free-form profile into facts the Global Readiness Score can use.
  *
  * Education and experience entries predate the score, so most existing ones
  * have a free-text `degree` and `employmentType` and no structured level. The

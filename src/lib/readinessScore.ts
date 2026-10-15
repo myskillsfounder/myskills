@@ -1,5 +1,5 @@
 /**
- * Career Readiness Score — the number the LaunchPad dashboard is built around,
+ * Global Readiness Score — the number the LaunchPad dashboard is built around,
  * and the one a company can rely on when choosing interns.
  *
  * It measures only what a student has done INSIDE MySkills, checked by the

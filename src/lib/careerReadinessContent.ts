@@ -4,7 +4,7 @@
  * is Learn (short cards), Practise (written tasks) and Reflect (one prompt),
  * and the app builds the rest from it.
  *
- * Fourteen modules, one per skill in the Life aptitude test. The first five
+ * Fourteen modules, one per skill in the Leadership Aptitude Test. The first five
  * (CORE_MODULES) have three tasks; finishing them opens the mentor-graded
  * project. The other nine, one per WHO life skill that had no module, have two.
  *

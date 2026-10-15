@@ -1,5 +1,5 @@
 -- Capstone project for both programmes — graded by a mentor — and internship
--- sign-offs. This is the data behind Career Readiness Score method v6.
+-- sign-offs. This is the data behind Global Readiness Score method v6.
 --
 -- A student who has finished a programme's practice submits a project (a title,
 -- a summary and links). A reviewer scores it on a four-part rubric, 0-5 each,
@@ -307,7 +307,7 @@ begin
         || public.notify_row('Grade', new.project_points::text || ' out of 20')
         || public.notify_row('Mentor''s note', new.reviewer_note)
         || public.notify_row('Next step', case new.status
-             when 'approved' then 'Your earned points are released into your Career Readiness Score.'
+             when 'approved' then 'Your earned points are released into your Global Readiness Score.'
              else 'Improve the project using the notes above, then submit it again from Practice.' end),
         'Open Practice',
         'https://myskills.org.in/practice'

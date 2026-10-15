@@ -98,7 +98,7 @@ const CONCEPTS: {
   {
     icon: Briefcase,
     title: 'Land your first internship',
-    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Career Readiness Score — proof that turns practice into a resume.',
+    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Global Readiness Score — proof that turns practice into a resume.',
     tag: 'Open now',
     live: true,
     to: '/community',

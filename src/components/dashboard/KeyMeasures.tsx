@@ -57,7 +57,7 @@ function GoalHero({ goal }: { goal: string }) {
 function StartHere() {
   const options = [
     { to: '/aptitude-assessment', label: 'Marketing aptitude', sub: 'Digital Marketing Programme', look: COURSE_LOOK[1] },
-    { to: '/career-readiness-assessment', label: 'Life aptitude test', sub: 'Global Leadership Programme', look: COURSE_LOOK[2] },
+    { to: '/career-readiness-assessment', label: 'Leadership Aptitude Test', sub: 'Global Leadership Programme', look: COURSE_LOOK[2] },
   ] as const
   return (
     <div className="mt-4 border-t border-ink-900/[0.06] pt-4">

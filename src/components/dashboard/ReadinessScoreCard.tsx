@@ -377,7 +377,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
 
   return (
     <section className="card flex h-full flex-col p-6 sm:p-7">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Career Readiness Score</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Global Readiness Score</p>
 
       <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
         <div className="relative mx-auto h-36 w-36 shrink-0 sm:mx-0">
@@ -415,7 +415,7 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
           <div
             className="absolute inset-0 flex flex-col items-center justify-center"
             role="img"
-            aria-label={`Career Readiness Score ${score} out of 100`}
+            aria-label={`Global Readiness Score ${score} out of 100`}
           >
             <span className="font-display text-5xl font-semibold leading-none tabular-nums text-ink-900">{shownScore}</span>
             <span className="mt-1 text-xs font-medium text-ink-500">out of 100</span>

@@ -31,7 +31,7 @@ const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.18em] text-whit
  * the programme's aptitude assessment — that report is where the mentor
  * starts. The student asks one mentor; the mentor accepts or declines; they
  * arrange sessions themselves and the mentor logs each one, which counts as a
- * confirmed live session in the Career Readiness Score.
+ * confirmed live session in the Global Readiness Score.
  */
 export function LiveMentorCard({
   programme,

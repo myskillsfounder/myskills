@@ -1,4 +1,4 @@
--- The Career Readiness Score, issued by the server.
+-- The Global Readiness Score, issued by the server.
 --
 -- The server works the score out from records it holds and stores the result
 -- with the date and the method version. refresh_my_career_readiness_score() is

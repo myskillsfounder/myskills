@@ -51,7 +51,7 @@ function Row({ c, onChanged }: { c: CommunityConnection; onChanged: () => void }
                 <span className="font-semibold">{c.organisation}</span> {SAYS[c.resource]}.
               </p>
               <p className="mt-1 text-xs leading-relaxed text-ink-600">
-                If you accept, they can see your name, email and phone number, your Career Readiness Score and your
+                If you accept, they can see your name, email and phone number, your Global Readiness Score and your
                 certificates, until you stop sharing. They never see your assessment answers. Nothing is shared
                 unless you accept.
               </p>

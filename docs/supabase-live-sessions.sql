@@ -1,6 +1,6 @@
 -- Live sessions with a trainer, mentor or institution — confirmed attendance.
 --
--- Worth up to 10 points of the Career Readiness Score's Personal Development
+-- Worth up to 10 points of the Global Readiness Score's Personal Development
 -- part (2 per confirmed session, 5 sessions). A student can never add one to
 -- themselves: attendance is recorded by the person who ran the session (a
 -- mentor) or by the MySkills team on behalf of a trainer or institution that

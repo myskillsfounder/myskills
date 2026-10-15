@@ -110,7 +110,7 @@ function ReviewCard({ review, onDone }: { review: AdminMentorReview; onDone: () 
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
             {review.career_readiness && !isLifeSkills(review.career_readiness.scores)
               ? 'Starting assessment (earlier five-skill version) · baseline'
-              : 'Life aptitude test · baseline'}
+              : 'Leadership Aptitude Test · baseline'}
           </p>
           {review.career_readiness ? (
             <>

@@ -1,5 +1,5 @@
 -- The Global Leadership Programme: fourteen modules, one for each skill in the
--- Life aptitude test, and the Career Readiness Score's method v7.
+-- Leadership Aptitude Test, and the Global Readiness Score's method v7.
 --
 -- MODULES
 --   The five core modules stay as they are (three written tasks and a
@@ -17,9 +17,9 @@
 --   The hold is unchanged: until the project passes, 8 activity points count.
 --   Every stored score is re-issued at the end, so the admin lists match.
 --
--- THE LIFE APTITUDE TEST
+-- THE LEADERSHIP APTITUDE TEST
 --   A student whose result is from the earlier, five-skill test may take the
---   Life aptitude test once; it replaces the result and the earlier scores
+--   Leadership Aptitude Test once; it replaces the result and the earlier scores
 --   are kept beside it (previous_scores).
 --
 -- ORDER: run this BEFORE deploying. The app this goes with saves answers to
@@ -94,7 +94,7 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------
--- 3. The Career Readiness Score, method v7
+-- 3. The Global Readiness Score, method v7
 -- ---------------------------------------------------------------------------
 create or replace function public.compute_career_readiness_score(p_user uuid)
 returns jsonb
@@ -332,7 +332,7 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------
--- 6. The Life aptitude test: an earlier, five-skill result may be replaced once
+-- 6. The Leadership Aptitude Test: an earlier, five-skill result may be replaced once
 -- ---------------------------------------------------------------------------
 create or replace function public.submit_career_readiness_assessment(
   p_answers    jsonb,

@@ -206,7 +206,7 @@ export function StudentRecord({ studentId }: { studentId: string }) {
             <div className="card mt-3 grid gap-6 p-5 sm:grid-cols-[auto,1fr] sm:p-6">
               <div className="text-center sm:text-left">
                 <p className="font-display text-5xl font-semibold tabular-nums text-ink-900">{progress.score}</p>
-                <p className="text-xs text-ink-500">Career Readiness Score, out of 100</p>
+                <p className="text-xs text-ink-500">Global Readiness Score, out of 100</p>
                 <p className="mt-2 inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">{band.label}</p>
               </div>
               <div className="space-y-4">
