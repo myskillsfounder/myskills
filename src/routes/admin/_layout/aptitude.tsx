@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { APTITUDES, levelFor as marketingLevel } from '@/lib/dmAptitude'
-import { SKILLS, levelFor as personalLevel } from '@/lib/careerReadinessAssessment'
+import { levelFor as personalLevel } from '@/lib/careerReadinessAssessment'
+import { LIFE_SKILLS, LIFE_SKILL_MAX, LIFE_SKILL_MIN } from '@/lib/lifeSkills'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { AptitudeResults } from '@/components/admin/AptitudeResults'
 
@@ -22,7 +23,7 @@ export const Route = createFileRoute('/admin/_layout/aptitude')({
 
 const TABS: { id: Programme; label: string }[] = [
   { id: 'digital-marketing', label: 'Marketing aptitude' },
-  { id: 'career-readiness', label: 'Personal aptitude' },
+  { id: 'career-readiness', label: 'Life skills' },
 ]
 
 function AptitudePage() {
@@ -62,10 +63,12 @@ function AptitudePage() {
           key="cr"
           programme="career-readiness"
           eyebrow="Career Readiness"
-          title="Personal aptitude results"
-          subtitle="Where students start on the five skills the programme builds. Each skill is scored 4–16."
-          dimensions={SKILLS}
-          levelFor={personalLevel}
+          title="Life skills profiles"
+          subtitle="Where students start on WHO’s ten life skills, which the programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
+          dimensions={LIFE_SKILLS}
+          levelFor={(s) => personalLevel(s, LIFE_SKILL_MAX)}
+          min={LIFE_SKILL_MIN}
+          max={LIFE_SKILL_MAX}
           reflectionLabel="Skill they most want to improve"
         />
       )}

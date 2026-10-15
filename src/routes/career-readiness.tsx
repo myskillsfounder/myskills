@@ -101,14 +101,14 @@ function StartCta({ dark = false }: { dark?: boolean }) {
   if (user) {
     return (
       <Link to="/career-readiness-assessment" onClick={() => rememberProgramme(2)} className={cls}>
-        Take the Personal aptitude
+        Take the Life skills profile
         <ArrowRight size={16} />
       </Link>
     )
   }
   return (
     <Link to="/signup" onClick={() => setAfterOnboarding('/career-readiness-assessment')} className={cls}>
-      Take the Personal aptitude
+      Take the Life skills profile
       <ArrowRight size={16} />
     </Link>
   )

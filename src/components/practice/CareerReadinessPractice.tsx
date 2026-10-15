@@ -4,6 +4,7 @@ import { MODULE_CONTENT } from '@/lib/careerReadinessContent'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { SectionHeader } from '@/components/app/SectionHeader'
+import { lifeSkillsForModule } from '@/lib/lifeSkills'
 
 /**
  * The Career Readiness Programme's five modules, live on /practice beside
@@ -52,6 +53,10 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
               <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">Module {i + 1}</p>
               <h3 className="mt-1 font-display text-xl font-semibold tracking-tight text-ink-900">{m.title}</h3>
               <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink-600">{content?.outcome ?? m.body}</p>
+              {/* The WHO life skills it builds (lib/lifeSkills.ts). */}
+              <p className="mt-2 text-xs leading-relaxed text-ink-500">
+                <span className="font-semibold text-ink-700">Builds:</span> {lifeSkillsForModule(m.slug).join(' · ')}
+              </p>
 
               <div className="mt-4">
                 <div className="h-1.5 overflow-hidden rounded-full bg-ink-100">
