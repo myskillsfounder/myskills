@@ -41,7 +41,7 @@ export function AssessmentResult({ result }: { result: Result }) {
       detail={{
         title: 'Where you are today',
         intro: life
-          ? 'WHO’s ten life skills, each read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Career Readiness Score.'
+          ? 'WHO’s ten life skills and the programme’s own, each read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Career Readiness Score.'
           : 'Each skill is read from how often you do the things that build it. A starting point, not a grade — it doesn’t change your Career Readiness Score.',
       }}
       reflection={result.reflection ? { label: 'The skill you want to improve', text: result.reflection } : null}

@@ -232,7 +232,7 @@ const STEPS: Record<StartKey, Plan['steps']> = {
   personal: [
     {
       title: 'Take the Life skills profile',
-      body: '30 statements, about eight minutes. It shows your starting point on WHO’s ten life skills, from self-awareness to coping with stress.',
+      body: '42 statements, about eleven minutes. It shows your starting point on WHO’s ten life skills, from self-awareness to coping with stress, plus goal setting, leadership, agile working and a growth mindset.',
     },
     {
       title: 'Work through five modules',

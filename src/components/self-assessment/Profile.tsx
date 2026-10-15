@@ -137,17 +137,26 @@ export function SkillProfile({
   reflection?: { label: string; text: string } | null
   footnote: string
 }) {
+  // Past ten spokes the labels crowd each other out; the list below carries
+  // every skill anyway.
+  const radar = skills.length <= 10
   return (
     <div className="space-y-6">
       <div className="grid gap-5 lg:grid-cols-5">
-        <section className="card-glass-dark glow-edge flex flex-col p-6 lg:col-span-2">
-          <Eyebrow dark>Your shape</Eyebrow>
-          <div className="mt-3 flex flex-1 items-center">
-            <Radar skills={skills} min={min} max={max} />
-          </div>
-        </section>
+        {radar && (
+          <section className="card-glass-dark glow-edge flex flex-col p-6 lg:col-span-2">
+            <Eyebrow dark>Your shape</Eyebrow>
+            <div className="mt-3 flex flex-1 items-center">
+              <Radar skills={skills} min={min} max={max} />
+            </div>
+          </section>
+        )}
 
-        <section className="surface-wood-dark relative flex flex-col justify-between overflow-hidden rounded-xl border border-white/10 p-6 shadow-e2 sm:p-8 lg:col-span-3">
+        <section
+          className={`surface-wood-dark relative flex flex-col justify-between overflow-hidden rounded-xl border border-white/10 p-6 shadow-e2 sm:p-8 ${
+            radar ? 'lg:col-span-3' : 'lg:col-span-5'
+          }`}
+        >
           <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
             <svg width="200" height="200" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="2">
               <circle cx="130" cy="70" r="76" />

@@ -1,7 +1,10 @@
 /**
- * WHO's ten life skills: what the Career Readiness Programme measures and
- * builds. The Life Skills Profile (the programme's starting assessment, see
- * docs/supabase-life-skills.sql) asks three statements per skill, rated
+ * What the Career Readiness Programme measures and builds: WHO's ten life
+ * skills, and four of the programme's own that WHO doesn't list (goal setting,
+ * leadership, agile working, growth mindset; communication is in both, as
+ * WHO's "effective communication"). The Life Skills Profile, the programme's
+ * one starting assessment (docs/supabase-life-skills.sql and
+ * -life-skills-combined.sql), asks three statements per skill, rated
  * Never / Sometimes / Often / Always (1-4), one of the three worded the other
  * way round. A skill scores 3-12.
  *
@@ -87,13 +90,26 @@ export const LIFE_SKILLS: { key: LifeSkillKey; name: string; what: string; modul
   },
 ]
 
+/** The programme's own skills that WHO's list doesn't have, each built by the
+ *  module of the same name. Their read-outs are the earlier assessment's
+ *  (READOUT in lib/careerReadinessAssessment.ts), which go by level. */
+export const PROGRAMME_SKILLS: { key: 'goal-setting' | 'leadership' | 'agile' | 'growth-mindset'; name: string; module: ModuleSlug }[] = [
+  { key: 'goal-setting', name: 'Goal setting', module: 'goal-setting' },
+  { key: 'leadership', name: 'Leadership', module: 'leadership' },
+  { key: 'agile', name: 'Agile working', module: 'agile' },
+  { key: 'growth-mindset', name: 'Growth mindset', module: 'growth-mindset' },
+]
+
 /** Three statements per skill, 1-4 each. */
 export const LIFE_SKILL_MIN = 3
 export const LIFE_SKILL_MAX = 12
 
-/** The life skills a module builds, in WHO's order. */
+/** The skills a module builds: its own (if it has one), then WHO's, in order. */
 export function lifeSkillsForModule(slug: ModuleSlug): string[] {
-  return LIFE_SKILLS.filter((s) => s.modules.includes(slug)).map((s) => s.name)
+  return [
+    ...PROGRAMME_SKILLS.filter((s) => s.module === slug).map((s) => s.name),
+    ...LIFE_SKILLS.filter((s) => s.modules.includes(slug)).map((s) => s.name),
+  ]
 }
 
 type Level = 'Emerging' | 'Developing' | 'Established' | 'Standout'
