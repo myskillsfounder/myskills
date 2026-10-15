@@ -1,4 +1,4 @@
--- Career Readiness Programme — the five personal-development modules go live.
+-- Life Readiness Programme — the five personal-development modules go live.
 --
 -- Each module is Learn -> Practise -> Reflect: three practice tasks and one
 -- reflection, so 4 written responses per module and 20 across the programme.
@@ -9,7 +9,7 @@
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run.
 -- Depends on: public.profiles, public.has_section_access(),
 -- docs/supabase-mentor-reviews.sql (this replaces request_mentor_review so the
--- Career Readiness review can be asked for once all 20 items are done).
+-- Life Readiness review can be asked for once all 20 items are done).
 --
 -- Nothing here is graded by a machine: the responses are read by a mentor in
 -- the mentor-review stage. The length minimums below only stop a one-word
@@ -104,7 +104,7 @@ revoke execute on function public.save_career_readiness_response(text, text, tex
 grant execute on function public.save_career_readiness_response(text, text, text) to authenticated;
 
 -- ---------------------------------------------------------------------------
--- Mentor review: open the Career Readiness one once all 20 items are in
+-- Mentor review: open the Life Readiness one once all 20 items are in
 -- (same function as docs/supabase-mentor-reviews.sql, with that branch filled in)
 -- ---------------------------------------------------------------------------
 create or replace function public.request_mentor_review(p_programme text, p_note text default null)

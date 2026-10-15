@@ -1,4 +1,4 @@
--- One-time email to everyone who asked to hear when the Career Readiness
+-- One-time email to everyone who asked to hear when the Life Readiness
 -- Programme opens: "it's open — start your first module".
 --
 -- Run once against Supabase Cloud (SQL editor). Safe to re-run: the sender
@@ -72,7 +72,7 @@ set search_path = public
 as $$
 declare
   v_key     text;
-  v_subject constant text := 'The Career Readiness Programme is open — start your first module';
+  v_subject constant text := 'The Life Readiness Programme is open — start your first module';
   v_sent    int;
   v_left    int;
   v_body    jsonb;
@@ -92,11 +92,11 @@ begin
            'html',
              '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f7f5f2;padding:24px">'
              || '<div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e7e2da;border-radius:16px;padding:28px">'
-             || '<h1 style="margin:0 0 16px;font-size:21px;color:#1c1917">It''s open — the Career Readiness Programme</h1>'
+             || '<h1 style="margin:0 0 16px;font-size:21px;color:#1c1917">It''s open — the Life Readiness Programme</h1>'
              || '<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1c1917">Hi '
              || public.notify_esc(coalesce(nullif(split_part(btrim(r.full_name), ' ', 1), ''), 'there')) || ',</p>'
              || '<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1c1917">You asked us to tell you when the '
-             || 'Career Readiness Programme opened. It has.</p>'
+             || 'Life Readiness Programme opened. It has.</p>'
              || '<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1c1917">There are five short modules — goal setting, '
              || 'communication, leadership, agile ways of working and a growth mindset. In each one you learn the idea, practise it '
              || 'in writing, then reflect. Together it is about four hours, at your own pace.</p>'

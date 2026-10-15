@@ -256,7 +256,7 @@ begin
   select m.full_name into v_mentor from public.mentors m where m.id = new.mentor_id;
   select u.email into v_mentor_email from auth.users u where u.id = new.mentor_user;
   v_prog := case new.programme when 'digital-marketing' then 'Digital Marketing Programme'
-                               else 'Career Readiness Programme' end;
+                               else 'Life Readiness Programme' end;
 
   if tg_op = 'INSERT' then
     perform public.notify_email_address(

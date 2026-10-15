@@ -240,7 +240,7 @@ function insights(stats: AdminOverviewV2, extra: DashboardExtra | null, inbox: I
   if (crDrop) {
     out.push({
       tone: 'watch',
-      text: `Career Readiness loses the most students between “${crDrop.from.label}” and “${crDrop.to.label}”: ${crDrop.lost} stop there.`,
+      text: `Life Readiness loses the most students between “${crDrop.from.label}” and “${crDrop.to.label}”: ${crDrop.lost} stop there.`,
       to: '/admin/modules',
     })
   }
@@ -397,7 +397,7 @@ function DashboardPage() {
     : []
   const cr: Step[] = stats
     ? [
-        { label: 'Took the life skills profile', count: stats.career_readiness.aptitude },
+        { label: 'Took the life aptitude test', count: stats.career_readiness.aptitude },
         { label: 'Started the modules', count: stats.career_readiness.started },
         { label: 'All 5 modules written', count: stats.career_readiness.all_modules },
         { label: 'Submitted a project', count: stats.career_readiness.review_asked },
@@ -547,7 +547,7 @@ function DashboardPage() {
           <SectionLabel>Programmes</SectionLabel>
           <div className="grid gap-4 lg:grid-cols-2">
             <Funnel title="Digital Marketing" steps={dm} />
-            <Funnel title="Career Readiness" steps={cr} />
+            <Funnel title="Life Readiness" steps={cr} />
           </div>
 
           {c && (

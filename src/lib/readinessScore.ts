@@ -9,7 +9,7 @@
  * Each programme is worth 40: a project graded by a mentor (20) and the
  * student's own activity (20).
  *
- *   40  Personal development     — the Career Readiness Programme
+ *   40  Personal development     — the Life Readiness Programme
  *         activity 20  3 per module finished (5 = 15), 1 per confirmed live
  *                      session (5 = 5)
  *         project  20  the mentor's rubric total, 0-20
@@ -41,7 +41,7 @@
  *
  * VERIFIED vs SELF-REPORTED: practice and the Foundation assessment are graded
  * by the server; live sessions and project grades are confirmed by a person.
- * Module answers are self-reported until the Career Readiness project passes.
+ * Module answers are self-reported until the Life Readiness project passes.
  */
 
 /** Bump when the rules change, so a stored score says which rules made it. */
@@ -88,9 +88,9 @@ export const NO_PROJECT: ProjectStanding = { status: 'none', points: 0 }
 
 /** Where a learner stands in the two programmes. */
 export interface ProgrammeStanding {
-  /** Career Readiness modules with all four items written. */
+  /** Life Readiness modules with all four items written. */
   modulesDone: number
-  /** Career Readiness live sessions whose attendance was confirmed by whoever ran them. */
+  /** Life Readiness live sessions whose attendance was confirmed by whoever ran them. */
   liveSessions: number
   /** Digital Marketing live training sessions, confirmed the same way. */
   dmLiveSessions: number
@@ -143,7 +143,7 @@ export function practicePoints(percents: number[]): number {
   )
 }
 
-/** Career Readiness activity before the hold: modules and live sessions. Out of 20. */
+/** Life Readiness activity before the hold: modules and live sessions. Out of 20. */
 export function personalActivity(p: Pick<ProgrammeStanding, 'modulesDone' | 'liveSessions'>): number {
   return Math.min(p.modulesDone, PROGRAMME_MODULES) * POINTS_PER_MODULE + livePoints(p.liveSessions)
 }
@@ -276,7 +276,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
   const canSubmitDm = s.dmPracticeDone && s.dmProject.status !== 'approved' && s.dmProject.status !== 'requested'
   const journey: (NextAction | null)[] = [
     modulesDone < PROGRAMME_MODULES
-      ? { label: 'Finish a Career Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 }
+      ? { label: 'Finish a Life Readiness module', upTo: POINTS_PER_MODULE, to: '/practice', programme: 2 }
       : null,
     tracksPassed < PRACTICE_TRACKS
       ? { label: 'Score 60% or more on a Digital Marketing track', upTo: TRACK_POINTS_MAX, to: '/practice', programme: 1 }
@@ -285,7 +285,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       ? { label: 'Take the Foundation assessment', upTo: FOUNDATION_MAX_POINTS, to: '/foundation-assessment' }
       : null,
     canSubmitCr
-      ? { label: 'Submit your Career Readiness project', upTo: PROJECT_MAX, to: '/practice', programme: 2 }
+      ? { label: 'Submit your Life Readiness project', upTo: PROJECT_MAX, to: '/practice', programme: 2 }
       : null,
     canSubmitDm
       ? { label: 'Submit your Digital Marketing project', upTo: PROJECT_MAX, to: '/practice', programme: 1 }
@@ -294,7 +294,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       ? { label: 'Work with a mentor on Digital Marketing', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 1 }
       : null,
     livePoints(s.liveSessions) < LIVE_SESSIONS_MAX_POINTS
-      ? { label: 'Work with a mentor on Career Readiness', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 2 }
+      ? { label: 'Work with a mentor on Life Readiness', upTo: POINTS_PER_LIVE_SESSION, to: '/practice', programme: 2 }
       : null,
   ]
   const nextActions = journey.filter((step): step is NextAction => step !== null)
@@ -302,7 +302,7 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
 
   const modulePts = modulesDone * POINTS_PER_MODULE
   const crCounted = countedActivity(crActivity, s.crProject)
-  // Once the Career Readiness project has passed a mentor has read the modules,
+  // Once the Life Readiness project has passed a mentor has read the modules,
   // so those points stop being self-reported.
   const selfReported = s.crProject.status === 'approved' ? 0 : Math.min(modulePts, crCounted)
   return {

@@ -11,7 +11,7 @@
 --   portal-access   Community > Portal access & usage: giving partners access
 --                   to the Community portal, and seeing which students use what
 --   partner-leads   Community > Internships (companies that applied to post
---                   internships) and Leads > Career Readiness leads
+--                   internships) and Leads > Life Readiness leads
 --
 -- A full admin still passes every check. Grants only work for
 -- @myskills.org.in accounts, as before.

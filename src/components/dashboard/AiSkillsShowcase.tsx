@@ -162,7 +162,7 @@ const SUPPORT: {
 
 /**
  * The two kinds of skill MySkills builds — professional (Digital Marketing)
- * and personal (Career Readiness), both live — followed by the people and
+ * and personal (Life Readiness), both live — followed by the people and
  * support around them.
  */
 export function AiSkillsShowcase() {

@@ -233,7 +233,7 @@ function ApplyForm({ role, onApplied }: { role: OpenRole; onApplied: () => void 
             Marketing aptitude <ArrowRight size={14} />
           </Link>
           <Link to="/career-readiness-assessment" className="press inline-flex h-10 items-center gap-1.5 rounded-full border border-ink-300 bg-white px-4 text-sm font-semibold text-ink-800">
-            Life skills profile
+            Life aptitude test
           </Link>
         </div>
       </div>

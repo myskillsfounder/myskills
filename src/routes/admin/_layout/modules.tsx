@@ -17,7 +17,7 @@ export const Route = createFileRoute('/admin/_layout/modules')({
 })
 
 /**
- * The five Career Readiness modules: how many students started and finished
+ * The five Life Readiness modules: how many students started and finished
  * each, and — opening one — every student's written answers, task by task.
  */
 function ModulesPage() {
@@ -44,7 +44,7 @@ function ModulesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Career Readiness"
+        eyebrow="Life Readiness"
         title="Modules & answers"
         subtitle="Each module is three written tasks and a reflection. Open one to read what students wrote."
       />

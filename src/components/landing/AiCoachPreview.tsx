@@ -110,7 +110,7 @@ function TypingDots() {
 
 /**
  * The hero's proof, not an abstraction of it — a real (scripted, but
- * representative) exchange from the Career Readiness programme: AI coaches,
+ * representative) exchange from the Life Readiness programme: AI coaches,
  * the student decides, then a real mentor connects and reviews it. Plays on
  * a loop so a visitor who lingers sees the whole handoff, not a snapshot.
  */
@@ -152,7 +152,7 @@ export function AiCoachPreview() {
           <p className="font-mono text-[11px] font-bold uppercase tracking-wide text-brand-200">
             Goal_Setting · Module_01
           </p>
-          <p className="mt-1 text-sm font-semibold text-white">Career Readiness Programme</p>
+          <p className="mt-1 text-sm font-semibold text-white">Life Readiness Programme</p>
         </div>
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] font-bold transition-colors ${

@@ -1,7 +1,7 @@
 /**
  * Which of the two programmes Practice opens on. Remembered on the device so
  * coming back lands where you left, and set by pages that belong to one
- * programme (a Career Readiness module, its assessment) so "Back to Practice"
+ * programme (a Life Readiness module, its assessment) so "Back to Practice"
  * returns to the right tab.
  */
 export type Programme = 1 | 2

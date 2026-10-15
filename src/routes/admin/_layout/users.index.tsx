@@ -128,7 +128,7 @@ function StudentsPage() {
                 <th scope="col" className="px-4 py-3 font-semibold">Student</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Score</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Digital Marketing</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Career Readiness</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Life Readiness</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Joined</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Working with</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Last login</th>

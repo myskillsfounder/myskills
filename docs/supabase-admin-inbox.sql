@@ -39,7 +39,7 @@ begin
   return query
   -- Projects waiting to be graded.
   select 'project'::text, r.id, coalesce(p.full_name, u.email::text, 'A student'),
-         (case r.programme when 'digital-marketing' then 'Digital Marketing' else 'Career Readiness' end
+         (case r.programme when 'digital-marketing' then 'Digital Marketing' else 'Life Readiness' end
            || coalesce(' · ' || nullif(r.project_title, ''), '')),
          r.created_at
     from public.mentor_reviews r

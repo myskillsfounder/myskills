@@ -7,7 +7,7 @@ import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 const ITEM_ORDER: ItemKey[] = ['t1', 't2', 't3', 'reflect']
 
 /**
- * What a Career Readiness learner actually wrote, module by module, under the
+ * What a Life Readiness learner actually wrote, module by module, under the
  * task it answers — the thing a mentor is signing off. Loaded when the review
  * is opened (open by default while it's waiting), not with the whole queue.
  */

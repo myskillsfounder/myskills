@@ -60,12 +60,12 @@ function CareerReadinessAssessmentPage() {
   return (
     <DarkShell
       back={{ to: '/practice', label: 'Back to Practice' }}
-      eyebrow="Career Readiness"
-      title={taken ? 'Your life skills profile' : 'Life skills profile'}
+      eyebrow="Life Readiness"
+      title={taken ? 'Your life aptitude' : 'Life aptitude test'}
       description={
         taken
           ? 'What you told us about how you work and relate to people today, and where the programme can help most.'
-          : 'A quick, honest look at the skills the programme builds: WHO’s ten life skills (self-awareness, empathy, critical and creative thinking, decision-making, problem-solving, communication, relationships, and coping with stress and emotions), plus goal setting, leadership, agile working and a growth mindset.'
+          : 'A quick, honest look at the 14 skills the Life Readiness Programme builds: self-awareness, empathy, critical and creative thinking, decision-making, problem-solving, communication, relationships, coping with stress and emotions, goal setting, leadership, agile working and a growth mindset.'
       }
     >
       {error && <DarkError title="The assessment isn’t available right now." message={error} />}

@@ -1,5 +1,5 @@
 /**
- * What the Career Readiness Programme measures and builds: WHO's ten life
+ * What the Life Readiness Programme measures and builds: WHO's ten life
  * skills, and four of the programme's own that WHO doesn't list (goal setting,
  * leadership, agile working, growth mindset; communication is in both, as
  * WHO's "effective communication"). The Life Skills Profile, the programme's

@@ -18,7 +18,7 @@ export const Route = createFileRoute('/admin/_layout/cr-leads')({
 const fmtDate = (v: string) => new Date(v).toLocaleDateString()
 
 /**
- * People who joined the Career Readiness waitlist before the programme opened
+ * People who joined the Life Readiness waitlist before the programme opened
  * (the form is retired; these are the leads it collected), newest first.
  */
 function CareerReadinessLeadsPage() {
@@ -61,7 +61,7 @@ function CareerReadinessLeadsPage() {
     <>
       <PageHeader
         eyebrow="Partners"
-        title="Career Readiness leads"
+        title="Life Readiness leads"
         subtitle={`From the old waitlist form. ${waiting} not contacted yet.`}
       />
       {error && (

@@ -22,7 +22,7 @@ const C = 2 * Math.PI * R
 /**
  * The Digital Marketing half of /practice, built the same way as the Career
  * Readiness card beside it (CareerReadinessOverview): the ring is how far
- * through the programme you are, the headline is the Career Readiness points
+ * through the programme you are, the headline is the Life Readiness points
  * the programme has earned you, and one bead per track shows coverage.
  *
  * The headline is the whole Professional Development part of the Career

@@ -202,7 +202,7 @@ function StudentPage() {
             {d.mentor_reviews.map((r) => (
               <li key={`${r.programme}-${r.created_at}`} className="rounded-xl bg-ink-100 p-3 text-sm">
                 <p className="font-medium text-ink-900">
-                  {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Career Readiness'} ·{' '}
+                  {r.programme === 'digital-marketing' ? 'Digital Marketing' : 'Life Readiness'} ·{' '}
                   {r.status === 'approved' ? 'Signed off' : r.status === 'requested' ? 'Waiting' : 'Sent back'}
                 </p>
                 <p className="text-xs text-ink-500">
@@ -264,8 +264,8 @@ function StudentPage() {
           </div>
         </Panel>
 
-        {/* Career Readiness */}
-        <Panel title="Career Readiness">
+        {/* Life Readiness */}
+        <Panel title="Life Readiness">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-500">Modules</p>
           <ul className="mt-2 space-y-1.5 text-sm">
             {PERSONAL_DEVELOPMENT_MODULES.map((m) => {
@@ -282,7 +282,7 @@ function StudentPage() {
               )
             })}
           </ul>
-          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Life skills profile</p>
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-ink-500">Life aptitude test</p>
           <div className="mt-2">
             {cr.aptitude ? (
               <AptitudeList
@@ -308,7 +308,7 @@ function StudentPage() {
                     {l.title} <span className="text-ink-500">· {l.host_name} ({l.host_kind})</span>
                   </span>
                   <span className="text-xs text-ink-500">
-                    {l.programme === 'digital-marketing' ? 'Digital Marketing' : 'Career Readiness'} · {fmtDate(l.held_on)}
+                    {l.programme === 'digital-marketing' ? 'Digital Marketing' : 'Life Readiness'} · {fmtDate(l.held_on)}
                   </span>
                 </li>
               ))}
