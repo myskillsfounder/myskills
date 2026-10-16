@@ -45,6 +45,8 @@ const todayIso = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 const INTERNSHIPS = '/community-portal/internships'
+/** Live and still taking applications (students stop seeing a role after its apply-by date). */
+const isOpen = (r: CompanyRole) => r.status === 'live' && !(r.apply_by && r.apply_by < todayIso())
 
 interface ResourceSummary {
   resource: CommunityResource
@@ -252,7 +254,7 @@ export function PortalHome({
 
     if (company) {
       const { roles, pipeline } = company
-      const live = roles.filter((r) => r.status === 'live').length
+      const live = roles.filter(isOpen).length
       const newApplicants = pipeline
         ? pipeline.filter((a) => a.status === 'applied').length
         : roles.reduce((n, r) => n + r.waiting, 0)
@@ -395,7 +397,7 @@ export function PortalHome({
       const { roles, pipeline } = company
       const pending = roles.filter((r) => r.status === 'pending').length
       const toChange = roles.filter((r) => r.status === 'rejected').length
-      const live = roles.filter((r) => r.status === 'live').length
+      const live = roles.filter(isOpen).length
       const fresh = pipeline
         ? pipeline.filter((a) => a.status === 'applied').length
         : roles.reduce((n, r) => n + r.waiting, 0)

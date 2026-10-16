@@ -394,8 +394,10 @@ function RoleCard({
   const [closing, setClosing] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string>()
-  const s = ROLE_STATUS[role.status]
-
+  // Students stop seeing a live role once its apply-by date has passed; say so here too.
+  const expired = role.status === 'live' && role.apply_by != null && role.apply_by < today()
+  const s = expired ? { label: 'Apply-by date passed', tone: 'neutral' as const } : ROLE_STATUS[role.status]
+
   async function close() {
     setBusy(true)
     try {
