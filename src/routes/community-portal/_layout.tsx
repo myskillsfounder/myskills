@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute, Outlet, useRouter } from '@tanstack/react-router'
-import { Briefcase, Building2, Compass, GraduationCap, HeartHandshake, LayoutDashboard, User, Users } from 'lucide-react'
+import { Briefcase, Building2, Compass, GraduationCap, HeartHandshake, LayoutDashboard, Users } from 'lucide-react'
 import { requireMentorSession } from '@/lib/guards'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { errorMessage } from '@/lib/errors'
@@ -114,12 +114,14 @@ function MentorPortalLayout() {
       icon: RESOURCE_ICON[a.resource],
       group: !profile && i === 0 ? 'Community' : undefined,
     })),
-    // Every verified partner has a profile page: their verification, and how they
-    // show up. A team account that only looks across (an overview) is not a partner.
-    ...(profile || access.some((a) => !a.sees_all)
-      ? [{ to: '/community-portal/profile', label: 'My profile', icon: User, dot: profile ? !profile.ready : false, group: 'Account' }]
-      : []),
   ]
+  // Every verified partner has a profile page: their verification, and how they
+  // show up. It opens from their name at the foot of the menu. A team account
+  // that only looks across (an overview) is not a partner, and has none.
+  const profileLink =
+    verified && (profile || access.some((a) => !a.sees_all))
+      ? { to: '/community-portal/profile', dot: profile ? !profile.ready : false }
+      : undefined
 
   const roles = [
     profile ? 'Mentor' : null,
@@ -132,7 +134,15 @@ function MentorPortalLayout() {
     (overview ? 'MySkills team · sees every section' : roles.slice(0, 2).join(' · '))
 
   return (
-    <MentorShell name={displayName} photo={profile?.avatar_url} subtitle={subtitle} tabs={tabs} overview={overview} adminLink={staff}>
+    <MentorShell
+      name={displayName}
+      photo={profile?.avatar_url}
+      subtitle={subtitle}
+      tabs={tabs}
+      overview={overview}
+      adminLink={staff}
+      profile={profileLink}
+    >
       {loading ? (
         <>
           <Skeleton className="h-8 w-56" />

@@ -272,6 +272,39 @@ export async function fetchApplicants(roleId: string): Promise<Applicant[]> {
   return (data ?? []) as Applicant[]
 }
 
+/** An application to one of this company's roles, with the role it is for. */
+export interface PipelineApplication extends Applicant {
+  role_id: string
+  role_title: string
+  duration_weeks: number
+  /** When the application last moved (an offer's age, for one). */
+  updated_at: string
+}
+
+/**
+ * Every application across the company's roles (docs/supabase-internships-
+ * portal.sql). Null, not an error, before that SQL is in, so the portal can
+ * still load and fall back to the per-role lists.
+ */
+export async function fetchMyPipeline(): Promise<PipelineApplication[] | null> {
+  const { data, error } = await supabase.rpc('my_internship_pipeline')
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as PipelineApplication[]
+}
+
+/** When an internship is due to end: its start plus the role's weeks. */
+export function expectedEnd(startedOn: string | null, weeks: number): string | null {
+  if (!startedOn) return null
+  const d = new Date(`${startedOn.slice(0, 10)}T00:00:00`)
+  d.setDate(d.getDate() + weeks * 7)
+  // Local date parts: toISOString would move it to UTC, a day early in India.
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
 export async function decideApplication(applicationId: string, action: 'shortlist' | 'offer' | 'reject'): Promise<void> {
   const { error } = await supabase.rpc('decide_internship_application', { p_application: applicationId, p_action: action })
   if (error) fail(error)
