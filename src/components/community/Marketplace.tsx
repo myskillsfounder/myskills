@@ -47,28 +47,20 @@ export const groupOf = (c: Category): Group | null => (c === 'all' ? null : c ==
 
 export const GROUPS: { id: Group; category: Category; label: string; blurb: string; icon: IconType; tile: string }[] = [
   {
-    id: 'mentors',
-    category: 'mentors',
-    label: 'Mentors',
-    blurb: 'Work one to one with someone who has done it.',
-    icon: GraduationCap,
-    tile: 'from-brand-400 to-brand-700',
-  },
-  {
-    id: 'support',
-    category: 'wellness',
-    label: 'Wellness & Guidance',
-    blurb: 'Talk privately to a counsellor or a career guide.',
-    icon: HeartHandshake,
-    tile: 'from-rose-400 to-pink-600',
-  },
-  {
     id: 'internships',
     category: 'internships',
     label: 'Internships',
     blurb: 'Real work with partner companies.',
     icon: Briefcase,
     tile: 'from-emerald-400 to-teal-600',
+  },
+  {
+    id: 'mentors',
+    category: 'mentors',
+    label: 'Mentors',
+    blurb: 'Work one to one with someone who has done it.',
+    icon: GraduationCap,
+    tile: 'from-brand-400 to-brand-700',
   },
   {
     id: 'institutions',
@@ -78,10 +70,20 @@ export const GROUPS: { id: Group; category: Category; label: string; blurb: stri
     icon: Building2,
     tile: 'from-sky-400 to-blue-600',
   },
+  {
+    id: 'support',
+    category: 'wellness',
+    label: 'Wellness & Guidance',
+    blurb: 'Talk privately to a counsellor or a career guide.',
+    icon: HeartHandshake,
+    tile: 'from-rose-400 to-pink-600',
+  },
 ]
 
 /**
- * The four groups as large tiles: the first thing on the page after search, so
+ * The four groups as large tiles, in the order students come for them:
+ * internships first, then mentors, institutions, and wellness & guidance.
+ * The first thing on the page after search, so
  * each of them is one tap away and none is buried under another's listings.
  */
 export function BrowseTiles({ meta, onPick }: { meta: Partial<Record<Group, string>>; onPick: (c: Category) => void }) {

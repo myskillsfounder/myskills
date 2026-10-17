@@ -162,7 +162,18 @@ export function YourInternships({ applications, onChanged }: { applications: MyA
 }
 
 /** One open role in the listings. The whole card opens it. */
+/** "Posted today", "Posted 3 days ago", or the date once it is older than a fortnight. */
+function postedLabel(iso: string): string {
+  const days = Math.floor((Date.now() - new Date(`${iso.slice(0, 10)}T00:00:00`).getTime()) / 86400000)
+  if (days <= 0) return 'Posted today'
+  if (days === 1) return 'Posted yesterday'
+  if (days < 14) return `Posted ${days} days ago`
+  return `Posted ${day(iso)}`
+}
+
 export function InternshipRoleCard({ role, onOpen }: { role: OpenRole; onOpen: () => void }) {
+  // A role up for a week or less is marked new, so a returning student sees it.
+  const fresh = Date.now() - new Date(`${role.posted_on.slice(0, 10)}T00:00:00`).getTime() < 7 * 86400000
   return (
     <button type="button" onClick={onOpen} className="card lift group flex flex-col p-5 text-left">
       <div className="flex w-full items-start justify-between gap-3">
@@ -172,12 +183,16 @@ export function InternshipRoleCard({ role, onOpen }: { role: OpenRole; onOpen: (
         {role.my_status ? (
           <Badge tone={MY_STATUS[role.my_status].tone}>{MY_STATUS[role.my_status].label}</Badge>
         ) : (
-          <Badge tone="success">Open</Badge>
+          <Badge tone="success">{fresh ? 'New' : 'Open'}</Badge>
         )}
       </div>
       <h3 className="mt-4 font-display text-lg font-semibold leading-snug text-ink-900">{role.title}</h3>
       <p className="mt-0.5 text-sm font-medium text-ink-700">{role.organisation}</p>
       <p className="mt-1 text-sm text-ink-600">{roleFacts(role)}</p>
+      <p className="mt-1 text-xs text-ink-500">
+        {postedLabel(role.posted_on)}
+        {role.apply_by ? ` · apply by ${day(role.apply_by)}` : ''}
+      </p>
       {role.skills.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
           {role.skills.slice(0, 4).map((s) => (

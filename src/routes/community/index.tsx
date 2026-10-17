@@ -259,7 +259,10 @@ function CommunityHub() {
   const mentorHits = mentors.filter((m) => matches(q, m.name, m.role, m.location, m.expertise, m.bio))
   // Real roles once a company has one live; until then, the kinds of role
   // partner companies offer, marked as not open yet.
-  const roleHits = internships.roles.filter((r) => matches(q, r.title, r.organisation, r.skills, r.description, r.location))
+  // Newest first: a student coming back sees what is new at the top.
+  const roleHits = internships.roles
+    .filter((r) => matches(q, r.title, r.organisation, r.skills, r.description, r.location))
+    .sort((a, b) => b.posted_on.localeCompare(a.posted_on))
   const hasRoles = internships.roles.length > 0
   const trackHits = hasRoles ? [] : INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
   const internshipCount = hasRoles ? roleHits.length : trackHits.length
@@ -295,7 +298,7 @@ function CommunityHub() {
             Find the Right Person for What You Need Next
           </h1>
           <p className="mt-1.5 text-sm text-ink-600">
-            One search across mentors, counsellors and career guides, internships and institutions.
+            One search across internships, mentors, institutions, and counsellors and career guides.
           </p>
         </header>
 
@@ -353,6 +356,30 @@ function CommunityHub() {
           </div>
         )}
 
+        {visible('internships') && (
+          <MarketSection
+            icon={Briefcase}
+            title="Internships"
+            subtitle="Real work with partner companies: the step that turns practice into experience you can show."
+            seeAll={front && internshipCount > PREVIEW ? { onClick: () => setCategory('internships'), label: `All ${internshipCount} roles` } : undefined}
+          >
+            {/* With the section opened on its own, the student's applications lead it. */}
+            {group === 'internships' && internships.applications.length > 0 && (
+              <div className="mb-4">
+                <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
+              </div>
+            )}
+            <div className={marketGrid}>
+              {some(roleHits).map((r) => (
+                <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
+              ))}
+              {some(trackHits).map((t) => (
+                <InternshipCard key={t.title} track={t} />
+              ))}
+            </div>
+          </MarketSection>
+        )}
+
         {visible('mentors') && (
           <MarketSection
             icon={GraduationCap}
@@ -379,50 +406,6 @@ function CommunityHub() {
                 </Link>
               </p>
             )}
-          </MarketSection>
-        )}
-
-        {visible('support') && (
-          <MarketSection
-            icon={HeartHandshake}
-            title="Wellness & Guidance"
-            subtitle="For the moments practice alone can’t fix: overwhelm, self-doubt, or not knowing what’s next."
-          >
-            <div className="grid gap-4 lg:grid-cols-2">
-              {support.map((s) => (
-                <ServiceCard key={s.id} service={s} />
-              ))}
-            </div>
-            {/* The detail of how it works belongs to the group's own page, not the front. */}
-            {group === 'support' && (
-              <div className="mt-4">
-                <HowSupportWorks />
-              </div>
-            )}
-          </MarketSection>
-        )}
-
-        {visible('internships') && (
-          <MarketSection
-            icon={Briefcase}
-            title="Internships"
-            subtitle="Real work with partner companies: the step that turns practice into experience you can show."
-            seeAll={front && internshipCount > PREVIEW ? { onClick: () => setCategory('internships'), label: `All ${internshipCount} roles` } : undefined}
-          >
-            {/* With the section opened on its own, the student's applications lead it. */}
-            {group === 'internships' && internships.applications.length > 0 && (
-              <div className="mb-4">
-                <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
-              </div>
-            )}
-            <div className={marketGrid}>
-              {some(roleHits).map((r) => (
-                <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
-              ))}
-              {some(trackHits).map((t) => (
-                <InternshipCard key={t.title} track={t} />
-              ))}
-            </div>
           </MarketSection>
         )}
 
@@ -458,6 +441,26 @@ function CommunityHub() {
             )}
           </MarketSection>
         )}
+        {visible('support') && (
+          <MarketSection
+            icon={HeartHandshake}
+            title="Wellness & Guidance"
+            subtitle="For the moments practice alone can’t fix: overwhelm, self-doubt, or not knowing what’s next."
+          >
+            <div className="grid gap-4 lg:grid-cols-2">
+              {support.map((s) => (
+                <ServiceCard key={s.id} service={s} />
+              ))}
+            </div>
+            {/* The detail of how it works belongs to the group's own page, not the front. */}
+            {group === 'support' && (
+              <div className="mt-4">
+                <HowSupportWorks />
+              </div>
+            )}
+          </MarketSection>
+        )}
+
       </div>
       {openRole && (
         <InternshipRoleDialog role={openRole} onClose={() => setOpenRoleId(null)} onChanged={() => void internships.reload()} />
