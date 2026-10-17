@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Briefcase, Mail, Phone, Send } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
@@ -12,15 +12,66 @@ import {
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { InviteLink } from '@/components/admin/InviteLink'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
+import { CompaniesList } from '@/components/admin/CompaniesList'
+import { fetchAdminCompanies, type AdminCompany } from '@/lib/internships'
 
-// Needs the partner-leads section (a full admin has it): the table's own RLS enforces the same.
+// Needs the Internships section ('partner-leads'; a full admin has it): the
+// database checks the same.
 export const Route = createFileRoute('/admin/_layout/internship-partners')({
   component: () => (
     <RequireSection section="partner-leads">
-      <InternshipPartnersPage />
+      <CompaniesPage />
     </RequireSection>
   ),
 })
+
+/**
+ * Every internship company, however it arrived. Before docs/supabase-admin-
+ * tidy.sql is run there is only the website form's list, shown as before.
+ */
+function CompaniesPage() {
+  const [rows, setRows] = useState<AdminCompany[] | null | undefined>(undefined)
+  const [error, setError] = useState<string>()
+
+  const load = useCallback(async () => {
+    try {
+      setRows(await fetchAdminCompanies())
+      setError(undefined)
+    } catch (e) {
+      setError(errorMessage(e))
+      setRows([])
+    }
+  }, [])
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  if (rows === null) return <InternshipPartnersPage />
+  const toVerify = (rows ?? []).filter((r) => r.stage === 'signed_up').length
+  const inPortal = (rows ?? []).filter((r) => r.stage === 'in_portal').length
+  const fresh = (rows ?? []).filter((r) => r.stage === 'interested' && !r.contacted).length
+  return (
+    <>
+      <PageHeader
+        eyebrow="Internships"
+        title="Companies"
+        subtitle={
+          rows
+            ? `Every company, from the website form or the portal. ${inPortal} in the portal · ${toVerify} to verify · ${fresh} not contacted yet.`
+            : 'Every company, from the website form or the portal.'
+        }
+      />
+      {error && (
+        <div className="mb-5">
+          <Alert tone="danger" title="Couldn’t load the companies">
+            <p>{error}</p>
+          </Alert>
+        </div>
+      )}
+      {rows === undefined ? <Skeleton className="h-64 w-full" /> : <CompaniesList rows={rows} onChanged={() => void load()} />}
+    </>
+  )
+}
 
 const fmtDate = (v: string) => new Date(v).toLocaleDateString()
 
@@ -45,7 +96,7 @@ function PortalStanding({ s }: { s: LeadPortalStatus | undefined }) {
   return <Badge tone="neutral">Not invited yet</Badge>
 }
 
-/** Companies that filled in "post internships with MySkills", newest first. */
+/** Before the SQL: companies that filled in "post internships with MySkills", newest first. */
 function InternshipPartnersPage() {
   const [rows, setRows] = useState<InternshipLead[]>([])
   const [loading, setLoading] = useState(true)
@@ -90,8 +141,8 @@ function InternshipPartnersPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Partners"
-        title="Internship companies"
+        eyebrow="Internships"
+        title="Companies"
         subtitle={`Companies interested in posting internships. ${waiting} not contacted yet${
           Object.keys(status).length > 0 ? ` · ${inPortal} in the portal` : ''
         }.`}

@@ -23,10 +23,10 @@ const HEADING: Record<'mentors' | GrantedResource, string> = {
 
 const EMPTY: Record<'mentors' | GrantedResource, string> = {
   mentors: 'No mentors are listed yet.',
-  wellness: 'No counsellors have been given access yet. Add them in Admin > Community > Portal access.',
-  guidance: 'No career guides have been given access yet. Add them in Admin > Community > Portal access.',
-  internships: 'No companies have been given access yet. Add them in Admin > Community > Portal access.',
-  institutions: 'No institutions have been given access yet. Add them in Admin > Community > Portal access.',
+  wellness: 'No counsellors have been given access yet. Add them in Admin > Partners > Portal access.',
+  guidance: 'No career guides have been given access yet. Add them in Admin > Partners > Portal access.',
+  internships: 'No companies have been given access yet. Add them in Admin > Partners > Portal access.',
+  institutions: 'No institutions have been given access yet. Add them in Admin > Partners > Portal access.',
 }
 
 /** The numbers under each provider's name: who they are working with. */

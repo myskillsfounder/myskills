@@ -447,3 +447,44 @@ export async function fetchInternshipOverview(): Promise<InternshipOverview | nu
   if (error) return null
   return data as InternshipOverview
 }
+
+export type CompanyStage = 'interested' | 'signed_up' | 'in_portal' | 'turned_down' | 'removed'
+
+/** Every company, however it arrived (docs/supabase-admin-tidy.sql). */
+export interface AdminCompany {
+  key: string
+  stage: CompanyStage
+  organisation: string
+  contact_name: string | null
+  email: string | null
+  phone: string | null
+  city: string | null
+  /** The roles they said they offer (the form), or their sign-up message. */
+  note: string | null
+  since: string | null
+  /** Set when they filled in the form. */
+  lead_id: string | null
+  contacted: boolean | null
+  contacted_at: string | null
+  /** Set when they signed up in the portal. */
+  request_id: string | null
+  user_id: string | null
+  has_account: boolean
+  about: string | null
+  website: string | null
+  roles_live: number
+  roles_pending: number
+  applicants_waiting: number
+  interns_now: number
+  internships_confirmed: number
+}
+
+/** Null before the SQL is in: the page then shows the form's list, as before. */
+export async function fetchAdminCompanies(): Promise<AdminCompany[] | null> {
+  const { data, error } = await supabase.rpc('admin_internship_companies')
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as AdminCompany[]
+}

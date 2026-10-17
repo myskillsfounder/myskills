@@ -41,7 +41,7 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
   },
   'demo-request': { label: 'Demo request', plural: 'Demo requests', to: '/admin/demo-requests' },
   'support-request': { label: 'Support request', plural: 'Support requests', to: '/admin/wellness' },
-  'internship-lead': { label: 'Internship company', plural: 'Internship companies', to: '/admin/internship-partners' },
+  'internship-lead': { label: 'Internship company', plural: 'Internship companies to contact', to: '/admin/internship-partners' },
   'cr-lead': { label: 'Global Leadership lead', plural: 'Global Leadership leads', to: '/admin/cr-leads' },
   'unlinked-mentor': { label: 'Mentor to link', plural: 'Mentors to link', to: '/admin/mentors' },
   'portal-request': { label: 'Portal sign-up', plural: 'Portal sign-ups to verify', to: '/admin/community-portal' },

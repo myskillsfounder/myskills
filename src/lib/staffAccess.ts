@@ -24,7 +24,12 @@ export const STAFF_SECTIONS = [
   // for a full admin only, now grantable one at a time.
   'overview',
   'portal-access',
+  // Internships: companies, roles, applications and sign-offs. (The slug is
+  // from when it also opened the lead lists; renaming it would mean changing
+  // every internship function in the database for no gain.)
   'partner-leads',
+  // Global Leadership leads (docs/supabase-admin-tidy.sql).
+  'leads',
 ] as const
 
 export type StaffSection = (typeof STAFF_SECTIONS)[number]

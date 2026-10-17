@@ -85,48 +85,54 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/inbox', label: 'Inbox', icon: Inbox, section: 'any' },
     ],
   },
+  // A student and everything they have done: one section ('users') opens the
+  // results pages as well, so they sit here rather than under Programmes.
   {
     label: 'Students',
     items: [
       { to: '/admin/users', label: 'All students', icon: Users, section: 'users' },
       { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
-    ],
-  },
-  // Both programmes together: the results, the projects mentors grade, and the
-  // content. (Digital Marketing and Global Leadership were two groups of mostly
-  // the same pages.)
-  {
-    label: 'Programmes',
-    items: [
       { to: '/admin/aptitude', label: 'Aptitude results', icon: Sparkles, section: 'users' },
       { to: '/admin/practice', label: 'Practice (Marketing)', icon: Dumbbell, section: 'users' },
       { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
-      { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
+    ],
+  },
+  // What the team grades and writes for both programmes.
+  {
+    label: 'Programmes',
+    items: [
       { to: '/admin/mentor-reviews', label: 'Projects to grade', icon: UserCheck, section: 'mentor-reviews' },
+      { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
+      { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
       { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
       { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
     ],
   },
-  // Everything a student sees on the Community page, in the same order as its
-  // category tiles. The day-to-day work with these people happens in the
-  // Community portal; this is where they are approved, given access and overseen.
+  // Internships end to end, under one section: every company however it came,
+  // then their roles, applications and sign-offs.
   {
-    label: 'Community',
+    label: 'Internships',
     items: [
-      { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
-      { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
-      { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness' },
-      { to: '/admin/internships', label: 'Internship roles', icon: Briefcase, section: 'partner-leads' },
-      { to: '/admin/internship-partners', label: 'Internship companies', icon: Building2, section: 'partner-leads' },
-      { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
+      { to: '/admin/internship-partners', label: 'Companies', icon: Building2, section: 'partner-leads' },
+      { to: '/admin/internships', label: 'Roles & applications', icon: Briefcase, section: 'partner-leads' },
+    ],
+  },
+  // The people and organisations who serve students in the Community portal:
+  // giving them access, then each kind.
+  {
+    label: 'Partners',
+    items: [
       { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access' },
+      { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
+      { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness' },
+      { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
     ],
   },
   {
     label: 'Leads',
     items: [
       { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
-      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'partner-leads' },
+      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads' },
     ],
   },
   {

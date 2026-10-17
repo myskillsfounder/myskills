@@ -237,8 +237,8 @@ function InternshipsAdminPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Partners"
-        title="Internship roles"
+        eyebrow="Internships"
+        title="Roles & applications"
         subtitle={[
           `${toApprove.length} to approve`,
           `${toConfirm.length} sign-offs to confirm`,

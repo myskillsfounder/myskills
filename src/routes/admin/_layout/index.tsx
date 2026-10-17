@@ -440,7 +440,7 @@ function DashboardPage() {
       <SectionLabel
         action={
           <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-            Internship roles <ArrowRight size={14} />
+            Roles &amp; applications <ArrowRight size={14} />
           </Link>
         }
       >
@@ -543,7 +543,7 @@ function DashboardPage() {
             <p className="mt-0.5 text-sm text-ink-600">
               Scores, trends and programme progress need the “Dashboard numbers” section. A full admin can add it under
               Team &amp; access.
-              {canSeeInternships && ' The internship numbers below come with your Partner leads section.'}
+              {canSeeInternships && ' The internship numbers below come with your Internships section.'}
             </p>
           </div>
         </div>
