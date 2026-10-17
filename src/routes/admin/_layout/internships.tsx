@@ -6,14 +6,17 @@ import {
   ROLE_STATUS,
   confirmSignoff,
   day,
+  fetchAdminPipeline,
   fetchAdminRoles,
   fetchAdminSignoffs,
   reviewRole,
   roleFacts,
+  type AdminApplication,
   type AdminRole,
   type AdminSignoff,
 } from '@/lib/internships'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { InternshipPipeline, stuckReason } from '@/components/admin/InternshipPipeline'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 
 // The same section as the internship companies: whoever handles them handles their roles.
@@ -202,14 +205,17 @@ function SignoffCard({ s, onChanged }: { s: AdminSignoff; onChanged: () => void 
 function InternshipsAdminPage() {
   const [roles, setRoles] = useState<AdminRole[]>([])
   const [signoffs, setSignoffs] = useState<AdminSignoff[]>([])
+  // Null before docs/supabase-admin-internships.sql: the section is left out.
+  const [pipeline, setPipeline] = useState<AdminApplication[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
 
   const load = useCallback(async () => {
     try {
-      const [r, s] = await Promise.all([fetchAdminRoles(), fetchAdminSignoffs()])
+      const [r, s, p] = await Promise.all([fetchAdminRoles(), fetchAdminSignoffs(), fetchAdminPipeline()])
       setRoles(r)
       setSignoffs(s)
+      setPipeline(p)
       setError(undefined)
     } catch (e) {
       setError(errorMessage(e))
@@ -226,13 +232,21 @@ function InternshipsAdminPage() {
   const toConfirm = signoffs.filter((s) => s.status === 'signoff_pending')
   const confirmed = signoffs.filter((s) => s.status === 'completed')
   const heading = 'text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500'
+  const stuck = pipeline ? pipeline.filter((a) => stuckReason(a) !== null).length : 0
 
   return (
     <>
       <PageHeader
         eyebrow="Partners"
         title="Internship roles"
-        subtitle={`${toApprove.length} to approve · ${toConfirm.length} sign-offs to confirm · ${roles.filter((r) => r.status === 'live').length} live`}
+        subtitle={[
+          `${toApprove.length} to approve`,
+          `${toConfirm.length} sign-offs to confirm`,
+          pipeline ? `${stuck} ${stuck === 1 ? 'application needs' : 'applications need'} a nudge` : null,
+          `${roles.filter((r) => r.status === 'live').length} live`,
+        ]
+          .filter(Boolean)
+          .join(' · ')}
       />
       {error && (
         <div className="mb-5">
@@ -268,6 +282,18 @@ function InternshipsAdminPage() {
                 {toApprove.map((r) => (
                   <RoleCard key={r.id} r={r} onChanged={() => void load()} />
                 ))}
+              </div>
+            </section>
+          )}
+          {pipeline && pipeline.length > 0 && (
+            <section>
+              <h2 className={heading}>Applications · {pipeline.length}</h2>
+              <p className="mt-1 max-w-2xl text-sm text-ink-600">
+                Every student who applied, at every company, and where it stands. Something is flagged when it hasn’t
+                moved in a week, or an internship is past its end with no sign-off: a nudge to the company or student.
+              </p>
+              <div className="mt-3">
+                <InternshipPipeline rows={pipeline} />
               </div>
             </section>
           )}

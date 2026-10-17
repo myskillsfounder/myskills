@@ -385,3 +385,25 @@ export async function fetchCommunityProviders(resource: GrantedResource): Promis
   }
   return (data ?? []) as CommunityProvider[]
 }
+
+/** A partner a student is with, was with, or has been asked by: for the team. */
+export interface StudentConnection {
+  id: string
+  resource: GrantedResource
+  /** The company or institution, or the counsellor's or guide's name. */
+  partner: string
+  status: 'invited' | 'declined' | 'active' | 'ended'
+  started_on: string
+  ended_on: string | null
+  asked_on: string
+}
+
+/** Null before docs/supabase-admin-internships.sql; an error otherwise. */
+export async function fetchStudentConnections(studentId: string): Promise<StudentConnection[] | null> {
+  const { data, error } = await supabase.rpc('admin_student_connections', { p_student: studentId })
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as StudentConnection[]
+}
