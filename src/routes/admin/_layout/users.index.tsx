@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle2, ChevronRight, Search, Users as UsersIcon } from 'lucide-react'
-import { fetchStudentMentors, fetchStudents, type AdminStudent } from '@/lib/adminStudents'
+import { CheckCircle2, ChevronRight, Crown, Megaphone, Search, Users as UsersIcon } from 'lucide-react'
+import { fetchStudentCounts, fetchStudentMentors, fetchStudents, type AdminStudent, type StudentCounts } from '@/lib/adminStudents'
 import { bandFor } from '@/lib/readinessScore'
 import { skillTracks } from '@/lib/skillTracks'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
@@ -30,6 +30,74 @@ const BAND_TONE: Record<string, string> = {
   'Getting started': 'bg-ink-100 text-ink-600',
 }
 
+/** One of the cards at the top: a number, what it counts, and a line under it. */
+function CountCard({
+  icon: Icon,
+  tone,
+  label,
+  value,
+  lines,
+}: {
+  icon: typeof UsersIcon
+  tone: string
+  label: string
+  value: number
+  lines: string[]
+}) {
+  return (
+    <div className="card p-5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-ink-700">{label}</p>
+        <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}>
+          <Icon size={17} />
+        </span>
+      </div>
+      <p className="mt-2 font-display text-4xl font-semibold leading-none tabular-nums text-ink-900">{value}</p>
+      <div className="mt-2 space-y-0.5">
+        {lines.map((l) => (
+          <p key={l} className="text-xs text-ink-500">
+            {l}
+          </p>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** The three numbers above the list: everyone, and each programme. */
+function StudentCountCards({ c }: { c: StudentCounts }) {
+  const share = (n: number) => (c.total ? `${Math.round((n / c.total) * 100)}% of students` : '')
+  return (
+    <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <CountCard
+        icon={UsersIcon}
+        tone="bg-ink-100 text-ink-700"
+        label="Total students"
+        value={c.total}
+        lines={[`${c.new_this_week} joined this week`, `${c.neither} not started a programme yet`]}
+      />
+      <CountCard
+        icon={Megaphone}
+        tone="bg-brand-50 text-brand-700"
+        label="Digital Marketing Programme"
+        value={c.dm}
+        lines={[share(c.dm), `${c.dm_practising} practising · ${c.dm_all_tracks} finished all 8 tracks`]}
+      />
+      <CountCard
+        icon={Crown}
+        tone="bg-gold-50 text-gold-700"
+        label="Global Leadership Programme"
+        value={c.gl}
+        lines={[share(c.gl), `${c.gl_writing} writing modules · ${c.gl_all_modules} finished all 14`]}
+      />
+      <p className="text-xs text-ink-500 sm:col-span-3">
+        In a programme: took its aptitude test or started its work. {c.both} {c.both === 1 ? 'student is' : 'students are'} in
+        both.
+      </p>
+    </div>
+  )
+}
+
 /**
  * Every student with their Global Readiness Score (recomputed by the server
  * when the list loads) and where they are in both programmes. A row opens the
@@ -37,6 +105,11 @@ const BAND_TONE: Record<string, string> = {
  */
 function StudentsPage() {
   const { q } = Route.useSearch()
+  // The numbers across every student, not just the rows below (which stop at 200).
+  const [counts, setCounts] = useState<StudentCounts | null>(null)
+  useEffect(() => {
+    void fetchStudentCounts().then(setCounts)
+  }, [])
   const [search, setSearch] = useState(q ?? '')
   const [sort, setSort] = useState<Sort>('newest')
   const [students, setStudents] = useState<AdminStudent[]>([])
@@ -79,6 +152,8 @@ function StudentsPage() {
         title="All students"
         subtitle="Global Readiness Score and progress in both programmes. Open a student to see everything behind the number."
       />
+
+      {counts && <StudentCountCards c={counts} />}
 
       <div className="mb-5 flex flex-wrap items-end gap-3">
         <div className="w-full max-w-sm">
