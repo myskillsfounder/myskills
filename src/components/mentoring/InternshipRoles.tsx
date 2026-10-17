@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Briefcase, CalendarCheck, Check, ChevronDown, Mail, Pencil, Phone, Plus, Star, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -7,6 +8,7 @@ import {
   closeRole,
   day,
   decideApplication,
+  expectedEnd,
   fetchApplicants,
   fetchMyRoles,
   requestSignoff,
@@ -147,8 +149,21 @@ const APPLICANT_STATUS: Record<Applicant['status'], { label: string; tone: 'neut
   rejected: { label: 'Not selected', tone: 'neutral' },
 }
 
-/** One applicant: what they have shown on MySkills, and the next thing the company can do. */
-function ApplicantRow({ a, onChanged }: { a: Applicant; onChanged: () => void }) {
+/**
+ * One applicant: what they have shown on MySkills, and the next thing the
+ * company can do. Also the row of "Your interns", which names the role and
+ * when the internship is due to end.
+ */
+export function ApplicantRow({
+  a,
+  onChanged,
+  role,
+}: {
+  a: Applicant
+  onChanged: () => void
+  /** Shown when the row stands outside its role card. */
+  role?: { title: string; weeks: number }
+}) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string>()
   const [signing, setSigning] = useState(false)
@@ -170,11 +185,29 @@ function ApplicantRow({ a, onChanged }: { a: Applicant; onChanged: () => void })
   }
 
   const s = APPLICANT_STATUS[a.status]
+  const name = a.student_name || 'A MySkills student'
+  // While the internship runs the student is on the company's list, so their
+  // record opens; before that the application is all the company sees.
+  const canOpen = a.status === 'accepted' || a.status === 'signoff_pending'
+  const due = role && a.status === 'accepted' ? expectedEnd(a.started_on, role.weeks) : null
   return (
     <li className="rounded-2xl border border-ink-900/[0.08] p-4">
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <div className="min-w-0">
-          <p className="font-display text-base font-semibold text-ink-900">{a.student_name || 'A MySkills student'}</p>
+          {role && <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-700">{role.title}</p>}
+          <p className="font-display text-base font-semibold text-ink-900">
+            {canOpen ? (
+              <Link
+                to="/community-portal/student/$id"
+                params={{ id: a.student_id }}
+                className="hover:text-brand-700 hover:underline"
+              >
+                {name}
+              </Link>
+            ) : (
+              name
+            )}
+          </p>
           {(a.headline || a.location) && (
             <p className="text-sm text-ink-600">{[a.headline, a.location].filter(Boolean).join(' · ')}</p>
           )}
@@ -192,7 +225,9 @@ function ApplicantRow({ a, onChanged }: { a: Applicant; onChanged: () => void })
       {a.certificates.length > 0 && (
         <p className="mt-1 text-xs text-ink-600">Certificates: {a.certificates.join(' · ')}</p>
       )}
-      {a.note && <p className="mt-2 whitespace-pre-line rounded-xl bg-ink-900/[0.03] p-3 text-sm leading-relaxed text-ink-700">{a.note}</p>}
+      {a.note && !role && (
+        <p className="mt-2 whitespace-pre-line rounded-xl bg-ink-900/[0.03] p-3 text-sm leading-relaxed text-ink-700">{a.note}</p>
+      )}
 
       {a.email ? (
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
@@ -269,7 +304,10 @@ function ApplicantRow({ a, onChanged }: { a: Applicant; onChanged: () => void })
           </div>
         ) : (
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <span className="text-sm text-ink-600">Started {a.started_on ? day(a.started_on) : 'recently'}.</span>
+            <span className="text-sm text-ink-600">
+              Started {a.started_on ? day(a.started_on) : 'recently'}
+              {due && (due <= today() ? ` · was due to end ${day(due)}` : ` · due to end ${day(due)}`)}.
+            </span>
             <Button size="sm" variant="secondary" icon={CalendarCheck} onClick={() => setSigning(true)}>
               Mark internship complete
             </Button>
@@ -288,7 +326,20 @@ function ApplicantRow({ a, onChanged }: { a: Applicant; onChanged: () => void })
   )
 }
 
-function Applicants({ roleId, onChanged }: { roleId: string; onChanged: () => void }) {
+/** Where an application has become an internship: on "Your interns" when that list is there. */
+const INTERNING: Applicant['status'][] = ['accepted', 'signoff_pending', 'completed']
+
+function Applicants({
+  roleId,
+  onChanged,
+  refreshKey,
+  internsElsewhere,
+}: {
+  roleId: string
+  onChanged: () => void
+  refreshKey: number
+  internsElsewhere: boolean
+}) {
   const [rows, setRows] = useState<Applicant[] | null>(null)
   const [error, setError] = useState<string>()
 
@@ -302,14 +353,16 @@ function Applicants({ roleId, onChanged }: { roleId: string; onChanged: () => vo
   }, [roleId])
   useEffect(() => {
     void load()
-  }, [load])
+  }, [load, refreshKey])
 
   if (error) return <p className="mt-3 text-sm text-red-700">{error}</p>
   if (rows === null) return <Skeleton className="mt-3 h-24 w-full" />
   if (rows.length === 0) return <p className="mt-3 text-sm text-ink-500">No one has applied yet.</p>
+  const shown = internsElsewhere ? rows.filter((a) => !INTERNING.includes(a.status)) : rows
+  if (shown.length === 0) return <p className="mt-3 text-sm text-ink-500">Everyone who applied is under Your interns, above.</p>
   return (
     <ul className="mt-3 space-y-3">
-      {rows.map((a) => (
+      {shown.map((a) => (
         <ApplicantRow
           key={a.id}
           a={a}
@@ -323,14 +376,28 @@ function Applicants({ roleId, onChanged }: { roleId: string; onChanged: () => vo
   )
 }
 
-function RoleCard({ role, onEdit, onChanged }: { role: CompanyRole; onEdit: () => void; onChanged: () => void }) {
-  // A role with something to act on opens by itself.
-  const [open, setOpen] = useState(role.waiting > 0 || role.interning > 0)
+function RoleCard({
+  role,
+  onEdit,
+  onChanged,
+  refreshKey,
+  internsElsewhere,
+}: {
+  role: CompanyRole
+  onEdit: () => void
+  onChanged: () => void
+  refreshKey: number
+  internsElsewhere: boolean
+}) {
+  // A role with new applicants opens by itself. (Interns have their own list.)
+  const [open, setOpen] = useState(role.waiting > 0)
   const [closing, setClosing] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string>()
-  const s = ROLE_STATUS[role.status]
-
+  // Students stop seeing a live role once its apply-by date has passed; say so here too.
+  const expired = role.status === 'live' && role.apply_by != null && role.apply_by < today()
+  const s = expired ? { label: 'Apply-by date passed', tone: 'neutral' as const } : ROLE_STATUS[role.status]
+
   async function close() {
     setBusy(true)
     try {
@@ -387,7 +454,7 @@ function RoleCard({ role, onEdit, onChanged }: { role: CompanyRole; onEdit: () =
             </button>
             {closing ? (
               <span className="inline-flex items-center gap-2 text-sm text-ink-700">
-                Stop taking applications?
+                Close it? Anyone still waiting hears it didn’t go through.
                 <Button size="sm" variant="secondary" disabled={busy} onClick={() => void close()}>
                   Yes
                 </Button>
@@ -404,7 +471,9 @@ function RoleCard({ role, onEdit, onChanged }: { role: CompanyRole; onEdit: () =
         )}
       </div>
       {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
-      {open && <Applicants roleId={role.id} onChanged={onChanged} />}
+      {open && (
+        <Applicants roleId={role.id} onChanged={onChanged} refreshKey={refreshKey} internsElsewhere={internsElsewhere} />
+      )}
     </li>
   )
 }
@@ -414,7 +483,18 @@ function RoleCard({ role, onEdit, onChanged }: { role: CompanyRole; onEdit: () =
  * and work through the students who applied, from shortlist to sign-off. It
  * sits above the "Interning now" list, which fills as offers are accepted.
  */
-export function InternshipRoles() {
+export function InternshipRoles({
+  onChanged,
+  refreshKey = 0,
+  internsElsewhere = false,
+}: {
+  /** Something changed here that the rest of the page shows too. */
+  onChanged?: () => void
+  /** Bumped when something changed elsewhere on the page. */
+  refreshKey?: number
+  /** The page lists interns on their own ("Your interns"): leave them out of the role cards. */
+  internsElsewhere?: boolean
+} = {}) {
   const [roles, setRoles] = useState<CompanyRole[] | null>(null)
   const [error, setError] = useState<string>()
   const [editing, setEditing] = useState<RoleDraft | null>(null)
@@ -431,7 +511,20 @@ export function InternshipRoles() {
   }, [])
   useEffect(() => {
     void load()
-  }, [load])
+  }, [load, refreshKey])
+
+  // "Post a role" on the portal's Home lands here with the form open.
+  useEffect(() => {
+    if (window.location.hash === '#post') {
+      setEditing(BLANK)
+      history.replaceState(null, '', window.location.pathname + window.location.search)
+    }
+  }, [])
+
+  const changed = () => {
+    void load()
+    onChanged?.()
+  }
 
   return (
     <section className="space-y-4">
@@ -470,7 +563,7 @@ export function InternshipRoles() {
           onSaved={() => {
             setEditing(null)
             setSent(true)
-            void load()
+            changed()
           }}
         />
       )}
@@ -489,7 +582,9 @@ export function InternshipRoles() {
             <RoleCard
               key={r.id}
               role={r}
-              onChanged={() => void load()}
+              refreshKey={refreshKey}
+              internsElsewhere={internsElsewhere}
+              onChanged={changed}
               onEdit={() => {
                 setSent(false)
                 setEditing({ ...r })

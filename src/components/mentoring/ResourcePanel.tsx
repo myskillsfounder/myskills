@@ -33,11 +33,13 @@ const COPY: Record<GrantedResource, { intro: string; empty: string; active: stri
     empty: 'When the team assigns a student’s request to you, they appear here.',
     active: 'Working with you',
   },
+  // Below a company's interns and roles: students sharing their record outside
+  // a role (interns taken on before the company joined, say).
   internships: {
     intro:
-      'The students interning with you right now. Ask a student by the email they use on MySkills; they join your list once they accept. Mark them finished when the internship ends.',
-    empty: 'Ask your first intern by their MySkills email.',
-    active: 'Interning now',
+      'Students sharing their MySkills record with you outside a role here, such as interns you took on before you joined. Ask one by the email they use on MySkills; they join once they accept. Only an internship through one of your roles can be signed off and count toward a student’s score.',
+    empty: 'No one else is sharing their record with you.',
+    active: 'Sharing with you',
   },
   institutions: {
     intro:
@@ -247,11 +249,17 @@ export function ResourcePanel({
   resource,
   organisation,
   seesAll = false,
+  exclude,
+  heading,
 }: {
   resource: GrantedResource
   organisation: string | null
   /** An overview: every student in this resource, whoever they are with. Read-only. */
   seesAll?: boolean
+  /** Students shown elsewhere on the page (a company's interns from its roles). */
+  exclude?: Set<string>
+  /** A section of a bigger page: its own heading, and no empty-state panel. */
+  heading?: string
 }) {
   const [students, setStudents] = useState<CommunityStudent[]>([])
   const [loading, setLoading] = useState(true)
@@ -297,13 +305,15 @@ export function ResourcePanel({
     }
   }
 
-  const active = students.filter((s) => s.status === 'active')
-  const finished = students.filter((s) => s.status === 'ended')
+  const shown = exclude ? students.filter((s) => !s.student_id || !exclude.has(s.student_id)) : students
+  const active = shown.filter((s) => s.status === 'active')
+  const finished = shown.filter((s) => s.status === 'ended')
   // Asked, and not (or not yet) on the list.
-  const requests = students.filter((s) => s.status === 'invited' || s.status === 'declined')
+  const requests = shown.filter((s) => s.status === 'invited' || s.status === 'declined')
 
   return (
     <div className="space-y-5">
+      {heading && <h2 className="-mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">{heading}</h2>}
       <p className="max-w-2xl text-sm leading-relaxed text-ink-600">
         {organisation && <span className="font-semibold text-ink-900">{organisation}. </span>}
         {seesAll ? OVERVIEW[resource] : copy.intro}
@@ -354,12 +364,16 @@ export function ResourcePanel({
 
       {loading ? (
         <Skeleton className="h-32 w-full" />
-      ) : students.length === 0 && !error ? (
+      ) : shown.length === 0 && !error ? (
+        heading ? (
+          <p className="text-sm text-ink-500">{copy.empty}</p>
+        ) : (
         <EmptyState
           icon={Users}
           title="No students yet"
           description={seesAll ? 'Students appear here as soon as one is working with someone in this resource.' : copy.empty}
         />
+        )
       ) : (
         <>
           {active.length > 0 && (

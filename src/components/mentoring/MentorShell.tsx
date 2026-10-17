@@ -1,6 +1,6 @@
 import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
-import { Eye, LogOut, Menu, ShieldCheck, X } from 'lucide-react'
+import { ChevronRight, Eye, LogOut, Menu, ShieldCheck, X } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { Avatar } from '@/components/ui'
 
@@ -37,6 +37,7 @@ export function MentorShell({
   tabs: tabList,
   overview = false,
   adminLink = false,
+  profile,
 }: {
   children: ReactNode
   /** The signed-in person, once known. */
@@ -50,6 +51,9 @@ export function MentorShell({
   overview?: boolean
   /** This account can also open the admin panel: offer the way across. */
   adminLink?: boolean
+  /** The account's own profile page. The name at the foot of the menu opens it,
+   *  so the person and their profile are one place, not two. */
+  profile?: { to: string; dot: boolean }
 }) {
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
@@ -107,17 +111,51 @@ export function MentorShell({
     </nav>
   )
 
+  const who = name && (
+    <>
+      <span className="relative shrink-0">
+        <Avatar name={name} src={photo ?? undefined} size={36} />
+        {profile?.dot && (
+          <span
+            aria-label="Your profile needs finishing"
+            className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-white"
+          />
+        )}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold text-ink-900">{name}</span>
+        {subtitle && (
+          <span className="block truncate text-xs text-ink-500" title={subtitle}>
+            {subtitle}
+          </span>
+        )}
+        {profile && (
+          <span className={`block text-xs font-semibold ${profile.dot ? 'text-amber-700' : 'text-brand-700'}`}>
+            {profile.dot ? 'Finish your profile' : 'View your profile'}
+          </span>
+        )}
+      </span>
+    </>
+  )
+  const onProfile = profile ? here === profile.to || here.startsWith(`${profile.to}/`) : false
+
   const account = (
     <div className="border-t border-ink-900/[0.06] p-3">
-      {name && (
-        <div className="flex items-center gap-3 px-2 py-2">
-          <Avatar name={name} src={photo ?? undefined} size={36} />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-ink-900">{name}</p>
-            {subtitle && <p className="truncate text-xs text-ink-500">{subtitle}</p>}
-          </div>
-        </div>
-      )}
+      {who &&
+        (profile ? (
+          <Link
+            to={profile.to}
+            aria-current={onProfile ? 'page' : undefined}
+            className={`group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors ${
+              onProfile ? 'bg-brand-50' : 'hover:bg-ink-100'
+            }`}
+          >
+            {who}
+            <ChevronRight size={16} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        ) : (
+          <div className="flex items-center gap-3 px-2 py-2">{who}</div>
+        ))}
       {adminLink && (
         <Link
           to="/admin"
@@ -170,15 +208,26 @@ export function MentorShell({
             {overview ? 'Team overview' : 'Community Portal'}
           </span>
         </Link>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open menu"
-          aria-expanded={open}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-700 hover:bg-ink-100"
-        >
-          <Menu size={20} />
-        </button>
+        <div className="flex items-center gap-1">
+          {/* The person, one tap from their profile, as on the computer's menu. */}
+          {profile && name && (
+            <Link to={profile.to} aria-label="Your profile" className="relative flex h-10 w-10 items-center justify-center rounded-full">
+              <Avatar name={name} src={photo ?? undefined} size={30} />
+              {profile.dot && (
+                <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-white" />
+              )}
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={open}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-700 hover:bg-ink-100"
+          >
+            <Menu size={20} />
+          </button>
+        </div>
       </header>
 
       {open && (
