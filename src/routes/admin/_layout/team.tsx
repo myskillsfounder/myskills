@@ -240,7 +240,7 @@ function TeamPage() {
         {[
           { icon: Crown, tone: 'bg-gold-50 text-gold-700', title: 'Full admin', body: 'Everything, including this page. Set in Supabase only.' },
           { icon: ShieldCheck, tone: 'bg-brand-50 text-brand-700', title: 'Team member', body: `An ${TEAM_DOMAIN} account given some sections here.` },
-          { icon: KeyRound, tone: 'bg-ink-100 text-ink-600', title: 'Partner', body: 'Not in the admin panel at all. Verified under Community > Portal access & usage.' },
+          { icon: KeyRound, tone: 'bg-ink-100 text-ink-600', title: 'Partner', body: 'Not in the admin panel at all. Verified under Partners > Portal access & usage.' },
         ].map(({ icon: Icon, tone, title, body }) => (
           <div key={title} className="flex items-start gap-3 rounded-2xl border border-ink-900/[0.07] bg-white p-4">
             <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tone}`}>

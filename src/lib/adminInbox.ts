@@ -41,7 +41,7 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
   },
   'demo-request': { label: 'Demo request', plural: 'Demo requests', to: '/admin/demo-requests' },
   'support-request': { label: 'Support request', plural: 'Support requests', to: '/admin/wellness' },
-  'internship-lead': { label: 'Internship company', plural: 'Internship companies', to: '/admin/internship-partners' },
+  'internship-lead': { label: 'Internship company', plural: 'Internship companies to contact', to: '/admin/internship-partners' },
   'cr-lead': { label: 'Global Leadership lead', plural: 'Global Leadership leads', to: '/admin/cr-leads' },
   'unlinked-mentor': { label: 'Mentor to link', plural: 'Mentors to link', to: '/admin/mentors' },
   'portal-request': { label: 'Portal sign-up', plural: 'Portal sign-ups to verify', to: '/admin/community-portal' },
@@ -82,17 +82,17 @@ export function fetchInbox(): Promise<InboxItem[] | null> {
   })
 }
 
-/** How many items are waiting, for the sidebar. Null until known, or if unavailable. */
-export function useInboxCount(): number | null {
-  const [count, setCount] = useState<number | null>(null)
+/** Everything waiting for this person, once, for the menu: null until known, or without the SQL. */
+export function useInboxItems(): InboxItem[] | null {
+  const [items, setItems] = useState<InboxItem[] | null>(null)
   useEffect(() => {
     let active = true
     fetchInbox()
-      .then((rows) => active && setCount(rows ? rows.length : null))
+      .then((rows) => active && setItems(rows ?? null))
       .catch(() => {})
     return () => {
       active = false
     }
   }, [])
-  return count
+  return items
 }

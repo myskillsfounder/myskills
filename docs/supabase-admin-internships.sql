@@ -4,8 +4,9 @@
 --    company's roles, with where it stands and how long it has waited, for
 --    Admin > Internship roles. With p_student, one student's own, for their
 --    page under All students.
--- 2. admin_internship_overview(): the numbers for the Dashboard: roles,
---    applications, interns and confirmed internships.
+-- 2. admin_internship_overview(): the numbers for the Dashboard: companies
+--    interested (from "post internships with MySkills"), roles, applications,
+--    interns and confirmed internships.
 -- 3. admin_student_connections(p_student): which counsellors, guides,
 --    companies and institutions a student is with, or was, or has been asked
 --    by. For the student's page.
@@ -16,8 +17,9 @@
 -- All read-only; nothing here changes what students or partners see, or the
 -- Global Readiness Score.
 --
--- Run once in the Supabase SQL editor; either order with the deploy (each
--- admin page works without it, with less on it). Safe to re-run.
+-- Run in the Supabase SQL editor; either order with the deploy (each admin
+-- page works without it, with less on it). Safe to re-run: run it again
+-- after it changes (the companies were added to the Dashboard numbers).
 -- Depends on: docs/supabase-internships.sql, docs/supabase-community-portal.sql,
 -- docs/supabase-community-consent.sql, docs/supabase-portal-signup.sql,
 -- docs/supabase-staff-permissions.sql (has_section_access).
@@ -75,6 +77,16 @@ begin
     raise exception 'Not authorised.';
   end if;
   return jsonb_build_object(
+    -- Companies that filled in "post internships with MySkills": all, not yet
+    -- contacted, and already in the portal; and the newest one.
+    'companies_interested', (select count(*) from public.internship_partner_leads),
+    'companies_new', (select count(*) from public.internship_partner_leads l where not l.contacted),
+    'companies_in_portal', (select count(*) from public.internship_partner_leads l
+                             join auth.users u on lower(u.email) = lower(btrim(l.email))
+                             join public.community_access c on c.user_id = u.id and c.resource = 'internships'
+                                  and not coalesce(c.sees_all, false)),
+    'newest_company', (select l.company from public.internship_partner_leads l order by l.created_at desc limit 1),
+    'newest_company_at', (select l.created_at from public.internship_partner_leads l order by l.created_at desc limit 1),
     -- Live and still taking applications (students stop seeing a role after its apply-by date).
     'roles_live', (select count(*) from public.internship_roles r
                     where r.status = 'live' and (r.apply_by is null or r.apply_by >= current_date)),

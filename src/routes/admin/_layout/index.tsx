@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { errorMessage } from '@/lib/errors'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   Activity,
   ArrowDownRight,
@@ -8,6 +8,7 @@ import {
   ArrowUpRight,
   Award,
   Briefcase,
+  Building2,
   CalendarCheck,
   CheckCircle2,
   ClipboardCheck,
@@ -15,11 +16,17 @@ import {
   Gauge,
   GraduationCap,
   Inbox,
+  KeyRound,
+  LayoutGrid,
   Lightbulb,
   LogIn,
+  Megaphone,
   Minus,
+  PenSquare,
+  Search,
   ShieldCheck,
   Star,
+  UserCog,
   UserPlus,
   Users,
 } from 'lucide-react'
@@ -30,6 +37,7 @@ import { useStaffAccessContext } from '@/lib/staffAccess'
 import { fetchInternshipOverview, type InternshipOverview } from '@/lib/internships'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { Alert, PageHeader, Skeleton } from '@/components/ui'
+import { AreaBoard, type AreaFacts } from '@/components/admin/AreaBoard'
 
 // Home for everyone on the team. What is waiting comes from the Inbox, which
 // the database already limits to each person's sections; the numbers below it
@@ -343,6 +351,59 @@ function Funnel({ title, steps }: { title: string; steps: Step[] }) {
   )
 }
 
+/* ------------------------------------------------------------ toolbar */
+
+/**
+ * Find a student from here, and start the things the team does most, each
+ * shown only to someone who can do it.
+ */
+function Toolbar({ isAdmin, sections }: { isAdmin: boolean; sections: string[] }) {
+  const navigate = useNavigate()
+  const [q, setQ] = useState('')
+  const can = (s: string) => isAdmin || sections.includes(s)
+  const actions = [
+    can('portal-access') && { to: '/admin/community-portal', label: 'Invite a partner', icon: KeyRound },
+    can('blog') && { to: '/admin/blog', label: 'Write a blog post', icon: PenSquare },
+    can('ads') && { to: '/admin/ads', label: 'Change the banners', icon: Megaphone },
+    isAdmin && { to: '/admin/team', label: 'Give team access', icon: UserCog },
+  ].filter(Boolean) as { to: string; label: string; icon: IconType }[]
+
+  if (!can('users') && actions.length === 0) return null
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      {can('users') && (
+        <form
+          role="search"
+          className="relative w-full min-w-0 sm:w-auto sm:min-w-[20rem] sm:flex-1"
+          onSubmit={(e) => {
+            e.preventDefault()
+            void navigate({ to: '/admin/users', search: q.trim() ? { q: q.trim() } : {} })
+          }}
+        >
+          <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Find a student by name or email"
+            aria-label="Find a student by name or email"
+            className="field h-11 w-full pl-10"
+          />
+        </form>
+      )}
+      {actions.map((a) => (
+        <Link
+          key={a.to}
+          to={a.to}
+          className="inline-flex h-11 items-center gap-2 rounded-xl border border-ink-200 bg-white px-3.5 text-sm font-semibold text-ink-800 transition-colors hover:border-brand-300 hover:text-brand-700"
+        >
+          <a.icon size={15} /> {a.label}
+        </Link>
+      ))}
+    </div>
+  )
+}
+
 /* ---------------------------------------------------------------- page */
 
 function greeting() {
@@ -384,11 +445,22 @@ function DashboardPage() {
       (x) => active && setExtra(x),
       () => active && setExtra(null),
     )
-    void fetchInternshipOverview().then((x) => active && setInterns(x))
     return () => {
       active = false
     }
   }, [canSeeNumbers])
+
+  // Whoever handles internship companies and roles sees this part, with or
+  // without the rest of the numbers.
+  const canSeeInternships = canSeeNumbers || (sections?.includes('partner-leads') ?? false)
+  useEffect(() => {
+    if (!canSeeInternships) return
+    let active = true
+    void fetchInternshipOverview().then((x) => active && setInterns(x))
+    return () => {
+      active = false
+    }
+  }, [canSeeInternships])
 
   const first = user ? userDisplayName(user).split(' ')[0] : ''
   const dm: Step[] = stats
@@ -423,13 +495,115 @@ function DashboardPage() {
   const w = extra?.weeks
   const c = extra?.community
 
+  // One line of numbers per area on the board; an area without one just lists its pages.
+  const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
+  const facts: AreaFacts = {
+    Students: stats
+      ? `${plural(stats.activity.total_users, 'student')} · ${w?.new_this_week ?? stats.activity.new_this_week} new this week · ${
+          stats.score.verified_share
+        }% of points verified`
+      : null,
+    Programmes: stats
+      ? `${plural(stats.digital_marketing.signed_off + stats.career_readiness.signed_off, 'project')} passed · ${plural(
+          stats.activity.live_sessions_this_month,
+          'live session',
+        )} in 30 days · ${plural(stats.activity.certificates, 'certificate')}`
+      : null,
+    Internships: interns
+      ? [
+          interns.companies_in_portal !== undefined ? `${plural(interns.companies_in_portal, 'company', 'companies')} in the portal` : null,
+          plural(interns.roles_live, 'live role'),
+          `${interns.interns_now} interning`,
+          interns.waiting_on_company + interns.offers_waiting > 0
+            ? `${interns.waiting_on_company + interns.offers_waiting} stuck`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(' · ')
+      : null,
+    Partners: c
+      ? `${plural(c.partner_accounts, 'partner')} in the portal · ${c.mentors_taking} of ${c.mentors_listed} mentors taking students`
+      : null,
+    Site:
+      stats && stats.activity.avg_rating !== null ? `Students rate the app ${stats.activity.avg_rating}/10 on average` : null,
+  }
+
+  const internshipsSection = interns && (
+    <>
+      <SectionLabel
+        action={
+          <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
+            Roles &amp; applications <ArrowRight size={14} />
+          </Link>
+        }
+      >
+        Internships
+      </SectionLabel>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="grid content-start gap-3 sm:grid-cols-2">
+          {/* The companies come first: every role starts with one asking to post. */}
+          {interns.companies_interested !== undefined && (
+            <Link
+              to="/admin/internship-partners"
+              className="group flex items-start justify-between gap-3 rounded-2xl border border-ink-200 bg-white p-4 transition-colors hover:border-brand-300 sm:col-span-2"
+            >
+              <div className="min-w-0">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
+                  <Building2 size={16} />
+                </span>
+                <p className="mt-3 font-display text-2xl font-semibold leading-none text-ink-900">{interns.companies_interested}</p>
+                <p className="mt-1 text-sm text-ink-600">
+                  Companies interested in posting internships
+                  {` · ${interns.companies_new ?? 0} not contacted · ${interns.companies_in_portal ?? 0} in the portal`}
+                </p>
+                {interns.newest_company && (
+                  <p className="mt-1 text-xs text-ink-500">
+                    Newest: <span className="font-semibold text-ink-700">{interns.newest_company}</span>
+                    {interns.newest_company_at ? `, ${new Date(interns.newest_company_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : ''}
+                  </p>
+                )}
+              </div>
+              <ArrowRight size={16} className="mt-1 shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          )}
+          <StatCard
+            label={`Live roles · ${interns.companies_posting} ${interns.companies_posting === 1 ? 'company' : 'companies'}${
+              interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''
+            }`}
+            value={interns.roles_live}
+            icon={Briefcase}
+          />
+          <StatCard
+            label={`Applications in 30 days · ${interns.applications} in all`}
+            value={interns.applications_30d}
+            icon={UserPlus}
+          />
+          <StatCard
+            label={`Interning now${
+              interns.signoffs_pending > 0
+                ? ` · ${interns.signoffs_pending} ${interns.signoffs_pending === 1 ? 'sign-off' : 'sign-offs'} to confirm`
+                : ''
+            }`}
+            value={interns.interns_now}
+            icon={GraduationCap}
+          />
+          <StatCard label="Internships confirmed" value={interns.confirmed} icon={Award} />
+          <StatCard label="Applicants a company hasn’t looked at in a week" value={interns.waiting_on_company} icon={Inbox} />
+          <StatCard label="Offers waiting for the student" value={interns.offers_waiting} icon={CalendarCheck} />
+        </div>
+        <Funnel title="From applying to a confirmed internship" steps={internSteps} />
+      </div>
+    </>
+  )
+
   return (
     <>
       <PageHeader
         eyebrow="MySkills Admin"
         title={`${greeting()}${first ? `, ${first}` : ''}`}
-        subtitle="What needs the team today, and how students and both programmes are moving."
+        subtitle="What needs the team today, every part of the panel you can open, and how students and both programmes are moving."
       />
+      <Toolbar isAdmin={isAdmin === true} sections={sections ?? []} />
 
       <SectionLabel
         action={
@@ -452,7 +626,19 @@ function DashboardPage() {
         <NeedsYou items={inbox} />
       )}
 
+      {sections !== null && isAdmin !== null && (
+        <>
+          <SectionLabel>
+            <span className="inline-flex items-center gap-2">
+              <LayoutGrid size={18} className="text-ink-500" /> Every area
+            </span>
+          </SectionLabel>
+          <AreaBoard isAdmin={isAdmin === true} sections={sections} inbox={inbox ?? []} facts={facts} />
+        </>
+      )}
+
       {!canSeeNumbers ? (
+        <>
         <div className="card mt-9 flex items-start gap-4 p-5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
             <Gauge size={19} />
@@ -462,9 +648,12 @@ function DashboardPage() {
             <p className="mt-0.5 text-sm text-ink-600">
               Scores, trends and programme progress need the “Dashboard numbers” section. A full admin can add it under
               Team &amp; access.
+              {canSeeInternships && ' The internship numbers below come with your Internships section.'}
             </p>
           </div>
         </div>
+        {internshipsSection}
+        </>
       ) : error ? (
         <div className="mt-9">
           <Alert tone="danger" title="Couldn’t load the numbers">
@@ -589,44 +778,7 @@ function DashboardPage() {
             </>
           )}
 
-          {interns && (
-            <>
-              <SectionLabel
-                action={
-                  <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-                    Internship roles <ArrowRight size={14} />
-                  </Link>
-                }
-              >
-                Internships
-              </SectionLabel>
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-                <div className="grid content-start gap-3 sm:grid-cols-2">
-                  <StatCard
-                    label={`Live roles · ${interns.companies_posting} ${interns.companies_posting === 1 ? 'company' : 'companies'}${
-                      interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''
-                    }`}
-                    value={interns.roles_live}
-                    icon={Briefcase}
-                  />
-                  <StatCard
-                    label={`Applications in 30 days · ${interns.applications} in all`}
-                    value={interns.applications_30d}
-                    icon={UserPlus}
-                  />
-                  <StatCard
-                    label={`Interning now${interns.signoffs_pending > 0 ? ` · ${interns.signoffs_pending} ${interns.signoffs_pending === 1 ? 'sign-off' : 'sign-offs'} to confirm` : ''}`}
-                    value={interns.interns_now}
-                    icon={GraduationCap}
-                  />
-                  <StatCard label="Internships confirmed" value={interns.confirmed} icon={Award} />
-                  <StatCard label="Applicants a company hasn’t looked at in a week" value={interns.waiting_on_company} icon={Inbox} />
-                  <StatCard label="Offers waiting for the student" value={interns.offers_waiting} icon={CalendarCheck} />
-                </div>
-                <Funnel title="From applying to a confirmed internship" steps={internSteps} />
-              </div>
-            </>
-          )}
+          {internshipsSection}
 
           <SectionLabel>Activity</SectionLabel>
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">

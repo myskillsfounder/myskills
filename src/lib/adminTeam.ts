@@ -18,7 +18,7 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
   {
     label: 'Students',
     sections: [
-      { id: 'users', label: 'Students', opens: 'All students, their records, aptitude, practice and foundation results' },
+      { id: 'users', label: 'Students', opens: 'All students and their records, aptitude, practice and foundation results' },
       { id: 'verification', label: 'Verification', opens: 'Checking a student’s identity and their verified items' },
     ],
   },
@@ -31,19 +31,29 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
     ],
   },
   {
-    label: 'Community',
+    label: 'Internships',
     sections: [
+      {
+        id: 'partner-leads',
+        label: 'Internships',
+        opens: 'Every company, their roles, applications and sign-offs; approving roles and confirming internships',
+      },
+    ],
+  },
+  {
+    label: 'Partners',
+    sections: [
+      { id: 'portal-access', label: 'Portal access & usage', opens: 'Verifying partners and giving them Community portal access' },
       { id: 'mentors', label: 'Mentors', opens: 'Mentor applications, listings and profiles' },
       { id: 'wellness', label: 'Wellness & career guidance', opens: 'Students’ private support requests' },
       { id: 'institution-partners', label: 'Institutions', opens: 'Institution applications and listings' },
-      { id: 'portal-access', label: 'Portal access & usage', opens: 'Verifying partners and giving them Community portal access' },
     ],
   },
   {
     label: 'Leads',
     sections: [
       { id: 'demo-requests', label: 'Demo requests', opens: 'Institutions asking for a demo' },
-      { id: 'partner-leads', label: 'Partner leads', opens: 'Internship companies and Global Leadership leads' },
+      { id: 'leads', label: 'Global Leadership leads', opens: 'People who asked about the Global Leadership Programme' },
     ],
   },
   {
@@ -65,8 +75,8 @@ export const sectionLabel = (id: string) =>
 export const PRESETS: { label: string; hint: string; sections: StaffSection[] }[] = [
   {
     label: 'Operations',
-    hint: 'Day-to-day: students, verification, partners, leads, blog and feedback',
-    sections: ['overview', 'users', 'verification', 'portal-access', 'partner-leads', 'demo-requests', 'blog', 'feedback'],
+    hint: 'Day-to-day: students, verification, partners, internships, leads, blog and feedback',
+    sections: ['overview', 'users', 'verification', 'portal-access', 'partner-leads', 'leads', 'demo-requests', 'blog', 'feedback'],
   },
   {
     label: 'Programmes',

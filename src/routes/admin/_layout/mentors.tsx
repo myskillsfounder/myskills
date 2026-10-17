@@ -288,7 +288,7 @@ function MentorsPage() {
         <PortalRequestsPanel only="mentor" onChanged={() => void load()} />
       ) : (
         <p className="mb-6 rounded-xl bg-ink-100 p-3 text-sm text-ink-700">
-          Mentors who have signed up are verified under Community &gt; Portal access &amp; usage, which isn’t part of your
+          Mentors who have signed up are verified under Partners &gt; Portal access &amp; usage, which isn’t part of your
           access.
         </p>
       )}

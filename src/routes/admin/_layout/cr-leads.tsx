@@ -6,10 +6,11 @@ import { fetchCareerReadinessLeads, setLeadContacted, type CareerReadinessLead }
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
-// Needs the partner-leads section (a full admin has it): the table's own RLS enforces the same.
+// Needs the leads section (a full admin has it): the table's own RLS enforces the same
+// (docs/supabase-admin-tidy.sql).
 export const Route = createFileRoute('/admin/_layout/cr-leads')({
   component: () => (
-    <RequireSection section="partner-leads">
+    <RequireSection section="leads">
       <CareerReadinessLeadsPage />
     </RequireSection>
   ),
