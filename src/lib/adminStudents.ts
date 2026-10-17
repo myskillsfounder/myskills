@@ -90,6 +90,29 @@ export interface AdminStudent {
   cr_signed_off: boolean
 }
 
+/** How many students there are, and in each programme (docs/supabase-admin-student-counts.sql). */
+export interface StudentCounts {
+  total: number
+  new_this_week: number
+  /** Took its aptitude assessment, practised a track, or took the Foundation assessment. */
+  dm: number
+  dm_practising: number
+  dm_all_tracks: number
+  /** Took the Leadership Aptitude Test, or wrote in a module. */
+  gl: number
+  gl_writing: number
+  gl_all_modules: number
+  both: number
+  neither: number
+}
+
+/** Null when it can't be read (the SQL isn't run yet): the page then shows the list alone. */
+export async function fetchStudentCounts(): Promise<StudentCounts | null> {
+  const { data, error } = await supabase.rpc('admin_student_counts')
+  if (error) return null
+  return (data as StudentCounts | null) ?? null
+}
+
 export async function fetchStudents(search?: string): Promise<AdminStudent[]> {
   const { data, error } = await supabase.rpc('admin_students', {
     p_search: search?.trim() || null,
