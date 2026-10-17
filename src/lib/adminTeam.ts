@@ -120,6 +120,81 @@ export async function setStaffAccess(email: string, sections: StaffSection[]): P
   if (error) fail(error)
 }
 
+/* -- team members and roles (docs/supabase-team-and-roles.sql) ------------- */
+
+/** A named set of sections, given to team members as one. */
+export interface StaffRole {
+  id: string
+  name: string
+  description: string | null
+  sections: StaffSection[]
+  /** How many team members have it. */
+  members: number
+}
+
+/** A full admin, or a team member, including an email with no account yet. */
+export interface TeamMemberV2 {
+  email: string
+  user_id: string | null
+  full_name: string | null
+  is_admin: boolean
+  /** False until they sign up with this email; their access starts then. */
+  has_account: boolean
+  role_id: string | null
+  role_name: string | null
+  sections: StaffSection[]
+  last_sign_in_at: string | null
+  added_at: string | null
+}
+
+/** Null (not an error) until the SQL is run: the page then works as before. */
+export async function fetchTeamMembers(): Promise<TeamMemberV2[] | null> {
+  const { data, error } = await supabase.rpc('admin_team_members')
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as TeamMemberV2[]
+}
+
+export async function fetchStaffRoles(): Promise<StaffRole[]> {
+  const { data, error } = await supabase.rpc('admin_staff_roles')
+  if (error) fail(error)
+  return (data ?? []) as StaffRole[]
+}
+
+/** Create a role (id null) or change one; everyone with it follows. */
+export async function saveStaffRole(id: string | null, name: string, description: string, sections: StaffSection[]): Promise<void> {
+  const { error } = await supabase.rpc('admin_save_staff_role', {
+    p_id: id,
+    p_name: name,
+    p_description: description,
+    p_sections: sections,
+  })
+  if (error) fail(error)
+}
+
+/** Its members keep exactly what they had, as their own sections. */
+export async function deleteStaffRole(id: string): Promise<void> {
+  const { error } = await supabase.rpc('admin_delete_staff_role', { p_id: id })
+  if (error) fail(error)
+}
+
+/** Add someone, or change them: a role, or (roleId null) their own sections. */
+export async function setTeamMember(email: string, roleId: string | null, sections: StaffSection[]): Promise<void> {
+  const { error } = await supabase.rpc('admin_set_team_member', {
+    p_email: email.trim(),
+    p_role: roleId,
+    p_sections: sections,
+  })
+  if (error) fail(error)
+}
+
+export async function removeTeamMember(email: string): Promise<void> {
+  const { error } = await supabase.rpc('admin_remove_team_member', { p_email: email.trim() })
+  if (error) fail(error)
+}
+
 /* -- the Dashboard's trends ------------------------------------------------ */
 
 export interface DashboardExtra {

@@ -119,7 +119,7 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
   // Who on the internal team can open this panel. Full admins only.
   {
     label: 'Team',
-    items: [{ to: '/admin/team', label: 'Team & access', icon: UserCog, section: null }],
+    items: [{ to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null }],
   },
 ]
 

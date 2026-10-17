@@ -3,10 +3,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Crown, KeyRound, Pencil, ShieldCheck, Trash2, UserPlus, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
-  ALL_SECTIONS,
-  PRESETS,
-  SECTION_GROUPS,
   TEAM_DOMAIN,
+  fetchTeamMembers,
+  type TeamMemberV2,
   fetchTeam,
   sectionLabel,
   setStaffAccess,
@@ -14,79 +13,61 @@ import {
 } from '@/lib/adminTeam'
 import type { StaffSection } from '@/lib/staffAccess'
 import { RequireAdmin } from '@/components/admin/AdminSectionGate'
+import { SectionPicker, sameSet } from '@/components/admin/SectionPicker'
+import { TeamAndRoles } from '@/components/admin/TeamAndRoles'
 import { Alert, Avatar, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
 // Full admins only: this page decides who else can open the admin panel.
 export const Route = createFileRoute('/admin/_layout/team')({
   component: () => (
     <RequireAdmin>
-      <TeamPage />
+      <TeamGate />
     </RequireAdmin>
   ),
 })
 
+/**
+ * Team & roles once docs/supabase-team-and-roles.sql is run; until then the
+ * page as it was (sections ticked per person, for accounts that exist).
+ */
+function TeamGate() {
+  const [members, setMembers] = useState<TeamMemberV2[] | null | undefined>(undefined)
+  const [error, setError] = useState<string>()
+  useEffect(() => {
+    let active = true
+    fetchTeamMembers().then(
+      (m) => active && setMembers(m),
+      (e) => {
+        if (!active) return
+        setError(errorMessage(e))
+        setMembers(null)
+      },
+    )
+    return () => {
+      active = false
+    }
+  }, [])
+  if (members === undefined) return <Skeleton className="h-64 w-full" />
+  if (members === null) {
+    return (
+      <>
+        {error && (
+          <div className="mb-5">
+            <Alert tone="danger" title="Couldn’t load the team">
+              <p>{error}</p>
+            </Alert>
+          </div>
+        )}
+        <TeamPage />
+      </>
+    )
+  }
+  return <TeamAndRoles initial={members} />
+}
+
 const day = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : 'never'
 
-const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((x) => b.includes(x))
-
-/** Tick the sections one person may open. Presets fill it in for the usual jobs. */
-function SectionPicker({ value, onChange }: { value: StaffSection[]; onChange: (next: StaffSection[]) => void }) {
-  const toggle = (id: StaffSection) => onChange(value.includes(id) ? value.filter((s) => s !== id) : [...value, id])
-  return (
-    <div>
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">Start from</span>
-        {PRESETS.map((p) => (
-          <button
-            key={p.label}
-            type="button"
-            title={p.hint}
-            onClick={() => onChange(p.sections)}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-              sameSet(value, p.sections) ? 'border-brand-500 bg-brand-50 text-brand-800' : 'border-ink-300 text-ink-700 hover:bg-ink-100'
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-        {value.length > 0 && (
-          <button type="button" onClick={() => onChange([])} className="text-xs font-semibold text-ink-500 hover:text-ink-800 hover:underline">
-            Clear
-          </button>
-        )}
-      </div>
-
-      <div className="mt-4 grid gap-x-8 gap-y-5 sm:grid-cols-2">
-        {SECTION_GROUPS.map((g) => (
-          <fieldset key={g.label}>
-            <legend className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">{g.label}</legend>
-            <div className="mt-1.5 space-y-1.5">
-              {g.sections.map((s) => (
-                <label key={s.id} className="flex cursor-pointer items-start gap-2.5 rounded-lg px-2 py-1.5 hover:bg-ink-50">
-                  <input
-                    type="checkbox"
-                    checked={value.includes(s.id)}
-                    onChange={() => toggle(s.id)}
-                    className="mt-0.5 h-4 w-4 shrink-0 accent-brand-600"
-                  />
-                  <span className="min-w-0">
-                    <span className="block text-sm font-medium text-ink-900">{s.label}</span>
-                    <span className="block text-xs leading-snug text-ink-500">{s.opens}</span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-        ))}
-      </div>
-      <p className="mt-3 text-xs text-ink-500">
-        {value.length} of {ALL_SECTIONS.length} sections. Everyone with any access also gets the Dashboard and the Inbox,
-        limited to what they can open.
-      </p>
-    </div>
-  )
-}
 
 function MemberRow({ member, busy, onSave }: { member: TeamMember; busy: boolean; onSave: (sections: StaffSection[]) => Promise<void> }) {
   const [editing, setEditing] = useState(false)

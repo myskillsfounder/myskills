@@ -34,7 +34,7 @@ export function RequireSection({ section, children }: { section: StaffSection; c
   return <>{children}</>
 }
 
-/** Gates a page to full admins only — Team & access, which decides who else
+/** Gates a page to full admins only — Team & roles, which decides who else
  *  can open the admin panel and so can't itself be a grantable section. */
 export function RequireAdmin({ children }: { children: ReactNode }) {
   const { isAdmin } = useStaffAccessContext()

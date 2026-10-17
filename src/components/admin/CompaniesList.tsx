@@ -181,7 +181,7 @@ function CompanyCard({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: 
           <Verify c={c} onChanged={onChanged} />
         ) : (
           <p className="mt-3 border-t border-ink-900/[0.06] pt-3 text-sm text-ink-600">
-            Verifying needs the Portal access &amp; usage section. Ask a full admin, or someone who has it.
+            Verifying needs the Portal access &amp; usage section. Ask a super admin, or someone who has it.
           </p>
         ))}
 

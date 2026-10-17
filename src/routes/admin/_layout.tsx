@@ -199,7 +199,7 @@ function StaffShell({ children, isAdmin }: { children: ReactNode; isAdmin?: bool
                 <p className="max-w-[16rem] truncate text-xs text-white/70">{user?.email}</p>
                 <p className={`inline-flex items-center gap-1 text-[11px] font-semibold ${isAdmin ? 'text-gold-300' : 'text-brand-200'}`}>
                   {isAdmin && <Crown size={11} />}
-                  {isAdmin ? 'Full admin' : 'Team member'}
+                  {isAdmin ? 'Super admin' : 'Team member'}
                 </p>
               </div>
             )}
