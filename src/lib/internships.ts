@@ -419,6 +419,12 @@ export const ADMIN_STATUS: Record<ApplicationStatus, { label: string; tone: 'neu
 }
 
 export interface InternshipOverview {
+  /** Absent until the SQL is re-run with the companies in it. */
+  companies_interested?: number
+  companies_new?: number
+  companies_in_portal?: number
+  newest_company?: string | null
+  newest_company_at?: string | null
   roles_live: number
   roles_pending: number
   companies_posting: number

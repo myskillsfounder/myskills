@@ -91,7 +91,7 @@ function InternshipPartnersPage() {
     <>
       <PageHeader
         eyebrow="Partners"
-        title="Internship partners"
+        title="Internship companies"
         subtitle={`Companies interested in posting internships. ${waiting} not contacted yet${
           Object.keys(status).length > 0 ? ` · ${inPortal} in the portal` : ''
         }.`}

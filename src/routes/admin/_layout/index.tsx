@@ -8,6 +8,7 @@ import {
   ArrowUpRight,
   Award,
   Briefcase,
+  Building2,
   CalendarCheck,
   CheckCircle2,
   ClipboardCheck,
@@ -384,11 +385,22 @@ function DashboardPage() {
       (x) => active && setExtra(x),
       () => active && setExtra(null),
     )
-    void fetchInternshipOverview().then((x) => active && setInterns(x))
     return () => {
       active = false
     }
   }, [canSeeNumbers])
+
+  // Whoever handles internship companies and roles sees this part, with or
+  // without the rest of the numbers.
+  const canSeeInternships = canSeeNumbers || (sections?.includes('partner-leads') ?? false)
+  useEffect(() => {
+    if (!canSeeInternships) return
+    let active = true
+    void fetchInternshipOverview().then((x) => active && setInterns(x))
+    return () => {
+      active = false
+    }
+  }, [canSeeInternships])
 
   const first = user ? userDisplayName(user).split(' ')[0] : ''
   const dm: Step[] = stats
@@ -423,6 +435,74 @@ function DashboardPage() {
   const w = extra?.weeks
   const c = extra?.community
 
+  const internshipsSection = interns && (
+    <>
+      <SectionLabel
+        action={
+          <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
+            Internship roles <ArrowRight size={14} />
+          </Link>
+        }
+      >
+        Internships
+      </SectionLabel>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="grid content-start gap-3 sm:grid-cols-2">
+          {/* The companies come first: every role starts with one asking to post. */}
+          {interns.companies_interested !== undefined && (
+            <Link
+              to="/admin/internship-partners"
+              className="group flex items-start justify-between gap-3 rounded-2xl border border-ink-200 bg-white p-4 transition-colors hover:border-brand-300 sm:col-span-2"
+            >
+              <div className="min-w-0">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
+                  <Building2 size={16} />
+                </span>
+                <p className="mt-3 font-display text-2xl font-semibold leading-none text-ink-900">{interns.companies_interested}</p>
+                <p className="mt-1 text-sm text-ink-600">
+                  Companies interested in posting internships
+                  {` · ${interns.companies_new ?? 0} not contacted · ${interns.companies_in_portal ?? 0} in the portal`}
+                </p>
+                {interns.newest_company && (
+                  <p className="mt-1 text-xs text-ink-500">
+                    Newest: <span className="font-semibold text-ink-700">{interns.newest_company}</span>
+                    {interns.newest_company_at ? `, ${new Date(interns.newest_company_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : ''}
+                  </p>
+                )}
+              </div>
+              <ArrowRight size={16} className="mt-1 shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          )}
+          <StatCard
+            label={`Live roles · ${interns.companies_posting} ${interns.companies_posting === 1 ? 'company' : 'companies'}${
+              interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''
+            }`}
+            value={interns.roles_live}
+            icon={Briefcase}
+          />
+          <StatCard
+            label={`Applications in 30 days · ${interns.applications} in all`}
+            value={interns.applications_30d}
+            icon={UserPlus}
+          />
+          <StatCard
+            label={`Interning now${
+              interns.signoffs_pending > 0
+                ? ` · ${interns.signoffs_pending} ${interns.signoffs_pending === 1 ? 'sign-off' : 'sign-offs'} to confirm`
+                : ''
+            }`}
+            value={interns.interns_now}
+            icon={GraduationCap}
+          />
+          <StatCard label="Internships confirmed" value={interns.confirmed} icon={Award} />
+          <StatCard label="Applicants a company hasn’t looked at in a week" value={interns.waiting_on_company} icon={Inbox} />
+          <StatCard label="Offers waiting for the student" value={interns.offers_waiting} icon={CalendarCheck} />
+        </div>
+        <Funnel title="From applying to a confirmed internship" steps={internSteps} />
+      </div>
+    </>
+  )
+
   return (
     <>
       <PageHeader
@@ -453,6 +533,7 @@ function DashboardPage() {
       )}
 
       {!canSeeNumbers ? (
+        <>
         <div className="card mt-9 flex items-start gap-4 p-5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
             <Gauge size={19} />
@@ -462,9 +543,12 @@ function DashboardPage() {
             <p className="mt-0.5 text-sm text-ink-600">
               Scores, trends and programme progress need the “Dashboard numbers” section. A full admin can add it under
               Team &amp; access.
+              {canSeeInternships && ' The internship numbers below come with your Partner leads section.'}
             </p>
           </div>
         </div>
+        {internshipsSection}
+        </>
       ) : error ? (
         <div className="mt-9">
           <Alert tone="danger" title="Couldn’t load the numbers">
@@ -589,44 +673,7 @@ function DashboardPage() {
             </>
           )}
 
-          {interns && (
-            <>
-              <SectionLabel
-                action={
-                  <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-                    Internship roles <ArrowRight size={14} />
-                  </Link>
-                }
-              >
-                Internships
-              </SectionLabel>
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-                <div className="grid content-start gap-3 sm:grid-cols-2">
-                  <StatCard
-                    label={`Live roles · ${interns.companies_posting} ${interns.companies_posting === 1 ? 'company' : 'companies'}${
-                      interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''
-                    }`}
-                    value={interns.roles_live}
-                    icon={Briefcase}
-                  />
-                  <StatCard
-                    label={`Applications in 30 days · ${interns.applications} in all`}
-                    value={interns.applications_30d}
-                    icon={UserPlus}
-                  />
-                  <StatCard
-                    label={`Interning now${interns.signoffs_pending > 0 ? ` · ${interns.signoffs_pending} ${interns.signoffs_pending === 1 ? 'sign-off' : 'sign-offs'} to confirm` : ''}`}
-                    value={interns.interns_now}
-                    icon={GraduationCap}
-                  />
-                  <StatCard label="Internships confirmed" value={interns.confirmed} icon={Award} />
-                  <StatCard label="Applicants a company hasn’t looked at in a week" value={interns.waiting_on_company} icon={Inbox} />
-                  <StatCard label="Offers waiting for the student" value={interns.offers_waiting} icon={CalendarCheck} />
-                </div>
-                <Funnel title="From applying to a confirmed internship" steps={internSteps} />
-              </div>
-            </>
-          )}
+          {internshipsSection}
 
           <SectionLabel>Activity</SectionLabel>
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
