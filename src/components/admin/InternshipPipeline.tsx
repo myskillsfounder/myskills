@@ -39,7 +39,16 @@ const FILTERS: { key: Filter; label: string; test: (a: AdminApplication) => bool
 ]
 
 /** One application: who, for what, where it stands, and since when. */
-export function ApplicationRow({ a, showStudent = true }: { a: AdminApplication; showStudent?: boolean }) {
+export function ApplicationRow({
+  a,
+  showStudent = true,
+  showRole = true,
+}: {
+  a: AdminApplication
+  showStudent?: boolean
+  /** Off inside a role, where the role is already the heading. */
+  showRole?: boolean
+}) {
   const s = ADMIN_STATUS[a.status]
   const stuck = stuckReason(a)
   return (
@@ -53,9 +62,11 @@ export function ApplicationRow({ a, showStudent = true }: { a: AdminApplication;
             <span className="font-normal text-ink-500"> · score {a.score ?? '—'}</span>
           </p>
         )}
-        <p className={showStudent ? 'text-sm text-ink-600' : 'text-sm font-semibold text-ink-900'}>
-          {a.role_title} <span className="font-normal text-ink-500">· {a.organisation}</span>
-        </p>
+        {showRole && (
+          <p className={showStudent ? 'text-sm text-ink-600' : 'text-sm font-semibold text-ink-900'}>
+            {a.role_title} <span className="font-normal text-ink-500">· {a.organisation}</span>
+          </p>
+        )}
         <p className="mt-0.5 text-xs text-ink-500">
           Applied {day(a.applied_on)}
           {a.started_on && ` · started ${day(a.started_on)}`}
