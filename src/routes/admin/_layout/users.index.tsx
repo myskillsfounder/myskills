@@ -9,6 +9,9 @@ import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Avatar, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/users/')({
+  // ?q= opens the list already searched (the Dashboard's search box lands here).
+  validateSearch: (s: Record<string, unknown>): { q?: string } =>
+    typeof s.q === 'string' && s.q.trim() ? { q: s.q.trim().slice(0, 100) } : {},
   component: () => (
     <RequireSection section="users">
       <StudentsPage />
@@ -33,7 +36,8 @@ const BAND_TONE: Record<string, string> = {
  * student's page with everything behind those numbers.
  */
 function StudentsPage() {
-  const [search, setSearch] = useState('')
+  const { q } = Route.useSearch()
+  const [search, setSearch] = useState(q ?? '')
   const [sort, setSort] = useState<Sort>('newest')
   const [students, setStudents] = useState<AdminStudent[]>([])
   const [loading, setLoading] = useState(true)

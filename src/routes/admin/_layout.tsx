@@ -1,42 +1,21 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute, Link, Outlet, useRouter, useRouterState } from '@tanstack/react-router'
 import {
-  Award,
-  BarChart3,
-  BookOpen,
-  Briefcase,
-  Building2,
-  CalendarCheck,
   ChevronDown,
-  ClipboardCheck,
-  ClipboardList,
   Crown,
-  Dumbbell,
   ExternalLink,
-  FileText,
-  GraduationCap,
-  HeartHandshake,
-  Inbox,
-  KeyRound,
   LogOut,
   Menu,
-  MessageSquare,
-  Megaphone,
   ShieldAlert,
-  ShieldCheck,
-  Sparkles,
-  UserCheck,
-  UserCog,
-  Users,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useAuthUser } from '@/lib/useAuth'
 import { fetchMyCommunityAccess } from '@/lib/communityPortal'
 import { fetchMyMentorProfile } from '@/lib/mentorPortal'
-import { useInboxCount } from '@/lib/adminInbox'
-import type { ReviewProgramme } from '@/lib/mentorReview'
+import { useInboxItems } from '@/lib/adminInbox'
 import { requireStaffSession } from '@/lib/guards'
 import { StaffAccessContext, useStaffAccess, type StaffSection } from '@/lib/staffAccess'
+import { ADMIN_GROUPS as GROUPS, visibleGroups, type NavItem } from '@/lib/adminNav'
 import { EmptyState, Skeleton } from '@/components/ui'
 
 /**
@@ -59,105 +38,6 @@ export const Route = createFileRoute('/admin/_layout')({
   beforeLoad: requireStaffSession,
   component: AdminLayout,
 })
-
-type NavItem = {
-  to: string
-  /** For a page that serves several items (mentor reviews, one per programme). */
-  search?: { programme?: ReviewProgramme }
-  label: string
-  icon: typeof BarChart3
-  exact?: boolean
-  /** 'any' = every staff member (the Inbox lists only what their sections allow);
-   *  null = full admins only. */
-  section: StaffSection | null | 'any'
-}
-
-// Grouped the way the work is: the students and their score, the two
-// programmes, the people and organisations MySkills works with, and the site
-// itself. A section is something an admin grants one person at a time; `null`
-// means full admins only (see src/lib/staffAccess.ts).
-const GROUPS: { label: string; items: NavItem[] }[] = [
-  {
-    label: 'Home',
-    items: [
-      // Everyone starts on the Dashboard; its numbers need the 'overview' section.
-      { to: '/admin', label: 'Dashboard', icon: BarChart3, exact: true, section: 'any' },
-      { to: '/admin/inbox', label: 'Inbox', icon: Inbox, section: 'any' },
-    ],
-  },
-  // A student and everything they have done: one section ('users') opens the
-  // results pages as well, so they sit here rather than under Programmes.
-  {
-    label: 'Students',
-    items: [
-      { to: '/admin/users', label: 'All students', icon: Users, section: 'users' },
-      { to: '/admin/verification', label: 'Verification', icon: ShieldCheck, section: 'verification' },
-      { to: '/admin/aptitude', label: 'Aptitude results', icon: Sparkles, section: 'users' },
-      { to: '/admin/practice', label: 'Practice (Marketing)', icon: Dumbbell, section: 'users' },
-      { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
-    ],
-  },
-  // What the team grades and writes for both programmes.
-  {
-    label: 'Programmes',
-    items: [
-      { to: '/admin/mentor-reviews', label: 'Projects to grade', icon: UserCheck, section: 'mentor-reviews' },
-      { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
-      { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
-      { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
-      { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
-    ],
-  },
-  // Internships end to end, under one section: every company however it came,
-  // then their roles, applications and sign-offs.
-  {
-    label: 'Internships',
-    items: [
-      { to: '/admin/internship-partners', label: 'Companies', icon: Building2, section: 'partner-leads' },
-      { to: '/admin/internships', label: 'Roles & applications', icon: Briefcase, section: 'partner-leads' },
-    ],
-  },
-  // The people and organisations who serve students in the Community portal:
-  // giving them access, then each kind.
-  {
-    label: 'Partners',
-    items: [
-      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access' },
-      { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors' },
-      { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness' },
-      { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners' },
-    ],
-  },
-  {
-    label: 'Leads',
-    items: [
-      { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests' },
-      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads' },
-    ],
-  },
-  {
-    label: 'Site',
-    items: [
-      { to: '/admin/blog', label: 'Blog', icon: FileText, section: 'blog' },
-      { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
-      { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
-    ],
-  },
-  // Who on the internal team can open this panel. Full admins only.
-  {
-    label: 'Team',
-    items: [{ to: '/admin/team', label: 'Team & access', icon: UserCog, section: null }],
-  },
-]
-
-function visibleGroups(isAdmin: boolean, sections: StaffSection[]) {
-  return GROUPS.map((g) => ({
-    ...g,
-    items: g.items.filter((t) =>
-      t.section === 'any' ? true : t.section === null ? isAdmin : isAdmin || sections.includes(t.section),
-    ),
-  })).filter((g) => g.items.length > 0)
-}
 
 function isActive(t: NavItem, pathname: string, programme: string | undefined) {
   if (t.search) return pathname === t.to && programme === t.search.programme
@@ -229,9 +109,13 @@ function NavLinks({
 function AdminNav({ isAdmin, sections }: { isAdmin: boolean; sections: StaffSection[] }) {
   const [open, setOpen] = useState(false)
   const { pathname, programme } = useLocationParts()
-  // What is waiting, shown beside the Inbox so it is visible from every page.
-  const inbox = useInboxCount()
-  const badges = { '/admin/inbox': inbox ?? 0 }
+  // What is waiting, beside the Inbox and beside the page that deals with it,
+  // so it is visible from every page.
+  const inbox = useInboxItems()
+  const badges: Record<string, number> = { '/admin/inbox': inbox?.length ?? 0 }
+  for (const t of GROUPS.flatMap((g) => g.items)) {
+    if (t.inbox && inbox) badges[t.to] = inbox.filter((i) => t.inbox!.includes(i.kind)).length
+  }
   const current = GROUPS.flatMap((g) => g.items).find((t) => isActive(t, pathname, programme))?.label ?? 'Menu'
   return (
     <>

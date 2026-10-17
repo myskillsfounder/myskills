@@ -82,17 +82,17 @@ export function fetchInbox(): Promise<InboxItem[] | null> {
   })
 }
 
-/** How many items are waiting, for the sidebar. Null until known, or if unavailable. */
-export function useInboxCount(): number | null {
-  const [count, setCount] = useState<number | null>(null)
+/** Everything waiting for this person, once, for the menu: null until known, or without the SQL. */
+export function useInboxItems(): InboxItem[] | null {
+  const [items, setItems] = useState<InboxItem[] | null>(null)
   useEffect(() => {
     let active = true
     fetchInbox()
-      .then((rows) => active && setCount(rows ? rows.length : null))
+      .then((rows) => active && setItems(rows ?? null))
       .catch(() => {})
     return () => {
       active = false
     }
   }, [])
-  return count
+  return items
 }
