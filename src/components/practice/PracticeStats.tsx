@@ -20,12 +20,12 @@ const R = 34
 const C = 2 * Math.PI * R
 
 /**
- * The Digital Marketing half of /practice, built the same way as the Career
- * Readiness card beside it (CareerReadinessOverview): the ring is how far
- * through the programme you are, the headline is the Global Leadership points
- * the programme has earned you, and one bead per track shows coverage.
+ * The Digital Marketing half of /practice, built the same way as the Global
+ * Leadership card beside it (CareerReadinessOverview): the ring is how far
+ * through the programme you are, the headline is the Professional Development
+ * points the programme has earned you, and one bead per track shows coverage.
  *
- * The headline is the whole Professional Development part of the Career
+ * The headline is the whole Professional Development part of the Global
  * Readiness Score (out of 40): activity (tracks, the Foundation assessment,
  * live training; 20) and the project a mentor grades (20).
  *

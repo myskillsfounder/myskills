@@ -225,7 +225,7 @@ function ApplyForm({ role, onApplied }: { role: OpenRole; onApplied: () => void 
       <div className="mt-6 rounded-2xl bg-brand-50 p-4">
         <p className="text-sm font-semibold text-ink-900">Take an aptitude assessment first</p>
         <p className="mt-1 text-sm leading-relaxed text-ink-600">
-          It takes about five minutes and has no right answers. It opens Practice, where you build the Career
+          It takes about five minutes and has no right answers. It opens Practice, where you build the Global
           Readiness Score that {role.organisation} looks at.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
