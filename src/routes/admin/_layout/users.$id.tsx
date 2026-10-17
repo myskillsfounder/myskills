@@ -9,6 +9,8 @@ import { APTITUDES, levelFor as aptitudeLevel } from '@/lib/dmAptitude'
 import { skillsFor } from '@/lib/careerReadinessAssessment'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
+import { StudentCommunityPanels } from '@/components/admin/StudentCommunityPanels'
+import { itemsFor } from '@/lib/careerReadinessContent'
 import { Alert, Avatar, EmptyState, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/users/$id')({
@@ -270,13 +272,15 @@ function StudentPage() {
           <ul className="mt-2 space-y-1.5 text-sm">
             {PERSONAL_DEVELOPMENT_MODULES.map((m) => {
               const n = cr.modules[m.slug] ?? 0
+              // The five core modules have four items, the nine newer ones three.
+              const of = itemsFor(m.slug).length
               return (
                 <li key={m.slug} className="flex items-center justify-between gap-3">
                   <span className="truncate text-ink-700">{m.title}</span>
                   <span
-                    className={`shrink-0 tabular-nums ${n >= 4 ? 'font-semibold text-emerald-700' : n > 0 ? 'text-ink-700' : 'text-ink-400'}`}
+                    className={`shrink-0 tabular-nums ${n >= of ? 'font-semibold text-emerald-700' : n > 0 ? 'text-ink-700' : 'text-ink-400'}`}
                   >
-                    {n}/4 written
+                    {n}/{of} written
                   </span>
                 </li>
               )
@@ -315,6 +319,8 @@ function StudentPage() {
             </ul>
           )}
         </Panel>
+
+        <StudentCommunityPanels studentId={id} />
       </div>
     </>
   )

@@ -372,3 +372,72 @@ export async function confirmSignoff(applicationId: string, confirm: boolean, no
   })
   if (error) fail(error)
 }
+
+/** One application anywhere in the flow, for the team (docs/supabase-admin-internships.sql). */
+export interface AdminApplication {
+  id: string
+  role_id: string
+  role_title: string
+  organisation: string
+  duration_weeks: number
+  status: ApplicationStatus
+  applied_on: string
+  /** When it last moved: how long it has waited at this stage. */
+  updated_at: string
+  started_on: string | null
+  ended_on: string | null
+  supervisor_name: string | null
+  student_id: string
+  student_name: string | null
+  student_email: string | null
+  score: number | null
+}
+
+/**
+ * Every application, or one student's. Null before the SQL is in (the admin
+ * pages leave that part out); an error otherwise.
+ */
+export async function fetchAdminPipeline(studentId?: string): Promise<AdminApplication[] | null> {
+  const { data, error } = await supabase.rpc('admin_internship_pipeline', { p_student: studentId ?? null })
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return (data ?? []) as AdminApplication[]
+}
+
+/** How each stage reads to the team. */
+export const ADMIN_STATUS: Record<ApplicationStatus, { label: string; tone: 'neutral' | 'brand' | 'success' | 'warning' }> = {
+  applied: { label: 'Applied', tone: 'brand' },
+  shortlisted: { label: 'Shortlisted', tone: 'brand' },
+  offered: { label: 'Offer sent', tone: 'warning' },
+  accepted: { label: 'Interning', tone: 'success' },
+  signoff_pending: { label: 'Sign-off to confirm', tone: 'warning' },
+  completed: { label: 'Confirmed', tone: 'success' },
+  rejected: { label: 'Not selected', tone: 'neutral' },
+  withdrawn: { label: 'Withdrawn', tone: 'neutral' },
+}
+
+export interface InternshipOverview {
+  roles_live: number
+  roles_pending: number
+  companies_posting: number
+  applications: number
+  applications_30d: number
+  students_applied: number
+  waiting_on_company: number
+  offers_waiting: number
+  interns_now: number
+  signoffs_pending: number
+  confirmed: number
+  students_confirmed: number
+  funnel_offered: number
+  funnel_interned: number
+}
+
+/** The Dashboard's internship numbers, or null when they can't be read (no SQL yet, or no access). */
+export async function fetchInternshipOverview(): Promise<InternshipOverview | null> {
+  const { data, error } = await supabase.rpc('admin_internship_overview')
+  if (error) return null
+  return data as InternshipOverview
+}

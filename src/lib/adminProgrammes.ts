@@ -126,6 +126,24 @@ export async function fetchInternshipLeads(): Promise<InternshipLead[]> {
   return (data ?? []) as InternshipLead[]
 }
 
+/** Where an interested company's email stands with the portal. */
+export interface LeadPortalStatus {
+  lead_id: string
+  /** A MySkills account uses this email. */
+  has_account: boolean
+  /** Their portal sign-up, if they made one. */
+  request_status: 'pending' | 'approved' | 'rejected' | null
+  /** They can post roles now. */
+  in_portal: boolean
+}
+
+/** Keyed by lead; empty before docs/supabase-admin-internships.sql (the page then just offers the invite). */
+export async function fetchInternshipLeadStatus(): Promise<Record<string, LeadPortalStatus>> {
+  const { data, error } = await supabase.rpc('admin_internship_lead_status')
+  if (error) return {}
+  return Object.fromEntries(((data ?? []) as LeadPortalStatus[]).map((r) => [r.lead_id, r]))
+}
+
 export interface CareerReadinessLead {
   id: string
   created_at: string

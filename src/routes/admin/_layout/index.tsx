@@ -7,11 +7,13 @@ import {
   ArrowRight,
   ArrowUpRight,
   Award,
+  Briefcase,
   CalendarCheck,
   CheckCircle2,
   ClipboardCheck,
   Crown,
   Gauge,
+  GraduationCap,
   Inbox,
   Lightbulb,
   LogIn,
@@ -25,6 +27,7 @@ import { fetchOverviewV2, type AdminOverviewV2 } from '@/lib/adminStudents'
 import { INBOX_KINDS, daysWaiting, fetchInbox, waitedLabel, type InboxItem, type InboxKind } from '@/lib/adminInbox'
 import { fetchDashboardExtra, sectionLabel, type DashboardExtra } from '@/lib/adminTeam'
 import { useStaffAccessContext } from '@/lib/staffAccess'
+import { fetchInternshipOverview, type InternshipOverview } from '@/lib/internships'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { Alert, PageHeader, Skeleton } from '@/components/ui'
 
@@ -355,6 +358,8 @@ function DashboardPage() {
   const [inbox, setInbox] = useState<InboxItem[] | null | undefined>(undefined)
   const [stats, setStats] = useState<AdminOverviewV2 | null>(null)
   const [extra, setExtra] = useState<DashboardExtra | null | undefined>(undefined)
+  // Null until docs/supabase-admin-internships.sql is in: the section is left out.
+  const [interns, setInterns] = useState<InternshipOverview | null>(null)
   const [error, setError] = useState<string>()
 
   useEffect(() => {
@@ -379,6 +384,7 @@ function DashboardPage() {
       (x) => active && setExtra(x),
       () => active && setExtra(null),
     )
+    void fetchInternshipOverview().then((x) => active && setInterns(x))
     return () => {
       active = false
     }
@@ -405,6 +411,15 @@ function DashboardPage() {
       ]
     : []
   const notes = stats ? insights(stats, extra ?? null, inbox ?? null, dm, cr) : []
+  // From applying to a confirmed internship, in students: where the 20 points are won or lost.
+  const internSteps: Step[] = interns
+    ? [
+        { label: 'Applied for a role', count: interns.students_applied },
+        { label: 'Got an offer', count: interns.funnel_offered },
+        { label: 'Started an internship', count: interns.funnel_interned },
+        { label: 'Internship confirmed', count: interns.students_confirmed },
+      ]
+    : []
   const w = extra?.weeks
   const c = extra?.community
 
@@ -570,6 +585,45 @@ function DashboardPage() {
                 <StatCard label="Mentor requests waiting on mentors" value={c.mentor_requests_waiting} icon={Inbox} />
                 <StatCard label="Students with a counsellor, guide or company" value={c.students_with_provider} icon={Users} />
                 <StatCard label="Partner sessions logged, 30 days" value={c.sessions_30d} icon={CalendarCheck} />
+              </div>
+            </>
+          )}
+
+          {interns && (
+            <>
+              <SectionLabel
+                action={
+                  <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
+                    Internship roles <ArrowRight size={14} />
+                  </Link>
+                }
+              >
+                Internships
+              </SectionLabel>
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                <div className="grid content-start gap-3 sm:grid-cols-2">
+                  <StatCard
+                    label={`Live roles · ${interns.companies_posting} ${interns.companies_posting === 1 ? 'company' : 'companies'}${
+                      interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''
+                    }`}
+                    value={interns.roles_live}
+                    icon={Briefcase}
+                  />
+                  <StatCard
+                    label={`Applications in 30 days · ${interns.applications} in all`}
+                    value={interns.applications_30d}
+                    icon={UserPlus}
+                  />
+                  <StatCard
+                    label={`Interning now${interns.signoffs_pending > 0 ? ` · ${interns.signoffs_pending} ${interns.signoffs_pending === 1 ? 'sign-off' : 'sign-offs'} to confirm` : ''}`}
+                    value={interns.interns_now}
+                    icon={GraduationCap}
+                  />
+                  <StatCard label="Internships confirmed" value={interns.confirmed} icon={Award} />
+                  <StatCard label="Applicants a company hasn’t looked at in a week" value={interns.waiting_on_company} icon={Inbox} />
+                  <StatCard label="Offers waiting for the student" value={interns.offers_waiting} icon={CalendarCheck} />
+                </div>
+                <Funnel title="From applying to a confirmed internship" steps={internSteps} />
               </div>
             </>
           )}
