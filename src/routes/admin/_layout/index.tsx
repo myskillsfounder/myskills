@@ -365,7 +365,7 @@ function Toolbar({ isAdmin, sections }: { isAdmin: boolean; sections: string[] }
     can('portal-access') && { to: '/admin/community-portal', label: 'Invite a partner', icon: KeyRound },
     can('blog') && { to: '/admin/blog', label: 'Write a blog post', icon: PenSquare },
     can('ads') && { to: '/admin/ads', label: 'Change the banners', icon: Megaphone },
-    isAdmin && { to: '/admin/team', label: 'Give team access', icon: UserCog },
+    isAdmin && { to: '/admin/team', label: 'Add a team member', icon: UserCog },
   ].filter(Boolean) as { to: string; label: string; icon: IconType }[]
 
   if (!can('users') && actions.length === 0) return null
@@ -646,8 +646,8 @@ function DashboardPage() {
           <div>
             <p className="font-semibold text-ink-900">Numbers and insights aren’t part of your access</p>
             <p className="mt-0.5 text-sm text-ink-600">
-              Scores, trends and programme progress need the “Dashboard numbers” section. A full admin can add it under
-              Team &amp; access.
+              Scores, trends and programme progress need the “Dashboard numbers” section. A super admin can add it under
+              Team &amp; roles.
               {canSeeInternships && ' The internship numbers below come with your Internships section.'}
             </p>
           </div>
@@ -829,21 +829,21 @@ function DashboardPage() {
         </span>
         <div className="min-w-0 flex-1">
           <p className="font-semibold text-ink-900">
-            {isAdmin ? 'Full admin' : 'Team member'}
+            {isAdmin ? 'Super admin' : 'Team member'}
             {user?.email ? <span className="font-normal text-ink-600"> · {user.email}</span> : null}
           </p>
           {isAdmin ? (
             <p className="mt-0.5 text-sm text-ink-600">
               You can open everything, and give the rest of the team access under{' '}
               <Link to="/admin/team" className="font-semibold text-brand-700 hover:underline">
-                Team &amp; access
+                Team &amp; roles
               </Link>
               .
             </p>
           ) : (
             <>
               <p className="mt-0.5 text-sm text-ink-600">
-                You can open the sections below. A full admin changes this under Team &amp; access.
+                You can open the sections below. A super admin changes this under Team &amp; roles.
               </p>
               <ul className="mt-2.5 flex flex-wrap gap-1.5">
                 {(sections ?? []).map((s) => (
