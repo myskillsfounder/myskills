@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, CheckCircle2 } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { INBOX_KINDS, fetchInbox, type InboxKind } from '@/lib/adminInbox'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
-import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
-import { EmptyState, PageHeader } from '@/components/ui'
+import { PartnerVerificationBoard } from '@/components/admin/PortalRequestsPanel'
+import { PageHeader } from '@/components/ui'
 
 // Next to the Inbox, because a partner can do nothing until someone here
 // verifies them. Needs the portal-access section, as verifying always has.
@@ -61,17 +61,7 @@ function PartnerVerificationPage() {
         </ul>
       )}
 
-      <PortalRequestsPanel
-        onChanged={() => {}}
-        recent
-        empty={
-          <EmptyState
-            icon={CheckCircle2}
-            title="Nobody is waiting"
-            description="New partner sign-ups appear here once they confirm their email."
-          />
-        }
-      />
+      <PartnerVerificationBoard />
     </>
   )
 }
