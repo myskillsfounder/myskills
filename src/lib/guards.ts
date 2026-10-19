@@ -29,9 +29,27 @@ export async function requireGuest(): Promise<void> {
  *  onboarding, or the phone's own (routes/welcome.tsx). */
 const onboardingPath = (): '/onboarding' | '/welcome' => (isPhone() ? '/welcome' : '/onboarding')
 
+type Session = NonNullable<Awaited<ReturnType<typeof currentSession>>>
+
+/**
+ * An account made through the Community portal's sign-up (a mentor, counsellor,
+ * career guide, company or institution), which has never done the student
+ * onboarding. It belongs in the portal: wherever it lands in the student app
+ * (the confirm link sent to the site's address, the student sign-in, a link
+ * to /community), it is taken there, never to "find your starting point".
+ */
+const isPartnerAccount = (s: Session) =>
+  s.user.user_metadata?.onboarded !== true && Boolean(s.user.user_metadata?.portal_request)
+
+/** Where a signed-in account that hasn't onboarded is sent: the portal for a partner, onboarding for a student. */
+const notOnboardedPath = (s: Session): '/community-portal' | '/onboarding' | '/welcome' =>
+  isPartnerAccount(s) ? '/community-portal' : onboardingPath()
+
 /** Signed-in required (/onboarding). A phone has its own onboarding instead. */
 export async function requireSession(): Promise<void> {
-  if (!(await currentSession())) throw redirect({ to: '/login' })
+  const session = await currentSession()
+  if (!session) throw redirect({ to: '/login' })
+  if (isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (isPhone()) throw redirect({ to: '/welcome' })
 }
 
@@ -47,7 +65,7 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
   if (!session) throw redirect({ to: '/login' })
   if (session.user.user_metadata?.onboarded !== true) {
-    throw redirect({ to: onboardingPath() })
+    throw redirect({ to: notOnboardedPath(session) })
   }
   if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
 }
@@ -59,6 +77,7 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
  */
 export async function requirePhoneWelcome(): Promise<void> {
   const session = await currentSession()
+  if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (!isPhone()) throw redirect({ to: session ? '/dashboard' : '/' })
   if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: '/community' })
 }
@@ -70,8 +89,11 @@ export async function requirePhoneWelcome(): Promise<void> {
  * the home page is the home page.
  */
 export async function phoneHome(): Promise<void> {
+  // A partner's confirm link can land here (the site's own address): on into the portal.
+  const session = await currentSession()
+  if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (!isPhone()) return
-  throw redirect({ to: (await currentSession()) ? '/community' : '/welcome' })
+  throw redirect({ to: session ? '/community' : '/welcome' })
 }
 
 /**
@@ -85,7 +107,7 @@ export async function phoneHome(): Promise<void> {
 export async function requireOnboardedIfSignedIn(): Promise<void> {
   const session = await currentSession()
   if (session && session.user.user_metadata?.onboarded !== true) {
-    throw redirect({ to: onboardingPath() })
+    throw redirect({ to: notOnboardedPath(session) })
   }
 }
 
