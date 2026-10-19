@@ -21,8 +21,11 @@ import { useMyMatch } from '@/lib/mentorMatches'
 import { useMentorReview } from '@/lib/mentorReview'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
-import { AiSkillsShowcase } from '@/components/dashboard/AiSkillsShowcase'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
+import { SkillBalanceCard } from '@/components/dashboard/SkillBalanceCard'
+import { GrowthCards, NextStepCards } from '@/components/dashboard/GrowthCards'
+import { aptitudeBalance, progressBalance } from '@/lib/skillBalance'
+import { fetchScoreTrend, type ScoreTrend } from '@/lib/scoreTrend'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
 import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
 import { FindMentorCard } from '@/components/dashboard/FindMentorCard'
@@ -183,6 +186,31 @@ function DashboardPage() {
     [estimate, serverScore],
   )
 
+  // How the score moved: asked once the server has stored today's score.
+  const [trend, setTrend] = useState<ScoreTrend | null>(null)
+  useEffect(() => {
+    if (!serverScore) return
+    let active = true
+    void fetchScoreTrend(serverScore.score).then((t) => active && setTrend(t))
+    return () => {
+      active = false
+    }
+  }, [serverScore])
+
+  // The practised tracks with their best score, for the growth card and the radar.
+  const practisedTracks = useMemo(
+    () => skillTracks.flatMap((t) => (practice[t.slug] ? [{ name: t.name, percent: practice[t.slug].percent }] : [])),
+    [practice],
+  )
+  const balance = useMemo(
+    () => ({
+      aptitude: aptitudeBalance(dmAptitude.result?.scores ?? null, crAptitude.result?.scores ?? null),
+      progress: progressBalance(practisedTracks.map((t) => t.percent), skillTracks.length, crProgress.modules),
+    }),
+    [dmAptitude.result, crAptitude.result, practisedTracks, crProgress.modules],
+  )
+  const bestTrack = practisedTracks.length ? [...practisedTracks].sort((a, b) => b.percent - a.percent)[0] : null
+
   // A course appears once the student has started it: taken its aptitude
   // assessment, done any work in it, or earned points from it.
   const dmStarted =
@@ -278,8 +306,11 @@ function DashboardPage() {
           streak={streak}
           readiness={readiness}
           highlights={highlights}
-          courses={courses}
           findMentor={findMentor}
+          trend={trend}
+          balance={balance}
+          tracks={practisedTracks}
+          modules={crProgress.modules}
         />
       </AppShell>
     )
@@ -303,30 +334,42 @@ function DashboardPage() {
             <Skeleton className="h-80" />
           </div>
         ) : (
-          // Layout note — why a gap can't open up beside the score. The score takes
-          // two columns and BOTH rows; the right column stacks the objective (its
-          // own height) over hours (the flexible row). The two columns always end
-          // together: if the right side is shorter, the hours card takes up the
-          // slack (its content is centred, so it just has more room); if it is
-          // taller, the score card spreads its sections a little. The two sides are
-          // close in height, so neither is ever more than a few dozen pixels.
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
-            <div className="lg:col-span-2 lg:col-start-1 lg:row-span-2 lg:row-start-1">
-              {firstRun ? (
+          firstRun ? (
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
+              <div className="lg:col-span-2 lg:col-start-1 lg:row-span-2 lg:row-start-1">
                 <FirstRunPath name={name} goal={goals[0]} />
-              ) : (
-                <ReadinessScoreCard readiness={readiness} highlights={highlights} />
-              )}
+              </div>
+              <KeyMeasures goals={goals} streak={streak} startHere showHours={false} courses={courses} />
             </div>
-            <KeyMeasures
-              goals={goals}
-              streak={streak}
-              startHere={firstRun}
-              showHours={!firstRun}
-              hours={activity?.hours30}
-              courses={courses}
-            />
-          </div>
+          ) : (
+            // Where they stand, then where it comes from: the score beside the
+            // balance of their skills; each programme's part with what is behind
+            // it, beside their objective; and the good news and the next step,
+            // beside their hours.
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <ReadinessScoreCard readiness={readiness} trend={trend} />
+              </div>
+              <SkillBalanceCard aptitude={balance.aptitude} progress={balance.progress} />
+              <GrowthCards readiness={readiness} tracks={practisedTracks} modules={crProgress.modules} />
+              <KeyMeasures
+                goals={goals}
+                streak={streak}
+                showHours
+                hours={activity?.hours30}
+                courses={courses}
+                place={{ objective: 'lg:col-start-3 lg:row-start-2', hours: 'lg:col-start-3 lg:row-start-3' }}
+              />
+              <div className="lg:col-span-2 lg:col-start-1 lg:row-start-3">
+                <NextStepCards
+                  readiness={readiness}
+                  trend={trend}
+                  bestTrack={bestTrack}
+                  modulesDone={crProgress.modulesDone}
+                />
+              </div>
+            </div>
+          )
         )}
 
         {findMentor}
@@ -353,7 +396,6 @@ function DashboardPage() {
           </Link>
         )}
 
-        {!firstRun && <AiSkillsShowcase />}
       </div>
     </AppShell>
   )
