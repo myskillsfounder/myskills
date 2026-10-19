@@ -1,50 +1,41 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { errorMessage } from '@/lib/errors'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Activity,
   ArrowDownRight,
-  ArrowRight,
   ArrowUpRight,
   Award,
+  BarChart3,
   Briefcase,
   Building2,
   CalendarCheck,
-  CheckCircle2,
   ClipboardCheck,
-  Crown,
+  FileText,
   Gauge,
+  Globe,
   GraduationCap,
-  Hand,
-  Inbox,
-  KeyRound,
-  LayoutGrid,
-  Lightbulb,
-  LogIn,
-  Megaphone,
+  HeartHandshake,
   Minus,
-  PenSquare,
-  Search,
+  Repeat,
+  School,
   ShieldCheck,
   Star,
   Target,
-  UserCog,
+  UserCheck,
   UserPlus,
   Users,
 } from 'lucide-react'
 import { fetchOverviewV2, type AdminOverviewV2 } from '@/lib/adminStudents'
-import { INBOX_KINDS, daysWaiting, fetchInbox, inboxLink, waitedLabel, type InboxItem, type InboxKind } from '@/lib/adminInbox'
-import { fetchInstitutionLeads, stageInfo, type InstitutionLead } from '@/lib/institutionLeads'
-import { fetchDashboardExtra, sectionLabel, type DashboardExtra } from '@/lib/adminTeam'
+import { fetchDashboardAnalytics, fetchDashboardExtra, type DashboardAnalytics, type DashboardExtra } from '@/lib/adminTeam'
 import { useStaffAccessContext } from '@/lib/staffAccess'
 import { fetchInternshipOverview, type InternshipOverview } from '@/lib/internships'
-import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { Alert, PageHeader, Skeleton } from '@/components/ui'
-import { AreaBoard, type AreaFacts } from '@/components/admin/AreaBoard'
 
-// Home for everyone on the team. What is waiting comes from the Inbox, which
-// the database already limits to each person's sections; the numbers below it
-// need the "Dashboard numbers" section (or a full admin).
+// The numbers, and only the numbers: how many users, how many come back, and
+// how the programmes, partners and internships are growing. What needs doing
+// is in the Inbox. Needs the "Dashboard numbers" section (or a full admin);
+// whoever handles internships sees that part with their own section.
 export const Route = createFileRoute('/admin/_layout/')({
   component: DashboardPage,
 })
@@ -89,219 +80,6 @@ function Kpi({ label, value, icon: Icon, children }: { label: string; value: str
   )
 }
 
-function StatCard({ label, value, icon: Icon }: { label: string; value: string | number; icon: IconType }) {
-  return (
-    <div className="rounded-2xl border border-ink-200 bg-white p-4">
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
-        <Icon size={16} />
-      </span>
-      <p className="mt-3 font-display text-2xl font-semibold leading-none text-ink-900">{value}</p>
-      <p className="mt-1 text-sm text-ink-600">{label}</p>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------ needs you */
-
-/** Amber after three days, red after a week: how long someone has been left waiting. */
-function ageTone(days: number): string {
-  if (days >= 7) return 'bg-red-50 text-red-700'
-  if (days >= 3) return 'bg-amber-50 text-amber-800'
-  return 'bg-ink-100 text-ink-600'
-}
-
-function NeedsYou({ items, me }: { items: InboxItem[]; me: string | undefined }) {
-  if (items.length === 0) {
-    return (
-      <div className="card flex items-center gap-4 p-5">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-          <CheckCircle2 size={22} />
-        </span>
-        <div>
-          <p className="font-display text-lg font-semibold text-ink-900">Nothing is waiting on you</p>
-          <p className="text-sm text-ink-600">Every request in your sections has been dealt with.</p>
-        </div>
-      </div>
-    )
-  }
-
-  const counts = new Map<InboxKind, number>()
-  for (const i of items) counts.set(i.kind, (counts.get(i.kind) ?? 0) + 1)
-  const kinds = [...counts.entries()].sort((a, b) => b[1] - a[1])
-  const overdue = items.filter((i) => daysWaiting(i.created_at) >= 7).length
-
-  return (
-    <div className="card overflow-hidden">
-      <div className="grid gap-px bg-ink-900/[0.06] lg:grid-cols-[18rem_minmax(0,1fr)]">
-        <div className="bg-white p-5">
-          <p className="font-display text-5xl font-semibold leading-none tabular-nums text-ink-900">{items.length}</p>
-          <p className="mt-1.5 text-sm text-ink-600">{items.length === 1 ? 'thing is' : 'things are'} waiting on the team</p>
-          {overdue > 0 && (
-            <p className="mt-3 inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
-              {overdue} waiting a week or more
-            </p>
-          )}
-          <ul className="mt-4 space-y-1.5">
-            {kinds.map(([kind, n]) => (
-              <li key={kind}>
-                <Link to={INBOX_KINDS[kind].to} className="flex items-center justify-between gap-3 rounded-lg px-2 py-1 text-sm hover:bg-ink-50">
-                  <span className="truncate text-ink-700">{n === 1 ? INBOX_KINDS[kind].label : INBOX_KINDS[kind].plural}</span>
-                  <span className="font-semibold tabular-nums text-ink-900">{n}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Waiting longest</p>
-          <ul className="mt-2 divide-y divide-ink-100">
-            {items.slice(0, 5).map((i) => {
-              const days = daysWaiting(i.created_at)
-              return (
-                <li key={`${i.kind}-${i.ref}`}>
-                  <Link to={inboxLink(i).to} search={inboxLink(i).search as never} className="group flex items-center gap-3 py-2.5">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-ink-900 group-hover:text-brand-700">{i.title}</p>
-                      <p className="truncate text-xs text-ink-500">
-                        {INBOX_KINDS[i.kind].label}
-                        {i.detail ? ` · ${i.detail}` : ''}
-                        {i.claim === null && (
-                          <span className={days >= 3 ? 'font-semibold text-amber-700' : ''}> · nobody on it</span>
-                        )}
-                        {i.claim && <span className="text-ink-600"> · {i.claim.by === me ? 'you’re' : `${i.claim.name} is`} on it</span>}
-                      </p>
-                    </div>
-                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${ageTone(days)}`}>
-                      {waitedLabel(i.created_at)}
-                    </span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------- my work */
-
-const todayIso = () => {
-  const d = new Date()
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-}
-const shortDay = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
-
-/**
- * What this person has said "I'm on it" to, and the institution leads they own,
- * follow-ups due first: the list to work through before anything new.
- */
-function MyWork({ claimed, leads }: { claimed: InboxItem[] | null; leads: InstitutionLead[] | null }) {
-  const today = todayIso()
-  const due = (leads ?? []).filter((l) => l.follow_up_on && l.follow_up_on <= today).length
-  // Each half only when it can be used: claims need docs/supabase-inbox-claims.sql,
-  // leads need the Institution leads section.
-  return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      {claimed && (
-        <div className="card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="inline-flex items-center gap-2 font-display text-base font-semibold text-ink-900">
-              <Hand size={16} className="text-brand-600" /> You’re on it
-            </h3>
-            <span className="text-xs font-semibold tabular-nums text-ink-500">{claimed.length}</span>
-          </div>
-          {claimed.length === 0 ? (
-            <p className="mt-2 text-sm text-ink-600">
-              Nothing yet. Pick something from the{' '}
-              <Link to="/admin/inbox" className="font-semibold text-brand-700 hover:underline">
-                Inbox
-              </Link>{' '}
-              and say “I’m on it” so the team knows.
-            </p>
-          ) : (
-            <ul className="mt-2 divide-y divide-ink-100">
-              {claimed.map((i) => (
-                <li key={`${i.kind}-${i.ref}`}>
-                  <Link to={inboxLink(i).to} search={inboxLink(i).search as never} className="group flex items-center gap-3 py-2.5">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-ink-900 group-hover:text-brand-700">{i.title}</p>
-                      <p className="truncate text-xs text-ink-500">
-                        {INBOX_KINDS[i.kind].label}
-                        {i.detail ? ` · ${i.detail}` : ''}
-                      </p>
-                    </div>
-                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${ageTone(daysWaiting(i.created_at))}`}>
-                      {waitedLabel(i.created_at)}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {leads && (
-        <div className="card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="inline-flex items-center gap-2 font-display text-base font-semibold text-ink-900">
-              <Target size={16} className="text-brand-600" /> Your institution leads
-            </h3>
-            {due > 0 ? (
-              <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700">{due} to call today</span>
-            ) : (
-              <span className="text-xs font-semibold tabular-nums text-ink-500">{leads.length}</span>
-            )}
-          </div>
-          {leads.length === 0 ? (
-            <p className="mt-2 text-sm text-ink-600">
-              None open.{' '}
-              <Link to="/admin/institution-leads" className="font-semibold text-brand-700 hover:underline">
-                See every lead
-              </Link>
-            </p>
-          ) : (
-            <ul className="mt-2 divide-y divide-ink-100">
-              {leads.slice(0, 6).map((l) => {
-                const late = l.follow_up_on != null && l.follow_up_on <= today
-                return (
-                  <li key={l.id}>
-                    <Link to="/admin/institution-leads" search={{ lead: l.id }} className="group flex items-center gap-3 py-2.5">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-ink-900 group-hover:text-brand-700">{l.full_name}</p>
-                        <p className="truncate text-xs text-ink-500">
-                          {stageInfo(l.stage).label} · {l.institution_name}
-                          {l.course ? ` · ${l.course}` : ''}
-                        </p>
-                      </div>
-                      {l.follow_up_on && (
-                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${late ? 'bg-red-50 text-red-700' : 'bg-ink-100 text-ink-600'}`}>
-                          {l.follow_up_on < today ? `Overdue · ${shortDay(l.follow_up_on)}` : l.follow_up_on === today ? 'Call today' : shortDay(l.follow_up_on)}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-              {leads.length > 6 && (
-                <li className="pt-2.5 text-xs">
-                  <Link to="/admin/institution-leads" className="font-semibold text-brand-700 hover:underline">
-                    {leads.length - 6} more
-                  </Link>
-                </li>
-              )}
-            </ul>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
 /* -------------------------------------------------------------- trends */
 
 /** Thirty days as bars: tall enough to compare, each bar titled with its day. */
@@ -332,79 +110,7 @@ function DayBars({ title, total, days, pick, tone }: { title: string; total: str
   )
 }
 
-/* ------------------------------------------------------------ insights */
-
 type Step = { label: string; count: number }
-
-/** Where a programme loses the most students between two steps. */
-function biggestDrop(steps: Step[]): { from: Step; to: Step; lost: number } | null {
-  let worst: { from: Step; to: Step; lost: number } | null = null
-  for (let i = 0; i < steps.length - 1; i++) {
-    const lost = steps[i].count - steps[i + 1].count
-    if (lost > 0 && (!worst || lost > worst.lost)) worst = { from: steps[i], to: steps[i + 1], lost }
-  }
-  return worst
-}
-
-/** A handful of sentences worked out from the numbers, so the page says what
- *  they mean instead of leaving it to be read off the charts. */
-function insights(stats: AdminOverviewV2, extra: DashboardExtra | null, inbox: InboxItem[] | null, dm: Step[], cr: Step[]) {
-  const out: { tone: 'good' | 'watch' | 'info'; text: string; to?: string }[] = []
-  const w = extra?.weeks
-  if (w) {
-    if (w.new_this_week > w.new_last_week) {
-      out.push({ tone: 'good', text: `Sign-ups are up: ${w.new_this_week} new students this week against ${w.new_last_week} last week.` })
-    } else if (w.new_this_week < w.new_last_week) {
-      out.push({ tone: 'watch', text: `Sign-ups are down: ${w.new_this_week} new students this week against ${w.new_last_week} last week.` })
-    }
-    if (stats.activity.total_users > 0) {
-      const share = Math.round((w.active_this_week / stats.activity.total_users) * 100)
-      out.push({ tone: share >= 25 ? 'good' : 'watch', text: `${share}% of students signed in this week (${w.active_this_week} of ${stats.activity.total_users}).` })
-    }
-  }
-  const dmDrop = biggestDrop(dm)
-  if (dmDrop) {
-    out.push({
-      tone: 'watch',
-      text: `Digital Marketing loses the most students between “${dmDrop.from.label}” and “${dmDrop.to.label}”: ${dmDrop.lost} stop there.`,
-      to: '/admin/practice',
-    })
-  }
-  const crDrop = biggestDrop(cr)
-  if (crDrop) {
-    out.push({
-      tone: 'watch',
-      text: `Global Leadership loses the most students between “${crDrop.from.label}” and “${crDrop.to.label}”: ${crDrop.lost} stop there.`,
-      to: '/admin/modules',
-    })
-  }
-  if (stats.score.students > 0) {
-    const early = Math.round((stats.score.getting_started / stats.score.students) * 100)
-    out.push({
-      tone: early > 60 ? 'watch' : 'info',
-      text: `${early}% of students are still in the Getting started band, and ${stats.score.verified_share}% of all points earned are verified.`,
-      to: '/admin/users',
-    })
-  }
-  const c = extra?.community
-  if (c) {
-    if (c.mentor_requests_waiting > 0) {
-      out.push({ tone: 'watch', text: `${c.mentor_requests_waiting} ${c.mentor_requests_waiting === 1 ? 'student is' : 'students are'} waiting for a mentor to accept them.`, to: '/admin/users' })
-    }
-    if (c.mentors_listed > 0 && c.mentors_taking < c.mentors_listed) {
-      out.push({
-        tone: 'info',
-        text: `${c.mentors_taking} of ${c.mentors_listed} mentors can be asked right now. The rest haven’t finished their profile, or are paused.`,
-        to: '/admin/mentors',
-      })
-    }
-  }
-  const oldest = inbox?.[0]
-  if (oldest && daysWaiting(oldest.created_at) >= 7) {
-    out.push({ tone: 'watch', text: `The oldest thing in the Inbox has waited ${waitedLabel(oldest.created_at)}: ${oldest.title}.`, to: '/admin/inbox' })
-  }
-  return out.slice(0, 6)
-}
 
 /* ------------------------------------------------- scores and programmes */
 
@@ -474,108 +180,25 @@ function Funnel({ title, steps }: { title: string; steps: Step[] }) {
   )
 }
 
-/* ------------------------------------------------------------ toolbar */
-
-/**
- * Find a student from here, and start the things the team does most, each
- * shown only to someone who can do it.
- */
-function Toolbar({ isAdmin, sections }: { isAdmin: boolean; sections: string[] }) {
-  const navigate = useNavigate()
-  const [q, setQ] = useState('')
-  const can = (s: string) => isAdmin || sections.includes(s)
-  const actions = [
-    can('portal-access') && { to: '/admin/community-portal', label: 'Invite a partner', icon: KeyRound },
-    can('blog') && { to: '/admin/blog', label: 'Write a blog post', icon: PenSquare },
-    can('ads') && { to: '/admin/ads', label: 'Change the banners', icon: Megaphone },
-    isAdmin && { to: '/admin/team', label: 'Add a team member', icon: UserCog },
-  ].filter(Boolean) as { to: string; label: string; icon: IconType }[]
-
-  if (!can('users') && actions.length === 0) return null
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      {can('users') && (
-        <form
-          role="search"
-          className="relative w-full min-w-0 sm:w-auto sm:min-w-[20rem] sm:flex-1"
-          onSubmit={(e) => {
-            e.preventDefault()
-            void navigate({ to: '/admin/users', search: q.trim() ? { q: q.trim() } : {} })
-          }}
-        >
-          <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
-          <input
-            type="search"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Find a student by name or email"
-            aria-label="Find a student by name or email"
-            className="field h-11 w-full pl-10"
-          />
-        </form>
-      )}
-      {actions.map((a) => (
-        <Link
-          key={a.to}
-          to={a.to}
-          className="inline-flex h-11 items-center gap-2 rounded-xl border border-ink-200 bg-white px-3.5 text-sm font-semibold text-ink-800 transition-colors hover:border-brand-300 hover:text-brand-700"
-        >
-          <a.icon size={15} /> {a.label}
-        </Link>
-      ))}
-    </div>
-  )
-}
-
 /* ---------------------------------------------------------------- page */
 
-function greeting() {
-  const h = new Date().getHours()
-  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
+const num = (n: number | null | undefined) => (n === null || n === undefined ? '—' : n.toLocaleString('en-IN'))
+const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0)
+
+function Sub({ children }: { children: ReactNode }) {
+  return <span className="text-xs text-ink-500">{children}</span>
 }
 
 function DashboardPage() {
   const { isAdmin, sections } = useStaffAccessContext()
-  const { user } = useAuthUser()
   const canSeeNumbers = isAdmin === true || (sections?.includes('overview') ?? false)
 
-  const [inbox, setInbox] = useState<InboxItem[] | null | undefined>(undefined)
   const [stats, setStats] = useState<AdminOverviewV2 | null>(null)
   const [extra, setExtra] = useState<DashboardExtra | null | undefined>(undefined)
+  const [more, setMore] = useState<DashboardAnalytics | null>(null)
   // Null until docs/supabase-admin-internships.sql is in: the section is left out.
   const [interns, setInterns] = useState<InternshipOverview | null>(null)
   const [error, setError] = useState<string>()
-  // Open institution leads this person owns; null without that section or the SQL.
-  const [myLeads, setMyLeads] = useState<InstitutionLead[] | null>(null)
-  const canLeads = isAdmin === true || (sections?.includes('demo-requests') ?? false)
-  const uid = user?.id
-  useEffect(() => {
-    if (!canLeads || !uid) return
-    let active = true
-    fetchInstitutionLeads()
-      .then((all) => {
-        if (!active || !all) return
-        const open = all.filter((l) => l.owner_id === uid && (l.stage === 'new' || l.stage === 'contacted' || l.stage === 'visit'))
-        // Follow-ups first, soonest first; then those without a date.
-        open.sort((a, b) => (a.follow_up_on ?? '9999').localeCompare(b.follow_up_on ?? '9999'))
-        setMyLeads(open)
-      })
-      .catch(() => {})
-    return () => {
-      active = false
-    }
-  }, [canLeads, uid])
-
-  useEffect(() => {
-    let active = true
-    fetchInbox().then(
-      (r) => active && setInbox(r),
-      () => active && setInbox(null),
-    )
-    return () => {
-      active = false
-    }
-  }, [])
 
   useEffect(() => {
     if (!canSeeNumbers) return
@@ -583,11 +206,12 @@ function DashboardPage() {
     fetchOverviewV2()
       .then((s) => active && setStats(s))
       .catch((e) => active && setError(errorMessage(e)))
-    // Trends are an extra: without them the Dashboard still has its numbers.
+    // Trends and the extra totals are extras: without them the cards show a dash.
     fetchDashboardExtra().then(
       (x) => active && setExtra(x),
       () => active && setExtra(null),
     )
+    void fetchDashboardAnalytics().then((x) => active && setMore(x))
     return () => {
       active = false
     }
@@ -605,9 +229,6 @@ function DashboardPage() {
     }
   }, [canSeeInternships])
 
-  const first = user ? userDisplayName(user).split(' ')[0] : ''
-  // Whether "I'm on it" is set up: every item then carries a claim, even if null.
-  const claimsReady = inbox?.some((i) => i.claim !== undefined) ?? false
   const dm: Step[] = stats
     ? [
         { label: 'Took the aptitude assessment', count: stats.digital_marketing.aptitude },
@@ -627,8 +248,7 @@ function DashboardPage() {
         { label: 'Project passed', count: stats.career_readiness.signed_off },
       ]
     : []
-  const notes = stats ? insights(stats, extra ?? null, inbox ?? null, dm, cr) : []
-  // From applying to a confirmed internship, in students: where the 20 points are won or lost.
+  // From applying to a confirmed internship, in students.
   const internSteps: Step[] = interns
     ? [
         { label: 'Applied for a role', count: interns.students_applied },
@@ -639,105 +259,37 @@ function DashboardPage() {
     : []
   const w = extra?.weeks
   const c = extra?.community
-
-  // One line of numbers per area on the board; an area without one just lists its pages.
-  const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
-  const facts: AreaFacts = {
-    Students: stats
-      ? `${plural(stats.activity.total_users, 'student')} · ${w?.new_this_week ?? stats.activity.new_this_week} new this week · ${
-          stats.score.verified_share
-        }% of points verified`
-      : null,
-    Programmes: stats
-      ? `${plural(stats.digital_marketing.signed_off + stats.career_readiness.signed_off, 'project')} passed · ${plural(
-          stats.activity.live_sessions_this_month,
-          'live session',
-        )} in 30 days · ${plural(stats.activity.certificates, 'certificate')}`
-      : null,
-    Internships: interns
-      ? [
-          interns.companies_in_portal !== undefined ? `${plural(interns.companies_in_portal, 'company', 'companies')} in the portal` : null,
-          plural(interns.roles_live, 'live role'),
-          `${interns.interns_now} interning`,
-          interns.waiting_on_company + interns.offers_waiting > 0
-            ? `${interns.waiting_on_company + interns.offers_waiting} stuck`
-            : null,
-        ]
-          .filter(Boolean)
-          .join(' · ')
-      : null,
-    'Team & access': c ? `${plural(c.partner_accounts, 'partner')} in the portal · ${c.signups_waiting} to verify` : null,
-    Mentors: c
-      ? `${c.mentors_taking} of ${c.mentors_listed} taking students · ${plural(c.students_with_mentor, 'student')} with a mentor`
-      : null,
-    Institutions: c ? `${plural(c.institutions_listed, 'institution')} listed` : null,
-    Site:
-      stats && stats.activity.avg_rating !== null ? `Students rate the app ${stats.activity.avg_rating}/10 on average` : null,
-  }
+  const u = more?.users
+  const leads = more?.leads
+  const grid = 'grid gap-3 sm:grid-cols-2 xl:grid-cols-4'
 
   const internshipsSection = interns && (
     <>
-      <SectionLabel
-        action={
-          <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-            Roles &amp; applications <ArrowRight size={14} />
-          </Link>
-        }
-      >
-        Internships
-      </SectionLabel>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="grid content-start gap-3 sm:grid-cols-2">
-          {/* The companies come first: every role starts with one asking to post. */}
-          {interns.companies_interested !== undefined && (
-            <Link
-              to="/admin/internship-partners"
-              className="group flex items-start justify-between gap-3 rounded-2xl border border-ink-200 bg-white p-4 transition-colors hover:border-brand-300 sm:col-span-2"
-            >
-              <div className="min-w-0">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
-                  <Building2 size={16} />
-                </span>
-                <p className="mt-3 font-display text-2xl font-semibold leading-none text-ink-900">{interns.companies_interested}</p>
-                <p className="mt-1 text-sm text-ink-600">
-                  Companies interested in posting internships
-                  {` · ${interns.companies_new ?? 0} not contacted · ${interns.companies_in_portal ?? 0} in the portal`}
-                </p>
-                {interns.newest_company && (
-                  <p className="mt-1 text-xs text-ink-500">
-                    Newest: <span className="font-semibold text-ink-700">{interns.newest_company}</span>
-                    {interns.newest_company_at ? `, ${new Date(interns.newest_company_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : ''}
-                  </p>
-                )}
-              </div>
-              <ArrowRight size={16} className="mt-1 shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
-            </Link>
+      <SectionLabel>Internships</SectionLabel>
+      <div className={grid}>
+        <Kpi label="Companies" value={num(interns.companies_interested ?? interns.companies_posting)} icon={Building2}>
+          {interns.companies_in_portal !== undefined && (
+            <Sub>
+              {num(interns.companies_in_portal)} in the portal · {num(interns.companies_new ?? 0)} not contacted
+            </Sub>
           )}
-          <StatCard
-            label={`Live roles · ${interns.companies_posting} ${interns.companies_posting === 1 ? 'company' : 'companies'}${
-              interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''
-            }`}
-            value={interns.roles_live}
-            icon={Briefcase}
-          />
-          <StatCard
-            label={`Applications in 30 days · ${interns.applications} in all`}
-            value={interns.applications_30d}
-            icon={UserPlus}
-          />
-          <StatCard
-            label={`Interning now${
-              interns.signoffs_pending > 0
-                ? ` · ${interns.signoffs_pending} ${interns.signoffs_pending === 1 ? 'sign-off' : 'sign-offs'} to confirm`
-                : ''
-            }`}
-            value={interns.interns_now}
-            icon={GraduationCap}
-          />
-          <StatCard label="Internships confirmed" value={interns.confirmed} icon={Award} />
-          <StatCard label="Applicants a company hasn’t looked at in a week" value={interns.waiting_on_company} icon={Inbox} />
-          <StatCard label="Offers waiting for the student" value={interns.offers_waiting} icon={CalendarCheck} />
-        </div>
+        </Kpi>
+        <Kpi label="Live roles" value={num(interns.roles_live)} icon={Briefcase}>
+          <Sub>
+            {num(interns.companies_posting)} {interns.companies_posting === 1 ? 'company' : 'companies'} posting
+            {interns.roles_pending > 0 ? ` · ${interns.roles_pending} to approve` : ''}
+          </Sub>
+        </Kpi>
+        <Kpi label="Applications" value={num(interns.applications)} icon={FileText}>
+          <Sub>
+            {num(interns.applications_30d)} in 30 days · {num(interns.students_applied)} students
+          </Sub>
+        </Kpi>
+        <Kpi label="Interning now" value={num(interns.interns_now)} icon={GraduationCap}>
+          <Sub>{num(interns.confirmed)} internships confirmed</Sub>
+        </Kpi>
+      </div>
+      <div className="mt-4">
         <Funnel title="From applying to a confirmed internship" steps={internSteps} />
       </div>
     </>
@@ -747,104 +299,66 @@ function DashboardPage() {
     <>
       <PageHeader
         eyebrow="MySkills Admin"
-        title={`${greeting()}${first ? `, ${first}` : ''}`}
-        subtitle="What needs the team today, every part of the panel you can open, and how students and both programmes are moving."
+        title="Dashboard"
+        subtitle="How MySkills is growing: users, programmes, mentors, institutions and internships."
       />
-      <Toolbar isAdmin={isAdmin === true} sections={sections ?? []} />
-
-      {(claimsReady || myLeads) && (
-        <>
-          <SectionLabel>
-            <span className="inline-flex items-center gap-2">
-              <Hand size={18} className="text-ink-500" /> My work
-            </span>
-          </SectionLabel>
-          <MyWork claimed={claimsReady ? (inbox ?? []).filter((i) => i.claim?.by === user?.id) : null} leads={myLeads} />
-        </>
-      )}
-
-      <SectionLabel
-        action={
-          <Link to="/admin/inbox" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-            Open the Inbox <ArrowRight size={14} />
-          </Link>
-        }
-      >
-        <span className="inline-flex items-center gap-2">
-          <Inbox size={18} className="text-ink-500" /> Needs the team
-        </span>
-      </SectionLabel>
-      {inbox === undefined ? <Skeleton className="h-40 w-full" /> : inbox === null ? (
-        <Alert tone="warning" title="The Inbox isn’t set up yet">
-          <p>
-            Run <code>docs/supabase-admin-inbox.sql</code> in Supabase to see what is waiting here.
-          </p>
-        </Alert>
-      ) : (
-        <NeedsYou items={inbox} me={user?.id} />
-      )}
-
-      {sections !== null && isAdmin !== null && (
-        <>
-          <SectionLabel>
-            <span className="inline-flex items-center gap-2">
-              <LayoutGrid size={18} className="text-ink-500" /> Every area
-            </span>
-          </SectionLabel>
-          <AreaBoard isAdmin={isAdmin === true} sections={sections} inbox={inbox ?? []} facts={facts} />
-        </>
-      )}
 
       {!canSeeNumbers ? (
         <>
-        <div className="card mt-9 flex items-start gap-4 p-5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
-            <Gauge size={19} />
-          </span>
-          <div>
-            <p className="font-semibold text-ink-900">Numbers and insights aren’t part of your access</p>
-            <p className="mt-0.5 text-sm text-ink-600">
-              Scores, trends and programme progress need the “Dashboard numbers” section. A super admin can add it under
-              Team &amp; roles.
-              {canSeeInternships && ' The internship numbers below come with your Internships section.'}
-            </p>
+          <div className="card flex items-start gap-4 p-5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-100 text-ink-600">
+              <Gauge size={19} />
+            </span>
+            <div>
+              <p className="font-semibold text-ink-900">The numbers aren’t part of your access</p>
+              <p className="mt-0.5 text-sm text-ink-600">
+                They need the “Dashboard numbers” section, which a super admin can add under Team &amp; roles. Your work is in
+                the{' '}
+                <Link to="/admin/inbox" className="font-semibold text-brand-700 hover:underline">
+                  Inbox
+                </Link>
+                .{canSeeInternships && ' The internship numbers below come with your Internships section.'}
+              </p>
+            </div>
           </div>
-        </div>
-        {internshipsSection}
+          {internshipsSection}
         </>
       ) : error ? (
-        <div className="mt-9">
-          <Alert tone="danger" title="Couldn’t load the numbers">
-            <p>{error}</p>
-            <p className="mt-1 text-xs">
-              First run? Apply <code>docs/supabase-admin-v2.sql</code> in Supabase.
-            </p>
-          </Alert>
-        </div>
+        <Alert tone="danger" title="Couldn’t load the numbers">
+          <p>{error}</p>
+          <p className="mt-1 text-xs">
+            First run? Apply <code>docs/supabase-admin-v2.sql</code> in Supabase.
+          </p>
+        </Alert>
       ) : !stats ? (
-        <div className="mt-9 space-y-4">
+        <div className="space-y-4">
           <Skeleton className="h-28 w-full" />
           <Skeleton className="h-48 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
       ) : (
         <>
-          <SectionLabel>At a glance</SectionLabel>
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <Kpi label="Students" value={stats.activity.total_users} icon={Users}>
-              <span className="text-xs text-ink-500">{stats.activity.active_today} signed in today</span>
+          <SectionLabel>Users</SectionLabel>
+          <div className={grid}>
+            <Kpi label="Total users" value={num(stats.activity.total_users)} icon={Users}>
+              {u && (
+                <Sub>
+                  {num(u.students)} students · {num(stats.activity.total_users - u.students)} partners
+                </Sub>
+              )}
             </Kpi>
-            <Kpi label="New this week" value={w?.new_this_week ?? stats.activity.new_this_week} icon={UserPlus}>
+            <Kpi label="Returning users" value={num(u?.returning)} icon={Repeat}>
+              {u && <Sub>{pct(u.returning, u.students)}% of students came back on another day</Sub>}
+            </Kpi>
+            <Kpi label="Active users" value={num(u?.active_30d)} icon={Activity}>
+              <Sub>
+                in 30 days · {num(stats.activity.active_today)} today · {num(w?.active_this_week ?? stats.activity.active_this_week)} this week
+              </Sub>
+            </Kpi>
+            <Kpi label="New this week" value={num(w?.new_this_week ?? stats.activity.new_this_week)} icon={UserPlus}>
               {w && <Delta now={w.new_this_week} before={w.new_last_week} />}
             </Kpi>
-            <Kpi label="Signed in this week" value={w?.active_this_week ?? stats.activity.active_this_week} icon={LogIn}>
-              {w && <Delta now={w.active_this_week} before={w.active_last_week} />}
-            </Kpi>
-            <Kpi label="Average score" value={stats.score.average ?? '—'} icon={Gauge}>
-              <span className="text-xs text-ink-500">out of 100 · {stats.score.verified_share}% verified</span>
-            </Kpi>
           </div>
-
           {extra?.days && extra.days.length > 0 && (
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
               <DayBars
@@ -863,157 +377,87 @@ function DashboardPage() {
               />
             </div>
           )}
-          {extra === null && isAdmin && (
-            <p className="mt-3 text-xs text-ink-500">
-              Trends, week-on-week changes and community numbers appear once <code>docs/supabase-admin-team.sql</code> is
-              run in Supabase.
-            </p>
-          )}
-
-          {notes.length > 0 && (
-            <>
-              <SectionLabel>
-                <span className="inline-flex items-center gap-2">
-                  <Lightbulb size={18} className="text-gold-500" /> What the numbers say
-                </span>
-              </SectionLabel>
-              <ul className="grid gap-3 lg:grid-cols-2">
-                {notes.map((n) => {
-                  const dot = n.tone === 'good' ? 'bg-emerald-500' : n.tone === 'watch' ? 'bg-amber-500' : 'bg-ink-300'
-                  const body = (
-                    <>
-                      <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${dot}`} />
-                      <span className="min-w-0 flex-1 text-sm leading-relaxed text-ink-800">{n.text}</span>
-                      {n.to && <ArrowRight size={15} className="mt-1 shrink-0 text-ink-400" />}
-                    </>
-                  )
-                  return (
-                    <li key={n.text}>
-                      {n.to ? (
-                        <Link to={n.to} className="lift flex h-full items-start gap-3 rounded-2xl border border-ink-900/[0.07] bg-white p-4">
-                          {body}
-                        </Link>
-                      ) : (
-                        <div className="flex h-full items-start gap-3 rounded-2xl border border-ink-900/[0.07] bg-white p-4">{body}</div>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </>
-          )}
-
-          <SectionLabel>Scores</SectionLabel>
-          <ScoreDistribution s={stats.score} />
 
           <SectionLabel>Programmes</SectionLabel>
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className={grid}>
+            <Kpi label="Digital Marketing" value={num(more?.programmes?.dm)} icon={BarChart3}>
+              <Sub>students · {num(stats.digital_marketing.practising)} practising</Sub>
+            </Kpi>
+            <Kpi label="Global Leadership" value={num(more?.programmes?.gl)} icon={Globe}>
+              <Sub>students · {num(stats.career_readiness.started)} writing modules</Sub>
+            </Kpi>
+            <Kpi
+              label="Projects passed"
+              value={num(stats.digital_marketing.signed_off + stats.career_readiness.signed_off)}
+              icon={ClipboardCheck}
+            >
+              <Sub>{num(stats.digital_marketing.review_asked + stats.career_readiness.review_asked)} submitted</Sub>
+            </Kpi>
+            <Kpi label="Certificates issued" value={num(stats.activity.certificates)} icon={Award} />
+            <Kpi label="Practice attempts" value={num(stats.activity.practice_this_week)} icon={Target}>
+              <Sub>this week</Sub>
+            </Kpi>
+            <Kpi label="Live sessions" value={num(stats.activity.live_sessions_this_month)} icon={CalendarCheck}>
+              <Sub>in the last 30 days</Sub>
+            </Kpi>
+            <Kpi label="Average score" value={stats.score.average ?? '—'} icon={Gauge}>
+              <Sub>out of 100 · {stats.score.verified_share}% of points verified</Sub>
+            </Kpi>
+            <Kpi
+              label="App rating"
+              value={stats.activity.avg_rating === null ? '—' : `${stats.activity.avg_rating}/10`}
+              icon={Star}
+            >
+              <Sub>from students’ feedback</Sub>
+            </Kpi>
+          </div>
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <Funnel title="Digital Marketing" steps={dm} />
             <Funnel title="Global Leadership" steps={cr} />
           </div>
+          <div className="mt-4">
+            <ScoreDistribution s={stats.score} />
+          </div>
 
-          {c && (
+          {(c || leads) && (
             <>
-              <SectionLabel
-                action={
-                  <Link to="/admin/community-portal" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-                    Portal access &amp; usage <ArrowRight size={14} />
-                  </Link>
-                }
-              >
-                Community &amp; partners
-              </SectionLabel>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <StatCard label={`Mentors · ${c.mentors_taking} taking students`} value={c.mentors_listed} icon={Users} />
-                <StatCard label="Students working with a mentor" value={c.students_with_mentor} icon={Star} />
-                <StatCard label="Institutions listed" value={c.institutions_listed} icon={Award} />
-                <StatCard label="Partner accounts in the portal" value={c.partner_accounts} icon={ShieldCheck} />
-                <StatCard label="Portal sign-ups to verify" value={c.signups_waiting} icon={UserPlus} />
-                <StatCard label="Mentor requests waiting on mentors" value={c.mentor_requests_waiting} icon={Inbox} />
-                <StatCard label="Students with a counsellor, guide or company" value={c.students_with_provider} icon={Users} />
-                <StatCard label="Partner sessions logged, 30 days" value={c.sessions_30d} icon={CalendarCheck} />
+              <SectionLabel>Mentors &amp; institutions</SectionLabel>
+              <div className={grid}>
+                <Kpi label="Mentors" value={num(c?.mentors_listed)} icon={UserCheck}>
+                  {c && <Sub>{num(c.mentors_taking)} taking students</Sub>}
+                </Kpi>
+                <Kpi label="Mentored students" value={num(c?.students_with_mentor)} icon={Users}>
+                  {c && <Sub>{num(c.mentor_requests_waiting)} waiting for a mentor</Sub>}
+                </Kpi>
+                <Kpi label="Institutions" value={num(c?.institutions_listed)} icon={School}>
+                  <Sub>listed for students</Sub>
+                </Kpi>
+                <Kpi label="Institution leads" value={num(leads?.institution_total)} icon={Target}>
+                  {leads && (
+                    <Sub>
+                      {num(leads.institution_open)} open · {num(leads.institution_enrolled)} enrolled
+                    </Sub>
+                  )}
+                </Kpi>
+                <Kpi label="Partner accounts" value={num(c?.partner_accounts)} icon={ShieldCheck}>
+                  {c && <Sub>{num(c.signups_waiting)} sign-ups to verify</Sub>}
+                </Kpi>
+                <Kpi label="Leadership leads" value={num(leads?.gl_total)} icon={Globe}>
+                  <Sub>asked about Global Leadership</Sub>
+                </Kpi>
+                <Kpi label="Guidance" value={num(c?.students_with_provider)} icon={HeartHandshake}>
+                  <Sub>students with a counsellor or guide</Sub>
+                </Kpi>
+                <Kpi label="Partner sessions" value={num(c?.sessions_30d)} icon={CalendarCheck}>
+                  <Sub>in the last 30 days</Sub>
+                </Kpi>
               </div>
             </>
           )}
 
           {internshipsSection}
-
-          <SectionLabel>Activity</SectionLabel>
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <StatCard label="Signed in today" value={stats.activity.active_today} icon={Activity} />
-              <StatCard label="Practice attempts this week" value={stats.activity.practice_this_week} icon={ClipboardCheck} />
-              <StatCard label="Live sessions, last 30 days" value={stats.activity.live_sessions_this_month} icon={CalendarCheck} />
-              <StatCard label="Certificates issued" value={stats.activity.certificates} icon={Award} />
-              <StatCard
-                label="Average feedback rating"
-                value={stats.activity.avg_rating === null ? '—' : `${stats.activity.avg_rating}/10`}
-                icon={Star}
-              />
-            </div>
-            {extra?.recent && extra.recent.length > 0 && (
-              <div className="card p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="font-display text-base font-semibold text-ink-900">Newest students</h3>
-                  <Link to="/admin/users" className="text-xs font-semibold text-brand-700 hover:underline">
-                    All students
-                  </Link>
-                </div>
-                <ul className="mt-3 divide-y divide-ink-100">
-                  {extra.recent.map((r) => (
-                    <li key={r.id}>
-                      <Link to="/admin/users/$id" params={{ id: r.id }} className="flex items-center justify-between gap-3 py-2 text-sm hover:text-brand-700">
-                        <span className="truncate font-medium text-ink-900">{r.name?.trim() || 'No name yet'}</span>
-                        <span className="shrink-0 text-xs text-ink-500">{waitedLabel(r.created_at) === 'today' ? 'today' : `${waitedLabel(r.created_at)} ago`}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
         </>
       )}
-
-      {/* Who you are here, because the same person can have several sign-ins. */}
-      <SectionLabel>Your access</SectionLabel>
-      <div className="card flex flex-wrap items-start gap-4 p-5">
-        <span
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-            isAdmin ? 'bg-gold-50 text-gold-700' : 'bg-brand-50 text-brand-700'
-          }`}
-        >
-          {isAdmin ? <Crown size={19} /> : <ShieldCheck size={19} />}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold text-ink-900">
-            {isAdmin ? 'Super admin' : 'Team member'}
-            {user?.email ? <span className="font-normal text-ink-600"> · {user.email}</span> : null}
-          </p>
-          {isAdmin ? (
-            <p className="mt-0.5 text-sm text-ink-600">
-              You can open everything, and give the rest of the team access under{' '}
-              <Link to="/admin/team" className="font-semibold text-brand-700 hover:underline">
-                Team &amp; roles
-              </Link>
-              .
-            </p>
-          ) : (
-            <>
-              <p className="mt-0.5 text-sm text-ink-600">
-                You can open the sections below. A super admin changes this under Team &amp; roles.
-              </p>
-              <ul className="mt-2.5 flex flex-wrap gap-1.5">
-                {(sections ?? []).map((s) => (
-                  <li key={s} className="rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-700">
-                    {sectionLabel(s)}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </div>
     </>
   )
 }

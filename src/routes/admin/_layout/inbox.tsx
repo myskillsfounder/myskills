@@ -3,6 +3,9 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, CheckCircle2, Hand, Inbox as InboxIcon } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { useAuthUser } from '@/lib/useAuth'
+import { useStaffAccessContext } from '@/lib/staffAccess'
+import { useMyOpenLeads } from '@/lib/institutionLeads'
+import { MyWork } from '@/components/admin/MyWork'
 import {
   INBOX_KINDS,
   claimInboxItem,
@@ -83,6 +86,8 @@ function ClaimControl({ item, me, onChange }: { item: InboxItem; me: string | un
 
 function InboxPage() {
   const { user } = useAuthUser()
+  const { isAdmin, sections } = useStaffAccessContext()
+  const myLeads = useMyOpenLeads(isAdmin === true || (sections?.includes('demo-requests') ?? false), user?.id)
   const [items, setItems] = useState<InboxItem[] | null | undefined>(undefined)
   const [error, setError] = useState<string>()
   const [kind, setKind] = useState<InboxKind | 'all'>('all')
@@ -138,6 +143,14 @@ function InboxPage() {
       )}
 
       {items === undefined && !error && <Skeleton className="h-64 w-full" />}
+
+      {/* Yours first: what you've said "I'm on it" to, and the leads you own. */}
+      {items && (claims || myLeads) && (
+        <div className="mb-6">
+          <h2 className="mb-3 font-display text-lg font-semibold text-ink-900">My work</h2>
+          <MyWork claimed={claims ? items.filter((i) => i.claim?.by === user?.id) : null} leads={myLeads} />
+        </div>
+      )}
 
       {items && (
         <>
