@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Clock, Compass, Flame, Megaphone, Target } from '
 import { goalLabel, resolveGoal } from '@/lib/onboardingContent'
 import { GOAL_ICONS } from '@/lib/goalIcons'
 import { StreakCard } from '@/components/dashboard/StreakCard'
+import { SubGoal } from '@/components/dashboard/SubGoal'
 import type { Activity } from '@/lib/activity'
 import { timeSeries } from '@/lib/timeTracker'
 
@@ -157,6 +158,8 @@ export function KeyMeasures({
                 Also: {also.join(' · ')}
               </p>
             )}
+            {/* The concrete step toward it, in their own words. Not on the first-run LaunchPad. */}
+            {!startHere && <SubGoal />}
           </>
         ) : (
           <p className="mt-3 text-sm leading-relaxed text-ink-600">
