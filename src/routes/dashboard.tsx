@@ -306,11 +306,8 @@ function DashboardPage() {
           streak={streak}
           readiness={readiness}
           highlights={highlights}
+          courses={courses}
           findMentor={findMentor}
-          trend={trend}
-          balance={balance}
-          tracks={practisedTracks}
-          modules={crProgress.modules}
         />
       </AppShell>
     )

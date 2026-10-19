@@ -1,23 +1,20 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowDownRight, ArrowUpRight, ChevronRight, Flame, Minus, Target } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronRight, Flame, Target } from 'lucide-react'
 import type { Readiness } from '@/lib/readinessScore'
+import type { CourseProgress } from '@/lib/programmes'
 import { goalLabel } from '@/lib/onboardingContent'
 import { rememberProgramme } from '@/lib/practiceProgramme'
+import { COURSE_LOOK } from '@/components/dashboard/KeyMeasures'
 import { FirstRunPath } from '@/components/dashboard/FirstRunPath'
 import { Part, slidesFor, useCountUp, useEntered, type Highlights } from '@/components/dashboard/ReadinessScoreCard'
 import { Skeleton } from '@/components/ui'
-import { SkillBalanceCard } from '@/components/dashboard/SkillBalanceCard'
-import { GrowthCards, NextStepCards } from '@/components/dashboard/GrowthCards'
-import type { Balance } from '@/lib/skillBalance'
-import type { ScoreTrend } from '@/lib/scoreTrend'
-import type { ModuleProgress } from '@/lib/careerReadinessProgramme'
 
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
 /** The score, sized for a phone: the ring beside its reading rather than above
  *  it, so the number and what it is made of fit on one screen. */
-function Score({ readiness, trend }: { readiness: Readiness; trend: ScoreTrend | null }) {
+function Score({ readiness }: { readiness: Readiness }) {
   const { score, band, personal, professional, internship } = readiness
   const R = 54
   const C = 2 * Math.PI * R
@@ -63,20 +60,7 @@ function Score({ readiness, trend }: { readiness: Readiness; trend: ScoreTrend |
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Global Readiness Score</p>
           <p className="mt-1 font-display text-xl font-semibold leading-tight text-ink-900">{band.label}</p>
-          {trend ? (
-            <p
-              className={`mt-1 inline-flex items-center gap-1 text-xs font-semibold ${
-                trend.change > 0 ? 'text-emerald-700' : trend.change < 0 ? 'text-red-600' : 'text-ink-500'
-              }`}
-            >
-              {trend.change > 0 ? <ArrowUpRight size={13} /> : trend.change < 0 ? <ArrowDownRight size={13} /> : <Minus size={13} />}
-              {trend.change === 0
-                ? `No change ${trend.since}`
-                : `${trend.change > 0 ? 'Up' : 'Down'} ${Math.abs(trend.change)} ${Math.abs(trend.change) === 1 ? 'point' : 'points'} ${trend.since}`}
-            </p>
-          ) : (
-            <p className="mt-1 text-xs leading-relaxed text-ink-600">What employers see, built from what you do here.</p>
-          )}
+          <p className="mt-1 text-xs leading-relaxed text-ink-600">What employers see, built from what you do here.</p>
         </div>
       </div>
 
@@ -85,6 +69,59 @@ function Score({ readiness, trend }: { readiness: Readiness; trend: ScoreTrend |
         <Part label="Professional Development" c={professional} tone="professional" entered={entered} delay={300} />
         <Part label="Internship" c={internship} tone="internship" entered={entered} delay={450} />
       </div>
+    </section>
+  )
+}
+
+/** The programmes under way, each one a tap from where it was left. */
+function Continue({ courses }: { courses: CourseProgress[] }) {
+  return (
+    <section>
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">Continue</h2>
+      <ul className="mt-2.5 space-y-2.5">
+        {courses.map((c) => {
+          const look = c.programme ? COURSE_LOOK[c.programme] : null
+          const Icon = look?.icon ?? BookOpen
+          return (
+            <li key={c.name}>
+              <Link
+                to="/practice"
+                onClick={() => c.programme && rememberProgramme(c.programme)}
+                className="card press flex items-center gap-3.5 p-4"
+              >
+                <span
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/40 ${
+                    look?.tile ?? 'from-brand-500 to-brand-700'
+                  }`}
+                >
+                  <Icon size={19} strokeWidth={2.2} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-base font-semibold leading-tight text-ink-900">
+                    {c.name.replace(/ Programme$/, '')}
+                  </span>
+                  <span className="mt-0.5 block text-xs leading-snug text-ink-500">{c.detail}</span>
+                  <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-ink-100">
+                    <span
+                      className={`block h-full rounded-full bg-gradient-to-r ${look?.bar ?? 'from-brand-500 to-brand-700'}`}
+                      style={{ width: `${Math.max(c.percent, 3)}%` }}
+                    />
+                  </span>
+                </span>
+                <ChevronRight size={18} className="shrink-0 text-ink-400" />
+              </Link>
+            </li>
+          )
+        })}
+        {courses.length === 0 && (
+          <li>
+            <Link to="/practice" className="card press flex items-center justify-between gap-3 p-4">
+              <span className="text-sm font-semibold text-ink-900">Open Practice</span>
+              <ArrowRight size={16} className="shrink-0 text-ink-400" />
+            </Link>
+          </li>
+        )}
+      </ul>
     </section>
   )
 }
@@ -147,11 +184,8 @@ export function PhoneLaunchPad({
   streak,
   readiness,
   highlights,
+  courses,
   findMentor,
-  trend,
-  balance,
-  tracks,
-  modules,
 }: {
   greeting: string
   loading: boolean
@@ -161,11 +195,7 @@ export function PhoneLaunchPad({
   streak: number
   readiness: Readiness
   highlights: Highlights
-  trend: ScoreTrend | null
-  balance: { aptitude: Balance; progress: Balance }
-  /** Practised tracks with their best score. */
-  tracks: { name: string; percent: number }[]
-  modules: ModuleProgress[]
+  courses: CourseProgress[]
   /** The way to a mentor, when the student is still without one. */
   findMentor?: ReactNode
 }) {
@@ -204,15 +234,8 @@ export function PhoneLaunchPad({
         <FirstRunPath name={name} goal={goal} />
       ) : (
         <>
-          <Score readiness={readiness} trend={trend} />
-          <NextStepCards
-            readiness={readiness}
-            trend={trend}
-            bestTrack={tracks.length ? [...tracks].sort((a, b) => b.percent - a.percent)[0] : null}
-            modulesDone={modules.filter((m) => m.done >= m.total).length}
-          />
-          <SkillBalanceCard aptitude={balance.aptitude} progress={balance.progress} />
-          <GrowthCards readiness={readiness} tracks={tracks} modules={modules} />
+          <Score readiness={readiness} />
+          <Continue courses={courses} />
           {findMentor}
           <Toward highlights={highlights} />
         </>
