@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from '@tanstack/react-router'
-import { ArrowRight, Award, Briefcase, CheckCircle2, Users } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Award, Briefcase, CheckCircle2, Minus, Users } from 'lucide-react'
 import type { Readiness, ReadinessComponent } from '@/lib/readinessScore'
-import { rememberProgramme } from '@/lib/practiceProgramme'
+import type { ScoreTrend } from '@/lib/scoreTrend'
 
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
@@ -135,20 +134,6 @@ type Slide = {
   tone: Tone
 }
 
-/**
- * Each slide uses the app's dark feature-card surface (the same wood-dark
- * panel, rings and white pill button as the aptitude and programme cards), so
- * the slider reads as part of the product. Only a small accent — the icon
- * tile and the eyebrow — tells the three apart.
- */
-const TONE: Record<Tone, { icon: string; eyebrow: string }> = {
-  gold: { icon: 'bg-amber-400/15 text-amber-300 ring-amber-300/30', eyebrow: 'text-amber-200' },
-  brand: { icon: 'bg-brand-400/20 text-brand-200 ring-brand-300/30', eyebrow: 'text-brand-200' },
-  green: { icon: 'bg-emerald-400/15 text-emerald-300 ring-emerald-300/30', eyebrow: 'text-emerald-200' },
-}
-
-const ADVANCE_MS = 3000
-
 /** Three things worth working toward: the certificate, a mentor, an internship. */
 export function slidesFor(h: Highlights): Slide[] {
   const cert: Slide =
@@ -182,192 +167,18 @@ export function slidesFor(h: Highlights): Slide[] {
 }
 
 /**
- * A slider at the foot of the card: the certificate, live mentor sessions and
- * the internship, each with the one action that moves it on. Moves every few
- * seconds (stopping while the pointer or focus is on it); the dots or a swipe
- * move it by hand.
- */
-function ActionSlider({ highlights }: { highlights: Highlights }) {
-  const slides = slidesFor(highlights)
-  const n = slides.length
-  // `pos` runs 0..n, where n is a copy of the first slide: the track always
-  // moves forward, and on reaching the copy it jumps (unanimated) back to the
-  // real first slide — so 3 → 1 doesn't rewind across the whole track.
-  const [pos, setPos] = useState(0)
-  const [animate, setAnimate] = useState(true)
-  const [paused, setPaused] = useState(false)
-  const [hidden, setHidden] = useState(() => document.visibilityState === 'hidden')
-  // Bumped on every move so the dot's timer restarts from empty.
-  const [tick, setTick] = useState(0)
-  const touchX = useRef<number | null>(null)
-  const active = pos % n
-
-  useEffect(() => {
-    const onVis = () => setHidden(document.visibilityState === 'hidden')
-    document.addEventListener('visibilitychange', onVis)
-    return () => document.removeEventListener('visibilitychange', onVis)
-  }, [])
-
-  const moveTo = (next: number) => {
-    setAnimate(true)
-    setPos(next)
-    setTick((t) => t + 1)
-  }
-
-  const step = (dir: 1 | -1) => {
-    if (dir === 1) {
-      // Already on the copy (its transition didn't finish): settle first.
-      if (pos >= n) {
-        setAnimate(false)
-        setPos(0)
-        requestAnimationFrame(() => requestAnimationFrame(() => moveTo(1)))
-      } else moveTo(pos + 1)
-    } else if (pos === 0) {
-      // Going back from the first slide: stand on the copy, then slide back.
-      setAnimate(false)
-      setPos(n)
-      requestAnimationFrame(() => requestAnimationFrame(() => moveTo(n - 1)))
-    } else moveTo(pos - 1)
-  }
-
-  const settle = () => {
-    if (pos >= n) {
-      setAnimate(false)
-      setPos(0)
-    }
-  }
-
-  // With reduced motion the slider doesn't move on its own — the dots and a
-  // swipe still work.
-  const [still] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  const running = !paused && !hidden && !still && n > 1
-
-  return (
-    <div
-      className="pt-6"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
-    >
-      {/* `contain: inline-size` stops the track (every slide side by side)
-          from counting toward the card's width — without it, a grid with no
-          set columns (the dashboard on phones) grows to fit all the slides
-          and the whole page renders wider than the screen. */}
-      <div
-        className="overflow-hidden rounded-2xl [contain:inline-size]"
-        aria-roledescription="carousel"
-        onTouchStart={(e) => {
-          touchX.current = e.touches[0].clientX
-          setPaused(true)
-        }}
-        onTouchEnd={(e) => {
-          const start = touchX.current
-          touchX.current = null
-          setPaused(false)
-          if (start === null) return
-          const dx = e.changedTouches[0].clientX - start
-          if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1)
-        }}
-      >
-        <div
-          className="flex"
-          onTransitionEnd={(e) => e.target === e.currentTarget && settle()}
-          style={{
-            transform: `translate3d(-${pos * 100}%, 0, 0)`,
-            transition: animate ? `transform 800ms ${EASE}` : 'none',
-          }}
-        >
-          {[...slides, slides[0]].map((s, i) => {
-            const Icon = s.icon
-            const t = TONE[s.tone]
-            const isCopy = i === n
-            const shown = i === pos
-            return (
-              <div
-                key={isCopy ? `${s.key}-copy` : s.key}
-                className="w-full shrink-0"
-                aria-roledescription={isCopy ? undefined : 'slide'}
-                aria-label={isCopy ? undefined : `${i + 1} of ${n}`}
-                aria-hidden={isCopy || i !== active}
-                style={{
-                  opacity: shown ? 1 : 0.35,
-                  transform: shown ? 'none' : 'scale(0.96)',
-                  transition: animate ? `opacity 800ms ${EASE}, transform 800ms ${EASE}` : 'none',
-                }}
-              >
-                <div className="surface-wood-dark relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl p-5 shadow-e2 sm:flex-row sm:items-center">
-                  <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
-                    <svg width="180" height="180" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="2">
-                      <circle cx="130" cy="70" r="76" />
-                      <circle cx="130" cy="70" r="56" />
-                      <circle cx="130" cy="70" r="36" />
-                      <circle cx="130" cy="70" r="16" />
-                    </svg>
-                  </span>
-                  <div className="relative flex min-w-0 flex-1 items-center gap-3.5">
-                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ring-1 ${t.icon}`}>
-                      <Icon size={19} />
-                    </span>
-                    <div className="min-w-0">
-                      <p className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${t.eyebrow}`}>{s.eyebrow}</p>
-                      <p className="mt-1 font-display text-lg font-semibold leading-snug text-white">{s.title}</p>
-                      {s.note && <p className="mt-0.5 text-xs text-white/60">{s.note}</p>}
-                    </div>
-                  </div>
-                  <Link
-                    to={s.to}
-                    onClick={() => s.programme && rememberProgramme(s.programme)}
-                    tabIndex={!isCopy && i === active ? 0 : -1}
-                    className="press relative inline-flex shrink-0 items-center justify-center gap-2 self-start whitespace-nowrap rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 sm:self-auto"
-                  >
-                    {s.cta}
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* The active dot is the timer: it fills over ADVANCE_MS and, when full,
-          moves the slider on — so the dot and the slide can't drift apart,
-          and hovering pauses both at once. */}
-      <div className="mt-3 flex items-center justify-center gap-1.5">
-        {slides.map((s, i) => (
-          <button
-            key={s.key}
-            type="button"
-            onClick={() => i !== active && moveTo(i)}
-            aria-label={`Show ${i + 1} of ${n}`}
-            aria-current={i === active}
-            className={`relative h-1.5 overflow-hidden rounded-full transition-[width,background-color] duration-500 ${
-              i === active ? `w-7 ${still ? 'bg-brand-600' : 'bg-brand-100'}` : 'w-1.5 bg-ink-300 hover:bg-ink-400'
-            }`}
-          >
-            {i === active && !still && (
-              <span
-                key={tick}
-                aria-hidden
-                className="fill-x absolute inset-0 rounded-full bg-brand-600"
-                style={{ animationDuration: `${ADVANCE_MS}ms`, animationPlayState: running ? 'running' : 'paused' }}
-                onAnimationEnd={() => step(1)}
-              />
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/**
  * The LaunchPad's centrepiece: where am I (the ring), what is it made of
  * (three parts), and what's worth working toward (the certificate, a mentor,
  * an internship).
  */
-export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readiness; highlights: Highlights }) {
+export function ReadinessScoreCard({
+  readiness,
+  trend,
+}: {
+  readiness: Readiness
+  /** How the score moved since last week (or since the first day on record). */
+  trend?: ScoreTrend | null
+}) {
   const { score, band, personal, professional, internship, verifiedPoints, selfReportedPoints } = readiness
   const counted = Math.round(verifiedPoints + selfReportedPoints)
   const R = 54
@@ -424,6 +235,18 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
 
         <div className="min-w-0 flex-1">
           <p className="font-display text-2xl font-semibold leading-tight text-ink-900">{band.label}</p>
+          {trend && (
+            <p
+              className={`mt-1 inline-flex items-center gap-1 text-sm font-semibold ${
+                trend.change > 0 ? 'text-emerald-700' : trend.change < 0 ? 'text-red-600' : 'text-ink-500'
+              }`}
+            >
+              {trend.change > 0 ? <ArrowUpRight size={15} /> : trend.change < 0 ? <ArrowDownRight size={15} /> : <Minus size={15} />}
+              {trend.change === 0
+                ? `No change ${trend.since}`
+                : `${trend.change > 0 ? 'Up' : 'Down'} ${Math.abs(trend.change)} ${Math.abs(trend.change) === 1 ? 'point' : 'points'} ${trend.since}`}
+            </p>
+          )}
           <p className="mt-1 text-sm leading-relaxed text-ink-600">
             This is what employers see. It only counts what you do on MySkills — learning, practice, live
             sessions and the project a mentor grades.
@@ -443,7 +266,6 @@ export function ReadinessScoreCard({ readiness, highlights }: { readiness: Readi
         <Part label="Internship" c={internship} tone="internship" entered={entered} delay={450} />
       </div>
 
-      <ActionSlider highlights={highlights} />
     </section>
   )
 }

@@ -112,6 +112,7 @@ export function KeyMeasures({
   startHere = false,
   showHours = true,
   hours: accountHours,
+  place,
 }: {
   goals: string[]
   streak: number
@@ -125,6 +126,8 @@ export function KeyMeasures({
   /** Hours in the last 30 days, kept with the account (lib/activity.ts). This
    *  browser's own count is used until it is known. */
   hours?: number
+  /** Where each card sits in the page's grid, when not the first-run layout. */
+  place?: { objective: string; hours: string }
 }) {
   const localHours = useMemo(() => timeSeries('month').totalHours, [])
   const hours = accountHours ?? localHours
@@ -136,7 +139,7 @@ export function KeyMeasures({
 
   return (
     <>
-      <section className={`card p-5 lg:col-start-3 lg:row-start-1 ${showHours ? '' : 'lg:row-span-2'}`}>
+      <section className={`card p-5 ${place?.objective ?? `lg:col-start-3 lg:row-start-1 ${showHours ? '' : 'lg:row-span-2'}`}`}>
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
             <Target size={16} />
@@ -200,7 +203,7 @@ export function KeyMeasures({
       </section>
 
       {showHours && (
-        <section className="card flex flex-col justify-center p-5 lg:col-start-3 lg:row-start-2">
+        <section className={`card flex flex-col justify-center p-5 ${place?.hours ?? 'lg:col-start-3 lg:row-start-2'}`}>
           <div className="flex items-center gap-2">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
               <Clock size={16} />
