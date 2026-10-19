@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BookOpen, Clock, Compass, Flame, Megaphone, Target } from 'lucide-react'
-import type { CourseProgress } from '@/lib/programmes'
 import { goalLabel, resolveGoal } from '@/lib/onboardingContent'
 import { GOAL_ICONS } from '@/lib/goalIcons'
+import { StreakCard } from '@/components/dashboard/StreakCard'
+import type { Activity } from '@/lib/activity'
 import { timeSeries } from '@/lib/timeTracker'
-import { rememberProgramme } from '@/lib/practiceProgramme'
 
 /** Each programme gets its own mark, so the two courses read apart at a
  *  glance: a megaphone for marketing, a compass for finding your direction. */
@@ -108,16 +108,14 @@ function StartHere() {
 export function KeyMeasures({
   goals,
   streak,
-  courses,
   startHere = false,
   showHours = true,
   hours: accountHours,
+  activity,
   place,
 }: {
   goals: string[]
   streak: number
-  /** The programmes working toward the objective, e.g. Digital Marketing. */
-  courses: CourseProgress[]
   /** The student hasn't taken any aptitude assessment yet. */
   startHere?: boolean
   /** The hours card says nothing before they've begun, so a new student's
@@ -126,6 +124,8 @@ export function KeyMeasures({
   /** Hours in the last 30 days, kept with the account (lib/activity.ts). This
    *  browser's own count is used until it is known. */
   hours?: number
+  /** The account's days and time (lib/activity.ts): the streak card when known. */
+  activity?: Activity | null
   /** Where each card sits in the page's grid, when not the first-run layout. */
   place?: { objective: string; hours: string }
 }) {
@@ -164,45 +164,12 @@ export function KeyMeasures({
           </p>
         )}
 
-        {courses.length > 0 && (
-          <div className="mt-4 border-t border-ink-900/[0.06] pt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Your courses</p>
-            {/* Just badges: the mark and the name, nothing to read through. Progress
-                lives on each programme's own page. */}
-            <ul className="mt-2.5 flex flex-wrap gap-2">
-              {courses.map((c) => {
-                const look = c.programme ? COURSE_LOOK[c.programme] : null
-                const Icon = look?.icon ?? BookOpen
-                return (
-                  <li key={c.name}>
-                    <Link
-                      to={c.path}
-                      onClick={() => c.programme && rememberProgramme(c.programme)}
-                      title={`${c.name} — ${c.detail}`}
-                      className="group inline-flex items-center gap-2 rounded-full border border-ink-900/[0.08] py-1.5 pl-1.5 pr-3.5 transition-colors hover:border-brand-300"
-                    >
-                      <span
-                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-white ring-1 ring-white/40 ${
-                          look?.tile ?? 'from-brand-500 to-brand-700'
-                        }`}
-                      >
-                        <Icon size={15} strokeWidth={2.2} />
-                      </span>
-                      <span className="text-[13px] font-semibold leading-tight text-ink-900">
-                        {c.name.replace(/ Programme$/, '')}
-                      </span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        )}
-
         {startHere && <StartHere />}
       </section>
 
-      {showHours && (
+      {showHours && activity && <StreakCard activity={activity} className={place?.hours ?? 'lg:col-start-3 lg:row-start-2'} />}
+
+      {showHours && !activity && (
         <section className={`card flex flex-col justify-center p-5 ${place?.hours ?? 'lg:col-start-3 lg:row-start-2'}`}>
           <div className="flex items-center gap-2">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">

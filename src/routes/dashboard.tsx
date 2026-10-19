@@ -336,7 +336,7 @@ function DashboardPage() {
               <div className="lg:col-span-2 lg:col-start-1 lg:row-span-2 lg:row-start-1">
                 <FirstRunPath name={name} goal={goals[0]} />
               </div>
-              <KeyMeasures goals={goals} streak={streak} startHere showHours={false} courses={courses} />
+              <KeyMeasures goals={goals} streak={streak} startHere showHours={false} />
             </div>
           ) : (
             // Where they stand, then where it comes from: the score beside the
@@ -354,7 +354,7 @@ function DashboardPage() {
                 streak={streak}
                 showHours
                 hours={activity?.hours30}
-                courses={courses}
+                activity={activity}
                 place={{ objective: 'lg:col-start-3 lg:row-start-2', hours: 'lg:col-start-3 lg:row-start-3' }}
               />
               <div className="lg:col-span-2 lg:col-start-1 lg:row-start-3">

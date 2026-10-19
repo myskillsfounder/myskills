@@ -85,6 +85,12 @@ export interface Activity {
   visits: number
   /** Hours in the last 30 days. */
   hours30: number
+  /** The longest run of days back to back in the last 90. */
+  best: number
+  /** Days used in the last 30. */
+  active30: number
+  /** Seconds on each day of the last 90, by local date (YYYY-MM-DD). */
+  seconds: Record<string, number>
 }
 
 /** Days back to back, ending today or yesterday. */
@@ -97,6 +103,25 @@ function streakOf(days: Set<string>): number {
     d.setDate(d.getDate() - 1)
   }
   return n
+}
+
+/** The longest run of days back to back. */
+function bestRunOf(days: Set<string>): number {
+  let best = 0
+  for (const day of days) {
+    const d = new Date(`${day}T00:00:00`)
+    d.setDate(d.getDate() - 1)
+    // Count only from the first day of each run.
+    if (days.has(localDay(d))) continue
+    let n = 0
+    const c = new Date(`${day}T00:00:00`)
+    while (days.has(localDay(c))) {
+      n++
+      c.setDate(c.getDate() + 1)
+    }
+    best = Math.max(best, n)
+  }
+  return best
 }
 
 /**
@@ -125,10 +150,14 @@ export function useActivity(): Activity | null {
       const cutoff = new Date()
       cutoff.setDate(cutoff.getDate() - 29)
       const from = localDay(cutoff)
+      const days = new Set(rows.map((r) => r.day))
       setActivity({
-        streak: streakOf(new Set(rows.map((r) => r.day))),
+        streak: streakOf(days),
         visits: rows.length,
         hours30: rows.filter((r) => r.day >= from).reduce((s, r) => s + r.seconds, 0) / 3600,
+        best: bestRunOf(days),
+        active30: rows.filter((r) => r.day >= from).length,
+        seconds: Object.fromEntries(rows.map((r) => [r.day, r.seconds])),
       })
     })()
     return () => {
