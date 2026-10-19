@@ -259,7 +259,7 @@ function LinkedInIcon({ size = 16 }: { size?: number }) {
 }
 
 /** The avatar: their photo, or their initials on the brand colour. */
-function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 'large' }) {
+export function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 'large' }) {
   const box = size === 'card' ? 'h-20 w-20 text-2xl ring-4 ring-white shadow-e1' : 'h-20 w-20 text-2xl ring-2 ring-brand-100'
   return mentor.avatar ? (
     <img src={mentor.avatar} alt="" className={`${box} shrink-0 rounded-full bg-white object-cover`} />
@@ -277,7 +277,7 @@ function MentorAvatar({ mentor, size }: { mentor: MentorListing; size: 'card' | 
  * grows, so every card in a row stays the same size however much a mentor has
  * written; this is where the whole bio and every area of expertise live.
  */
-function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListing; preview?: boolean; onClose: () => void }) {
+export function MentorProfileDialog({ mentor, preview, onClose }: { mentor: MentorListing; preview?: boolean; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
