@@ -18,6 +18,7 @@ import { useProfile } from '@/lib/useProfile'
 import { useHasStarted } from '@/lib/firstRun'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
 import { AdSlider } from './AdSlider'
+import { HelpCard } from './HelpCard'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -64,40 +65,25 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mx-5 border-t border-ink-900/[0.06]" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 px-3 py-5">
+      <nav className="flex-1 space-y-1.5 px-3 py-5">
         {NAV.map(({ to, label, icon: Icon }) => {
-          const active = pathname === to
+          // A page's own sub-pages keep it lit.
+          const active = pathname === to || pathname.startsWith(`${to}/`)
           return (
             <Link
               key={to}
               to={to}
               onClick={onNavigate}
               aria-current={active ? 'page' : undefined}
-              className={`group relative flex items-center gap-3.5 overflow-hidden rounded-xl py-2.5 pl-3.5 pr-3 text-sm outline-none backdrop-blur-md transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
-                active
-                  ? 'bg-brand-50/80 font-semibold text-brand-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_0_0_1px_rgba(111,99,226,0.12)]'
-                  : 'text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
+              className={`group flex items-center gap-3.5 rounded-2xl px-4 py-3 text-[15px] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                active ? 'bg-brand-100/70 font-semibold text-brand-800' : 'font-medium text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
               }`}
             >
-              {active && (
-                <>
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/50 to-transparent"
-                  />
-                  <span
-                    aria-hidden
-                    className="absolute inset-y-2 left-0 w-1 rounded-full bg-brand-500"
-                  />
-                </>
-              )}
               <Icon
-                size={19}
-                className={`relative shrink-0 transition-transform duration-200 ${
-                  active ? 'text-brand-600' : 'text-ink-400 group-hover:translate-x-0.5 group-hover:text-ink-800'
-                }`}
+                size={20}
+                className={`shrink-0 transition-colors duration-200 ${active ? 'text-brand-600' : 'text-ink-400 group-hover:text-ink-700'}`}
               />
-              <span className="relative">{label}</span>
+              <span>{label}</span>
             </Link>
           )
         })}
@@ -106,6 +92,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       {/* Footer */}
       <div className="mx-5 border-t border-ink-900/[0.06]" />
       <div className="space-y-3 px-4 pb-6 pt-4">
+        <HelpCard onNavigate={onNavigate} />
         <AdSlider />
 
         <ProfileNavCard onNavigate={onNavigate} active={pathname === '/profile'} />
