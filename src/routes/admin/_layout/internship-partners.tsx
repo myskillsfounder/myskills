@@ -86,8 +86,8 @@ function PortalStanding({ s }: { s: LeadPortalStatus | undefined }) {
   if (s.in_portal) return <Badge tone="success">In the portal</Badge>
   if (s.request_status === 'pending') {
     return (
-      <Link to="/admin/community-portal" className="inline-flex">
-        <Badge tone="warning">Signed up · verify in Portal access</Badge>
+      <Link to="/admin/partner-verification" className="inline-flex">
+        <Badge tone="warning">Signed up · verify in Partners to verify</Badge>
       </Link>
     )
   }
@@ -207,8 +207,8 @@ function InternshipPartnersPage() {
                     <>
                       <p className="text-sm text-ink-600">
                         {status[l.id]?.has_account
-                          ? 'They already have a MySkills account with this email: send the portal sign-in. They say they are a company, then appear in Portal access to verify.'
-                          : 'Send the company sign-up link. They sign up with this email, confirm it, then appear in Portal access to verify.'}
+                          ? 'They already have a MySkills account with this email: send the portal sign-in. They say they are a company, then appear in Partners to verify.'
+                          : 'Send the company sign-up link. They sign up with this email, confirm it, then appear in Partners to verify.'}
                       </p>
                       <div className="mt-2">
                         <InviteLink role="internships" email={l.email} existing={status[l.id]?.has_account} />

@@ -6,6 +6,7 @@
  */
 import {
   Award,
+  BadgeCheck,
   BarChart3,
   BookOpen,
   Briefcase,
@@ -60,6 +61,8 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       // Everyone starts on the Dashboard; its numbers need the 'overview' section.
       { to: '/admin', label: 'Dashboard', icon: BarChart3, exact: true, section: 'any' },
       { to: '/admin/inbox', label: 'Inbox', icon: Inbox, section: 'any' },
+      // Beside the Inbox: a partner can do nothing until they are verified.
+      { to: '/admin/partner-verification', label: 'Partners to verify', icon: BadgeCheck, section: 'portal-access', inbox: ['portal-request'] },
     ],
   },
   // Who can get in: the internal team, and partners in the Community portal.
@@ -67,7 +70,7 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
     label: 'Team & access',
     items: [
       { to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null },
-      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access', inbox: ['portal-request'] },
+      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access' },
       { to: '/admin/activity', label: 'Activity log', icon: History, section: null },
     ],
   },

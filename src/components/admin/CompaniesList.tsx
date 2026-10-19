@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Building2, Check, Globe, Mail, MapPin, Phone, Send, X } from 'lucide-react'
+import { ArrowRight, Building2, Check, Globe, Mail, MapPin, Phone, Search, Send, User, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { setLeadContacted } from '@/lib/adminProgrammes'
 import { reviewPortalRequest } from '@/lib/portalAccess'
@@ -8,9 +8,11 @@ import { revokeCommunityAccess } from '@/lib/communityPortal'
 import { useStaffAccessContext } from '@/lib/staffAccess'
 import type { AdminCompany, CompanyStage } from '@/lib/internships'
 import { InviteLink } from '@/components/admin/InviteLink'
+import { OrgAvatar } from '@/components/admin/OrgAvatar'
 import { Badge, Button, Chip, EmptyState, Textarea } from '@/components/ui'
 
 const fmtDate = (v: string) => new Date(v).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+const shortDate = (v: string) => new Date(v).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 
 /** Where a company is, in the order the team moves it along. */
@@ -134,7 +136,56 @@ function RemoveAccess({ c, onChanged }: { c: AdminCompany; onChanged: () => void
   )
 }
 
-function CompanyCard({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: boolean; onChanged: () => void }) {
+/** A number and what it counts, for a company's profile. */
+function Stat({ n, label, tone = 'text-ink-900' }: { n: number; label: string; tone?: string }) {
+  return (
+    <div className="rounded-xl bg-ink-50 px-3 py-2.5">
+      <p className={`font-display text-xl font-semibold leading-none tabular-nums ${tone}`}>{n}</p>
+      <p className="mt-1 text-xs text-ink-600">{label}</p>
+    </div>
+  )
+}
+
+/** One line in the list: enough to recognise the company and see where it stands. */
+function CompanyRow({ c, active, onOpen }: { c: AdminCompany; active: boolean; onOpen: () => void }) {
+  const st = STAGE[c.stage]
+  const line =
+    c.stage === 'in_portal'
+      ? [plural(c.roles_live, 'live role'), c.interns_now > 0 ? `${c.interns_now} interning` : null].filter(Boolean).join(' · ')
+      : c.stage === 'signed_up'
+        ? `Signed up${c.since ? ` ${shortDate(c.since)}` : ''}`
+        : c.contacted
+          ? `Contacted${c.contacted_at ? ` ${shortDate(c.contacted_at)}` : ''}`
+          : c.since
+            ? `Asked ${shortDate(c.since)}`
+            : ''
+  const needs = c.roles_pending + c.applicants_waiting
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-current={active ? 'true' : undefined}
+      className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors ${active ? 'bg-brand-50' : 'hover:bg-ink-50'}`}
+    >
+      <OrgAvatar name={c.organisation} size="sm" />
+      <span className="min-w-0 flex-1">
+        <span className={`block truncate text-sm font-semibold ${active ? 'text-brand-800' : 'text-ink-900'}`}>{c.organisation}</span>
+        <span className="block truncate text-xs text-ink-500">
+          {[c.city, line].filter(Boolean).join(' · ') || st.what}
+        </span>
+      </span>
+      {needs > 0 && (
+        <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white" title="Roles to approve and new applicants">
+          {needs}
+        </span>
+      )}
+      <Badge tone={st.tone}>{st.label}</Badge>
+    </button>
+  )
+}
+
+/** The whole company: who they are, how to reach them, what they do with students, and the next step. */
+function CompanyProfile({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: boolean; onChanged: () => void }) {
   const [inviting, setInviting] = useState(false)
   const [contacted, setContacted] = useState(Boolean(c.contacted))
   const [busy, setBusy] = useState(false)
@@ -151,74 +202,101 @@ function CompanyCard({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: 
     }
   }
 
-  const work =
-    c.stage === 'in_portal'
-      ? [
-          plural(c.roles_live, 'live role'),
-          c.roles_pending > 0 ? `${c.roles_pending} waiting for approval` : null,
-          c.applicants_waiting > 0 ? plural(c.applicants_waiting, 'new applicant') : null,
-          plural(c.interns_now, 'intern') + ' now',
-          c.internships_confirmed > 0 ? `${c.internships_confirmed} confirmed` : null,
-        ]
-          .filter(Boolean)
-          .join(' · ')
-      : null
+  const website = c.website && (/^https?:\/\//.test(c.website) ? c.website : `https://${c.website}`)
 
   return (
-    <li className="card p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-display text-lg font-semibold text-ink-900">{c.organisation}</h2>
+    <article className="card p-5 sm:p-6">
+      <div className="flex items-start gap-4">
+        <OrgAvatar name={c.organisation} size="lg" />
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-xl font-semibold leading-tight text-ink-900">{c.organisation}</h2>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <Badge tone={st.tone}>{st.label}</Badge>
+            {c.city && (
+              <span className="inline-flex items-center gap-1 text-sm text-ink-600">
+                <MapPin size={13} className="text-ink-400" /> {c.city}
+              </span>
+            )}
           </div>
-          <p className="mt-0.5 text-xs text-ink-500">
+          <p className="mt-1.5 text-xs text-ink-500">
             {st.what}
             {c.since ? ` Since ${fmtDate(c.since)}.` : ''}
           </p>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-700">
-            {c.contact_name && <span>{c.contact_name}</span>}
-            {c.email && (
-              <a href={`mailto:${c.email}`} className="inline-flex items-center gap-1 hover:text-brand-700">
-                <Mail size={13} /> {c.email}
-              </a>
-            )}
-            {c.phone && (
-              <a href={`tel:${c.phone}`} className="inline-flex items-center gap-1 hover:text-brand-700">
-                <Phone size={13} /> {c.phone}
-              </a>
-            )}
-            {c.city && (
-              <span className="inline-flex items-center gap-1">
-                <MapPin size={13} /> {c.city}
-              </span>
-            )}
-            {c.website && (
-              <a href={c.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-brand-700">
-                <Globe size={13} /> Website
-              </a>
-            )}
-          </div>
         </div>
-        {/* Only a company that filled in the form has a "contacted" to tick. */}
-        {c.lead_id && c.stage !== 'in_portal' && (
-          <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-ink-700">
-            <input type="checkbox" checked={contacted} disabled={busy} onChange={() => void toggleContacted()} className="h-4 w-4 accent-brand-600" />
-            {contacted ? `Contacted${c.contacted_at ? ` ${fmtDate(c.contacted_at)}` : ''}` : 'Mark contacted'}
-          </label>
-        )}
       </div>
 
-      {c.about && <p className="mt-3 text-sm leading-relaxed text-ink-700">{c.about}</p>}
-      {c.note && <p className="mt-3 whitespace-pre-line rounded-xl bg-ink-100 p-3 text-sm text-ink-700">{c.note}</p>}
-
-      {work && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-ink-900/[0.06] pt-3">
-          <p className="text-sm text-ink-700">{work}</p>
-          <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-            Roles &amp; applications <ArrowRight size={14} />
-          </Link>
+      {c.about ? (
+        <div className="mt-5">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">About</h3>
+          <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink-800">{c.about}</p>
         </div>
+      ) : (
+        c.stage === 'in_portal' && <p className="mt-5 text-sm text-ink-500">They haven’t written about the company in the portal yet.</p>
+      )}
+
+      {c.stage === 'in_portal' && (
+        <div className="mt-5">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">With students</h3>
+            <Link to="/admin/internships" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
+              Roles &amp; applications <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <Stat n={c.roles_live} label="Live roles" />
+            <Stat n={c.roles_pending} label="To approve" tone={c.roles_pending > 0 ? 'text-amber-700' : 'text-ink-900'} />
+            <Stat n={c.applicants_waiting} label="New applicants" tone={c.applicants_waiting > 0 ? 'text-amber-700' : 'text-ink-900'} />
+            <Stat n={c.interns_now} label={`Interning · ${c.internships_confirmed} confirmed`} />
+          </div>
+        </div>
+      )}
+
+      <div className="mt-5">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Contact</h3>
+        <ul className="mt-2 space-y-1.5 text-sm text-ink-800">
+          {c.contact_name && (
+            <li className="inline-flex items-center gap-2">
+              <User size={14} className="text-ink-400" /> {c.contact_name}
+            </li>
+          )}
+          {c.email && (
+            <li>
+              <a href={`mailto:${c.email}`} className="inline-flex items-center gap-2 hover:text-brand-700">
+                <Mail size={14} className="text-ink-400" /> {c.email}
+              </a>
+            </li>
+          )}
+          {c.phone && (
+            <li>
+              <a href={`tel:${c.phone}`} className="inline-flex items-center gap-2 hover:text-brand-700">
+                <Phone size={14} className="text-ink-400" /> {c.phone}
+              </a>
+            </li>
+          )}
+          {website && (
+            <li>
+              <a href={website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-brand-700">
+                <Globe size={14} className="text-ink-400" /> {c.website}
+              </a>
+            </li>
+          )}
+          {!c.contact_name && !c.email && !c.phone && !website && <li className="text-ink-500">No contact details.</li>}
+        </ul>
+      </div>
+
+      {c.note && (
+        <div className="mt-5">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">What they told us</h3>
+          <p className="mt-1.5 whitespace-pre-line rounded-xl bg-ink-100 p-3 text-sm leading-relaxed text-ink-700">{c.note}</p>
+        </div>
+      )}
+
+      {/* Only a company that filled in the form has a "contacted" to tick. */}
+      {c.lead_id && c.stage !== 'in_portal' && (
+        <label className="mt-5 inline-flex cursor-pointer items-center gap-2 text-sm text-ink-700">
+          <input type="checkbox" checked={contacted} disabled={busy} onChange={() => void toggleContacted()} className="h-4 w-4 accent-brand-600" />
+          {contacted ? `Contacted${c.contacted_at ? ` ${fmtDate(c.contacted_at)}` : ''}` : 'Mark contacted'}
+        </label>
       )}
 
       {c.stage === 'in_portal' && canVerify && <RemoveAccess c={c} onChanged={onChanged} />}
@@ -233,7 +311,7 @@ function CompanyCard({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: 
         ))}
 
       {(c.stage === 'interested' || c.stage === 'removed') && c.email && (
-        <div className="mt-3 border-t border-ink-900/[0.06] pt-3">
+        <div className="mt-4 border-t border-ink-900/[0.06] pt-4">
           {inviting ? (
             <>
               <p className="text-sm text-ink-600">
@@ -252,14 +330,17 @@ function CompanyCard({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: 
           )}
         </div>
       )}
-    </li>
+    </article>
   )
 }
 
+/** The order the team works in: sign-ups to verify, then the companies posting, then the rest. */
+const STAGE_ORDER: CompanyStage[] = ['signed_up', 'in_portal', 'interested', 'removed', 'turned_down']
+
 /**
  * Every internship company in one list, however it arrived: the website form,
- * a portal sign-up, or access given by the team. Filtered by where it stands,
- * and moved along from here: invite, verify, then their roles.
+ * a portal sign-up, or access given by the team. The list on the left; the
+ * company you pick, in full, on the right (under its row on a narrow screen).
  */
 export function CompaniesList({ rows, onChanged }: { rows: AdminCompany[]; onChanged: () => void }) {
   const { isAdmin, sections } = useStaffAccessContext()
@@ -270,8 +351,19 @@ export function CompaniesList({ rows, onChanged }: { rows: AdminCompany[]; onCha
     return c
   }, [rows])
   const [filter, setFilter] = useState<Filter>('all')
-  const shown = filter === 'all' ? rows : rows.filter((r) => r.stage === filter)
+  const [q, setQ] = useState('')
+  const [open, setOpen] = useState<string>()
   const order: Filter[] = ['all', 'signed_up', 'interested', 'in_portal', 'turned_down', 'removed']
+
+  const term = q.trim().toLowerCase()
+  const shown = rows
+    .filter((r) => filter === 'all' || r.stage === filter)
+    .filter((r) => !term || [r.organisation, r.contact_name ?? '', r.email ?? '', r.city ?? ''].some((v) => v.toLowerCase().includes(term)))
+    .sort(
+      (a, b) =>
+        STAGE_ORDER.indexOf(a.stage) - STAGE_ORDER.indexOf(b.stage) || (b.since ?? '').localeCompare(a.since ?? '') || a.organisation.localeCompare(b.organisation),
+    )
+  const current = shown.find((r) => r.key === open) ?? shown[0]
 
   if (rows.length === 0) {
     return (
@@ -284,7 +376,7 @@ export function CompaniesList({ rows, onChanged }: { rows: AdminCompany[]; onCha
   }
   return (
     <div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {order
           .filter((f) => f === 'all' || counts[f] > 0)
           .map((f) => (
@@ -293,11 +385,40 @@ export function CompaniesList({ rows, onChanged }: { rows: AdminCompany[]; onCha
             </Chip>
           ))}
       </div>
-      <ul className="mt-4 space-y-3">
-        {shown.map((c) => (
-          <CompanyCard key={c.key} c={c} canVerify={canVerify} onChanged={onChanged} />
-        ))}
-      </ul>
+      <div className="relative mt-3 max-w-sm">
+        <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Company, person, email or city"
+          aria-label="Search companies"
+          className="field h-10" style={{ paddingLeft: '2.25rem' }}
+        />
+      </div>
+
+      {shown.length === 0 ? (
+        <p className="mt-6 text-sm text-ink-500">No company matches.</p>
+      ) : (
+        <div className="mt-4 grid items-start gap-5 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+          <ul className="card divide-y divide-ink-900/[0.06] overflow-hidden">
+            {shown.map((c) => (
+              <li key={c.key}>
+                <CompanyRow c={c} active={current?.key === c.key} onOpen={() => setOpen(c.key)} />
+                {current?.key === c.key && (
+                  <div className="border-t border-ink-900/[0.06] bg-ink-50 p-3 lg:hidden">
+                    <CompanyProfile key={c.key} c={c} canVerify={canVerify} onChanged={onChanged} />
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+          {current && (
+            <div className="sticky top-24 hidden lg:block">
+              <CompanyProfile key={current.key} c={current} canVerify={canVerify} onChanged={onChanged} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

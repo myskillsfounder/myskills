@@ -67,6 +67,7 @@ import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/
 import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
 import { Route as AdminLayoutTeamRouteImport } from './routes/admin/_layout/team'
 import { Route as AdminLayoutPracticeRouteImport } from './routes/admin/_layout/practice'
+import { Route as AdminLayoutPartnerVerificationRouteImport } from './routes/admin/_layout/partner-verification'
 import { Route as AdminLayoutModulesRouteImport } from './routes/admin/_layout/modules'
 import { Route as AdminLayoutMentorsRouteImport } from './routes/admin/_layout/mentors'
 import { Route as AdminLayoutMentorReviewsRouteImport } from './routes/admin/_layout/mentor-reviews'
@@ -390,6 +391,12 @@ const AdminLayoutPracticeRoute = AdminLayoutPracticeRouteImport.update({
   path: '/practice',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutPartnerVerificationRoute =
+  AdminLayoutPartnerVerificationRouteImport.update({
+    id: '/partner-verification',
+    path: '/partner-verification',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
 const AdminLayoutModulesRoute = AdminLayoutModulesRouteImport.update({
   id: '/modules',
   path: '/modules',
@@ -595,6 +602,7 @@ export interface FileRoutesByFullPath {
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
   '/admin/modules': typeof AdminLayoutModulesRoute
+  '/admin/partner-verification': typeof AdminLayoutPartnerVerificationRoute
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/team': typeof AdminLayoutTeamRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
@@ -677,6 +685,7 @@ export interface FileRoutesByTo {
   '/admin/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/mentors': typeof AdminLayoutMentorsRoute
   '/admin/modules': typeof AdminLayoutModulesRoute
+  '/admin/partner-verification': typeof AdminLayoutPartnerVerificationRoute
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/team': typeof AdminLayoutTeamRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
@@ -763,6 +772,7 @@ export interface FileRoutesById {
   '/admin/_layout/mentor-reviews': typeof AdminLayoutMentorReviewsRoute
   '/admin/_layout/mentors': typeof AdminLayoutMentorsRoute
   '/admin/_layout/modules': typeof AdminLayoutModulesRoute
+  '/admin/_layout/partner-verification': typeof AdminLayoutPartnerVerificationRoute
   '/admin/_layout/practice': typeof AdminLayoutPracticeRoute
   '/admin/_layout/team': typeof AdminLayoutTeamRoute
   '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
@@ -850,6 +860,7 @@ export interface FileRouteTypes {
     | '/admin/mentor-reviews'
     | '/admin/mentors'
     | '/admin/modules'
+    | '/admin/partner-verification'
     | '/admin/practice'
     | '/admin/team'
     | '/admin/verification'
@@ -932,6 +943,7 @@ export interface FileRouteTypes {
     | '/admin/mentor-reviews'
     | '/admin/mentors'
     | '/admin/modules'
+    | '/admin/partner-verification'
     | '/admin/practice'
     | '/admin/team'
     | '/admin/verification'
@@ -1017,6 +1029,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/mentor-reviews'
     | '/admin/_layout/mentors'
     | '/admin/_layout/modules'
+    | '/admin/_layout/partner-verification'
     | '/admin/_layout/practice'
     | '/admin/_layout/team'
     | '/admin/_layout/verification'
@@ -1486,6 +1499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutPracticeRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/partner-verification': {
+      id: '/admin/_layout/partner-verification'
+      path: '/partner-verification'
+      fullPath: '/admin/partner-verification'
+      preLoaderRoute: typeof AdminLayoutPartnerVerificationRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/modules': {
       id: '/admin/_layout/modules'
       path: '/modules'
@@ -1727,6 +1747,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutMentorReviewsRoute: typeof AdminLayoutMentorReviewsRoute
   AdminLayoutMentorsRoute: typeof AdminLayoutMentorsRoute
   AdminLayoutModulesRoute: typeof AdminLayoutModulesRoute
+  AdminLayoutPartnerVerificationRoute: typeof AdminLayoutPartnerVerificationRoute
   AdminLayoutPracticeRoute: typeof AdminLayoutPracticeRoute
   AdminLayoutTeamRoute: typeof AdminLayoutTeamRoute
   AdminLayoutVerificationRoute: typeof AdminLayoutVerificationRoute
@@ -1759,6 +1780,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutMentorReviewsRoute: AdminLayoutMentorReviewsRoute,
   AdminLayoutMentorsRoute: AdminLayoutMentorsRoute,
   AdminLayoutModulesRoute: AdminLayoutModulesRoute,
+  AdminLayoutPartnerVerificationRoute: AdminLayoutPartnerVerificationRoute,
   AdminLayoutPracticeRoute: AdminLayoutPracticeRoute,
   AdminLayoutTeamRoute: AdminLayoutTeamRoute,
   AdminLayoutVerificationRoute: AdminLayoutVerificationRoute,

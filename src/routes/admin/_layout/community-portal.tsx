@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Eye, KeyRound, UserPlus, Users } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -17,7 +17,6 @@ import {
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { fetchPartnerProfiles, type AdminPartnerProfile } from '@/lib/partnerProfile'
 import { InviteLink, SIGNUP_ROLE } from '@/components/admin/InviteLink'
-import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
 import { Alert, Badge, Button, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
 
 // Needs the portal-access section (a full admin has it): this decides who can
@@ -117,10 +116,9 @@ function CommunityPortalAdminPage() {
       <PageHeader
         eyebrow="Team & access"
         title="Portal access & usage"
-        subtitle="Invite partners, verify the ones who sign up, see who can open each part of the Community portal, and which students are using which resource."
+        subtitle="Invite partners, see who can open each part of the Community portal, and which students are using which resource. New sign-ups are verified under Partners to verify."
       />
 
-      <PortalRequestsPanel onChanged={() => void load()} />
 
       {error && (
         <div className="mb-5">
@@ -136,8 +134,11 @@ function CommunityPortalAdminPage() {
           <UserPlus size={18} className="text-brand-700" /> Invite a partner
         </h2>
         <p className="mt-1 text-sm text-ink-600">
-          Everyone becomes a partner the same way: they ask, their email is confirmed, and you verify them at the top of
-          this page. Nobody is given a section directly, whether they are new or already have a MySkills account.
+          Everyone becomes a partner the same way: they ask, their email is confirmed, and you verify them under{' '}
+          <Link to="/admin/partner-verification" className="font-semibold text-brand-700 hover:underline">
+            Partners to verify
+          </Link>
+          . Nobody is given a section directly, whether they are new or already have a MySkills account.
         </p>
 
         <div className="mt-5 grid gap-6 lg:grid-cols-2">
@@ -166,8 +167,8 @@ function CommunityPortalAdminPage() {
           <div className="lg:border-l lg:border-ink-900/[0.06] lg:pl-6">
             <p className="text-sm font-semibold text-ink-900">They already have a MySkills account</p>
             <p className="mt-0.5 text-sm text-ink-600">
-              Send the portal sign-in. They sign in with the account they have, say what they do, and appear at the top
-              of this page to verify. They can’t sign up again with the same email.
+              Send the portal sign-in. They sign in with the account they have, say what they do, and appear under
+              Partners to verify. They can’t sign up again with the same email.
             </p>
             <div className="mt-3">
               <InviteLink existing />

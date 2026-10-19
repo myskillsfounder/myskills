@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Check, Mail, Phone, ShieldCheck, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
@@ -118,7 +118,19 @@ function RequestCard({
  * waiting, and quiet if the SQL for sign-up hasn't been run or the signed-in
  * person can't verify. `only` narrows it to one kind of partner.
  */
-export function PortalRequestsPanel({ onChanged, only }: { onChanged: () => void; only?: PortalRole }) {
+export function PortalRequestsPanel({
+  onChanged,
+  only,
+  empty,
+  recent = false,
+}: {
+  onChanged: () => void
+  only?: PortalRole
+  /** Shown instead of nothing when no one is waiting (the verification page). */
+  empty?: ReactNode
+  /** Also list the last decisions, so the team can see who was verified or turned down. */
+  recent?: boolean
+}) {
   const [requests, setRequests] = useState<AdminPortalRequest[] | null | undefined>(undefined)
   const [busyId, setBusyId] = useState<string>()
   const [error, setError] = useState<string>()
@@ -152,7 +164,41 @@ export function PortalRequestsPanel({ onChanged, only }: { onChanged: () => void
 
   if (requests === undefined) return <Skeleton className="mb-6 h-32 w-full" />
   const waiting = (requests ?? []).filter((r) => r.status === 'pending' && (!only || r.role === only))
-  if (!error && waiting.length === 0) return null
+  const decided = recent
+    ? (requests ?? [])
+        .filter((r) => r.status !== 'pending' && (!only || r.role === only))
+        .sort((a, b) => (b.reviewed_at ?? b.created_at).localeCompare(a.reviewed_at ?? a.created_at))
+        .slice(0, 10)
+    : []
+  const recentList = decided.length > 0 && (
+    <section className="mt-8">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Recently decided</h2>
+      <ul className="card mt-3 divide-y divide-ink-900/[0.06]">
+        {decided.map((r) => (
+          <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm">
+            <span className="min-w-0 flex-1">
+              <span className="font-semibold text-ink-900">{r.full_name || r.email}</span>
+              <span className="text-ink-500">
+                {' '}
+                · {roleLabel(r.role)}
+                {r.organisation ? ` · ${r.organisation}` : ''}
+              </span>
+            </span>
+            <Badge tone={r.status === 'approved' ? 'success' : 'neutral'}>{r.status === 'approved' ? 'Verified' : 'Turned down'}</Badge>
+            <span className="text-xs text-ink-500">{day(r.reviewed_at ?? r.created_at)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+  if (!error && waiting.length === 0) {
+    return empty || recentList ? (
+      <>
+        {empty}
+        {recentList}
+      </>
+    ) : null
+  }
 
   return (
     <section className="mb-8">
@@ -182,6 +228,7 @@ export function PortalRequestsPanel({ onChanged, only }: { onChanged: () => void
           />
         ))}
       </div>
+      {recentList}
     </section>
   )
 }
