@@ -87,6 +87,7 @@ import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
 import { Route as AdminLayoutAptitudeRouteImport } from './routes/admin/_layout/aptitude'
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
+import { Route as AdminLayoutActivityRouteImport } from './routes/admin/_layout/activity'
 import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
 import { Route as CommunityPortalLayoutStudentIdRouteImport } from './routes/community-portal/_layout/student.$id'
 import { Route as AdminLayoutUsersIdRouteImport } from './routes/admin/_layout/users.$id'
@@ -493,6 +494,11 @@ const AdminLayoutAdsRoute = AdminLayoutAdsRouteImport.update({
   path: '/ads',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutActivityRoute = AdminLayoutActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutUsersIndexRoute = AdminLayoutUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -560,6 +566,7 @@ export interface FileRoutesByFullPath {
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
@@ -640,6 +647,7 @@ export interface FileRoutesByTo {
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
+  '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
@@ -724,6 +732,7 @@ export interface FileRoutesById {
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/admin/_layout/activity': typeof AdminLayoutActivityRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
   '/admin/_layout/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/_layout/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
@@ -809,6 +818,7 @@ export interface FileRouteTypes {
     | '/partnerships/login'
     | '/blog/'
     | '/community/'
+    | '/admin/activity'
     | '/admin/ads'
     | '/admin/aptitude'
     | '/admin/assessment-questions'
@@ -889,6 +899,7 @@ export interface FileRouteTypes {
     | '/partnerships/login'
     | '/blog'
     | '/community'
+    | '/admin/activity'
     | '/admin/ads'
     | '/admin/aptitude'
     | '/admin/assessment-questions'
@@ -972,6 +983,7 @@ export interface FileRouteTypes {
     | '/partnerships/login'
     | '/blog/'
     | '/community/'
+    | '/admin/_layout/activity'
     | '/admin/_layout/ads'
     | '/admin/_layout/aptitude'
     | '/admin/_layout/assessment-questions'
@@ -1601,6 +1613,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutAdsRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/activity': {
+      id: '/admin/_layout/activity'
+      path: '/activity'
+      fullPath: '/admin/activity'
+      preLoaderRoute: typeof AdminLayoutActivityRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/users/': {
       id: '/admin/_layout/users/'
       path: '/users'
@@ -1666,6 +1685,7 @@ const PartnershipsRouteWithChildren = PartnershipsRoute._addFileChildren(
 )
 
 interface AdminLayoutRouteChildren {
+  AdminLayoutActivityRoute: typeof AdminLayoutActivityRoute
   AdminLayoutAdsRoute: typeof AdminLayoutAdsRoute
   AdminLayoutAptitudeRoute: typeof AdminLayoutAptitudeRoute
   AdminLayoutAssessmentQuestionsRoute: typeof AdminLayoutAssessmentQuestionsRoute
@@ -1696,6 +1716,7 @@ interface AdminLayoutRouteChildren {
 }
 
 const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
+  AdminLayoutActivityRoute: AdminLayoutActivityRoute,
   AdminLayoutAdsRoute: AdminLayoutAdsRoute,
   AdminLayoutAptitudeRoute: AdminLayoutAptitudeRoute,
   AdminLayoutAssessmentQuestionsRoute: AdminLayoutAssessmentQuestionsRoute,

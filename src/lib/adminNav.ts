@@ -15,6 +15,7 @@ import {
   ClipboardList,
   Dumbbell,
   FileText,
+  History,
   GraduationCap,
   HeartHandshake,
   Inbox,
@@ -113,13 +114,16 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
     items: [
       { to: '/admin/blog', label: 'Blog', icon: FileText, section: 'blog' },
       { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
-      { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback' },
+      { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback', inbox: ['feedback'] },
     ],
   },
   // Who on the internal team can open this panel. Full admins only.
   {
     label: 'Team',
-    items: [{ to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null }],
+    items: [
+      { to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null },
+      { to: '/admin/activity', label: 'Activity log', icon: History, section: null },
+    ],
   },
 ]
 

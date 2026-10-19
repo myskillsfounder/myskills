@@ -38,16 +38,24 @@ export interface AdminFeedback {
   suggestion: string
   review: string
   created_at: string
+  /** Null: nobody on the team has read it yet. Absent before docs/supabase-activity-log.sql. */
+  reviewed_at?: string | null
 }
 
 export async function fetchAllFeedback(): Promise<AdminFeedback[]> {
-  const { data, error } = await supabase
-    .from('feedback')
-    .select('id, profile_id, rating, suggestion, review, created_at')
-    .order('created_at', { ascending: false })
-    .limit(300)
+  const query = (cols: string) =>
+    supabase.from('feedback').select(cols).order('created_at', { ascending: false }).limit(300)
+  let { data, error } = await query('id, profile_id, rating, suggestion, review, created_at, reviewed_at')
+  // 42703: no reviewed_at yet (the SQL isn't run): the list as it was.
+  if (error?.code === '42703') ({ data, error } = await query('id, profile_id, rating, suggestion, review, created_at'))
   if (error) raise(error)
-  return (data ?? []) as AdminFeedback[]
+  return (data ?? []) as unknown as AdminFeedback[]
+}
+
+/** Mark feedback read; no ids marks all of it. */
+export async function markFeedbackRead(ids?: string[]): Promise<void> {
+  const { error } = await supabase.rpc('admin_mark_feedback_read', { p_ids: ids ?? null })
+  if (error) raise(error)
 }
 
 /* ========================================================================== */

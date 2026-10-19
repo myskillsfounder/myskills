@@ -18,7 +18,7 @@ export const Route = createFileRoute('/admin/_layout/modules')({
 })
 
 /**
- * The five Global Leadership modules: how many students started and finished
+ * The fourteen Global Leadership modules: how many students started and finished
  * each, and — opening one — every student's written answers, task by task.
  */
 function ModulesPage() {
@@ -47,7 +47,7 @@ function ModulesPage() {
       <PageHeader
         eyebrow="Global Leadership"
         title="Modules & answers"
-        subtitle="Each module is three written tasks and a reflection. Open one to read what students wrote."
+        subtitle="The 14 Global Leadership modules: the five core ones have three written tasks and a reflection, the other nine two tasks and a reflection. Open one to read what students wrote."
       />
 
       {error && (

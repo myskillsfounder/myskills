@@ -228,7 +228,7 @@ function WellnessRequestsPage() {
       <PageHeader
         eyebrow="Admin"
         title="Wellness requests"
-        subtitle="Counselling and career-guidance requests from the dashboard's Wellness Support card."
+        subtitle="Counselling and career-guidance requests students send privately from the Community page."
       />
 
       <div className="mb-3 flex flex-wrap gap-2">
@@ -282,7 +282,7 @@ function WellnessRequestsPage() {
         <EmptyState
           icon={HeartHandshake}
           title="No requests here"
-          description="Counselling and career-guidance requests from the dashboard will show up here."
+          description="Counselling and career-guidance requests from the Community page will show up here."
         />
       ) : (
         <div className="space-y-4">

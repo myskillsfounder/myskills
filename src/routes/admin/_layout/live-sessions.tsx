@@ -77,7 +77,7 @@ function LiveSessionsPage() {
       <PageHeader
         eyebrow="Admin"
         title="Live sessions"
-        subtitle="Confirm that a student attended a live session with a trainer, mentor or institution. Each confirmed session is worth 2 points of their Global Readiness Score, up to 10 per programme."
+        subtitle="Confirm that a student attended a live session with a trainer, mentor or institution. A Digital Marketing live training adds 1 point to their Global Readiness Score, up to 5. Global Leadership sessions go on their record but aren’t scored."
       />
 
       <form onSubmit={submit} className="card mb-6 space-y-4 p-5 sm:p-6">

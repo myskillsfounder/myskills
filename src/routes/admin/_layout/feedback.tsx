@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
-import { MessageSquare, Star } from 'lucide-react'
-import { fetchAllFeedback, type AdminFeedback } from '@/lib/admin'
+import { Check, MessageSquare, Star } from 'lucide-react'
+import { fetchAllFeedback, markFeedbackRead, type AdminFeedback } from '@/lib/admin'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
-import { Alert, Badge, EmptyState, PageHeader, Skeleton } from '@/components/ui'
+import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/feedback')({
   component: () => (
@@ -33,6 +33,18 @@ function FeedbackPage() {
     }
   }, [])
 
+  // reviewed_at null = new; undefined = the column isn't there yet, so nothing is "new".
+  const unread = items.filter((i) => i.reviewed_at === null)
+  async function markRead(ids?: string[]) {
+    try {
+      await markFeedbackRead(ids)
+      const now = new Date().toISOString()
+      setItems((prev) => prev.map((i) => (!ids || ids.includes(i.id) ? { ...i, reviewed_at: i.reviewed_at ?? now } : i)))
+    } catch (e) {
+      setError(errorMessage(e))
+    }
+  }
+
   const rated = items.filter((i) => i.rating !== null)
   const avg = rated.length
     ? Math.round((rated.reduce((s, i) => s + (i.rating ?? 0), 0) / rated.length) * 10) / 10
@@ -49,6 +61,15 @@ function FeedbackPage() {
             : `What users are telling you — ${avg}/10 across ${rated.length} ratings.`
         }
       />
+
+      {unread.length > 0 && (
+        <div className="mb-5 flex flex-wrap items-center gap-3">
+          <Badge tone="brand">{unread.length} new</Badge>
+          <Button size="sm" variant="secondary" icon={Check} onClick={() => void markRead()}>
+            Mark all as read
+          </Button>
+        </div>
+      )}
 
       {error && (
         <div className="mb-5">
@@ -72,14 +93,28 @@ function FeedbackPage() {
       ) : (
         <div className="space-y-4">
           {items.map((f) => (
-            <article key={f.id} className="card p-5">
+            <article key={f.id} className={`card p-5 ${f.reviewed_at === null ? 'ring-2 ring-brand-200' : ''}`}>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <Badge tone={toneFor(f.rating)} icon={Star}>
-                  {f.rating === null ? 'No rating' : `${f.rating}/10`}
-                </Badge>
-                <time className="text-xs text-ink-500" dateTime={f.created_at}>
-                  {new Date(f.created_at).toLocaleDateString()}
-                </time>
+                <span className="inline-flex items-center gap-2">
+                  <Badge tone={toneFor(f.rating)} icon={Star}>
+                    {f.rating === null ? 'No rating' : `${f.rating}/10`}
+                  </Badge>
+                  {f.reviewed_at === null && <Badge tone="brand">New</Badge>}
+                </span>
+                <span className="inline-flex items-center gap-3">
+                  {f.reviewed_at === null && (
+                    <button
+                      type="button"
+                      onClick={() => void markRead([f.id])}
+                      className="text-xs font-semibold text-brand-700 hover:underline"
+                    >
+                      Mark as read
+                    </button>
+                  )}
+                  <time className="text-xs text-ink-500" dateTime={f.created_at}>
+                    {new Date(f.created_at).toLocaleDateString()}
+                  </time>
+                </span>
               </div>
 
               {f.review.trim() && (

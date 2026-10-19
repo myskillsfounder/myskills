@@ -4,6 +4,7 @@ import { ArrowRight, Building2, Check, Globe, Mail, MapPin, Phone, Send, X } fro
 import { errorMessage } from '@/lib/errors'
 import { setLeadContacted } from '@/lib/adminProgrammes'
 import { reviewPortalRequest } from '@/lib/portalAccess'
+import { revokeCommunityAccess } from '@/lib/communityPortal'
 import { useStaffAccessContext } from '@/lib/staffAccess'
 import type { AdminCompany, CompanyStage } from '@/lib/internships'
 import { InviteLink } from '@/components/admin/InviteLink'
@@ -83,6 +84,50 @@ function Verify({ c, onChanged }: { c: AdminCompany; onChanged: () => void }) {
             <X size={14} /> Turn down
           </button>
         </div>
+      )}
+      {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+    </div>
+  )
+}
+
+/** Take a company out of the portal: its roles stop showing to students. */
+function RemoveAccess({ c, onChanged }: { c: AdminCompany; onChanged: () => void }) {
+  const [confirming, setConfirming] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string>()
+  if (!c.user_id) return null
+  return (
+    <div className="mt-3">
+      {confirming ? (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl bg-red-50 p-3">
+          <p className="min-w-0 flex-1 text-sm text-red-900">
+            Remove {c.organisation} from the portal? Their roles stop showing to students and they can’t sign in to the
+            portal. Students already interning keep their internship.
+          </p>
+          <Button
+            size="sm"
+            variant="danger"
+            disabled={busy}
+            onClick={() => {
+              setBusy(true)
+              void revokeCommunityAccess(c.user_id!, 'internships')
+                .then(onChanged)
+                .catch((e) => {
+                  setError(errorMessage(e))
+                  setBusy(false)
+                })
+            }}
+          >
+            {busy ? 'Removing…' : 'Yes, remove'}
+          </Button>
+          <Button size="sm" variant="ghost" disabled={busy} onClick={() => setConfirming(false)}>
+            Keep
+          </Button>
+        </div>
+      ) : (
+        <button type="button" onClick={() => setConfirming(true)} className="text-sm font-medium text-ink-500 hover:text-red-700">
+          Remove their portal access
+        </button>
       )}
       {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
     </div>
@@ -175,6 +220,8 @@ function CompanyCard({ c, canVerify, onChanged }: { c: AdminCompany; canVerify: 
           </Link>
         </div>
       )}
+
+      {c.stage === 'in_portal' && canVerify && <RemoveAccess c={c} onChanged={onChanged} />}
 
       {c.stage === 'signed_up' &&
         (canVerify ? (
