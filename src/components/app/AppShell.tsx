@@ -50,13 +50,13 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="surface-wood flex h-full flex-col">
       {/* Brand */}
-      <div className="flex items-center gap-3 px-5 pb-5 pt-6">
-        <img src="/logo-mark.png" alt="" className="h-10 w-10 shrink-0" />
+      <div className="flex items-center gap-2.5 px-5 pb-4 pt-5">
+        <img src="/logo-mark.png" alt="" className="h-9 w-9 shrink-0" />
         <div className="min-w-0">
-          <p className="font-display text-[17px] font-semibold leading-tight tracking-tight text-ink-900">
+          <p className="font-display text-base font-semibold leading-tight tracking-tight text-ink-900">
             MySkills
           </p>
-          <p className="text-xs font-medium leading-snug text-ink-500">
+          <p className="text-[11px] font-medium leading-snug text-ink-500">
             Personal &amp; professional development
           </p>
         </div>
@@ -65,7 +65,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mx-5 border-t border-ink-900/[0.06]" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1.5 px-3 py-5">
+      <nav className="flex-1 space-y-1 px-3 py-4">
         {NAV.map(({ to, label, icon: Icon }) => {
           // A page's own sub-pages keep it lit.
           const active = pathname === to || pathname.startsWith(`${to}/`)
@@ -75,12 +75,12 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               to={to}
               onClick={onNavigate}
               aria-current={active ? 'page' : undefined}
-              className={`group flex items-center gap-3.5 rounded-2xl px-4 py-3 text-[15px] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
+              className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
                 active ? 'bg-brand-100/70 font-semibold text-brand-800' : 'font-medium text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
               }`}
             >
               <Icon
-                size={20}
+                size={18}
                 className={`shrink-0 transition-colors duration-200 ${active ? 'text-brand-600' : 'text-ink-400 group-hover:text-ink-700'}`}
               />
               <span>{label}</span>
@@ -91,7 +91,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* Footer */}
       <div className="mx-5 border-t border-ink-900/[0.06]" />
-      <div className="space-y-3 px-4 pb-6 pt-4">
+      <div className="space-y-2.5 px-4 pb-5 pt-4">
         <HelpCard onNavigate={onNavigate} />
         <AdSlider />
 
@@ -100,9 +100,9 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <button
           type="button"
           onClick={handleSignOut}
-          className="group flex w-full items-center gap-2.5 rounded-2xl border border-ink-900/[0.08] bg-white px-3.5 py-2.5 text-sm font-medium text-ink-800 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
+          className="group flex w-full items-center gap-2.5 rounded-xl border border-ink-900/[0.08] bg-white px-3 py-2 text-[13px] font-medium text-ink-800 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
         >
-          <LogOut size={17} className="text-ink-600 transition-transform duration-300 group-hover:-translate-x-0.5" />
+          <LogOut size={15} className="text-ink-600 transition-transform duration-300 group-hover:-translate-x-0.5" />
           Sign Out
         </button>
       </div>
@@ -129,15 +129,15 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
     <Link
       to="/profile"
       onClick={onNavigate}
-      className={`group flex flex-col gap-2.5 rounded-2xl border px-3.5 py-3 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 ${
+      className={`group flex flex-col gap-2 rounded-xl border px-3 py-2.5 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 ${
         active ? 'border-ink-900/[0.12] bg-ink-100' : 'border-ink-900/[0.08] bg-white hover:bg-ink-100'
       }`}
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
-          <User size={16} />
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
+          <User size={14} />
         </span>
-        <span className="min-w-0 flex-1 text-sm font-medium text-ink-900">Profile</span>
+        <span className="min-w-0 flex-1 text-[13px] font-medium text-ink-900">Profile</span>
         {incomplete ? (
           <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
             {percent}%
@@ -149,13 +149,13 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
 
       {incomplete && (
         <>
-          <div className="h-1.5 overflow-hidden rounded-full bg-ink-200">
+          <div className="h-1 overflow-hidden rounded-full bg-ink-200">
             <span
               className="block h-full rounded-full bg-amber-500 transition-[width] duration-300"
               style={{ width: `${percent}%` }}
             />
           </div>
-          <p className="text-xs leading-snug text-ink-600">
+          <p className="text-[11px] leading-snug text-ink-600">
             Add {missing[0].label.toLowerCase()}
             {missing.length > 1 ? ` +${missing.length - 1} more` : ''} to finish your profile.
           </p>
