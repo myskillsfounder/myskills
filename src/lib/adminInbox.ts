@@ -23,12 +23,21 @@ export type InboxKind =
   | 'internship-signoff'
   | 'feedback'
 
+/** Who said "I'm on it" (docs/supabase-inbox-claims.sql). */
+export interface InboxClaim {
+  by: string
+  name: string
+  at: string
+}
+
 export interface InboxItem {
   kind: InboxKind
   ref: string
   title: string
   detail: string | null
   created_at: string
+  /** Null when nobody has it; undefined until the claims SQL is run, so no buttons show. */
+  claim?: InboxClaim | null
 }
 
 /** What each kind is called, and which admin page deals with it. */
@@ -53,6 +62,12 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
   feedback: { label: 'New feedback', plural: 'New feedback', to: '/admin/feedback' },
 }
 
+/** Where an item is dealt with; a lead opens on its own row. */
+export function inboxLink(i: Pick<InboxItem, 'kind' | 'ref'>): { to: string; search?: { lead: string } } {
+  const to = INBOX_KINDS[i.kind].to
+  return i.kind === 'institution-lead' || i.kind === 'lead-follow-up' ? { to, search: { lead: i.ref } } : { to }
+}
+
 const DAY = 24 * 60 * 60 * 1000
 
 /** Whole days an item has waited (0 = today). */
@@ -75,12 +90,14 @@ export function waitedLabel(iso: string): string {
  */
 export function fetchInbox(): Promise<InboxItem[] | null> {
   return shared('adminInbox', async () => {
-    const [main, feedback, leads] = await Promise.all([
+    const [main, feedback, leads, claims] = await Promise.all([
       supabase.rpc('admin_inbox'),
       // Unread feedback (docs/supabase-activity-log.sql); nothing until that is run.
       supabase.rpc('admin_inbox_feedback'),
       // New institution leads and follow-ups due (docs/supabase-institution-leads.sql).
       supabase.rpc('admin_inbox_institution_leads'),
+      // Who is on what (docs/supabase-inbox-claims.sql).
+      supabase.rpc('admin_inbox_claims'),
     ])
     const { data, error } = main
     if (error) {
@@ -92,12 +109,26 @@ export function fetchInbox(): Promise<InboxItem[] | null> {
       ...((feedback.error ? [] : feedback.data ?? []) as InboxItem[]),
       ...((leads.error ? [] : leads.data ?? []) as InboxItem[]),
     ]
+    const held = claims.error
+      ? null
+      : new Map(
+          ((claims.data ?? []) as { kind: string; ref: string; claimed_by: string; name: string; claimed_at: string }[]).map(
+            (c) => [`${c.kind}:${c.ref}`, { by: c.claimed_by, name: c.name, at: c.claimed_at }] as const,
+          ),
+        )
     // A kind this page doesn't know yet (the SQL can run ahead of a deploy) is
     // left out rather than breaking the Inbox and the Dashboard. Oldest first.
     return rows
       .filter((i) => i.kind in INBOX_KINDS)
+      .map((i) => (held ? { ...i, claim: held.get(`${i.kind}:${i.ref}`) ?? null } : i))
       .sort((a, b) => a.created_at.localeCompare(b.created_at))
   })
+}
+
+/** Say "I'm on it" (claim true), or let go of it. Claiming someone else's takes it over. */
+export async function claimInboxItem(i: Pick<InboxItem, 'kind' | 'ref'>, claim: boolean): Promise<void> {
+  const { error } = await supabase.rpc('admin_claim_inbox_item', { p_kind: i.kind, p_ref: i.ref, p_claim: claim })
+  if (error) throw new Error(error.message?.trim() || 'Something went wrong.')
 }
 
 /** Everything waiting for this person, once, for the menu: null until known, or without the SQL. */

@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, CheckCircle2, Inbox as InboxIcon } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Hand, Inbox as InboxIcon } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
+import { useAuthUser } from '@/lib/useAuth'
 import {
   INBOX_KINDS,
+  claimInboxItem,
   daysWaiting,
   fetchInbox,
+  inboxLink,
   waitedLabel,
   type InboxItem,
   type InboxKind,
@@ -26,20 +29,77 @@ function ageTone(days: number): string {
   return 'bg-ink-100 text-ink-600 ring-ink-200'
 }
 
+/**
+ * "I'm on it", or who already is. Claiming someone else's takes it over, for
+ * when they're away; the button says so.
+ */
+function ClaimControl({ item, me, onChange }: { item: InboxItem; me: string | undefined; onChange: () => void }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string>()
+  if (item.claim === undefined) return null
+
+  async function set(claim: boolean) {
+    setBusy(true)
+    setError(undefined)
+    try {
+      await claimInboxItem(item, claim)
+      onChange()
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const small = 'rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors disabled:opacity-50'
+  const c = item.claim
+  return (
+    <div className="flex shrink-0 flex-col items-end gap-1">
+      {!c ? (
+        <button type="button" disabled={busy} onClick={() => void set(true)} className={`${small} inline-flex items-center gap-1 border border-brand-200 bg-white text-brand-700 hover:bg-brand-50`}>
+          <Hand size={12} /> I’m on it
+        </button>
+      ) : c.by === me ? (
+        <div className="flex items-center gap-1.5">
+          <span className="rounded-full bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white">You’re on it</span>
+          <button type="button" disabled={busy} onClick={() => void set(false)} className={`${small} text-ink-500 hover:bg-ink-100 hover:text-ink-800`}>
+            Let go
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-1.5">
+          <span className="max-w-[10rem] truncate rounded-full bg-ink-100 px-2.5 py-1 text-xs font-semibold text-ink-700" title={`Since ${new Date(c.at).toLocaleString()}`}>
+            {c.name} is on it
+          </span>
+          <button type="button" disabled={busy} onClick={() => void set(true)} className={`${small} text-ink-500 hover:bg-ink-100 hover:text-ink-800`}>
+            Take over
+          </button>
+        </div>
+      )}
+      {error && <span className="text-[11px] text-red-700">{error}</span>}
+    </div>
+  )
+}
+
 function InboxPage() {
+  const { user } = useAuthUser()
   const [items, setItems] = useState<InboxItem[] | null | undefined>(undefined)
   const [error, setError] = useState<string>()
   const [kind, setKind] = useState<InboxKind | 'all'>('all')
+  const [who, setWho] = useState<'all' | 'mine' | 'nobody'>('all')
 
-  useEffect(() => {
-    let active = true
-    fetchInbox()
-      .then((r) => active && setItems(r))
-      .catch((e) => active && setError(errorMessage(e)))
-    return () => {
-      active = false
+  const load = useCallback(async () => {
+    try {
+      setItems(await fetchInbox())
+      setError(undefined)
+    } catch (e) {
+      setError(errorMessage(e))
     }
   }, [])
+  useEffect(() => {
+    void load()
+  }, [load])
+  const claims = (items ?? []).some((i) => i.claim !== undefined)
 
   const counts = useMemo(() => {
     const c = new Map<InboxKind, number>()
@@ -47,7 +107,11 @@ function InboxPage() {
     return c
   }, [items])
 
-  const visible = (items ?? []).filter((i) => kind === 'all' || i.kind === kind)
+  const visible = (items ?? [])
+    .filter((i) => kind === 'all' || i.kind === kind)
+    .filter((i) => (who === 'all' ? true : who === 'mine' ? i.claim?.by === user?.id : !i.claim))
+  const mine = (items ?? []).filter((i) => i.claim?.by === user?.id).length
+  const nobody = (items ?? []).filter((i) => !i.claim).length
   const overdue = (items ?? []).filter((i) => daysWaiting(i.created_at) >= 7).length
   const oldest = items && items.length > 0 ? items[0] : null
 
@@ -56,7 +120,7 @@ function InboxPage() {
       <PageHeader
         eyebrow="Admin"
         title="Inbox"
-        subtitle="Everything waiting on the team, oldest first. Each item opens the page where you deal with it."
+        subtitle="Everything waiting on the team, oldest first. Say “I’m on it” so nobody doubles up; each item opens the page where you deal with it."
       />
 
       {error && (
@@ -96,6 +160,30 @@ function InboxPage() {
             </div>
           </div>
 
+          {items.length > 0 && claims && (
+            <div className="mb-3 inline-flex rounded-xl border border-ink-200 bg-white p-1" role="group" aria-label="Whose">
+              {(
+                [
+                  ['all', 'Everyone’s', items.length],
+                  ['mine', 'Mine', mine],
+                  ['nobody', 'Nobody’s yet', nobody],
+                ] as const
+              ).map(([k, label, n]) => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => setWho(k)}
+                  aria-pressed={who === k}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                    who === k ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'
+                  }`}
+                >
+                  {label} <span className={`tabular-nums ${who === k ? 'text-white/60' : 'text-ink-400'}`}>{n}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           {items.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               <button
@@ -130,12 +218,22 @@ function InboxPage() {
             />
           ) : (
             <ul className="card divide-y divide-ink-900/[0.06]">
+              {visible.length === 0 && (
+                <li className="px-5 py-8 text-center text-sm text-ink-500">
+                  {who === 'mine' ? 'You haven’t said “I’m on it” to anything here.' : 'Everything here has someone on it.'}
+                </li>
+              )}
               {visible.map((i) => {
                 const k = INBOX_KINDS[i.kind]
                 const days = daysWaiting(i.created_at)
+                const link = inboxLink(i)
                 return (
-                  <li key={`${i.kind}-${i.ref}`}>
-                    <Link to={k.to} className="group flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-ink-50 sm:px-5">
+                  <li key={`${i.kind}-${i.ref}`} className="flex items-center gap-2 pr-3 sm:pr-4">
+                    <Link
+                      to={link.to}
+                      search={link.search as never}
+                      className="group flex min-w-0 flex-1 items-center gap-4 px-4 py-3.5 transition-colors hover:bg-ink-50 sm:px-5"
+                    >
                       <span className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 sm:flex">
                         <InboxIcon size={17} />
                       </span>
@@ -151,6 +249,7 @@ function InboxPage() {
                       </span>
                       <ArrowRight size={16} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
                     </Link>
+                    <ClaimControl item={i} me={user?.id} onChange={() => void load()} />
                   </li>
                 )
               })}

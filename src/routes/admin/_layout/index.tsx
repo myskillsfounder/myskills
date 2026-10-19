@@ -15,6 +15,7 @@ import {
   Crown,
   Gauge,
   GraduationCap,
+  Hand,
   Inbox,
   KeyRound,
   LayoutGrid,
@@ -26,12 +27,14 @@ import {
   Search,
   ShieldCheck,
   Star,
+  Target,
   UserCog,
   UserPlus,
   Users,
 } from 'lucide-react'
 import { fetchOverviewV2, type AdminOverviewV2 } from '@/lib/adminStudents'
-import { INBOX_KINDS, daysWaiting, fetchInbox, waitedLabel, type InboxItem, type InboxKind } from '@/lib/adminInbox'
+import { INBOX_KINDS, daysWaiting, fetchInbox, inboxLink, waitedLabel, type InboxItem, type InboxKind } from '@/lib/adminInbox'
+import { fetchInstitutionLeads, stageInfo, type InstitutionLead } from '@/lib/institutionLeads'
 import { fetchDashboardExtra, sectionLabel, type DashboardExtra } from '@/lib/adminTeam'
 import { useStaffAccessContext } from '@/lib/staffAccess'
 import { fetchInternshipOverview, type InternshipOverview } from '@/lib/internships'
@@ -107,7 +110,7 @@ function ageTone(days: number): string {
   return 'bg-ink-100 text-ink-600'
 }
 
-function NeedsYou({ items }: { items: InboxItem[] }) {
+function NeedsYou({ items, me }: { items: InboxItem[]; me: string | undefined }) {
   if (items.length === 0) {
     return (
       <div className="card flex items-center gap-4 p-5">
@@ -157,12 +160,16 @@ function NeedsYou({ items }: { items: InboxItem[] }) {
               const days = daysWaiting(i.created_at)
               return (
                 <li key={`${i.kind}-${i.ref}`}>
-                  <Link to={INBOX_KINDS[i.kind].to} className="group flex items-center gap-3 py-2.5">
+                  <Link to={inboxLink(i).to} search={inboxLink(i).search as never} className="group flex items-center gap-3 py-2.5">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-ink-900 group-hover:text-brand-700">{i.title}</p>
                       <p className="truncate text-xs text-ink-500">
                         {INBOX_KINDS[i.kind].label}
                         {i.detail ? ` · ${i.detail}` : ''}
+                        {i.claim === null && (
+                          <span className={days >= 3 ? 'font-semibold text-amber-700' : ''}> · nobody on it</span>
+                        )}
+                        {i.claim && <span className="text-ink-600"> · {i.claim.by === me ? 'you’re' : `${i.claim.name} is`} on it</span>}
                       </p>
                     </div>
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${ageTone(days)}`}>
@@ -175,6 +182,122 @@ function NeedsYou({ items }: { items: InboxItem[] }) {
           </ul>
         </div>
       </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------- my work */
+
+const todayIso = () => {
+  const d = new Date()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+const shortDay = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
+
+/**
+ * What this person has said "I'm on it" to, and the institution leads they own,
+ * follow-ups due first: the list to work through before anything new.
+ */
+function MyWork({ claimed, leads }: { claimed: InboxItem[] | null; leads: InstitutionLead[] | null }) {
+  const today = todayIso()
+  const due = (leads ?? []).filter((l) => l.follow_up_on && l.follow_up_on <= today).length
+  // Each half only when it can be used: claims need docs/supabase-inbox-claims.sql,
+  // leads need the Institution leads section.
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {claimed && (
+        <div className="card p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="inline-flex items-center gap-2 font-display text-base font-semibold text-ink-900">
+              <Hand size={16} className="text-brand-600" /> You’re on it
+            </h3>
+            <span className="text-xs font-semibold tabular-nums text-ink-500">{claimed.length}</span>
+          </div>
+          {claimed.length === 0 ? (
+            <p className="mt-2 text-sm text-ink-600">
+              Nothing yet. Pick something from the{' '}
+              <Link to="/admin/inbox" className="font-semibold text-brand-700 hover:underline">
+                Inbox
+              </Link>{' '}
+              and say “I’m on it” so the team knows.
+            </p>
+          ) : (
+            <ul className="mt-2 divide-y divide-ink-100">
+              {claimed.map((i) => (
+                <li key={`${i.kind}-${i.ref}`}>
+                  <Link to={inboxLink(i).to} search={inboxLink(i).search as never} className="group flex items-center gap-3 py-2.5">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-ink-900 group-hover:text-brand-700">{i.title}</p>
+                      <p className="truncate text-xs text-ink-500">
+                        {INBOX_KINDS[i.kind].label}
+                        {i.detail ? ` · ${i.detail}` : ''}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${ageTone(daysWaiting(i.created_at))}`}>
+                      {waitedLabel(i.created_at)}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {leads && (
+        <div className="card p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="inline-flex items-center gap-2 font-display text-base font-semibold text-ink-900">
+              <Target size={16} className="text-brand-600" /> Your institution leads
+            </h3>
+            {due > 0 ? (
+              <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700">{due} to call today</span>
+            ) : (
+              <span className="text-xs font-semibold tabular-nums text-ink-500">{leads.length}</span>
+            )}
+          </div>
+          {leads.length === 0 ? (
+            <p className="mt-2 text-sm text-ink-600">
+              None open.{' '}
+              <Link to="/admin/institution-leads" className="font-semibold text-brand-700 hover:underline">
+                See every lead
+              </Link>
+            </p>
+          ) : (
+            <ul className="mt-2 divide-y divide-ink-100">
+              {leads.slice(0, 6).map((l) => {
+                const late = l.follow_up_on != null && l.follow_up_on <= today
+                return (
+                  <li key={l.id}>
+                    <Link to="/admin/institution-leads" search={{ lead: l.id }} className="group flex items-center gap-3 py-2.5">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-ink-900 group-hover:text-brand-700">{l.full_name}</p>
+                        <p className="truncate text-xs text-ink-500">
+                          {stageInfo(l.stage).label} · {l.institution_name}
+                          {l.course ? ` · ${l.course}` : ''}
+                        </p>
+                      </div>
+                      {l.follow_up_on && (
+                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${late ? 'bg-red-50 text-red-700' : 'bg-ink-100 text-ink-600'}`}>
+                          {l.follow_up_on < today ? `Overdue · ${shortDay(l.follow_up_on)}` : l.follow_up_on === today ? 'Call today' : shortDay(l.follow_up_on)}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                )
+              })}
+              {leads.length > 6 && (
+                <li className="pt-2.5 text-xs">
+                  <Link to="/admin/institution-leads" className="font-semibold text-brand-700 hover:underline">
+                    {leads.length - 6} more
+                  </Link>
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -422,6 +545,26 @@ function DashboardPage() {
   // Null until docs/supabase-admin-internships.sql is in: the section is left out.
   const [interns, setInterns] = useState<InternshipOverview | null>(null)
   const [error, setError] = useState<string>()
+  // Open institution leads this person owns; null without that section or the SQL.
+  const [myLeads, setMyLeads] = useState<InstitutionLead[] | null>(null)
+  const canLeads = isAdmin === true || (sections?.includes('demo-requests') ?? false)
+  const uid = user?.id
+  useEffect(() => {
+    if (!canLeads || !uid) return
+    let active = true
+    fetchInstitutionLeads()
+      .then((all) => {
+        if (!active || !all) return
+        const open = all.filter((l) => l.owner_id === uid && (l.stage === 'new' || l.stage === 'contacted' || l.stage === 'visit'))
+        // Follow-ups first, soonest first; then those without a date.
+        open.sort((a, b) => (a.follow_up_on ?? '9999').localeCompare(b.follow_up_on ?? '9999'))
+        setMyLeads(open)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [canLeads, uid])
 
   useEffect(() => {
     let active = true
@@ -463,6 +606,8 @@ function DashboardPage() {
   }, [canSeeInternships])
 
   const first = user ? userDisplayName(user).split(' ')[0] : ''
+  // Whether "I'm on it" is set up: every item then carries a claim, even if null.
+  const claimsReady = inbox?.some((i) => i.claim !== undefined) ?? false
   const dm: Step[] = stats
     ? [
         { label: 'Took the aptitude assessment', count: stats.digital_marketing.aptitude },
@@ -607,6 +752,17 @@ function DashboardPage() {
       />
       <Toolbar isAdmin={isAdmin === true} sections={sections ?? []} />
 
+      {(claimsReady || myLeads) && (
+        <>
+          <SectionLabel>
+            <span className="inline-flex items-center gap-2">
+              <Hand size={18} className="text-ink-500" /> My work
+            </span>
+          </SectionLabel>
+          <MyWork claimed={claimsReady ? (inbox ?? []).filter((i) => i.claim?.by === user?.id) : null} leads={myLeads} />
+        </>
+      )}
+
       <SectionLabel
         action={
           <Link to="/admin/inbox" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
@@ -625,7 +781,7 @@ function DashboardPage() {
           </p>
         </Alert>
       ) : (
-        <NeedsYou items={inbox} />
+        <NeedsYou items={inbox} me={user?.id} />
       )}
 
       {sections !== null && isAdmin !== null && (
