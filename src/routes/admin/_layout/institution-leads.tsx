@@ -259,7 +259,7 @@ function InstitutionLeadsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Leads"
+        eyebrow="Institutions"
         title="Institution leads"
         subtitle={
           leads

@@ -37,8 +37,8 @@ export function AreaBoard({
   /** Keyed by the group's label. */
   facts: AreaFacts
 }) {
-  // Home is this page and the Inbox; Team is one link for full admins. Neither is an area.
-  const groups = visibleGroups(isAdmin, sections).filter((g) => g.label !== 'Home' && g.label !== 'Team')
+  // Home is this page and the Inbox, so it isn't an area.
+  const groups = visibleGroups(isAdmin, sections).filter((g) => g.label !== 'Home')
   if (groups.length === 0) return null
 
   return (

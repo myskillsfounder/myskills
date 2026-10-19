@@ -115,7 +115,7 @@ function CommunityPortalAdminPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Community"
+        eyebrow="Team & access"
         title="Portal access & usage"
         subtitle="Invite partners, verify the ones who sign up, see who can open each part of the Community portal, and which students are using which resource."
       />

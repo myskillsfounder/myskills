@@ -277,7 +277,7 @@ function MentorsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Community"
+        eyebrow="Mentors"
         title="Mentors"
         subtitle="A mentor is someone with a confirmed email whom the team has verified. Nothing else makes a mentor."
       />

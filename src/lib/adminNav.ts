@@ -14,6 +14,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   Dumbbell,
+  FileCheck,
   FileText,
   History,
   GraduationCap,
@@ -24,6 +25,7 @@ import {
   Megaphone,
   ShieldCheck,
   Sparkles,
+  Target,
   UserCheck,
   UserCog,
   Users,
@@ -46,10 +48,11 @@ export type NavItem = {
   inbox?: InboxKind[]
 }
 
-// Grouped the way the work is: the students and their score, the two
-// programmes, the people and organisations MySkills works with, and the site
-// itself. A section is something an admin grants one person at a time; `null`
-// means full admins only (see src/lib/staffAccess.ts).
+// Grouped the way the work is: running the panel first (the day's work, then
+// who can get in), then the students and their programmes, then each kind of
+// partner with everything to do with it, then the site. A section is something
+// an admin grants one person at a time; `null` means full admins only (see
+// src/lib/staffAccess.ts).
 export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Home',
@@ -57,6 +60,15 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       // Everyone starts on the Dashboard; its numbers need the 'overview' section.
       { to: '/admin', label: 'Dashboard', icon: BarChart3, exact: true, section: 'any' },
       { to: '/admin/inbox', label: 'Inbox', icon: Inbox, section: 'any' },
+    ],
+  },
+  // Who can get in: the internal team, and partners in the Community portal.
+  {
+    label: 'Team & access',
+    items: [
+      { to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null },
+      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access', inbox: ['portal-request'] },
+      { to: '/admin/activity', label: 'Activity log', icon: History, section: null },
     ],
   },
   // A student and everything they have done: one section ('users') opens the
@@ -71,15 +83,17 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
     ],
   },
-  // What the team grades and writes for both programmes.
+  // What the team grades and writes for both programmes, and the people
+  // asking to join Global Leadership.
   {
     label: 'Programmes',
     items: [
-      { to: '/admin/mentor-reviews', label: 'Projects to grade', icon: UserCheck, section: 'mentor-reviews', inbox: ['project'] },
+      { to: '/admin/mentor-reviews', label: 'Projects to grade', icon: FileCheck, section: 'mentor-reviews', inbox: ['project'] },
       { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
       { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
       { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
       { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
+      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
     ],
   },
   // Internships end to end, under one section: every company however it came,
@@ -91,22 +105,24 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/internships', label: 'Roles & applications', icon: Briefcase, section: 'partner-leads', inbox: ['internship-role', 'internship-signoff'] },
     ],
   },
-  // The people and organisations who serve students in the Community portal:
-  // giving them access, then each kind.
   {
-    label: 'Partners',
+    label: 'Mentors',
     items: [
-      { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access', inbox: ['portal-request'] },
       { to: '/admin/mentors', label: 'Mentors', icon: UserCheck, section: 'mentors', inbox: ['mentor-application', 'unlinked-mentor'] },
-      { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness', inbox: ['support-request'] },
+    ],
+  },
+  // The institutions themselves, then the students they have interested.
+  {
+    label: 'Institutions',
+    items: [
       { to: '/admin/institution-partners', label: 'Institutions', icon: GraduationCap, section: 'institution-partners', inbox: ['institution-application'] },
+      { to: '/admin/institution-leads', label: 'Institution leads', icon: Target, section: 'demo-requests', inbox: ['institution-lead', 'lead-follow-up'] },
     ],
   },
   {
-    label: 'Leads',
+    label: 'Wellness',
     items: [
-      { to: '/admin/institution-leads', label: 'Institution leads', icon: Building2, section: 'demo-requests', inbox: ['institution-lead', 'lead-follow-up'] },
-      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
+      { to: '/admin/wellness', label: 'Wellness & career guidance', icon: HeartHandshake, section: 'wellness', inbox: ['support-request'] },
     ],
   },
   {
@@ -115,14 +131,6 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/blog', label: 'Blog', icon: FileText, section: 'blog' },
       { to: '/admin/ads', label: 'Ads', icon: Megaphone, section: 'ads' },
       { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare, section: 'feedback', inbox: ['feedback'] },
-    ],
-  },
-  // Who on the internal team can open this panel. Full admins only.
-  {
-    label: 'Team',
-    items: [
-      { to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null },
-      { to: '/admin/activity', label: 'Activity log', icon: History, section: null },
     ],
   },
 ]
