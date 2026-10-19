@@ -52,7 +52,7 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
   {
     label: 'Leads',
     sections: [
-      { id: 'demo-requests', label: 'Demo requests', opens: 'Institutions asking for a demo' },
+      { id: 'demo-requests', label: 'Institution leads', opens: 'Students interested in an institution: calls, visits, enrolment' },
       { id: 'leads', label: 'Global Leadership leads', opens: 'People who asked about the Global Leadership Programme' },
     ],
   },

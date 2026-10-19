@@ -105,7 +105,7 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Leads',
     items: [
-      { to: '/admin/demo-requests', label: 'Demo requests', icon: Building2, section: 'demo-requests', inbox: ['demo-request'] },
+      { to: '/admin/institution-leads', label: 'Institution leads', icon: Building2, section: 'demo-requests', inbox: ['institution-lead', 'lead-follow-up'] },
       { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
     ],
   },

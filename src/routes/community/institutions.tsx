@@ -26,7 +26,7 @@ import {
   type InstitutionPartnerCourse,
   type InstitutionPartnerRating,
 } from '@/lib/institutionPartners'
-import { submitInstitutionLead, type InstitutionLeadInput } from '@/lib/institutionDemoRequests'
+import { STUDENT_STAGE, enquireInstitution, fetchMyEnquiries, type EnquiryInput, type MyEnquiry } from '@/lib/institutionLeads'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { Alert, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
@@ -40,13 +40,7 @@ export const Route = createFileRoute('/community/institutions')({
   component: InstitutionsPage,
 })
 
-const EMPTY_LEAD: InstitutionLeadInput = {
-  full_name: '',
-  email: '',
-  phone: '',
-  city: '',
-  message: '',
-}
+const WHEN = ['Any time', 'Weekday mornings', 'Weekday afternoons', 'Weekday evenings', 'Weekends']
 
 interface RatingStats {
   average: number
@@ -96,56 +90,37 @@ function RatingStars({
   )
 }
 
-/** Inline "get pricing" lead form, shared by every partner card. Writes into
- *  institution_demo_requests (docs/supabase-institution-demo-requests.sql)
- *  with `partner` set to this specific institution's name — that table
- *  predates the partner-directory rework and was never institution-specific
- *  on its own, just fed by a single hardcoded page before. */
-function LeadForm({ partnerName, onDone }: { partnerName: string; onDone: () => void }) {
-  const { user } = useAuthUser()
+/**
+ * "I'm interested": the student's enquiry, which goes to the MySkills team as a
+ * lead (docs/supabase-institution-leads.sql). Their name and email come from
+ * their account; the phone from their profile, which they can change here.
+ */
+function EnquiryForm({
+  partner,
+  courses,
+  onDone,
+}: {
+  partner: InstitutionPartner
+  courses: string[]
+  onDone: () => void
+}) {
   const { profile } = useProfile()
-
-  const [form, setForm] = useState<InstitutionLeadInput>(EMPTY_LEAD)
-  const [errors, setErrors] = useState<Partial<Record<keyof InstitutionLeadInput, string>>>({})
+  const [form, setForm] = useState<EnquiryInput>({ course: '', phone: '', city: '', preferred: WHEN[0], message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string>()
 
   useEffect(() => {
-    setForm((f) => ({
-      ...f,
-      full_name: f.full_name || profile?.full_name || '',
-      email: f.email || user?.email || '',
-    }))
-  }, [profile?.full_name, user?.email])
+    setForm((f) => ({ ...f, phone: f.phone || profile?.phone || '', city: f.city || partner.city || '' }))
+  }, [profile?.phone, partner.city])
 
-  const set = (key: keyof InstitutionLeadInput) => (e: { target: { value: string } }) => {
-    setForm((f) => ({ ...f, [key]: e.target.value }))
-    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev))
-  }
-
-  function validate(): Partial<Record<keyof InstitutionLeadInput, string>> {
-    const found: Partial<Record<keyof InstitutionLeadInput, string>> = {}
-    if (form.full_name.trim().length < 2) found.full_name = 'Please enter your full name.'
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) {
-      found.email = 'Enter a valid email address.'
-    }
-    return found
-  }
+  const set = (key: keyof EnquiryInput) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSubmitError(undefined)
-
-    const found = validate()
-    if (Object.keys(found).length > 0) {
-      setErrors(found)
-      return
-    }
-    if (!user) return
-
     setSubmitting(true)
     try {
-      await submitInstitutionLead(user.id, partnerName, form)
+      await enquireInstitution(partner.id, form)
       onDone()
     } catch (err) {
       setSubmitError(errorMessage(err))
@@ -157,36 +132,77 @@ function LeadForm({ partnerName, onDone }: { partnerName: string; onDone: () => 
   return (
     <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-4 border-t border-ink-200 pt-4">
       <p className="text-sm text-ink-600">
-        Share your details and {partnerName}'s admissions team will reach out with pricing and
-        batch timings.
+        The MySkills team will call you within two working days to help you choose, and to set up a visit to{' '}
+        {partner.legal_name}.
       </p>
-
-      <Input label="Your name" value={form.full_name} onChange={set('full_name')} error={errors.full_name} autoComplete="name" />
+      {courses.length > 0 && (
+        <label className="block text-sm font-medium text-ink-800">
+          Course you’re interested in
+          <select value={form.course} onChange={set('course')} className="field mt-1.5 block w-full">
+            <option value="">Not sure yet</option>
+            {courses.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input label="Email" value={form.email} onChange={set('email')} error={errors.email} type="email" autoComplete="email" />
-        <Input label="Phone" value={form.phone} onChange={set('phone')} error={errors.phone} required={false} type="tel" autoComplete="tel" />
+        <Input label="Phone" value={form.phone} onChange={set('phone')} required={false} type="tel" autoComplete="tel" />
+        <Input label="City" value={form.city} onChange={set('city')} required={false} />
       </div>
-      <Input label="City" value={form.city} onChange={set('city')} error={errors.city} required={false} />
+      <label className="block text-sm font-medium text-ink-800">
+        When suits you for a call
+        <select value={form.preferred} onChange={set('preferred')} className="field mt-1.5 block w-full">
+          {WHEN.map((w) => (
+            <option key={w} value={w}>
+              {w}
+            </option>
+          ))}
+        </select>
+      </label>
       <Textarea
         label="Anything else?"
         value={form.message}
         onChange={set('message')}
-        error={errors.message}
         required={false}
         rows={2}
-        placeholder="Preferred batch timing, course you're interested in…"
+        maxLength={2000}
+        placeholder="Batch timing, fees, or a question for the team"
       />
+      <p className="text-xs text-ink-500">Your name, email and phone go to the MySkills team only.</p>
 
       {submitError && (
-        <Alert tone="danger" title="Couldn't send your details">
+        <Alert tone="danger" title="Couldn't send your enquiry">
           <p>{submitError}</p>
         </Alert>
       )}
 
       <Button type="submit" size="sm" icon={Send} disabled={submitting}>
-        {submitting ? 'Sending…' : 'Send my details'}
+        {submitting ? 'Sending…' : 'Send my enquiry'}
       </Button>
     </form>
+  )
+}
+
+/** Where a student's enquiry stands, in plain words. */
+function EnquiryStatus({ enquiry }: { enquiry: MyEnquiry }) {
+  const st = STUDENT_STAGE[enquiry.stage]
+  const done = enquiry.stage === 'enrolled'
+  return (
+    <div className={`mt-4 flex items-start gap-3 rounded-xl p-4 ${done ? 'bg-emerald-50' : enquiry.stage === 'lost' ? 'bg-ink-100' : 'bg-brand-50'}`}>
+      <CheckCircle2 size={18} className={`mt-0.5 shrink-0 ${done ? 'text-emerald-600' : 'text-brand-600'}`} />
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-ink-900">
+          {st.label}
+          {enquiry.course ? <span className="font-normal text-ink-600"> · {enquiry.course}</span> : null}
+        </p>
+        <p className="text-xs text-ink-600">
+          {st.note} Sent {new Date(enquiry.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}.
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -196,15 +212,22 @@ function PartnerCard({
   stats,
   onRate,
   ratingBusy,
+  enquiry,
+  onEnquired,
 }: {
   partner: InstitutionPartner
   courses: InstitutionPartnerCourse[]
   stats: RatingStats
   onRate: (rating: number) => void
   ratingBusy: boolean
+  /** The student's latest enquiry with this institution, if any. */
+  enquiry?: MyEnquiry
+  onEnquired: () => void
 }) {
   const [showForm, setShowForm] = useState(false)
-  const [done, setDone] = useState(false)
+  // An open or successful enquiry replaces the button; a closed one lets them ask again.
+  const open = enquiry && enquiry.stage !== 'lost'
+  const courseNames = courses.length > 0 ? courses.map((c) => c.name) : partner.courses_offered
 
   return (
     <div className="card p-6 shadow-sm">
@@ -296,22 +319,24 @@ function PartnerCard({
             <ExternalLink size={14} /> Google profile
           </a>
         )}
-        {!done && !showForm && (
-          <Button size="sm" variant="secondary" onClick={() => setShowForm(true)} className="ml-auto">
-            Get pricing
+        {!open && !showForm && (
+          <Button size="sm" onClick={() => setShowForm(true)} className="ml-auto">
+            {enquiry ? 'Enquire again' : 'I’m interested'}
           </Button>
         )}
       </div>
 
-      {showForm && !done && <LeadForm partnerName={partner.legal_name} onDone={() => setDone(true)} />}
+      {enquiry && !showForm && <EnquiryStatus enquiry={enquiry} />}
 
-      {done && (
-        <div className="mt-4 flex items-center gap-3 rounded-xl bg-emerald-50 p-4">
-          <CheckCircle2 size={18} className="shrink-0 text-emerald-600" />
-          <p className="text-sm text-emerald-800">
-            Thanks! {partner.legal_name}'s team will reach out with pricing and next steps.
-          </p>
-        </div>
+      {showForm && !open && (
+        <EnquiryForm
+          partner={partner}
+          courses={courseNames}
+          onDone={() => {
+            setShowForm(false)
+            onEnquired()
+          }}
+        />
       )}
     </div>
   )
@@ -325,6 +350,15 @@ function InstitutionsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()
   const [ratingBusyId, setRatingBusyId] = useState<string>()
+  const [enquiries, setEnquiries] = useState<MyEnquiry[]>([])
+  const loadEnquiries = () => void fetchMyEnquiries().then(setEnquiries)
+  useEffect(loadEnquiries, [])
+  const latestEnquiry = useMemo(() => {
+    const map = new Map<string, MyEnquiry>()
+    // Newest first from the server: the first one seen per institution is the latest.
+    for (const e of enquiries) if (e.institution_id && !map.has(e.institution_id)) map.set(e.institution_id, e)
+    return map
+  }, [enquiries])
 
   useEffect(() => {
     let active = true
@@ -401,7 +435,7 @@ function InstitutionsPage() {
         <PageHeader
           eyebrow="Community"
           title="Institutions"
-          description="Training institutions verified as MySkills partners — the same skill tracks and assessments you practice here, offered offline or in a classroom. Rate the ones you've experienced."
+          description="Training institutions verified as MySkills partners, for classroom and offline learning. Tell us which one interests you and the MySkills team will help you choose and visit."
         />
 
         {error && (
@@ -430,6 +464,8 @@ function InstitutionsPage() {
                 stats={statsByInstitution.get(p.id) ?? { average: 0, count: 0, mine: null }}
                 onRate={(rating) => void handleRate(p.id, rating)}
                 ratingBusy={ratingBusyId === p.id}
+                enquiry={latestEnquiry.get(p.id)}
+                onEnquired={loadEnquiries}
               />
             ))}
           </div>

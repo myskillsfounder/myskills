@@ -12,7 +12,8 @@ export type InboxKind =
   | 'verification'
   | 'mentor-application'
   | 'institution-application'
-  | 'demo-request'
+  | 'institution-lead'
+  | 'lead-follow-up'
   | 'support-request'
   | 'internship-lead'
   | 'cr-lead'
@@ -40,7 +41,8 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
     plural: 'Institution applications',
     to: '/admin/institution-partners',
   },
-  'demo-request': { label: 'Demo request', plural: 'Demo requests', to: '/admin/demo-requests' },
+  'institution-lead': { label: 'Institution lead', plural: 'New institution leads', to: '/admin/institution-leads' },
+  'lead-follow-up': { label: 'Lead follow-up', plural: 'Lead follow-ups due', to: '/admin/institution-leads' },
   'support-request': { label: 'Support request', plural: 'Support requests', to: '/admin/wellness' },
   'internship-lead': { label: 'Internship company', plural: 'Internship companies to contact', to: '/admin/internship-partners' },
   'cr-lead': { label: 'Global Leadership lead', plural: 'Global Leadership leads', to: '/admin/cr-leads' },
@@ -73,17 +75,23 @@ export function waitedLabel(iso: string): string {
  */
 export function fetchInbox(): Promise<InboxItem[] | null> {
   return shared('adminInbox', async () => {
-    const [main, feedback] = await Promise.all([
+    const [main, feedback, leads] = await Promise.all([
       supabase.rpc('admin_inbox'),
       // Unread feedback (docs/supabase-activity-log.sql); nothing until that is run.
       supabase.rpc('admin_inbox_feedback'),
+      // New institution leads and follow-ups due (docs/supabase-institution-leads.sql).
+      supabase.rpc('admin_inbox_institution_leads'),
     ])
     const { data, error } = main
     if (error) {
       if (error.code === 'PGRST202') return null
       throw new Error(error.message?.trim() || 'Something went wrong.')
     }
-    const rows = [...((data ?? []) as InboxItem[]), ...((feedback.error ? [] : feedback.data ?? []) as InboxItem[])]
+    const rows = [
+      ...((data ?? []) as InboxItem[]),
+      ...((feedback.error ? [] : feedback.data ?? []) as InboxItem[]),
+      ...((leads.error ? [] : leads.data ?? []) as InboxItem[]),
+    ]
     // A kind this page doesn't know yet (the SQL can run ahead of a deploy) is
     // left out rather than breaking the Inbox and the Dashboard. Oldest first.
     return rows
