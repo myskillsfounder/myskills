@@ -1,9 +1,9 @@
-import { useEffect, useState, type ComponentType } from 'react'
+import { useState, type ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Award, BookOpenCheck, Briefcase, Building2, ChevronRight, Clock, Compass, Megaphone, Sparkles, Trophy } from 'lucide-react'
+import { ArrowRight, Award, Briefcase, Building2, Compass, Flame, GraduationCap, Medal, Megaphone, Sparkles } from 'lucide-react'
 import type { MentorSuggestion } from '@/lib/mentorMatch'
+import { BADGES_TOTAL, type Badge } from '@/lib/badges'
 import { rememberProgramme } from '@/lib/practiceProgramme'
-import { supabase } from '@/lib/supabase'
 import { MentorProfileDialog, initialsOf, toMentorListing } from '@/components/community/Marketplace'
 
 /* ------------------------------------------------------------- explore */
@@ -155,83 +155,57 @@ export function MentorsForYou({ suggestions, hasMentor }: { suggestions: MentorS
 
 interface Stat {
   key: string
-  icon: ComponentType<{ size?: number }>
+  icon: ComponentType<{ size?: number; className?: string }>
   value: string
   label: string
-  to?: string
-}
-
-/** Where the student ranks (docs/supabase-score-rank.sql); null without the SQL or too few students. */
-export function useTopPercent(): number | null {
-  const [top, setTop] = useState<number | null>(null)
-  useEffect(() => {
-    let active = true
-    void (async () => {
-      const { data, error } = await supabase.rpc('my_score_rank')
-      if (!active || error || !data) return
-      const r = data as { score: number | null; scored: number; above: number }
-      if (!r.score || r.score <= 0 || r.scored < 10) return
-      // "Top n%": the share of scored students at or above them, at least 1%.
-      setTop(Math.max(1, Math.ceil(((r.above + 1) / r.scored) * 100)))
-    })()
-    return () => {
-      active = false
-    }
-  }, [])
-  return top
+  /** Shown on hover: what is behind the number. */
+  title?: string
 }
 
 /**
- * The numbers along the foot of the LaunchPad: programmes started, hours in
- * the last 30 days, certificates, and where their score ranks (or, before
- * that is known, their best streak).
+ * The numbers along the foot of the LaunchPad: courses enrolled, badges
+ * collected (lib/badges.ts), certificates earned and the best streak.
  */
 export function StatsStrip({
-  programmes,
-  hours30,
+  courses,
+  badges,
   certificates,
-  topPercent,
   bestStreak,
 }: {
-  programmes: number
-  hours30: number | null
+  courses: number
+  badges: Badge[]
   certificates: number | null
-  topPercent: number | null
   bestStreak: number | null
 }) {
   const stats: Stat[] = [
-    { key: 'prog', icon: BookOpenCheck, value: `${programmes} of 2`, label: 'Programmes started', to: '/practice' },
-    { key: 'hours', icon: Clock, value: hours30 == null ? '—' : hours30 < 10 ? hours30.toFixed(1) : String(Math.round(hours30)), label: 'Learning hours, last 30 days' },
-    { key: 'cert', icon: Award, value: certificates == null ? '—' : String(certificates), label: certificates === 1 ? 'Certificate earned' : 'Certificates earned', to: '/profile' },
-    topPercent != null
-      ? { key: 'rank', icon: Trophy, value: `Top ${topPercent}%`, label: 'Among all learners' }
-      : { key: 'best', icon: Trophy, value: bestStreak == null ? '—' : `${bestStreak} ${bestStreak === 1 ? 'day' : 'days'}`, label: 'Best streak' },
+    { key: 'courses', icon: GraduationCap, value: String(courses), label: courses === 1 ? 'Course enrolled' : 'Courses enrolled' },
+    {
+      key: 'badges',
+      icon: Medal,
+      value: String(badges.length),
+      label: badges.length === 1 ? 'Badge collected' : 'Badges collected',
+      title: badges.length ? badges.map((b) => b.name).join(', ') : `${BADGES_TOTAL} to collect: tracks, modules, projects, streaks and more`,
+    },
+    { key: 'cert', icon: Award, value: certificates == null ? '—' : String(certificates), label: certificates === 1 ? 'Certificate earned' : 'Certificates earned' },
+    { key: 'best', icon: Flame, value: bestStreak == null ? '—' : `${bestStreak} ${bestStreak === 1 ? 'day' : 'days'}`, label: 'Best streak' },
   ]
   return (
-    <section className="card grid grid-cols-2 divide-ink-900/[0.06] p-2 lg:grid-cols-4 lg:divide-x" aria-label="Your numbers">
-      {stats.map((s) => {
-        const inner = (
-          <>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
-              <s.icon size={20} />
-            </span>
-            <span className="min-w-0">
-              <span className="block font-display text-xl font-semibold leading-tight tabular-nums text-ink-900">{s.value}</span>
-              <span className="block text-xs text-ink-500">{s.label}</span>
-            </span>
-            {s.to && <ChevronRight size={15} className="ml-auto shrink-0 text-ink-300" />}
-          </>
-        )
-        return s.to ? (
-          <Link key={s.key} to={s.to} className="flex items-center gap-3 rounded-xl p-4 transition-colors hover:bg-ink-50">
-            {inner}
-          </Link>
-        ) : (
-          <div key={s.key} className="flex items-center gap-3 p-4">
-            {inner}
-          </div>
-        )
-      })}
+    <section className="card grid grid-cols-2 gap-y-2 px-2 py-3 lg:grid-cols-4" aria-label="Your numbers">
+      {stats.map((s, i) => (
+        <div
+          key={s.key}
+          title={s.title}
+          className={`flex items-center gap-4 px-5 py-2 ${i > 0 ? 'lg:border-l lg:border-ink-900/[0.07]' : ''} ${i % 2 === 1 ? 'border-l border-ink-900/[0.07] lg:border-l' : ''}`}
+        >
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+            <s.icon size={22} className="fill-brand-200" />
+          </span>
+          <span className="min-w-0">
+            <span className="block font-display text-2xl font-semibold leading-tight tabular-nums text-ink-900">{s.value}</span>
+            <span className="block text-xs text-ink-500">{s.label}</span>
+          </span>
+        </div>
+      ))}
     </section>
   )
 }

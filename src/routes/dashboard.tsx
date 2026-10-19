@@ -26,7 +26,8 @@ import { SkillBalanceCard } from '@/components/dashboard/SkillBalanceCard'
 import { InsightsPanel, SkillsGrowthPanel, buildInsights } from '@/components/dashboard/GrowthCards'
 import { aptitudeBalance, progressBalance } from '@/lib/skillBalance'
 import { fetchScoreTrend, type ScoreTrend } from '@/lib/scoreTrend'
-import { ExplorePanel, MentorsForYou, StatsStrip, useTopPercent } from '@/components/dashboard/LaunchPadBottom'
+import { ExplorePanel, MentorsForYou, StatsStrip } from '@/components/dashboard/LaunchPadBottom'
+import { earnedBadges } from '@/lib/badges'
 import { suggestMentors } from '@/lib/mentorMatch'
 import { BALANCE_AREAS } from '@/lib/skillBalance'
 import { fetchMentors, type Mentor } from '@/lib/mentors'
@@ -226,7 +227,6 @@ function DashboardPage() {
   const [openRoles, setOpenRoles] = useState<number | null>(null)
   const [institutions, setInstitutions] = useState<number | null>(null)
   const [certificates, setCertificates] = useState<number | null>(null)
-  const topPercent = useTopPercent()
   useEffect(() => {
     if (isPhone()) return
     let active = true
@@ -438,10 +438,19 @@ function DashboardPage() {
               </div>
             </div>
             <StatsStrip
-              programmes={courses.length}
-              hours30={activity?.hours30 ?? null}
+              courses={courses.length}
+              badges={earnedBadges({
+                aptitudeTaken: dmAptitude.result != null || crAptitude.result != null,
+                trackPercents: practisedTracks,
+                modulesDone: crProgress.modules.filter((m) => m.done >= m.total),
+                foundationPassed: assessment != null,
+                dmProjectPassed: dmReview.state === 'approved',
+                crProjectPassed: crReview.state === 'approved',
+                hasMentor: [dmMatch.match, crMatch.match].some((m) => m?.status === 'active'),
+                internshipDone,
+                bestStreak: activity?.best ?? 0,
+              })}
               certificates={certificates}
-              topPercent={topPercent}
               bestStreak={activity?.best ?? null}
             />
           </>
