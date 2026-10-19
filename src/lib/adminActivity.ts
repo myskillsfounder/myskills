@@ -38,7 +38,7 @@ export const ACTIVITY_AREAS: { id: string; label: string; tables: string[] }[] =
   { id: 'partners', label: 'Partners', tables: ['portal_requests', 'community_access', 'mentors', 'institution_partners', 'wellness_requests'] },
   { id: 'programmes', label: 'Programmes', tables: ['mentor_reviews', 'live_session_attendance', 'initial_assessment_questions'] },
   { id: 'students', label: 'Students', tables: ['verification_requests', 'verified_items'] },
-  { id: 'leads', label: 'Leads', tables: ['career_readiness_leads'] },
+  { id: 'leads', label: 'Leads', tables: ['career_readiness_leads', 'institution_leads', 'institution_lead_notes'] },
   { id: 'site', label: 'Site', tables: ['blog_posts', 'ads'] },
   { id: 'team', label: 'Team', tables: ['admins', 'staff_members', 'staff_roles'] },
 ]
@@ -121,6 +121,17 @@ export function describe(r: ActivityRow): string {
       if (r.op === 'DELETE') return `deleted the ${what} ${quote(r.label)}`
       return `changed the ${what} ${quote(r.label)}${fields}`
     }
+    case 'institution_leads': {
+      const stage: Record<string, string> = { new: 'new', contacted: 'contacted', visit: 'visit scheduled', enrolled: 'enrolled', lost: 'not interested' }
+      if (r.op === 'INSERT') return `took a new lead for ${r.label ?? 'an institution'}`
+      if (r.op === 'DELETE') return `deleted a lead for ${r.label ?? 'an institution'}`
+      if (to) return `moved ${who}’s lead for ${r.label ?? 'an institution'} to ${stage[to] ?? words(to)}`
+      if (changed.includes('owner_id')) return `changed who owns ${who}’s lead for ${r.label ?? 'an institution'}`
+      if (changed.includes('follow_up_on')) return `set a follow-up on ${who}’s lead for ${r.label ?? 'an institution'}`
+      return `updated ${who}’s lead for ${r.label ?? 'an institution'}${fields}`
+    }
+    case 'institution_lead_notes':
+      return r.op === 'DELETE' ? 'deleted a note on an institution lead' : 'added a note to an institution lead'
     case 'portal_requests':
       if (to === 'approved') return `verified the portal sign-up of ${r.label ?? who}`
       if (to === 'rejected') return `turned down the portal sign-up of ${r.label ?? who}`

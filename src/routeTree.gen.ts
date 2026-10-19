@@ -74,6 +74,7 @@ import { Route as AdminLayoutLiveSessionsRouteImport } from './routes/admin/_lay
 import { Route as AdminLayoutInternshipsRouteImport } from './routes/admin/_layout/internships'
 import { Route as AdminLayoutInternshipPartnersRouteImport } from './routes/admin/_layout/internship-partners'
 import { Route as AdminLayoutInstitutionPartnersRouteImport } from './routes/admin/_layout/institution-partners'
+import { Route as AdminLayoutInstitutionLeadsRouteImport } from './routes/admin/_layout/institution-leads'
 import { Route as AdminLayoutInboxRouteImport } from './routes/admin/_layout/inbox'
 import { Route as AdminLayoutFoundationRouteImport } from './routes/admin/_layout/foundation'
 import { Route as AdminLayoutFeedbackRouteImport } from './routes/admin/_layout/feedback'
@@ -427,6 +428,12 @@ const AdminLayoutInstitutionPartnersRoute =
     path: '/institution-partners',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
+const AdminLayoutInstitutionLeadsRoute =
+  AdminLayoutInstitutionLeadsRouteImport.update({
+    id: '/institution-leads',
+    path: '/institution-leads',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
 const AdminLayoutInboxRoute = AdminLayoutInboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
@@ -580,6 +587,7 @@ export interface FileRoutesByFullPath {
   '/admin/feedback': typeof AdminLayoutFeedbackRoute
   '/admin/foundation': typeof AdminLayoutFoundationRoute
   '/admin/inbox': typeof AdminLayoutInboxRoute
+  '/admin/institution-leads': typeof AdminLayoutInstitutionLeadsRoute
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/internship-partners': typeof AdminLayoutInternshipPartnersRoute
   '/admin/internships': typeof AdminLayoutInternshipsRoute
@@ -661,6 +669,7 @@ export interface FileRoutesByTo {
   '/admin/feedback': typeof AdminLayoutFeedbackRoute
   '/admin/foundation': typeof AdminLayoutFoundationRoute
   '/admin/inbox': typeof AdminLayoutInboxRoute
+  '/admin/institution-leads': typeof AdminLayoutInstitutionLeadsRoute
   '/admin/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/internship-partners': typeof AdminLayoutInternshipPartnersRoute
   '/admin/internships': typeof AdminLayoutInternshipsRoute
@@ -746,6 +755,7 @@ export interface FileRoutesById {
   '/admin/_layout/feedback': typeof AdminLayoutFeedbackRoute
   '/admin/_layout/foundation': typeof AdminLayoutFoundationRoute
   '/admin/_layout/inbox': typeof AdminLayoutInboxRoute
+  '/admin/_layout/institution-leads': typeof AdminLayoutInstitutionLeadsRoute
   '/admin/_layout/institution-partners': typeof AdminLayoutInstitutionPartnersRoute
   '/admin/_layout/internship-partners': typeof AdminLayoutInternshipPartnersRoute
   '/admin/_layout/internships': typeof AdminLayoutInternshipsRoute
@@ -832,6 +842,7 @@ export interface FileRouteTypes {
     | '/admin/feedback'
     | '/admin/foundation'
     | '/admin/inbox'
+    | '/admin/institution-leads'
     | '/admin/institution-partners'
     | '/admin/internship-partners'
     | '/admin/internships'
@@ -913,6 +924,7 @@ export interface FileRouteTypes {
     | '/admin/feedback'
     | '/admin/foundation'
     | '/admin/inbox'
+    | '/admin/institution-leads'
     | '/admin/institution-partners'
     | '/admin/internship-partners'
     | '/admin/internships'
@@ -997,6 +1009,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/feedback'
     | '/admin/_layout/foundation'
     | '/admin/_layout/inbox'
+    | '/admin/_layout/institution-leads'
     | '/admin/_layout/institution-partners'
     | '/admin/_layout/internship-partners'
     | '/admin/_layout/internships'
@@ -1522,6 +1535,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutInstitutionPartnersRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/institution-leads': {
+      id: '/admin/_layout/institution-leads'
+      path: '/institution-leads'
+      fullPath: '/admin/institution-leads'
+      preLoaderRoute: typeof AdminLayoutInstitutionLeadsRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/inbox': {
       id: '/admin/_layout/inbox'
       path: '/inbox'
@@ -1699,6 +1719,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutFeedbackRoute: typeof AdminLayoutFeedbackRoute
   AdminLayoutFoundationRoute: typeof AdminLayoutFoundationRoute
   AdminLayoutInboxRoute: typeof AdminLayoutInboxRoute
+  AdminLayoutInstitutionLeadsRoute: typeof AdminLayoutInstitutionLeadsRoute
   AdminLayoutInstitutionPartnersRoute: typeof AdminLayoutInstitutionPartnersRoute
   AdminLayoutInternshipPartnersRoute: typeof AdminLayoutInternshipPartnersRoute
   AdminLayoutInternshipsRoute: typeof AdminLayoutInternshipsRoute
@@ -1730,6 +1751,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutFeedbackRoute: AdminLayoutFeedbackRoute,
   AdminLayoutFoundationRoute: AdminLayoutFoundationRoute,
   AdminLayoutInboxRoute: AdminLayoutInboxRoute,
+  AdminLayoutInstitutionLeadsRoute: AdminLayoutInstitutionLeadsRoute,
   AdminLayoutInstitutionPartnersRoute: AdminLayoutInstitutionPartnersRoute,
   AdminLayoutInternshipPartnersRoute: AdminLayoutInternshipPartnersRoute,
   AdminLayoutInternshipsRoute: AdminLayoutInternshipsRoute,
