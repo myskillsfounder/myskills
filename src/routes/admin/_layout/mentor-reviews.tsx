@@ -315,7 +315,7 @@ function MentorReviewsPage() {
       <PageHeader
         eyebrow={programme ? PROGRAMME[programme] : 'Both programmes'}
         title="Projects to grade"
-        subtitle="Projects students submitted after finishing a programme's practice. Grade each on four criteria: 8 of 20 passes and releases the student's held activity points."
+        subtitle="Projects students submitted: Digital Marketing after all 8 tracks, Global Leadership after the five core modules. Grade each on four criteria, out of 20: 8 passes and releases the student's held activity points. A Digital Marketing grade counts as is; a Global Leadership grade counts out of 15."
       />
 
       <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Programme">

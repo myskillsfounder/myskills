@@ -20,6 +20,7 @@ export type InboxKind =
   | 'portal-request'
   | 'internship-role'
   | 'internship-signoff'
+  | 'feedback'
 
 export interface InboxItem {
   kind: InboxKind
@@ -47,6 +48,7 @@ export const INBOX_KINDS: Record<InboxKind, { label: string; plural: string; to:
   'portal-request': { label: 'Portal sign-up', plural: 'Portal sign-ups to verify', to: '/admin/community-portal' },
   'internship-role': { label: 'Internship role to approve', plural: 'Internship roles to approve', to: '/admin/internships' },
   'internship-signoff': { label: 'Internship to confirm', plural: 'Internships to confirm', to: '/admin/internships' },
+  feedback: { label: 'New feedback', plural: 'New feedback', to: '/admin/feedback' },
 }
 
 const DAY = 24 * 60 * 60 * 1000
@@ -71,14 +73,22 @@ export function waitedLabel(iso: string): string {
  */
 export function fetchInbox(): Promise<InboxItem[] | null> {
   return shared('adminInbox', async () => {
-    const { data, error } = await supabase.rpc('admin_inbox')
+    const [main, feedback] = await Promise.all([
+      supabase.rpc('admin_inbox'),
+      // Unread feedback (docs/supabase-activity-log.sql); nothing until that is run.
+      supabase.rpc('admin_inbox_feedback'),
+    ])
+    const { data, error } = main
     if (error) {
       if (error.code === 'PGRST202') return null
       throw new Error(error.message?.trim() || 'Something went wrong.')
     }
+    const rows = [...((data ?? []) as InboxItem[]), ...((feedback.error ? [] : feedback.data ?? []) as InboxItem[])]
     // A kind this page doesn't know yet (the SQL can run ahead of a deploy) is
-    // left out rather than breaking the Inbox and the Dashboard.
-    return ((data ?? []) as InboxItem[]).filter((i) => i.kind in INBOX_KINDS)
+    // left out rather than breaking the Inbox and the Dashboard. Oldest first.
+    return rows
+      .filter((i) => i.kind in INBOX_KINDS)
+      .sort((a, b) => a.created_at.localeCompare(b.created_at))
   })
 }
 

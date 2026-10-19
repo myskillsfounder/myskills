@@ -64,7 +64,7 @@ function AptitudePage() {
           programme="career-readiness"
           eyebrow="Global Leadership"
           title="Leadership aptitude results"
-          subtitle="Where students start on the 14 skills the Global Leadership Programme builds. Each skill is scored 3–12. Results from the earlier five-skill version show as —."
+          subtitle="Where students start on the 14 skills the Global Leadership Programme builds. Each skill is scored 3–12. Never counted in the score."
           dimensions={[...LIFE_SKILLS, ...PROGRAMME_SKILLS]}
           levelFor={(s) => personalLevel(s, LIFE_SKILL_MAX)}
           min={LIFE_SKILL_MIN}
