@@ -229,3 +229,16 @@ export async function fetchDashboardExtra(): Promise<DashboardExtra | null> {
   }
   return (data as DashboardExtra | null) ?? null
 }
+
+export interface DashboardAnalytics {
+  users: { students: number; returning: number; returning_30d: number; active_30d: number } | null
+  programmes: { dm: number; gl: number } | null
+  leads: { institution_total: number; institution_open: number; institution_enrolled: number; gl_total: number } | null
+}
+
+/** Returning users and the other Dashboard totals (docs/supabase-admin-analytics.sql); null until that is run. */
+export async function fetchDashboardAnalytics(): Promise<DashboardAnalytics | null> {
+  const { data, error } = await supabase.rpc('admin_dashboard_analytics')
+  if (error) return null
+  return (data as DashboardAnalytics | null) ?? null
+}

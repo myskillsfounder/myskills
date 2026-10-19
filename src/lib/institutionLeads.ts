@@ -3,6 +3,7 @@
  * in an institution, worked by the MySkills team from first call to enrolment.
  * The student sees a simple status; the team sees everything, with notes.
  */
+import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 
 function fail(error: { message?: string }): never {
@@ -142,4 +143,28 @@ export async function fetchLeadOwners(): Promise<{ user_id: string; name: string
   const { data, error } = await supabase.rpc('admin_institution_lead_owners')
   if (error) return []
   return (data ?? []) as { user_id: string; name: string }[]
+}
+
+/**
+ * The open leads this person owns, follow-ups first (soonest first), then
+ * those without a date. Null when they can't see leads or the SQL isn't run.
+ */
+export function useMyOpenLeads(enabled: boolean, userId: string | undefined): InstitutionLead[] | null {
+  const [leads, setLeads] = useState<InstitutionLead[] | null>(null)
+  useEffect(() => {
+    if (!enabled || !userId) return
+    let active = true
+    fetchInstitutionLeads()
+      .then((all) => {
+        if (!active || !all) return
+        const open = all.filter((l) => l.owner_id === userId && (l.stage === 'new' || l.stage === 'contacted' || l.stage === 'visit'))
+        open.sort((a, b) => (a.follow_up_on ?? '9999').localeCompare(b.follow_up_on ?? '9999'))
+        setLeads(open)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [enabled, userId])
+  return leads
 }
