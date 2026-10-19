@@ -23,7 +23,7 @@ import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
 import { ReadinessScoreCard } from '@/components/dashboard/ReadinessScoreCard'
 import { SkillBalanceCard } from '@/components/dashboard/SkillBalanceCard'
-import { GrowthCards, NextStepCards } from '@/components/dashboard/GrowthCards'
+import { InsightsPanel, SkillsGrowthPanel, buildInsights } from '@/components/dashboard/GrowthCards'
 import { aptitudeBalance, progressBalance } from '@/lib/skillBalance'
 import { fetchScoreTrend, type ScoreTrend } from '@/lib/scoreTrend'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
@@ -340,15 +340,16 @@ function DashboardPage() {
             </div>
           ) : (
             // Where they stand, then where it comes from: the score beside the
-            // balance of their skills; each programme's part with what is behind
-            // it, beside their objective; and the good news and the next step,
-            // beside their hours.
+            // balance of their skills; both programmes in one panel beside their
+            // objective; and what their progress says beside their streak.
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <ReadinessScoreCard readiness={readiness} trend={trend} />
               </div>
               <SkillBalanceCard aptitude={balance.aptitude} progress={balance.progress} />
-              <GrowthCards readiness={readiness} tracks={practisedTracks} modules={crProgress.modules} />
+              <div className="lg:col-span-2">
+                <SkillsGrowthPanel readiness={readiness} tracks={practisedTracks} modules={crProgress.modules} />
+              </div>
               <KeyMeasures
                 goals={goals}
                 streak={streak}
@@ -358,11 +359,15 @@ function DashboardPage() {
                 place={{ objective: 'lg:col-start-3 lg:row-start-2', hours: 'lg:col-start-3 lg:row-start-3' }}
               />
               <div className="lg:col-span-2 lg:col-start-1 lg:row-start-3">
-                <NextStepCards
-                  readiness={readiness}
-                  trend={trend}
-                  bestTrack={bestTrack}
-                  modulesDone={crProgress.modulesDone}
+                <InsightsPanel
+                  insights={buildInsights({
+                    readiness,
+                    trend,
+                    bestTrack,
+                    modulesDone: crProgress.modulesDone,
+                    activity,
+                    progress: balance.progress,
+                  })}
                 />
               </div>
             </div>
