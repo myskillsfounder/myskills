@@ -20,6 +20,8 @@ import { Alert, Badge, Button, Chip, EmptyState, Input, PageHeader, Skeleton, Te
 
 // The section that used to open Demo requests ('demo-requests') opens this.
 export const Route = createFileRoute('/admin/_layout/institution-leads')({
+  // ?lead=<id> opens that lead, from the Inbox and the Dashboard's My work.
+  validateSearch: (s: Record<string, unknown>): { lead?: string } => (typeof s.lead === 'string' ? { lead: s.lead } : {}),
   component: () => (
     <RequireSection section="demo-requests">
       <InstitutionLeadsPage />
@@ -205,7 +207,8 @@ function InstitutionLeadsPage() {
   const [ownerFilter, setOwnerFilter] = useState<'all' | 'mine' | 'none'>('all')
   const [institution, setInstitution] = useState('')
   const [q, setQ] = useState('')
-  const [open, setOpen] = useState<string>()
+  const { lead: linked } = Route.useSearch()
+  const [open, setOpen] = useState<string | undefined>(linked)
 
   const load = useCallback(async () => {
     try {
