@@ -188,7 +188,7 @@ export function NextStepCards({
   return (
     <div className="grid h-full gap-4 sm:grid-cols-2">
       {good && (
-        <div className="flex h-full items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+        <div className={`flex h-full items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 ${todo ? '' : 'sm:col-span-2'}`}>
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-e1">
             {trend && trend.change > 0 ? <TrendingUp size={18} /> : <Sparkles size={18} />}
           </span>
@@ -202,7 +202,7 @@ export function NextStepCards({
         <Link
           to={todo.to}
           onClick={() => todo.programme && rememberProgramme(todo.programme)}
-          className={`group flex h-full items-center gap-3 rounded-2xl border p-4 transition-colors ${
+          className={`group flex h-full items-center gap-3 rounded-2xl border p-4 transition-colors ${good ? '' : 'sm:col-span-2'} ${
             todo.warn ? 'border-amber-100 bg-amber-50 hover:border-amber-300' : 'border-brand-100 bg-brand-50 hover:border-brand-300'
           }`}
         >
