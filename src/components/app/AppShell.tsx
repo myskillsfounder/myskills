@@ -2,14 +2,14 @@ import { useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import {
+  BookOpen,
   ChevronRight,
-  Dumbbell,
-  Rocket,
+  LayoutDashboard,
   LogOut,
   Menu,
-  MessageCircle,
-  MessageSquare,
+  MessageSquareHeart,
   User,
+  Users,
   X,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
@@ -32,10 +32,10 @@ type IconType = ComponentType<{ size?: number; className?: string }>
  * it properly.
  */
 const NAV: { to: string; label: string; icon: IconType }[] = [
-  { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
-  { to: '/practice', label: 'Practice', icon: Dumbbell },
-  { to: '/community', label: 'Community', icon: MessageCircle },
-  { to: '/feedback', label: 'Feedback', icon: MessageSquare },
+  { to: '/dashboard', label: 'LaunchPad', icon: LayoutDashboard },
+  { to: '/practice', label: 'Practice', icon: BookOpen },
+  { to: '/community', label: 'Community', icon: Users },
+  { to: '/feedback', label: 'Feedback', icon: MessageSquareHeart },
 ]
 
 
@@ -81,7 +81,9 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             >
               <Icon
                 size={18}
-                className={`shrink-0 transition-colors duration-200 ${active ? 'text-brand-600' : 'text-ink-400 group-hover:text-ink-700'}`}
+                className={`shrink-0 transition-colors duration-200 ${
+                  active ? 'fill-brand-200 text-brand-600' : 'text-ink-400 group-hover:text-ink-700'
+                }`}
               />
               <span>{label}</span>
             </Link>
