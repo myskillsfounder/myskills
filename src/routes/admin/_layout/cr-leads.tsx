@@ -61,7 +61,7 @@ function CareerReadinessLeadsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Partners"
+        eyebrow="Programmes"
         title="Global Leadership leads"
         subtitle={`From the old waitlist form. ${waiting} not contacted yet.`}
       />

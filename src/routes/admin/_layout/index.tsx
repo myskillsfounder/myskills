@@ -521,9 +521,11 @@ function DashboardPage() {
           .filter(Boolean)
           .join(' · ')
       : null,
-    Partners: c
-      ? `${plural(c.partner_accounts, 'partner')} in the portal · ${c.mentors_taking} of ${c.mentors_listed} mentors taking students`
+    'Team & access': c ? `${plural(c.partner_accounts, 'partner')} in the portal · ${c.signups_waiting} to verify` : null,
+    Mentors: c
+      ? `${c.mentors_taking} of ${c.mentors_listed} taking students · ${plural(c.students_with_mentor, 'student')} with a mentor`
       : null,
+    Institutions: c ? `${plural(c.institutions_listed, 'institution')} listed` : null,
     Site:
       stats && stats.activity.avg_rating !== null ? `Students rate the app ${stats.activity.avg_rating}/10 on average` : null,
   }

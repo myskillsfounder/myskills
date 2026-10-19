@@ -16,6 +16,12 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
     sections: [{ id: 'overview', label: 'Dashboard numbers', opens: 'Scores, trends and programme progress on the Dashboard' }],
   },
   {
+    label: 'Team & access',
+    sections: [
+      { id: 'portal-access', label: 'Portal access & usage', opens: 'Verifying partners and giving them Community portal access' },
+    ],
+  },
+  {
     label: 'Students',
     sections: [
       { id: 'users', label: 'Students', opens: 'All students and their records, aptitude, practice and foundation results' },
@@ -28,6 +34,7 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
       { id: 'mentor-reviews', label: 'Projects & sessions', opens: 'Projects to grade, modules and answers, live sessions' },
       { id: 'certificates', label: 'Certificates', opens: 'Certificates issued' },
       { id: 'assessment', label: 'Foundation questions', opens: 'Editing the foundation assessment' },
+      { id: 'leads', label: 'Global Leadership leads', opens: 'People who asked about the Global Leadership Programme' },
     ],
   },
   {
@@ -41,20 +48,19 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
     ],
   },
   {
-    label: 'Partners',
+    label: 'Mentors',
+    sections: [{ id: 'mentors', label: 'Mentors', opens: 'Mentor applications, listings and profiles' }],
+  },
+  {
+    label: 'Institutions',
     sections: [
-      { id: 'portal-access', label: 'Portal access & usage', opens: 'Verifying partners and giving them Community portal access' },
-      { id: 'mentors', label: 'Mentors', opens: 'Mentor applications, listings and profiles' },
-      { id: 'wellness', label: 'Wellness & career guidance', opens: 'Students’ private support requests' },
       { id: 'institution-partners', label: 'Institutions', opens: 'Institution applications and listings' },
+      { id: 'demo-requests', label: 'Institution leads', opens: 'Students interested in an institution: calls, visits, enrolment' },
     ],
   },
   {
-    label: 'Leads',
-    sections: [
-      { id: 'demo-requests', label: 'Institution leads', opens: 'Students interested in an institution: calls, visits, enrolment' },
-      { id: 'leads', label: 'Global Leadership leads', opens: 'People who asked about the Global Leadership Programme' },
-    ],
+    label: 'Wellness',
+    sections: [{ id: 'wellness', label: 'Wellness & career guidance', opens: 'Students’ private support requests' }],
   },
   {
     label: 'Site',

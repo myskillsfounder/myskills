@@ -34,13 +34,14 @@ export interface ActivityRow {
 
 /** The areas the log can be filtered by, as the admin menu groups them. */
 export const ACTIVITY_AREAS: { id: string; label: string; tables: string[] }[] = [
-  { id: 'internships', label: 'Internships', tables: ['internship_roles', 'internship_applications', 'internship_partner_leads'] },
-  { id: 'partners', label: 'Partners', tables: ['portal_requests', 'community_access', 'mentors', 'institution_partners', 'wellness_requests'] },
-  { id: 'programmes', label: 'Programmes', tables: ['mentor_reviews', 'live_session_attendance', 'initial_assessment_questions'] },
+  { id: 'team', label: 'Team & access', tables: ['admins', 'staff_members', 'staff_roles', 'portal_requests', 'community_access'] },
   { id: 'students', label: 'Students', tables: ['verification_requests', 'verified_items'] },
-  { id: 'leads', label: 'Leads', tables: ['career_readiness_leads', 'institution_leads', 'institution_lead_notes'] },
+  { id: 'programmes', label: 'Programmes', tables: ['mentor_reviews', 'live_session_attendance', 'initial_assessment_questions', 'career_readiness_leads'] },
+  { id: 'internships', label: 'Internships', tables: ['internship_roles', 'internship_applications', 'internship_partner_leads'] },
+  { id: 'mentors', label: 'Mentors', tables: ['mentors'] },
+  { id: 'institutions', label: 'Institutions', tables: ['institution_partners', 'institution_leads', 'institution_lead_notes'] },
+  { id: 'wellness', label: 'Wellness', tables: ['wellness_requests'] },
   { id: 'site', label: 'Site', tables: ['blog_posts', 'ads'] },
-  { id: 'team', label: 'Team', tables: ['admins', 'staff_members', 'staff_roles'] },
 ]
 
 export const areaOf = (table: string) => ACTIVITY_AREAS.find((a) => a.tables.includes(table))?.label ?? 'Other'
