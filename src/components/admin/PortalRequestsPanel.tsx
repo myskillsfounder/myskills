@@ -1,5 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react'
-import { Check, Mail, Phone, ShieldCheck, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Check, CheckCircle2, Mail, Phone, ShieldCheck, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   fetchPortalRequests,
@@ -118,19 +118,47 @@ function RequestCard({
  * waiting, and quiet if the SQL for sign-up hasn't been run or the signed-in
  * person can't verify. `only` narrows it to one kind of partner.
  */
-export function PortalRequestsPanel({
-  onChanged,
-  only,
-  empty,
-  recent = false,
-}: {
-  onChanged: () => void
-  only?: PortalRole
-  /** Shown instead of nothing when no one is waiting (the verification page). */
-  empty?: ReactNode
-  /** Also list the last decisions, so the team can see who was verified or turned down. */
-  recent?: boolean
-}) {
+export function PortalRequestsPanel({ onChanged, only }: { onChanged: () => void; only?: PortalRole }) {
+  const { requests, busyId, error, decide } = useRequests(onChanged)
+
+  if (requests === undefined) return <Skeleton className="mb-6 h-32 w-full" />
+  const waiting = (requests ?? []).filter((r) => r.status === 'pending' && (!only || r.role === only))
+  if (!error && waiting.length === 0) return null
+
+  return (
+    <section className="mb-8">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+        {only === 'mentor' ? 'Mentors waiting to be verified' : 'Waiting for verification'} · {waiting.length}
+      </h2>
+      <p className="mt-1 text-sm text-ink-600">
+        {only === 'mentor'
+          ? 'People who signed up as a mentor and confirmed their email. Nobody is a mentor until you verify them here.'
+          : 'People who signed up for the Community portal and confirmed their email. They have no access until you verify them here.'}
+      </p>
+      {error && (
+        <div className="mt-3">
+          <Alert tone="danger" title="Couldn’t complete that">
+            <p>{error}</p>
+          </Alert>
+        </div>
+      )}
+      <div className="mt-3 space-y-3">
+        {waiting.map((r) => (
+          <RequestCard
+            key={r.id}
+            req={r}
+            busy={busyId === r.id}
+            onApprove={() => void decide(r.id, () => reviewPortalRequest(r.id, 'approved'))}
+            onReject={(note) => void decide(r.id, () => reviewPortalRequest(r.id, 'rejected', { note }))}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/** Load the sign-ups, and decide one then reload. */
+function useRequests(onChanged: () => void) {
   const [requests, setRequests] = useState<AdminPortalRequest[] | null | undefined>(undefined)
   const [busyId, setBusyId] = useState<string>()
   const [error, setError] = useState<string>()
@@ -162,73 +190,158 @@ export function PortalRequestsPanel({
     }
   }
 
-  if (requests === undefined) return <Skeleton className="mb-6 h-32 w-full" />
-  const waiting = (requests ?? []).filter((r) => r.status === 'pending' && (!only || r.role === only))
-  const decided = recent
-    ? (requests ?? [])
-        .filter((r) => r.status !== 'pending' && (!only || r.role === only))
-        .sort((a, b) => (b.reviewed_at ?? b.created_at).localeCompare(a.reviewed_at ?? a.created_at))
-        .slice(0, 10)
-    : []
-  const recentList = decided.length > 0 && (
-    <section className="mt-8">
-      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Recently decided</h2>
-      <ul className="card mt-3 divide-y divide-ink-900/[0.06]">
-        {decided.map((r) => (
-          <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm">
-            <span className="min-w-0 flex-1">
-              <span className="font-semibold text-ink-900">{r.full_name || r.email}</span>
-              <span className="text-ink-500">
-                {' '}
-                · {roleLabel(r.role)}
-                {r.organisation ? ` · ${r.organisation}` : ''}
-              </span>
-            </span>
-            <Badge tone={r.status === 'approved' ? 'success' : 'neutral'}>{r.status === 'approved' ? 'Verified' : 'Turned down'}</Badge>
-            <span className="text-xs text-ink-500">{day(r.reviewed_at ?? r.created_at)}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
+  return { requests, busyId, error, decide }
+}
+
+/** Each kind of partner, in the order the menu lists them, with a plural for headings. */
+const CATEGORIES: { role: PortalRole; plural: string }[] = [
+  { role: 'mentor', plural: 'Mentors' },
+  { role: 'wellness', plural: 'Counsellors' },
+  { role: 'guidance', plural: 'Career guides' },
+  { role: 'internships', plural: 'Companies' },
+  { role: 'institutions', plural: 'Institutions' },
+]
+const pluralOf = (r: PortalRole) => CATEGORIES.find((c) => c.role === r)?.plural ?? r
+
+const heading = 'text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500'
+
+/** Verified or turned down: who, and when. */
+function DecidedList({ rows }: { rows: AdminPortalRequest[] }) {
+  return (
+    <ul className="card divide-y divide-ink-900/[0.06]">
+      {rows.map((r) => (
+        <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm">
+          <span className="min-w-0 flex-1">
+            <span className="font-semibold text-ink-900">{r.full_name || r.email}</span>
+            {r.organisation && <span className="text-ink-500"> · {r.organisation}</span>}
+          </span>
+          <Badge tone={r.status === 'approved' ? 'success' : 'neutral'}>{r.status === 'approved' ? 'Verified' : 'Turned down'}</Badge>
+          <span className="w-24 text-right text-xs text-ink-500">{day(r.reviewed_at ?? r.created_at)}</span>
+        </li>
+      ))}
+    </ul>
   )
-  if (!error && waiting.length === 0) {
-    return empty || recentList ? (
-      <>
-        {empty}
-        {recentList}
-      </>
-    ) : null
-  }
+}
+
+/**
+ * The Partners to verify page: every sign-up, by kind of partner. A tab for
+ * each kind with what is waiting; under it, who is waiting, then who was
+ * verified or turned down. "All partners" groups both lists by kind.
+ */
+export function PartnerVerificationBoard() {
+  const { requests, busyId, error, decide } = useRequests(() => {})
+  const [tab, setTab] = useState<PortalRole | 'all'>('all')
+
+  if (requests === undefined) return <Skeleton className="h-64 w-full" />
+  const all = requests ?? []
+  const byNewest = (a: AdminPortalRequest, b: AdminPortalRequest) =>
+    (b.reviewed_at ?? b.created_at).localeCompare(a.reviewed_at ?? a.created_at)
+  const waitingIn = (r: PortalRole) => all.filter((x) => x.role === r && x.status === 'pending')
+  const decidedIn = (r: PortalRole) => all.filter((x) => x.role === r && x.status !== 'pending').sort(byNewest)
+  const totalWaiting = all.filter((x) => x.status === 'pending').length
+  const shownCats = tab === 'all' ? CATEGORIES : CATEGORIES.filter((c) => c.role === tab)
+
+  const card = (r: AdminPortalRequest) => (
+    <RequestCard
+      key={r.id}
+      req={r}
+      busy={busyId === r.id}
+      onApprove={() => void decide(r.id, () => reviewPortalRequest(r.id, 'approved'))}
+      onReject={(note) => void decide(r.id, () => reviewPortalRequest(r.id, 'rejected', { note }))}
+    />
+  )
+  const waitingCats = shownCats.filter((c) => waitingIn(c.role).length > 0)
+  const decidedCats = shownCats.filter((c) => decidedIn(c.role).length > 0)
 
   return (
-    <section className="mb-8">
-      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
-        {only === 'mentor' ? 'Mentors waiting to be verified' : 'Waiting for verification'} · {waiting.length}
-      </h2>
-      <p className="mt-1 text-sm text-ink-600">
-        {only === 'mentor'
-          ? 'People who signed up as a mentor and confirmed their email. Nobody is a mentor until you verify them here.'
-          : 'People who signed up for the Community portal and confirmed their email. They have no access until you verify them here.'}
-      </p>
+    <>
+      <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Kind of partner">
+        {[{ role: 'all' as const, plural: 'All partners' }, ...CATEGORIES].map((c) => {
+          const n = c.role === 'all' ? totalWaiting : waitingIn(c.role).length
+          const active = tab === c.role
+          return (
+            <button
+              key={c.role}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setTab(c.role)}
+              className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                active ? 'border-brand-500 bg-brand-50 text-brand-800' : 'border-ink-300 bg-white text-ink-600 hover:bg-ink-100'
+              }`}
+            >
+              {c.plural}
+              {n > 0 && <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">{n}</span>}
+            </button>
+          )
+        })}
+      </div>
+
       {error && (
-        <div className="mt-3">
+        <div className="mb-5">
           <Alert tone="danger" title="Couldn’t complete that">
             <p>{error}</p>
           </Alert>
         </div>
       )}
-      <div className="mt-3 space-y-3">
-        {waiting.map((r) => (
-          <RequestCard
-            key={r.id}
-            req={r}
-            busy={busyId === r.id}
-            onApprove={() => void decide(r.id, () => reviewPortalRequest(r.id, 'approved'))}
-            onReject={(note) => void decide(r.id, () => reviewPortalRequest(r.id, 'rejected', { note }))}
-          />
-        ))}
-      </div>
-      {recentList}
-    </section>
+
+      <h2 className={heading}>Waiting to be verified</h2>
+      {waitingCats.length === 0 ? (
+        <div className="card mt-3 flex items-center gap-3 p-5">
+          <CheckCircle2 size={20} className="shrink-0 text-emerald-600" />
+          <p className="text-sm text-ink-700">
+            {tab === 'all' ? 'Nobody is waiting.' : `No ${pluralOf(tab).toLowerCase()} waiting.`} New sign-ups appear here once
+            they confirm their email.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-3 space-y-6">
+          {waitingCats.map((c) => (
+            <div key={c.role}>
+              {tab === 'all' && (
+                <h3 className="mb-2 font-display text-base font-semibold text-ink-900">
+                  {c.plural} <span className="text-ink-400">· {waitingIn(c.role).length}</span>
+                </h3>
+              )}
+              <div className="space-y-3">{waitingIn(c.role).map(card)}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {decidedCats.length > 0 && (
+        <>
+          <h2 className={`${heading} mt-10`}>Verified &amp; turned down</h2>
+          <div className="mt-3 grid gap-5 xl:grid-cols-2">
+            {decidedCats.map((c) => {
+              const rows = decidedIn(c.role)
+              const verified = rows.filter((r) => r.status === 'approved').length
+              // On All partners, the latest five of each; a kind's own tab lists them all.
+              const shown = tab === 'all' ? rows.slice(0, 5) : rows
+              return (
+                <div key={c.role} className={tab === 'all' ? '' : 'xl:col-span-2'}>
+                  <div className="mb-2 flex items-baseline justify-between gap-3">
+                    <h3 className="font-display text-base font-semibold text-ink-900">{c.plural}</h3>
+                    <p className="text-xs text-ink-500">
+                      {verified} verified{rows.length - verified > 0 ? ` · ${rows.length - verified} turned down` : ''}
+                    </p>
+                  </div>
+                  <DecidedList rows={shown} />
+                  {shown.length < rows.length && (
+                    <button
+                      type="button"
+                      onClick={() => setTab(c.role)}
+                      className="mt-2 text-sm font-semibold text-brand-700 hover:underline"
+                    >
+                      All {rows.length} {c.plural.toLowerCase()}
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </>
   )
 }
