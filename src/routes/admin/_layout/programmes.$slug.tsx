@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute, Link, useBlocker } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, CheckCircle2, Download, Rocket, Save, Upload } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, CheckCircle2, Download, Eye, Rocket, Save, Upload } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   LEVELS,
@@ -372,6 +372,15 @@ function ProgrammeEditorPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={`/programmes/${p.slug}?preview=1`}
+            target="_blank"
+            rel="noreferrer"
+            title="Opens in a new tab. Shows the saved draft, so save first."
+            className="inline-flex items-center gap-1.5 rounded-xl border border-ink-300 bg-white px-3 py-2 text-sm font-medium text-ink-800 hover:bg-ink-100"
+          >
+            <Eye size={15} /> Preview as a student
+          </a>
           {saved && !dirty && <span className="text-xs text-emerald-700">{saved}</span>}
           {dirty && <span className="text-xs font-semibold text-amber-700">Unsaved changes</span>}
           <Button icon={Save} disabled={busy || !dirty} onClick={() => void save()}>

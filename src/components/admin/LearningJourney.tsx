@@ -34,6 +34,8 @@ const ICON: Record<LearnerEventKind, typeof Award> = {
   internship: Briefcase,
   certificate: Award,
   goal: Flag,
+  programme_quiz: Dumbbell,
+  programme_final: ClipboardCheck,
 }
 
 const label = (slug: unknown) =>
@@ -59,13 +61,15 @@ function EventDetail({ e }: { e: LearnerEvent }) {
   switch (e.kind) {
     case 'practice':
     case 'foundation':
+    case 'programme_quiz':
+    case 'programme_final':
       return (
         <div className="space-y-1">
           <Line k="Result">
             {String(d.correct ?? '?')}/{String(d.total ?? '?')} right · {String(d.percent ?? '?')}%
           </Line>
           {missed.length > 0 ? (
-            <Line k="Missed">{missed.map((m) => m.competency ?? m.category ?? m.question_id).join(', ')}</Line>
+            <Line k="Missed">{missed.map((m) => m.competency ?? m.topic ?? m.category ?? m.question_id).join(', ')}</Line>
           ) : d.answers_kept === false ? (
             <p className="text-xs text-ink-500">Taken before answers were kept, so only the total is known.</p>
           ) : null}
@@ -120,6 +124,8 @@ function hasDetail(e: LearnerEvent): boolean {
   return (
     e.kind === 'practice' ||
     e.kind === 'foundation' ||
+    e.kind === 'programme_quiz' ||
+    e.kind === 'programme_final' ||
     e.kind === 'aptitude' ||
     e.kind === 'module_answer' ||
     (e.kind === 'project' && Boolean(d.title || d.points != null || d.reviewer_note || d.student_note)) ||

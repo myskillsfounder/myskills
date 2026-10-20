@@ -60,6 +60,9 @@ export function Button({
   )
 }
 
+/** A button's look, for a router Link that needs params or search (ButtonLink takes neither). */
+export const buttonClass = (variant: Variant = 'primary', size: Size = 'md') => `${BTN} ${VARIANT[variant]} ${SIZE[size]}`
+
 export function ButtonLink({
   to,
   href,
