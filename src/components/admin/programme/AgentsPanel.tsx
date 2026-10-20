@@ -375,7 +375,7 @@ export function AgentsPanel({
                 className="mt-0.5 h-4 w-4 accent-brand-600"
               />
               <span>
-                Check it every week: research what has changed in the field and improve the programme. Each check usually costs $3
+                Check it every month: research what has changed in the field and improve the programme. Each check usually costs $3
                 to $10, and its result waits here for you.
               </span>
             </label>
@@ -397,7 +397,7 @@ export function AgentsPanel({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-900">
-                      {j.kind === 'draft' ? 'Draft' : j.weekly ? 'Weekly check' : 'Improve'}
+                      {j.kind === 'draft' ? 'Draft' : j.weekly ? 'Monthly check' : 'Improve'}
                       <Badge tone={STATUS[j.status].tone}>{STATUS[j.status].label}</Badge>
                       {j.loaded_at && <Badge tone="success">Loaded</Badge>}
                     </p>

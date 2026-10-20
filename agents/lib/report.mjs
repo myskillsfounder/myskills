@@ -28,7 +28,7 @@ export function buildReport({ programme, job, rounds, stats, before, notes, less
 
   out.push(`# ${programme.title}: ${job.kind === 'draft' ? 'drafted' : 'reviewed and improved'} by the course agents`)
   out.push(
-    `${today} · ${count(rounds.length, 'review round')} · ${count(usage.calls, 'call')} to Claude, ${count(usage.web_searches, 'web search', 'web searches')} · cost ${money(usage.cost_usd)}${job.weekly ? ' · weekly check' : ''}`,
+    `${today} · ${count(rounds.length, 'review round')} · ${count(usage.calls, 'call')} to Claude, ${count(usage.web_searches, 'web search', 'web searches')} · cost ${money(usage.cost_usd)}${job.weekly ? ' · monthly check' : ''}`,
   )
   if (job.brief) out.push(`**Instructions:** ${job.brief}`)
 
