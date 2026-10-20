@@ -17,6 +17,8 @@ import {
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { ApplicationRow, InternshipPipeline, stuckReason } from '@/components/admin/InternshipPipeline'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDate } from '@/lib/csv'
 
 // The same section as the internship companies: whoever handles them handles their roles.
 export const Route = createFileRoute('/admin/_layout/internships')({
@@ -444,6 +446,51 @@ function InternshipsAdminPage() {
         ]
           .filter(Boolean)
           .join(' · ')}
+        actions={
+          <>
+            <ExportButton<AdminRole>
+              name="internship-roles"
+              label="Export roles"
+              rows={roles}
+              columns={[
+                { header: 'Posted', value: (r) => csvDate(r.created_at) },
+                { header: 'Role', value: (r) => r.title },
+                { header: 'Company', value: (r) => r.organisation },
+                { header: 'Status', value: (r) => r.status },
+                { header: 'Where', value: (r) => (r.mode === 'remote' ? 'Remote' : [r.mode, r.location].filter(Boolean).join(', ')) },
+                { header: 'Weeks', value: (r) => r.duration_weeks },
+                { header: 'Stipend', value: (r) => r.stipend || 'Unpaid' },
+                { header: 'Openings', value: (r) => r.openings },
+                { header: 'Apply by', value: (r) => csvDate(r.apply_by) },
+                { header: 'Skills', value: (r) => r.skills.join(', ') },
+                { header: 'Applicants', value: (r) => r.applicants },
+                { header: 'Interning', value: (r) => r.interning },
+                { header: 'Company email', value: (r) => r.company_email },
+              ]}
+            />
+            {pipeline && (
+              <ExportButton<AdminApplication>
+                name="internship-applications"
+                label="Export applications"
+                rows={pipeline}
+                columns={[
+                  { header: 'Applied', value: (a) => csvDate(a.applied_on) },
+                  { header: 'Student', value: (a) => a.student_name },
+                  { header: 'Email', value: (a) => a.student_email },
+                  { header: 'Score', value: (a) => a.score },
+                  { header: 'Role', value: (a) => a.role_title },
+                  { header: 'Company', value: (a) => a.organisation },
+                  { header: 'Status', value: (a) => a.status.replace(/_/g, ' ') },
+                  { header: 'Weeks', value: (a) => a.duration_weeks },
+                  { header: 'Started', value: (a) => csvDate(a.started_on) },
+                  { header: 'Ended', value: (a) => csvDate(a.ended_on) },
+                  { header: 'Supervisor', value: (a) => a.supervisor_name },
+                  { header: 'Last change', value: (a) => csvDate(a.updated_at) },
+                ]}
+              />
+            )}
+          </>
+        }
       />
       {error && (
         <div className="mb-5">

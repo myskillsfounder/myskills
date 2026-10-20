@@ -5,6 +5,8 @@ import { Check, MessageSquare, Star } from 'lucide-react'
 import { fetchAllFeedback, markFeedbackRead, type AdminFeedback } from '@/lib/admin'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDateTime } from '@/lib/csv'
 
 export const Route = createFileRoute('/admin/_layout/feedback')({
   component: () => (
@@ -59,6 +61,19 @@ function FeedbackPage() {
           avg === null
             ? 'What users are telling you.'
             : `What users are telling you — ${avg}/10 across ${rated.length} ratings.`
+        }
+        actions={
+          <ExportButton<AdminFeedback>
+            name="feedback"
+            rows={items}
+            columns={[
+              { header: 'Date', value: (f) => csvDateTime(f.created_at) },
+              { header: 'Rating out of 10', value: (f) => f.rating },
+              { header: 'Review', value: (f) => f.review },
+              { header: 'Suggestion', value: (f) => f.suggestion },
+              { header: 'Read by the team', value: (f) => (f.reviewed_at === undefined ? '' : f.reviewed_at !== null) },
+            ]}
+          />
         }
       />
 

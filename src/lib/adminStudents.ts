@@ -113,10 +113,11 @@ export async function fetchStudentCounts(): Promise<StudentCounts | null> {
   return (data as StudentCounts | null) ?? null
 }
 
-export async function fetchStudents(search?: string): Promise<AdminStudent[]> {
+/** The list shows 200; the export asks for up to 1,000, the most the server gives. */
+export async function fetchStudents(search?: string, maxRows = 200): Promise<AdminStudent[]> {
   const { data, error } = await supabase.rpc('admin_students', {
     p_search: search?.trim() || null,
-    p_max_rows: 200,
+    p_max_rows: maxRows,
   })
   if (error) raise(error)
   return (data ?? []) as AdminStudent[]

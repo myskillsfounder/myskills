@@ -17,6 +17,8 @@ import {
 import { useAuthUser } from '@/lib/useAuth'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, Chip, EmptyState, Input, PageHeader, Skeleton, Textarea } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDate, csvDateTime } from '@/lib/csv'
 
 // The section that used to open Demo requests ('demo-requests') opens this.
 export const Route = createFileRoute('/admin/_layout/institution-leads')({
@@ -270,6 +272,30 @@ function InstitutionLeadsPage() {
                 decided ? ` (${Math.round((enrolled / decided) * 100)}% of closed leads)` : ''
               }`
             : 'Students interested in an institution, from first call to enrolment.'
+        }
+        actions={
+          leads ? (
+            <ExportButton<InstitutionLead>
+              name="institution-leads"
+              rows={shown}
+              columns={[
+                { header: 'Received', value: (l) => csvDateTime(l.created_at) },
+                { header: 'Student', value: (l) => l.full_name },
+                { header: 'Email', value: (l) => l.email },
+                { header: 'Phone', value: (l) => l.phone },
+                { header: 'City', value: (l) => l.city },
+                { header: 'Institution', value: (l) => l.institution_name },
+                { header: 'Course', value: (l) => l.course },
+                { header: 'Best time to call', value: (l) => l.preferred_time },
+                { header: 'Message', value: (l) => l.message },
+                { header: 'Stage', value: (l) => stageInfo(l.stage).label },
+                { header: 'Reason closed', value: (l) => l.lost_reason },
+                { header: 'Owner', value: (l) => l.owner_name },
+                { header: 'Follow up on', value: (l) => csvDate(l.follow_up_on) },
+                { header: 'Notes', value: (l) => l.notes },
+              ]}
+            />
+          ) : undefined
         }
       />
       {error && (

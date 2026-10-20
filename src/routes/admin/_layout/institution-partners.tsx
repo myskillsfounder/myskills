@@ -20,6 +20,7 @@ import { useStaffAccessContext } from '@/lib/staffAccess'
 import { OrgAvatar } from '@/components/admin/OrgAvatar'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
 
 export const Route = createFileRoute('/admin/_layout/institution-partners')({
   component: () => (
@@ -391,14 +392,40 @@ function ListedInstitutions() {
         />
       ) : (
         <>
-          <div className="relative mb-4 max-w-sm">
-            <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Name, city or course"
-              aria-label="Search institutions"
-              className="field h-10" style={{ paddingLeft: '2.25rem' }}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="relative w-full max-w-sm">
+              <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Name, city or course"
+                aria-label="Search institutions"
+                className="field h-10" style={{ paddingLeft: '2.25rem' }}
+              />
+            </div>
+            <ExportButton<InstitutionPartner>
+              name="institutions"
+              rows={shown}
+              columns={[
+                { header: 'Institution', value: (p) => p.legal_name },
+                { header: 'City', value: (p) => p.city },
+                { header: 'Years in education', value: (p) => p.years_in_education },
+                { header: 'Courses', value: (p) => (coursesFor.get(p.id) ?? p.courses_offered).join(', ') },
+                { header: 'Google rating', value: (p) => p.google_rating },
+                {
+                  header: 'Students’ rating',
+                  value: (p) => {
+                    const r = ratingFor.get(p.id)
+                    return r ? Math.round((r.sum / r.n) * 10) / 10 : null
+                  },
+                },
+                { header: 'Student ratings', value: (p) => ratingFor.get(p.id)?.n ?? 0 },
+                { header: 'Leads', value: (p) => (leads ? (leadsFor.get(p.id)?.total ?? 0) : '') },
+                { header: 'Open leads', value: (p) => (leads ? (leadsFor.get(p.id)?.open ?? 0) : '') },
+                { header: 'Enrolled', value: (p) => (leads ? (leadsFor.get(p.id)?.enrolled ?? 0) : '') },
+                { header: 'Website', value: (p) => p.website_url },
+                { header: 'Google profile', value: (p) => p.google_profile_url },
+              ]}
             />
           </div>
           {shown.length === 0 ? (

@@ -15,6 +15,8 @@ import { InviteLink } from '@/components/admin/InviteLink'
 import { MentorEditor } from '@/components/admin/MentorEditor'
 import { PortalRequestsPanel } from '@/components/admin/PortalRequestsPanel'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDate } from '@/lib/csv'
 
 /**
  * Mentors — and the one way to become one. A mentor is an account with a
@@ -280,6 +282,23 @@ function MentorsPage() {
         eyebrow="Mentors"
         title="Mentors"
         subtitle="A mentor is someone with a confirmed email whom the team has verified. Nothing else makes a mentor."
+        actions={
+          <ExportButton<ListedMentor>
+            name="mentors"
+            rows={mentors}
+            columns={[
+              { header: 'Name', value: (m) => m.full_name },
+              { header: 'Headline', value: (m) => m.headline },
+              { header: 'Expertise', value: (m) => m.expertise.join(', ') },
+              { header: 'Account email', value: (m) => m.account_email },
+              { header: 'Linked to an account', value: (m) => m.linked },
+              { header: 'Profile complete', value: (m) => m.ready },
+              { header: 'Taking students', value: (m) => m.accepting },
+              { header: 'Missing from profile', value: (m) => (m.missing ?? []).join(', ') },
+              { header: 'Listed on', value: (m) => csvDate(m.created_at) },
+            ]}
+          />
+        }
       />
 
       <TheRule />

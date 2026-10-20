@@ -10,6 +10,8 @@ import type { AdminCompany, CompanyStage } from '@/lib/internships'
 import { InviteLink } from '@/components/admin/InviteLink'
 import { OrgAvatar } from '@/components/admin/OrgAvatar'
 import { Badge, Button, Chip, EmptyState, Textarea } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDate } from '@/lib/csv'
 
 const fmtDate = (v: string) => new Date(v).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 const shortDate = (v: string) => new Date(v).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
@@ -385,14 +387,38 @@ export function CompaniesList({ rows, onChanged }: { rows: AdminCompany[]; onCha
             </Chip>
           ))}
       </div>
-      <div className="relative mt-3 max-w-sm">
-        <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Company, person, email or city"
-          aria-label="Search companies"
-          className="field h-10" style={{ paddingLeft: '2.25rem' }}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="relative w-full max-w-sm">
+          <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Company, person, email or city"
+            aria-label="Search companies"
+            className="field h-10" style={{ paddingLeft: '2.25rem' }}
+          />
+        </div>
+        <ExportButton<AdminCompany>
+          name="companies"
+          rows={shown}
+          columns={[
+            { header: 'Company', value: (c) => c.organisation },
+            { header: 'Stage', value: (c) => STAGE[c.stage].label },
+            { header: 'Contact', value: (c) => c.contact_name },
+            { header: 'Email', value: (c) => c.email },
+            { header: 'Phone', value: (c) => c.phone },
+            { header: 'City', value: (c) => c.city },
+            { header: 'Website', value: (c) => c.website },
+            { header: 'Live roles', value: (c) => c.roles_live },
+            { header: 'Roles to approve', value: (c) => c.roles_pending },
+            { header: 'New applicants', value: (c) => c.applicants_waiting },
+            { header: 'Interning now', value: (c) => c.interns_now },
+            { header: 'Internships confirmed', value: (c) => c.internships_confirmed },
+            { header: 'Contacted', value: (c) => (c.lead_id ? Boolean(c.contacted) : '') },
+            { header: 'Since', value: (c) => csvDate(c.since) },
+            { header: 'About', value: (c) => c.about },
+            { header: 'What they told us', value: (c) => c.note },
+          ]}
         />
       </div>
 

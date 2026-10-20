@@ -5,6 +5,8 @@ import { errorMessage } from '@/lib/errors'
 import { fetchCareerReadinessLeads, setLeadContacted, type CareerReadinessLead } from '@/lib/adminProgrammes'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, EmptyState, PageHeader, Skeleton } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDate, csvDateTime } from '@/lib/csv'
 
 // Needs the leads section (a full admin has it): the table's own RLS enforces the same
 // (docs/supabase-admin-tidy.sql).
@@ -64,6 +66,21 @@ function CareerReadinessLeadsPage() {
         eyebrow="Programmes"
         title="Global Leadership leads"
         subtitle={`From the old waitlist form. ${waiting} not contacted yet.`}
+        actions={
+          <ExportButton<CareerReadinessLead>
+            name="global-leadership-leads"
+            rows={rows}
+            columns={[
+              { header: 'Received', value: (r) => csvDateTime(r.created_at) },
+              { header: 'Name', value: (r) => r.full_name },
+              { header: 'Phone', value: (r) => r.phone },
+              { header: 'Email', value: (r) => r.email },
+              { header: 'City', value: (r) => r.city },
+              { header: 'Contacted', value: (r) => r.contacted },
+              { header: 'Contacted on', value: (r) => csvDate(r.contacted_at) },
+            ]}
+          />
+        }
       />
       {error && (
         <div className="mb-5">

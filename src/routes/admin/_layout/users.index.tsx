@@ -7,6 +7,8 @@ import { bandFor } from '@/lib/readinessScore'
 import { skillTracks } from '@/lib/skillTracks'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Alert, Avatar, EmptyState, Input, PageHeader, Skeleton } from '@/components/ui'
+import { ExportButton } from '@/components/admin/ExportButton'
+import { csvDate, csvDateTime } from '@/lib/csv'
 
 export const Route = createFileRoute('/admin/_layout/users/')({
   // ?q= opens the list already searched (the Dashboard's search box lands here).
@@ -151,6 +153,33 @@ function StudentsPage() {
         eyebrow="Students"
         title="All students"
         subtitle="Global Readiness Score and progress in both programmes. Open a student to see everything behind the number."
+        actions={
+          <ExportButton<AdminStudent>
+            name={search.trim() ? 'students-search' : 'students'}
+            label={search.trim() ? 'Export matches' : 'Export CSV'}
+            // Every match up to 1,000, not just the 200 on screen, in the order chosen.
+            rows={async () => {
+              const all = await fetchStudents(search, 1000)
+              return sort === 'score' ? [...all].sort((a, b) => b.score - a.score) : all
+            }}
+            columns={[
+              { header: 'Name', value: (s) => s.full_name },
+              { header: 'Email', value: (s) => s.email },
+              { header: 'Score', value: (s) => s.score },
+              { header: 'Band', value: (s) => bandFor(s.score).label },
+              { header: 'Verified points', value: (s) => s.verified_points },
+              { header: 'Identity verified', value: (s) => s.identity_verified },
+              { header: 'Digital Marketing tracks practised', value: (s) => s.dm_tracks },
+              { header: 'Foundation %', value: (s) => s.dm_foundation },
+              { header: 'Digital Marketing project passed', value: (s) => s.dm_signed_off },
+              { header: 'Global Leadership modules written', value: (s) => s.cr_modules },
+              { header: 'Global Leadership project passed', value: (s) => s.cr_signed_off },
+              { header: 'Working with', value: (s) => mentors[s.id]?.names ?? '' },
+              { header: 'Joined', value: (s) => csvDate(s.created_at) },
+              { header: 'Last login', value: (s) => csvDateTime(s.last_login) },
+            ]}
+          />
+        }
       />
 
       {counts && <StudentCountCards c={counts} />}
