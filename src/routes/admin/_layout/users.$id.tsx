@@ -10,6 +10,7 @@ import { skillsFor } from '@/lib/careerReadinessAssessment'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { StudentCommunityPanels } from '@/components/admin/StudentCommunityPanels'
+import { LearningJourney } from '@/components/admin/LearningJourney'
 import { itemsFor } from '@/lib/careerReadinessContent'
 import { Alert, Avatar, EmptyState, Skeleton } from '@/components/ui'
 
@@ -319,6 +320,9 @@ function StudentPage() {
             </ul>
           )}
         </Panel>
+
+        {/* Everything they have done, and the topics they keep missing. */}
+        <LearningJourney studentId={id} />
 
         <StudentCommunityPanels studentId={id} />
       </div>
