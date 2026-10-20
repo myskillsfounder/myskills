@@ -1,0 +1,24 @@
+# The course agents' worker (see README.md). Install:
+#   cp myskills-agents.service /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now myskills-agents
+[Unit]
+Description=MySkills course agents (Course Architect and Assessment Agent)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/frontend-app/agents
+# If `which node` isn't /usr/bin/node, use its path here.
+ExecStart=/usr/bin/node --env-file=.env worker.mjs
+Restart=always
+RestartSec=30
+TimeoutStopSec=20
+# It only needs to read its own folder and reach the internet.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target
