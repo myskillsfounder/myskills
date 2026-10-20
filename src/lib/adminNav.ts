@@ -8,6 +8,7 @@ import {
   Award,
   BadgeCheck,
   BarChart3,
+  Bot,
   BookOpen,
   Briefcase,
   Building2,
@@ -72,6 +73,7 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/team', label: 'Team & roles', icon: UserCog, section: null },
       { to: '/admin/community-portal', label: 'Portal access & usage', icon: KeyRound, section: 'portal-access' },
       { to: '/admin/activity', label: 'Activity log', icon: History, section: null },
+      { to: '/admin/ai-agents', label: 'AI agents', icon: Bot, section: null },
     ],
   },
   // A student and everything they have done: one section ('users') opens the
