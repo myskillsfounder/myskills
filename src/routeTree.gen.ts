@@ -88,6 +88,7 @@ import { Route as AdminLayoutCertificatesRouteImport } from './routes/admin/_lay
 import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog'
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
 import { Route as AdminLayoutAptitudeRouteImport } from './routes/admin/_layout/aptitude'
+import { Route as AdminLayoutAiAgentsRouteImport } from './routes/admin/_layout/ai-agents'
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
 import { Route as AdminLayoutActivityRouteImport } from './routes/admin/_layout/activity'
 import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
@@ -503,6 +504,11 @@ const AdminLayoutAptitudeRoute = AdminLayoutAptitudeRouteImport.update({
   path: '/aptitude',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutAiAgentsRoute = AdminLayoutAiAgentsRouteImport.update({
+  id: '/ai-agents',
+  path: '/ai-agents',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutAdsRoute = AdminLayoutAdsRouteImport.update({
   id: '/ads',
   path: '/ads',
@@ -582,6 +588,7 @@ export interface FileRoutesByFullPath {
   '/community/': typeof CommunityIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
+  '/admin/ai-agents': typeof AdminLayoutAiAgentsRoute
   '/admin/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
@@ -665,6 +672,7 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
+  '/admin/ai-agents': typeof AdminLayoutAiAgentsRoute
   '/admin/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/blog': typeof AdminLayoutBlogRoute
@@ -752,6 +760,7 @@ export interface FileRoutesById {
   '/community/': typeof CommunityIndexRoute
   '/admin/_layout/activity': typeof AdminLayoutActivityRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
+  '/admin/_layout/ai-agents': typeof AdminLayoutAiAgentsRoute
   '/admin/_layout/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/_layout/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
   '/admin/_layout/blog': typeof AdminLayoutBlogRoute
@@ -840,6 +849,7 @@ export interface FileRouteTypes {
     | '/community/'
     | '/admin/activity'
     | '/admin/ads'
+    | '/admin/ai-agents'
     | '/admin/aptitude'
     | '/admin/assessment-questions'
     | '/admin/blog'
@@ -923,6 +933,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/admin/activity'
     | '/admin/ads'
+    | '/admin/ai-agents'
     | '/admin/aptitude'
     | '/admin/assessment-questions'
     | '/admin/blog'
@@ -1009,6 +1020,7 @@ export interface FileRouteTypes {
     | '/community/'
     | '/admin/_layout/activity'
     | '/admin/_layout/ads'
+    | '/admin/_layout/ai-agents'
     | '/admin/_layout/aptitude'
     | '/admin/_layout/assessment-questions'
     | '/admin/_layout/blog'
@@ -1646,6 +1658,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutAptitudeRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/ai-agents': {
+      id: '/admin/_layout/ai-agents'
+      path: '/ai-agents'
+      fullPath: '/admin/ai-agents'
+      preLoaderRoute: typeof AdminLayoutAiAgentsRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/ads': {
       id: '/admin/_layout/ads'
       path: '/ads'
@@ -1727,6 +1746,7 @@ const PartnershipsRouteWithChildren = PartnershipsRoute._addFileChildren(
 interface AdminLayoutRouteChildren {
   AdminLayoutActivityRoute: typeof AdminLayoutActivityRoute
   AdminLayoutAdsRoute: typeof AdminLayoutAdsRoute
+  AdminLayoutAiAgentsRoute: typeof AdminLayoutAiAgentsRoute
   AdminLayoutAptitudeRoute: typeof AdminLayoutAptitudeRoute
   AdminLayoutAssessmentQuestionsRoute: typeof AdminLayoutAssessmentQuestionsRoute
   AdminLayoutBlogRoute: typeof AdminLayoutBlogRoute
@@ -1760,6 +1780,7 @@ interface AdminLayoutRouteChildren {
 const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutActivityRoute: AdminLayoutActivityRoute,
   AdminLayoutAdsRoute: AdminLayoutAdsRoute,
+  AdminLayoutAiAgentsRoute: AdminLayoutAiAgentsRoute,
   AdminLayoutAptitudeRoute: AdminLayoutAptitudeRoute,
   AdminLayoutAssessmentQuestionsRoute: AdminLayoutAssessmentQuestionsRoute,
   AdminLayoutBlogRoute: AdminLayoutBlogRoute,
