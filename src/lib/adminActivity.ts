@@ -36,7 +36,7 @@ export interface ActivityRow {
 export const ACTIVITY_AREAS: { id: string; label: string; tables: string[] }[] = [
   { id: 'team', label: 'Team & access', tables: ['admins', 'staff_members', 'staff_roles', 'portal_requests', 'community_access'] },
   { id: 'students', label: 'Students', tables: ['verification_requests', 'verified_items'] },
-  { id: 'programmes', label: 'Programmes', tables: ['mentor_reviews', 'live_session_attendance', 'initial_assessment_questions', 'career_readiness_leads'] },
+  { id: 'programmes', label: 'Programmes', tables: ['mentor_reviews', 'live_session_attendance', 'initial_assessment_questions', 'career_readiness_leads', 'programmes'] },
   { id: 'internships', label: 'Internships', tables: ['internship_roles', 'internship_applications', 'internship_partner_leads'] },
   { id: 'mentors', label: 'Mentors', tables: ['mentors'] },
   { id: 'institutions', label: 'Institutions', tables: ['institution_partners', 'institution_leads', 'institution_lead_notes'] },
@@ -102,6 +102,15 @@ export function describe(r: ActivityRow): string {
   const fields = changed.length ? ` (${changed.map(words).join(', ')})` : ''
 
   switch (r.table_name) {
+    case 'programmes': {
+      const v = d.current_version as { to: unknown } | undefined
+      if (r.op === 'INSERT') return `started the programme ${quote(r.label)}`
+      if (r.op === 'DELETE') return `deleted the programme ${quote(r.label)}`
+      if (to === 'archived') return `archived the programme ${quote(r.label)}`
+      if (from === 'archived') return `brought back the programme ${quote(r.label)}`
+      if (changed.includes('current_version')) return `published a new version of ${quote(r.label)}${v ? ` (v${String(v.to)})` : ''}`
+      return `changed the programme ${quote(r.label)}${fields}`
+    }
     case 'internship_roles':
       if (r.op === 'INSERT') return `posted the role ${quote(r.label)}`
       if (r.op === 'DELETE') return `deleted the role ${quote(r.label)}`

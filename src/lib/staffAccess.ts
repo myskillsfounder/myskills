@@ -30,6 +30,8 @@ export const STAFF_SECTIONS = [
   'partner-leads',
   // Global Leadership leads (docs/supabase-admin-tidy.sql).
   'leads',
+  // Building and publishing programmes on the course engine (docs/supabase-course-engine.sql).
+  'programmes',
 ] as const
 
 export type StaffSection = (typeof STAFF_SECTIONS)[number]
