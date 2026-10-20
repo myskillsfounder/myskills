@@ -94,6 +94,7 @@ import { Route as AdminLayoutBlogRouteImport } from './routes/admin/_layout/blog
 import { Route as AdminLayoutAssessmentQuestionsRouteImport } from './routes/admin/_layout/assessment-questions'
 import { Route as AdminLayoutAptitudeRouteImport } from './routes/admin/_layout/aptitude'
 import { Route as AdminLayoutAiAgentsRouteImport } from './routes/admin/_layout/ai-agents'
+import { Route as AdminLayoutAgentWorkRouteImport } from './routes/admin/_layout/agent-work'
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
 import { Route as AdminLayoutActivityRouteImport } from './routes/admin/_layout/activity'
 import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
@@ -543,6 +544,11 @@ const AdminLayoutAiAgentsRoute = AdminLayoutAiAgentsRouteImport.update({
   path: '/ai-agents',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutAgentWorkRoute = AdminLayoutAgentWorkRouteImport.update({
+  id: '/agent-work',
+  path: '/agent-work',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutAdsRoute = AdminLayoutAdsRouteImport.update({
   id: '/ads',
   path: '/ads',
@@ -640,6 +646,7 @@ export interface FileRoutesByFullPath {
   '/programmes/': typeof ProgrammesIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
+  '/admin/agent-work': typeof AdminLayoutAgentWorkRoute
   '/admin/ai-agents': typeof AdminLayoutAiAgentsRoute
   '/admin/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
@@ -732,6 +739,7 @@ export interface FileRoutesByTo {
   '/programmes': typeof ProgrammesIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
+  '/admin/agent-work': typeof AdminLayoutAgentWorkRoute
   '/admin/ai-agents': typeof AdminLayoutAiAgentsRoute
   '/admin/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
@@ -828,6 +836,7 @@ export interface FileRoutesById {
   '/programmes/': typeof ProgrammesIndexRoute
   '/admin/_layout/activity': typeof AdminLayoutActivityRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
+  '/admin/_layout/agent-work': typeof AdminLayoutAgentWorkRoute
   '/admin/_layout/ai-agents': typeof AdminLayoutAiAgentsRoute
   '/admin/_layout/aptitude': typeof AdminLayoutAptitudeRoute
   '/admin/_layout/assessment-questions': typeof AdminLayoutAssessmentQuestionsRoute
@@ -925,6 +934,7 @@ export interface FileRouteTypes {
     | '/programmes/'
     | '/admin/activity'
     | '/admin/ads'
+    | '/admin/agent-work'
     | '/admin/ai-agents'
     | '/admin/aptitude'
     | '/admin/assessment-questions'
@@ -1017,6 +1027,7 @@ export interface FileRouteTypes {
     | '/programmes'
     | '/admin/activity'
     | '/admin/ads'
+    | '/admin/agent-work'
     | '/admin/ai-agents'
     | '/admin/aptitude'
     | '/admin/assessment-questions'
@@ -1112,6 +1123,7 @@ export interface FileRouteTypes {
     | '/programmes/'
     | '/admin/_layout/activity'
     | '/admin/_layout/ads'
+    | '/admin/_layout/agent-work'
     | '/admin/_layout/ai-agents'
     | '/admin/_layout/aptitude'
     | '/admin/_layout/assessment-questions'
@@ -1804,6 +1816,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutAiAgentsRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/agent-work': {
+      id: '/admin/_layout/agent-work'
+      path: '/agent-work'
+      fullPath: '/admin/agent-work'
+      preLoaderRoute: typeof AdminLayoutAgentWorkRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/ads': {
       id: '/admin/_layout/ads'
       path: '/ads'
@@ -1906,6 +1925,7 @@ const PartnershipsRouteWithChildren = PartnershipsRoute._addFileChildren(
 interface AdminLayoutRouteChildren {
   AdminLayoutActivityRoute: typeof AdminLayoutActivityRoute
   AdminLayoutAdsRoute: typeof AdminLayoutAdsRoute
+  AdminLayoutAgentWorkRoute: typeof AdminLayoutAgentWorkRoute
   AdminLayoutAiAgentsRoute: typeof AdminLayoutAiAgentsRoute
   AdminLayoutAptitudeRoute: typeof AdminLayoutAptitudeRoute
   AdminLayoutAssessmentQuestionsRoute: typeof AdminLayoutAssessmentQuestionsRoute
@@ -1943,6 +1963,7 @@ interface AdminLayoutRouteChildren {
 const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutActivityRoute: AdminLayoutActivityRoute,
   AdminLayoutAdsRoute: AdminLayoutAdsRoute,
+  AdminLayoutAgentWorkRoute: AdminLayoutAgentWorkRoute,
   AdminLayoutAiAgentsRoute: AdminLayoutAiAgentsRoute,
   AdminLayoutAptitudeRoute: AdminLayoutAptitudeRoute,
   AdminLayoutAssessmentQuestionsRoute: AdminLayoutAssessmentQuestionsRoute,

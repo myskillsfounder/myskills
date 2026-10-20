@@ -223,3 +223,15 @@ test('budget: stops reviewing once the job has spent its budget, and says so', a
   assert.equal(claude.calls.filter((x) => x.startsWith('review')).length, 0)
   assert.match(out.report, /reached its \$1 budget/)
 })
+
+test('budget: stops before a revision that would go past the budget', async () => {
+  const claude = fakeClaude({
+    review: () => ({ verdict: 'needs_work', summary: '', strengths: [], findings: [{ target: 'module:da-m01', severity: 'must_fix', problem: 'x', fix: 'y', source: '' }], lessons: [] }),
+    revise: () => assert.fail('should not revise'),
+  })
+  const c = ctx(claude, { budgetUsd: 2 })
+  c.usage.output_tokens = 90_000 // $1.80 spent: a $1.50 review would pass $2, so it stops first
+  const out = await runJob({ job: { id: 'j', kind: 'improve' }, programme: { slug: 'x-y', title: 'X', source: 'engine' }, content: clone(DA), playbook: [] }, c)
+  assert.equal(claude.calls.filter((x) => x.startsWith('revise')).length, 0)
+  assert.match(out.report, /Stopped before review round 1/)
+})

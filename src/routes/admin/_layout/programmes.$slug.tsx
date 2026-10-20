@@ -25,6 +25,8 @@ import { QuestionList } from '@/components/admin/programme/QuestionList'
 import { Alert, Badge, Button, EmptyState, Skeleton } from '@/components/ui'
 
 export const Route = createFileRoute('/admin/_layout/programmes/$slug')({
+  // ?tab=agents opens on the Agents tab (from Agents’ work).
+  validateSearch: (s: Record<string, unknown>): { tab?: 'agents' } => (s.tab === 'agents' ? { tab: 'agents' } : {}),
   component: () => (
     <RequireSection section="programmes">
       <ProgrammeEditorPage />
@@ -274,7 +276,7 @@ function ProgrammeEditorPage() {
   const [content, setContent] = useState<ProgrammeContent>()
   const [problems, setProblems] = useState<string[]>([])
   const [dirty, setDirty] = useState(false)
-  const [tab, setTab] = useState<Tab>('overview')
+  const [tab, setTab] = useState<Tab>(Route.useSearch().tab ?? 'overview')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string>()
   const [saved, setSaved] = useState<string>()
