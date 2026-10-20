@@ -93,6 +93,39 @@ export const AI_AGENTS: AiAgent[] = [
     runs: 'On the MySkills server, when a meeting ends',
   },
   {
+    id: 'assessment-agent',
+    name: 'Assessment Agent',
+    purpose: 'Keeps the curriculum current and the tests honest: researches each topic weekly, checks how every question performs, and proposes better assessments.',
+    status: 'building',
+    progress:
+      'Step 1 is live: Question health (Programmes menu) shows how every practice and Foundation question performs, with the standard checks flagged. Next: question banks in the database with versions, a review queue, then the weekly agent.',
+    reads: [
+      'Recent changes in each topic (web search, with sources)',
+      'Question health: % right, options picked, how well each question separates strong and weak students',
+      'Learner Coach data: the topics students struggle with',
+      'The current modules, questions and aptitude statements',
+    ],
+    produces: [
+      'A weekly report: outdated content, weak questions, gaps',
+      'Drafts in a review queue: new and advanced questions with answer keys, rewrites, better aptitude statements, syllabus updates',
+      'Proposals for new kinds of assessment: case simulations, adaptive tests, written answers graded by AI and checked by a person',
+    ],
+    safeguards: [
+      'Never publishes: the team approves every change',
+      'Never changes the score rules',
+      'Question changes go live as a new version, never mid-test, so past results stay fair',
+      'Answer keys stay on the server',
+      'Every claim about a change in the field links to its source',
+    ],
+    needs: [
+      'About 30 students answering each question before it can be judged (answers kept since 21 Oct 2026)',
+      'Question banks in the database, with versions (practice questions are in code today)',
+      'Anthropic API account',
+    ],
+    model: 'Claude Opus 5.5 (Anthropic), with web search',
+    runs: 'On the MySkills server, once a week',
+  },
+  {
     id: 'course-architect',
     name: 'Course Architect',
     purpose: 'Name a course (Data Analytics, Cyber Security, AI Engineer…) and it drafts a complete MySkills programme.',
