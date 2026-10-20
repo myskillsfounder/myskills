@@ -357,7 +357,7 @@ export function AgentsPanel({
               {draft ? 'Draft this programme' : 'Improve this programme'}
             </Button>
             <span className="text-xs text-ink-500">
-              {working ? 'They’re already working on it.' : `Takes about 15 to 40 minutes and usually costs $5 to $20.`}
+              {working ? 'They’re already working on it.' : `Takes about 15 to 40 minutes and usually costs $3 to $10 (at most $10, within the $20 a month).`}
               {!running && ' The agents’ server isn’t running, so the job will wait until it is.'}
             </span>
           </div>

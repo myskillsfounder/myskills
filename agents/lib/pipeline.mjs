@@ -89,7 +89,10 @@ export async function runJob(claim, ctx) {
     log(stage)
     if ((await ctx.progress(stage, usage.toJSON())) === 'cancelled') throw new Cancelled()
   }
-  const overBudget = () => usage.cost >= ctx.budgetUsd
+  // Stop before a step that would likely take the job past its budget (a
+  // review costs about $1.50, revising one part about $0.50), so a job ends
+  // within its limit instead of just after it.
+  const overBudget = (next = 0) => usage.cost + next > ctx.budgetUsd
 
   // 1. Research.
   await step('Researching the field')
@@ -148,7 +151,7 @@ export async function runJob(claim, ctx) {
   const rounds = []
   let previous = null
   for (let round = 1; ; round++) {
-    if (overBudget()) {
+    if (overBudget(1.5)) {
       notes.push(`Stopped before review round ${round}: the job reached its $${ctx.budgetUsd} budget.`)
       break
     }
@@ -170,7 +173,7 @@ export async function runJob(claim, ctx) {
     rounds.push(r)
     if (!toFix.length) break
     if (round > MAX_REVISIONS) break
-    if (overBudget()) {
+    if (overBudget(0.5 * new Set(toFix.map((f) => (FRAME_TARGETS.has(f.target) ? 'frame' : f.target))).size)) {
       notes.push(`Stopped before revising round ${round}: the job reached its $${ctx.budgetUsd} budget.`)
       break
     }

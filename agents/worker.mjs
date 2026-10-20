@@ -12,8 +12,11 @@ import { Cancelled, runJob } from './lib/pipeline.mjs'
 const VERSION = '1.0.0'
 const env = process.env
 const MODEL = env.AGENT_MODEL || DEFAULT_MODEL
-const JOB_BUDGET = Number(env.AGENT_JOB_BUDGET_USD || 25)
-const MONTH_BUDGET = Number(env.AGENT_MONTHLY_BUDGET_USD || 150)
+const JOB_BUDGET = Number(env.AGENT_JOB_BUDGET_USD || 10)
+const MONTH_BUDGET = Number(env.AGENT_MONTHLY_BUDGET_USD || 20)
+// Drafting a programme costs this much before it can stop early, so a draft
+// only starts when at least this much of the month's budget is left.
+const DRAFT_MINIMUM = 8
 const POLL_MS = 30_000
 const WEEKLY_MS = 60 * 60_000
 
@@ -61,8 +64,15 @@ async function work() {
   current = job.id
   log(`Job ${job.id}: ${job.kind} "${programme.title}"`)
   const usage = new Usage(MODEL)
-  if (Number(claim.month_cost_usd) >= MONTH_BUDGET) {
-    await finish(job.id, { ok: false, usage: usage.toJSON(), error: `This month’s agent budget ($${MONTH_BUDGET}) is used up. Raise AGENT_MONTHLY_BUDGET_USD on the server, or wait for next month.` })
+  // A job may spend at most what is left of the month's budget.
+  const left = Math.round((MONTH_BUDGET - Number(claim.month_cost_usd)) * 100) / 100
+  const needs = job.kind === 'draft' ? DRAFT_MINIMUM : 2
+  if (left < needs) {
+    await finish(job.id, {
+      ok: false,
+      usage: usage.toJSON(),
+      error: `Only $${Math.max(left, 0).toFixed(2)} of this month’s $${MONTH_BUDGET} agent budget is left, and ${job.kind === 'draft' ? 'drafting a programme' : 'a job'} needs at least $${needs}. Wait for next month, or raise AGENT_MONTHLY_BUDGET_USD on the server.`,
+    })
     current = null
     return true
   }
@@ -71,7 +81,7 @@ async function work() {
     const out = await runJob(claim, {
       claude,
       usage,
-      budgetUsd: JOB_BUDGET,
+      budgetUsd: Math.min(JOB_BUDGET, left),
       log: (m) => log(`  ${m}`),
       progress: (stage, u) => rpc('agent_job_progress', { p_id: job.id, p_stage: stage, p_usage: u }),
     })

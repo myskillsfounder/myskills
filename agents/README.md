@@ -40,14 +40,17 @@ searches cost $10 per 1,000.
 
 | Job | Usual cost |
 | --- | --- |
-| Drafting a programme | $5–20 |
+| Drafting a programme | $5–10 (capped at the job limit) |
 | Improving a programme, or a monthly check | $3–10 |
 
 Two limits in `.env` cap spending:
 
-- `AGENT_JOB_BUDGET_USD` (default 25): a job stops revising when it reaches this.
-- `AGENT_MONTHLY_BUDGET_USD` (default 150): no job starts once the month's total
-  reaches this.
+- `AGENT_MONTHLY_BUDGET_USD` (default 20): the most the agents spend in a month.
+  A job may only spend what is left of it; a draft needs at least $8 left to
+  start, an improve job $2.
+- `AGENT_JOB_BUDGET_USD` (default 10): the most one job spends. A job stops
+  before a review or revision that would take it past its limit, and reports
+  what it finished.
 
 The Agents tab shows the month's spending.
 
