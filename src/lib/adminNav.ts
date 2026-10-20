@@ -15,7 +15,6 @@ import {
   Building2,
   CalendarCheck,
   ClipboardCheck,
-  ClipboardList,
   Dumbbell,
   FileCheck,
   FileText,
@@ -90,20 +89,31 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/admin/foundation', label: 'Foundation results', icon: ClipboardCheck, section: 'users' },
     ],
   },
-  // What the team grades and writes for both programmes, and the people
-  // asking to join Global Leadership.
+  // The course content: written and kept current by the course agents (the
+  // Course Architect and the Assessment Agent), approved by the team. The
+  // Foundation and practice question sets open from the Course engine.
   {
-    label: 'Programmes',
+    label: 'Courses',
+    items: [
+      { to: '/admin/programmes', label: 'Course engine', icon: Layers, section: 'programmes' },
+      { to: '/admin/agent-work', label: 'Agents’ work', icon: Bot, section: 'programmes' },
+      { to: '/admin/question-health', label: 'Question health', icon: Activity, section: 'assessment' },
+    ],
+  },
+  // Work with students that people decide: grading, sessions, certificates.
+  {
+    label: 'Teaching & grading',
     items: [
       { to: '/admin/mentor-reviews', label: 'Projects to grade', icon: FileCheck, section: 'mentor-reviews', inbox: ['project'] },
       { to: '/admin/modules', label: 'Modules & answers', icon: BookOpen, section: 'mentor-reviews' },
       { to: '/admin/live-sessions', label: 'Live sessions', icon: CalendarCheck, section: 'mentor-reviews' },
       { to: '/admin/certificates', label: 'Certificates', icon: Award, section: 'certificates' },
-      { to: '/admin/assessment-questions', label: 'Foundation questions', icon: ClipboardList, section: 'assessment' },
-      { to: '/admin/question-health', label: 'Question health', icon: Activity, section: 'assessment' },
-      { to: '/admin/programmes', label: 'Course engine', icon: Layers, section: 'programmes' },
-      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
     ],
+  },
+  // People asking to join a programme.
+  {
+    label: 'Admissions',
+    items: [{ to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] }],
   },
   // Internships end to end, under one section: every company however it came,
   // then their roles, applications and sign-offs.

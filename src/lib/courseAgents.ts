@@ -54,6 +54,16 @@ export interface AgentJobs {
   worker_seen_at: string | null
 }
 
+/** Every programme's jobs, for the Agents' work page. */
+export interface AgentWork {
+  jobs: (AgentJob & { programme_slug: string; programme_title: string })[]
+  /** Programmes switched to the monthly check. */
+  monthly: { slug: string; title: string }[]
+  month_cost_usd: number
+  worker_seen_at: string | null
+  worker_info: { version?: string; model?: string; job_budget_usd?: number; month_budget_usd?: number } | null
+}
+
 export interface PlaybookRule {
   id: string
   created_at: string
@@ -79,6 +89,16 @@ export async function fetchAgentJobs(programmeId: string): Promise<AgentJobs | n
     fail(error)
   }
   return data as AgentJobs
+}
+
+/** Null until docs/supabase-agent-work.sql is run. */
+export async function fetchAgentWork(): Promise<AgentWork | null> {
+  const { data, error } = await supabase.rpc('admin_agent_work')
+  if (error) {
+    if (error.code === 'PGRST202') return null
+    fail(error)
+  }
+  return data as AgentWork
 }
 
 export async function fetchAgentJob(id: string): Promise<AgentJobFull | null> {

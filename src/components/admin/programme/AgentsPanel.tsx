@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { AlertTriangle, BookOpenCheck, Bot, CircleStop, Download, Pencil, Plus, RefreshCw, Sparkles } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { withDefaults, type ProgrammeContent } from '@/lib/programmeEngine'
@@ -106,8 +107,8 @@ function JobDetail({ id, dirty, onLoad }: { id: string; dirty: boolean; onLoad: 
 
 const SOURCE = { seed: 'From the first review', team: 'Added by the team', review: 'Learned' }
 
-/** What the agents have learned: rules both follow on every job. */
-function Playbook() {
+/** What the agents have learned: rules both follow on every job (on the Agents’ work page). */
+export function Playbook() {
   const [rules, setRules] = useState<PlaybookRule[]>()
   const [editing, setEditing] = useState<string | 'new' | null>(null)
   const [rule, setRule] = useState('')
@@ -150,7 +151,7 @@ function Playbook() {
   )
 
   return (
-    <section className="border-t border-ink-900/[0.06] pt-5">
+    <section>
       <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-ink-900">
         <BookOpenCheck size={18} className="text-brand-700" /> The playbook
       </h3>
@@ -454,7 +455,15 @@ export function AgentsPanel({
         </section>
       )}
 
-      {data && <Playbook />}
+      {data && (
+        <p className="border-t border-ink-900/[0.06] pt-4 text-sm text-ink-600">
+          The rules both agents follow (the playbook), every programme’s jobs and this month’s spending are on{' '}
+          <Link to="/admin/agent-work" className="font-semibold text-brand-700 underline underline-offset-2">
+            Agents’ work
+          </Link>
+          .
+        </p>
+      )}
     </div>
   )
 }

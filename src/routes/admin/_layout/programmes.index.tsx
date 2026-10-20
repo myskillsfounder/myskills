@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, Layers, Plus } from 'lucide-react'
+import { ArrowRight, Bot, ClipboardList, Layers, Plus } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { createProgramme, fetchProgrammes, slugify, type ProgrammeKind, type ProgrammeSummary } from '@/lib/programmeEngine'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
@@ -174,6 +174,24 @@ function ProgrammesPage() {
               ))}
             </ul>
           )}
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <Link to="/admin/agent-work" className="card group flex items-start gap-3 p-4 transition-shadow hover:shadow-e2">
+              <Bot size={18} className="mt-0.5 shrink-0 text-brand-700" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-ink-900">Agents’ work</span>
+                <span className="block text-xs text-ink-500">Every agent job, the playbook they follow, and this month’s spending</span>
+              </span>
+              <ArrowRight size={16} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link to="/admin/assessment-questions" className="card group flex items-start gap-3 p-4 transition-shadow hover:shadow-e2">
+              <ClipboardList size={18} className="mt-0.5 shrink-0 text-brand-700" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-ink-900">Foundation and practice question sets</span>
+                <span className="block text-xs text-ink-500">The Foundation assessment (edited here as Digital Marketing’s final) and extra practice sets</span>
+              </span>
+              <ArrowRight size={16} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
         </>
       )}
     </>
