@@ -19,6 +19,7 @@ import {
 } from '@/lib/programmeEngine'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { AddButton, Area, ItemTools, NumberField, Select, StringList, StructureLock, Text, moved, replaced, useStructureLock } from '@/components/admin/programme/fields'
+import { AgentsPanel } from '@/components/admin/programme/AgentsPanel'
 import { ModuleEditor } from '@/components/admin/programme/ModuleEditor'
 import { QuestionList } from '@/components/admin/programme/QuestionList'
 import { Alert, Badge, Button, EmptyState, Skeleton } from '@/components/ui'
@@ -31,7 +32,7 @@ export const Route = createFileRoute('/admin/_layout/programmes/$slug')({
   ),
 })
 
-type Tab = 'overview' | 'skills' | 'aptitude' | 'modules' | 'final' | 'project' | 'publish'
+type Tab = 'overview' | 'skills' | 'aptitude' | 'modules' | 'final' | 'project' | 'publish' | 'agents'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'skills', label: 'Skills' },
@@ -40,6 +41,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'final', label: 'Final assessment' },
   { id: 'project', label: 'Project' },
   { id: 'publish', label: 'Check & publish' },
+  { id: 'agents', label: 'Agents' },
 ]
 
 /* ---------------------------------------------------------------- tabs */
@@ -463,6 +465,9 @@ function ProgrammeEditorPage() {
         {tab === 'modules' && <ModulesTab c={content} set={edit} />}
         {tab === 'final' && <FinalTab c={content} set={edit} />}
         {tab === 'project' && <ProjectTab c={content} set={edit} />}
+        {tab === 'agents' && (
+          <AgentsPanel programmeId={p.id} builtIn={builtIn} hasModules={content.modules.length > 0} dirty={dirty} onLoad={edit} />
+        )}
         {tab === 'publish' && (
           <div className="space-y-6">
             <section>
