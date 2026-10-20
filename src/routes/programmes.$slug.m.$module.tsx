@@ -107,17 +107,18 @@ function ModuleView({ p, m, preview, reload }: { p: MyProgramme; m: ProgrammeMod
   const responses = p.responses[m.id] ?? {}
   const [local, setLocal] = useState<Record<string, string>>({})
   const written = (k: string) => Boolean(local[k] ?? responses[k])
+  // Only the parts this module has.
   const steps: { key: Step; label: string }[] = [
-    { key: 'learn', label: 'Learn' },
+    ...(m.learn.length ? [{ key: 'learn', label: 'Learn' }] : []),
     ...m.tasks.map((t, i) => ({ key: t.id, label: `Task ${i + 1}` })),
-    { key: 'reflect', label: 'Reflect' },
-    { key: 'quiz', label: 'Quiz' },
+    ...(m.tasks.length ? [{ key: 'reflect', label: 'Reflect' }] : []),
+    ...(m.quiz.length ? [{ key: 'quiz', label: 'Quiz' }] : []),
   ]
   // Where to open: Learn on a first visit, then the first thing not yet
   // written, then the quiz once everything is written.
   const [step, setStep] = useState<Step>(() => {
-    if (Object.keys(responses).length === 0) return 'learn'
-    return steps.find((s) => s.key !== 'learn' && s.key !== 'quiz' && !responses[s.key])?.key ?? 'quiz'
+    if (Object.keys(responses).length === 0) return steps[0]?.key ?? 'learn'
+    return steps.find((s) => s.key !== 'learn' && s.key !== 'quiz' && !responses[s.key])?.key ?? steps[steps.length - 1]?.key ?? 'learn'
   })
   const idx = steps.findIndex((s) => s.key === step)
   const next = () => setStep(steps[Math.min(idx + 1, steps.length - 1)].key)
@@ -140,7 +141,8 @@ function ModuleView({ p, m, preview, reload }: { p: MyProgramme; m: ProgrammeMod
     <div className="space-y-5">
       <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label="Module steps">
         {steps.map((s, i) => {
-          const isDone = s.key === 'learn' ? i < idx || written(m.tasks[0]?.id ?? 'reflect') : s.key === 'quiz' ? (quiz?.best ?? 0) >= QUIZ_PASS : written(s.key)
+          const isDone =
+            s.key === 'learn' ? i < idx || (m.tasks[0] ? written(m.tasks[0].id) : Boolean(quiz)) : s.key === 'quiz' ? (quiz?.best ?? 0) >= QUIZ_PASS : written(s.key)
           const on = s.key === step
           return (
             <li key={s.key}>
@@ -191,7 +193,7 @@ function ModuleView({ p, m, preview, reload }: { p: MyProgramme; m: ProgrammeMod
             </article>
           ))}
           <Button iconRight={ArrowRight} onClick={next}>
-            Start the tasks
+            {m.tasks.length ? 'Start the tasks' : 'Take the quiz'}
           </Button>
         </section>
       )}

@@ -9,20 +9,41 @@ import { supabase } from './supabase'
 
 export type ProgrammeKind = 'professional' | 'personal'
 export type ProgrammeStatus = 'draft' | 'published' | 'archived'
+/** 'built-in': Global Leadership and Digital Marketing, which have their own pages and a locked structure. */
+export type ProgrammeSource = 'engine' | 'built-in'
 export type VersionStatus = 'draft' | 'published' | 'superseded'
 export type Level = 'beginner' | 'intermediate' | 'advanced'
 export type ModuleLevel = 'foundation' | 'intermediate' | 'advanced'
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
 
+/** A full case for a scenario question (Digital Marketing's practice questions have one). */
+export interface QuestionContext {
+  company?: string
+  role?: string
+  industry?: string
+  background?: string
+  objective?: string
+  information?: string
+  constraints?: string
+}
+
 export interface Question {
   id: string
+  /** A short name for the case, shown above it (optional). */
+  title?: string
   /** Optional context: the situation the question is set in. */
   scenario: string
+  /** Optional structured case: company, role, background, objective… */
+  context?: QuestionContext
   question: string
   options: string[]
   correct_index: number
   /** Why the right answer is right; shown after the attempt. */
   explanation: string
+  /** Why the other options are wrong; shown after the attempt (optional). */
+  why_wrong?: string
+  /** What the question teaches; shown after the attempt (optional). */
+  learning_outcome?: string
   difficulty: Difficulty
   /** The topic it tests, for Question health and the Learner Coach. */
   topic: string
@@ -32,6 +53,8 @@ export interface Question {
 export interface ProgrammeModule {
   id: string
   title: string
+  /** One or two lines for lists and the programme page (optional). */
+  summary?: string
   /** The skill it trains (a skill id). */
   skill: string
   level: ModuleLevel
@@ -58,6 +81,7 @@ export interface ProgrammeSummary {
   title: string
   kind: ProgrammeKind
   status: ProgrammeStatus
+  source: ProgrammeSource
   current_version: number | null
   draft_version: number | null
   updated_at: string
@@ -82,6 +106,7 @@ export interface ProgrammeForEditing {
   title: string
   kind: ProgrammeKind
   status: ProgrammeStatus
+  source: ProgrammeSource
   current_version: number | null
   editing_version: number
   editing_status: VersionStatus
@@ -176,6 +201,7 @@ export const blankQuestion = (): Question => ({
 export const blankModule = (skill = ''): ProgrammeModule => ({
   id: newId('m'),
   title: 'New module',
+  summary: '',
   skill,
   level: 'foundation',
   outcome: '',

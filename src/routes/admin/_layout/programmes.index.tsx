@@ -106,7 +106,7 @@ function ProgrammesPage() {
       <PageHeader
         eyebrow="Programmes"
         title="Course engine"
-        subtitle="Programmes built on the course engine: written as a draft, checked, then published. Global Leadership and Digital Marketing are not here yet; they keep working as they are."
+        subtitle="Every programme, edited as a draft, checked, then published. Global Leadership and Digital Marketing are here too: publishing them changes what students see on their own pages."
         actions={
           rows && !adding ? (
             <Button icon={Plus} onClick={() => setAdding(true)}>
@@ -152,6 +152,7 @@ function ProgrammesPage() {
                       <span className="flex flex-wrap items-center gap-2">
                         <span className="font-display text-base font-semibold text-ink-900">{p.title}</span>
                         <Badge tone={STATUS[p.status].tone}>{STATUS[p.status].label}</Badge>
+                        {p.source === 'built-in' && <Badge tone="neutral">Built into the app</Badge>}
                         {p.draft_version && p.current_version && <Badge tone="warning">Draft v{p.draft_version} in progress</Badge>}
                       </span>
                       <span className="mt-0.5 block text-xs text-ink-500">

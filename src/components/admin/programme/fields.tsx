@@ -1,5 +1,13 @@
-import type { ReactNode } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react'
+
+/**
+ * True for Global Leadership and Digital Marketing: their modules, tasks,
+ * questions, statements and skills can't be added, removed or reordered
+ * (progress and scores count them), only reworded.
+ */
+export const StructureLock = createContext(false)
+export const useStructureLock = () => useContext(StructureLock)
 
 /** A labelled one-line text box. */
 export function Text({

@@ -43,6 +43,13 @@ function Final({ p, preview, reload }: { p: MyProgramme; preview: boolean; reloa
   const allDone = p.content.modules.every((m) => moduleDone(p, m))
   const search = preview ? { preview: 1 as const } : {}
 
+  if (f.questions.length === 0) {
+    return (
+      <Alert tone="info" title="No final assessment">
+        <p>This programme doesn’t have one: finishing the modules is enough.</p>
+      </Alert>
+    )
+  }
   if (p.final?.passed && !taken) {
     return (
       <Alert tone="success" title={`Passed with ${p.final.percent}%`}>

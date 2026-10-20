@@ -91,6 +91,33 @@ export function ProgrammeFrame({
 
 const LETTER = 'ABCDEF'
 
+/** A scenario question's case: company, role, background, objective… */
+function CaseDetails({ q }: { q: Question }) {
+  const c = q.context
+  if (!c) return null
+  const head = [c.company, c.role, c.industry].filter((x) => x && x.trim())
+  const rows = (
+    [
+      ['Background', c.background],
+      ['Objective', c.objective],
+      ['What you know', c.information],
+      ['Constraints', c.constraints],
+    ] as const
+  ).filter(([, v]) => v && v.trim())
+  if (head.length === 0 && rows.length === 0) return null
+  return (
+    <div className="mt-2 rounded-xl bg-ink-50 p-3 text-sm leading-relaxed text-ink-700">
+      {head.length > 0 && <p className="text-xs font-semibold text-ink-500">{head.join(' · ')}</p>}
+      {rows.map(([k, v]) => (
+        <p key={k} className="mt-1">
+          <span className="font-semibold text-ink-900">{k}: </span>
+          {v}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 /**
  * A set of multiple-choice questions: answer all, submit, then see what was
  * right and why. Used for module quizzes and the final assessment.
@@ -159,7 +186,9 @@ export function QuizRunner({
                 Question {i + 1} of {questions.length}
                 {q.topic ? ` · ${q.topic}` : ''}
               </p>
+              {q.title && <p className="mt-1 font-display text-base font-semibold text-ink-900">{q.title}</p>}
               {q.scenario && <p className="mt-2 rounded-xl bg-ink-50 p-3 text-sm leading-relaxed text-ink-700">{q.scenario}</p>}
+              <CaseDetails q={q} />
               <p className="mt-2 font-medium text-ink-900">{q.question}</p>
               <ul className="mt-3 space-y-2" role="radiogroup" aria-label={`Question ${i + 1}`}>
                 {q.options.map((o, j) => {
@@ -198,11 +227,27 @@ export function QuizRunner({
                   )
                 })}
               </ul>
-              {r?.explanation && (
-                <p className="mt-3 rounded-xl bg-ink-50 p-3 text-sm leading-relaxed text-ink-700">
-                  <span className="font-semibold text-ink-900">Why: </span>
-                  {r.explanation}
-                </p>
+              {r && (r.explanation || r.whyWrong || r.learningOutcome) && (
+                <div className="mt-3 space-y-1.5 rounded-xl bg-ink-50 p-3 text-sm leading-relaxed text-ink-700">
+                  {r.explanation && (
+                    <p>
+                      <span className="font-semibold text-ink-900">Why: </span>
+                      {r.explanation}
+                    </p>
+                  )}
+                  {r.whyWrong && (
+                    <p>
+                      <span className="font-semibold text-ink-900">The others: </span>
+                      {r.whyWrong}
+                    </p>
+                  )}
+                  {r.learningOutcome && (
+                    <p>
+                      <span className="font-semibold text-ink-900">What it teaches: </span>
+                      {r.learningOutcome}
+                    </p>
+                  )}
+                </div>
               )}
             </li>
           )
