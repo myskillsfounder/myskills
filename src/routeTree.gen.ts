@@ -45,6 +45,7 @@ import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as AptitudeAssessmentRouteImport } from './routes/aptitude-assessment'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProgrammesIndexRouteImport } from './routes/programmes.index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
@@ -58,8 +59,11 @@ import { Route as CareerModuleSlugRouteImport } from './routes/career-module.$sl
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
+import { Route as ProgrammesSlugIndexRouteImport } from './routes/programmes.$slug.index'
 import { Route as CommunityPortalLayoutIndexRouteImport } from './routes/community-portal/_layout/index'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
+import { Route as ProgrammesSlugFinalRouteImport } from './routes/programmes.$slug.final'
+import { Route as ProgrammesSlugAptitudeRouteImport } from './routes/programmes.$slug.aptitude'
 import { Route as CommunityPortalLayoutStudentsRouteImport } from './routes/community-portal/_layout/students'
 import { Route as CommunityPortalLayoutProfileRouteImport } from './routes/community-portal/_layout/profile'
 import { Route as CommunityPortalLayoutResourceRouteImport } from './routes/community-portal/_layout/$resource'
@@ -94,6 +98,7 @@ import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
 import { Route as AdminLayoutActivityRouteImport } from './routes/admin/_layout/activity'
 import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
 import { Route as AdminLayoutProgrammesIndexRouteImport } from './routes/admin/_layout/programmes.index'
+import { Route as ProgrammesSlugMModuleRouteImport } from './routes/programmes.$slug.m.$module'
 import { Route as CommunityPortalLayoutStudentIdRouteImport } from './routes/community-portal/_layout/student.$id'
 import { Route as AdminLayoutUsersIdRouteImport } from './routes/admin/_layout/users.$id'
 import { Route as AdminLayoutProgrammesSlugRouteImport } from './routes/admin/_layout/programmes.$slug'
@@ -281,6 +286,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgrammesIndexRoute = ProgrammesIndexRouteImport.update({
+  id: '/programmes/',
+  path: '/programmes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -346,6 +356,11 @@ const AdminLayoutRoute = AdminLayoutRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgrammesSlugIndexRoute = ProgrammesSlugIndexRouteImport.update({
+  id: '/programmes/$slug/',
+  path: '/programmes/$slug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityPortalLayoutIndexRoute =
   CommunityPortalLayoutIndexRouteImport.update({
     id: '/',
@@ -356,6 +371,16 @@ const AdminLayoutIndexRoute = AdminLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminLayoutRoute,
+} as any)
+const ProgrammesSlugFinalRoute = ProgrammesSlugFinalRouteImport.update({
+  id: '/programmes/$slug/final',
+  path: '/programmes/$slug/final',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgrammesSlugAptitudeRoute = ProgrammesSlugAptitudeRouteImport.update({
+  id: '/programmes/$slug/aptitude',
+  path: '/programmes/$slug/aptitude',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityPortalLayoutStudentsRoute =
   CommunityPortalLayoutStudentsRouteImport.update({
@@ -539,6 +564,11 @@ const AdminLayoutProgrammesIndexRoute =
     path: '/programmes/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
+const ProgrammesSlugMModuleRoute = ProgrammesSlugMModuleRouteImport.update({
+  id: '/programmes/$slug/m/$module',
+  path: '/programmes/$slug/m/$module',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityPortalLayoutStudentIdRoute =
   CommunityPortalLayoutStudentIdRouteImport.update({
     id: '/student/$id',
@@ -607,6 +637,7 @@ export interface FileRoutesByFullPath {
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/programmes/': typeof ProgrammesIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/ai-agents': typeof AdminLayoutAiAgentsRoute
@@ -639,11 +670,15 @@ export interface FileRoutesByFullPath {
   '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
+  '/programmes/$slug/aptitude': typeof ProgrammesSlugAptitudeRoute
+  '/programmes/$slug/final': typeof ProgrammesSlugFinalRoute
   '/admin/': typeof AdminLayoutIndexRoute
   '/community-portal/': typeof CommunityPortalLayoutIndexRoute
+  '/programmes/$slug/': typeof ProgrammesSlugIndexRoute
   '/admin/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
   '/community-portal/student/$id': typeof CommunityPortalLayoutStudentIdRoute
+  '/programmes/$slug/m/$module': typeof ProgrammesSlugMModuleRoute
   '/admin/programmes/': typeof AdminLayoutProgrammesIndexRoute
   '/admin/users/': typeof AdminLayoutUsersIndexRoute
 }
@@ -694,6 +729,7 @@ export interface FileRoutesByTo {
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
+  '/programmes': typeof ProgrammesIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/ai-agents': typeof AdminLayoutAiAgentsRoute
@@ -726,11 +762,15 @@ export interface FileRoutesByTo {
   '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
+  '/programmes/$slug/aptitude': typeof ProgrammesSlugAptitudeRoute
+  '/programmes/$slug/final': typeof ProgrammesSlugFinalRoute
   '/admin': typeof AdminLayoutIndexRoute
   '/community-portal': typeof CommunityPortalLayoutIndexRoute
+  '/programmes/$slug': typeof ProgrammesSlugIndexRoute
   '/admin/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
   '/community-portal/student/$id': typeof CommunityPortalLayoutStudentIdRoute
+  '/programmes/$slug/m/$module': typeof ProgrammesSlugMModuleRoute
   '/admin/programmes': typeof AdminLayoutProgrammesIndexRoute
   '/admin/users': typeof AdminLayoutUsersIndexRoute
 }
@@ -785,6 +825,7 @@ export interface FileRoutesById {
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/programmes/': typeof ProgrammesIndexRoute
   '/admin/_layout/activity': typeof AdminLayoutActivityRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
   '/admin/_layout/ai-agents': typeof AdminLayoutAiAgentsRoute
@@ -817,11 +858,15 @@ export interface FileRoutesById {
   '/community-portal/_layout/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/_layout/profile': typeof CommunityPortalLayoutProfileRoute
   '/community-portal/_layout/students': typeof CommunityPortalLayoutStudentsRoute
+  '/programmes/$slug/aptitude': typeof ProgrammesSlugAptitudeRoute
+  '/programmes/$slug/final': typeof ProgrammesSlugFinalRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
   '/community-portal/_layout/': typeof CommunityPortalLayoutIndexRoute
+  '/programmes/$slug/': typeof ProgrammesSlugIndexRoute
   '/admin/_layout/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/_layout/users/$id': typeof AdminLayoutUsersIdRoute
   '/community-portal/_layout/student/$id': typeof CommunityPortalLayoutStudentIdRoute
+  '/programmes/$slug/m/$module': typeof ProgrammesSlugMModuleRoute
   '/admin/_layout/programmes/': typeof AdminLayoutProgrammesIndexRoute
   '/admin/_layout/users/': typeof AdminLayoutUsersIndexRoute
 }
@@ -877,6 +922,7 @@ export interface FileRouteTypes {
     | '/partnerships/login'
     | '/blog/'
     | '/community/'
+    | '/programmes/'
     | '/admin/activity'
     | '/admin/ads'
     | '/admin/ai-agents'
@@ -909,11 +955,15 @@ export interface FileRouteTypes {
     | '/community-portal/$resource'
     | '/community-portal/profile'
     | '/community-portal/students'
+    | '/programmes/$slug/aptitude'
+    | '/programmes/$slug/final'
     | '/admin/'
     | '/community-portal/'
+    | '/programmes/$slug/'
     | '/admin/programmes/$slug'
     | '/admin/users/$id'
     | '/community-portal/student/$id'
+    | '/programmes/$slug/m/$module'
     | '/admin/programmes/'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
@@ -964,6 +1014,7 @@ export interface FileRouteTypes {
     | '/partnerships/login'
     | '/blog'
     | '/community'
+    | '/programmes'
     | '/admin/activity'
     | '/admin/ads'
     | '/admin/ai-agents'
@@ -996,11 +1047,15 @@ export interface FileRouteTypes {
     | '/community-portal/$resource'
     | '/community-portal/profile'
     | '/community-portal/students'
+    | '/programmes/$slug/aptitude'
+    | '/programmes/$slug/final'
     | '/admin'
     | '/community-portal'
+    | '/programmes/$slug'
     | '/admin/programmes/$slug'
     | '/admin/users/$id'
     | '/community-portal/student/$id'
+    | '/programmes/$slug/m/$module'
     | '/admin/programmes'
     | '/admin/users'
   id:
@@ -1054,6 +1109,7 @@ export interface FileRouteTypes {
     | '/partnerships/login'
     | '/blog/'
     | '/community/'
+    | '/programmes/'
     | '/admin/_layout/activity'
     | '/admin/_layout/ads'
     | '/admin/_layout/ai-agents'
@@ -1086,11 +1142,15 @@ export interface FileRouteTypes {
     | '/community-portal/_layout/$resource'
     | '/community-portal/_layout/profile'
     | '/community-portal/_layout/students'
+    | '/programmes/$slug/aptitude'
+    | '/programmes/$slug/final'
     | '/admin/_layout/'
     | '/community-portal/_layout/'
+    | '/programmes/$slug/'
     | '/admin/_layout/programmes/$slug'
     | '/admin/_layout/users/$id'
     | '/community-portal/_layout/student/$id'
+    | '/programmes/$slug/m/$module'
     | '/admin/_layout/programmes/'
     | '/admin/_layout/users/'
   fileRoutesById: FileRoutesById
@@ -1140,6 +1200,11 @@ export interface RootRouteChildren {
   CommunityPortalLoginRoute: typeof CommunityPortalLoginRoute
   CommunityPortalSignupRoute: typeof CommunityPortalSignupRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  ProgrammesIndexRoute: typeof ProgrammesIndexRoute
+  ProgrammesSlugAptitudeRoute: typeof ProgrammesSlugAptitudeRoute
+  ProgrammesSlugFinalRoute: typeof ProgrammesSlugFinalRoute
+  ProgrammesSlugIndexRoute: typeof ProgrammesSlugIndexRoute
+  ProgrammesSlugMModuleRoute: typeof ProgrammesSlugMModuleRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1396,6 +1461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programmes/': {
+      id: '/programmes/'
+      path: '/programmes'
+      fullPath: '/programmes/'
+      preLoaderRoute: typeof ProgrammesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community/': {
       id: '/community/'
       path: '/'
@@ -1487,6 +1559,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programmes/$slug/': {
+      id: '/programmes/$slug/'
+      path: '/programmes/$slug'
+      fullPath: '/programmes/$slug/'
+      preLoaderRoute: typeof ProgrammesSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community-portal/_layout/': {
       id: '/community-portal/_layout/'
       path: '/'
@@ -1500,6 +1579,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminLayoutIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
+    }
+    '/programmes/$slug/final': {
+      id: '/programmes/$slug/final'
+      path: '/programmes/$slug/final'
+      fullPath: '/programmes/$slug/final'
+      preLoaderRoute: typeof ProgrammesSlugFinalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programmes/$slug/aptitude': {
+      id: '/programmes/$slug/aptitude'
+      path: '/programmes/$slug/aptitude'
+      fullPath: '/programmes/$slug/aptitude'
+      preLoaderRoute: typeof ProgrammesSlugAptitudeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/community-portal/_layout/students': {
       id: '/community-portal/_layout/students'
@@ -1739,6 +1832,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutProgrammesIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/programmes/$slug/m/$module': {
+      id: '/programmes/$slug/m/$module'
+      path: '/programmes/$slug/m/$module'
+      fullPath: '/programmes/$slug/m/$module'
+      preLoaderRoute: typeof ProgrammesSlugMModuleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community-portal/_layout/student/$id': {
       id: '/community-portal/_layout/student/$id'
       path: '/student/$id'
@@ -1947,6 +2047,11 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityPortalLoginRoute: CommunityPortalLoginRoute,
   CommunityPortalSignupRoute: CommunityPortalSignupRoute,
   BlogIndexRoute: BlogIndexRoute,
+  ProgrammesIndexRoute: ProgrammesIndexRoute,
+  ProgrammesSlugAptitudeRoute: ProgrammesSlugAptitudeRoute,
+  ProgrammesSlugFinalRoute: ProgrammesSlugFinalRoute,
+  ProgrammesSlugIndexRoute: ProgrammesSlugIndexRoute,
+  ProgrammesSlugMModuleRoute: ProgrammesSlugMModuleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

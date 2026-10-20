@@ -16,6 +16,8 @@ export type LearnerEventKind =
   | 'internship'
   | 'certificate'
   | 'goal'
+  | 'programme_quiz'
+  | 'programme_final'
 
 export interface LearnerEvent {
   at: string
@@ -44,6 +46,8 @@ export const EVENT_KIND: Record<LearnerEventKind, string> = {
   internship: 'Internship',
   certificate: 'Certificate',
   goal: 'Goals',
+  programme_quiz: 'Programme quiz',
+  programme_final: 'Programme final',
 }
 
 /** Null until the SQL is run, so the page can say so instead of failing. */
