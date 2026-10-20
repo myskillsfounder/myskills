@@ -33,7 +33,8 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
     sections: [
       { id: 'mentor-reviews', label: 'Projects & sessions', opens: 'Projects to grade, modules and answers, live sessions' },
       { id: 'certificates', label: 'Certificates', opens: 'Certificates issued' },
-      { id: 'assessment', label: 'Foundation questions', opens: 'Editing the foundation assessment' },
+      { id: 'assessment', label: 'Foundation questions', opens: 'Editing the foundation assessment, and Question health' },
+      { id: 'programmes', label: 'Course engine', opens: 'Building, checking and publishing programmes such as Data Analytics' },
       { id: 'leads', label: 'Global Leadership leads', opens: 'People who asked about the Global Leadership Programme' },
     ],
   },

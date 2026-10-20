@@ -93,8 +93,10 @@ import { Route as AdminLayoutAiAgentsRouteImport } from './routes/admin/_layout/
 import { Route as AdminLayoutAdsRouteImport } from './routes/admin/_layout/ads'
 import { Route as AdminLayoutActivityRouteImport } from './routes/admin/_layout/activity'
 import { Route as AdminLayoutUsersIndexRouteImport } from './routes/admin/_layout/users.index'
+import { Route as AdminLayoutProgrammesIndexRouteImport } from './routes/admin/_layout/programmes.index'
 import { Route as CommunityPortalLayoutStudentIdRouteImport } from './routes/community-portal/_layout/student.$id'
 import { Route as AdminLayoutUsersIdRouteImport } from './routes/admin/_layout/users.$id'
+import { Route as AdminLayoutProgrammesSlugRouteImport } from './routes/admin/_layout/programmes.$slug'
 
 const WellnessRoute = WellnessRouteImport.update({
   id: '/wellness',
@@ -531,6 +533,12 @@ const AdminLayoutUsersIndexRoute = AdminLayoutUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutProgrammesIndexRoute =
+  AdminLayoutProgrammesIndexRouteImport.update({
+    id: '/programmes/',
+    path: '/programmes/',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
 const CommunityPortalLayoutStudentIdRoute =
   CommunityPortalLayoutStudentIdRouteImport.update({
     id: '/student/$id',
@@ -542,6 +550,12 @@ const AdminLayoutUsersIdRoute = AdminLayoutUsersIdRouteImport.update({
   path: '/users/$id',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutProgrammesSlugRoute =
+  AdminLayoutProgrammesSlugRouteImport.update({
+    id: '/programmes/$slug',
+    path: '/programmes/$slug',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -627,8 +641,10 @@ export interface FileRoutesByFullPath {
   '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
   '/admin/': typeof AdminLayoutIndexRoute
   '/community-portal/': typeof CommunityPortalLayoutIndexRoute
+  '/admin/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
   '/community-portal/student/$id': typeof CommunityPortalLayoutStudentIdRoute
+  '/admin/programmes/': typeof AdminLayoutProgrammesIndexRoute
   '/admin/users/': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -712,8 +728,10 @@ export interface FileRoutesByTo {
   '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
   '/admin': typeof AdminLayoutIndexRoute
   '/community-portal': typeof CommunityPortalLayoutIndexRoute
+  '/admin/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
   '/community-portal/student/$id': typeof CommunityPortalLayoutStudentIdRoute
+  '/admin/programmes': typeof AdminLayoutProgrammesIndexRoute
   '/admin/users': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -801,8 +819,10 @@ export interface FileRoutesById {
   '/community-portal/_layout/students': typeof CommunityPortalLayoutStudentsRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
   '/community-portal/_layout/': typeof CommunityPortalLayoutIndexRoute
+  '/admin/_layout/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/_layout/users/$id': typeof AdminLayoutUsersIdRoute
   '/community-portal/_layout/student/$id': typeof CommunityPortalLayoutStudentIdRoute
+  '/admin/_layout/programmes/': typeof AdminLayoutProgrammesIndexRoute
   '/admin/_layout/users/': typeof AdminLayoutUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -891,8 +911,10 @@ export interface FileRouteTypes {
     | '/community-portal/students'
     | '/admin/'
     | '/community-portal/'
+    | '/admin/programmes/$slug'
     | '/admin/users/$id'
     | '/community-portal/student/$id'
+    | '/admin/programmes/'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -976,8 +998,10 @@ export interface FileRouteTypes {
     | '/community-portal/students'
     | '/admin'
     | '/community-portal'
+    | '/admin/programmes/$slug'
     | '/admin/users/$id'
     | '/community-portal/student/$id'
+    | '/admin/programmes'
     | '/admin/users'
   id:
     | '__root__'
@@ -1064,8 +1088,10 @@ export interface FileRouteTypes {
     | '/community-portal/_layout/students'
     | '/admin/_layout/'
     | '/community-portal/_layout/'
+    | '/admin/_layout/programmes/$slug'
     | '/admin/_layout/users/$id'
     | '/community-portal/_layout/student/$id'
+    | '/admin/_layout/programmes/'
     | '/admin/_layout/users/'
   fileRoutesById: FileRoutesById
 }
@@ -1706,6 +1732,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutUsersIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/programmes/': {
+      id: '/admin/_layout/programmes/'
+      path: '/programmes'
+      fullPath: '/admin/programmes/'
+      preLoaderRoute: typeof AdminLayoutProgrammesIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/community-portal/_layout/student/$id': {
       id: '/community-portal/_layout/student/$id'
       path: '/student/$id'
@@ -1718,6 +1751,13 @@ declare module '@tanstack/react-router' {
       path: '/users/$id'
       fullPath: '/admin/users/$id'
       preLoaderRoute: typeof AdminLayoutUsersIdRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/programmes/$slug': {
+      id: '/admin/_layout/programmes/$slug'
+      path: '/programmes/$slug'
+      fullPath: '/admin/programmes/$slug'
+      preLoaderRoute: typeof AdminLayoutProgrammesSlugRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
   }
@@ -1794,7 +1834,9 @@ interface AdminLayoutRouteChildren {
   AdminLayoutVerificationRoute: typeof AdminLayoutVerificationRoute
   AdminLayoutWellnessRoute: typeof AdminLayoutWellnessRoute
   AdminLayoutIndexRoute: typeof AdminLayoutIndexRoute
+  AdminLayoutProgrammesSlugRoute: typeof AdminLayoutProgrammesSlugRoute
   AdminLayoutUsersIdRoute: typeof AdminLayoutUsersIdRoute
+  AdminLayoutProgrammesIndexRoute: typeof AdminLayoutProgrammesIndexRoute
   AdminLayoutUsersIndexRoute: typeof AdminLayoutUsersIndexRoute
 }
 
@@ -1829,7 +1871,9 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutVerificationRoute: AdminLayoutVerificationRoute,
   AdminLayoutWellnessRoute: AdminLayoutWellnessRoute,
   AdminLayoutIndexRoute: AdminLayoutIndexRoute,
+  AdminLayoutProgrammesSlugRoute: AdminLayoutProgrammesSlugRoute,
   AdminLayoutUsersIdRoute: AdminLayoutUsersIdRoute,
+  AdminLayoutProgrammesIndexRoute: AdminLayoutProgrammesIndexRoute,
   AdminLayoutUsersIndexRoute: AdminLayoutUsersIndexRoute,
 }
 
