@@ -95,10 +95,10 @@ export const AI_AGENTS: AiAgent[] = [
   {
     id: 'assessment-agent',
     name: 'Assessment Agent',
-    purpose: 'Keeps the curriculum current and the tests honest: researches each topic weekly, checks how every question performs, and proposes better assessments.',
+    purpose: 'Keeps the curriculum current and the tests honest: researches each topic regularly, checks how every question performs, and proposes better assessments.',
     status: 'building',
     progress:
-      'Built, waiting for the API key and the server set-up: on any programme’s Agents tab it researches the field on the web, reviews every part with automatic test-writing checks, makes the Course Architect fix what it finds, and writes the playbook rules the Architect follows. A programme can be checked every week. Question health (step 1) is live. Next: reading Question health and Learner Coach data in its reviews.',
+      'Built, waiting for the API key and the server set-up: on any programme’s Agents tab it researches the field on the web, reviews every part with automatic test-writing checks, makes the Course Architect fix what it finds, and writes the playbook rules the Architect follows. A programme can be checked every month. Question health (step 1) is live. Next: reading Question health and Learner Coach data in its reviews.',
     reads: [
       'Recent changes in each topic (web search, with sources)',
       'Question health: % right, options picked, how well each question separates strong and weak students',
@@ -109,7 +109,7 @@ export const AI_AGENTS: AiAgent[] = [
       'A review report on every job: what was wrong, what was fixed, what still needs a person, with sources',
       'Findings the Course Architect must fix: wrong or out-of-date content, weak questions, gaps',
       'Playbook rules: lessons from each review that the Course Architect follows on every later programme (the team can switch any off)',
-      'Weekly checks of the programmes the team chooses',
+      'Monthly checks of the programmes the team chooses',
       'Later: proposals for new kinds of assessment (case simulations, adaptive tests, written answers graded by AI and checked by a person)',
     ],
     safeguards: [
@@ -125,7 +125,7 @@ export const AI_AGENTS: AiAgent[] = [
       'About 30 students answering each question before Question health can judge it (answers kept since 21 Oct 2026)',
     ],
     model: 'Claude Opus 5.5 (Anthropic), with web search',
-    runs: 'On the MySkills server: when the team asks on a programme’s Agents tab, and weekly for programmes switched to weekly checks',
+    runs: 'On the MySkills server: when the team asks on a programme’s Agents tab, and monthly for programmes switched to regular checks',
   },
   {
     id: 'course-architect',

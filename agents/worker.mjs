@@ -1,5 +1,5 @@
 // The course agents' worker. Runs on the MySkills server (see README.md):
-// every 30 seconds it checks in, queues any weekly checks that are due, and
+// every 30 seconds it checks in, queues any monthly checks that are due, and
 // takes the oldest job the team has asked for. One job at a time.
 //
 //   node --env-file=.env worker.mjs           run (as the systemd service does)
@@ -114,7 +114,7 @@ async function main() {
       await ping()
       if (Date.now() - lastWeekly > WEEKLY_MS) {
         const n = await rpc('agent_queue_weekly')
-        if (n) log(`Queued ${n} weekly ${n === 1 ? 'check' : 'checks'}.`)
+        if (n) log(`Queued ${n} monthly ${n === 1 ? 'check' : 'checks'}.`)
         lastWeekly = Date.now()
       }
       if (await work()) continue

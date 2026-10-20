@@ -30,8 +30,8 @@ until someone loads the result into the draft, reads it, saves and publishes.
    the Architect: both agents follow its rules on every later job, and the team
    can switch any rule off.
 
-Programmes switched to **Check it every week** get an improve job queued every
-7 days.
+Programmes switched to **Check it every month** get an improve job queued
+once a month.
 
 ## Cost
 
@@ -41,7 +41,7 @@ searches cost $10 per 1,000.
 | Job | Usual cost |
 | --- | --- |
 | Drafting a programme | $5–20 |
-| Improving a programme, or a weekly check | $3–10 |
+| Improving a programme, or a monthly check | $3–10 |
 
 Two limits in `.env` cap spending:
 
@@ -109,7 +109,7 @@ To run one real job and stop, use `node --env-file=.env worker.mjs --once`.
 
 | File | What it does |
 | --- | --- |
-| `worker.mjs` | The loop: check in, queue weekly checks, take a job, run it, save the result |
+| `worker.mjs` | The loop: check in, queue monthly checks, take a job, run it, save the result |
 | `lib/pipeline.mjs` | One job: research, draft, review and revise |
 | `lib/prompts.mjs` | What each agent is told: the house style, the roles and every task |
 | `lib/schemas.mjs` | The JSON shapes the agents answer in |
