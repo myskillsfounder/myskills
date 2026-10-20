@@ -1,5 +1,5 @@
 import { MODULE_LEVELS, type ProgrammeContent, type ProgrammeModule } from '@/lib/programmeEngine'
-import { AddButton, Area, ItemTools, NumberField, Select, Text, moved, replaced } from './fields'
+import { AddButton, Area, ItemTools, NumberField, Select, Text, moved, replaced, useStructureLock } from './fields'
 import { QuestionList } from './QuestionList'
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -23,6 +23,7 @@ export function ModuleEditor({
   onChange: (m: ProgrammeModule) => void
 }) {
   const set = <K extends keyof ProgrammeModule>(k: K, v: ProgrammeModule[K]) => onChange({ ...m, [k]: v })
+  const locked = useStructureLock()
   return (
     <div className="space-y-5">
       <div className="grid gap-3 sm:grid-cols-2">
@@ -42,7 +43,15 @@ export function ModuleEditor({
         <NumberField label="Minutes" value={m.minutes} onChange={(v) => set('minutes', v)} />
       </div>
       <Text label="Outcome" value={m.outcome} onChange={(v) => set('outcome', v)} hint="One line: what the student can do after this module." />
+      <Area label="Summary (optional, shown in lists)" value={m.summary ?? ''} onChange={(v) => set('summary', v)} rows={2} />
+      {locked ? (
+        <p className="text-xs text-ink-500">Only the parts this module has are shown: its pages have no place for the others.</p>
+      ) : (
+        <p className="text-xs text-ink-500">Every part below is optional, but a module needs Practise tasks, a quiz, or both.</p>
+      )}
 
+      {/* A built-in programme's pages only show the parts each module already has. */}
+      {!(locked && m.learn.length === 0) && (
       <Section title="Learn" hint="Short cards, read in order.">
         <ol className="space-y-3">
           {m.learn.map((c, i) => (
@@ -61,8 +70,10 @@ export function ModuleEditor({
           <AddButton onClick={() => set('learn', [...m.learn, { title: '', body: '' }])}>Add a card</AddButton>
         </div>
       </Section>
+      )}
 
-      <Section title="Practise" hint="Written tasks. The answers go to the student’s learning journey.">
+      {!(locked && m.tasks.length === 0) && (
+      <Section title={`Practise · ${m.tasks.length}`} hint="Written tasks. The answers go to the student’s learning journey.">
         <ol className="space-y-3">
           {m.tasks.map((t, i) => (
             <li key={t.id} className="rounded-xl border border-ink-200 bg-white p-3">
@@ -72,12 +83,14 @@ export function ModuleEditor({
                   <Area label="What to do" value={t.prompt} onChange={(v) => set('tasks', replaced(m.tasks, i, { ...t, prompt: v }))} rows={3} />
                   <Text label="Hint or example" value={t.hint} onChange={(v) => set('tasks', replaced(m.tasks, i, { ...t, hint: v }))} />
                 </div>
-                <ItemTools index={i} count={m.tasks.length} onMove={(to) => set('tasks', moved(m.tasks, i, to))} onRemove={() => set('tasks', m.tasks.filter((_, j) => j !== i))} />
+                {!locked && (
+                  <ItemTools index={i} count={m.tasks.length} onMove={(to) => set('tasks', moved(m.tasks, i, to))} onRemove={() => set('tasks', m.tasks.filter((_, j) => j !== i))} />
+                )}
               </div>
             </li>
           ))}
         </ol>
-        <div className="mt-3">
+        <div className={`mt-3 ${locked ? 'hidden' : ''}`}>
           <AddButton
             onClick={() => {
               // Task ids stay t1, t2…; a new one takes the next free number.
@@ -92,16 +105,22 @@ export function ModuleEditor({
         </div>
       </Section>
 
-      <Section title="Reflect">
+      )}
+
+      {!(locked && m.tasks.length === 0) && (
+      <Section title="Reflect" hint="Needed when the module has Practise tasks.">
         <div className="space-y-2">
           <Area label="Prompt" value={m.reflection.prompt} onChange={(v) => set('reflection', { ...m.reflection, prompt: v })} rows={2} />
           <Text label="Hint" value={m.reflection.hint} onChange={(v) => set('reflection', { ...m.reflection, hint: v })} />
         </div>
       </Section>
+      )}
 
-      <Section title={`Quiz · ${m.quiz.length}`} hint="Scenario questions, graded on the server. At least 3.">
+      {!(locked && m.quiz.length === 0) && (
+      <Section title={`Quiz · ${m.quiz.length}`} hint="Scenario questions, graded on the server. Optional; at least 3 when there is one.">
         <QuestionList questions={m.quiz} onChange={(q) => set('quiz', q)} />
       </Section>
+      )}
     </div>
   )
 }

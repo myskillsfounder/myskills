@@ -8,6 +8,7 @@ import {
   QUIZ_PASS,
   enrol,
   itemsDone,
+  itemsToWrite,
   moduleDone,
   moduleStarted,
   suggestedOrder,
@@ -183,8 +184,8 @@ function ProgrammePage() {
 
                 <Step n={2} title={`Modules · ${done} of ${p.content.modules.length} done`} icon={Target} state={allDone ? 'done' : 'now'}>
                   <p className="mb-3 text-sm text-ink-600">
-                    Each module: Learn, Practise, Reflect, then a quiz. A module is done when you’ve written every task and the
-                    reflection and passed its quiz ({QUIZ_PASS}%).
+                    Each module: Learn, Practise, Reflect, then a quiz. A module is done when you’ve written what it asks and
+                    passed its quiz ({QUIZ_PASS}%) if it has one.
                   </p>
                   <ol className="divide-y divide-ink-900/[0.06] rounded-xl border border-ink-200">
                     {modules.map((m, i) => {
@@ -208,7 +209,8 @@ function ProgrammePage() {
                             <span className="min-w-0 flex-1">
                               <span className="block truncate text-sm font-semibold text-ink-900">{m.title}</span>
                               <span className="block truncate text-xs text-ink-500">
-                                {skillName(m.skill)} · {m.level} · {m.minutes} min · {itemsDone(p, m)}/{m.tasks.length + 1} written
+                                {skillName(m.skill)} · {m.level} · {m.minutes} min
+                                {itemsToWrite(m) ? ` · ${itemsDone(p, m)}/${itemsToWrite(m)} written` : ''}
                                 {q ? ` · quiz best ${q.best}%` : ''}
                               </span>
                             </span>
@@ -220,6 +222,7 @@ function ProgrammePage() {
                   </ol>
                 </Step>
 
+                {p.content.final.questions.length > 0 && (
                 <Step
                   n={3}
                   title="Final assessment"
@@ -246,8 +249,9 @@ function ProgrammePage() {
                     <p className="text-sm text-ink-600">Opens once every module is done.</p>
                   )}
                 </Step>
+                )}
 
-                <Step n={4} title="Mentor, project and internship" icon={UserCheck} state="locked">
+                <Step n={p.content.final.questions.length > 0 ? 4 : 3} title="Mentor, project and internship" icon={UserCheck} state="locked">
                   <p className="text-sm text-ink-600">
                     Coming next: work with a mentor on a real project for this programme, then an internship. Finishing it earns
                     the programme’s badge and certificate.

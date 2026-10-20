@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createFileRoute, Link, useBlocker } from '@tanstack/react-router'
-import { AlertTriangle, ArrowLeft, CheckCircle2, Download, Eye, Rocket, Save, Upload } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, CheckCircle2, Download, ExternalLink, Eye, Lock, Rocket, Save, Upload } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
   LEVELS,
@@ -18,7 +18,7 @@ import {
   type ProgrammeKind,
 } from '@/lib/programmeEngine'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
-import { AddButton, Area, ItemTools, NumberField, Select, StringList, Text, moved, replaced } from '@/components/admin/programme/fields'
+import { AddButton, Area, ItemTools, NumberField, Select, StringList, StructureLock, Text, moved, replaced, useStructureLock } from '@/components/admin/programme/fields'
 import { ModuleEditor } from '@/components/admin/programme/ModuleEditor'
 import { QuestionList } from '@/components/admin/programme/QuestionList'
 import { Alert, Badge, Button, EmptyState, Skeleton } from '@/components/ui'
@@ -61,6 +61,7 @@ function OverviewTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeConten
 }
 
 function SkillsTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent) => void }) {
+  const locked = useStructureLock()
   const used = (id: string) => c.modules.some((m) => m.skill === id) || c.aptitude.items.some((i) => i.skill === id)
   return (
     <div>
@@ -75,28 +76,33 @@ function SkillsTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent)
                 <Text label="Name" value={s.name} onChange={(v) => set({ ...c, skills: replaced(c.skills, i, { ...s, name: v }) })} />
                 <Text label="What it means" value={s.description} onChange={(v) => set({ ...c, skills: replaced(c.skills, i, { ...s, description: v }) })} />
               </div>
-              <ItemTools
-                index={i}
-                count={c.skills.length}
-                onMove={(to) => set({ ...c, skills: moved(c.skills, i, to) })}
-                onRemove={() => {
-                  if (used(s.id) && !window.confirm(`“${s.name || s.id}” is used by modules or aptitude statements. Remove it anyway?`)) return
-                  set({ ...c, skills: c.skills.filter((_, j) => j !== i) })
-                }}
-              />
+              {!locked && (
+                <ItemTools
+                  index={i}
+                  count={c.skills.length}
+                  onMove={(to) => set({ ...c, skills: moved(c.skills, i, to) })}
+                  onRemove={() => {
+                    if (used(s.id) && !window.confirm(`“${s.name || s.id}” is used by modules or aptitude statements. Remove it anyway?`)) return
+                    set({ ...c, skills: c.skills.filter((_, j) => j !== i) })
+                  }}
+                />
+              )}
             </div>
             <p className="mt-1 text-[11px] text-ink-400">id: {s.id}</p>
           </li>
         ))}
       </ol>
-      <div className="mt-3">
-        <AddButton onClick={() => set({ ...c, skills: [...c.skills, { id: newId('s'), name: '', description: '' }] })}>Add a skill</AddButton>
-      </div>
+      {!locked && (
+        <div className="mt-3">
+          <AddButton onClick={() => set({ ...c, skills: [...c.skills, { id: newId('s'), name: '', description: '' }] })}>Add a skill</AddButton>
+        </div>
+      )}
     </div>
   )
 }
 
 function AptitudeTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent) => void }) {
+  const locked = useStructureLock()
   const items = c.aptitude.items
   const put = (next: typeof items) => set({ ...c, aptitude: { items: next } })
   if (c.skills.length === 0) return <p className="text-sm text-ink-500">Add the skills first.</p>
@@ -121,13 +127,15 @@ function AptitudeTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeConten
                     <input type="checkbox" checked={it.reverse} onChange={(e) => put(replaced(items, i, { ...it, reverse: e.target.checked }))} className="h-4 w-4 accent-brand-600" />
                     reverse
                   </label>
-                  <ItemTools index={0} count={1} onMove={() => {}} onRemove={() => put(items.filter((_, j) => j !== i))} />
+                  {!locked && <ItemTools index={0} count={1} onMove={() => {}} onRemove={() => put(items.filter((_, j) => j !== i))} />}
                 </li>
               ))}
             </ul>
-            <div className="mt-2">
-              <AddButton onClick={() => put([...items, { id: newId('a'), skill: s.id, statement: '', reverse: false }])}>Add a statement</AddButton>
-            </div>
+            {!locked && (
+              <div className="mt-2">
+                <AddButton onClick={() => put([...items, { id: newId('a'), skill: s.id, statement: '', reverse: false }])}>Add a statement</AddButton>
+              </div>
+            )}
           </section>
         )
       })}
@@ -137,6 +145,7 @@ function AptitudeTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeConten
 
 function ModulesTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent) => void }) {
   const [open, setOpen] = useState(0)
+  const locked = useStructureLock()
   const skillName = (id: string) => c.skills.find((s) => s.id === id)?.name || 'no skill yet'
   const m = c.modules[open]
   return (
@@ -150,9 +159,10 @@ function ModulesTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent
                   {i + 1}. {x.title || 'Untitled'}
                 </span>
                 <span className="block truncate text-xs text-ink-500">
-                  {skillName(x.skill)} · {x.level} · {x.quiz.length} questions
+                  {skillName(x.skill)} · {x.tasks.length ? `${x.tasks.length} tasks` : 'no tasks'} · {x.quiz.length} questions
                 </span>
               </button>
+              {!locked && (
               <ItemTools
                 index={i}
                 count={c.modules.length}
@@ -166,10 +176,11 @@ function ModulesTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent
                   setOpen(Math.max(0, i - 1))
                 }}
               />
+              )}
             </li>
           ))}
         </ol>
-        <div className="mt-3">
+        <div className={`mt-3 ${locked ? 'hidden' : ''}`}>
           <AddButton
             onClick={() => {
               set({ ...c, modules: [...c.modules, blankModule(c.skills[0]?.id ?? '')] })
@@ -195,7 +206,10 @@ function FinalTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent) 
   const f = c.final
   return (
     <div className="space-y-4">
-      <p className="text-sm text-ink-600">One test across every skill, taken once at the end, like the Foundation assessment. At least 5 questions.</p>
+      <p className="text-sm text-ink-600">
+        One test across every skill, taken at the end, like the Foundation assessment. Optional: leave it empty for no final
+        assessment, or add at least 5 questions.
+      </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <NumberField label="Time limit, minutes" value={f.minutes} onChange={(v) => set({ ...c, final: { ...f, minutes: v } })} />
         <NumberField label="Pass mark, %" value={f.pass_percent} onChange={(v) => set({ ...c, final: { ...f, pass_percent: v } })} />
@@ -335,6 +349,7 @@ function ProgrammeEditorPage() {
 
   const live = p.versions.find((v) => v.status === 'published')
   const draft = p.versions.find((v) => v.status === 'draft')
+  const builtIn = p.source === 'built-in'
 
   return (
     <>
@@ -372,15 +387,27 @@ function ProgrammeEditorPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <a
-            href={`/programmes/${p.slug}?preview=1`}
-            target="_blank"
-            rel="noreferrer"
-            title="Opens in a new tab. Shows the saved draft, so save first."
-            className="inline-flex items-center gap-1.5 rounded-xl border border-ink-300 bg-white px-3 py-2 text-sm font-medium text-ink-800 hover:bg-ink-100"
-          >
-            <Eye size={15} /> Preview as a student
-          </a>
+          {builtIn ? (
+            <a
+              href={p.slug === 'global-leadership' ? '/career-readiness' : '/practice'}
+              target="_blank"
+              rel="noreferrer"
+              title="The pages students use. They show the published version."
+              className="inline-flex items-center gap-1.5 rounded-xl border border-ink-300 bg-white px-3 py-2 text-sm font-medium text-ink-800 hover:bg-ink-100"
+            >
+              <ExternalLink size={15} /> Open the live pages
+            </a>
+          ) : (
+            <a
+              href={`/programmes/${p.slug}?preview=1`}
+              target="_blank"
+              rel="noreferrer"
+              title="Opens in a new tab. Shows the saved draft, so save first."
+              className="inline-flex items-center gap-1.5 rounded-xl border border-ink-300 bg-white px-3 py-2 text-sm font-medium text-ink-800 hover:bg-ink-100"
+            >
+              <Eye size={15} /> Preview as a student
+            </a>
+          )}
           {saved && !dirty && <span className="text-xs text-emerald-700">{saved}</span>}
           {dirty && <span className="text-xs font-semibold text-amber-700">Unsaved changes</span>}
           <Button icon={Save} disabled={busy || !dirty} onClick={() => void save()}>
@@ -394,6 +421,18 @@ function ProgrammeEditorPage() {
           <Alert tone="danger" title="Couldn’t do that">
             <p>{error}</p>
           </Alert>
+        </div>
+      )}
+
+      {builtIn && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-brand-200 bg-brand-50 p-3.5 text-sm text-ink-800">
+          <Lock size={16} className="mt-0.5 shrink-0 text-brand-700" />
+          <p>
+            <span className="font-semibold">Built into the app.</span> Publishing changes what students see on its own pages.
+            You can reword anything, and change questions, options, answers and explanations. Modules, tasks, questions,
+            statements and skills can’t be added, removed or reordered yet, because students’ progress and the Global
+            Readiness Score count them.
+          </p>
         </div>
       )}
 
@@ -416,6 +455,7 @@ function ProgrammeEditorPage() {
         ))}
       </div>
 
+      <StructureLock.Provider value={builtIn}>
       <div className={tab === 'modules' ? '' : 'card p-5 sm:p-6'}>
         {tab === 'overview' && <OverviewTab c={content} set={edit} />}
         {tab === 'skills' && <SkillsTab c={content} set={edit} />}
@@ -518,18 +558,20 @@ function ProgrammeEditorPage() {
                     Discard the draft
                   </Button>
                 )}
-                <Button
-                  variant="secondary"
-                  disabled={busy}
-                  onClick={() =>
-                    void run(async () => {
-                      await archiveProgramme(p.id, p.status !== 'archived')
-                      await load()
-                    })
-                  }
-                >
-                  {p.status === 'archived' ? 'Bring back' : 'Archive'}
-                </Button>
+                {!builtIn && (
+                  <Button
+                    variant="secondary"
+                    disabled={busy}
+                    onClick={() =>
+                      void run(async () => {
+                        await archiveProgramme(p.id, p.status !== 'archived')
+                        await load()
+                      })
+                    }
+                  >
+                    {p.status === 'archived' ? 'Bring back' : 'Archive'}
+                  </Button>
+                )}
               </div>
               {importing && (
                 <div className="mt-3 space-y-2">
@@ -558,6 +600,7 @@ function ProgrammeEditorPage() {
           </div>
         )}
       </div>
+      </StructureLock.Provider>
     </>
   )
 }

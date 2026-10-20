@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, ClipboardList, FolderPlus, Layers, Plus, Trash2 } from 'lucide-react'
 import {
   deleteAssessmentQuestion,
@@ -203,10 +203,13 @@ function QuestionList<T extends { id: string; question: string; options: string[
   questions,
   onEdit,
   onDelete,
+  readOnly = false,
 }: {
   questions: T[]
   onEdit: (q: T) => void
   onDelete: (id: string) => void
+  /** The Foundation bank: edited in the course engine now, so only shown here. */
+  readOnly?: boolean
 }) {
   const [confirmDelete, setConfirmDelete] = useState<string>()
   return (
@@ -224,7 +227,7 @@ function QuestionList<T extends { id: string; question: string; options: string[
               ))}
             </ul>
           </div>
-          <div className="flex shrink-0 gap-2">
+          <div className={`flex shrink-0 gap-2 ${readOnly ? 'hidden' : ''}`}>
             <Button size="sm" variant="secondary" onClick={() => onEdit(q)}>
               Edit
             </Button>
@@ -318,25 +321,21 @@ function InitialAssessmentView({ onBack }: { onBack: () => void }) {
       <PageHeader
         eyebrow="Foundation Assessment"
         title="Question bank"
-        subtitle="The one-time Foundation assessment. Correct answers stay server-side until you save a change here."
-        actions={
-          <Button
-            icon={Plus}
-            onClick={() =>
-              setEditing({
-                category: assessmentCategories[0],
-                question: '',
-                options: ['', '', '', ''],
-                sort_order: (questions.at(-1)?.sort_order ?? -1) + 1,
-                correct_index: 0,
-                explanation: '',
-              })
-            }
-          >
-            New question
-          </Button>
-        }
+        subtitle="The one-time Foundation assessment, shown here for reference."
       />
+
+      {/* The Foundation assessment is Digital Marketing's final assessment in the
+          course engine now; publishing there updates these rows, so editing them
+          here as well would be overwritten. */}
+      <Alert tone="info" title="Edit these in the Course engine">
+        <p>
+          The Foundation assessment is now Digital Marketing’s final assessment. Change questions, options and answers in{' '}
+          <Link to="/admin/programmes/$slug" params={{ slug: 'digital-marketing' }} className="font-semibold underline">
+            Course engine → Digital Marketing
+          </Link>{' '}
+          (Final assessment tab), then publish.
+        </p>
+      </Alert>
 
       {error && (
         <Alert tone="danger" title="Something went wrong">
@@ -347,7 +346,7 @@ function InitialAssessmentView({ onBack }: { onBack: () => void }) {
       {loading ? (
         <Skeleton className="h-64 w-full" />
       ) : questions.length === 0 ? (
-        <EmptyState icon={ClipboardList} title="No questions yet" description="Add the first one." />
+        <EmptyState icon={ClipboardList} title="No questions yet" description="They are added in the Course engine." />
       ) : (
         <div className="space-y-8">
           {groups.map((category) => (
@@ -357,6 +356,7 @@ function InitialAssessmentView({ onBack }: { onBack: () => void }) {
                 questions={questions.filter((q) => q.category === category)}
                 onEdit={(q) => setEditing(q)}
                 onDelete={(id) => void remove(id)}
+                readOnly
               />
             </section>
           ))}

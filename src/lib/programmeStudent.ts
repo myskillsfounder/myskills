@@ -61,7 +61,7 @@ export interface CatalogueEntry {
 
 export interface QuizResult {
   grade: { correct: number; total: number; earnedWeight: number; maxWeight: number; percent: number }
-  review: Record<string, { correctIndex: number; explanation: string }>
+  review: Record<string, { correctIndex: number; explanation: string; whyWrong?: string; learningOutcome?: string }>
   passed?: boolean
   pass_percent?: number
 }
@@ -149,20 +149,26 @@ export function gradeLocally(questions: Question[], answers: Record<string, numb
       earned += w
       correct += 1
     }
-    review[q.id] = { correctIndex: q.correct_index, explanation: q.explanation }
+    review[q.id] = { correctIndex: q.correct_index, explanation: q.explanation, whyWrong: q.why_wrong, learningOutcome: q.learning_outcome }
   }
   return { grade: { correct, total: questions.length, earnedWeight: earned, maxWeight: max, percent: max ? Math.round((earned / max) * 100) : 0 }, review }
 }
 
 /* ------------------------------------------------------------ progress */
 
-export function itemsDone(p: MyProgramme, m: ProgrammeModule): number {
-  const r = p.responses[m.id] ?? {}
-  return m.tasks.filter((t) => r[t.id]).length + (r.reflect ? 1 : 0)
+/** What a module asks the student to write: its tasks, and the reflection when it has tasks. */
+export function itemsToWrite(m: ProgrammeModule): number {
+  return m.tasks.length ? m.tasks.length + 1 : 0
 }
 
+export function itemsDone(p: MyProgramme, m: ProgrammeModule): number {
+  const r = p.responses[m.id] ?? {}
+  return m.tasks.filter((t) => r[t.id]).length + (m.tasks.length && r.reflect ? 1 : 0)
+}
+
+/** Everything written, and the quiz passed when the module has one. */
 export function moduleDone(p: MyProgramme, m: ProgrammeModule): boolean {
-  return itemsDone(p, m) === m.tasks.length + 1 && (p.quizzes[m.id]?.best ?? 0) >= QUIZ_PASS
+  return itemsDone(p, m) === itemsToWrite(m) && (m.quiz.length === 0 || (p.quizzes[m.id]?.best ?? 0) >= QUIZ_PASS)
 }
 
 export function moduleStarted(p: MyProgramme, m: ProgrammeModule): boolean {

@@ -1,6 +1,7 @@
 import { redirect } from '@tanstack/react-router'
 import { supabase } from './supabase'
 import { homePath, inPhoneApp, isPhone } from './device'
+import { ensureLiveContent } from './liveContent'
 
 /** What a route guard is handed: enough to know which page is being opened. */
 type GuardContext = { location: { pathname: string } }
@@ -68,6 +69,8 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
     throw redirect({ to: notOnboardedPath(session) })
   }
   if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
+  // The programmes' published wording from the course engine (lib/liveContent.ts).
+  await ensureLiveContent()
 }
 
 /**
@@ -119,6 +122,7 @@ export async function requireOnboardedIfSignedIn(): Promise<void> {
  */
 export async function requireStaffSession(): Promise<void> {
   if (!(await currentSession())) throw redirect({ to: '/admin/login' })
+  await ensureLiveContent()
 }
 
 /** Guest-only for /admin/login: someone already signed in (an admin or a

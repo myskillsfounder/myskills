@@ -1,15 +1,46 @@
 import { useState } from 'react'
 import { ChevronDown, Plus, X } from 'lucide-react'
-import { DIFFICULTIES, blankQuestion, type Question } from '@/lib/programmeEngine'
-import { AddButton, Area, ItemTools, NumberField, Select, Text, moved, replaced } from './fields'
+import { DIFFICULTIES, blankQuestion, type Question, type QuestionContext } from '@/lib/programmeEngine'
+import { AddButton, Area, ItemTools, NumberField, Select, Text, moved, replaced, useStructureLock } from './fields'
 
 const LETTER = 'ABCDEF'
 
+const CASE_FIELDS: { k: keyof QuestionContext; label: string; area?: boolean }[] = [
+  { k: 'company', label: 'Company' },
+  { k: 'role', label: 'Your role' },
+  { k: 'industry', label: 'Industry' },
+  { k: 'background', label: 'Background', area: true },
+  { k: 'objective', label: 'Objective', area: true },
+  { k: 'information', label: 'Information available', area: true },
+  { k: 'constraints', label: 'Constraints', area: true },
+]
+
 function QuestionEditor({ q, onChange }: { q: Question; onChange: (q: Question) => void }) {
   const set = <K extends keyof Question>(k: K, v: Question[K]) => onChange({ ...q, [k]: v })
+  const ctx = q.context ?? {}
+  const hasCase = Object.values(ctx).some((v) => typeof v === 'string' && v.trim())
+  const [showCase, setShowCase] = useState(hasCase)
+  const setCtx = (k: keyof QuestionContext, v: string) => set('context', { ...ctx, [k]: v })
   return (
     <div className="space-y-3">
+      <Text label="Case title (optional)" value={q.title ?? ''} onChange={(v) => set('title', v)} placeholder="Launching an EdTech startup" />
       <Area label="Scenario (optional)" value={q.scenario} onChange={(v) => set('scenario', v)} rows={2} placeholder="The situation the question is set in" />
+      <button type="button" onClick={() => setShowCase((x) => !x)} className="text-sm font-medium text-brand-700 hover:underline">
+        {showCase ? 'Hide the case details' : hasCase ? 'Show the case details' : 'Add case details (company, role, background…)'}
+      </button>
+      {showCase && (
+        <div className="grid gap-3 rounded-xl bg-ink-50 p-3 sm:grid-cols-3">
+          {CASE_FIELDS.map((f) =>
+            f.area ? (
+              <div key={f.k} className="sm:col-span-3">
+                <Area label={f.label} value={ctx[f.k] ?? ''} onChange={(v) => setCtx(f.k, v)} rows={2} />
+              </div>
+            ) : (
+              <Text key={f.k} label={f.label} value={ctx[f.k] ?? ''} onChange={(v) => setCtx(f.k, v)} />
+            ),
+          )}
+        </div>
+      )}
       <Area label="Question" value={q.question} onChange={(v) => set('question', v)} rows={2} />
       <div>
         <p className="text-sm font-medium text-ink-800">Options · pick the right one</p>
@@ -61,6 +92,8 @@ function QuestionEditor({ q, onChange }: { q: Question; onChange: (q: Question) 
         )}
       </div>
       <Area label="Why the right answer is right (shown after the attempt)" value={q.explanation} onChange={(v) => set('explanation', v)} rows={2} />
+      <Area label="Why the other options are wrong (optional)" value={q.why_wrong ?? ''} onChange={(v) => set('why_wrong', v)} rows={2} />
+      <Text label="What it teaches (optional)" value={q.learning_outcome ?? ''} onChange={(v) => set('learning_outcome', v)} />
       <div className="grid gap-3 sm:grid-cols-3">
         <Text label="Topic" value={q.topic} onChange={(v) => set('topic', v)} placeholder="e.g. Pivot tables" />
         <Select label="Difficulty" value={q.difficulty} options={DIFFICULTIES} onChange={(v) => set('difficulty', v)} />
@@ -73,6 +106,7 @@ function QuestionEditor({ q, onChange }: { q: Question; onChange: (q: Question) 
 /** A quiz or the final assessment: questions that open one at a time. */
 export function QuestionList({ questions, onChange }: { questions: Question[]; onChange: (q: Question[]) => void }) {
   const [open, setOpen] = useState<string>()
+  const locked = useStructureLock()
   return (
     <div>
       {questions.length === 0 && <p className="text-sm text-ink-500">No questions yet.</p>}
@@ -84,19 +118,24 @@ export function QuestionList({ questions, onChange }: { questions: Question[]; o
               <div className="flex items-center gap-2 px-3 py-2">
                 <button type="button" onClick={() => setOpen(isOpen ? undefined : q.id)} aria-expanded={isOpen} className="flex min-w-0 flex-1 items-center gap-2 text-left">
                   <span className="text-xs font-semibold tabular-nums text-ink-400">{i + 1}</span>
-                  <span className="min-w-0 flex-1 truncate text-sm text-ink-900">{q.question || <span className="text-ink-400">Untitled question</span>}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-ink-900">
+                    {q.title ? <span className="font-semibold">{q.title}: </span> : null}
+                    {q.question || <span className="text-ink-400">Untitled question</span>}
+                  </span>
                   <span className="hidden shrink-0 text-xs text-ink-500 sm:inline">
                     {q.topic || 'no topic'} · {q.difficulty}
                   </span>
                   <ChevronDown size={15} className={`shrink-0 text-ink-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <ItemTools
-                  index={i}
-                  count={questions.length}
-                  onMove={(to) => onChange(moved(questions, i, to))}
-                  onRemove={() => onChange(questions.filter((_, j) => j !== i))}
-                  removeLabel="Remove question"
-                />
+                {!locked && (
+                  <ItemTools
+                    index={i}
+                    count={questions.length}
+                    onMove={(to) => onChange(moved(questions, i, to))}
+                    onRemove={() => onChange(questions.filter((_, j) => j !== i))}
+                    removeLabel="Remove question"
+                  />
+                )}
               </div>
               {isOpen && (
                 <div className="border-t border-ink-900/[0.06] p-3">
@@ -107,17 +146,19 @@ export function QuestionList({ questions, onChange }: { questions: Question[]; o
           )
         })}
       </ol>
-      <div className="mt-3">
-        <AddButton
-          onClick={() => {
-            const q = blankQuestion()
-            onChange([...questions, q])
-            setOpen(q.id)
-          }}
-        >
-          Add a question
-        </AddButton>
-      </div>
+      {!locked && (
+        <div className="mt-3">
+          <AddButton
+            onClick={() => {
+              const q = blankQuestion()
+              onChange([...questions, q])
+              setOpen(q.id)
+            }}
+          >
+            Add a question
+          </AddButton>
+        </div>
+      )}
     </div>
   )
 }
