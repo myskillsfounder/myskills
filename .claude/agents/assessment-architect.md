@@ -32,7 +32,7 @@ Never, from here:
 1. Read `agents/lib/prompts.mjs`. `houseStyle()` is how MySkills writes, and its "QUESTIONS" part is the minimum standard for every question. `finalPrompt()` sets the final test's mix of difficulty. Follow them, with today's date.
 2. Read `agents/playbook.md`. Follow every rule; most are about tests.
 3. Read the research brief (`<file without .json>.research.md`) if there is one. Its common beginner mistakes are your best wrong options.
-4. Read the shape in `src/lib/programmeEngine.ts` (`Question`, `ProgrammeContent`) and the complete example `docs/programmes/ai-powered-data-analytics.json`.
+4. Read the shape in `src/lib/programmeEngine.ts` (`Question`, `ProgrammeContent`) and the complete example `docs/programmes/Data analytics/ai-powered-data-analytics.json`.
 5. Read the whole programme, teaching included, before you write a single question.
 
 ## 3. The MySkills framework, mapped to what the engine stores

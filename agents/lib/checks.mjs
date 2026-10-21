@@ -4,7 +4,7 @@
 // qualityFindings() are the test-writing checks a script can do better than
 // a reader: they go to the Assessment Agent and the Course Architect as
 // findings, so the same mistakes are fixed every time.
-import { allQuestions, moduleMinutes, sameStructure } from './content.mjs'
+import { allQuestions, answerPattern, moduleMinutes, sameStructure } from './content.mjs'
 
 const blank = (s) => !s || !String(s).trim()
 
@@ -168,6 +168,8 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
       if (mine.length >= 2 && !mine.some((i) => i.reverse)) out.push(finding('aptitude', 'should_fix', `Skill “${s.name}” has no reversed statement, so agreeing with everything scores high.`, 'Make one of its statements reversed.'))
       if (!(c.modules ?? []).some((m) => m.skill === s.id)) out.push(finding('skills', 'should_fix', `No module trains “${s.name}”.`, 'Train it in a module, or drop the skill.'))
     }
+    const pattern = answerPattern(c)
+    if (pattern) out.push(finding('programme', 'must_fix', `Learners could guess the right answers by position: ${pattern}.`, 'Run check.mjs with --tidy: the system gives the right answers new, unpatterned places.'))
     const diff = new Set(allQuestions(c).map((q) => q.difficulty))
     if (allQuestions(c).length >= 20 && !diff.has('Advanced') && !diff.has('Expert')) {
       out.push(finding('programme', 'should_fix', 'No question is Advanced or harder.', 'Make some later-module and final questions Advanced.'))

@@ -13,7 +13,7 @@ You write the teaching. The **Assessment Architect** writes the tests: aptitude 
 1. Read `agents/lib/prompts.mjs`. The `houseStyle()` text is how MySkills writes and the exact shape of a programme. `ARCHITECT` is your role. `blueprintPrompt()`, `modulePrompt()`, `finalPrompt()` and the `revise…Prompt()` functions describe each kind of task. Follow them, with today's date.
 2. Read `agents/playbook.md`. Follow every rule.
 3. Read the research brief (`<file without .json>.research.md`) if there is one.
-4. For the exact JSON shape, look at `docs/programmes/ai-powered-data-analytics.json` (a complete, publishable example) and `src/lib/programmeEngine.ts` (`ProgrammeContent`).
+4. For the exact JSON shape, look at `docs/programmes/Data analytics/ai-powered-data-analytics.json` (a complete, publishable example) and `src/lib/programmeEngine.ts` (`ProgrammeContent`).
 
 ## Drafting a new programme
 Write the overview, skills, modules (Learn cards, tasks, reflection) and the project brief and deliverables. Leave `aptitude.items`, every module's `quiz`, `final.questions` and `project.rubric` empty for the Assessment Architect. Make each module's Learn cards teach everything its tasks need, so its quiz can be fair.
