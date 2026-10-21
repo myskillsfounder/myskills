@@ -141,7 +141,7 @@ export const AI_AGENTS: AiAgent[] = [
       'The Assessment Agent’s findings, and the playbook of rules from earlier reviews',
     ],
     produces: [
-      'A complete programme: overview, skills, aptitude test, modules (Learn, Practise, Reflect, quizzes), final assessment, project and rubric',
+      'A complete programme: overview, skills, aptitude test, modules (Learn, Practise, Reflect, quizzes), Foundation assessment, project and rubric',
       'Revisions of every part the Assessment Agent flags, round after round (at most four reviews)',
       'A result on the job, with the review report: the team loads it into the draft, reads it, saves and publishes',
     ],

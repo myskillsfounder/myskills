@@ -4,6 +4,7 @@ import { MODULE_CONTENT } from '@/lib/careerReadinessContent'
 import type { ProgrammeProgress } from '@/lib/careerReadinessProgramme'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { SectionHeader } from '@/components/app/SectionHeader'
+import { GlobalLeadershipFoundation } from './GlobalLeadershipFoundation'
 import { lifeSkillsForModule, skillKeyForModule } from '@/lib/lifeSkills'
 import { CORE_MODULES } from '@/lib/careerReadinessContent'
 import { isLifeSkills, levelFor, scaleFor, useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
@@ -92,6 +93,7 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
           )
         })}
       </div>
+      <GlobalLeadershipFoundation />
     </section>
   )
 }

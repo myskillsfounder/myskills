@@ -131,10 +131,15 @@ begin
 end $$;
 
 -- A programme's problems: the content's, plus the lock on a built-in one.
+-- Global Leadership's Foundation questions (`final`) are outside the lock:
+-- nothing counts them (docs/supabase-foundation-certificates.sql).
 create or replace function public.programme_problems(p_programme uuid, p_content jsonb) returns text[]
 language sql stable security definer set search_path = public as $$
   select case
-           when pr.source = 'built-in' and public.programme_structure(p_content) is distinct from pr.structure then
+           when pr.source = 'built-in'
+            and case when pr.slug = 'global-leadership'
+                     then (public.programme_structure(p_content) - 'final') is distinct from (pr.structure - 'final')
+                     else public.programme_structure(p_content) is distinct from pr.structure end then
              array[pr.title || ': modules, tasks, questions and statements can''t be added, removed or reordered yet, because students'' progress and scores count them. Change their wording instead.']
            else '{}'::text[]
          end || public.programme_content_problems(p_content)

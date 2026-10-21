@@ -47,7 +47,10 @@ function CertificatesPage() {
   const term = search.trim().toLowerCase()
   const filtered = term
     ? certificates.filter(
-        (c) => c.recipient_name.toLowerCase().includes(term) || c.code.toLowerCase().includes(term),
+        (c) =>
+          c.recipient_name.toLowerCase().includes(term) ||
+          c.code.toLowerCase().includes(term) ||
+          c.title.toLowerCase().includes(term),
       )
     : certificates
 
@@ -56,7 +59,7 @@ function CertificatesPage() {
       <PageHeader
         eyebrow="Admin"
         title="Certificates"
-        subtitle="Issued automatically when someone completes the Foundation assessment — read-only, since grading and issuing both happen server-side."
+        subtitle="Foundation certificates, one per student per programme, issued automatically when someone completes that programme’s Foundation assessment. Read-only, since grading and issuing both happen server-side. Programme certificates come later."
       />
 
       <div className="mb-5 max-w-sm">
@@ -65,7 +68,7 @@ function CertificatesPage() {
           required={false}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name or certificate code"
+          placeholder="Search by name, programme or certificate code"
           aria-label="Search certificates"
         />
       </div>
@@ -84,7 +87,7 @@ function CertificatesPage() {
         <EmptyState
           icon={Award}
           title={term ? 'No matches' : 'No certificates yet'}
-          description={term ? 'Try a different name or code.' : 'Issued once someone finishes the assessment.'}
+          description={term ? 'Try a different name, programme or code.' : 'Issued once someone finishes a Foundation assessment.'}
         />
       ) : (
         <div className="card overflow-x-auto">
@@ -95,7 +98,7 @@ function CertificatesPage() {
                 <th scope="col" className="px-5 py-3 font-semibold">Code</th>
                 <th scope="col" className="px-5 py-3 font-semibold">Tier</th>
                 <th scope="col" className="px-5 py-3 font-semibold">Score</th>
-                <th scope="col" className="px-5 py-3 font-semibold">Title</th>
+                <th scope="col" className="px-5 py-3 font-semibold">Programme</th>
                 <th scope="col" className="px-5 py-3 font-semibold">Issued</th>
               </tr>
             </thead>

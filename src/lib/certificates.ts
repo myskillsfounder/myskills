@@ -1,7 +1,10 @@
 /**
- * Certificates — one per user, awarded on completing the Foundation assessment
- * (the old initial assessment) and titled "Foundational Progress in Digital
- * Marketing".
+ * Foundation certificates — one per student per programme, awarded for
+ * finishing that programme's Foundation assessment (Digital Marketing's is the
+ * old initial assessment; every other programme's is the course engine's
+ * `final`). The title is the programme's name, e.g. "Digital Marketing".
+ * The Programme certificate (modules, practical tasks, graded capstone) is a
+ * separate credential that comes later.
  *
  * Performance bands (single source of truth for the whole app — the SVG
  * certificate, the profile card, the practice page and the prompt library all
@@ -16,7 +19,7 @@
  * ONLY `TIER_THRESHOLDS` below carries the numbers. Every user-facing string
  * ("80% and above", "60% to 79%") is derived from it, so changing a cut-off is
  * a one-line edit. The one place that can still drift is SQL — keep it in sync
- * with the CASE in docs/supabase-migration-2026-07-30-certificate-bands.sql.
+ * with certificate_band() in docs/supabase-foundation-certificates.sql.
  */
 import { supabase } from './supabase'
 import { sessionUser } from './sessionUser'
@@ -38,8 +41,13 @@ export function tierRange(kind: CertificateKind): { min: number; max: number } {
   return { min, max }
 }
 
+/** Digital Marketing's slug: its certificates predate the programme column. */
+export const DM_PROGRAMME = 'digital-marketing'
+
 export interface Certificate {
   id: string
+  /** The programme's slug, e.g. 'digital-marketing' */
+  programme: string
   code: string
   recipient_name: string
   kind: CertificateKind
@@ -187,19 +195,34 @@ export function tierForCertificate(cert: Pick<Certificate, 'kind' | 'percent'>):
  * inline at each call site. */
 
 /**
- * Certificates are issued server-side now, inside grade_initial_assessment()
- * (see docs/supabase-server-side-grading.sql) — the percent that decides the
- * band has to come from the same trusted grading, not a client-supplied
- * argument. There is no client-callable issueCertificate() anymore; the
- * certificates table has no client-facing INSERT policy at all.
+ * Certificates are issued server-side, by grade_initial_assessment() for
+ * Digital Marketing and submit_programme_final() for every other programme
+ * (see docs/supabase-foundation-certificates.sql) — the percent that decides
+ * the band has to come from the same trusted grading, not a client-supplied
+ * argument. There is no client-callable issueCertificate(); the certificates
+ * table has no client-facing INSERT policy at all.
  */
-export async function fetchMyCertificate(): Promise<Certificate | null> {
+export async function fetchMyCertificates(): Promise<Certificate[]> {
+  const user = await sessionUser()
+  if (!user) return []
+  const { data, error } = await supabase
+    .from('certificates')
+    .select('*')
+    .eq('profile_id', user.id)
+    .order('issued_at', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as Certificate[]
+}
+
+/** This student's certificate for one programme (Digital Marketing by default). */
+export async function fetchMyCertificate(programme: string = DM_PROGRAMME): Promise<Certificate | null> {
   const user = await sessionUser()
   if (!user) return null
   const { data, error } = await supabase
     .from('certificates')
     .select('*')
     .eq('profile_id', user.id)
+    .eq('programme', programme)
     .maybeSingle()
   if (error) throw error
   return (data as Certificate) ?? null

@@ -6,7 +6,7 @@ import { signOut } from '@/lib/auth'
 import { isPhone } from '@/lib/device'
 import { useProfile } from '@/lib/useProfile'
 import { useHasStarted } from '@/lib/firstRun'
-import { fetchMyCertificate, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
+import { fetchMyCertificates, tierForCertificate, type Certificate as Cert } from '@/lib/certificates'
 import { useMyBadges } from '@/lib/skillBadges'
 import { useMyProjects } from '@/lib/mentorProjects'
 import { useMyInternshipRecord } from '@/lib/internships'
@@ -24,15 +24,12 @@ export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 })
 
-/** Certificate + badge earned from the Foundation assessment — shown inside
- *  the Achievements card, above projects and internships. */
-function CertificateCard() {
-  const [cert, setCert] = useState<Cert | null>(null)
-  const [loading, setLoading] = useState(true)
+/** One Foundation certificate, with its band and ID. */
+function CertificateRow({ cert }: { cert: Cert }) {
   const [copied, setCopied] = useState(false)
+  const tier = tierForCertificate(cert)
 
   async function copyId() {
-    if (!cert) return
     try {
       await navigator.clipboard.writeText(cert.code)
       setCopied(true)
@@ -42,9 +39,49 @@ function CertificateCard() {
     }
   }
 
+  return (
+    <div className={`rounded-xl border p-4 ${tier.ui.border} ${tier.ui.bg}`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className={`inline-flex items-center gap-1.5 text-sm font-semibold ${tier.ui.text}`}>
+          <Award size={15} />
+          {tier.certLabel}
+        </span>
+        {cert.kind === 'gold' && <DistinctionBadge />}
+      </div>
+      <p className="mt-2 text-xs text-ink-600">
+        Foundational Progress in {cert.title} · {cert.percent}%
+      </p>
+      <div className="mt-0.5 flex items-center gap-1.5">
+        <p className="text-[11px] text-ink-500">ID: {cert.code}</p>
+        <button
+          type="button"
+          onClick={copyId}
+          aria-label="Copy certificate ID"
+          className="text-ink-500 transition-colors hover:text-brand-600"
+        >
+          {copied ? <Check size={12} /> : <Copy size={12} />}
+        </button>
+      </div>
+      <Link
+        to="/certificate"
+        search={{ programme: cert.programme }}
+        className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink-900 shadow-sm transition-colors hover:text-brand-700"
+      >
+        View certificate <ExternalLink size={12} />
+      </Link>
+    </div>
+  )
+}
+
+/** Foundation certificates (one per programme) — shown inside the
+ *  Achievements card, above projects and internships. */
+function CertificateCard() {
+  const [certs, setCerts] = useState<Cert[]>([])
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
-    fetchMyCertificate()
-      .then(setCert)
+    fetchMyCertificates()
+      .then(setCerts)
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -58,52 +95,26 @@ function CertificateCard() {
     )
   }
 
-  const tier = cert ? tierForCertificate(cert) : null
+  if (certs.length) {
+    return (
+      <div className="space-y-3">
+        {certs.map((c) => (
+          <CertificateRow key={c.id} cert={c} />
+        ))}
+      </div>
+    )
+  }
 
   return (
-    <>
-      {cert && tier ? (
-        <div className={`rounded-xl border p-4 ${tier.ui.border} ${tier.ui.bg}`}>
-          <div className="flex items-center justify-between gap-2">
-            <span className={`inline-flex items-center gap-1.5 text-sm font-semibold ${tier.ui.text}`}>
-              <Award size={15} />
-              {tier.certLabel}
-            </span>
-            {cert.kind === 'gold' && <DistinctionBadge />}
-          </div>
-          <p className="mt-2 text-xs text-ink-600">
-            Foundational Progress in {cert.title} · {cert.percent}%
-          </p>
-          <div className="mt-0.5 flex items-center gap-1.5">
-            <p className="text-[11px] text-ink-500">ID: {cert.code}</p>
-            <button
-              type="button"
-              onClick={copyId}
-              aria-label="Copy certificate ID"
-              className="text-ink-500 transition-colors hover:text-brand-600"
-            >
-              {copied ? <Check size={12} /> : <Copy size={12} />}
-            </button>
-          </div>
-          <Link
-            to="/certificate"
-            className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink-900 shadow-sm transition-colors hover:text-brand-700"
-          >
-            View certificate <ExternalLink size={12} />
-          </Link>
-        </div>
-      ) : (
-        <div className="rounded-xl border border-dashed border-ink-300 bg-ink-100 p-4">
-          <p className="text-sm font-medium text-ink-800">No certificate yet</p>
-          <p className="mt-0.5 text-xs text-ink-600">
-            Complete the Foundation assessment to earn your certificate of foundational progress.
-          </p>
-          <Link to="/foundation-assessment" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
-            Go to assessment →
-          </Link>
-        </div>
-      )}
-    </>
+    <div className="rounded-xl border border-dashed border-ink-300 bg-ink-100 p-4">
+      <p className="text-sm font-medium text-ink-800">No certificate yet</p>
+      <p className="mt-0.5 text-xs text-ink-600">
+        Complete a programme’s Foundation assessment to earn its certificate of foundational progress.
+      </p>
+      <Link to="/foundation-assessment" className="mt-2 inline-flex text-xs font-semibold text-brand-600 hover:text-brand-700">
+        Go to assessment →
+      </Link>
+    </div>
   )
 }
 
