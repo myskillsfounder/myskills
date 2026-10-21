@@ -172,7 +172,7 @@ function AgentWorkPage() {
                           <span className="font-semibold text-ink-900">{j.programme_title}</span>
                           <span className="text-sm text-ink-600">{j.kind === 'draft' ? 'Draft' : j.weekly ? 'Monthly check' : 'Improve'}</span>
                           <Badge tone={STATUS[j.status].tone}>{STATUS[j.status].label}</Badge>
-                          {j.loaded_at && <Badge tone="success">Loaded</Badge>}
+                          {j.published_version ? <Badge tone="success">Published v{j.published_version}</Badge> : j.loaded_at && <Badge tone="success">Loaded</Badge>}
                           {j.status === 'done' && !j.loaded_at && <Badge tone="warning">To read</Badge>}
                         </span>
                         <span className="mt-0.5 block text-xs text-ink-500">

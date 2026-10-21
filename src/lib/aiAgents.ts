@@ -113,7 +113,7 @@ export const AI_AGENTS: AiAgent[] = [
       'Later: proposals for new kinds of assessment (case simulations, adaptive tests, written answers graded by AI and checked by a person)',
     ],
     safeguards: [
-      'Never publishes: the team approves every change',
+      'Publishes nothing itself: its “ready” verdict is what lets a result be auto-published, where the team has switched that on',
       'Never changes the score rules',
       'Question changes go live as a new version, never mid-test, so past results stay fair',
       'Answer keys stay on the server',
@@ -146,7 +146,7 @@ export const AI_AGENTS: AiAgent[] = [
       'A result on the job, with the review report: the team loads it into the draft, reads it, saves and publishes',
     ],
     safeguards: [
-      'Never publishes: a person loads, reads and publishes every result',
+      'Publishes only where the team switches on auto-publish for a programme, and only results the Assessment Agent calls ready that pass every check; otherwise a person loads, reads and publishes',
       'Built-in programmes keep every module, task, question, statement and skill in place',
       'Ids, weights and answer positions are set by code, not by the AI',
       'A spending limit: $10 a job, $20 a month',

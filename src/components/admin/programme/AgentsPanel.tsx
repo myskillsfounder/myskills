@@ -11,6 +11,7 @@ import {
   markAgentJobLoaded,
   requestAgentJob,
   saveRule,
+  setAgentAutopublish,
   setAgentWeekly,
   usd,
   workerRunning,
@@ -301,7 +302,7 @@ export function AgentsPanel({
           part like an examiner, and sends what it finds to the <span className="font-semibold text-ink-800">Course Architect</span>,
           who {draft ? 'writes the programme and ' : ''}fixes it. They go round until the review has nothing left to fix (at most
           four reviews). The result comes back here with a review report. Nothing reaches students until you load it into the draft,
-          read it, save and publish.
+          read it, save and publish, unless you switch on publishing automatically below.
         </p>
         {data && (
           <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ink-500">
@@ -377,7 +378,26 @@ export function AgentsPanel({
               />
               <span>
                 Check it every month: research what has changed in the field and improve the programme. Each check usually costs $3
-                to $10, and its result waits here for you.
+                to $10, and its result waits here for you (or is published, if the switch below is on).
+              </span>
+            </label>
+          )}
+          {!builtIn && data.autopublish !== undefined && (
+            <label className="mt-3 flex items-start gap-2 text-sm text-ink-700">
+              <input
+                type="checkbox"
+                checked={data.autopublish}
+                disabled={busy}
+                onChange={(e) => {
+                  const on = e.target.checked
+                  if (on && !window.confirm('Publish results automatically? When the Assessment Agent says a result is ready and every check passes, it goes live for students without anyone reading it first.')) return
+                  void run(() => setAgentAutopublish(programmeId, on))
+                }}
+                className="mt-0.5 h-4 w-4 accent-brand-600"
+              />
+              <span>
+                Publish automatically when the Assessment Agent says a result is ready and every check passes. Off: each result waits
+                here for you to load, read and publish.
               </span>
             </label>
           )}
@@ -400,7 +420,7 @@ export function AgentsPanel({
                     <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-900">
                       {j.kind === 'draft' ? 'Draft' : j.weekly ? 'Monthly check' : 'Improve'}
                       <Badge tone={STATUS[j.status].tone}>{STATUS[j.status].label}</Badge>
-                      {j.loaded_at && <Badge tone="success">Loaded</Badge>}
+                      {j.published_version ? <Badge tone="success">Published v{j.published_version}</Badge> : j.loaded_at && <Badge tone="success">Loaded</Badge>}
                     </p>
                     <p className="mt-0.5 text-xs text-ink-500">
                       {when(j.created_at)}
@@ -410,6 +430,7 @@ export function AgentsPanel({
                       {j.finished_at ? ` · finished ${when(j.finished_at)}` : ''}
                     </p>
                     {active(j) && j.stage && <p className="mt-1 text-sm text-brand-800">{j.stage}…</p>}
+                    {j.autopublish_note && <p className="mt-1 text-xs text-ink-600">{j.autopublish_note}</p>}
                     {j.brief && <p className="mt-1 line-clamp-2 text-xs text-ink-600">“{j.brief}”</p>}
                     {j.status === 'failed' && j.error && (
                       <p className="mt-1 flex items-start gap-1.5 text-xs text-red-700">

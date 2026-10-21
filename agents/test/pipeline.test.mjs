@@ -235,3 +235,27 @@ test('budget: stops before a revision that would go past the budget', async () =
   assert.equal(claude.calls.filter((x) => x.startsWith('revise')).length, 0)
   assert.match(out.report, /Stopped before review round 1/)
 })
+
+test('ready: only when the last review passed and nothing changed after it', async () => {
+  const fixed = fakeClaude({
+    review: (round) => (round === 1 ? { verdict: 'needs_work', summary: '', strengths: [], findings: [{ target: 'module:da-m06', severity: 'must_fix', problem: 'x', fix: 'y', source: '' }], lessons: [] } : ready()),
+    revise: (label, prompt) => {
+      if (label.startsWith('revise final')) return { questions: now(prompt, 'The final assessment now').map((q) => ({ ...q, context: null, why_wrong: 'w', learning_outcome: 'l' })) }
+      const m = now(prompt, 'The module now')
+      return { ...m, quiz: m.quiz.map((q) => ({ ...q, context: null })) }
+    },
+  })
+  const a = await runJob({ job: { id: 'j', kind: 'improve' }, programme: { slug: 'x-y', title: 'X', source: 'engine' }, content: clone(DA), playbook: [] }, ctx(fixed))
+  assert.equal(a.ready, true)
+
+  const stillWrong = fakeClaude({
+    review: () => ({ verdict: 'needs_work', summary: '', strengths: [], findings: [{ target: 'module:da-m06', severity: 'must_fix', problem: 'x', fix: 'y', source: '' }], lessons: [] }),
+    revise: (label, prompt) => {
+      if (label.startsWith('revise final')) return { questions: now(prompt, 'The final assessment now').map((q) => ({ ...q, context: null, why_wrong: 'w', learning_outcome: 'l' })) }
+      const m = now(prompt, 'The module now')
+      return { ...m, quiz: m.quiz.map((q) => ({ ...q, context: null })) }
+    },
+  })
+  const b = await runJob({ job: { id: 'j', kind: 'improve' }, programme: { slug: 'x-y', title: 'X', source: 'engine' }, content: clone(DA), playbook: [] }, ctx(stillWrong))
+  assert.equal(b.ready, false)
+})

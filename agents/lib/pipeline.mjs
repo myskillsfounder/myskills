@@ -4,7 +4,7 @@
 // worker saves them.
 import * as S from './schemas.mjs'
 import * as P from './prompts.mjs'
-import { qualityFindings, stats } from './checks.mjs'
+import { publishProblems, qualityFindings, stats } from './checks.mjs'
 import {
   allQuestions,
   assembleDraft,
@@ -255,5 +255,10 @@ export async function runJob(claim, ctx) {
   }
   const report = buildReport({ programme, job, rounds, stats: stats(content), before: job.kind === 'improve' ? stats(base) : null, notes, lessons: lessons.slice(0, 5), usage: usage.toJSON(), sources: research.sources, today, moduleTitles: Object.fromEntries(content.modules.map((m) => [m.id, m.title])) })
   const researchText = `${research.brief}\n\n${research.sources.length ? `## Pages the searches found\n${research.sources.map((s) => `- [${s.title}](${s.url})`).join('\n')}` : ''}`.trim()
-  return { result: content, report, research: researchText, lessons: lessons.slice(0, 5), questions: allQuestions(content).length }
+  // Ready to publish without a person (when the programme allows it): the
+  // last review said ready with nothing left to fix, nothing changed after
+  // it, and the publish checks pass.
+  const last = rounds.at(-1)
+  const ready = Boolean(last && last.review.verdict === 'ready' && !last.toFix.some((f) => f.severity === 'must_fix') && !last.revised.length && !publishProblems(content).length)
+  return { result: content, report, research: researchText, lessons: lessons.slice(0, 5), questions: allQuestions(content).length, ready }
 }
