@@ -5,7 +5,11 @@ improve existing ones on the course engine, working together until the review
 has nothing left to fix. The team asks for a job on a programme's **Agents**
 tab in the admin; this worker runs on the MySkills server, does the work, and
 leaves the result and a review report on the job. Nothing reaches students
-until someone loads the result into the draft, reads it, saves and publishes.
+until someone loads the result into the draft, reads it, saves and publishes,
+unless the programme's **Publish automatically** switch is on: then a result
+the Assessment Agent calls ready, passing every check, is published by
+`agent_autopublish_job()` (never Global Leadership or Digital Marketing, and
+never over a draft someone saved while the job ran).
 
 ## What a job does
 

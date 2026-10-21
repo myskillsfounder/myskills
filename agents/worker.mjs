@@ -86,6 +86,12 @@ async function work() {
       progress: (stage, u) => rpc('agent_job_progress', { p_id: job.id, p_stage: stage, p_usage: u }),
     })
     await finish(job.id, { ok: true, result: out.result, report: out.report, research: out.research, usage: usage.toJSON(), lessons: out.lessons })
+    // Publishes only if the programme has auto-publish on (the database checks
+    // that, and everything else, again).
+    if (out.ready) {
+      const note = await rpc('agent_autopublish_job', { p_id: job.id }).catch((e) => `Auto-publish failed: ${e.message}`)
+      if (note) log(`Job ${job.id}: ${note}`)
+    }
     log(`Job ${job.id} done: $${usage.cost.toFixed(2)}`)
   } catch (e) {
     const cancelled = e instanceof Cancelled

@@ -35,6 +35,10 @@ export interface AgentJob {
   error: string | null
   has_result: boolean
   loaded_at: string | null
+  /** The version auto-publish made live, if it did. */
+  published_version?: number | null
+  /** What auto-publish did or why it didn't. */
+  autopublish_note?: string | null
   requested_by: string | null
 }
 
@@ -49,6 +53,8 @@ export interface AgentJobFull extends AgentJob {
 export interface AgentJobs {
   jobs: AgentJob[]
   weekly: boolean
+  /** Undefined until docs/supabase-agent-autopublish.sql is run. */
+  autopublish?: boolean
   month_cost_usd: number
   /** When the worker on the server last checked in (null: never). */
   worker_seen_at: string | null
@@ -125,6 +131,11 @@ export async function markAgentJobLoaded(id: string): Promise<void> {
 
 export async function setAgentWeekly(programmeId: string, on: boolean): Promise<void> {
   const { error } = await supabase.rpc('admin_set_agent_weekly', { p_programme: programmeId, p_on: on })
+  if (error) fail(error)
+}
+
+export async function setAgentAutopublish(programmeId: string, on: boolean): Promise<void> {
+  const { error } = await supabase.rpc('admin_set_agent_autopublish', { p_programme: programmeId, p_on: on })
   if (error) fail(error)
 }
 
