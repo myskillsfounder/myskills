@@ -191,6 +191,37 @@ export const AI_AGENTS: AiAgent[] = [
     runs: 'On Paul’s computer, inside /course-team, when Paul asks',
   },
   {
+    id: 'curriculum-intelligence',
+    name: 'Curriculum Intelligence',
+    purpose: 'Keeps every published programme accurate and current: finds what has changed in its field, proposes evidence-backed updates, and checks the Architects made them correctly.',
+    status: 'building',
+    progress:
+      'Ready on Paul’s computer as /course-team health (added 21 Oct 2026): it researches changes since the last review, sorts findings into critical, important, enhancement and monitor-only, and asks Paul which updates to make; the Course Architect and Assessment Architect make them, and it validates the result. Not part of the server agents, and not on a schedule yet.',
+    reads: [
+      'The published programme file Paul downloads from the admin, with its assessment blueprint',
+      'Official documentation, release notes, regulators and qualification bodies first; industry research and practitioner writing after; social media only as a lead',
+      'Its own curriculum log: the last review date, earlier findings and open items',
+    ],
+    produces: [
+      'A curriculum log per programme: review history, an evidence register with sources and dates, and change proposals with before-and-after text',
+      'A health report: Current, Needs updates or Needs urgent correction, with critical findings first',
+      'Approved changes, sent to the Course Architect or Assessment Architect as findings to fix',
+      'A validation of each revision against what was approved',
+    ],
+    safeguards: [
+      'Never edits the programme itself; the two Architects make every change',
+      'Nothing is revised without Paul’s yes; outcomes, pass marks, certification claims and big duration changes always need it',
+      'Never changes scores, results or certificates',
+      'Unverified claims are recorded to watch, never taught',
+      'Does not refresh sound foundations or propose changes just to look busy; a review with no material change is a success',
+      'At most 2 repair rounds, then unresolved items go to Paul',
+      'Publishes nothing: Paul loads the file into the draft, reads it and publishes',
+    ],
+    needs: [],
+    model: 'Claude (Claude Code, on Paul’s plan)',
+    runs: 'On Paul’s computer, as /course-team health, when Paul asks',
+  },
+  {
     id: 'development-assistant',
     name: 'Development assistant',
     purpose: 'Builds and maintains the MySkills app with Paul: code, database scripts, testing and checks after each deploy.',
