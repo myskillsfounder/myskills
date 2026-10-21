@@ -8,7 +8,7 @@ description: Run the MySkills course team on Paul's PC (his Claude plan, no API 
 This does the same job as the server's course agents (`agents/`), run here as three Claude Code subagents:
 - `assessment-agent` researches and reviews;
 - `course-architect` writes the teaching: overview, skills, modules, project brief;
-- `assessment-architect` writes the tests: aptitude statements, module quizzes, the final and the project rubric.
+- `assessment-architect` writes the tests: aptitude statements, module quizzes, the final and the project rubric. It also keeps the assessment blueprint, `<file without .json>.assessment.md`: the question and coverage maps, rubric levels, practical evidence, and what only Paul can decide.
 
 ## Inputs
 - **improve `<file>`**: a programme file. If Paul has none, ask him to open the programme in the admin, go to Check & publish, click **Download**, and save it in `docs/programmes/`.
@@ -32,6 +32,7 @@ This does the same job as the server's course agents (`agents/`), run here as th
      - what changed in each round;
      - what still needs a person;
      - sources worth checking;
+     - the blueprint's RESULT and its "For the team" items;
      - the numbers from `check.mjs`.
 
 ## Tell Paul
@@ -42,4 +43,4 @@ This does the same job as the server's course agents (`agents/`), run here as th
 ## Keep in mind
 - This uses Paul's Claude plan. A full draft is long work, so it can hit his usage limit. If it stops, say where it got to; the files on disk let the next run carry on.
 - Never publish, deploy or touch the database from here. Paul loads the file himself.
-- The `.research.md`, `.review-N.json` and `.report.md` files are working files. Commit only if Paul asks.
+- The `.research.md`, `.review-N.json`, `.assessment.md` and `.report.md` files are working files. Commit only if Paul asks.

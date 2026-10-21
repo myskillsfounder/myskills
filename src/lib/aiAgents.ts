@@ -159,23 +159,29 @@ export const AI_AGENTS: AiAgent[] = [
   {
     id: 'assessment-architect',
     name: 'Assessment Architect',
-    purpose: 'Writes the tests in every programme: aptitude statements, module quizzes, the final test and the project rubric.',
+    purpose: 'Owns how every programme measures learning: the self-check, module quizzes, the final test and the project rubric, so a pass means demonstrated competence, not just completion.',
     status: 'building',
     progress:
-      'Ready on Paul’s computer as part of /course-team (added 21 Oct 2026): the Course Architect writes the teaching, the Assessment Architect writes the tests against it, and the Assessment Agent reviews both until they are ready. Not part of the server agents.',
+      'Ready on Paul’s computer as part of /course-team (added 21 Oct 2026): the Course Architect writes the teaching, the Assessment Architect writes the tests and an assessment blueprint against it, and the Assessment Agent reviews both until they are ready. It can also review an assessment on its own, and judge learner work or Question health figures Paul gives it. Not part of the server agents.',
     reads: [
       'The programme’s Learn cards and tasks, so every question tests what was taught',
       'The Assessment Agent’s research brief, for the mistakes beginners really make',
       'The Assessment Agent’s findings on the tests, and the playbook of rules from earlier reviews',
+      'Only when Paul provides them: Question health figures, or anonymised student answers and projects',
     ],
     produces: [
       'Aptitude statements (three per skill, one reversed)',
       'Module quizzes and the final test: scenario questions with one defensible answer and believable wrong options',
       'A project rubric specific to the field',
+      'An assessment blueprint: what each test is for, a question and coverage map, rubric levels (Beginning to Advanced) and the evidence needed, and a readiness result',
+      'Specific feedback and next steps on learner work, traced to the evidence, with disputed cases left to a person',
       'A note to the Course Architect when a module doesn’t yet teach what a fair test needs',
     ],
     safeguards: [
       'Never changes the teaching; that stays with the Course Architect',
+      'Never changes the score rules, pass marks of a published programme, or a result; never fabricates evidence',
+      'Calls no one job-ready from a self-check or a quiz; skills without evidence count as not yet assessed, never as zero',
+      'Draws no conclusion about a question from fewer than about 30 answers',
       'Built-in programmes keep every question and statement in place: reworded and corrected only',
       'Weights and answer positions are set by code, not by the AI',
       'Publishes nothing: Paul loads the file into the draft, reads it and publishes',

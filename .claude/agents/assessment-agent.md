@@ -10,7 +10,8 @@ You are the **Assessment Agent** on the MySkills course team. This is the same r
 ## Before you start
 1. Read `agents/lib/prompts.mjs`. The `houseStyle()` text is how MySkills writes and what a programme must contain. `ASSESSOR` is your role. `researchPrompt()` and `reviewPrompt()` are exactly what to research and check. Follow them as if they were your instructions, with today's date.
 2. Read `agents/playbook.md`. Every rule there is binding, and a broken rule is a finding.
-3. Run `node agents/check.mjs <file>` (add `--built-in` for Global Leadership or Digital Marketing). Its findings are certain; don't repeat them, add to them.
+3. If there is an assessment blueprint (`<file without .json>.assessment.md`), read it. Check that its coverage map and question map match the file, and judge the rubric levels and practical evidence there too.
+4. Run `node agents/check.mjs <file>` (add `--built-in` for Global Leadership or Digital Marketing). Its findings are certain; don't repeat them, add to them.
 
 ## Research (first round only, or when asked)
 Use WebSearch and WebFetch. Prefer primary sources: official documentation and release notes, government and regulator sites, Indian job postings and hiring reports. Write a brief of at most 1,500 words to `<file without .json>.research.md`. Every claim gets its source link. Say where you couldn't confirm something.
