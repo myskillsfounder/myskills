@@ -1,24 +1,28 @@
 ---
 name: course-team
-description: Run the MySkills course team on Paul's PC (his Claude plan, no API credit). The Assessment Agent researches and reviews, the Course Architect drafts or fixes, and they repeat until the review says ready. Use for "/course-team improve <file>", "/course-team draft <title>", or any request to draft, improve or review a programme without using the server agents.
+description: Run the MySkills course team on Paul's PC (his Claude plan, no API credit). The Assessment Agent researches and reviews, the Course Architect drafts or fixes the teaching, the Assessment Architect drafts or fixes the tests, and they repeat until the review says ready. Use for "/course-team improve <file>", "/course-team draft <title>", or any request to draft, improve or review a programme without using the server agents.
 ---
 
 # /course-team
 
-This does the same job as the server's course agents (`agents/`), run here as two Claude Code subagents: `assessment-agent` and `course-architect`.
+This does the same job as the server's course agents (`agents/`), run here as three Claude Code subagents:
+- `assessment-agent` researches and reviews;
+- `course-architect` writes the teaching: overview, skills, modules, project brief;
+- `assessment-architect` writes the tests: aptitude statements, module quizzes, the final and the project rubric.
 
 ## Inputs
 - **improve `<file>`**: a programme file. If Paul has none, ask him to open the programme in the admin, go to Check & publish, click **Download**, and save it in `docs/programmes/`.
 - **draft `<title>`** (and optional instructions): the new file is `docs/programmes/<slug>.json`. The slug must match the programme's web address in the Course engine.
-- Is it **built-in**? Global Leadership and Digital Marketing are. If so, pass `--built-in` to every `check.mjs` run, and tell both agents.
+- Is it **built-in**? Global Leadership and Digital Marketing are. If so, pass `--built-in` to every `check.mjs` run, and tell every agent.
 
 ## The loop
 1. **Research and first review.**
    - For a new programme, run `assessment-agent` for research only: "research `<title>`, write `<file>.research.md`".
    - For an existing one, run `assessment-agent` for research plus review round 1.
 2. **Draft or revise.**
-   - For a new programme: run `course-architect` to draft the whole file from the research and Paul's instructions, then `assessment-agent` for review round 1.
-   - Then, for every round: if the review has any must-fix or should-fix findings, run `course-architect` to fix them all.
+   - For a new programme: run `course-architect` to draft the teaching from the research and Paul's instructions, then `assessment-architect` to write the tests, then `assessment-agent` for review round 1.
+   - Then, for every round: if the review has must-fix or should-fix findings with `owner` "course", run `course-architect` to fix them; then, if it has any with `owner` "assessment", run `assessment-architect` to fix those. Always in that order, so the tests are fixed against the revised teaching.
+   - If the `assessment-architect` says the teaching must change before a test can be fair, pass that to `course-architect` in the same round, then run `assessment-architect` again.
 3. **Review again.** Run `assessment-agent` for the next round. Repeat steps 2 and 3 until the verdict is "ready", or after **3 revisions**.
 4. **Finish.**
    - Run `node agents/check.mjs <file> --tidy` and confirm `ready_to_publish: true`.

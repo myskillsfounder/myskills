@@ -1,7 +1,7 @@
 # The course team's playbook
 
 Rules the Assessment Agent has learned from reviews. The Course Architect
-follows every one; a broken rule is a finding. This copy is for the agents
+and the Assessment Architect follow every one; a broken rule is a finding. This copy is for the agents
 that run in Claude Code on Paul's PC (`/course-team`). The server's agents
 keep theirs in the database (Admin → Agents' work). When a review teaches a
 new general lesson, add it at the end with the date and why.

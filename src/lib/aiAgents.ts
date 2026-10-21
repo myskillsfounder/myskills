@@ -157,6 +157,34 @@ export const AI_AGENTS: AiAgent[] = [
     runs: 'On the MySkills server, when the team asks (about 15–40 minutes; at most $10 a job and $20 a month)',
   },
   {
+    id: 'assessment-architect',
+    name: 'Assessment Architect',
+    purpose: 'Writes the tests in every programme: aptitude statements, module quizzes, the final test and the project rubric.',
+    status: 'building',
+    progress:
+      'Ready on Paul’s computer as part of /course-team (added 21 Oct 2026): the Course Architect writes the teaching, the Assessment Architect writes the tests against it, and the Assessment Agent reviews both until they are ready. Not part of the server agents.',
+    reads: [
+      'The programme’s Learn cards and tasks, so every question tests what was taught',
+      'The Assessment Agent’s research brief, for the mistakes beginners really make',
+      'The Assessment Agent’s findings on the tests, and the playbook of rules from earlier reviews',
+    ],
+    produces: [
+      'Aptitude statements (three per skill, one reversed)',
+      'Module quizzes and the final test: scenario questions with one defensible answer and believable wrong options',
+      'A project rubric specific to the field',
+      'A note to the Course Architect when a module doesn’t yet teach what a fair test needs',
+    ],
+    safeguards: [
+      'Never changes the teaching; that stays with the Course Architect',
+      'Built-in programmes keep every question and statement in place: reworded and corrected only',
+      'Weights and answer positions are set by code, not by the AI',
+      'Publishes nothing: Paul loads the file into the draft, reads it and publishes',
+    ],
+    needs: [],
+    model: 'Claude (Claude Code, on Paul’s plan)',
+    runs: 'On Paul’s computer, inside /course-team, when Paul asks',
+  },
+  {
     id: 'development-assistant',
     name: 'Development assistant',
     purpose: 'Builds and maintains the MySkills app with Paul: code, database scripts, testing and checks after each deploy.',
