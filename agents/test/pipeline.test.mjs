@@ -12,11 +12,19 @@ const DA = JSON.parse(fs.readFileSync(new URL('../../docs/programmes/Data analyt
 const words = (n) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ')
 const clone = (x) => JSON.parse(JSON.stringify(x))
 
+// Ten made-up words per question, so no two fixture questions read alike
+// (the near-duplicate check would flag them).
+let serial = 0
+const unique = () => {
+  serial++
+  return Array.from({ length: 10 }, (_, k) => `zq${serial}x${k}`).join(' ')
+}
+
 function question(i, difficulty = 'Intermediate') {
   return {
     id: `q${i}`,
     title: `Case ${i}`,
-    scenario: `A coaching centre in Pune has a problem, case ${i}.`,
+    scenario: `A coaching centre in Pune has a problem, case ${i}: ${unique()}.`,
     context: null,
     question: `What should the analyst do first in case ${i}?`,
     options: [`Check the totals against the source ${i}`, `Build a dashboard of every metric ${i}`, `Email the founder the raw export ${i}`, `Delete rows that look unusual ${i}`],
@@ -127,7 +135,8 @@ test('improve: fixes what the review and the checks found, keeps ids, records le
         : ready(),
     revise: (label, prompt) => {
       if (label.startsWith('revise final')) {
-        return { questions: now(prompt, 'The final assessment now').map((q) => ({ ...q, context: null, why_wrong: 'Each is wrong for a reason.', learning_outcome: 'Something.' })) }
+        // The final was flagged as no harder than the quizzes, too.
+        return { questions: now(prompt, 'The final assessment now').map((q, i) => ({ ...q, context: null, why_wrong: 'Each is wrong for a reason.', learning_outcome: 'Something.', difficulty: i < 6 ? 'Advanced' : q.difficulty })) }
       }
       const m = now(prompt, 'The module now')
       m.learn = m.learn.map((l) => ({ ...l, body: `${l.body} ${words(40)}` }))

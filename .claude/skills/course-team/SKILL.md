@@ -1,6 +1,6 @@
 ---
 name: course-team
-description: Run the MySkills course team on Paul's PC (his Claude plan, no API credit). The Assessment Agent researches and reviews, the Course Architect drafts or fixes the teaching, the Assessment Architect drafts or fixes the tests, and they repeat until the review says ready. The Curriculum Intelligence agent checks a programme is still current and proposes evidence-backed updates. Every round is scored, and a track record shows whether the programmes and the agents are getting better. Use for "/course-team improve <file>", "/course-team draft <title>", "/course-team health <file>", "/course-team outcome <file>", "/course-team progress", or any request to draft, improve, review or keep a programme current without using the server agents, or to ask whether the course team is working.
+description: Run the MySkills course team on Paul's PC (his Claude plan, no API credit). The Assessment Agent researches and reviews, the Course Architect drafts or fixes the teaching, the Assessment Architect drafts or fixes the tests, and they repeat until the review says ready. The Curriculum Intelligence agent checks a programme is still current and proposes evidence-backed updates. Every round is scored, and a track record shows whether the programmes and the agents are getting better. Use for "/course-team improve <file>", "/course-team draft <title>", "/course-team health <file>", "/course-team probe <file>", "/course-team outcome <file>", "/course-team progress", or any request to draft, improve, review or keep a programme current without using the server agents, or to ask whether the course team is working.
 ---
 
 # /course-team
@@ -15,6 +15,7 @@ This does the same job as the server's course agents (`agents/`), run here as Cl
 - **improve `<file>`**: a programme file. If Paul has none, ask him to open the programme in the admin, go to Check & publish, click **Download**, and save it in `docs/programmes/`.
 - **health `<file>`**: a published programme to keep current (see "The health loop"). Ask Paul which version number the admin shows as published, and pass it on; if he doesn't know, the agent records it as unknown.
 - **draft `<title>`** (and optional instructions): the new file is `docs/programmes/<slug>.json`. The slug must match the programme's web address in the Course engine.
+- **probe `<file>`**: run the clue tests only (see "Clue tests"), then tell Paul what they found.
 - **outcome `<file>`**: how students do on a published version (see "The scorecard").
 - **progress**: is the course team getting better? Run `node agents/track.mjs report` and explain it to Paul in plain words (see "The scorecard").
 - Is it **built-in**? Global Leadership and Digital Marketing are. If so, pass `--built-in` to every `check.mjs` run, and tell every agent.
@@ -30,16 +31,31 @@ Student data: ask Paul to open Admin → **Question health**, set **Answers sinc
 
 **After a report shows a rule broken again**: tell Paul, then do what the playbook's "How the rules learn" says (sharpen it; after two repeats, make it an automatic check in `agents/lib/checks.mjs` if a script can see it). That change is part of the job.
 
+## Clue tests
+Before every review of a programme's tests, a cheap model takes the questions the way a student would, from packets with no answers in them. This is the `question-prober` subagent, which runs on Haiku. The scorer turns its answers into findings for the Assessment Agent and the Assessment Architect.
+
+Run all three modes each time. Each mode needs one make, one prober run and one score:
+1. **Make the packet.** Run `node agents/probe.mjs make <file> --mode <mode> --out <dir>`. `<dir>` is a new folder in your scratchpad, never inside the repository, so the prober can't find the programme.
+2. **Run the prober.** Run `question-prober` with: "Packet: `<dir>/<name>.probe-<mode>.packet.json`. Answers: `<dir>/<name>.probe-<mode>.answers.json`." The three modes can run at the same time.
+3. **Score it.** Run `node agents/probe.mjs score <file> --mode <mode> --answers <answers file>`. It adds the results to `<file without .json>.probes.json`.
+
+What each mode shows:
+- `options`: only the four options. Right far more often than 1 in 4 means the options give the answer away.
+- `cards`: the module's Learn cards, then its quiz. A miss may mean the module doesn't teach it.
+- `blind`: the full question with no key. A different pick may mean a second defensible answer or a wrong key.
+
+The packets cost little: about 30 to 35 KB each, on the cheapest model. Skip the clue tests only if Paul asks, or if the run is about to hit his usage limit, and say so in the report.
+
 ## The loop
 1. **Research and first review.**
    - For a new programme, run `assessment-agent` for research only: "research `<title>`, write `<file>.research.md`".
-   - For an existing one, run `assessment-agent` for research plus review round 1.
+   - For an existing one, run the clue tests, then `assessment-agent` for research plus review round 1.
 2. **Draft or revise.**
-   - For a new programme: run `course-architect` to draft the teaching from the research and Paul's instructions, then `assessment-architect` to write the tests, then `assessment-agent` for review round 1.
+   - For a new programme: run `course-architect` to draft the teaching from the research and Paul's instructions, then `assessment-architect` to write the tests. Then run the clue tests, then `assessment-agent` for review round 1.
    - Then, for every round: if the review has must-fix or should-fix findings with `owner` "course", run `course-architect` to fix them; then, if it has any with `owner` "assessment", run `assessment-architect` to fix those. Always in that order, so the tests are fixed against the revised teaching.
    - If the `assessment-architect` says the teaching must change before a test can be fair, pass that to `course-architect` in the same round, then run `assessment-architect` again.
    - Scorecard: after review round 1, save a row with `--stage "start (review 1)"` for an existing programme, or `--stage "draft (review 1)"` for a new one. That first row is what the track record judges the Architects by, so never skip it.
-3. **Review again.** Run `assessment-agent` for the next round, then save a scorecard row with `--stage "round <n>"`. Repeat steps 2 and 3 until the verdict is "ready", or after **3 revisions**.
+3. **Review again.** If the tests changed this round, run the clue tests again. Then run `assessment-agent` for the next round, then save a scorecard row with `--stage "round <n>"`. Repeat steps 2 and 3 until the verdict is "ready", or after **3 revisions**.
 4. **Finish.**
    - Run `node agents/check.mjs <file> --tidy` and confirm `ready_to_publish: true`.
    - Add the reviews' new `lessons` to the end of `agents/playbook.md`, numbered, ending "(added <today>)", with why. Skip any that repeat an existing rule.
@@ -71,6 +87,6 @@ Student data: ask Paul to open Admin → **Question health**, set **Answers sinc
 ## Keep in mind
 - This uses Paul's Claude plan. A full draft is long work, so it can hit his usage limit. If it stops, say where it got to; the files on disk let the next run carry on.
 - Never publish, deploy or touch the database from here. Paul loads the file himself.
-- The `.research.md`, `.review-N.json`, `.assessment.md`, `.changes-<date>.json` and `.report.md` files are working files. Commit only if Paul asks.
+- The `.research.md`, `.review-N.json`, `.assessment.md`, `.assessment-tables.md`, `.probes.json`, `.changes-<date>.json` and `.report.md` files are working files. The probe packets and answers stay in the scratchpad. Commit only if Paul asks.
 - `agents/track-record.json` holds no answers or student data: commit it with the job. The `.scorecard.json` holds only numbers: suggest Paul commits it with the curriculum log.
 - The `.curriculum.md` log is the programme's review history: keep it between runs, since the next health review starts from its last review date and open items. Suggest Paul commits it after each health review.

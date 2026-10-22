@@ -34,7 +34,10 @@ Never, from here:
 3. Read the research brief (`<file without .json>.research.md`) if there is one. Its common beginner mistakes are your best wrong options.
 4. Read the shape in `src/lib/programmeEngine.ts` (`Question`, `ProgrammeContent`) and the complete example `docs/programmes/Data analytics/ai-powered-data-analytics.json`.
 5. Read the whole programme, teaching included, before you write a single question.
-6. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
+6. Run `node agents/blueprint.mjs <file>`. It writes `<file without .json>.assessment-tables.md`: what each test holds, a row per question, the skills each part covers, the answer keys. Use its numbers; never count by hand.
+7. If `<file without .json>.probes.json` exists, read it: the clue tests' results (section 7).
+8. For checking answers by running them, run `bash agents/verify/setup.sh` once. It prints a Python with pandas, SciPy, openpyxl and SQLite; use that with `-I`, and keep your scripts in the scratchpad, not the repository.
+9. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
 
 ## 3. The MySkills framework, mapped to what the engine stores
 Use several kinds of evidence, not only multiple choice. The engine stores some kinds and not others yet; the blueprint holds the rest. Never invent fields in the JSON: the editor and Publish reject the file.
@@ -83,17 +86,19 @@ The engine stores `id`, `name` and a one-line `description`, and the mentor grad
 - observable descriptors for Beginning (0–1), Developing (2), Competent (3), Proficient (4) and Advanced (5), specific to that skill.
 
 ## 4. The assessment blueprint (`<file without .json>.assessment.md`)
-Write it every time you draft or revise, and update it on every later run. Keep it short and use tables. It holds:
+Write it every time you draft or revise, and update it on every later run. Keep it short and use tables.
+
+What a script can count lives in `<file without .json>.assessment-tables.md` (from `node agents/blueprint.mjs`): marks, difficulty mix, the per-question table, skills per part, the answer keys. Link to it; don't copy it, so the two can never disagree. Your blueprint holds the judgement:
 - **ASSESSMENT**: for the self-check, each quiz, the final and the project, give:
   - purpose and skills assessed;
   - format and the number of questions or criteria;
   - estimated minutes;
   - scoring method (percentage = marks earned ÷ marks available × 100, with weights from difficulty set by code; no negative marking; an unanswered question earns 0 marks);
   - pass criteria.
-- **Question map**: one row per question with:
-  - id, module and skill;
-  - the outcome it tests;
-  - type, difficulty and estimated seconds;
+- **Question map**: one row per question with what the tables can't know:
+  - the overview outcome it tests;
+  - for a final question, the skill and the modules it combines;
+  - type and estimated seconds;
   - prerequisites (the earlier modules it relies on).
 - **Coverage map**: outcomes and skills against the quizzes, the final and the project, with any gaps.
 - **Practical evidence**: the task and rubric detail from 3C and 3F.
@@ -120,14 +125,17 @@ Every question needs its JSON fields:
 The module, skill, time and prerequisites go in the blueprint's question map.
 1. **Clear and unambiguous.** One question, the facts needed and nothing irrelevant. Plain English for readers of a second language, with no idioms and no trick wording.
 2. **One defensible right answer.** Answer it yourself without looking at `correct_index`, then ask whether a strong student could argue for another option. If they could, rewrite it.
-3. **Verify it.** Check every calculation, formula, code output and fact, by running it with Bash or checking a primary source with WebSearch or WebFetch. If you can't verify a detail, don't test it.
+3. **Verify it.** Run every calculation, formula, query and code output with the verification Python (section 2). Check every fact against a primary source.
+   - Laws, regulations and their dates: fetch the official text (the Gazette of India, the ministry's or regulator's own site). A law firm's or news summary is not enough.
+   - If you can't confirm a detail from a primary source, mark it "unconfirmed" in the blueprint, and never make it what a question turns on.
 4. **Plausible wrong options.** Each one is a mistake real learners make. Code options are complete-looking code with one realistic error.
 5. **No clues.** Keep the options alike in length, detail and grammar, and check by script that the right answer is the longest in no more than about one question in four. No "all/none of the above".
 6. **Apply and judge, not recall.** Never use a Learn card's wording as the answer.
 7. **Honest difficulty.** Rate what the question demands, not the module's level.
 8. **No duplicates.** No two questions test the same point the same way, across all the quizzes and the final.
 9. **Explanations that teach.** Say why the right answer is right. `why_wrong` names each wrong option's mistake and never starts "The others".
-10. **Fair to every learner.** Use Indian contexts students know. No knowledge of a region, religion, wealth or paid tool is needed unless it's the skill being taught. Everything is answerable on a phone.
+10. **Name options by their words, never their letter.** Positions change whenever `--tidy` runs, so "option B" or "(c)" in an explanation, `why_wrong` or the blueprint is wrong the moment it does. Quote the option or name its idea. `check.mjs` flags letters.
+11. **Fair to every learner.** Use Indian contexts students know. No knowledge of a region, religion, wealth or paid tool is needed unless it's the skill being taught. Everything is answerable on a phone.
 
 ## 6. Drafting and revising
 **Drafting.** The Course Architect has written the teaching and left the tests empty. Write the aptitude statements, every module's quiz, the final and the rubric, then the blueprint.
@@ -147,10 +155,23 @@ The module, skill, time and prerequisites go in the blueprint's question map.
 **After every write:**
 1. Run `node agents/check.mjs <file> --tidy`. Add `--built-in` for a built-in programme. It sets the weights and spreads the right answers.
 2. Fix every must-fix it reports about your parts, and run it again until those are 0.
-3. The file must stay valid JSON.
+3. Run `node agents/blueprint.mjs <file>` so the tables match the file.
+4. The file must stay valid JSON.
 
 ## 7. Reviewing an assessment (when asked only to review)
-Don't edit the file. Read the whole assessment and its scoring, and judge:
+Don't edit the file. Work in this order, so nothing is skimmed:
+1. **Module by module.** Read the module's Learn cards and tasks, then solve its quiz without the key, then compare.
+2. **The final.** Solve it without the key, and map each question to the outcomes and modules it combines.
+3. **The whole programme.** Coverage, duplicates across parts, difficulty from quizzes to final, the self-check and the rubric.
+
+**The clue tests** (`<file without .json>.probes.json`, when /course-team has run them). A cheaper model took the questions from packets with no answers in them:
+- `options`: only the four options. A question it was certain of without seeing the question has a clue in its options.
+- `cards`: only the module's Learn cards. A miss may mean the module doesn't teach it.
+- `blind`: the full question, no key. A different pick may mean a second defensible answer or a wrong key.
+
+Treat each result as a lead, not a verdict. The prober is a weaker model and it guesses. Confirm or dismiss every one, with the reason in the QUALITY REVIEW, and never dismiss a pattern across many questions.
+
+Judge:
 - content validity, coverage and accuracy;
 - clarity and difficulty;
 - fairness and reliability;

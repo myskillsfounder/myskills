@@ -4,7 +4,7 @@
 // qualityFindings() are the test-writing checks a script can do better than
 // a reader: they go to the Assessment Agent and the Course Architect as
 // findings, so the same mistakes are fixed every time.
-import { allQuestions, answerPattern, moduleMinutes, sameStructure } from './content.mjs'
+import { WEIGHT, allQuestions, answerPattern, moduleMinutes, sameStructure } from './content.mjs'
 
 const blank = (s) => !s || !String(s).trim()
 
@@ -72,6 +72,29 @@ function targetsOf(c) {
   return t
 }
 
+// "Option B", "answer (c)", "(a)": a letter goes stale when the options move.
+const LETTER = /\b(?:[Oo]ptions?|[Aa]nswers?|[Cc]hoices?)\s+(?:[A-D]|\([A-Da-d]\))(?![\w/])|\([a-d]\)(?!\w)/
+const lettered = (q) => [q.explanation, q.why_wrong, q.learning_outcome].some((t) => typeof t === 'string' && LETTER.test(t))
+
+const STOP = new Set('the a an and or of to in on for with is are was were be by at as it its this that which what who how why your you their they from into than then when if not no can will would should could does do did has have had more most less'.split(' '))
+const words = (q) => new Set(`${q.scenario ?? ''} ${Object.values(q.context ?? {}).join(' ')} ${q.question ?? ''} ${q.options?.[q.correct_index] ?? ''}`.toLowerCase().match(/[a-z0-9₹]+/g)?.filter((w) => w.length > 2 && !STOP.has(w)) ?? [])
+
+/** Pairs of questions whose scenario, question and right answer share most of their words. */
+export function nearDuplicates(c, threshold = 0.5) {
+  const qs = allQuestions(c).filter((q) => q.question)
+  const sets = qs.map(words)
+  const pairs = []
+  for (let i = 0; i < qs.length; i++)
+    for (let j = i + 1; j < qs.length; j++) {
+      const a = sets[i], b = sets[j]
+      if (a.size < 5 || b.size < 5) continue
+      let both = 0
+      for (const w of a) if (b.has(w)) both++
+      if (both / (a.size + b.size - both) >= threshold) pairs.push([qs[i], qs[j]])
+    }
+  return pairs
+}
+
 const finding = (target, severity, problem, fix) => ({ target, severity, problem, fix, source: 'Automatic check' })
 
 /**
@@ -128,6 +151,7 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
     else if (/^the others?\b/i.test(q.why_wrong.trim())) flag(q, 'others')
     if (blank(q.learning_outcome)) flag(q, 'nooutcome')
     if (blank(q.topic)) flag(q, 'notopic')
+    if (lettered(q)) flag(q, 'letter')
   }
   const KINDS = {
     long: ['must_fix', 'The right answer is much longer than the other options, which gives it away, in', 'Make the wrong options as long and detailed as the right one (real mistakes learners make), or tighten the right answer.'],
@@ -137,12 +161,18 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
     nowhy: ['should_fix', 'No “why the others are wrong” in', 'Say briefly why each wrong option is wrong.'],
     others: ['should_fix', '“Why the others are wrong” starts with “The other(s)”, which the page already says, in', 'Start with the reason itself.'],
     nooutcome: ['should_fix', 'No “what it teaches” line in', 'Add one line each.'],
+    letter: [locked ? 'should_fix' : 'must_fix', 'The explanation names an option by its letter, which is wrong as soon as the options are reordered, in', 'Quote the option’s words (or its idea) instead of its letter.'],
     notopic: ['should_fix', 'No topic (Question health and the Learner Coach group by it) in', 'Add a short topic to each.'],
   }
   for (const [key, ids] of per) {
     const [target, kind] = key.split('|')
     const [severity, problem, fix] = KINDS[kind]
     out.push(finding(target, severity, `${problem} ${ids.join(', ')}.`, fix))
+  }
+
+  // Near-duplicates: two questions testing the same point the same way.
+  for (const [a, b] of nearDuplicates(c)) {
+    out.push(finding(where.get(b.id) ?? 'programme', 'should_fix', `${b.id} is nearly the same question as ${a.id}.`, 'Test a different point, or the same point in a different situation.'))
   }
 
   // Time: the overview's hours should cover the modules, and modules with
@@ -170,6 +200,15 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
     }
     const pattern = answerPattern(c)
     if (pattern) out.push(finding('programme', 'must_fix', `Learners could guess the right answers by position: ${pattern}.`, 'Run check.mjs with --tidy: the system gives the right answers new, unpatterned places.'))
+    // The final should be harder on average than the quizzes it follows.
+    const finalQs = c.final?.questions ?? []
+    const quizQs = (c.modules ?? []).flatMap((m) => m.quiz ?? [])
+    const mean = (qs) => qs.reduce((n, q) => n + (WEIGHT[q.difficulty] ?? 10), 0) / qs.length
+    if (finalQs.length >= 8 && quizQs.length >= 8) {
+      if (mean(finalQs) <= mean(quizQs)) out.push(finding('final', 'should_fix', `The final is no harder than the module quizzes (average difficulty ${mean(finalQs).toFixed(1)} against ${mean(quizQs).toFixed(1)}).`, 'Make the final ask learners to combine ideas from several modules, with more Advanced questions.'))
+      const hard = finalQs.filter((q) => q.difficulty === 'Advanced' || q.difficulty === 'Expert').length
+      if (hard / finalQs.length < 0.2) out.push(finding('final', 'should_fix', `Only ${hard} of ${finalQs.length} final questions are Advanced or Expert.`, 'Aim for about 4 Advanced and 1 Expert in 15.'))
+    }
     const diff = new Set(allQuestions(c).map((q) => q.difficulty))
     if (allQuestions(c).length >= 20 && !diff.has('Advanced') && !diff.has('Expert')) {
       out.push(finding('programme', 'should_fix', 'No question is Advanced or harder.', 'Make some later-module and final questions Advanced.'))

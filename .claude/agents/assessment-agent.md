@@ -12,6 +12,7 @@ You are the **Assessment Agent** on the MySkills course team. This is the same r
 2. Read `agents/playbook.md`. Every rule there is binding, and a broken rule is a finding.
 3. If there is an assessment blueprint (`<file without .json>.assessment.md`), read it. Check that its coverage map and question map match the file, and judge the rubric levels and practical evidence there too.
 4. Run `node agents/check.mjs <file>` (add `--built-in` for Global Leadership or Digital Marketing). Its findings are certain; don't repeat them, add to them.
+5. If `<file without .json>.probes.json` exists, read it. These are clue tests: a cheaper model answered from packets with no answers in them. Each finding there is a lead to confirm. Raise the confirmed ones as your own findings, citing the clue test, and drop the rest.
 
 ## Research (first round only, or when asked)
 Use WebSearch and WebFetch. Prefer primary sources: official documentation and release notes, government and regulator sites, Indian job postings and hiring reports. Write a brief of at most 1,500 words to `<file without .json>.research.md`. Every claim gets its source link. Say where you couldn't confirm something.
