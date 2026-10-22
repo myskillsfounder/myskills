@@ -10,6 +10,7 @@
 //                      how students answer each question (no names)
 import { qualityFindings, publishProblems, stats } from './checks.mjs'
 import { allQuestions } from './content.mjs'
+import { moduleScoreSummary, standardFindings } from './standard.mjs'
 
 /** Review finding categories (the Assessment Agent tags each finding with one). */
 export const CATEGORIES = ['accuracy', 'question-design', 'teaching', 'coverage', 'aptitude', 'project', 'time', 'house-style']
@@ -120,6 +121,12 @@ export function scoreProgramme(content, { locked = false, review = null, learner
     hours: { advertised: s.hours, modules: s.moduleHours },
     difficulty: s.difficulty,
     learners: learners ? learnerScore(content, learners) : null,
+    // The Module Standard: what a script measures, and the review's scores.
+    // Kept apart from the counts above so earlier rows still compare.
+    standard: {
+      auto: standardFindings(content).length,
+      modules: moduleScoreSummary(review, content),
+    },
   }
 }
 
@@ -140,6 +147,10 @@ export function compare(prev, now) {
   for (const k of ['whyWrong', 'learningOutcome', 'topic']) move(`questions with ${k}`, prev.complete?.[k], now.complete?.[k], false, '%')
   move('healthy questions (students)', prev.learners?.healthyPct, now.learners?.healthyPct, false, '%')
   move('mean separation (students)', prev.learners?.meanSeparation, now.learners?.meanSeparation, false)
+  move('Module Standard automatic findings', prev.standard?.auto, now.standard?.auto)
+  move('mean module score', prev.standard?.modules?.mean, now.standard?.modules?.mean, false)
+  move('lowest module score', prev.standard?.modules?.min, now.standard?.modules?.min, false)
+  move('module dimensions below 4', prev.standard?.modules?.belowBar?.length, now.standard?.modules?.belowBar?.length)
   // A rule broken again after a revision means the fix didn't stick.
   for (const [r, c] of Object.entries(now.review?.rulesBroken ?? {})) {
     if (prev.review?.rulesBroken?.[r]) out.push(`still broken: playbook rule ${r} (${prev.review.rulesBroken[r]} → ${c} findings)`)

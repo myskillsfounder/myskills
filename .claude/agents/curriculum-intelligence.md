@@ -25,7 +25,7 @@ Never, from here:
 - fabricate a source, a date, a feature, a statistic, a standard, a review history or an approval.
 
 ## 2. Before you start
-1. Read `agents/lib/prompts.mjs` (`houseStyle()` is how MySkills writes and what a programme must contain) and `agents/playbook.md`. A broken rule there is a finding.
+1. Read `agents/lib/prompts.mjs` (`houseStyle()` is how MySkills writes and what a programme must contain), `agents/playbook.md` and `agents/module-standard.md`. A broken rule is a finding, and so is a module that has fallen below 4 on `relevance` because the field moved. Run `node agents/check.mjs <file> --links` for broken links.
 2. Read the programme file in full, and its working files if they exist: `<file without .json>.research.md`, `.assessment.md`, the latest `.review-<n>.json`, and your own log `.curriculum.md`.
 3. **The approved version.** The file on disk is the one Paul downloaded from the admin (Check & publish → **Download**). It doesn't carry its version number or publish date. Use what Paul or `/course-team` tells you; otherwise record the version as "unknown (file dated <file's last commit or modified date>)" and say so. If the file may be a draft rather than the published version, say that too.
 4. **Student evidence.** If `<file without .json>.learners.json` exists, run `node agents/scorecard.mjs <file> --stage check --learners <that file>` (add `--built-in` if needed). A flagged question with 30+ first-time answers is evidence like any source: "Check the answer" or "Strong students miss it" on a question whose field has changed often means the right answer is out of date. Record the numbers in the log's review row. Fewer answers: no conclusion.
