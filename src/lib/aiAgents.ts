@@ -98,7 +98,7 @@ export const AI_AGENTS: AiAgent[] = [
     purpose: 'Keeps the curriculum current and the tests honest: researches each topic regularly, checks how every question performs, and proposes better assessments.',
     status: 'building',
     progress:
-      'Built, waiting for the API key and the server set-up: on any programme’s Agents tab it researches the field on the web, reviews every part with automatic test-writing checks, makes the Course Architect fix what it finds, and writes the playbook rules the Architect follows. A programme can be checked every month. Question health (step 1) is live. Next: reading Question health and Learner Coach data in its reviews.',
+      'Built, waiting for the API key and the server set-up: on any programme’s Agents tab it researches the field on the web, reviews every part with automatic test-writing checks, makes the Course Architect fix what it finds, and writes the playbook rules the Architect follows. A programme can be checked every month. Question health (step 1) is live; on Paul’s PC the course team reads it from Question health’s “Download for the course team”, and scores every round. Next: Learner Coach topic data in its reviews.',
     reads: [
       'Recent changes in each topic (web search, with sources)',
       'Question health: % right, options picked, how well each question separates strong and weak students',
@@ -109,6 +109,7 @@ export const AI_AGENTS: AiAgent[] = [
       'A review report on every job: what was wrong, what was fixed, what still needs a person, with sources',
       'Findings the Course Architect must fix: wrong or out-of-date content, weak questions, gaps',
       'Playbook rules: lessons from each review that the Course Architect follows on every later programme (the team can switch any off)',
+      'A scorecard on every round, and a track record across programmes: whether each programme gets better, whether new drafts start better, and which playbook rules are broken again and need to become automatic checks',
       'Monthly checks of the programmes the team chooses',
       'Later: proposals for new kinds of assessment (case simulations, adaptive tests, written answers graded by AI and checked by a person)',
     ],

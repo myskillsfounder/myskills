@@ -6,6 +6,15 @@ that run in Claude Code on Paul's PC (`/course-team`). The server's agents
 keep theirs in the database (Admin → Agents' work). When a review teaches a
 new general lesson, add it at the end with the date and why.
 
+How the rules learn (the feedback loop, see `node agents/track.mjs report`):
+- A rule's number never changes; reviews cite it in each finding's `rule`.
+  New rules go at the end and end with "(added YYYY-MM-DD)".
+- A rule broken again after it was written isn't working. After one repeat,
+  sharpen its wording with a worked example. After two, make it an automatic
+  check in `agents/lib/checks.mjs` if a script can see it, and end the rule
+  with "(checked by check.mjs)".
+- Rules 1 to 8 were written on 2026-10-21.
+
 1. The right answer must not be the longest option more often than chance would make it (about one question in four). Write wrong options of similar length and detail, each a real mistake learners make. *Why:* in the first Data Analytics draft the right answer was the longest in 45 of 55 questions.
 2. Code, formula and query questions need wrong options that look just as complete as the right one: the same function with a wrong argument, a missing clause, a wrong default. *Why:* short, obviously broken code options give the answer away.
 3. Overview hours must equal the module minutes plus the project and final test. A module with two hands-on tasks takes 60 to 120 minutes, not 40. *Why:* the first draft said 50 hours while its modules added up to 9.

@@ -86,9 +86,14 @@ export function flagsFor(q: QuestionStats): QuestionFlag[] {
   return out
 }
 
-/** Null until the SQL is run. */
-export async function fetchQuestionHealth(): Promise<QuestionStats[] | null> {
-  const { data, error } = await supabase.rpc('admin_question_health')
+/**
+ * Null until the SQL is run. `since` (YYYY-MM-DD) counts only answers from that
+ * day, e.g. since a programme version was published.
+ */
+export async function fetchQuestionHealth(since?: string): Promise<QuestionStats[] | null> {
+  const { data, error } = since
+    ? await supabase.rpc('admin_question_health', { p_since: `${since}T00:00:00+05:30` })
+    : await supabase.rpc('admin_question_health')
   if (error) {
     if (error.code === 'PGRST202') return null
     throw new Error(error.message?.trim() || 'Something went wrong.')
@@ -98,4 +103,24 @@ export async function fetchQuestionHealth(): Promise<QuestionStats[] | null> {
     correct_pct: q.correct_pct === null ? null : Number(q.correct_pct),
     separation: q.separation === null ? null : Number(q.separation),
   }))
+}
+
+/**
+ * The course team's copy (agents/scorecard.mjs --learners): every question in
+ * both banks, numbers only, no students. The agents match it to a programme
+ * file by question id.
+ */
+export function downloadForCourseTeam(rows: QuestionStats[], since: string) {
+  const body = {
+    downloaded_at: new Date().toISOString(),
+    since: since || null,
+    min_answers: MIN_ANSWERS,
+    questions: rows.map(({ question: _q, title: _t, ...r }) => r),
+  }
+  const url = URL.createObjectURL(new Blob([JSON.stringify(body, null, 1)], { type: 'application/json' }))
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `question-health${since ? `-since-${since}` : ''}-${body.downloaded_at.slice(0, 10)}.learners.json`
+  a.click()
+  URL.revokeObjectURL(url)
 }
