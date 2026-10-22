@@ -87,7 +87,54 @@ export function Flag({ code, className = 'h-4 w-6' }: { code?: string | null; cl
   return <img src={`https://flagcdn.com/w80/${code}.png`} alt="" loading="lazy" className={`rounded-[3px] object-cover shadow-sm ring-1 ring-black/5 ${className}`} />
 }
 
-/** The drawn picture: a disc with the subject's icon on a soft base, and the flag on a pole. */
+/** Nursing programmes get a nurse instead of an icon. */
+export const isNursing = (p: Pick<StudyProgramme, 'field' | 'title'>) => /nurs/i.test(`${p.field ?? ''} ${p.title}`)
+
+/**
+ * A nurse, drawn here (no stock photo to license): scrubs, a cap with a red
+ * cross, a stethoscope and a clipboard.
+ */
+export function Nurse({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 120 140" className={className} aria-hidden>
+      {/* hair behind */}
+      <path d="M36 52c0-17 11-28 24-28s24 11 24 28v22c0 6-5 10-11 10H47c-6 0-11-4-11-10z" fill="#3b2a24" />
+      {/* body: scrubs */}
+      <path d="M22 140c0-26 15-42 38-42s38 16 38 42z" fill="#2bb3a3" />
+      <path d="M47 99l13 15 13-15" fill="#e8f7f5" />
+      <path d="M47 99l13 15 13-15" fill="none" stroke="#1f8f82" strokeWidth="2" strokeLinejoin="round" />
+      <rect x="70" y="118" width="12" height="9" rx="2" fill="#1f8f82" />
+      {/* neck and face */}
+      <rect x="53" y="80" width="14" height="16" rx="6" fill="#c98b62" />
+      <ellipse cx="60" cy="60" rx="21" ry="23" fill="#d99b6f" />
+      <ellipse cx="38.5" cy="62" rx="3.5" ry="5" fill="#c98b62" />
+      <ellipse cx="81.5" cy="62" rx="3.5" ry="5" fill="#c98b62" />
+      {/* hair fringe */}
+      <path d="M39 55c2-14 11-22 21-22s19 8 21 22c-8-3-14-9-17-15-5 8-14 13-25 15z" fill="#3b2a24" />
+      {/* nurse's cap */}
+      <path d="M40 36c2-7 10-12 20-12s18 5 20 12l-3 6H43z" fill="#ffffff" stroke="#d6e4e2" strokeWidth="1.5" />
+      <rect x="57" y="27" width="6" height="12" rx="1" fill="#e5484d" />
+      <rect x="54" y="30" width="12" height="6" rx="1" fill="#e5484d" />
+      {/* face */}
+      <circle cx="52.5" cy="62" r="2.4" fill="#2b1d17" />
+      <circle cx="67.5" cy="62" r="2.4" fill="#2b1d17" />
+      <path d="M53 71c4 4 10 4 14 0" fill="none" stroke="#8a4b2f" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="47.5" cy="69" r="3" fill="#f2a08b" opacity=".55" />
+      <circle cx="72.5" cy="69" r="3" fill="#f2a08b" opacity=".55" />
+      {/* stethoscope */}
+      <path d="M45 98c-3 10 0 20 9 23" fill="none" stroke="#334155" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M75 98c3 10 0 20-9 23" fill="none" stroke="#334155" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M54 121c3 3 9 3 12 0" fill="none" stroke="#334155" strokeWidth="2.6" strokeLinecap="round" />
+      <circle cx="60" cy="127" r="4.2" fill="#94a3b8" stroke="#334155" strokeWidth="2" />
+      {/* clipboard */}
+      <rect x="26" y="112" width="20" height="24" rx="3" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.5" />
+      <rect x="31" y="109" width="10" height="5" rx="1.5" fill="#64748b" />
+      <path d="M30 121h12M30 126h12M30 131h8" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+/** The drawn picture: a disc with the subject's icon (or a nurse) on a soft base, and the flag on a pole. */
 export function Illustration({ p, size = 'lg' }: { p: StudyProgramme; size?: 'lg' | 'md' }) {
   const t = themeOf(p)
   const Icon = subjectIcon(p)
@@ -95,11 +142,19 @@ export function Illustration({ p, size = 'lg' }: { p: StudyProgramme; size?: 'lg
   return (
     <div aria-hidden className={`relative shrink-0 ${big ? 'h-32 w-36' : 'h-24 w-28'}`}>
       <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 rounded-[50%] ${t.base} ${big ? 'h-6 w-32' : 'h-5 w-24'}`} />
-      <span
-        className={`absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br text-white shadow-lg ${t.disc} ${big ? 'h-20 w-20' : 'h-16 w-16'}`}
-      >
-        <Icon size={big ? 36 : 28} strokeWidth={1.75} />
-      </span>
+      {isNursing(p) ? (
+        <span
+          className={`absolute bottom-2 left-1/2 -translate-x-1/2 overflow-hidden rounded-b-[2.5rem] rounded-t-full bg-gradient-to-b shadow-lg ${t.disc} ${big ? 'h-[6.5rem] w-24' : 'h-[5.5rem] w-[5rem]'}`}
+        >
+          <Nurse className="absolute inset-x-0 bottom-0 mx-auto h-[115%] w-auto translate-y-[6%]" />
+        </span>
+      ) : (
+        <span
+          className={`absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br text-white shadow-lg ${t.disc} ${big ? 'h-20 w-20' : 'h-16 w-16'}`}
+        >
+          <Icon size={big ? 36 : 28} strokeWidth={1.75} />
+        </span>
+      )}
       {p.country_code && (
         <span className={`absolute flex items-start ${big ? 'right-2 top-0' : 'right-1 top-0'}`}>
           <span className={`w-0.5 rounded-full bg-ink-400 ${big ? 'h-14' : 'h-11'}`} />
