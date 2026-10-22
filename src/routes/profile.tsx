@@ -18,6 +18,9 @@ import { VerificationSection, isVerificationComplete } from '@/components/profil
 import { useVerification } from '@/lib/useVerification'
 import { SkillsSection } from '@/components/profile/SkillsSection'
 import { DetailsSection, ProfileCompletion, headerExtras } from '@/components/profile/DetailsSection'
+import { BlueprintSection } from '@/components/profile/BlueprintSection'
+import { RecordsSection } from '@/components/profile/RecordsSection'
+import { useBlueprint, useRecords } from '@/lib/personalBlueprint'
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: requireOnboarded,
@@ -115,6 +118,15 @@ function ProfilePage() {
   const started = useHasStarted()
   const projects = useMyProjects()
   const internships = useMyInternshipRecord()
+  // The blueprint and records are for the computer for now: the phone app's
+  // profile stays as it is.
+  const phone = isPhone()
+  const { blueprint, save: saveBlueprint } = useBlueprint()
+  const records = useRecords()
+  const [certificates, setCertificates] = useState(0)
+  useEffect(() => {
+    fetchMyCertificate().then((c) => setCertificates(c ? 1 : 0), () => {})
+  }, [])
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
   const router = useRouter()
   async function leave() {
@@ -164,6 +176,17 @@ function ProfilePage() {
               view={verification.view}
               request={verification.request}
               onChange={() => void verification.reload()}
+            />
+          )}
+
+          {!phone && blueprint && <BlueprintSection blueprint={blueprint} save={saveBlueprint} />}
+          {!phone && (
+            <RecordsSection
+              records={records}
+              certificates={certificates}
+              projects={projects.length}
+              internships={internships.confirmed.length}
+              badges={badges.length}
             />
           )}
 
