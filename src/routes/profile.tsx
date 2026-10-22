@@ -20,6 +20,8 @@ import { SkillsSection } from '@/components/profile/SkillsSection'
 import { DetailsSection, ProfileCompletion, headerExtras } from '@/components/profile/DetailsSection'
 import { BlueprintSection } from '@/components/profile/BlueprintSection'
 import { RecordsSection } from '@/components/profile/RecordsSection'
+import { BadgesRow } from '@/components/profile/BadgesRow'
+import { DetailsCard } from '@/components/profile/DetailsCard'
 import { useBlueprint, useRecords } from '@/lib/personalBlueprint'
 
 export const Route = createFileRoute('/profile')({
@@ -179,23 +181,38 @@ function ProfilePage() {
             />
           )}
 
-          {!phone && blueprint && <BlueprintSection blueprint={blueprint} save={saveBlueprint} />}
+          {/* On a computer: badges along the top, then the blueprint, the
+              records and the details with their verification. Achievements
+              (certificates, projects, internships) are counted in the
+              records instead. The phone keeps its layout, below. */}
           {!phone && (
-            <RecordsSection
-              records={records}
-              certificates={certificates}
-              projects={projects.length}
-              internships={internships.confirmed.length}
-              badges={badges.length}
-            />
+            <>
+              <BadgesRow badges={badges} />
+              {blueprint && <BlueprintSection blueprint={blueprint} save={saveBlueprint} />}
+              <RecordsSection
+                records={records}
+                certificates={certificates}
+                projects={projects.length}
+                internships={internships.confirmed.length}
+                badges={badges.length}
+              />
+              <DetailsCard
+                profile={profile}
+                save={save}
+                verified={identityVerified}
+                request={verification.request}
+                canRequest={started === true}
+              />
+            </>
           )}
 
-          {/* Achievements (certificates, mentor-verified projects and, later,
+          {/* Phone: Achievements (certificates, mentor-verified projects and, later,
               internships through the app) take the wide column; skill badges
               and details sit beside them. Nothing but the details is typed in
               by the student. On a phone they stack in that order.
               The profile is deliberately fresh: no education history or past
               jobs. */}
+          {phone && (
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:items-start">
             <div className="lg:col-span-2">
               <AchievementsSection
@@ -210,6 +227,7 @@ function ProfilePage() {
               <DetailsSection profile={profile} save={save} verified={identityVerified} />
             </div>
           </div>
+          )}
         </div>
       )}
 
