@@ -112,6 +112,12 @@ export function PersonalDetailsModal({
   }
 
   async function submit() {
+    // A typed year can run past four digits (one profile had 51996).
+    const year = Number(draft.date_of_birth.slice(0, 4))
+    if (draft.date_of_birth && (!/^\d{4}-\d{2}-\d{2}$/.test(draft.date_of_birth) || year < 1940 || new Date(draft.date_of_birth) > new Date())) {
+      setError('Check your date of birth: the year should have four digits, like 2004.')
+      return
+    }
     setSaving(true)
     setError(undefined)
     try {
@@ -154,6 +160,8 @@ export function PersonalDetailsModal({
         <Field
           label={f.dob.label}
           type="date"
+          min="1940-01-01"
+          max={new Date().toISOString().slice(0, 10)}
           value={draft.date_of_birth}
           onChange={(e) => set('date_of_birth', e.target.value)}
         />

@@ -332,36 +332,86 @@ export function positions(c) {
 
 export const allQuestions = (c) => [...(c.modules ?? []).flatMap((m) => m.quiz ?? []), ...(c.final?.questions ?? [])]
 
+const isFour = (q) => q.options?.length === 4 && q.correct_index >= 0
+
+/** The answer key of each quiz and of the final, as positions (four-option questions only). */
+const answerKeys = (c) =>
+  [...(c.modules ?? []).map((m) => m.quiz ?? []), c.final?.questions ?? []].map((qs) => qs.filter(isFour).map((q) => q.correct_index))
+
 /**
- * Spread the right answers evenly over the positions when they bunch up
- * (any position over 35% or under 15% of four-option questions). Moves the
- * right option to its new place; the others keep their order. Not for
- * built-in programmes, whose option order the practice pages share.
+ * Why the right answers' positions would give them away, or null. They give
+ * them away when they bunch up (any position over 35% or under 15% of the
+ * four-option questions) or follow a pattern a learner could learn: a key
+ * that repeats every 1 to 4 questions across the programme, three or more
+ * quizzes with the same key, or a quiz whose four answers all sit in one place.
+ */
+export function answerPattern(c) {
+  const keys = answerKeys(c)
+  const seq = keys.flat()
+  if (seq.length < 8) return null
+  const n = [0, 0, 0, 0]
+  for (const p of seq) n[p]++
+  if (n.some((x) => x / seq.length > 0.35 || x / seq.length < 0.15)) return `the right answers bunch up (A ${n[0]}, B ${n[1]}, C ${n[2]}, D ${n[3]})`
+  for (let p = 1; p <= 4; p++) {
+    let same = 0
+    for (let i = p; i < seq.length; i++) if (seq[i] === seq[i - p]) same++
+    if (same / (seq.length - p) >= 0.9) return `the right answers repeat every ${p} question${p > 1 ? 's' : ''}`
+  }
+  const seen = new Map()
+  for (const k of keys) if (k.length >= 3) seen.set(k.join(''), (seen.get(k.join('')) ?? 0) + 1)
+  for (const [k, count] of seen) if (count >= 3) return `${count} quizzes share the answer key ${[...k].map((p) => 'ABCD'[p]).join('')}`
+  if (keys.some((k) => k.length >= 4 && k.every((p) => p === k[0]))) return 'a quiz has every right answer in the same place'
+  return null
+}
+
+// A small seeded generator, so the same programme always tidies the same way.
+const seededRandom = (text) => {
+  let h = 2166136261
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619)
+  return () => {
+    h = (h + 0x6d2b79f5) | 0
+    let t = Math.imul(h ^ (h >>> 15), 1 | h)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/**
+ * When answerPattern() finds a problem, give every right answer a new place:
+ * an even share of A, B, C and D, shuffled (seeded by the question ids) until
+ * no pattern is left. Moves the right option to its new place; the others
+ * keep their order. Not for built-in programmes, whose option order the
+ * practice pages share.
  */
 export function balancePositions(c) {
-  const four = allQuestions(c).filter((q) => q.options.length === 4 && q.correct_index >= 0)
-  if (four.length < 8) return { content: c, moved: 0 }
-  const n = [0, 0, 0, 0]
-  for (const q of four) n[q.correct_index]++
-  if (n.every((x) => x / four.length <= 0.35 && x / four.length >= 0.15)) return { content: c, moved: 0 }
-  const CYCLE = [2, 0, 3, 1]
-  let turn = 0
-  let moved = 0
-  const place = (q) => {
-    if (q.options.length !== 4 || q.correct_index < 0) return q
-    const target = CYCLE[turn++ % 4]
-    if (target === q.correct_index) return q
-    const right = q.options[q.correct_index]
-    const others = q.options.filter((_, i) => i !== q.correct_index)
-    others.splice(target, 0, right)
-    moved++
-    return { ...q, options: others, correct_index: target }
+  if (!answerPattern(c)) return { content: c, moved: 0 }
+  const four = allQuestions(c).filter(isFour)
+  const random = seededRandom(four.map((q) => q.id).join('|'))
+  let targets = []
+  let out = c
+  for (let attempt = 0; attempt < 200; attempt++) {
+    targets = four.map((_, i) => i % 4)
+    for (let i = targets.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1))
+      ;[targets[i], targets[j]] = [targets[j], targets[i]]
+    }
+    let turn = 0
+    const place = (q) => {
+      if (!isFour(q)) return q
+      const target = targets[turn++]
+      if (target === q.correct_index) return q
+      const others = q.options.filter((_, i) => i !== q.correct_index)
+      others.splice(target, 0, q.options[q.correct_index])
+      return { ...q, options: others, correct_index: target }
+    }
+    out = {
+      ...c,
+      modules: c.modules.map((m) => ({ ...m, quiz: m.quiz.map(place) })),
+      final: { ...c.final, questions: c.final.questions.map(place) },
+    }
+    if (!answerPattern(out)) break
   }
-  const out = {
-    ...c,
-    modules: c.modules.map((m) => ({ ...m, quiz: m.quiz.map(place) })),
-    final: { ...c.final, questions: c.final.questions.map(place) },
-  }
+  const moved = four.filter((q, i) => q.correct_index !== targets[i]).length
   return { content: out, moved }
 }
 

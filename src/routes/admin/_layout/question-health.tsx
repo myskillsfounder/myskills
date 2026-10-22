@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Activity, Check, ChevronDown, Search } from 'lucide-react'
+import { Activity, Check, ChevronDown, FileJson, Search } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { decisionLabQuestions } from '@/lib/decisionLabs'
 import {
   FLAG,
   MIN_ANSWERS,
+  downloadForCourseTeam,
   fetchQuestionHealth,
   flagsFor,
   type QuestionFlag,
@@ -13,7 +14,7 @@ import {
 } from '@/lib/questionHealth'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { ExportButton } from '@/components/admin/ExportButton'
-import { Alert, Badge, Chip, PageHeader, Skeleton } from '@/components/ui'
+import { Alert, Badge, Button, Chip, PageHeader, Skeleton } from '@/components/ui'
 
 // The same section as editing the Foundation questions.
 export const Route = createFileRoute('/admin/_layout/question-health')({
@@ -148,10 +149,13 @@ function QuestionHealthPage() {
   const [grp, setGrp] = useState('')
   const [view, setView] = useState<View>('all')
   const [q, setQ] = useState('')
+  // Only answers from this day on (YYYY-MM-DD), e.g. since a new version was published.
+  const [since, setSince] = useState('')
 
   useEffect(() => {
-    fetchQuestionHealth().then(setRows, (e) => setError(errorMessage(e)))
-  }, [])
+    setError(undefined)
+    fetchQuestionHealth(since || undefined).then(setRows, (e) => setError(errorMessage(e)))
+  }, [since])
 
   const all: Row[] = useMemo(
     () =>
@@ -198,27 +202,32 @@ function QuestionHealthPage() {
         subtitle="How every practice and Foundation question performs: how many get it right, which options get picked, and whether it tells strong students from weak ones."
         actions={
           rows ? (
-            <ExportButton<Row>
-              name={`question-health-${bank}`}
-              rows={shown}
-              columns={[
-                { header: 'Question', value: (r) => r.question_id },
-                { header: bank === 'practice' ? 'Track' : 'Category', value: (r) => r.grp },
-                { header: 'Topic', value: (r) => r.topic },
-                { header: 'Difficulty', value: (r) => r.difficulty },
-                { header: 'Title', value: (r) => r.title ?? r.text },
-                { header: 'Students (first time)', value: (r) => r.answered },
-                { header: 'All answers', value: (r) => r.answers },
-                { header: '% right', value: (r) => r.correct_pct },
-                { header: 'Separation', value: (r) => r.separation },
-                { header: 'Picked A', value: (r) => r.option_counts[0] },
-                { header: 'Picked B', value: (r) => r.option_counts[1] },
-                { header: 'Picked C', value: (r) => r.option_counts[2] },
-                { header: 'Picked D', value: (r) => r.option_counts[3] },
-                { header: 'Correct option', value: (r) => (r.correct_index === null ? '' : LETTER[r.correct_index]) },
-                { header: 'Flags', value: (r) => r.flags.map((f) => FLAG[f].label).join('; ') },
-              ]}
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="secondary" icon={FileJson} onClick={() => downloadForCourseTeam(rows, since)}>
+                Download for the course team
+              </Button>
+              <ExportButton<Row>
+                name={`question-health-${bank}`}
+                rows={shown}
+                columns={[
+                  { header: 'Question', value: (r) => r.question_id },
+                  { header: bank === 'practice' ? 'Track' : 'Category', value: (r) => r.grp },
+                  { header: 'Topic', value: (r) => r.topic },
+                  { header: 'Difficulty', value: (r) => r.difficulty },
+                  { header: 'Title', value: (r) => r.title ?? r.text },
+                  { header: 'Students (first time)', value: (r) => r.answered },
+                  { header: 'All answers', value: (r) => r.answers },
+                  { header: '% right', value: (r) => r.correct_pct },
+                  { header: 'Separation', value: (r) => r.separation },
+                  { header: 'Picked A', value: (r) => r.option_counts[0] },
+                  { header: 'Picked B', value: (r) => r.option_counts[1] },
+                  { header: 'Picked C', value: (r) => r.option_counts[2] },
+                  { header: 'Picked D', value: (r) => r.option_counts[3] },
+                  { header: 'Correct option', value: (r) => (r.correct_index === null ? '' : LETTER[r.correct_index]) },
+                  { header: 'Flags', value: (r) => r.flags.map((f) => FLAG[f].label).join('; ') },
+                ]}
+              />
+            </div>
           ) : undefined
         }
       />
@@ -285,6 +294,17 @@ function QuestionHealthPage() {
               ))}
           </div>
           <div className="mb-4 flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 text-sm text-ink-600">
+              Answers since
+              <input
+                type="date"
+                value={since}
+                max={new Date().toISOString().slice(0, 10)}
+                onChange={(e) => setSince(e.target.value)}
+                aria-label="Count only answers since this date"
+                className="field h-10 w-auto"
+              />
+            </label>
             <div className="relative w-full max-w-sm">
               <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
               <input

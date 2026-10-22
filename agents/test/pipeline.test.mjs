@@ -8,7 +8,7 @@ import { Cancelled, runJob } from '../lib/pipeline.mjs'
 import { publishProblems, qualityFindings } from '../lib/checks.mjs'
 import { prefixFor, structureOf } from '../lib/content.mjs'
 
-const DA = JSON.parse(fs.readFileSync(new URL('../../docs/programmes/ai-powered-data-analytics.json', import.meta.url), 'utf8'))
+const DA = JSON.parse(fs.readFileSync(new URL('../../docs/programmes/Data analytics/ai-powered-data-analytics.json', import.meta.url), 'utf8'))
 const words = (n) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ')
 const clone = (x) => JSON.parse(JSON.stringify(x))
 

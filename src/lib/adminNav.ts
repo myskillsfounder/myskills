@@ -25,6 +25,7 @@ import {
   KeyRound,
   Layers,
   MessageSquare,
+  Plane,
   Megaphone,
   ShieldCheck,
   Sparkles,
@@ -113,7 +114,10 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
   // People asking to join a programme.
   {
     label: 'Admissions',
-    items: [{ to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] }],
+    items: [
+      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
+      { to: '/admin/study-abroad', label: 'Study abroad', icon: Plane, section: 'leads' },
+    ],
   },
   // Internships end to end, under one section: every company however it came,
   // then their roles, applications and sign-offs.

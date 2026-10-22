@@ -45,9 +45,11 @@ import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as AptitudeAssessmentRouteImport } from './routes/aptitude-assessment'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudyAbroadIndexRouteImport } from './routes/study-abroad.index'
 import { Route as ProgrammesIndexRouteImport } from './routes/programmes.index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as StudyAbroadSlugRouteImport } from './routes/study-abroad.$slug'
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
 import { Route as MentorPortalSplatRouteImport } from './routes/mentor-portal.$'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
@@ -70,6 +72,7 @@ import { Route as CommunityPortalLayoutResourceRouteImport } from './routes/comm
 import { Route as AdminLayoutWellnessRouteImport } from './routes/admin/_layout/wellness'
 import { Route as AdminLayoutVerificationRouteImport } from './routes/admin/_layout/verification'
 import { Route as AdminLayoutTeamRouteImport } from './routes/admin/_layout/team'
+import { Route as AdminLayoutStudyAbroadRouteImport } from './routes/admin/_layout/study-abroad'
 import { Route as AdminLayoutQuestionHealthRouteImport } from './routes/admin/_layout/question-health'
 import { Route as AdminLayoutPracticeRouteImport } from './routes/admin/_layout/practice'
 import { Route as AdminLayoutPartnerVerificationRouteImport } from './routes/admin/_layout/partner-verification'
@@ -287,6 +290,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudyAbroadIndexRoute = StudyAbroadIndexRouteImport.update({
+  id: '/study-abroad/',
+  path: '/study-abroad/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgrammesIndexRoute = ProgrammesIndexRouteImport.update({
   id: '/programmes/',
   path: '/programmes/',
@@ -300,6 +308,11 @@ const CommunityIndexRoute = CommunityIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudyAbroadSlugRoute = StudyAbroadSlugRouteImport.update({
+  id: '/study-abroad/$slug',
+  path: '/study-abroad/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnershipsLoginRoute = PartnershipsLoginRouteImport.update({
@@ -414,6 +427,11 @@ const AdminLayoutVerificationRoute = AdminLayoutVerificationRouteImport.update({
 const AdminLayoutTeamRoute = AdminLayoutTeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutStudyAbroadRoute = AdminLayoutStudyAbroadRouteImport.update({
+  id: '/study-abroad',
+  path: '/study-abroad',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
 const AdminLayoutQuestionHealthRoute =
@@ -641,9 +659,11 @@ export interface FileRoutesByFullPath {
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
+  '/study-abroad/$slug': typeof StudyAbroadSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/programmes/': typeof ProgrammesIndexRoute
+  '/study-abroad/': typeof StudyAbroadIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/agent-work': typeof AdminLayoutAgentWorkRoute
@@ -671,6 +691,7 @@ export interface FileRoutesByFullPath {
   '/admin/partner-verification': typeof AdminLayoutPartnerVerificationRoute
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/question-health': typeof AdminLayoutQuestionHealthRoute
+  '/admin/study-abroad': typeof AdminLayoutStudyAbroadRoute
   '/admin/team': typeof AdminLayoutTeamRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
@@ -734,9 +755,11 @@ export interface FileRoutesByTo {
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
+  '/study-abroad/$slug': typeof StudyAbroadSlugRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
   '/programmes': typeof ProgrammesIndexRoute
+  '/study-abroad': typeof StudyAbroadIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/agent-work': typeof AdminLayoutAgentWorkRoute
@@ -764,6 +787,7 @@ export interface FileRoutesByTo {
   '/admin/partner-verification': typeof AdminLayoutPartnerVerificationRoute
   '/admin/practice': typeof AdminLayoutPracticeRoute
   '/admin/question-health': typeof AdminLayoutQuestionHealthRoute
+  '/admin/study-abroad': typeof AdminLayoutStudyAbroadRoute
   '/admin/team': typeof AdminLayoutTeamRoute
   '/admin/verification': typeof AdminLayoutVerificationRoute
   '/admin/wellness': typeof AdminLayoutWellnessRoute
@@ -831,9 +855,11 @@ export interface FileRoutesById {
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
+  '/study-abroad/$slug': typeof StudyAbroadSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/programmes/': typeof ProgrammesIndexRoute
+  '/study-abroad/': typeof StudyAbroadIndexRoute
   '/admin/_layout/activity': typeof AdminLayoutActivityRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
   '/admin/_layout/agent-work': typeof AdminLayoutAgentWorkRoute
@@ -861,6 +887,7 @@ export interface FileRoutesById {
   '/admin/_layout/partner-verification': typeof AdminLayoutPartnerVerificationRoute
   '/admin/_layout/practice': typeof AdminLayoutPracticeRoute
   '/admin/_layout/question-health': typeof AdminLayoutQuestionHealthRoute
+  '/admin/_layout/study-abroad': typeof AdminLayoutStudyAbroadRoute
   '/admin/_layout/team': typeof AdminLayoutTeamRoute
   '/admin/_layout/verification': typeof AdminLayoutVerificationRoute
   '/admin/_layout/wellness': typeof AdminLayoutWellnessRoute
@@ -929,9 +956,11 @@ export interface FileRouteTypes {
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
+    | '/study-abroad/$slug'
     | '/blog/'
     | '/community/'
     | '/programmes/'
+    | '/study-abroad/'
     | '/admin/activity'
     | '/admin/ads'
     | '/admin/agent-work'
@@ -959,6 +988,7 @@ export interface FileRouteTypes {
     | '/admin/partner-verification'
     | '/admin/practice'
     | '/admin/question-health'
+    | '/admin/study-abroad'
     | '/admin/team'
     | '/admin/verification'
     | '/admin/wellness'
@@ -1022,9 +1052,11 @@ export interface FileRouteTypes {
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
+    | '/study-abroad/$slug'
     | '/blog'
     | '/community'
     | '/programmes'
+    | '/study-abroad'
     | '/admin/activity'
     | '/admin/ads'
     | '/admin/agent-work'
@@ -1052,6 +1084,7 @@ export interface FileRouteTypes {
     | '/admin/partner-verification'
     | '/admin/practice'
     | '/admin/question-health'
+    | '/admin/study-abroad'
     | '/admin/team'
     | '/admin/verification'
     | '/admin/wellness'
@@ -1118,9 +1151,11 @@ export interface FileRouteTypes {
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
+    | '/study-abroad/$slug'
     | '/blog/'
     | '/community/'
     | '/programmes/'
+    | '/study-abroad/'
     | '/admin/_layout/activity'
     | '/admin/_layout/ads'
     | '/admin/_layout/agent-work'
@@ -1148,6 +1183,7 @@ export interface FileRouteTypes {
     | '/admin/_layout/partner-verification'
     | '/admin/_layout/practice'
     | '/admin/_layout/question-health'
+    | '/admin/_layout/study-abroad'
     | '/admin/_layout/team'
     | '/admin/_layout/verification'
     | '/admin/_layout/wellness'
@@ -1211,8 +1247,10 @@ export interface RootRouteChildren {
   CommunityPortalLayoutRoute: typeof CommunityPortalLayoutRouteWithChildren
   CommunityPortalLoginRoute: typeof CommunityPortalLoginRoute
   CommunityPortalSignupRoute: typeof CommunityPortalSignupRoute
+  StudyAbroadSlugRoute: typeof StudyAbroadSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ProgrammesIndexRoute: typeof ProgrammesIndexRoute
+  StudyAbroadIndexRoute: typeof StudyAbroadIndexRoute
   ProgrammesSlugAptitudeRoute: typeof ProgrammesSlugAptitudeRoute
   ProgrammesSlugFinalRoute: typeof ProgrammesSlugFinalRoute
   ProgrammesSlugIndexRoute: typeof ProgrammesSlugIndexRoute
@@ -1473,6 +1511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/study-abroad/': {
+      id: '/study-abroad/'
+      path: '/study-abroad'
+      fullPath: '/study-abroad/'
+      preLoaderRoute: typeof StudyAbroadIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/programmes/': {
       id: '/programmes/'
       path: '/programmes'
@@ -1492,6 +1537,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/study-abroad/$slug': {
+      id: '/study-abroad/$slug'
+      path: '/study-abroad/$slug'
+      fullPath: '/study-abroad/$slug'
+      preLoaderRoute: typeof StudyAbroadSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partnerships/login': {
@@ -1646,6 +1698,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/admin/team'
       preLoaderRoute: typeof AdminLayoutTeamRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/study-abroad': {
+      id: '/admin/_layout/study-abroad'
+      path: '/study-abroad'
+      fullPath: '/admin/study-abroad'
+      preLoaderRoute: typeof AdminLayoutStudyAbroadRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
     '/admin/_layout/question-health': {
@@ -1950,6 +2009,7 @@ interface AdminLayoutRouteChildren {
   AdminLayoutPartnerVerificationRoute: typeof AdminLayoutPartnerVerificationRoute
   AdminLayoutPracticeRoute: typeof AdminLayoutPracticeRoute
   AdminLayoutQuestionHealthRoute: typeof AdminLayoutQuestionHealthRoute
+  AdminLayoutStudyAbroadRoute: typeof AdminLayoutStudyAbroadRoute
   AdminLayoutTeamRoute: typeof AdminLayoutTeamRoute
   AdminLayoutVerificationRoute: typeof AdminLayoutVerificationRoute
   AdminLayoutWellnessRoute: typeof AdminLayoutWellnessRoute
@@ -1988,6 +2048,7 @@ const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutPartnerVerificationRoute: AdminLayoutPartnerVerificationRoute,
   AdminLayoutPracticeRoute: AdminLayoutPracticeRoute,
   AdminLayoutQuestionHealthRoute: AdminLayoutQuestionHealthRoute,
+  AdminLayoutStudyAbroadRoute: AdminLayoutStudyAbroadRoute,
   AdminLayoutTeamRoute: AdminLayoutTeamRoute,
   AdminLayoutVerificationRoute: AdminLayoutVerificationRoute,
   AdminLayoutWellnessRoute: AdminLayoutWellnessRoute,
@@ -2067,8 +2128,10 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityPortalLayoutRoute: CommunityPortalLayoutRouteWithChildren,
   CommunityPortalLoginRoute: CommunityPortalLoginRoute,
   CommunityPortalSignupRoute: CommunityPortalSignupRoute,
+  StudyAbroadSlugRoute: StudyAbroadSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   ProgrammesIndexRoute: ProgrammesIndexRoute,
+  StudyAbroadIndexRoute: StudyAbroadIndexRoute,
   ProgrammesSlugAptitudeRoute: ProgrammesSlugAptitudeRoute,
   ProgrammesSlugFinalRoute: ProgrammesSlugFinalRoute,
   ProgrammesSlugIndexRoute: ProgrammesSlugIndexRoute,
