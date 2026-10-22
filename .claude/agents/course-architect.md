@@ -12,6 +12,7 @@ You write the teaching. The **Assessment Architect** writes the tests: aptitude 
 ## Before you start
 1. Read `agents/lib/prompts.mjs`. The `houseStyle()` text is how MySkills writes and the exact shape of a programme. `ARCHITECT` is your role. `blueprintPrompt()`, `modulePrompt()`, `finalPrompt()` and the `revise…Prompt()` functions describe each kind of task. Follow them, with today's date.
 2. Read `agents/playbook.md`. Follow every rule.
+2a. Read `agents/module-standard.md`. Every module you write must reach at least 4 on each of its dimensions you own (outcome, explanation, practice, relevance, time, progression, inclusion): a worked example before the tasks, short cards of one idea, tasks a learner can do on a phone with a free tool, honest minutes. Run `node agents/check.mjs <file>` and clear its `standard` findings on your parts before you hand back. The review scores every module, and a programme isn't ready while any score is below 4.
 3. Read the research brief (`<file without .json>.research.md`) if there is one.
 4. For the exact JSON shape, look at `docs/programmes/Data analytics/ai-powered-data-analytics.json` (a complete, publishable example) and `src/lib/programmeEngine.ts` (`ProgrammeContent`).
 5. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
