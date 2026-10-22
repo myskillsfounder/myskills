@@ -1,0 +1,429 @@
+{
+  "programme": "ai-powered-data-analytics.json",
+  "rows": [
+    {
+      "date": "2026-10-22",
+      "stage": "start (review 1)",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-1.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 3
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 18,
+        "should": 17,
+        "ideas": 2,
+        "byOwner": {
+          "assessment": 25,
+          "course": 10
+        },
+        "byCategory": {
+          "question-design": 17,
+          "accuracy": 7,
+          "house-style": 1,
+          "aptitude": 1,
+          "project": 1,
+          "teaching": 7,
+          "coverage": 1
+        },
+        "rulesBroken": {
+          "1": 8,
+          "2": 4,
+          "4": 1,
+          "6": 2,
+          "7": 2,
+          "8": 2
+        },
+        "lessons": 3
+      },
+      "mustPer10": 3.3,
+      "shouldPer10": 3.6,
+      "rightIsLongestPct": 18.2,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 74.5,
+        "learningOutcome": 72.7,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14
+      },
+      "difficulty": {
+        "Beginner": 17,
+        "Intermediate": 26,
+        "Advanced": 12
+      },
+      "learners": null
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "round 2",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-2.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 9,
+        "should": 8,
+        "ideas": 1,
+        "byOwner": {
+          "assessment": 14,
+          "course": 3
+        },
+        "byCategory": {
+          "question-design": 11,
+          "accuracy": 3,
+          "house-style": 1,
+          "teaching": 2
+        },
+        "rulesBroken": {},
+        "lessons": 3
+      },
+      "mustPer10": 1.6,
+      "shouldPer10": 1.5,
+      "rightIsLongestPct": 16.4,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14.3
+      },
+      "difficulty": {
+        "Beginner": 12,
+        "Intermediate": 35,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "round 3",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-3.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 3,
+        "should": 3,
+        "ideas": 1,
+        "byOwner": {
+          "assessment": 5,
+          "course": 1
+        },
+        "byCategory": {
+          "question-design": 4,
+          "teaching": 1,
+          "coverage": 1
+        },
+        "rulesBroken": {},
+        "lessons": 3
+      },
+      "mustPer10": 0.5,
+      "shouldPer10": 0.5,
+      "rightIsLongestPct": 9.1,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14.3
+      },
+      "difficulty": {
+        "Beginner": 10,
+        "Intermediate": 37,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "final (after revision 3)",
+      "reviewFile": null,
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": null,
+      "mustPer10": 0,
+      "shouldPer10": 0,
+      "rightIsLongestPct": 10.9,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14.3
+      },
+      "difficulty": {
+        "Beginner": 10,
+        "Intermediate": 37,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "round 4 (Module Standard)",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-4.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 0,
+        "should": 20,
+        "ideas": 6,
+        "byOwner": {
+          "course": 19,
+          "assessment": 1
+        },
+        "byCategory": {
+          "teaching": 11,
+          "time": 6,
+          "house-style": 2,
+          "coverage": 1
+        },
+        "rulesBroken": {},
+        "lessons": 2
+      },
+      "mustPer10": 0,
+      "shouldPer10": 3.6,
+      "rightIsLongestPct": 10.9,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14.3
+      },
+      "difficulty": {
+        "Beginner": 10,
+        "Intermediate": 37,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 10,
+          "missing": [],
+          "min": 2,
+          "mean": 4,
+          "byDimension": {
+            "outcome": 4.1,
+            "explanation": 3.7,
+            "practice": 3.3,
+            "feedback": 4,
+            "relevance": 4.7,
+            "time": 3.3,
+            "progression": 4.9,
+            "inclusion": 3.8
+          },
+          "belowBar": [
+            "da-m01: outcome 3",
+            "da-m02: practice 3",
+            "da-m02: time 3",
+            "da-m02: inclusion 3",
+            "da-m03: practice 3",
+            "da-m03: time 3",
+            "da-m04: practice 3",
+            "da-m04: time 3",
+            "da-m05: explanation 3",
+            "da-m05: practice 3",
+            "da-m05: time 3",
+            "da-m06: explanation 3",
+            "da-m07: explanation 3",
+            "da-m07: practice 3",
+            "da-m07: time 2",
+            "da-m07: inclusion 3",
+            "da-m08: practice 3",
+            "da-m08: time 3",
+            "da-m09: practice 3"
+          ],
+          "meetsBar": false
+        }
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "stage": "round 5 (Module Standard)",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-5.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 5,
+        "ideas": 7,
+        "byOwner": {
+          "course": 3,
+          "assessment": 2
+        },
+        "byCategory": {
+          "teaching": 2,
+          "accuracy": 1,
+          "question-design": 1,
+          "coverage": 1
+        },
+        "rulesBroken": {},
+        "lessons": 2
+      },
+      "mustPer10": 0,
+      "shouldPer10": 0.9,
+      "rightIsLongestPct": 10.9,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14.1
+      },
+      "difficulty": {
+        "Beginner": 10,
+        "Intermediate": 37,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 10,
+          "missing": [],
+          "min": 4,
+          "mean": 4.2,
+          "byDimension": {
+            "outcome": 4.2,
+            "explanation": 4,
+            "practice": 4,
+            "feedback": 4,
+            "relevance": 4.8,
+            "time": 4,
+            "progression": 4.8,
+            "inclusion": 4
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "stage": "final (ready)",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-5.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 5,
+        "ideas": 7,
+        "byOwner": {
+          "course": 3,
+          "assessment": 2
+        },
+        "byCategory": {
+          "teaching": 2,
+          "accuracy": 1,
+          "question-design": 1,
+          "coverage": 1
+        },
+        "rulesBroken": {},
+        "lessons": 2
+      },
+      "mustPer10": 0,
+      "shouldPer10": 0.9,
+      "rightIsLongestPct": 10.9,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 35,
+        "modules": 14.1
+      },
+      "difficulty": {
+        "Beginner": 10,
+        "Intermediate": 37,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 10,
+          "missing": [],
+          "min": 4,
+          "mean": 4.2,
+          "byDimension": {
+            "outcome": 4.2,
+            "explanation": 4,
+            "practice": 4,
+            "feedback": 4,
+            "relevance": 4.8,
+            "time": 4,
+            "progression": 4.8,
+            "inclusion": 4
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1594 @@
+{
+ "options": {
+  "mode": "options",
+  "date": "2026-10-22",
+  "asked": 55,
+  "answered": 55,
+  "right": 39,
+  "summary": "Picked the right answer from the options alone in 39 of 55 questions (71%; chance is 25%, and a result this high by chance has probability 0.000).",
+  "findings": [
+   {
+    "target": "programme",
+    "severity": "must_fix",
+    "problem": "The scenarios rarely decide the answer: Picked the right answer from the options alone in 39 of 55 questions (71%; chance is 25%, and a result this high by chance has probability 0.000). A learner who knows the textbook practice can pass without applying it to the case.",
+    "fix": "Rewrite judgement questions so the scenario’s facts decide: make each wrong option what would be right in a different, plausible situation (another goal, data shape, audience or constraint), so only the facts given make one option the best. Aim for no more than half answerable from the options alone.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m02",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m02-q2.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m04",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m04-q1, da-m04-q2, da-m04-q3, da-m04-q4.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m05",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m05-q1, da-m05-q2.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m06",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m06-q1, da-m06-q3, da-m06-q4.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m07",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m07-q3, da-m07-q4.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m08",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m08-q2.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m09",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-m09-q3, da-m09-q4.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "final",
+    "severity": "should_fix",
+    "problem": "Without seeing the question, the clue test was certain of the right answer in da-f03, da-f08, da-f09, da-f12, da-f13.",
+    "fix": "Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.",
+    "source": "Clue test (options)",
+    "owner": "assessment",
+    "category": "clue-test"
+   }
+  ],
+  "rows": [
+   {
+    "id": "da-m01-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m01-q2",
+    "answered": true,
+    "right": false,
+    "picked": 1,
+    "sure": 1,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m01-q3",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 1,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m01-q4",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q2",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q4",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q3",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q3",
+    "answered": true,
+    "right": false,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q3",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 1,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q3",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q4",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q1",
+    "answered": true,
+    "right": false,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q4",
+    "answered": true,
+    "right": false,
+    "picked": 1,
+    "sure": 1,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m09-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m09-q2",
+    "answered": true,
+    "right": false,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m09-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m09-q4",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m10-q1",
+    "answered": true,
+    "right": false,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m10-q2",
+    "answered": true,
+    "right": false,
+    "picked": 3,
+    "sure": 1,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m10-q3",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m10-q4",
+    "answered": true,
+    "right": false,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f01",
+    "answered": true,
+    "right": false,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f02",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f03",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f04",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f05",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 1,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f06",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f07",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f08",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f09",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f10",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f11",
+    "answered": true,
+    "right": false,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f12",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f13",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f14",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f15",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": null
+   }
+  ]
+ },
+ "cards": {
+  "mode": "cards",
+  "date": "2026-10-22",
+  "asked": 40,
+  "answered": 40,
+  "right": 40,
+  "summary": "Answered 40 of 40 module questions right from the Learn cards alone (100%).",
+  "findings": [],
+  "rows": [
+   {
+    "id": "da-m01-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m01-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m01-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m01-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m02-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m02-q2",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m02-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m02-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m03-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m03-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m03-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m03-q4",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m04-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m04-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m04-q3",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m04-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m05-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m05-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m05-q3",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m05-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m06-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m06-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m06-q3",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m06-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m07-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m07-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m07-q3",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m07-q4",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m08-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m08-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m08-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m08-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m09-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m09-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m09-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m09-q4",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m10-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m10-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m10-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": true,
+    "also": null
+   },
+   {
+    "id": "da-m10-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 1,
+    "taught": true,
+    "also": null
+   }
+  ]
+ },
+ "blind": {
+  "mode": "blind",
+  "date": "2026-10-22",
+  "asked": 55,
+  "answered": 55,
+  "right": 52,
+  "summary": "Agreed with the key in 52 of 55 questions (95%).",
+  "findings": [
+   {
+    "target": "module:da-m01",
+    "severity": "must_fix",
+    "problem": "da-m01-q1: answering in full without the key, the clue test chose “Ask the founder what she will decide with the report, and agree which measure of delay she means”, not the keyed answer.",
+    "fix": "Check the key. If the chosen option can be defended, rewrite the question so only one answer can be; if the key is right, make the deciding fact clearer in the scenario.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m08",
+    "severity": "must_fix",
+    "problem": "da-m08-q4: answering in full without the key, the clue test chose “Show both figures side by side, each with a note that gives its definition”, not the keyed answer.",
+    "fix": "Check the key. If the chosen option can be defended, rewrite the question so only one answer can be; if the key is right, make the deciding fact clearer in the scenario.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m10",
+    "severity": "must_fix",
+    "problem": "da-m10-q3: answering in full without the key, the clue test chose “Say the weeks may not be typical of the year, and that the numbers are only a rough guide”, not the keyed answer.",
+    "fix": "Check the key. If the chosen option can be defended, rewrite the question so only one answer can be; if the key is right, make the deciding fact clearer in the scenario.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m01",
+    "severity": "should_fix",
+    "problem": "da-m01-q4: the clue test found “Not yet: first survey students on whether they actually prefer dark mode or not” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m06",
+    "severity": "should_fix",
+    "problem": "da-m06-q4: the clue test found “The answer scale leans positive, which pushes replies towards “very satisfied”” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m09",
+    "severity": "should_fix",
+    "problem": "da-m09-q1: the clue test found ““In our data, a repeat customer is one who has ordered before. Write PostgreSQL for each 2026 month’s repeat customer rate from the orders table.”” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m09",
+    "severity": "should_fix",
+    "problem": "da-m09-q4: the clue test found “Ask it again, telling it to use only columns that exist, then re-check the query it returns” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m10",
+    "severity": "should_fix",
+    "problem": "da-m10-q1: the clue test found ““Recommendation: test a ₹49 COD fee in two Tier-3 cities for a month, before deciding for the rest of the tier.”” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "module:da-m10",
+    "severity": "should_fix",
+    "problem": "da-m10-q4: the clue test found ““No: the nine cities grew only ₹20 lakh more than Shillong, which has no programme, so ₹12 lakh of gross profit against ₹15 lakh of cost.”” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "final",
+    "severity": "should_fix",
+    "problem": "da-f01: the clue test found ““Which channel brought the most new customers in Q2, Instagram or Google?”” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "final",
+    "severity": "should_fix",
+    "problem": "da-f05: the clue test found “The average of the 1,400 answers, with the margin of error for a sample of 1,400” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "final",
+    "severity": "should_fix",
+    "problem": "da-f10: the clue test found “Run the test three more weeks, to see whether B’s small lead becomes significant” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "final",
+    "severity": "should_fix",
+    "problem": "da-f11: the clue test found “Hold the roll-out everywhere until Tier-3 cities, at 3,000 visitors a group, also show a rise” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   },
+   {
+    "target": "final",
+    "severity": "should_fix",
+    "problem": "da-f15: the clue test found ““We ran a 6-week randomised test of SMS reminders in 8 of our 30 clinics, covering 4,200 appointments; the method is set out below.”” defensible too.",
+    "fix": "Make that option clearly wrong, for a reason the explanation can state.",
+    "source": "Clue test (blind)",
+    "owner": "assessment",
+    "category": "clue-test"
+   }
+  ],
+  "rows": [
+   {
+    "id": "da-m01-q1",
+    "answered": true,
+    "right": false,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": 0
+   },
+   {
+    "id": "da-m01-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m01-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m01-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": 1
+   },
+   {
+    "id": "da-m02-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q2",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m02-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m03-q4",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q3",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m04-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q3",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m05-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q1",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q2",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q3",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m06-q4",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 2,
+    "taught": null,
+    "also": 2
+   },
+   {
+    "id": "da-m07-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q3",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m07-q4",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q3",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m08-q4",
+    "answered": true,
+    "right": false,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": 3
+   },
+   {
+    "id": "da-m09-q1",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": 2
+   },
+   {
+    "id": "da-m09-q2",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m09-q3",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m09-q4",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": 0
+   },
+   {
+    "id": "da-m10-q1",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": 3
+   },
+   {
+    "id": "da-m10-q2",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-m10-q3",
+    "answered": true,
+    "right": false,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": 2
+   },
+   {
+    "id": "da-m10-q4",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": 3
+   },
+   {
+    "id": "da-f01",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 2,
+    "taught": null,
+    "also": 2
+   },
+   {
+    "id": "da-f02",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f03",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f04",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f05",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": 3
+   },
+   {
+    "id": "da-f06",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f07",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f08",
+    "answered": true,
+    "right": true,
+    "picked": 0,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f09",
+    "answered": true,
+    "right": true,
+    "picked": 3,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f10",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": 0
+   },
+   {
+    "id": "da-f11",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 2,
+    "taught": null,
+    "also": 2
+   },
+   {
+    "id": "da-f12",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f13",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f14",
+    "answered": true,
+    "right": true,
+    "picked": 1,
+    "sure": 3,
+    "taught": null,
+    "also": null
+   },
+   {
+    "id": "da-f15",
+    "answered": true,
+    "right": true,
+    "picked": 2,
+    "sure": 2,
+    "taught": null,
+    "also": 3
+   }
+  ]
+ }
+}
