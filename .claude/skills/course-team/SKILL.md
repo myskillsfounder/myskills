@@ -40,7 +40,7 @@ Run all three modes each time. Each mode needs one make, one prober run and one 
 3. **Score it.** Run `node agents/probe.mjs score <file> --mode <mode> --answers <answers file>`. It adds the results to `<file without .json>.probes.json`.
 
 What each mode shows:
-- `options`: only the four options. Right far more often than 1 in 4 means the options give the answer away.
+- `options`: only the four options. The prober knows the subject, so a question it gets right from the options alone doesn't need its scenario. That means it tests knowing good practice rather than applying it to the case, or that its wrong options mark themselves out. Aim for no more than half; a few code and fact questions can rightly be answerable this way.
 - `cards`: the module's Learn cards, then its quiz. A miss may mean the module doesn't teach it.
 - `blind`: the full question with no key. A different pick may mean a second defensible answer or a wrong key.
 

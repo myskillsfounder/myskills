@@ -156,7 +156,7 @@ test('improve: fixes what the review and the checks found, keeps ids, records le
   const revised = c.claude.calls.filter((x) => x.startsWith('revise'))
   const flagged = qualityFindings(DA).filter((f) => f.target.startsWith('module:')).map((f) => f.target.slice(7))
   for (const id of new Set(['da-m02', 'da-m03', ...flagged])) assert.ok(revised.includes(`revise ${id} 1`), id)
-  assert.ok(revised.includes('revise final 1'))
+  if (qualityFindings(DA).some((f) => f.target === 'final')) assert.ok(revised.includes('revise final 1'))
   // Ids kept; the new question got a new, unique id.
   const m2 = out.result.modules.find((m) => m.id === 'da-m02')
   assert.equal(m2.quiz.length, 5)

@@ -3,8 +3,11 @@
 // from a packet with no answers in it. What it gets right or wrong shows
 // problems a careful writer misses:
 //
-//   options   only the four options, no scenario or question. Right far more
-//             often than 1 in 4 means the options give the answer away.
+//   options   only the four options, no scenario or question. The prober knows
+//             the subject, so this measures whether the scenario decides the
+//             answer: a question it gets right from the options alone tests
+//             knowing good practice, not applying it to the case. Some code
+//             and fact questions are fine that way; most should not be.
 //   cards     a module's Learn cards, then its quiz. A miss may mean the
 //             module doesn't teach what the question tests.
 //   blind     every question in full, no answer key. A pick that differs from
@@ -117,9 +120,10 @@ export function score(c, mode, answers) {
     const p = atLeast(right, done.length, 0.25)
     summary = `Picked the right answer from the options alone in ${right} of ${done.length} questions (${pct(right, done.length)}; chance is 25%, and a result this high by chance has probability ${p.toFixed(3)}).`
     const sure = done.filter((r) => r.right && r.sure === 3)
-    if (p < 0.05) add('programme', 'must_fix', `The options give the answer away: ${summary}`, 'Rewrite the wrong options in the questions listed by the clue test so each is as specific, careful and plausible as the right one.')
+    if (p < 0.05 && right / done.length > 0.5)
+      add('programme', 'must_fix', `The scenarios rarely decide the answer: ${summary} A learner who knows the textbook practice can pass without applying it to the case.`, 'Rewrite judgement questions so the scenario’s facts decide: make each wrong option what would be right in a different, plausible situation (another goal, data shape, audience or constraint), so only the facts given make one option the best. Aim for no more than half answerable from the options alone.')
     for (const [target, ids] of group(sure.map((r) => r.id), where))
-      add(target, 'should_fix', `Without seeing the question, the clue test was certain of the right answer in ${ids.join(', ')}.`, 'Find what marks the right option out (more careful wording, a reason attached, the only hedged or precise one) and give the wrong options the same quality.')
+      add(target, 'should_fix', `Without seeing the question, the clue test was certain of the right answer in ${ids.join(', ')}.`, 'Check what makes the right option stand out. If a wrong option is careless or marks itself out, give it the same quality as the right one. If the right one is simply always good practice, make the scenario decide (see the programme-level finding), unless it is a code or fact question that rightly tests knowing it.')
   } else if (mode === 'cards') {
     summary = `Answered ${right} of ${done.length} module questions right from the Learn cards alone (${pct(right, done.length)}).`
     const gaps = done.filter((r) => !r.right || r.taught === false)

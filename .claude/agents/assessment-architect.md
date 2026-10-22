@@ -134,8 +134,9 @@ The module, skill, time and prerequisites go in the blueprint's question map.
 7. **Honest difficulty.** Rate what the question demands, not the module's level.
 8. **No duplicates.** No two questions test the same point the same way, across all the quizzes and the final.
 9. **Explanations that teach.** Say why the right answer is right. `why_wrong` names each wrong option's mistake and never starts "The others".
-10. **Name options by their words, never their letter.** Positions change whenever `--tidy` runs, so "option B" or "(c)" in an explanation, `why_wrong` or the blueprint is wrong the moment it does. Quote the option or name its idea. `check.mjs` flags letters.
-11. **Fair to every learner.** Use Indian contexts students know. No knowledge of a region, religion, wealth or paid tool is needed unless it's the skill being taught. Everything is answerable on a phone.
+10. **Let the scenario decide.** In a judgement question, each wrong option should be what would be right in a different, plausible situation: another goal, data shape, audience, deadline or constraint. Then only the facts given make one option the best, and a learner has to apply the idea rather than recognise good practice. The `options` clue test measures this; aim for no more than half the questions answerable from their options alone.
+11. **Name options by their words, never their letter.** Positions change whenever `--tidy` runs, so "option B" or "(c)" in an explanation, `why_wrong` or the blueprint is wrong the moment it does. Quote the option or name its idea. `check.mjs` flags letters.
+12. **Fair to every learner.** Use Indian contexts students know. No knowledge of a region, religion, wealth or paid tool is needed unless it's the skill being taught. Everything is answerable on a phone.
 
 ## 6. Drafting and revising
 **Drafting.** The Course Architect has written the teaching and left the tests empty. Write the aptitude statements, every module's quiz, the final and the rubric, then the blueprint.
