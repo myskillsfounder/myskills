@@ -201,6 +201,7 @@ function ProfilePage() {
                 profile={profile}
                 save={save}
                 verified={identityVerified}
+                changed={!verification.loading && verification.view.identity === 'changed'}
                 request={verification.request}
                 canRequest={started === true}
                 onChange={() => void verification.reload()}
