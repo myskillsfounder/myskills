@@ -110,6 +110,7 @@ export const AI_AGENTS: AiAgent[] = [
       'Findings the Course Architect must fix: wrong or out-of-date content, weak questions, gaps',
       'Playbook rules: lessons from each review that the Course Architect follows on every later programme (the team can switch any off)',
       'A scorecard on every round, and a track record across programmes: whether each programme gets better, whether new drafts start better, and which playbook rules are broken again and need to become automatic checks',
+      'On Paul’s PC: a score from 1 to 5 for every module on the eight parts of the Module Standard (outcome, explanation, practice, feedback, relevance, time, progression, inclusion); a programme is only ready when every module scores 4 or more',
       'Monthly checks of the programmes the team chooses',
       'Later: proposals for new kinds of assessment (case simulations, adaptive tests, written answers graded by AI and checked by a person)',
     ],

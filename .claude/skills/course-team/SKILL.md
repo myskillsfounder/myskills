@@ -11,6 +11,8 @@ This does the same job as the server's course agents (`agents/`), run here as Cl
 - `assessment-architect` writes the tests: aptitude statements, module quizzes, the final and the project rubric. It also keeps the assessment blueprint, `<file without .json>.assessment.md`: the question and coverage maps, rubric levels, practical evidence, and what only Paul can decide;
 - `curriculum-intelligence` keeps a published programme current: it researches what changed in the field since its last review, classifies findings (A critical, B important, C enhancement, D monitor), proposes changes with sources, and validates the Architects' revisions. It keeps the curriculum log, `<file without .json>.curriculum.md`.
 
+Every agent works to the **Module Standard** (`agents/module-standard.md`): eight dimensions scored 1 to 5 for every module in every review. A programme is ready only when `check.mjs` passes, nothing is must-fix, and every module scores at least 4 on every dimension.
+
 ## Inputs
 - **improve `<file>`**: a programme file. If Paul has none, ask him to open the programme in the admin, go to Check & publish, click **Download**, and save it in `docs/programmes/`.
 - **health `<file>`**: a published programme to keep current (see "The health loop"). Ask Paul which version number the admin shows as published, and pass it on; if he doesn't know, the agent records it as unknown.
@@ -55,7 +57,7 @@ The packets cost little: about 30 to 35 KB each, on the cheapest model. Skip the
    - Then, for every round: if the review has must-fix or should-fix findings with `owner` "course", run `course-architect` to fix them; then, if it has any with `owner` "assessment", run `assessment-architect` to fix those. Always in that order, so the tests are fixed against the revised teaching.
    - If the `assessment-architect` says the teaching must change before a test can be fair, pass that to `course-architect` in the same round, then run `assessment-architect` again.
    - Scorecard: after review round 1, save a row with `--stage "start (review 1)"` for an existing programme, or `--stage "draft (review 1)"` for a new one. That first row is what the track record judges the Architects by, so never skip it.
-3. **Review again.** If the tests changed this round, run the clue tests again. Then run `assessment-agent` for the next round, then save a scorecard row with `--stage "round <n>"`. Repeat steps 2 and 3 until the verdict is "ready", or after **3 revisions**.
+3. **Review again.** If the tests changed this round, run the clue tests again. Then run `assessment-agent` for the next round, then save a scorecard row with `--stage "round <n>"`. Repeat steps 2 and 3 until the verdict is "ready" (which now needs every module at 4 or more), or after **3 revisions**. Check the review's `module_scores` yourself with the scorecard's `standard.modules`: if it says `meetsBar: false`, the verdict can't be "ready", whatever the review says; send it back.
 4. **Finish.**
    - Run `node agents/check.mjs <file> --tidy` and confirm `ready_to_publish: true`.
    - Add the reviews' new `lessons` to the end of `agents/playbook.md`, numbered, ending "(added <today>)", with why. Skip any that repeat an existing rule.
@@ -68,6 +70,7 @@ The packets cost little: about 30 to 35 KB each, on the cheapest model. Skip the
      - the blueprint's RESULT and its "For the team" items;
      - the numbers from `check.mjs`;
      - the scorecard: the first and last rows' main numbers and what changed;
+     - the Module Standard: a table of every module's eight scores from the last review, and every score below 4 with why;
      - any playbook rule the report shows broken again, and what was done about it.
 
 ## The health loop (`health <file>`)
