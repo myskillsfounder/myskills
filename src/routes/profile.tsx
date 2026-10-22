@@ -168,7 +168,8 @@ function ProfilePage() {
           {/* KYC: a verified profile is one employers can trust. Once it's all
               checked, the tick by the name says so — the checklist only shows
               while there's something to do or a call is booked. */}
-          {started === true &&
+          {/* On a computer the Details & verification card does this. */}
+          {phone && started === true &&
             !verification.loading &&
             (!isVerificationComplete(profile, verification.view) ||
               verification.request?.status === 'requested' ||
@@ -181,13 +182,12 @@ function ProfilePage() {
             />
           )}
 
-          {/* On a computer: badges along the top, then the blueprint, the
-              records and the details with their verification. Achievements
+          {/* On a computer: the blueprint, the records, the skill badges,
+              then the details with their verification. Achievements
               (certificates, projects, internships) are counted in the
               records instead. The phone keeps its layout, below. */}
           {!phone && (
             <>
-              <BadgesRow badges={badges} />
               {blueprint && <BlueprintSection blueprint={blueprint} save={saveBlueprint} />}
               <RecordsSection
                 records={records}
@@ -196,12 +196,14 @@ function ProfilePage() {
                 internships={internships.confirmed.length}
                 badges={badges.length}
               />
+              <BadgesRow badges={badges} />
               <DetailsCard
                 profile={profile}
                 save={save}
                 verified={identityVerified}
                 request={verification.request}
                 canRequest={started === true}
+                onChange={() => void verification.reload()}
               />
             </>
           )}
