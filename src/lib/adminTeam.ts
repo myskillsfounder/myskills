@@ -44,7 +44,7 @@ export const SECTION_GROUPS: { label: string; sections: { id: StaffSection; labe
   },
   {
     label: 'Admissions',
-    sections: [{ id: 'leads', label: 'Global Leadership leads', opens: 'People who asked about the Global Leadership Programme' }],
+    sections: [{ id: 'leads', label: 'Admissions', opens: 'Global Leadership leads, and Study abroad programmes and applications' }],
   },
   {
     label: 'Internships',

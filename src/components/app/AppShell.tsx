@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   MessageSquareHeart,
+  Plane,
   User,
   Users,
   X,
@@ -35,7 +36,8 @@ const NAV: { to: string; label: string; icon: IconType }[] = [
   { to: '/dashboard', label: 'LaunchPad', icon: LayoutDashboard },
   { to: '/practice', label: 'Practice', icon: BookOpen },
   { to: '/community', label: 'Community', icon: Users },
-  { to: '/feedback', label: 'Feedback', icon: MessageSquareHeart },
+  // Feedback moved to the sidebar footer (and stays on the LaunchPad).
+  { to: '/study-abroad', label: 'Study abroad', icon: Plane },
 ]
 
 
@@ -98,6 +100,15 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <AdSlider />
 
         <ProfileNavCard onNavigate={onNavigate} active={pathname === '/profile'} />
+
+        <Link
+          to="/feedback"
+          onClick={onNavigate}
+          aria-current={pathname === '/feedback' ? 'page' : undefined}
+          className="flex items-center gap-2 px-1 text-[12px] font-medium text-ink-500 transition-colors hover:text-ink-900"
+        >
+          <MessageSquareHeart size={14} /> Send feedback
+        </Link>
 
         <button
           type="button"
