@@ -70,6 +70,54 @@
         "rulesBroken": {}
       },
       "note": ""
+    },
+    {
+      "date": "2026-10-23",
+      "programme": "ai-powered-data-analytics",
+      "job": "improve",
+      "rounds": 5,
+      "lessonsAdded": null,
+      "first": {
+        "stage": "start (review 1)",
+        "questions": 55,
+        "mustPer10": 3.3,
+        "shouldPer10": 3.6,
+        "rightIsLongestPct": 18.2,
+        "verdict": "needs_work",
+        "byCategory": {
+          "question-design": 17,
+          "accuracy": 7,
+          "house-style": 1,
+          "aptitude": 1,
+          "project": 1,
+          "teaching": 7,
+          "coverage": 1
+        },
+        "rulesBroken": {
+          "1": 8,
+          "2": 4,
+          "4": 1,
+          "6": 2,
+          "7": 2,
+          "8": 2
+        }
+      },
+      "last": {
+        "stage": "final (ready)",
+        "questions": 55,
+        "mustPer10": 0,
+        "shouldPer10": 0.9,
+        "rightIsLongestPct": 10.9,
+        "verdict": "ready",
+        "byCategory": {
+          "teaching": 2,
+          "accuracy": 1,
+          "question-design": 1,
+          "coverage": 1
+        },
+        "rulesBroken": {}
+      },
+      "note": ""
     }
   ],
   "outcomes": []
