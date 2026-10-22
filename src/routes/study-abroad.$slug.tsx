@@ -15,6 +15,7 @@ import {
 } from '@/lib/studyAbroad'
 import { AppShell } from '@/components/app/AppShell'
 import { Markdown } from '@/components/admin/programme/Markdown'
+import { Flag, Illustration, themeOf } from '@/components/studyAbroad/Cards'
 import { Alert, Badge, Button, EmptyState, Skeleton } from '@/components/ui'
 
 // Behind sign-in, so not in PAGE_SEO.
@@ -96,9 +97,29 @@ function StudyProgrammePage() {
       {p && (
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <article>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">{[p.field, p.country].filter(Boolean).join(' · ')}</p>
-            <h1 className="mt-1 font-display text-3xl font-semibold text-ink-900">{p.title}</h1>
-            {p.level && <p className="mt-1 text-sm text-ink-600">{p.level}</p>}
+            <header className={`flex items-center gap-4 overflow-hidden rounded-3xl border p-5 sm:p-6 ${themeOf(p).card}`}>
+              <div className="min-w-0 flex-1">
+                <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-600">
+                  <Flag code={p.country_code} className="h-3.5 w-5" /> {[p.field, p.country].filter(Boolean).join(' · ')}
+                </p>
+                {p.badge && <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${themeOf(p).badge}`}>{p.badge}</span>}
+                <h1 className="mt-1.5 font-display text-3xl font-semibold leading-tight text-ink-900">{p.title}</h1>
+                {p.university && <p className={`mt-1 text-sm font-semibold ${themeOf(p).accent}`}>{p.university}</p>}
+                {p.level && <p className="mt-1 text-sm text-ink-600">{p.level}</p>}
+                {p.tags && p.tags.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {p.tags.map((tag) => (
+                      <span key={tag} className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${themeOf(p).chip}`}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="hidden sm:block">
+                <Illustration p={p} />
+              </div>
+            </header>
             {p.status === 'draft' && (
               <div className="mt-3">
                 <Alert tone="warning" title="Draft: only the MySkills team can see this">
