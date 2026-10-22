@@ -17,11 +17,17 @@
 -- answers kept. Retakes come after seeing the answers, so they would make
 -- every question look easier than it is.
 --
+-- Since a date (p_since, optional): only answers from then on, e.g. since a
+-- new version of a programme was published, so the course team can compare
+-- versions (Admin → Question health → "Answers since", and "Download for the
+-- course team"). Without it, every answer kept.
+--
 -- Run once, BEFORE OR AFTER the deploy (the page says "run the SQL" until it
 -- is in). Safe to re-run. Depends on docs/supabase-learner-events.sql.
 -- Who: the Foundation questions section ('assessment'), as editing them is.
 
-create or replace function public.admin_question_health()
+drop function if exists public.admin_question_health();
+create or replace function public.admin_question_health(p_since timestamptz default null)
 returns table (
   bank          text,
   question_id   text,
@@ -57,6 +63,7 @@ begin
     select distinct on (a.profile_id, a.track_slug) a.id, a.track_slug, a.percent
       from public.practice_attempts a
      where exists (select 1 from public.practice_answers pa where pa.attempt_id = a.id)
+       and (p_since is null or a.attempted_at >= p_since)
      order by a.profile_id, a.track_slug, a.attempted_at
   ),
   thirds as (
@@ -82,7 +89,9 @@ begin
      group by fa.question_id
   ),
   everything as (
-    select pa.question_id, count(*)::int as n from public.practice_answers pa group by pa.question_id
+    select pa.question_id, count(*)::int as n from public.practice_answers pa
+     where p_since is null or pa.answered_at >= p_since
+     group by pa.question_id
   )
   select 'practice'::text, k.question_id, k.track_slug, k.competency, k.difficulty, k.title,
          null::text, null::text[], k.correct_index,
@@ -115,11 +124,12 @@ begin
         from public.foundation_answers f
         join (select ir.profile_id, ntile(3) over (order by ir.percent) as third
                 from public.initial_assessment_results ir) r on r.profile_id = f.profile_id
+       where p_since is null or f.answered_at >= p_since
        group by f.question_id
     ) fs on fs.question_id = q.id;
 end;
 $$;
-revoke execute on function public.admin_question_health() from public, anon;
-grant execute on function public.admin_question_health() to authenticated;
+revoke execute on function public.admin_question_health(timestamptz) from public, anon;
+grant execute on function public.admin_question_health(timestamptz) to authenticated;
 
 notify pgrst, 'reload schema';

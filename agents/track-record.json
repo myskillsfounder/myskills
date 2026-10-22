@@ -1,0 +1,33 @@
+{
+  "jobs": [
+    {
+      "date": "2026-10-21",
+      "programme": "ai-powered-data-analytics",
+      "job": "draft",
+      "rounds": 2,
+      "lessonsAdded": 8,
+      "first": {
+        "stage": "first draft (by hand in chat, before the agents existed)",
+        "questions": 55,
+        "mustPer10": null,
+        "shouldPer10": null,
+        "rightIsLongestPct": 81.8,
+        "verdict": "needs_work",
+        "byCategory": {},
+        "rulesBroken": {}
+      },
+      "last": {
+        "stage": "after 2 review rounds",
+        "questions": 55,
+        "mustPer10": 0,
+        "shouldPer10": 0.4,
+        "rightIsLongestPct": 18.2,
+        "verdict": null,
+        "byCategory": {},
+        "rulesBroken": {}
+      },
+      "note": "Seeded from ai-powered-data-analytics-review.md: the first draft's right answer was the longest in 45 of 55; hours said 50 against 9 of modules. Its review lessons became playbook rules 1-8. No per-finding counts were kept, so the first numbers are partial."
+    }
+  ],
+  "outcomes": []
+}

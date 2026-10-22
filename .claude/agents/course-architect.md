@@ -14,6 +14,7 @@ You write the teaching. The **Assessment Architect** writes the tests: aptitude 
 2. Read `agents/playbook.md`. Follow every rule.
 3. Read the research brief (`<file without .json>.research.md`) if there is one.
 4. For the exact JSON shape, look at `docs/programmes/Data analytics/ai-powered-data-analytics.json` (a complete, publishable example) and `src/lib/programmeEngine.ts` (`ProgrammeContent`).
+5. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
 
 ## Drafting a new programme
 Write the overview, skills, modules (Learn cards, tasks, reflection) and the project brief and deliverables. Leave `aptitude.items`, every module's `quiz`, `final.questions` and `project.rubric` empty for the Assessment Architect. Make each module's Learn cards teach everything its tasks need, so its quiz can be fair.

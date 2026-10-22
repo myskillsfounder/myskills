@@ -28,8 +28,9 @@ Never, from here:
 1. Read `agents/lib/prompts.mjs` (`houseStyle()` is how MySkills writes and what a programme must contain) and `agents/playbook.md`. A broken rule there is a finding.
 2. Read the programme file in full, and its working files if they exist: `<file without .json>.research.md`, `.assessment.md`, the latest `.review-<n>.json`, and your own log `.curriculum.md`.
 3. **The approved version.** The file on disk is the one Paul downloaded from the admin (Check & publish → **Download**). It doesn't carry its version number or publish date. Use what Paul or `/course-team` tells you; otherwise record the version as "unknown (file dated <file's last commit or modified date>)" and say so. If the file may be a draft rather than the published version, say that too.
-4. From your log, take the **last successful review date** and every **open item**. If there's no log, this is the first review: research the last 12 months.
-5. Is it **built-in**? Global Leadership and Digital Marketing are. Their structure can't change from here: no added, removed or reordered modules, tasks, questions, statements or skills. Propose structural changes only as ideas for Paul.
+4. **Student evidence.** If `<file without .json>.learners.json` exists, run `node agents/scorecard.mjs <file> --stage check --learners <that file>` (add `--built-in` if needed). A flagged question with 30+ first-time answers is evidence like any source: "Check the answer" or "Strong students miss it" on a question whose field has changed often means the right answer is out of date. Record the numbers in the log's review row. Fewer answers: no conclusion.
+5. From your log, take the **last successful review date** and every **open item**. If there's no log, this is the first review: research the last 12 months.
+6. Is it **built-in**? Global Leadership and Digital Marketing are. Their structure can't change from here: no added, removed or reordered modules, tasks, questions, statements or skills. Propose structural changes only as ideas for Paul.
 
 ## 3. Decide how deep to look
 Rate each module's **volatility** from what it teaches:
@@ -113,7 +114,8 @@ Each proposal has:
 { "verdict": "needs_work", "summary": "what changed in the field and why these changes",
   "strengths": [], "findings": [{ "target": "overview|skills|aptitude|project|final|module:<id>|programme",
   "severity": "must_fix|should_fix|idea", "problem": "<proposal id>: what is outdated or missing, quoting it",
-  "fix": "exactly what to write instead", "source": "URL", "owner": "course" | "assessment" }], "lessons": [] }
+  "fix": "exactly what to write instead", "source": "URL", "owner": "course" | "assessment",
+  "category": "accuracy|question-design|teaching|coverage|aptitude|project|time|house-style", "rule": <playbook rule number, or null> }], "lessons": [] }
 ```
 
 Class A is `must_fix`, B is `should_fix`, approved C is `should_fix`, and anything not approved is left out. Write this file only when `/course-team` tells you which proposals Paul approved.

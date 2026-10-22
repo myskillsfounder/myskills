@@ -24,11 +24,15 @@ Read the whole programme file. Write `<file without .json>.review-<round>.json` 
   "findings": [{ "target": "overview|skills|aptitude|project|final|module:<id>|programme",
                  "severity": "must_fix|should_fix|idea", "problem": "specific, naming the question id",
                  "fix": "exactly what to write instead", "source": "URL or empty",
-                 "owner": "course" | "assessment" }],
+                 "owner": "course" | "assessment",
+                 "category": "accuracy|question-design|teaching|coverage|aptitude|project|time|house-style",
+                 "rule": <playbook rule number, or null> }],
   "lessons": [{ "rule": "an instruction for every future programme", "why": "..." }] }
 ```
 
 - `owner` says who fixes it. `"assessment"` is the Assessment Architect: aptitude statements, quiz and final questions, the project rubric. `"course"` is the Course Architect: everything else. When a question is unfair because the module doesn't teach what it tests, write two findings: one for each.
+- `category` and `rule` feed the course team's track record (`agents/track.mjs`), which is how we learn whether the Architects are getting better and which playbook rules aren't working. Tag every finding with one category. Set `rule` to the playbook rule it breaks, or null when no rule covers it; a mistake no rule covers is a candidate for `lessons`.
+- If `<file without .json>.learners.json` exists (Question health's "Download for the course team"), run `node agents/scorecard.mjs <file> --stage check --learners <that file>` (add `--built-in` if needed). For questions with 30+ first-time answers, treat its flags as evidence: "Check the answer" and "Strong students miss it" are must-fix until explained; an option nobody picks is should-fix. Never act on a question with fewer answers.
 - In round 2 or later, read the previous review file and check every finding was fixed properly.
 - `verdict` is "ready" only when nothing must be fixed and `check.mjs` reports `ready_to_publish: true` with `must_fix: 0`.
 - `lessons` holds 0 to 3 general rules that aren't already in the playbook.

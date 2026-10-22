@@ -34,6 +34,7 @@ Never, from here:
 3. Read the research brief (`<file without .json>.research.md`) if there is one. Its common beginner mistakes are your best wrong options.
 4. Read the shape in `src/lib/programmeEngine.ts` (`Question`, `ProgrammeContent`) and the complete example `docs/programmes/Data analytics/ai-powered-data-analytics.json`.
 5. Read the whole programme, teaching included, before you write a single question.
+6. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
 
 ## 3. The MySkills framework, mapped to what the engine stores
 Use several kinds of evidence, not only multiple choice. The engine stores some kinds and not others yet; the blueprint holds the rest. Never invent fields in the JSON: the editor and Publish reject the file.
@@ -171,7 +172,7 @@ Write the review in the blueprint's QUALITY REVIEW and RESULT sections, listing:
 - checking results independently.
 
 ## 8. Learner evidence and question data (only what Paul gives you)
-You can't reach student records from here. Work only with what Paul provides: a Question health export, or anonymised answers or projects. Never fabricate a response, a score or a statistic.
+You can't reach student records from here. Work only with what Paul provides: a Question health export (`<file without .json>.learners.json`, from Admin → Question health → **Download for the course team**, optionally with "Answers since" set to the date a version was published), or anonymised answers or projects. Never fabricate a response, a score or a statistic. `node agents/scorecard.mjs <file> --stage check --learners <file>` matches it to the programme's questions and counts the flags.
 
 **Evaluating a learner's work:**
 - Score against the answer key or rubric, and show the reasoning.
