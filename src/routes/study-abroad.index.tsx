@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, CalendarDays, Clock, GraduationCap, Languages, Plane } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Plane } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
-import { APPLICATION_STATUS, dateText, fetchStudyProgrammes, type StudyProgramme } from '@/lib/studyAbroad'
+import { fetchStudyProgrammes, type StudyProgramme } from '@/lib/studyAbroad'
 import { AppShell } from '@/components/app/AppShell'
 import { PageHeader } from '@/components/app/PageHeader'
-import { Alert, Badge, EmptyState, Skeleton } from '@/components/ui'
+import { FeaturedCard, Flag, ProgrammeCard } from '@/components/studyAbroad/Cards'
+import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
 // Behind sign-in, so not in PAGE_SEO.
 export const Route = createFileRoute('/study-abroad/')({
@@ -14,7 +15,28 @@ export const Route = createFileRoute('/study-abroad/')({
   component: StudyAbroadPage,
 })
 
-/** Every study-abroad programme the team has opened, by country. */
+/** Real numbers only: what is on the page, nothing rounded up. */
+function Stats({ rows }: { rows: StudyProgramme[] }) {
+  const items = [
+    { label: 'Countries', value: new Set(rows.map((r) => r.country)).size },
+    { label: 'Universities', value: new Set(rows.map((r) => r.university).filter(Boolean)).size },
+    { label: 'Programmes', value: rows.length },
+    { label: 'Open now', value: rows.filter((r) => r.status === 'open').length },
+    { label: 'Your applications', value: rows.filter((r) => r.my_status && r.my_status !== 'withdrawn').length },
+  ]
+  return (
+    <div className="card mb-8 grid grid-cols-2 divide-ink-900/[0.06] sm:grid-cols-5 sm:divide-x">
+      {items.map((s) => (
+        <div key={s.label} className="px-5 py-4">
+          <p className="text-xs font-medium text-ink-500">{s.label}</p>
+          <p className="mt-1 font-display text-2xl font-semibold text-ink-900">{s.value}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Every study-abroad programme the team has opened: featured first, then all, by country. */
 function StudyAbroadPage() {
   const [rows, setRows] = useState<StudyProgramme[] | null | undefined>(undefined)
   const [error, setError] = useState<string>()
@@ -23,16 +45,17 @@ function StudyAbroadPage() {
     fetchStudyProgrammes().then(setRows, (e) => setError(errorMessage(e)))
   }, [])
 
-  const countries = [...new Set((rows ?? []).map((r) => r.country))].sort()
-  const shown = (rows ?? []).filter((r) => country === 'all' || r.country === country)
-  const byCountry = [...new Set(shown.map((r) => r.country))].sort().map((c) => ({ country: c, items: shown.filter((r) => r.country === c) }))
+  const all = rows ?? []
+  const countries = [...new Map(all.map((r) => [r.country, r.country_code])).entries()].sort((a, b) => a[0].localeCompare(b[0]))
+  const featured = all.filter((r) => r.featured)
+  const shown = all.filter((r) => country === 'all' || r.country === country)
 
   return (
     <AppShell wide>
       <PageHeader
         eyebrow="Study abroad"
         title="Study in another country"
-        description="Degree programmes abroad that MySkills helps you apply to: who each is for, what you need, the steps and the deadlines. Apply here, and a mentor guides you through it."
+        description="Degree programmes abroad with our partner universities: who each is for, what you need, the steps and the deadlines. Apply here, and a mentor guides you through it."
       />
 
       {error && (
@@ -47,78 +70,46 @@ function StudyAbroadPage() {
 
       {rows && rows.length > 0 && (
         <>
-          {countries.length > 1 && (
-            <div className="mb-5 flex flex-wrap gap-1.5" role="tablist" aria-label="Country">
-              {['all', ...countries].map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  role="tab"
-                  aria-selected={country === c}
-                  onClick={() => setCountry(c)}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${country === c ? 'bg-ink-900 text-white' : 'bg-white text-ink-700 ring-1 ring-ink-900/[0.08] hover:bg-ink-50'}`}
-                >
-                  {c === 'all' ? 'All countries' : c}
-                </button>
-              ))}
-            </div>
+          <Stats rows={all} />
+
+          {featured.length > 0 && (
+            <section className="mb-10">
+              <h2 className="mb-3 font-display text-xl font-semibold text-ink-900">Featured programmes</h2>
+              <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 xl:grid-cols-3">
+                {featured.map((p) => (
+                  <FeaturedCard key={p.slug} p={p} />
+                ))}
+              </div>
+            </section>
           )}
 
-          <div className="space-y-8">
-            {byCountry.map((g) => (
-              <section key={g.country}>
-                <h2 className="mb-3 font-display text-xl font-semibold text-ink-900">{g.country}</h2>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {g.items.map((p) => (
-                    <Link
-                      key={p.slug}
-                      to="/study-abroad/$slug"
-                      params={{ slug: p.slug }}
-                      className="lift group flex h-full flex-col rounded-2xl border border-ink-900/[0.08] bg-white p-5"
+          <section>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-display text-xl font-semibold text-ink-900">All programmes</h2>
+              {countries.length > 1 && (
+                <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Country">
+                  {[['all', null] as const, ...countries].map(([c, code]) => (
+                    <button
+                      key={c}
+                      type="button"
+                      role="tab"
+                      aria-selected={country === c}
+                      onClick={() => setCountry(c)}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${country === c ? 'bg-ink-900 text-white' : 'bg-white text-ink-700 ring-1 ring-ink-900/[0.08] hover:bg-ink-50'}`}
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
-                          <GraduationCap size={18} />
-                        </span>
-                        {p.my_status ? (
-                          <Badge tone={APPLICATION_STATUS[p.my_status].tone}>{APPLICATION_STATUS[p.my_status].label}</Badge>
-                        ) : p.status === 'closed' ? (
-                          <Badge tone="neutral">Closed</Badge>
-                        ) : (
-                          <Badge tone="success">Open</Badge>
-                        )}
-                      </div>
-                      <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                        {[p.field, p.country].filter(Boolean).join(' · ')}
-                      </p>
-                      <h3 className="mt-0.5 font-display text-lg font-semibold text-ink-900">{p.title}</h3>
-                      {p.summary && <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-ink-600">{p.summary}</p>}
-                      <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-500">
-                        {p.duration && (
-                          <span className="inline-flex items-center gap-1">
-                            <Clock size={12} /> {p.duration}
-                          </span>
-                        )}
-                        {p.language && (
-                          <span className="inline-flex items-center gap-1">
-                            <Languages size={12} /> {p.language}
-                          </span>
-                        )}
-                        {p.apply_by && (
-                          <span className="inline-flex items-center gap-1">
-                            <CalendarDays size={12} /> Apply by {dateText(p.apply_by)}
-                          </span>
-                        )}
-                      </p>
-                      <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-brand-700">
-                        See the details <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-                      </span>
-                    </Link>
+                      {code && <Flag code={code} className="h-3 w-[18px]" />}
+                      {c === 'all' ? 'All countries' : c}
+                    </button>
                   ))}
                 </div>
-              </section>
-            ))}
-          </div>
+              )}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {shown.map((p) => (
+                <ProgrammeCard key={p.slug} p={p} />
+              ))}
+            </div>
+          </section>
         </>
       )}
     </AppShell>

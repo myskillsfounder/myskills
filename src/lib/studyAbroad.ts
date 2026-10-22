@@ -7,11 +7,26 @@ import { supabase } from './supabase'
 export type StudyStatus = 'draft' | 'open' | 'closed'
 export type ApplicationStatus = 'applied' | 'in_review' | 'shortlisted' | 'offered' | 'enrolled' | 'not_selected' | 'withdrawn'
 
+export type StudyTheme = 'violet' | 'orange' | 'teal' | 'pink' | 'blue' | 'amber'
+
 export interface StudyProgramme {
   id: string
   slug: string
   title: string
   country: string
+  /** Two letters, for the flag (docs/supabase-study-abroad-v2.sql). */
+  country_code?: string | null
+  /** The partner university. */
+  university?: string | null
+  /** Short chips on the card. */
+  tags?: string[]
+  /** An optional ribbon: "Most popular", "New". */
+  badge?: string | null
+  /** One line at the foot of the card: "Low fees". */
+  highlight?: string | null
+  /** Shown large at the top. */
+  featured?: boolean
+  theme?: StudyTheme
   field: string | null
   level: string | null
   summary: string | null

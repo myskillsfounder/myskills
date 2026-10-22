@@ -13,9 +13,11 @@ import {
   type AdminStudyProgramme,
   type ApplicationStatus,
   type StudyProgrammeDraft,
+  type StudyTheme,
 } from '@/lib/studyAbroad'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Markdown } from '@/components/admin/programme/Markdown'
+import { FeaturedCard, ProgrammeCard, THEMES } from '@/components/studyAbroad/Cards'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
 // Admissions: study-abroad programmes by country, and the students applying
@@ -39,6 +41,7 @@ const TEAM_STEPS: Exclude<ApplicationStatus, 'withdrawn'>[] = ['applied', 'in_re
 const blank = (): StudyProgrammeDraft => ({
   id: null, slug: '', title: '', country: '', field: '', level: '', summary: '', details: '',
   duration: '', language: '', intake: '', fees: '', apply_by: null, status: 'draft',
+  university: '', country_code: '', tags: [], badge: '', highlight: '', featured: false, theme: 'violet',
 })
 
 function Input({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
@@ -97,7 +100,9 @@ function ProgrammeEditor({ start, onSaved, onCancel }: { start: StudyProgrammeDr
           />
           <span className="mt-1 block text-xs font-normal text-ink-500">myskills.org.in/study-abroad/{p.slug || '…'}</span>
         </label>
-        <Input label="Country" value={p.country} onChange={(v) => put('country', v)} placeholder="Italy" />
+        <Input label="Country" value={p.country} onChange={(v) => put('country', v)} placeholder="Albania" />
+        <Input label="Country code (2 letters, for the flag)" value={p.country_code ?? ''} onChange={(v) => put('country_code', v.toLowerCase().replace(/[^a-z]/g, '').slice(0, 2))} placeholder="al" />
+        <Input label="University" value={p.university ?? ''} onChange={(v) => put('university', v)} placeholder="Our Lady of Good Counsel University, Tirana" />
         <Input label="Subject" value={p.field ?? ''} onChange={(v) => put('field', v)} placeholder="Nursing" />
         <Input label="Level" value={p.level ?? ''} onChange={(v) => put('level', v)} placeholder="Bachelor’s degree" />
         <Input label="Duration" value={p.duration ?? ''} onChange={(v) => put('duration', v)} placeholder="3 years" />
@@ -105,6 +110,27 @@ function ProgrammeEditor({ start, onSaved, onCancel }: { start: StudyProgrammeDr
         <Input label="Starts" value={p.intake ?? ''} onChange={(v) => put('intake', v)} placeholder="September each year" />
         <Input label="Fees" value={p.fees ?? ''} onChange={(v) => put('fees', v)} placeholder="About €2,000 a year" />
         <Input label="Apply by (optional)" type="date" value={p.apply_by ?? ''} onChange={(v) => put('apply_by', v || null)} />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Input label="Chips (comma-separated)" value={(p.tags ?? []).join(', ')} onChange={(v) => put('tags', v.split(',').map((x) => x.trimStart()))} placeholder="Italian medium, Joint degree" />
+        <Input label="Ribbon (optional)" value={p.badge ?? ''} onChange={(v) => put('badge', v)} placeholder="Most popular" />
+        <Input label="Card footer line (optional)" value={p.highlight ?? ''} onChange={(v) => put('highlight', v)} placeholder="Low fees" />
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
+        <span className="text-sm font-medium text-ink-800">Colour</span>
+        {(Object.keys(THEMES) as StudyTheme[]).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => put('theme', t)}
+            aria-label={t}
+            className={`h-7 w-7 rounded-full border-2 bg-gradient-to-br ${THEMES[t].disc} ${p.theme === t ? 'border-ink-900' : 'border-white shadow'}`}
+          />
+        ))}
+        <label className="flex items-center gap-2 text-sm text-ink-700">
+          <input type="checkbox" checked={Boolean(p.featured)} onChange={(e) => put('featured', e.target.checked)} className="h-4 w-4 accent-brand-600" />
+          Featured (large, at the top)
+        </label>
       </div>
       <label className="block text-sm font-medium text-ink-800">
         Summary (on the card)
@@ -144,6 +170,17 @@ function ProgrammeEditor({ start, onSaved, onCancel }: { start: StudyProgrammeDr
             <span className="block text-xs opacity-80">{PROGRAMME_STATUS[s].hint}</span>
           </button>
         ))}
+      </div>
+      <div>
+        <p className="mb-2 text-sm font-medium text-ink-800">How the cards look</p>
+        <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,22rem)_minmax(0,16rem)]">
+          <div className="pointer-events-none">
+            <FeaturedCard p={{ ...p, id: p.id ?? 'new', tags: (p.tags ?? []).filter(Boolean) }} />
+          </div>
+          <div className="pointer-events-none">
+            <ProgrammeCard p={{ ...p, id: p.id ?? 'new', tags: (p.tags ?? []).filter(Boolean) }} />
+          </div>
+        </div>
       </div>
       {error && <p className="text-sm text-red-700">{error}</p>}
       <div className="flex gap-2">
