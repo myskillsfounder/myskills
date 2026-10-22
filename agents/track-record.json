@@ -27,6 +27,57 @@
         "rulesBroken": {}
       },
       "note": "Seeded from ai-powered-data-analytics-review.md: the first draft's right answer was the longest in 45 of 55; hours said 50 against 9 of modules. Its review lessons became playbook rules 1-8. No per-finding counts were kept, so the first numbers are partial."
+    },
+    {
+      "date": "2026-10-22",
+      "programme": "digital-marketing",
+      "job": "health",
+      "rounds": 1,
+      "lessonsAdded": 4,
+      "first": {
+        "stage": "v1 published (baseline)",
+        "questions": 135,
+        "mustPer10": 1.6,
+        "shouldPer10": 2.1,
+        "rightIsLongestPct": 78.5,
+        "verdict": "needs_work",
+        "byCategory": {
+          "question-design": 12,
+          "house-style": 1,
+          "accuracy": 10,
+          "aptitude": 1,
+          "project": 1,
+          "time": 1,
+          "teaching": 2
+        },
+        "rulesBroken": {
+          "1": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 2,
+          "8": 1
+        }
+      },
+      "last": {
+        "stage": "health round 1 (review 2), with the new rule-9 check",
+        "questions": 135,
+        "mustPer10": 0,
+        "shouldPer10": 1.2,
+        "rightIsLongestPct": 3,
+        "verdict": "ready",
+        "byCategory": {
+          "question-design": 8,
+          "accuracy": 4,
+          "aptitude": 1,
+          "teaching": 1
+        },
+        "rulesBroken": {
+          "5": 1,
+          "8": 1
+        }
+      },
+      "note": "First scored job. 19 approved proposals (18 routine + reduced CI-12), 1 repair round (ANA-S002 key on the wrong option after a rewrite), examiner verdict ready with 14 should-fix. The examiner found a new giveaway (absolute words), now playbook rule 9 and an automatic check."
     }
   ],
   "outcomes": []

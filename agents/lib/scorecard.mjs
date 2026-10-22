@@ -132,10 +132,15 @@ export function compare(prev, now) {
     const better = betterIsLower ? b < a : b > a
     out.push(`${better ? 'better' : 'worse'}: ${label} ${a}${unit} → ${b}${unit}`)
   }
-  move('must-fix per 10 questions', prev.mustPer10, now.mustPer10)
-  move('should-fix per 10 questions', prev.shouldPer10, now.shouldPer10)
+  // Per-10 counts include the review's findings, so they only compare when
+  // both rows had a review; otherwise compare the automatic checks alone.
+  if (Boolean(prev.review) === Boolean(now.review)) {
+    move('must-fix per 10 questions', prev.mustPer10, now.mustPer10)
+    move('should-fix per 10 questions', prev.shouldPer10, now.shouldPer10)
+  } else out.push(`not compared: per-10 counts (only one of the two rows has a review)`)
   move('right answer is the longest', prev.rightIsLongestPct, now.rightIsLongestPct, true, '%')
   move('automatic must-fix', prev.auto?.must, now.auto?.must)
+  move('automatic should-fix', prev.auto?.should, now.auto?.should)
   move('review must-fix', prev.review?.must, now.review?.must)
   for (const k of ['whyWrong', 'learningOutcome', 'topic']) move(`questions with ${k}`, prev.complete?.[k], now.complete?.[k], false, '%')
   move('healthy questions (students)', prev.learners?.healthyPct, now.learners?.healthyPct, false, '%')

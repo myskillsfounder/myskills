@@ -119,6 +119,27 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
     }
   }
 
+  // Absolute words (playbook rule 9): when they sit only in wrong options, a
+  // guesser who avoids them beats chance.
+  const ABSOLUTE = /\b(all|every|always|never|only|whole|entire|entirely|equally|completely|everything|everyone|none)\b/i
+  let absRight = 0
+  let absWrong = 0
+  let wrongTotal = 0
+  for (const q of qs) {
+    q.options.forEach((o, i) => {
+      if (i === q.correct_index) absRight += ABSOLUTE.test(o) ? 1 : 0
+      else {
+        wrongTotal++
+        absWrong += ABSOLUTE.test(o) ? 1 : 0
+      }
+    })
+  }
+  const rightRate = qs.length ? absRight / qs.length : 0
+  const wrongRate = wrongTotal ? absWrong / wrongTotal : 0
+  if (qs.length >= 8 && wrongRate > 0.15 && wrongRate >= rightRate * 2) {
+    out.push(finding('programme', 'should_fix', `Absolute words (all, every, only, always, never…) are in ${absWrong} of ${wrongTotal} wrong options but ${absRight} of ${qs.length} right answers, so avoiding them beats chance.`, 'Reword wrong options without absolutes (wrong for a reason in the case), and word a right answer as an absolute where the right action really is one.'))
+  }
+
   for (const q of allQuestions(c)) {
     const opts = (q.options ?? []).map((o) => o.trim().toLowerCase())
     if (new Set(opts).size !== opts.length) flag(q, 'same')
@@ -151,6 +172,11 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
   const hours = c.overview?.hours ?? 0
   if ((c.modules ?? []).length && (hours < Math.round(mins / 60) || hours > Math.round(mins / 60) + 60)) {
     out.push(finding('overview', 'should_fix', `The overview says ${hours} hours, but the modules add up to ${(mins / 60).toFixed(1)} hours (plus the project).`, 'Make the hours the module time plus the project and final test.'))
+  }
+  // Playbook rule 3, broken in the first two programmes: the project can't
+  // plausibly hold three quarters of the time.
+  else if ((c.modules ?? []).length && hours > 0 && mins / 60 < hours * 0.25) {
+    out.push(finding('overview', 'should_fix', `The overview says ${hours} hours, but the modules add up to only ${(mins / 60).toFixed(1)}, so the project and final test would have to take over three quarters of the time.`, 'Lower the hours to what the modules, project and final really take, or give the modules more to do.'))
   }
   for (const m of c.modules ?? []) {
     if ((m.tasks?.length ?? 0) >= 2 && m.minutes < 45) out.push(finding(`module:${m.id}`, 'should_fix', `“${m.title}” has ${m.tasks.length} hands-on tasks in ${m.minutes} minutes.`, 'Give it a realistic time.'))

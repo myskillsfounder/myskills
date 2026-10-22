@@ -34,7 +34,7 @@ Never, from here:
 3. Read the research brief (`<file without .json>.research.md`) if there is one. Its common beginner mistakes are your best wrong options.
 4. Read the shape in `src/lib/programmeEngine.ts` (`Question`, `ProgrammeContent`) and the complete example `docs/programmes/Data analytics/ai-powered-data-analytics.json`.
 5. Read the whole programme, teaching included, before you write a single question.
-6. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
+6. Run `node agents/track.mjs report`. Its "PLAYBOOK RULES BROKEN IN THE AGENTS’ OWN WORK" and "WHAT FIRST REVIEWS FIND MOST" are the team's known weak spots. Before you hand back, check your own work against each one, and say in your reply what you checked.
 
 ## 3. The MySkills framework, mapped to what the engine stores
 Use several kinds of evidence, not only multiple choice. The engine stores some kinds and not others yet; the blueprint holds the rest. Never invent fields in the JSON: the editor and Publish reject the file.

@@ -61,3 +61,20 @@ test('compare says what got better and which rules are still broken', () => {
   assert.ok(lines.some((l) => l.startsWith('better: must-fix')))
   assert.ok(lines.some((l) => l.startsWith('still broken: playbook rule 1')))
 })
+
+test('hours mostly outside the modules are flagged (playbook rule 3)', async () => {
+  const { qualityFindings } = await import('../lib/checks.mjs')
+  const c = programme([q('q1', ['aaaa', 'bbbb', 'cccc', 'dddd'], 0)])
+  c.overview.hours = 40
+  assert.ok(qualityFindings(c, { locked: true }).some((f) => f.target === 'overview' && /three quarters/.test(f.problem)))
+  c.overview.hours = 3
+  assert.ok(!qualityFindings(c, { locked: true }).some((f) => /three quarters/.test(f.problem)))
+})
+
+test('absolute words only in wrong options are flagged (playbook rule 9)', async () => {
+  const { qualityFindings } = await import('../lib/checks.mjs')
+  const qs = Array.from({ length: 8 }, (_, i) => q(`q${i}`, ['check the landing page', 'pause every campaign', 'only use Meta', 'always raise the budget'], 0))
+  assert.ok(qualityFindings(programme(qs), { locked: true }).some((f) => /Absolute words/.test(f.problem)))
+  const fair = Array.from({ length: 8 }, (_, i) => q(`q${i}`, ['check the landing page', 'pause the campaign', 'use Meta', 'raise the budget'], 0))
+  assert.ok(!qualityFindings(programme(fair), { locked: true }).some((f) => /Absolute words/.test(f.problem)))
+})

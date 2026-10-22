@@ -102,15 +102,19 @@ if (cmd === 'add') {
   if (drafts.length < 2) lines.push(`  ${drafts.length} draft(s) so far: a trend needs at least two.`)
   for (const j of drafts) lines.push(`  ${j.date}  ${j.programme}: ${show(j.first?.mustPer10)} must-fix per 10 questions, right answer longest ${show(j.first?.rightIsLongestPct)}%, ready after ${j.rounds} round(s)`)
 
-  // Rules broken at a job's first review although they were already in the
-  // playbook: the rule isn't working.
+  // Rules broken in the agents' own work although they were already in the
+  // playbook: the rule isn't working. The agents' work is a new draft at its
+  // first review, and whatever any job leaves broken at its last review (an
+  // improve or health job starts from content someone else wrote).
   const repeats = {}
   for (const j of jobs) {
-    for (const [r, n] of Object.entries(j.first?.rulesBroken ?? {})) {
+    const own = { ...(j.job === 'draft' ? j.first?.rulesBroken : {}) }
+    for (const [r, n] of Object.entries(j.last?.rulesBroken ?? {})) own[r] = Math.max(own[r] ?? 0, n)
+    for (const [r, n] of Object.entries(own)) {
       if (rules[r] && rules[r].date < j.date) (repeats[r] ??= []).push(`${j.programme} ${j.date} (${n})`)
     }
   }
-  lines.push('', 'PLAYBOOK RULES BROKEN AFTER THEY WERE WRITTEN')
+  lines.push('', 'PLAYBOOK RULES BROKEN IN THE AGENTS’ OWN WORK AFTER THEY WERE WRITTEN')
   const rep = Object.entries(repeats).sort((a, b) => b[1].length - a[1].length)
   if (!rep.length) lines.push('  None yet.')
   for (const [r, where] of rep) {
@@ -120,7 +124,7 @@ if (cmd === 'add') {
 
   const cats = {}
   for (const j of jobs) for (const [c, n] of Object.entries(j.first?.byCategory ?? {})) cats[c] = (cats[c] ?? 0) + n
-  lines.push('', 'WHAT FIRST REVIEWS FIND MOST (all jobs)')
+  lines.push('', 'WHAT FIRST REVIEWS FIND MOST (all jobs; for improve and health jobs this is the old content)')
   if (!Object.keys(cats).length) lines.push('  No tagged findings yet.')
   for (const [c, n] of Object.entries(cats).sort((a, b) => b[1] - a[1])) lines.push(`  ${c}: ${n}`)
 
