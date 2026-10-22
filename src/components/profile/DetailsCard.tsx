@@ -88,6 +88,7 @@ export function DetailsCard({
   profile,
   save,
   verified,
+  changed = false,
   request,
   canRequest,
   onChange,
@@ -95,6 +96,8 @@ export function DetailsCard({
   profile: Profile
   save: (patch: ProfilePatch) => Promise<Profile>
   verified: boolean
+  /** Verified once, but the name or date of birth has changed since. */
+  changed?: boolean
   request: VerificationRequest | null
   /** Verification opens after the first aptitude test. */
   canRequest: boolean
@@ -170,7 +173,7 @@ export function DetailsCard({
             </span>
             <div className="min-w-0">
               <p className="font-display text-lg font-semibold leading-tight text-ink-900">
-                {verified ? 'Verified by MySkills' : scheduled ? 'Your call is booked' : requested ? 'Request received' : 'Get your verified tick'}
+                {verified ? 'Verified by MySkills' : scheduled ? 'Your call is booked' : requested ? 'Request received' : changed ? 'Changed since verified' : 'Get your verified tick'}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-ink-600">
                 {verified
@@ -179,7 +182,9 @@ export function DetailsCard({
                     ? 'Have a government photo ID ready.'
                     : requested
                       ? 'We’ll email you a call time soon.'
-                      : 'Employers trust profiles a person has checked. A 15-minute video call confirms your name and date of birth.'}
+                      : changed
+                        ? 'Your name or date of birth changed after MySkills verified it, so the tick is paused. A short re-check call brings it back.'
+                        : 'Employers trust profiles a person has checked. A 15-minute video call confirms your name and date of birth.'}
               </p>
             </div>
           </div>
@@ -215,7 +220,7 @@ export function DetailsCard({
                 >
                   {complete ? (
                     <>
-                      <Video size={15} /> Book my verification call
+                      <Video size={15} /> {changed ? 'Book a re-check' : 'Book my verification call'}
                     </>
                   ) : (
                     'Add your details first'
