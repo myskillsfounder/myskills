@@ -113,6 +113,13 @@ export function AssessmentQuiz({
         if (answers[i] !== null) byId[question.id] = answers[i] as number
       })
       const graded = await onSubmit(byId)
+      // A benchmark has no answers to review (the same questions come back
+      // on the next attempt): the page shows what to practise instead.
+      if (graded.kind === 'benchmark') {
+        clearDraft()
+        onContinue(graded)
+        return
+      }
       setResult(graded)
       setPhase('result')
       // Only after grading is safely persisted — if it throws, the draft is

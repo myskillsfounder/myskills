@@ -194,6 +194,8 @@ export async function getAccessToken(): Promise<string | null> {
 export interface OnboardingProfile {
   career_stage: string
   goals: string[]
+  /** New to their starting programme, or already experienced in it. */
+  start_level?: 'beginner' | 'experienced'
 }
 
 /** Persist the onboarding profile and mark the user onboarded (stored in

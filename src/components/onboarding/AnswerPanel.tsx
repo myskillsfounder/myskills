@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ArrowRight, Sparkles } from 'lucide-react'
-import { START_LABEL, type Plan, type StartKey } from '@/lib/onboardingContent'
+import type { Plan } from '@/lib/onboardingContent'
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -22,7 +22,8 @@ export function AnswerPanel({
 }: {
   plan: Plan
   busy: boolean
-  onPick: (start: StartKey) => void
+  /** Where the chosen button leads. */
+  onPick: (to: string) => void
   onSkip: () => void
 }) {
   const still = prefersReducedMotion()
@@ -116,19 +117,19 @@ export function AnswerPanel({
         <button
           type="button"
           disabled={busy}
-          onClick={() => onPick(plan.start)}
+          onClick={() => onPick(plan.primary.to)}
           className="press inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {busy ? 'Saving…' : `Start the ${START_LABEL[plan.start]}`}
+          {busy ? 'Saving…' : plan.primary.label}
           <ArrowRight size={17} />
         </button>
         <button
           type="button"
           disabled={busy}
-          onClick={() => onPick(plan.other)}
+          onClick={() => onPick(plan.secondary.to)}
           className="press inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Take the {START_LABEL[plan.other]} instead
+          {plan.secondary.label}
         </button>
         <button
           type="button"

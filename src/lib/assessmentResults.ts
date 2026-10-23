@@ -38,6 +38,10 @@ export interface QuizGradeResult {
    *  after grading — see grade_initial_assessment in
    *  docs/supabase-server-side-grading.sql. */
   review: Record<string, { correctIndex: number; explanation: string }>
+  /** 'benchmark': an experienced student's first attempt under 60%: no
+   *  certificate, no score, and no answers shown (the same questions come
+   *  back). Missing before docs/supabase-foundation-certificates.sql. */
+  kind?: 'benchmark' | 'certificate'
 }
 
 export interface AssessmentResult {
@@ -180,6 +184,8 @@ export function useInitialAssessment() {
   }, [])
 
   const commit = useCallback((graded: QuizGradeResult) => {
+    // A benchmark isn't a result: the assessment is still to be taken.
+    if (graded.kind === 'benchmark') return
     const updated: AssessmentResult = {
       overall: {
         correct: graded.correct,

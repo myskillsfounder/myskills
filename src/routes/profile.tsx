@@ -138,7 +138,8 @@ function ProfilePage() {
   const records = useRecords()
   const [certificates, setCertificates] = useState(0)
   useEffect(() => {
-    fetchMyCertificate().then((c) => setCertificates(c ? 1 : 0), () => {})
+    // Every programme's Foundation certificate counts.
+    fetchMyCertificates().then((c) => setCertificates(c.length), () => {})
   }, [])
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
   const router = useRouter()
