@@ -30,9 +30,27 @@ const STEPS = [
  * assessment their goal points to; the other is one link away, and the
  * objective card beside it offers both.
  */
-export function FirstRunPath({ name, goal }: { name: string; goal?: string }) {
+export function FirstRunPath({ name, goal, level }: { name: string; goal?: string; level?: 'beginner' | 'experienced' }) {
   const suggested: StartKey = resolveGoal(goal)?.lean ?? 'personal'
   const other: StartKey = suggested === 'marketing' ? 'personal' : 'marketing'
+  // Experienced in Digital Marketing: the Foundation assessment is the first
+  // step (the benchmark); the aptitude test stays one link away.
+  const benchmarkFirst = level === 'experienced' && suggested === 'marketing'
+  const steps = benchmarkFirst
+    ? [
+        {
+          title: 'Take the Foundation assessment',
+          body: 'The benchmark for Digital Marketing. 60% or more earns your certificate now; below that, it shows what to practise.',
+        },
+        ...STEPS.slice(1),
+      ]
+    : STEPS
+  const first = benchmarkFirst
+    ? { to: '/foundation-assessment', label: 'Take the Foundation assessment' }
+    : { to: ASSESSMENT_ROUTE[suggested], label: `Start the ${START_LABEL[suggested]}` }
+  const second = benchmarkFirst
+    ? { to: ASSESSMENT_ROUTE.marketing, label: `or start with the ${START_LABEL.marketing}` }
+    : { to: ASSESSMENT_ROUTE[other], label: `or take the ${START_LABEL[other]}` }
   return (
     <section className="surface-wood-dark rise-in relative h-full overflow-hidden rounded-2xl p-6 shadow-e2 sm:p-8">
       <GridBackdrop mask="ellipse 70% 60% at 85% 10%" />
@@ -58,9 +76,9 @@ export function FirstRunPath({ name, goal }: { name: string; goal?: string }) {
         )}
 
         <ol className="mt-6">
-          {STEPS.map((s, i) => {
+          {steps.map((s, i) => {
             const current = i === 0
-            const last = i === STEPS.length - 1
+            const last = i === steps.length - 1
             return (
               <li key={s.title} className="relative flex gap-4 pb-6 last:pb-0">
                 {!last && <span aria-hidden className="absolute left-[15px] top-9 h-[calc(100%-2.25rem)] w-px bg-white/15" />}
@@ -80,17 +98,17 @@ export function FirstRunPath({ name, goal }: { name: string; goal?: string }) {
                   {current && (
                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
                       <Link
-                        to={ASSESSMENT_ROUTE[suggested]}
+                        to={first.to}
                         className="press inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
                       >
-                        Start the {START_LABEL[suggested]}
+                        {first.label}
                         <ArrowRight size={15} />
                       </Link>
                       <Link
-                        to={ASSESSMENT_ROUTE[other]}
+                        to={second.to}
                         className="py-2 text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
                       >
-                        or take the {START_LABEL[other]}
+                        {second.label}
                       </Link>
                     </div>
                   )}

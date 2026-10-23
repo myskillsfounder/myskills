@@ -190,6 +190,23 @@ export const focusStep = {
   ] as SentenceOption[],
 }
 
+/** How much they know already. Experienced students of Digital Marketing
+ *  start with the Foundation assessment (the benchmark); everyone else with
+ *  the aptitude test. */
+export const levelStep = {
+  title: 'How much do you already know?',
+  options: [
+    { id: 'beginner', label: 'New to it', description: 'Start from the basics.', chip: 'new to it' },
+    { id: 'experienced', label: 'Already experienced', description: 'I’ve studied it or worked with it.', chip: 'already experienced' },
+  ] as SentenceOption[],
+}
+
+/** The programme each starting point opens (the slug its path is kept under). */
+export const START_PROGRAMME: Record<StartKey, string> = {
+  marketing: 'digital-marketing',
+  personal: 'global-leadership',
+}
+
 /** Where each assessment lives. */
 export const ASSESSMENT_ROUTE: Record<StartKey, '/aptitude-assessment' | '/career-readiness-assessment'> = {
   marketing: '/aptitude-assessment',
@@ -212,7 +229,28 @@ export interface Plan {
   headline: string
   /** Three steps, in order. */
   steps: { title: string; body: string }[]
+  /** New to it, or already experienced. */
+  level: 'beginner' | 'experienced'
+  /** The first step's button, and the alternative. */
+  primary: { label: string; to: string }
+  secondary: { label: string; to: string }
 }
+
+// An experienced start in Digital Marketing: the Foundation assessment first.
+const EXPERIENCED_MARKETING: Plan['steps'] = [
+  {
+    title: 'Take the Foundation assessment',
+    body: 'The benchmark for Digital Marketing. 60% or more earns your certificate now; below that, it shows exactly what to practise.',
+  },
+  {
+    title: 'Practise what you haven’t shown yet',
+    body: 'Real scenarios with an AI coach in the tracks you need; the ones you’ve already shown are marked as done.',
+  },
+  {
+    title: 'Work with a mentor',
+    body: 'Ask a mentor to work with you. They see your results, run sessions and award skill badges when you’ve earned them.',
+  },
+]
 
 const STEPS: Record<StartKey, Plan['steps']> = {
   marketing: [
@@ -250,7 +288,7 @@ const STEPS: Record<StartKey, Plan['steps']> = {
  * to start with; "not sure" lets the goal decide. Deterministic on purpose —
  * the same three choices always give the same plan.
  */
-export function planFor(stageId: string, goalId: string, focusId: string): Plan {
+export function planFor(stageId: string, goalId: string, focusId: string, levelId = 'beginner'): Plan {
   const stage = careerStageStep.options.find((o) => o.id === stageId)
   const goal = goalStep.options.find((o) => o.id === goalId)
   const focus = focusStep.options.find((o) => o.id === focusId)
@@ -259,11 +297,25 @@ export function planFor(stageId: string, goalId: string, focusId: string): Plan 
   const other: StartKey = start === 'marketing' ? 'personal' : 'marketing'
 
   const because = focusId === 'marketing' || focusId === 'personal' ? '' : ' — it’s the closest fit to your goal'
+  const level = levelStep.options.find((o) => o.id === levelId)
+  const experienced = levelId === 'experienced'
+  // Global Leadership's Foundation questions aren't written yet, so an
+  // experienced start there still begins with its aptitude test.
+  const benchmarkFirst = experienced && start === 'marketing'
   return {
     start,
     other,
-    basedOn: [stage?.label, goal?.label, focus?.label].filter((x): x is string => Boolean(x)),
-    headline: `As ${stage?.who ?? 'you'}, working to ${goal?.you ?? 'reach your goal'}, I’d start with the ${START_LABEL[start]}${because}.`,
-    steps: STEPS[start],
+    basedOn: [stage?.label, goal?.label, focus?.label, level?.label].filter((x): x is string => Boolean(x)),
+    headline: benchmarkFirst
+      ? `As ${stage?.who ?? 'you'} who already knows some digital marketing, working to ${goal?.you ?? 'reach your goal'}, I’d start with the Foundation assessment: it shows what you know and what to practise${because}.`
+      : `As ${stage?.who ?? 'you'}, working to ${goal?.you ?? 'reach your goal'}, I’d start with the ${START_LABEL[start]}${because}.`,
+    steps: benchmarkFirst ? EXPERIENCED_MARKETING : STEPS[start],
+    level: experienced ? 'experienced' : 'beginner',
+    primary: benchmarkFirst
+      ? { label: 'Take the Foundation assessment', to: '/foundation-assessment' }
+      : { label: `Start the ${START_LABEL[start]}`, to: ASSESSMENT_ROUTE[start] },
+    secondary: benchmarkFirst
+      ? { label: `Start with the ${START_LABEL.marketing} instead`, to: ASSESSMENT_ROUTE.marketing }
+      : { label: `Take the ${START_LABEL[other]} instead`, to: ASSESSMENT_ROUTE[other] },
   }
 }

@@ -187,7 +187,7 @@ function ProgrammesPage() {
               <ClipboardList size={18} className="mt-0.5 shrink-0 text-brand-700" />
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold text-ink-900">Foundation and practice question sets</span>
-                <span className="block text-xs text-ink-500">The Foundation assessment (edited here as Digital Marketing’s final) and extra practice sets</span>
+                <span className="block text-xs text-ink-500">The Foundation assessment (edited in Digital Marketing’s Foundation assessment tab) and extra practice sets</span>
               </span>
               <ArrowRight size={16} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5" />
             </Link>

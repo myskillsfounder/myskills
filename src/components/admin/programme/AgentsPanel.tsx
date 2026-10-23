@@ -340,7 +340,7 @@ export function AgentsPanel({
               placeholder={
                 draft
                   ? 'For example: for final-year commerce and BCA students; job-ready for junior analyst roles; Excel, SQL, Power BI and Python; 30 to 40 hours.'
-                  : 'For example: check the tools are current for 2026; make module 7 more hands-on; harder final questions.'
+                  : 'For example: check the tools are current for 2026; make module 7 more hands-on; clearer Foundation questions.'
               }
             />
           </label>

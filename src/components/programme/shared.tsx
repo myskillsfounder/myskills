@@ -4,6 +4,7 @@ import { ArrowLeft, Check, Eye, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { fetchMyProgramme, type MyProgramme, type QuizResult } from '@/lib/programmeStudent'
 import type { Question } from '@/lib/programmeEngine'
+import { tierForPercent } from '@/lib/certificates'
 import { AppShell } from '@/components/app/AppShell'
 import { Alert, Button, Skeleton } from '@/components/ui'
 
@@ -49,7 +50,12 @@ export function ProgrammeFrame({
   return (
     <AppShell wide>
       <div className="mx-auto max-w-3xl">
-        {back === 'catalogue' ? (
+        {p?.source === 'built-in' ? (
+          // A built-in programme (Global Leadership) is taken on /practice.
+          <Link to="/practice" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
+            <ArrowLeft size={16} /> {p.title}
+          </Link>
+        ) : back === 'catalogue' ? (
           <Link to="/programmes" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
             <ArrowLeft size={16} /> Programmes
           </Link>
@@ -120,19 +126,25 @@ function CaseDetails({ q }: { q: Question }) {
 
 /**
  * A set of multiple-choice questions: answer all, submit, then see what was
- * right and why. Used for module quizzes and the final assessment.
+ * right and why. Used for module quizzes (passed at `passPercent`) and the
+ * Foundation assessment (`banded`: no pass mark, the score's certificate band
+ * instead, with `resultNote` under it).
  */
 export function QuizRunner({
   questions,
   onSubmit,
-  passPercent,
+  passPercent = 0,
+  banded = false,
+  resultNote,
   submitLabel = 'Submit answers',
   onDone,
   doneLabel,
 }: {
   questions: Question[]
   onSubmit: (answers: Record<string, number>) => Promise<QuizResult>
-  passPercent: number
+  passPercent?: number
+  banded?: boolean
+  resultNote?: (r: QuizResult) => ReactNode
   submitLabel?: string
   onDone?: () => void
   doneLabel?: string
@@ -157,15 +169,26 @@ export function QuizRunner({
   }
 
   const passed = result ? result.grade.percent >= passPercent : false
+  const tier = result && banded ? tierForPercent(result.grade.percent) : null
+  const tone = tier
+    ? { box: `border ${tier.ui.border} ${tier.ui.bg}`, text: tier.ui.textStrong }
+    : passed
+      ? { box: 'bg-emerald-50', text: 'text-emerald-800' }
+      : { box: 'bg-amber-50', text: 'text-amber-800' }
   return (
     <div className="space-y-4">
       {result && (
-        <div className={`rounded-2xl p-5 ${passed ? 'bg-emerald-50' : 'bg-amber-50'}`}>
-          <p className={`font-display text-3xl font-semibold ${passed ? 'text-emerald-800' : 'text-amber-800'}`}>{result.grade.percent}%</p>
+        <div className={`rounded-2xl p-5 ${tone.box}`}>
+          <p className={`font-display text-3xl font-semibold ${tone.text}`}>{result.grade.percent}%</p>
           <p className="mt-1 text-sm text-ink-700">
             {result.grade.correct} of {result.grade.total} right.{' '}
-            {passed ? 'Passed.' : `${passPercent}% passes. Read the explanations below, then try again later.`}
+            {tier
+              ? `${tier.label} band (${tier.meaning}).`
+              : passed
+                ? 'Passed.'
+                : `${passPercent}% passes. Read the explanations below, then try again later.`}
           </p>
+          {resultNote?.(result)}
           {onDone && (
             <div className="mt-3">
               <Button size="sm" onClick={onDone}>

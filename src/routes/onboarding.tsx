@@ -9,14 +9,15 @@ import { homePath } from '@/lib/device'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { peekAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
 import {
-  ASSESSMENT_ROUTE,
+  START_PROGRAMME,
   careerStageStep,
   focusStep,
   goalStep,
   goalsFor,
+  levelStep,
   planFor,
-  type StartKey,
 } from '@/lib/onboardingContent'
+import { setProgrammePath } from '@/lib/foundationPath'
 import { GOAL_ICONS } from '@/lib/goalIcons'
 import { InlineSelect } from '@/components/onboarding/InlineSelect'
 import { AnswerPanel } from '@/components/onboarding/AnswerPanel'
@@ -53,13 +54,14 @@ function OnboardingPage() {
   const [stage, setStage] = useState('')
   const [goal, setGoal] = useState('')
   const [focus, setFocus] = useState('')
+  const [level, setLevel] = useState('')
   const [asked, setAsked] = useState(false)
   const [error, setError] = useState<string>()
   const [submitting, setSubmitting] = useState(false)
   const answerRef = useRef<HTMLDivElement>(null)
 
-  const chosen = [stage, goal, focus].filter(Boolean).length
-  const complete = chosen === 3
+  const chosen = [stage, goal, focus, level].filter(Boolean).length
+  const complete = chosen === 4
 
   // A visitor who came from "Take the aptitude test" (or a programme's "start")
   // has already said where they're heading, so there's nothing to ask: the
@@ -89,7 +91,7 @@ function OnboardingPage() {
 
   function ask() {
     if (!complete) return
-    trackEvent('onboarding_ask', { stage, goal, focus })
+    trackEvent('onboarding_ask', { stage, goal, focus, level })
     if (knownDestination) {
       void finish(undefined, 'remembered')
     } else {
@@ -104,7 +106,13 @@ function OnboardingPage() {
     setSubmitting(true)
     setError(undefined)
     try {
-      const method = await completeOnboarding({ career_stage: stage, goals: goal ? [goal] : [] })
+      const startLevel = level === 'experienced' ? 'experienced' : 'beginner'
+      const method = await completeOnboarding({ career_stage: stage, goals: goal ? [goal] : [], start_level: startLevel })
+      // Their starting point in the programme they chose (beginner or
+      // experienced), kept per programme. Before the Foundation SQL is run
+      // this can't be saved; the Foundation page then asks again.
+      const plan = planFor(stage, goal, focus, level)
+      await setProgrammePath(START_PROGRAMME[plan.start], startLevel).catch(() => {})
       // Create their profile row now: the assessment they're about to take saves
       // a result that points at it. If this fails, saving the assessment retries.
       try {
@@ -127,7 +135,7 @@ function OnboardingPage() {
     router.navigate({ to: '/login' })
   }
 
-  const plan = complete ? planFor(stage, goal, focus) : null
+  const plan = complete ? planFor(stage, goal, focus, level) : null
 
   return (
     <div className="surface-wood-dark relative min-h-screen overflow-hidden">
@@ -203,13 +211,21 @@ function OnboardingPage() {
                 placeholder="a starting point"
                 label="Where you'd like to start"
               />
+              , and I’m{' '}
+              <InlineSelect
+                value={level}
+                options={levelStep.options}
+                onChange={pick(setLevel)}
+                placeholder="how much you know"
+                label="How much you already know"
+              />
               .
             </p>
 
             <div className="mt-5 flex items-center justify-between gap-4 border-t border-white/10 pt-4">
               <p className="flex items-center gap-2 font-mono text-xs text-white/50" aria-live="polite">
                 <span className="flex gap-1" aria-hidden>
-                  {[0, 1, 2].map((i) => (
+                  {[0, 1, 2, 3].map((i) => (
                     <span
                       key={i}
                       className={`h-1.5 w-5 rounded-full transition-colors duration-300 ${
@@ -218,7 +234,7 @@ function OnboardingPage() {
                     />
                   ))}
                 </span>
-                {chosen} of 3 chosen
+                {chosen} of 4 chosen
               </p>
               <button
                 type="button"
@@ -248,10 +264,10 @@ function OnboardingPage() {
           <div ref={answerRef}>
             {asked && plan && (
               <AnswerPanel
-                key={`${stage}|${goal}|${focus}`}
+                key={`${stage}|${goal}|${focus}|${level}`}
                 plan={plan}
                 busy={submitting}
-                onPick={(start: StartKey) => void finish(ASSESSMENT_ROUTE[start], start)}
+                onPick={(to: string) => void finish(to, to)}
                 onSkip={() => void finish(homePath(), 'later')}
               />
             )}

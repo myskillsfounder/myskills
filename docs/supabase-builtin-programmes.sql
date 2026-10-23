@@ -131,13 +131,45 @@ begin
 end $$;
 
 -- A programme's problems: the content's, plus the lock on a built-in one.
+-- Global Leadership's Foundation questions (`final`) are outside the lock:
+-- nothing counts them (docs/supabase-foundation-certificates.sql).
+-- Foundation questions name a real skill, and every skill with a
+-- foundation module has at least 2 (engine programmes; a warning in the
+-- editor for built-in ones). Same as in docs/supabase-foundation-certificates.sql
+-- and publishProblems() in agents/lib/checks.mjs.
+create or replace function public.programme_foundation_problems(p jsonb, p_built_in boolean) returns text[]
+language sql immutable as $$
+  select coalesce(array_agg(x order by n), '{}')
+    from (
+      select 'Foundation assessment: a question names a skill that does not exist' as x, 1 as n
+       where exists (select 1 from jsonb_array_elements(coalesce(p #> '{final,questions}', '[]')) q
+                      where coalesce(btrim(q ->> 'skill'), '') <> ''
+                        and not exists (select 1 from jsonb_array_elements(coalesce(p -> 'skills', '[]')) s where s ->> 'id' = q ->> 'skill'))
+      union all
+      select 'Foundation assessment: skill "' || s || '" needs at least 2 questions', 2
+        from (select distinct m ->> 'skill' as s
+                from jsonb_array_elements(coalesce(p -> 'modules', '[]')) m
+               -- The foundation modules (every module, when none is marked).
+               where coalesce(m ->> 'skill', '') <> ''
+                 and (m ->> 'level' = 'foundation'
+                      or not exists (select 1 from jsonb_array_elements(coalesce(p -> 'modules', '[]')) x
+                                      where x ->> 'level' = 'foundation'))) fs
+       where not p_built_in
+         and (select count(*) from jsonb_array_elements(coalesce(p #> '{final,questions}', '[]')) q where q ->> 'skill' = fs.s) < 2
+    ) t
+$$;
+
 create or replace function public.programme_problems(p_programme uuid, p_content jsonb) returns text[]
 language sql stable security definer set search_path = public as $$
   select case
-           when pr.source = 'built-in' and public.programme_structure(p_content) is distinct from pr.structure then
+           when pr.source = 'built-in'
+            and case when pr.slug = 'global-leadership'
+                     then (public.programme_structure(p_content) - 'final') is distinct from (pr.structure - 'final')
+                     else public.programme_structure(p_content) is distinct from pr.structure end then
              array[pr.title || ': modules, tasks, questions and statements can''t be added, removed or reordered yet, because students'' progress and scores count them. Change their wording instead.']
            else '{}'::text[]
          end || public.programme_content_problems(p_content)
+             || public.programme_foundation_problems(p_content, pr.source = 'built-in')
     from public.programmes pr where pr.id = p_programme
 $$;
 revoke execute on function public.programme_problems(uuid, jsonb) from public, anon, authenticated;

@@ -383,7 +383,7 @@ function DashboardPage() {
           firstRun ? (
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
               <div className="lg:col-span-2 lg:col-start-1 lg:row-span-2 lg:row-start-1">
-                <FirstRunPath name={name} goal={goals[0]} />
+                <FirstRunPath name={name} goal={goals[0]} level={user?.user_metadata?.profile?.start_level} />
               </div>
               <KeyMeasures goals={goals} streak={streak} startHere showHours={false} />
             </div>

@@ -324,16 +324,16 @@ function InitialAssessmentView({ onBack }: { onBack: () => void }) {
         subtitle="The one-time Foundation assessment, shown here for reference."
       />
 
-      {/* The Foundation assessment is Digital Marketing's final assessment in the
-          course engine now; publishing there updates these rows, so editing them
+      {/* The Foundation assessment is Digital Marketing's `final` in the course
+          engine now; publishing there updates these rows, so editing them
           here as well would be overwritten. */}
       <Alert tone="info" title="Edit these in the Course engine">
         <p>
-          The Foundation assessment is now Digital Marketing’s final assessment. Change questions, options and answers in{' '}
+          Change the Foundation assessment’s questions, options and answers in{' '}
           <Link to="/admin/programmes/$slug" params={{ slug: 'digital-marketing' }} className="font-semibold underline">
             Course engine → Digital Marketing
           </Link>{' '}
-          (Final assessment tab), then publish.
+          (Foundation assessment tab), then publish.
         </p>
       </Alert>
 
