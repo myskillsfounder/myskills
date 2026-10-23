@@ -13,7 +13,12 @@
  *         activity 25  its fourteen modules share 25 points (about 1.8 each).
  *                      Live sessions are on the record, not scored.
  *         project  15  the mentor's rubric total, 0-20, counted as 0-15
- *   40  Professional development — the Digital Marketing Programme
+ *   40  Professional development — the professional programmes (method v8):
+ *         Digital Marketing, Data Analytics and the rest. Each is worth 40 in
+ *         the shape below; with several, the score is the AVERAGE of the ones
+ *         the student has started, and each finished one is a Completed badge.
+ *         This browser copy only knows Digital Marketing; the server (docs/
+ *         supabase-score-v8.sql) counts every programme. Digital Marketing:
  *         activity 20  per track (best of the last 3 attempts): 0 below 60%,
  *                      0.25 at 60% rising to 1.25 at 100% (8 tracks = 10);
  *                      the Foundation assessment, its % / 20 (up to 5);
@@ -45,7 +50,7 @@
  */
 
 /** Bump when the rules change, so a stored score says which rules made it. */
-export const METHOD_VERSION = 'v7'
+export const METHOD_VERSION = 'v8'
 
 export const PERSONAL_MAX = 40
 export const PROFESSIONAL_MAX = 40
@@ -222,6 +227,16 @@ export interface ReadinessComponent {
   projectPoints?: number
   projectMax?: number
   projectStatus?: ProjectStatus
+  /** Method v8, Professional only: each started programme (the server's list). */
+  programmes?: ScoredProgramme[]
+}
+
+/** A professional programme's own points, as the server worked them out. */
+export interface ScoredProgramme {
+  slug: string
+  title: string
+  points: number
+  completed: boolean
 }
 
 export interface NextAction {

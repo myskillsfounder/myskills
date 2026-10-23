@@ -23,6 +23,8 @@ import { RecordsSection } from '@/components/profile/RecordsSection'
 import { BadgesRow } from '@/components/profile/BadgesRow'
 import { DetailsCard } from '@/components/profile/DetailsCard'
 import { useBlueprint, useRecords } from '@/lib/personalBlueprint'
+import { refreshMyScore } from '@/lib/scoreService'
+import type { ScoredProgramme } from '@/lib/readinessScore'
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: requireOnboarded,
@@ -141,6 +143,15 @@ function ProfilePage() {
     // Every programme's Foundation certificate counts.
     fetchMyCertificates().then((c) => setCertificates(c.length), () => {})
   }, [])
+  // Score method v8: each professional programme finished is a badge too.
+  const [completed, setCompleted] = useState<ScoredProgramme[]>([])
+  useEffect(() => {
+    if (phone) return
+    refreshMyScore().then(
+      (s) => setCompleted((s?.professional.programmes ?? []).filter((p) => p.completed)),
+      () => {},
+    )
+  }, [phone])
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
   const router = useRouter()
   async function leave() {
@@ -208,7 +219,7 @@ function ProfilePage() {
                 internships={internships.confirmed.length}
                 badges={badges.length}
               />
-              <BadgesRow badges={badges} />
+              <BadgesRow badges={badges} completed={completed} />
               <DetailsCard
                 profile={profile}
                 save={save}
