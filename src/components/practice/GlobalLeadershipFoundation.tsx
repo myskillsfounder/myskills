@@ -66,7 +66,7 @@ export function GlobalLeadershipFoundation() {
             </>
           ) : (
             <p className="mt-1 text-sm text-ink-600">
-              Opens once the foundation modules are written. Taken once, it earns your Foundation certificate.
+              Opens once you’ve completed all fourteen modules. Taken once, it earns your Foundation certificate.
             </p>
           )}
         </div>
