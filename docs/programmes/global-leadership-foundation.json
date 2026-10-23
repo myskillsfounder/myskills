@@ -1,0 +1,566 @@
+{
+  "minutes": 35,
+  "pass_percent": 60,
+  "questions": [
+    {
+      "id": "gl-f01",
+      "skill": "goal-setting",
+      "difficulty": "Beginner",
+      "topic": "Specific goals",
+      "title": "Sneha's goal",
+      "scenario": "Sneha, a final-year BCom student in Kochi, writes down her goal for the term: “Get a good job.”",
+      "question": "Which rewrite turns it into a real goal?",
+      "options": [
+        "“Work really hard this term and get a good job by the end.”",
+        "“Think every day about the job I want and how to get it.”",
+        "“Apply to 10 accounts internships by 30 November.”",
+        "“Get a better job than most of my classmates will get.”"
+      ],
+      "correct_index": 2,
+      "explanation": "A real goal says what, how you’ll measure it, and by when: 10 applications, accounts internships, by 30 November.",
+      "why_wrong": "Working hard can’t be checked; thinking about a job isn’t an action you can measure; beating classmates depends on them, not on what you do.",
+      "learning_outcome": "A goal needs a what, a measure and a date.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f02",
+      "skill": "goal-setting",
+      "difficulty": "Intermediate",
+      "topic": "Working backwards",
+      "title": "The big goal",
+      "scenario": "Arjun wants to pass his CA Foundation exam in June. It is now January, and he doesn’t know what to do on Monday.",
+      "question": "What should he do first?",
+      "options": [
+        "Work back from June into monthly milestones, then this week’s tasks",
+        "Wait until he feels motivated, then study hard for a few weeks",
+        "Buy every recommended book first, so nothing is missing later on",
+        "Study whichever subject feels easiest that day, to build momentum"
+      ],
+      "correct_index": 0,
+      "explanation": "Working backwards from the finish line gives milestones, then actions for this week. If he can’t say what he’ll do on Monday, the goal is still too big.",
+      "why_wrong": "Motivation is unreliable and leaves no plan; buying books isn’t a plan; picking the easiest subject skips the hard ones that need the most time.",
+      "learning_outcome": "Split a big goal into milestones and this week’s actions.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f03",
+      "skill": "effective-communication",
+      "difficulty": "Beginner",
+      "topic": "Lead with the point",
+      "title": "Email to the manager",
+      "scenario": "Priya needs her internship manager to approve her leave for Friday. Her manager reads dozens of emails a day.",
+      "question": "How should her email start?",
+      "options": [
+        "“I hope you are well. As you know, this has been a busy month for the team…”",
+        "“I wanted to talk to you about something important when you have a free moment.”",
+        "“Sorry to disturb you again, I know you are very busy with the new client this week.”",
+        "“Could you approve my leave this Friday, 8 March? Reasons and cover plan below.”"
+      ],
+      "correct_index": 3,
+      "explanation": "Busy readers read the first line. Putting the request and the date first means the manager can say yes without digging.",
+      "why_wrong": "A long warm-up hides the request; asking to talk later adds a step; an apology fills the first line without saying what she needs.",
+      "learning_outcome": "Put what you want first, then the reasons.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f04",
+      "skill": "effective-communication",
+      "difficulty": "Intermediate",
+      "topic": "Clear next steps",
+      "title": "Getting a reply",
+      "scenario": "Rahul sends his project group a draft presentation and wants comments before Thursday’s class.",
+      "question": "Which closing line is most likely to get the replies he needs?",
+      "options": [
+        "“Let me know your thoughts on any of the slides whenever you get a chance.”",
+        "“Could each of you check your own slides and reply by Wednesday 6 pm?”",
+        "“Feedback is welcome from everyone, as always. Thanks so much, everyone!”",
+        "“Hope the whole presentation looks good to everyone in the group.”"
+      ],
+      "correct_index": 1,
+      "explanation": "A specific next step, with who and by when, gets replies. Open-ended requests are easy to put off.",
+      "why_wrong": "“Whenever you get a chance” has no deadline; “feedback is welcome” asks nobody for anything; hoping it looks good doesn’t ask for anything at all.",
+      "learning_outcome": "End with a specific ask and a date.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f05",
+      "skill": "leadership",
+      "difficulty": "Beginner",
+      "topic": "Leading without a title",
+      "title": "The stalled fest",
+      "scenario": "Two weeks before the college fest, nobody has booked the sound system. Meera is a volunteer, not on the committee.",
+      "question": "What would leadership look like from Meera?",
+      "options": [
+        "Wait for the committee to notice, since it isn’t her role",
+        "Tell everyone the fest will fail unless someone acts soon",
+        "Offer to get three quotes by Friday and ask who wants to help",
+        "Complain to the faculty adviser that the committee is careless"
+      ],
+      "correct_index": 2,
+      "explanation": "Leadership without a title is noticing what isn’t getting done, taking it on, and making it easy for others to join.",
+      "why_wrong": "Waiting leaves the gap open; warning people without acting adds worry, not progress; complaining blames people instead of fixing the problem.",
+      "learning_outcome": "You can lead by taking on what isn’t being done.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f06",
+      "skill": "leadership",
+      "difficulty": "Intermediate",
+      "topic": "Ownership and credit",
+      "title": "After the presentation",
+      "scenario": "Karthik led his group’s client presentation. The client loved the research, which Divya did, but the budget slide, which Karthik made, had an error.",
+      "question": "What should Karthik say to the team afterwards?",
+      "options": [
+        "Thank Divya by name for the research, and own the budget mistake himself",
+        "Thank everyone in general, and not mention the budget slide again to anyone",
+        "Point out that the budget numbers came late from the finance student",
+        "Say the client was happy, so nothing else needs to be discussed"
+      ],
+      "correct_index": 0,
+      "explanation": "Name the people who did the work when it goes well; own your part first when it doesn’t. It builds trust.",
+      "why_wrong": "General thanks miss Divya’s work and hiding the error stops anyone learning; blaming someone else damages trust; ignoring the error means it can happen again.",
+      "learning_outcome": "Share the credit, own the mistakes.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f07",
+      "skill": "agile",
+      "difficulty": "Beginner",
+      "topic": "Sprints",
+      "title": "The college app",
+      "scenario": "A student team has eight weeks to build a canteen-ordering app. One member suggests planning every detail now and building it all in week eight.",
+      "question": "What is the agile way to work?",
+      "options": [
+        "Plan every detail now, so that nothing needs to change in the later weeks",
+        "Let each member build their part alone and join them at the end",
+        "Start with the hardest feature and leave testing for the last week",
+        "Build in two-week cycles, show a small working part each time, and adjust"
+      ],
+      "correct_index": 3,
+      "explanation": "Short cycles mean you finish something small, see what happens, and learn sooner when a plan turns out wrong.",
+      "why_wrong": "A fixed eight-week plan finds problems too late; joining parts at the end hides problems until it’s too late; leaving testing to the end means late surprises.",
+      "learning_outcome": "Work in short cycles and learn from each one.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f08",
+      "skill": "agile",
+      "difficulty": "Intermediate",
+      "topic": "Backlogs and retros",
+      "title": "End of the sprint",
+      "scenario": "At the end of a two-week sprint, Fatima’s team finished half of what they planned because two tasks were bigger than expected.",
+      "question": "What should the team do next?",
+      "options": [
+        "Work weekends during the next sprint so the team can catch up on everything",
+        "Hold a retro: what went well, what didn’t, one change; then re-order the backlog",
+        "Drop the backlog and let each member decide their own tasks every morning",
+        "Plan exactly the same amount next sprint, and ask everyone to try harder"
+      ],
+      "correct_index": 1,
+      "explanation": "A retrospective finds one thing to change, and the backlog is re-ordered as the team learns. Here, splitting big tasks smaller is a likely change.",
+      "why_wrong": "Weekend work hides the planning problem; dropping the backlog loses the priorities; planning the same amount repeats the mistake.",
+      "learning_outcome": "Look back, change one thing, re-order the backlog.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f09",
+      "skill": "growth-mindset",
+      "difficulty": "Beginner",
+      "topic": "Not yet",
+      "title": "The presentation",
+      "scenario": "After a nervous seminar presentation, Ananya says: “I’m just bad at presenting.”",
+      "question": "Which thought shows a growth mindset?",
+      "options": [
+        "“Some people are born speakers, and I’m simply not one of them, sadly.”",
+        "“I’ll avoid presentations from now on and offer to do the written parts.”",
+        "“I’m not good at presenting yet. Next time I’ll practise it twice aloud.”",
+        "“It went badly because the audience wasn’t really interested in my topic.”"
+      ],
+      "correct_index": 2,
+      "explanation": "“Not good at it yet” leaves room to improve and points to what to practise.",
+      "why_wrong": "“Born speakers” is a fixed verdict; avoiding presentations stops the skill growing; blaming the audience skips what she could change.",
+      "learning_outcome": "Skills grow with practice: add “yet”.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f10",
+      "skill": "growth-mindset",
+      "difficulty": "Intermediate",
+      "topic": "Using feedback",
+      "title": "The rejection",
+      "scenario": "Vikram was rejected after an interview. The recruiter said his answers were “too general”.",
+      "question": "What is the most useful next step?",
+      "options": [
+        "Ask for an example of a general answer, then prepare specific stories",
+        "Decide that interviews favour confident people, and stop applying for a while",
+        "Apply to many more jobs quickly, so that a single rejection matters a lot less",
+        "Write to the recruiter explaining why his answers were actually detailed enough"
+      ],
+      "correct_index": 0,
+      "explanation": "A rejection is information about what he did, not who he is. Asking for something specific and acting on it is how feedback teaches.",
+      "why_wrong": "Giving up turns one result into a verdict; more applications with the same answers repeat the problem; defending the answers ignores the feedback.",
+      "learning_outcome": "Treat setbacks as information and act on feedback.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f11",
+      "skill": "self-awareness",
+      "difficulty": "Beginner",
+      "topic": "Strengths",
+      "title": "Finding a strength",
+      "scenario": "Rohan is asked to name a real strength for his internship application.",
+      "question": "Which is the best way to find one?",
+      "options": [
+        "Choose whichever skill employers mention most often in the job ads he reads",
+        "Pick the subject he got his highest marks in, whatever he thinks of it",
+        "Ask a few friends to list his strengths and copy the longest list they give",
+        "Notice what he finds easy that friends find hard, and loses track of time doing"
+      ],
+      "correct_index": 3,
+      "explanation": "A strength is something you do well that also gives you energy: what comes easily and absorbs you.",
+      "why_wrong": "A skill from job ads may not be his; marks alone don’t show what energises him; a friend’s list is a start but can’t replace his own noticing.",
+      "learning_outcome": "Strengths are what you do well and enjoy doing.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f12",
+      "skill": "self-awareness",
+      "difficulty": "Intermediate",
+      "topic": "Triggers",
+      "title": "The last-minute panic",
+      "scenario": "Every time a deadline is two days away, Isha panics and stops working well. She has three deadlines next month.",
+      "question": "What does knowing this trigger let her do?",
+      "options": [
+        "Accept that panic is just part of her personality and can’t really change",
+        "Plan to finish each piece three days early, so the trigger never arrives",
+        "Avoid choosing courses with tight deadlines in all her future terms",
+        "Ask her teachers to remove or extend the deadlines just for her"
+      ],
+      "correct_index": 1,
+      "explanation": "Knowing your triggers lets you plan around them instead of being caught out every time.",
+      "why_wrong": "Accepting it as fixed changes nothing; avoiding deadlines isn’t possible at work; asking to remove deadlines doesn’t help her manage them.",
+      "learning_outcome": "Know what throws you, and plan around it.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f13",
+      "skill": "empathy",
+      "difficulty": "Beginner",
+      "topic": "Listening",
+      "title": "A friend’s bad news",
+      "scenario": "Your friend tells you she didn’t get into the MBA programme she wanted. She is still talking about it.",
+      "question": "What does empathy look like here?",
+      "options": [
+        "Tell her about the time you were rejected too, so she feels less alone",
+        "Quickly list three other good programmes she could apply to instead",
+        "Listen to the end, then say “That sounds really disappointing”",
+        "Tell her it wasn’t a great programme anyway, so she’s lucky"
+      ],
+      "correct_index": 2,
+      "explanation": "Empathy starts with listening to the end and showing you heard the feeling, not just the facts.",
+      "why_wrong": "Your own story moves the focus to you; solutions too early skip what she feels; dismissing the programme dismisses her disappointment.",
+      "learning_outcome": "Listen to understand, and name the feeling.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f14",
+      "skill": "empathy",
+      "difficulty": "Intermediate",
+      "topic": "Understanding without agreeing",
+      "title": "The angry customer",
+      "scenario": "During your internship at a bank branch, a customer is angry that his loan is taking weeks. You can’t speed it up.",
+      "question": "What is the empathetic response?",
+      "options": [
+        "“Waiting weeks without news is frustrating. Let me check where it stands.”",
+        "“That’s just the bank’s process, sir, and I’m afraid I can’t change it.”",
+        "“You’re right, sir, the bank is very slow and badly run these days.”",
+        "“Please calm down, sir; every customer has to wait the same amount of time.”"
+      ],
+      "correct_index": 0,
+      "explanation": "You can understand his frustration without agreeing that the bank is wrong, then do what you can.",
+      "why_wrong": "Quoting the process ignores how he feels; agreeing that the bank is badly run isn’t empathy, it’s taking sides; telling someone to calm down rarely calms them.",
+      "learning_outcome": "Show you understand, even when you can’t agree or fix it.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f15",
+      "skill": "critical-thinking",
+      "difficulty": "Beginner",
+      "topic": "Checking sources",
+      "title": "The forwarded message",
+      "scenario": "A WhatsApp forward says a government scholarship gives ₹50,000 to every student who fills a form at a link.",
+      "question": "What should you ask first?",
+      "options": [
+        "How many people have already shared it in other groups",
+        "Whether the message looks official and has the national emblem",
+        "Whether your friends have already filled the form in and got the money",
+        "Who sent it out, how they know, and what they gain if you fill the form"
+      ],
+      "correct_index": 3,
+      "explanation": "Ask where it came from, what evidence backs it, and what the sender gains. Check on the official government site, not the link.",
+      "why_wrong": "Many shares don’t make it true; logos are easy to copy; friends filling it in only spreads the risk.",
+      "learning_outcome": "Check who says so, and how they know.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f16",
+      "skill": "critical-thinking",
+      "difficulty": "Intermediate",
+      "topic": "The other side",
+      "title": "The course decision",
+      "scenario": "Nikhil is sure a ₹1.5 lakh data science course will get him a job, because its website shows 98% placement.",
+      "question": "What would test his view most fairly?",
+      "options": [
+        "Read more of the success stories on the course’s own website before paying",
+        "Ask recent students, and check what the course counts as “placed”",
+        "Ask the course counsellor whether the course is really worth the fees",
+        "Trust the number, since 98% placement is far higher than most courses"
+      ],
+      "correct_index": 1,
+      "explanation": "A strong view survives its best counter-argument. Independent students and a clear definition of “placed” test the claim.",
+      "why_wrong": "More success stories from the same source only confirm the view; the counsellor gains from his enrolment; a high number proves nothing without knowing how it was counted.",
+      "learning_outcome": "Test your view against the best case against it.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f17",
+      "skill": "creative-thinking",
+      "difficulty": "Beginner",
+      "topic": "Many ideas first",
+      "title": "Fundraising ideas",
+      "scenario": "Your NSS unit needs ₹20,000 for a village library. The first idea, a bake sale, raises too little.",
+      "question": "What should the group do in its next meeting?",
+      "options": [
+        "Vote straight away between the bake sale and doing nothing at all",
+        "Ask the most senior member to choose the best idea alone, to save time",
+        "List lots of ideas in ten minutes without judging, then pick the best",
+        "Copy exactly what last year’s unit did, since that plan worked for them"
+      ],
+      "correct_index": 2,
+      "explanation": "Good ideas usually come after many ordinary ones. Generate first, judge later.",
+      "why_wrong": "Voting on one idea skips better ones; one person choosing loses the group’s ideas; last year’s plan may not fit this goal.",
+      "learning_outcome": "Generate many ideas before you judge them.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f18",
+      "skill": "creative-thinking",
+      "difficulty": "Intermediate",
+      "topic": "Borrow and combine",
+      "title": "The empty library",
+      "scenario": "Few students use the college library in the evenings. The librarian asks for a fresh idea.",
+      "question": "Which approach best uses “borrow and combine”?",
+      "options": [
+        "Ask what makes cafés busy in the evening, and try that in the library",
+        "Make a new rule that every student must visit the library twice a week",
+        "Repaint the library in bright colours and hope more students come in",
+        "Run a survey asking students to rate the library from 1 to 5"
+      ],
+      "correct_index": 0,
+      "explanation": "Most new ideas take something that works in one place and use it in another, like a café’s good seating, snacks or group tables.",
+      "why_wrong": "A rule forces visits without making the library better; repainting is a guess with no reason behind it; a 1-to-5 rating doesn’t produce ideas.",
+      "learning_outcome": "Borrow what works elsewhere and combine it.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f19",
+      "skill": "decision-making",
+      "difficulty": "Beginner",
+      "topic": "Options and consequences",
+      "title": "Two offers",
+      "scenario": "Aisha has two internship offers: a known brand with no stipend, and a small startup paying ₹12,000 a month. She keeps going round in circles.",
+      "question": "What should she do?",
+      "options": [
+        "Choose whichever offer her friends and family say sounds more impressive",
+        "Wait until one of the companies withdraws its offer, then take the other",
+        "Accept both offers now and decide later which one to leave",
+        "Write down each option and what it would lead to, then choose and note why"
+      ],
+      "correct_index": 3,
+      "explanation": "Listing the options and their consequences, then choosing and saying why, beats going round in circles.",
+      "why_wrong": "Friends don’t carry the consequences; waiting may lose both offers; accepting both and leaving one breaks a promise.",
+      "learning_outcome": "Write the options and their consequences, then choose.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f20",
+      "skill": "decision-making",
+      "difficulty": "Intermediate",
+      "topic": "Deciding without everything",
+      "title": "Not enough information",
+      "scenario": "Dev must choose his final-year elective by Friday. He can’t find out everything about both options in time.",
+      "question": "What is the best way to decide?",
+      "options": [
+        "Ask for an extension until he knows absolutely everything about both",
+        "Choose on what he knows by Friday, and note what to check later",
+        "Pick at random, since he can’t know everything about either one anyway",
+        "Choose whichever elective has the most students signed up for it"
+      ],
+      "correct_index": 1,
+      "explanation": "You rarely have all the information. Set a date, choose the best option you have, and review later what you learned.",
+      "why_wrong": "Waiting for complete information means never deciding; random choice ignores what he does know; class size says little about whether it suits him.",
+      "learning_outcome": "Decide on time with what you know, then review.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f21",
+      "skill": "problem-solving",
+      "difficulty": "Beginner",
+      "topic": "Root cause",
+      "title": "Late every day",
+      "scenario": "Sana keeps arriving late to her 9 am internship. She asks herself why: she leaves late. Why? She wakes late. Why? She’s on her phone until 1 am.",
+      "question": "What should she fix first?",
+      "options": [
+        "Take an auto instead of the bus every morning",
+        "Set three alarms for the morning",
+        "Stop using her phone after 11 pm",
+        "Apologise to her manager every time she is late"
+      ],
+      "correct_index": 2,
+      "explanation": "Asking “why” more than once reaches a cause she can change: late-night phone use. The other fixes treat symptoms.",
+      "why_wrong": "A faster auto helps today but not the cause; more alarms fight the same late night; apologising doesn’t change anything.",
+      "learning_outcome": "Ask why until you reach a cause you can change.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f22",
+      "skill": "problem-solving",
+      "difficulty": "Intermediate",
+      "topic": "Testing small fixes",
+      "title": "Low attendance",
+      "scenario": "Your coding club’s attendance dropped from 40 to 12. Members say the 7 pm timing clashes with dinner.",
+      "question": "What is the best next step?",
+      "options": [
+        "Try a 5 pm session next week and count who comes",
+        "Redesign the whole club over the summer before changing anything",
+        "Ask the college to make attendance compulsory",
+        "Keep 7 pm, since changing it might upset the 12 who still come"
+      ],
+      "correct_index": 0,
+      "explanation": "Break the fix into a small step you can test now. A trial at 5 pm shows quickly whether timing was the cause.",
+      "why_wrong": "A summer-long redesign delays any learning; compulsory attendance hides the real problem; keeping 7 pm ignores what members said.",
+      "learning_outcome": "Try a small fix and see what happens.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f23",
+      "skill": "relationships",
+      "difficulty": "Beginner",
+      "topic": "Building trust",
+      "title": "A new team",
+      "scenario": "Zoya has joined a new internship team. She wants people to trust her.",
+      "question": "What builds that trust fastest?",
+      "options": [
+        "Telling the team about her best marks and the awards she won in college",
+        "Agreeing with everyone in every meeting so that nobody is ever upset",
+        "Staying quiet in meetings until she has been there for a few months",
+        "Keeping small promises, thanking people and remembering what they tell her"
+      ],
+      "correct_index": 3,
+      "explanation": "Trust is built in small moments: kept promises, thanks and remembering what people said.",
+      "why_wrong": "Talking about marks impresses but doesn’t build trust; agreeing with everything makes her views unknown; staying silent gives people nothing to trust.",
+      "learning_outcome": "Small, reliable actions build trust.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f24",
+      "skill": "relationships",
+      "difficulty": "Intermediate",
+      "topic": "Handling conflict",
+      "title": "The group project",
+      "scenario": "Your project partner keeps changing the slides you made without asking. It is starting to annoy you.",
+      "question": "What should you say?",
+      "options": [
+        "“You always ruin my work. Stop touching my slides from now on, please.”",
+        "“When slides change without a word, I lose track. Can we agree how?”",
+        "Say nothing, and quietly change the slides back to yours each night",
+        "Complain to the teacher that your partner is very hard to work with"
+      ],
+      "correct_index": 1,
+      "explanation": "Describe the problem and how it affects you, ask for their view, and look for an option that works for both. Disagree with the action, not the person.",
+      "why_wrong": "“Always” and “ruin” attack the person; changing slides back silently starts a hidden fight; going to the teacher first skips talking to your partner.",
+      "learning_outcome": "Disagree with the idea, not the person.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f25",
+      "skill": "coping-stress",
+      "difficulty": "Beginner",
+      "topic": "Early signs",
+      "title": "Exam season",
+      "scenario": "Three weeks before exams, Kabir is sleeping badly, snapping at his family and scrolling instead of studying.",
+      "question": "What are these, most likely?",
+      "options": [
+        "Signs he is lazy and needs more discipline",
+        "Normal behaviour that will go away on its own after exams",
+        "Early signs of stress he can act on now",
+        "Proof that he chose the wrong course"
+      ],
+      "correct_index": 2,
+      "explanation": "Poor sleep, snapping and scrolling are common early signs of stress. Spotting them early lets him act sooner.",
+      "why_wrong": "Calling it laziness blames him instead of helping; waiting for exams to end lets it grow; one stressful month says nothing about his course.",
+      "learning_outcome": "Learn your early signs of stress.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f26",
+      "skill": "coping-stress",
+      "difficulty": "Intermediate",
+      "topic": "Prioritising and rest",
+      "title": "Too much to do",
+      "scenario": "Lakshmi has an assignment due tomorrow, a quiz on Friday, a family function and club work. She feels overwhelmed.",
+      "question": "What helps most?",
+      "options": [
+        "Write everything down, do the assignment first, and plan a short break",
+        "Do a little of everything tonight so nothing is left untouched",
+        "Skip sleep tonight so that she can finish everything on the list",
+        "Wait until she feels less stressed before starting anything"
+      ],
+      "correct_index": 0,
+      "explanation": "Write it all down, pick the one thing that matters most and do it first. Rest is part of the plan, not a reward.",
+      "why_wrong": "A little of everything finishes nothing; skipping sleep makes tomorrow worse; waiting to feel better delays the work that’s causing the stress.",
+      "learning_outcome": "Plan, prioritise, and build in rest.",
+      "weight": 10
+    },
+    {
+      "id": "gl-f27",
+      "skill": "coping-emotions",
+      "difficulty": "Beginner",
+      "topic": "Naming feelings",
+      "title": "After the results",
+      "scenario": "Tanvi is upset after her semester results but can’t say why. She just feels “bad”.",
+      "question": "What would help her most first?",
+      "options": [
+        "Distract herself with a film and not think about it",
+        "Tell herself to stop feeling bad because it won’t help",
+        "Compare her marks with friends to see if others did worse",
+        "Put the feeling into exact words, like “disappointed” or “worried”"
+      ],
+      "correct_index": 3,
+      "explanation": "Naming a feeling exactly makes it easier to handle. “Name it to tame it.”",
+      "why_wrong": "Distraction postpones it; ordering herself not to feel bad rarely works; comparing marks usually adds feelings rather than easing them.",
+      "learning_outcome": "Name a feeling to manage it.",
+      "weight": 5
+    },
+    {
+      "id": "gl-f28",
+      "skill": "coping-emotions",
+      "difficulty": "Intermediate",
+      "topic": "Pausing",
+      "title": "The rude comment",
+      "scenario": "In the class WhatsApp group, someone mocks Farhan’s idea. He is angry and starts typing a sharp reply.",
+      "question": "What is the best thing to do?",
+      "options": [
+        "Send the reply at once, so everyone sees he won’t be pushed around",
+        "Pause and wait an hour, then decide whether and how to reply",
+        "Leave the group straight away, so that it can’t happen again",
+        "Reply with a joke about the other person instead"
+      ],
+      "correct_index": 1,
+      "explanation": "Between what happens and what you do, there is a moment. Waiting gives him room to choose a response instead of reacting.",
+      "why_wrong": "An instant angry reply is a reaction he may regret; leaving the group avoids it but loses the group; a mocking joke answers anger with more of it.",
+      "learning_outcome": "Pause before you respond.",
+      "weight": 10
+    }
+  ]
+}

@@ -108,11 +108,12 @@ function OnboardingPage() {
     try {
       const startLevel = level === 'experienced' ? 'experienced' : 'beginner'
       const method = await completeOnboarding({ career_stage: stage, goals: goal ? [goal] : [], start_level: startLevel })
-      // Their starting point in the programme they chose (beginner or
-      // experienced), kept per programme. Before the Foundation SQL is run
-      // this can't be saved; the Foundation page then asks again.
+      // Their starting point in Digital Marketing (beginner or experienced),
+      // kept per programme. Global Leadership has no experienced start: everyone
+      // begins with its aptitude test. Before the Foundation SQL is run this
+      // can't be saved; the Foundation page then asks again.
       const plan = planFor(stage, goal, focus, level)
-      await setProgrammePath(START_PROGRAMME[plan.start], startLevel).catch(() => {})
+      if (plan.start === 'marketing') await setProgrammePath(START_PROGRAMME.marketing, startLevel).catch(() => {})
       // Create their profile row now: the assessment they're about to take saves
       // a result that points at it. If this fails, saving the assessment retries.
       try {
