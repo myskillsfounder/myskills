@@ -53,7 +53,6 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     <div className="surface-wood flex h-full flex-col">
       {/* Brand */}
       <div className="flex items-center gap-2.5 px-5 pb-4 pt-5">
-        <img src="/logo-mark.png" alt="" className="h-9 w-9 shrink-0" />
         <div className="min-w-0">
           <p className="font-display text-base font-semibold leading-tight tracking-tight text-ink-900">
             MySkills
@@ -203,7 +202,6 @@ export function AppShell({
           bottom bar, so the top bar is just the name. */}
       <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] px-4 backdrop-blur lg:hidden">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <img src="/logo-mark.png" alt="" className="h-8 w-8" />
           <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
             MySkills
           </span>

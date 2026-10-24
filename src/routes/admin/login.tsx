@@ -58,7 +58,7 @@ function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-ink-50 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <img src="/logo-mark.png" alt="" className="h-10 w-10" />
+          <span className="font-display text-2xl font-semibold tracking-tight text-ink-900">MySkills</span>
           <h1 className="mt-3 font-display text-xl font-semibold text-ink-900">Admin sign in</h1>
           <p className="mt-1 text-sm text-ink-600">Sign in to the MySkills staff area.</p>
         </div>

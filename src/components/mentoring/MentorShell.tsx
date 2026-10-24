@@ -176,7 +176,6 @@ export function MentorShell({
 
   const brand = (
     <Link to="/community-portal" className="flex items-center gap-2.5 px-5">
-      <img src="/logo-mark.png" alt="" className="h-8 w-8" />
       <span className="min-w-0">
         <span className="block font-display text-lg font-semibold leading-tight tracking-tight text-ink-900">MySkills</span>
         <span className={`block text-[11px] font-semibold uppercase tracking-[0.14em] ${overview ? 'text-gold-600' : 'text-brand-700'}`}>
@@ -198,7 +197,6 @@ export function MentorShell({
       {/* Phone: a bar with a menu button. */}
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] bg-white/90 px-4 backdrop-blur lg:hidden">
         <Link to="/community-portal" className="flex items-center gap-2">
-          <img src="/logo-mark.png" alt="" className="h-7 w-7" />
           <span className="font-display text-base font-semibold text-ink-900">MySkills</span>
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
