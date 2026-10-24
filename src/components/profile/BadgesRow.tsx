@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Award, Lock } from 'lucide-react'
 import { skillName, type SkillBadge } from '@/lib/skillBadges'
+import type { ScoredProgramme } from '@/lib/readinessScore'
 
 const fmtMonth = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
 
@@ -31,7 +32,7 @@ function Medal({ programme, locked = false }: { programme?: string; locked?: boo
  * once the student earned the skill in practice. Read-only: a badge is
  * something a person vouched for, never typed in.
  */
-export function BadgesRow({ badges }: { badges: SkillBadge[] }) {
+export function BadgesRow({ badges, completed = [] }: { badges: SkillBadge[]; completed?: ScoredProgramme[] }) {
   return (
     <section className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -49,6 +50,14 @@ export function BadgesRow({ badges }: { badges: SkillBadge[] }) {
       </div>
 
       <ul className="mt-4 flex gap-3 overflow-x-auto pb-1">
+        {/* A finished professional programme (project approved) comes first. */}
+        {completed.map((p) => (
+          <li key={`done-${p.slug}`} className="flex w-32 shrink-0 flex-col items-center rounded-2xl border border-brand-200 bg-gradient-to-b from-brand-50 to-white px-2 pb-3 pt-4 text-center">
+            <Medal programme={p.slug} />
+            <p className="mt-2 line-clamp-2 text-xs font-semibold leading-snug text-ink-900">{p.title}</p>
+            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-700">Completed</p>
+          </li>
+        ))}
         {badges.map((b) => (
           <li key={b.id} className="flex w-32 shrink-0 flex-col items-center rounded-2xl border border-ink-900/[0.06] bg-gradient-to-b from-white to-ink-50 px-2 pb-3 pt-4 text-center">
             <Medal programme={b.programme} />
@@ -60,7 +69,7 @@ export function BadgesRow({ badges }: { badges: SkillBadge[] }) {
           </li>
         ))}
         {/* Room for what's to come: a few locked medals, never fake ones. */}
-        {Array.from({ length: Math.max(0, 6 - badges.length) }, (_, i) => (
+        {Array.from({ length: Math.max(0, 6 - badges.length - completed.length) }, (_, i) => (
           <li key={`locked-${i}`} className="flex w-32 shrink-0 flex-col items-center rounded-2xl border border-dashed border-ink-200 px-2 pb-3 pt-4 text-center">
             <Medal locked />
             <p className="mt-2 text-xs font-medium text-ink-400">Next badge</p>

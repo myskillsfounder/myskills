@@ -6,7 +6,7 @@
  * the dashboard falls back to the browser's own calculation.
  */
 import { supabase } from './supabase'
-import { bandFor, type ProjectStatus, type Readiness } from './readinessScore'
+import { bandFor, type ProjectStatus, type Readiness, type ScoredProgramme } from './readinessScore'
 
 export interface ServerScore {
   method_version: string
@@ -28,6 +28,10 @@ interface ServerProgramme {
   project_points?: number
   project_max?: number
   project_status?: ProjectStatus | null
+  /** Personal: the Global Leadership project has passed. */
+  mentor_approved?: boolean
+  /** Method v8, Professional: every started programme (averaged). */
+  programmes?: ScoredProgramme[]
 }
 
 export async function refreshMyScore(): Promise<ServerScore | null> {
@@ -69,5 +73,6 @@ function withServerProgramme(local: Readiness['personal'], server: ServerProgram
     projectPoints: server.project_points ?? local.projectPoints,
     projectMax: server.project_max ?? local.projectMax,
     projectStatus: server.project_status ?? local.projectStatus,
+    programmes: server.programmes ?? local.programmes,
   }
 }
