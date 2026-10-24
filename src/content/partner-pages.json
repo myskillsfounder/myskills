@@ -230,7 +230,8 @@
     ],
     "stepsTitle": "How it works",
     "steps": [
-      { "title": "Apply", "body": "Tell us about your institution and the courses you run, then create your partner account. It takes a few minutes." },
+      { "title": "Create your partner account", "body": "Sign up as an institution: your institution, the courses you run and who to contact. It takes a few minutes." },
+      { "title": "Confirm your email", "body": "Enter the 6-digit code we send to the address you signed up with." },
       { "title": "We verify", "body": "We check your details — legal name, years in education, website and Google profile — before anything goes live." },
       { "title": "Get listed", "body": "Your partner listing appears in the MySkills Community for signed-in students." },
       { "title": "Hear from students", "body": "Interested students send enquiries through MySkills." }
@@ -256,12 +257,12 @@
         "a": "Verified partners are listed in the MySkills Community, where signed-in students can see your courses and city, rate your institution and send an enquiry."
       },
       {
-        "q": "What do you need from us to apply?",
+        "q": "What do you need from us to sign up?",
         "a": "Your institution's name and city, the courses you offer, how many years you have been teaching, your website and Google profile, and a contact person."
       },
       {
-        "q": "What happens after we apply?",
-        "a": "We review every application by hand and email the contact you name. If it's a fit, we verify the details and publish your listing."
+        "q": "What happens after we sign up?",
+        "a": "We review every partner account by hand and email you. If it's a fit, we verify the details and publish your listing."
       }
     ]
   },
@@ -294,8 +295,9 @@
     ],
     "stepsTitle": "How it works",
     "steps": [
-      { "title": "Tell us about your company", "body": "Your company, the kinds of internships you can offer and who to contact. Then create your partner account." },
-      { "title": "We get in touch", "body": "A real person reads every submission and reaches out to understand the roles." },
+      { "title": "Create your partner account", "body": "Sign up as an internship partner: your company, the internships you can offer and who to contact." },
+      { "title": "Confirm your email", "body": "Enter the 6-digit code we send to the address you signed up with." },
+      { "title": "We get in touch", "body": "A real person reviews every partner account and reaches out to understand the roles." },
       { "title": "Meet students who've shown their skills", "body": "Interns come from students with a track record on MySkills, not a blank page." }
     ],
     "lookingForTitle": "Who we're looking for",
@@ -319,7 +321,7 @@
       },
       {
         "q": "Do we need a MySkills account?",
-        "a": "Not to tell us about your company. Once the form is in, you create a partner account with the same email address; the team verifies it, and that is how you sign in to the Community portal."
+        "a": "Yes, a free partner account. It is how you tell us about your company and sign in to the Community portal; the team verifies it before you can post internships."
       },
       {
         "q": "What happens after we submit?",
