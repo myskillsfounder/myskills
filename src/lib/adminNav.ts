@@ -115,7 +115,7 @@ export const ADMIN_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Admissions',
     items: [
-      { to: '/admin/cr-leads', label: 'Global Leadership leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
+      { to: '/admin/cr-leads', label: 'Programme leads', icon: Users, section: 'leads', inbox: ['cr-lead'] },
       { to: '/admin/study-abroad', label: 'Study abroad', icon: Plane, section: 'leads' },
     ],
   },

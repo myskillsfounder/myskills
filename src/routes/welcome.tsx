@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { ArrowLeft, ArrowRight, Briefcase, Building2, Check, GraduationCap, HeartHandshake, LayoutGrid, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BarChart3, Briefcase, Building2, Check, Globe2, GraduationCap, HeartHandshake, LayoutGrid, Megaphone, Rocket, Sparkles } from 'lucide-react'
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
-import { takeAfterOnboarding } from '@/lib/afterOnboarding'
+import { setAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
+import { submitProgrammeLead, type LeadProgramme } from '@/lib/programmes'
 import { requirePhoneWelcome } from '@/lib/guards'
 import { GOAL_ICONS } from '@/lib/goalIcons'
 import { careerStageStep, goalsFor } from '@/lib/onboardingContent'
@@ -22,7 +23,10 @@ import type { Category } from '@/components/community/Marketplace'
  * they want, and what they came to find. Then the marketplace, already open
  * on that.
  *
- * Signed out: the welcome. Signed in and new: the three questions. Anyone
+ * Signed out: "I want to learn…", four programmes. The open ones (Digital
+ * Marketing, Global Leadership) go to their aptitude test through sign-up;
+ * the coming ones (Entrepreneurship, Data Analytics) take a lead.
+ * Signed in and new: the three questions. Anyone
  * else is sent on by the guard.
  */
 export const Route = createFileRoute('/welcome')({
@@ -57,7 +61,95 @@ const Brand = () => (
 
 /* --------------------------------------------------------------- signed out */
 
+type Learn = {
+  id: string
+  label: string
+  body: string
+  icon: typeof GraduationCap
+  tile: string
+} & ({ open: true; test: '/aptitude-assessment' | '/career-readiness-assessment' } | { open: false; lead: LeadProgramme })
+
+/**
+ * What a visitor can come to learn. The two open programmes start with their
+ * free aptitude test; the two that aren't open yet take a name and number so
+ * the team can call when they do.
+ */
+const LEARN: Learn[] = [
+  { id: 'dm', label: 'Digital Marketing', body: 'Ads, content, SEO and data, with practice and a mentor.', icon: Megaphone, tile: 'from-brand-400 to-brand-700', open: true, test: '/aptitude-assessment' },
+  { id: 'gl', label: 'Global Leadership', body: 'Goals, communication and leading people: the Global Readiness programme.', icon: Globe2, tile: 'from-amber-400 to-orange-500', open: true, test: '/career-readiness-assessment' },
+  { id: 'en', label: 'Entrepreneurship', body: 'Turn an idea into a business people pay for.', icon: Rocket, tile: 'from-rose-400 to-pink-600', open: false, lead: 'entrepreneurship' },
+  { id: 'da', label: 'Data Analytics', body: 'Spreadsheets, SQL and dashboards that answer real questions.', icon: BarChart3, tile: 'from-emerald-400 to-teal-600', open: false, lead: 'data-analytics' },
+]
+
+/** Coming soon: name, phone, and email if they like. One short form, in the card. */
+function LeadForm({ programme, title }: { programme: LeadProgramme; title: string }) {
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [state, setState] = useState<'idle' | 'saving' | 'done'>('idle')
+  const [error, setError] = useState<string>()
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault()
+    if (name.trim().length < 2) return setError('Please add your name.')
+    if (phone.replace(/\D/g, '').length < 10) return setError('Please add a phone number we can call.')
+    setState('saving')
+    setError(undefined)
+    try {
+      await submitProgrammeLead(programme, { full_name: name, phone, email })
+      trackEvent('programme_lead', { programme, start: 'mobile' })
+      setState('done')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not send that. Please try again.')
+      setState('idle')
+    }
+  }
+
+  if (state === 'done') {
+    return (
+      <p className="mt-3 flex items-start gap-2 rounded-xl bg-emerald-400/15 p-3 text-sm text-emerald-100">
+        <Check size={16} className="mt-0.5 shrink-0" />
+        Thanks, {name.trim().split(' ')[0]}. We’ll call you as soon as {title} opens.
+      </p>
+    )
+  }
+
+  const field =
+    'h-12 w-full rounded-xl border border-white/15 bg-white/10 px-3.5 text-base text-white placeholder:text-white/45 focus:border-white/40 focus:outline-none'
+  return (
+    <form onSubmit={submit} className="mt-3 space-y-2.5" noValidate>
+      <p className="text-sm text-white/70">{title} opens soon. Leave your details and we’ll call you first.</p>
+      <input className={field} placeholder="Your name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+      <input className={field} placeholder="Phone number" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      <input className={field} placeholder="Email (optional)" type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      {error && <p className="text-sm text-rose-200">{error}</p>}
+      <button
+        type="submit"
+        disabled={state === 'saving'}
+        className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-ink-900 disabled:opacity-60"
+      >
+        {state === 'saving' ? 'Sending…' : 'Tell me when it opens'}
+      </button>
+    </form>
+  )
+}
+
 function Intro() {
+  const router = useRouter()
+  const [opened, setOpened] = useState<string | null>(null)
+
+  // An open programme starts with its aptitude test, after sign-up; onboarding
+  // sends them on to it (lib/afterOnboarding.ts).
+  function start(l: Learn) {
+    if (!l.open) {
+      setOpened((cur) => (cur === l.id ? null : l.id))
+      return
+    }
+    trackEvent('welcome_programme', { programme: l.id })
+    setAfterOnboarding(l.test)
+    router.navigate({ to: '/signup' })
+  }
+
   return (
     <Frame>
       <header>
@@ -67,37 +159,47 @@ function Intro() {
       <main className="flex flex-1 flex-col justify-center py-6">
         <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
           <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          MySkills Community
+          Free to start
         </span>
         <h1 className="mt-3.5 font-display text-[1.75rem] font-semibold leading-[1.15] tracking-tight text-white">
-          Find the right person for what you need next
+          I want to learn…
         </h1>
         <p className="mt-2.5 text-[15px] leading-relaxed text-white/70">
-          Mentors, counsellors, internships and institutes, all verified, in one place.
+          Pick one. Open programmes start with a free aptitude test that shows where to begin.
         </p>
 
         <ul className="mt-5 space-y-2.5">
-          {FINDS.map((f) => (
-            <li key={f.id} className="card-glass-dark flex items-center gap-3.5 p-3">
-              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${f.tile}`}>
-                <f.icon size={20} />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-[15px] font-semibold text-white">{f.label}</span>
-                <span className="block text-sm leading-snug text-white/60">{f.body}</span>
-              </span>
+          {LEARN.map((l) => (
+            <li key={l.id} className="card-glass-dark p-3">
+              <button
+                type="button"
+                onClick={() => start(l)}
+                aria-expanded={l.open ? undefined : opened === l.id}
+                className="flex w-full items-center gap-3.5 text-left"
+              >
+                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${l.tile}`}>
+                  <l.icon size={20} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span className="text-[15px] font-semibold text-white">{l.label}</span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${l.open ? 'bg-emerald-400/20 text-emerald-200' : 'bg-white/10 text-white/60'}`}
+                    >
+                      {l.open ? 'Open' : 'Soon'}
+                    </span>
+                  </span>
+                  <span className="block text-sm leading-snug text-white/60">{l.body}</span>
+                  {l.open && <span className="mt-1 block text-xs font-semibold text-brand-200">Take the aptitude test →</span>}
+                </span>
+              </button>
+              {!l.open && opened === l.id && <LeadForm programme={l.lead} title={l.label} />}
             </li>
           ))}
         </ul>
       </main>
 
       <footer className="space-y-3">
-        <Link
-          to="/signup"
-          className="press flex h-13 min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-full bg-white text-base font-semibold text-ink-900 shadow-e2"
-        >
-          Get started <ArrowRight size={18} />
-        </Link>
         <Link
           to="/login"
           className="press flex min-h-[3.25rem] w-full items-center justify-center rounded-full border border-white/25 text-base font-semibold text-white"
