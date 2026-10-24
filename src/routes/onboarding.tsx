@@ -206,7 +206,7 @@ function OnboardingPage() {
             <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/50">
               Your starting point
             </p>
-            <p className="font-display text-[1.375rem] font-medium leading-[2.35] text-white sm:text-[1.75rem] sm:leading-[2.3]">
+            <div className="font-display text-[1.375rem] font-medium leading-[2.35] text-white sm:text-[1.75rem] sm:leading-[2.3]">
               I’m{' '}
               <InlineSelect
                 value={stage}
@@ -244,7 +244,7 @@ function OnboardingPage() {
                 label="How much you already know"
               />
               .
-            </p>
+            </div>
 
             <div className="mt-5 flex items-center justify-between gap-4 border-t border-white/10 pt-4">
               <p className="flex items-center gap-2 font-mono text-xs text-white/50" aria-live="polite">

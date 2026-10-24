@@ -14,6 +14,7 @@ import {
 import { AssessmentResult } from '@/components/career-readiness/AssessmentResult'
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
 import { SignUpToSee } from '@/components/self-assessment/SignUpToSee'
+import { CoachNote } from '@/components/self-assessment/CoachNote'
 import { strongestFor } from '@/lib/guestResult'
 import { useAuthUser } from '@/lib/useAuth'
 import { clearPendingAptitude, pendingAptitudeFor, savePendingAptitude } from '@/lib/pendingAptitude'
@@ -109,6 +110,7 @@ function CareerReadinessAssessmentPage() {
         </p>
       )}
 
+      {result && <CoachNote test="gl-aptitude" />}
       {result && <AssessmentResult result={result} />}
 
       {!result && waiting && !user && !authLoading && <SignUpToSee route="/career-readiness-assessment" />}

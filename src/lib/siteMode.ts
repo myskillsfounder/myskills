@@ -8,6 +8,8 @@
  */
 export type SiteMode = 'ai' | 'standard'
 
+import { setAnalyticsUser } from './analytics'
+
 const KEY = 'myskills.siteMode'
 
 export function siteMode(): SiteMode {
@@ -24,6 +26,7 @@ export function setSiteMode(mode: SiteMode): void {
   } catch {
     // Storage blocked: the choice lasts this page only.
   }
+  setAnalyticsUser({ site_mode: mode })
 }
 
 /** A crawler or an automated browser, which should see the standard site. */

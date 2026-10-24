@@ -7,7 +7,9 @@ import {
 } from '@tanstack/react-router'
 import { supabase } from '@/lib/supabase'
 import { recordLoginEvent, validateSession } from '@/lib/auth'
-import { initAnalytics, trackPageView } from '@/lib/analytics'
+import { initAnalytics, setAnalyticsUser, trackPageView } from '@/lib/analytics'
+import { siteMode } from '@/lib/siteMode'
+import { isPhone } from '@/lib/device'
 import { applySeo } from '@/lib/seo'
 import { startTimeTracking } from '@/lib/timeTracker'
 import { startActivitySync } from '@/lib/activity'
@@ -64,6 +66,9 @@ function RootComponent() {
   // Load gtag once, then report a page_view on every SPA navigation.
   useEffect(() => {
     initAnalytics()
+    // Which way in: the AI guide or the standard site on a computer, or the
+    // phone's own front door, so GA4 can compare them (docs/ga4-guide-funnel.md).
+    setAnalyticsUser({ site_mode: isPhone() ? 'phone' : siteMode() })
   }, [])
 
   // Track active time on the app: with the account (lib/activity.ts), and in
