@@ -22,7 +22,7 @@ function BecomeAMentorPage() {
       <Navbar />
 
       <main>
-        <PartnerHero page={page} icon={GraduationCap} breadcrumb="Mentors" />
+        <PartnerHero page={page} icon={GraduationCap} breadcrumb="Mentors" signup="mentor" />
         <PartnerDetails page={page} />
         <PartnerFaq faqs={page.faqs} />
 
