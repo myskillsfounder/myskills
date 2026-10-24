@@ -172,7 +172,6 @@ function OnboardingPage() {
       <div className="relative mx-auto flex min-h-screen w-full max-w-3xl flex-col px-4 py-6 sm:px-6 sm:py-10">
         <header className="flex items-center justify-between gap-3">
           <span className="flex items-center gap-2.5">
-            <img src="/logo-mark.png" alt="" className="h-8 w-8" />
             <span className="font-display text-lg font-semibold tracking-tight text-white">MySkills</span>
           </span>
           <button

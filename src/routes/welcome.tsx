@@ -55,7 +55,6 @@ function Frame({ children }: { children: React.ReactNode }) {
 
 const Brand = () => (
   <span className="flex items-center gap-2.5">
-    <img src="/logo-mark.png" alt="" className="h-8 w-8" />
     <span className="font-display text-lg font-semibold tracking-tight text-white">MySkills</span>
   </span>
 )
