@@ -14,6 +14,7 @@ import {
 import { AssessmentResult } from '@/components/career-readiness/AssessmentResult'
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
 import { SignUpToSee } from '@/components/self-assessment/SignUpToSee'
+import { strongestFor } from '@/lib/guestResult'
 import { useAuthUser } from '@/lib/useAuth'
 import { clearPendingAptitude, pendingAptitudeFor, savePendingAptitude } from '@/lib/pendingAptitude'
 import { SelfAssessmentQuiz, type QuizCopy } from '@/components/self-assessment/Quiz'
@@ -119,7 +120,7 @@ function CareerReadinessAssessmentPage() {
           onSubmit={async (answers, reflection) => {
             // Signed out: keep the answers, and ask for an account to see the result.
             if (!user) {
-              savePendingAptitude('/career-readiness-assessment', answers, reflection)
+              savePendingAptitude('/career-readiness-assessment', answers, reflection, strongestFor('/career-readiness-assessment', questions, answers))
               trackEvent('aptitude_answered_guest', { programme: 'global-leadership' })
               setWaiting(true)
               window.scrollTo({ top: 0 })

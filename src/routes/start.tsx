@@ -17,6 +17,7 @@ import { fetchAptitudeQuestions } from '@/lib/dmAptitude'
 import { fetchAssessmentQuestions } from '@/lib/careerReadinessAssessment'
 import { pendingAptitudeFor, savePendingAptitude, type TestRoute } from '@/lib/pendingAptitude'
 import { peekGuideAnswers, saveGuideAnswers } from '@/lib/guideAnswers'
+import { strongestFor } from '@/lib/guestResult'
 import { setSiteMode } from '@/lib/siteMode'
 import type { LeadProgramme } from '@/lib/programmes'
 import { InlineSelect } from '@/components/onboarding/InlineSelect'
@@ -57,7 +58,7 @@ const COMING: Record<string, { lead: LeadProgramme; title: string }> = {
 
 const QUIZ_COPY: Record<TestRoute, QuizCopy> = {
   '/aptitude-assessment': {
-    draftPrefix: 'myskills.guide.dm',
+    draftPrefix: 'myskills.dmAptitudeDraft',
     intro: 'One statement at a time. Say how often it’s true for you: there are no right answers, so answer as you really are.',
     closing: {
       title: 'Which part of marketing are you most curious about?',
@@ -67,7 +68,7 @@ const QUIZ_COPY: Record<TestRoute, QuizCopy> = {
     },
   },
   '/career-readiness-assessment': {
-    draftPrefix: 'myskills.guide.gl',
+    draftPrefix: 'myskills.lifeSkillsDraft',
     intro: 'One statement at a time. Say how often it’s true for you: it’s a starting point, not a test, so answer as you really are.',
     closing: {
       title: 'Which one skill would you most like to get better at?',
@@ -111,7 +112,8 @@ function StartPage() {
   // The test they started from the plan, and whether it's done.
   const [test, setTest] = useState<TestRoute | null>(arrival?.route ?? null)
   const [done, setDone] = useState(Boolean(arrival))
-  const [questions, setQuestions] = useState<QuizStatement[] | null>(null)
+  // The statements with their skill and reverse flag: the teaser is worked out from them.
+  const [questions, setQuestions] = useState<(QuizStatement & { skill: string; reverse?: boolean })[] | null>(null)
   const [testError, setTestError] = useState<string>()
   const answerRef = useRef<HTMLDivElement>(null)
   const testRef = useRef<HTMLDivElement>(null)
@@ -281,6 +283,14 @@ function StartPage() {
             </div>
           </div>
 
+          {/* Partners have a way in from here too: every partner page leads to the portal's sign-up. */}
+          <p className="mt-4 text-sm text-white/55">
+            A mentor, company or institute?{' '}
+            <Link to="/community" search={{ partners: true }} className="font-semibold text-white underline-offset-4 hover:underline">
+              Partner with MySkills
+            </Link>
+          </p>
+
           <div ref={answerRef}>
             {/* A programme that isn't open yet: a place on its list, and the open ones meanwhile. */}
             {asked && coming && (
@@ -330,7 +340,7 @@ function StartPage() {
                       questions={questions}
                       copy={QUIZ_COPY[test]}
                       onSubmit={async (answers, reflection) => {
-                        savePendingAptitude(test, answers, reflection)
+                        savePendingAptitude(test, answers, reflection, strongestFor(test, questions, answers))
                         remember(test === '/aptitude-assessment' ? 'marketing' : 'personal')
                         trackEvent('aptitude_answered_guest', { test, start: 'guide' })
                         setDone(true)

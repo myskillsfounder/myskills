@@ -52,6 +52,8 @@ export interface AssessmentQuestion {
   id: string
   skill: SkillKey
   statement: string
+  /** Worded negatively: scored 5 - answer. */
+  reverse?: boolean
 }
 
 export interface AssessmentResult {
@@ -206,13 +208,13 @@ function fail(error: { message?: string }): never {
 export async function fetchAssessmentQuestions(): Promise<{ questions: AssessmentQuestion[]; lifeSkills: boolean }> {
   const v2 = await supabase
     .from('career_readiness_assessment_questions')
-    .select('id, skill, statement')
+    .select('id, skill, statement, reverse')
     .eq('version', 2)
     .order('sort_order', { ascending: true })
   if (!v2.error && (v2.data ?? []).length > 0) return { questions: v2.data as AssessmentQuestion[], lifeSkills: true }
   const all = await supabase
     .from('career_readiness_assessment_questions')
-    .select('id, skill, statement')
+    .select('id, skill, statement, reverse')
     .order('sort_order', { ascending: true })
   if (all.error) fail(all.error)
   return { questions: (all.data ?? []) as AssessmentQuestion[], lifeSkills: false }

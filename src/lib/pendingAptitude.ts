@@ -16,6 +16,8 @@ interface Pending {
   route: TestRoute
   answers: Record<string, number>
   reflection: string
+  /** Their strongest skill, shown before sign-up as a taste of the result. */
+  strongest?: string
   at: number
 }
 
@@ -35,9 +37,14 @@ function read(): Pending | null {
   }
 }
 
-export function savePendingAptitude(route: TestRoute, answers: Record<string, number>, reflection: string): void {
+export function savePendingAptitude(
+  route: TestRoute,
+  answers: Record<string, number>,
+  reflection: string,
+  strongest?: string,
+): void {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ route, answers, reflection, at: Date.now() } satisfies Pending))
+    localStorage.setItem(KEY, JSON.stringify({ route, answers, reflection, strongest, at: Date.now() } satisfies Pending))
   } catch {
     // Storage blocked: they'll take the test again after signing up.
   }
