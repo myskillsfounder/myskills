@@ -20,9 +20,17 @@ export const Route = createFileRoute('/admin/_layout/cr-leads')({
 
 const fmtDate = (v: string) => new Date(v).toLocaleDateString()
 
+const PROGRAMME: Record<string, string> = {
+  'global-leadership': 'Global Leadership',
+  entrepreneurship: 'Entrepreneurship',
+  'data-analytics': 'Data Analytics',
+}
+const programmeName = (p: string) => PROGRAMME[p] ?? p
+
 /**
- * People who joined the Global Leadership waitlist before the programme opened
- * (the form is retired; these are the leads it collected), newest first.
+ * People who asked to hear about a programme before it opened, newest first:
+ * the old Global Leadership waitlist, and Entrepreneurship and Data Analytics
+ * from the phone's front door. Filter by programme.
  */
 function CareerReadinessLeadsPage() {
   const [rows, setRows] = useState<CareerReadinessLead[]>([])
@@ -58,20 +66,24 @@ function CareerReadinessLeadsPage() {
     }
   }
 
-  const waiting = rows.filter((r) => !r.contacted).length
+  const [only, setOnly] = useState('')
+  const shown = only ? rows.filter((r) => r.programme === only) : rows
+  const waiting = shown.filter((r) => !r.contacted).length
+  const programmes = [...new Set(rows.map((r) => r.programme))]
 
   return (
     <>
       <PageHeader
         eyebrow="Programmes"
-        title="Global Leadership leads"
-        subtitle={`From the old waitlist form. ${waiting} not contacted yet.`}
+        title="Programme leads"
+        subtitle={`People waiting for a programme to open. ${waiting} not contacted yet.`}
         actions={
           <ExportButton<CareerReadinessLead>
-            name="global-leadership-leads"
-            rows={rows}
+            name="programme-leads"
+            rows={shown}
             columns={[
               { header: 'Received', value: (r) => csvDateTime(r.created_at) },
+              { header: 'Programme', value: (r) => programmeName(r.programme) },
               { header: 'Name', value: (r) => r.full_name },
               { header: 'Phone', value: (r) => r.phone },
               { header: 'Email', value: (r) => r.email },
@@ -89,9 +101,23 @@ function CareerReadinessLeadsPage() {
           </Alert>
         </div>
       )}
+      {programmes.length > 1 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {['', ...programmes].map((p) => (
+            <button
+              key={p || 'all'}
+              type="button"
+              onClick={() => setOnly(p)}
+              className={`rounded-full px-3 py-1.5 text-sm font-medium ${only === p ? 'bg-ink-900 text-white' : 'bg-ink-100 text-ink-700 hover:bg-ink-200'}`}
+            >
+              {p ? programmeName(p) : 'All'} ({p ? rows.filter((r) => r.programme === p).length : rows.length})
+            </button>
+          ))}
+        </div>
+      )}
       {loading ? (
         <Skeleton className="h-64 w-full" />
-      ) : rows.length === 0 ? (
+      ) : shown.length === 0 ? (
         <EmptyState icon={Users} title="No leads" />
       ) : (
         <div className="card overflow-x-auto">
@@ -99,6 +125,7 @@ function CareerReadinessLeadsPage() {
             <thead className="border-b border-ink-200 text-xs uppercase tracking-wide text-ink-500">
               <tr>
                 <th className="px-4 py-3 font-semibold">Name</th>
+                <th className="px-4 py-3 font-semibold">Programme</th>
                 <th className="px-4 py-3 font-semibold">Phone</th>
                 <th className="px-4 py-3 font-semibold">Email / city</th>
                 <th className="px-4 py-3 font-semibold">Joined</th>
@@ -106,9 +133,10 @@ function CareerReadinessLeadsPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((l) => (
+              {shown.map((l) => (
                 <tr key={l.id} className={`border-b border-ink-100 last:border-0 ${l.contacted ? 'text-ink-400' : ''}`}>
                   <td className="px-4 py-3 font-medium text-ink-900">{l.full_name}</td>
+                  <td className="px-4 py-3 text-ink-600">{programmeName(l.programme)}</td>
                   <td className="px-4 py-3">
                     <a href={`tel:${l.phone}`} className="text-ink-700 hover:text-brand-700">
                       {l.phone}

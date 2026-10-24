@@ -351,3 +351,29 @@ export async function submitCareerReadinessLead(lead: CareerReadinessLead): Prom
     throw new Error(error.message?.trim() || 'Something went wrong.')
   }
 }
+
+/** Programmes the phone's front door takes leads for, until they open. */
+export type LeadProgramme = 'entrepreneurship' | 'data-analytics'
+
+/**
+ * "Tell me when it opens" from the phone's front door: name and phone, email
+ * if they want. Same table as the Global Leadership waitlist, with the
+ * programme named (docs/supabase-programme-leads.sql).
+ */
+export async function submitProgrammeLead(
+  programme: LeadProgramme,
+  lead: { full_name: string; phone: string; email?: string },
+): Promise<void> {
+  const user = await sessionUser()
+  const email = lead.email?.trim()
+  const { error } = await supabase.from('career_readiness_leads').insert({
+    user_id: user?.id ?? null,
+    programme,
+    full_name: lead.full_name.trim(),
+    phone: lead.phone.trim(),
+    email: email || null,
+  })
+  if (error) {
+    throw new Error(error.message?.trim() || 'Something went wrong.')
+  }
+}
