@@ -60,7 +60,7 @@ export async function requireSession(): Promise<void> {
  * A new account is onboarded first: on a computer by the sentence and the
  * plan, on a phone by its own three taps. After that, a phone has the
  * Community, the LaunchPad and Practice (see lib/device.ts); any other app
- * page sends them to the Community.
+ * page sends them home, to the LaunchPad.
  */
 export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
@@ -68,7 +68,7 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   if (session.user.user_metadata?.onboarded !== true) {
     throw redirect({ to: notOnboardedPath(session) })
   }
-  if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
+  if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: homePath() })
   // The programmes' published wording from the course engine (lib/liveContent.ts).
   await ensureLiveContent()
 }
@@ -76,18 +76,18 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
 /**
  * The phone's front door (/welcome): the welcome for someone signed out, the
  * three questions for a new account. A computer has no use for it, and an
- * account that has already answered goes to the marketplace.
+ * account that has already answered goes home.
  */
 export async function requirePhoneWelcome(): Promise<void> {
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (!isPhone()) throw redirect({ to: session ? '/dashboard' : '/' })
-  if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: '/community' })
+  if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: homePath() })
 }
 
 /**
  * The home page on a phone is the app's front door, not the website's: someone
- * signed in is taken to the marketplace, the way opening an app takes you to
+ * signed in is taken to their LaunchPad, the way opening an app takes you to
  * the app, and someone signed out to the phone's own welcome. On a computer
  * the home page is the home page.
  */
@@ -96,7 +96,7 @@ export async function phoneHome(): Promise<void> {
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (!isPhone()) return
-  throw redirect({ to: session ? '/community' : '/welcome' })
+  throw redirect({ to: session ? homePath() : '/welcome' })
 }
 
 /**
