@@ -15,7 +15,6 @@ import {
   Target,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
-import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { skillTracks } from '@/lib/skillTracks'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { Navbar } from '@/components/landing/Navbar'
@@ -180,10 +179,9 @@ function PillarCard({
 /**
  * The phone hero's one action: the aptitude test, which is step 1 of the
  * Digital Marketing programme and unlocks Practice. A signed-out visitor
- * goes through sign-up first; we remember where they were heading so
- * onboarding sends them straight to the test (lib/afterOnboarding.ts).
+ * takes it first and signs up to see the result (lib/pendingAptitude.ts).
  */
-function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment' | '/signup'; signedIn: boolean }) {
+function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment'; signedIn: boolean }) {
   return (
     <div className="card-glass-dark mt-7 p-5 lg:hidden">
       <div className="flex items-center gap-3.5">
@@ -213,7 +211,6 @@ function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment' | '/sign
       </ul>
       <Link
         to={to}
-        onClick={() => !signedIn && setAfterOnboarding('/aptitude-assessment')}
         className="press mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
       >
         Start the aptitude test
@@ -233,7 +230,8 @@ function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment' | '/sign
 
 function HomePage() {
   const { user } = useAuthUser()
-  const assessmentTo = user ? '/aptitude-assessment' : '/signup'
+  // Signed out too: the test comes first, and signing up shows the result (lib/pendingAptitude.ts).
+  const assessmentTo = '/aptitude-assessment'
 
   return (
     <div className="min-h-screen bg-ink-900">
@@ -501,7 +499,6 @@ function HomePage() {
             </div>
             <Link
               to={assessmentTo}
-              onClick={() => !user && setAfterOnboarding('/aptitude-assessment')}
               className="press relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
             >
               <Target size={16} />
