@@ -120,7 +120,7 @@ function BecomeAnInternshipPartnerPage() {
       <main>
         {!done && (
           <>
-            <PartnerHero page={page} icon={Briefcase} breadcrumb="Internship partners" />
+            <PartnerHero page={page} icon={Briefcase} breadcrumb="Internship partners" signup="internships" />
             <PartnerDetails page={page} />
             <PartnerFaq faqs={page.faqs} />
           </>

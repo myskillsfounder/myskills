@@ -161,7 +161,7 @@ function BecomeAPartnerInstitutionPage() {
       <main>
         {!done && (
           <>
-            <PartnerHero page={page} icon={Building2} breadcrumb="Partner institutions" />
+            <PartnerHero page={page} icon={Building2} breadcrumb="Partner institutions" signup="institutions" />
             <PartnerDetails page={page} />
             <PartnerFaq faqs={page.faqs} />
           </>
