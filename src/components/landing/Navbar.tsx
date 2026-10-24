@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { isPhone } from '@/lib/device'
 import { Link } from '@tanstack/react-router'
-import { Menu, X } from 'lucide-react'
+import { Menu, Sparkles, X } from 'lucide-react'
+import { setSiteMode } from '@/lib/siteMode'
 import { useAuthUser } from '@/lib/useAuth'
 
 // Home (the Personal & Professional Development page) leads, followed by
@@ -64,6 +65,17 @@ export function Navbar() {
               </Link>
             ) : (
               <>
+                {/* Back to the AI guide, the computer's other way in (lib/siteMode.ts). */}
+                {!isPhone() && (
+                  <Link
+                    to="/start"
+                    onClick={() => setSiteMode('ai')}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-100"
+                  >
+                    <Sparkles size={14} />
+                    Try the AI guide
+                  </Link>
+                )}
                 <Link
                   to="/login"
                   className="text-sm font-medium text-ink-700 transition-colors hover:text-ink-900"
