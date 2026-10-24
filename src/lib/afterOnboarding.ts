@@ -12,7 +12,7 @@ import { pendingAptitudeRoute } from './pendingAptitude'
 const KEY = 'myskills.afterOnboarding'
 
 /** Only in-app paths we expect — never an arbitrary URL from storage. */
-const ALLOWED = new Set(['/aptitude-assessment', '/career-readiness-assessment'])
+const ALLOWED = new Set(['/aptitude-assessment', '/career-readiness-assessment', '/foundation-assessment'])
 
 export function setAfterOnboarding(path: string): void {
   try {

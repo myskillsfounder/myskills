@@ -14,6 +14,7 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as StartRouteImport } from './routes/start'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -130,6 +131,11 @@ const TermsRoute = TermsRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -643,6 +649,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/start': typeof StartRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
@@ -741,6 +748,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/start': typeof StartRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
@@ -839,6 +847,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/start': typeof StartRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
@@ -940,6 +949,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/signup'
+    | '/start'
     | '/support'
     | '/terms'
     | '/tests'
@@ -1038,6 +1048,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/signup'
+    | '/start'
     | '/support'
     | '/terms'
     | '/tests'
@@ -1135,6 +1146,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/signup'
+    | '/start'
     | '/support'
     | '/terms'
     | '/tests'
@@ -1235,6 +1247,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
+  StartRoute: typeof StartRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   TestsRoute: typeof TestsRoute
@@ -1292,6 +1305,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -2116,6 +2136,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
+  StartRoute: StartRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   TestsRoute: TestsRoute,

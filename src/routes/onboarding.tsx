@@ -18,6 +18,7 @@ import {
   planFor,
 } from '@/lib/onboardingContent'
 import { setProgrammePath } from '@/lib/foundationPath'
+import { clearGuideAnswers, peekGuideAnswers } from '@/lib/guideAnswers'
 import { GOAL_ICONS } from '@/lib/goalIcons'
 import { InlineSelect } from '@/components/onboarding/InlineSelect'
 import { AnswerPanel } from '@/components/onboarding/AnswerPanel'
@@ -63,6 +64,21 @@ function OnboardingPage() {
   const chosen = [stage, goal, focus, level].filter(Boolean).length
   const complete = chosen === 4
 
+  // Onboarded already, by the AI guide before sign-up (routes/start.tsx): its
+  // answers fill the sentence, and onboarding finishes by itself, on to the
+  // results of the test they took there.
+  const fromGuide = useRef(false)
+  useEffect(() => {
+    if (!user || fromGuide.current) return
+    const g = peekGuideAnswers()
+    if (!g) return
+    fromGuide.current = true
+    setStage(g.stage)
+    setGoal(g.goal)
+    setFocus(g.focus)
+    setLevel(g.level ?? 'beginner')
+  }, [user])
+
   // A visitor who came from "Take the aptitude test" (or a programme's "start")
   // has already said where they're heading, so there's nothing to ask: the
   // sentence finishes onboarding and lands them on that assessment.
@@ -84,6 +100,14 @@ function OnboardingPage() {
     if (goal && !goalsFor(id).some((o) => o.id === goal)) setGoal('')
     pick(setStage)(id)
   }
+
+  useEffect(() => {
+    if (!fromGuide.current || !complete || submitting) return
+    clearGuideAnswers()
+    void finish(undefined, 'guide')
+    // finish reads the answers just set; it runs once, when they are complete.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [complete])
 
   useEffect(() => {
     if (asked) answerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
