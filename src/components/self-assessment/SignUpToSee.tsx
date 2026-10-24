@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, Compass, Lock, Sparkles } from 'lucide-react'
 import { setAfterOnboarding } from '@/lib/afterOnboarding'
+import { trackEvent } from '@/lib/analytics'
 import { pendingAptitudeFor, type TestRoute } from '@/lib/pendingAptitude'
 
 /**
@@ -42,7 +43,10 @@ export function SignUpToSee({ route }: { route: TestRoute }) {
       </ul>
       <Link
         to="/signup"
-        onClick={() => setAfterOnboarding(route)}
+        onClick={() => {
+          setAfterOnboarding(route)
+          trackEvent('results_signup', { test: route })
+        }}
         className="press mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-ink-900 shadow-e2"
       >
         Create a free account <ArrowRight size={17} />

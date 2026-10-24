@@ -90,6 +90,16 @@ export function initAnalytics() {
   window.gtag('config', MEASUREMENT_ID, { send_page_view: false })
 }
 
+/**
+ * A user property on every event from here on, e.g. which way in a visitor
+ * used: { site_mode: 'ai' | 'standard' | 'phone' }. GA4 reports on it once it
+ * is registered as a custom dimension (docs/ga4-guide-funnel.md).
+ */
+export function setAnalyticsUser(props: Record<string, string>) {
+  if (!MEASUREMENT_ID || typeof window === 'undefined' || !window.gtag) return
+  window.gtag('set', 'user_properties', props)
+}
+
 /** Report a single-page-app page view for the given path. */
 export function trackPageView(path: string) {
   if (typeof window === 'undefined') return

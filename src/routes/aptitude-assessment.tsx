@@ -13,6 +13,7 @@ import {
 import { AptitudeResult } from '@/components/aptitude/AptitudeResult'
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
 import { SignUpToSee } from '@/components/self-assessment/SignUpToSee'
+import { CoachNote } from '@/components/self-assessment/CoachNote'
 import { strongestFor } from '@/lib/guestResult'
 import { useAuthUser } from '@/lib/useAuth'
 import { clearPendingAptitude, pendingAptitudeFor, savePendingAptitude } from '@/lib/pendingAptitude'
@@ -102,6 +103,7 @@ function AptitudeAssessmentPage() {
         </p>
       )}
 
+      {result && <CoachNote test="dm-aptitude" />}
       {result && <AptitudeResult result={result} />}
 
       {!result && waiting && !user && !authLoading && <SignUpToSee route="/aptitude-assessment" />}

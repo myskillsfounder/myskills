@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { ArrowRight, LayoutGrid, Sparkles } from 'lucide-react'
+import { ArrowRight, Award, BadgeCheck, Briefcase, GraduationCap, LayoutGrid, Sparkles } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requireGuest } from '@/lib/guards'
 import { setAfterOnboarding } from '@/lib/afterOnboarding'
@@ -238,7 +238,7 @@ function StartPage() {
           {/* The prompt: a sentence with four dropdowns in it. */}
           <div className={`card-glass-dark relative mt-7 rounded-2xl p-5 transition-shadow duration-500 sm:p-7 ${complete ? 'glow-edge' : ''}`}>
             <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/50">Your starting point</p>
-            <p className="font-display text-[1.375rem] font-medium leading-[2.35] text-white sm:text-[1.75rem] sm:leading-[2.3]">
+            <div className="font-display text-[1.375rem] font-medium leading-[2.35] text-white sm:text-[1.75rem] sm:leading-[2.3]">
               I’m{' '}
               <InlineSelect value={stage} options={careerStageStep.options} onChange={pickStage} placeholder="where you are" label="Where you are right now" />{' '}
               and I want to{' '}
@@ -257,7 +257,7 @@ function StartPage() {
               <InlineSelect value={learn} options={LEARN} onChange={pick(setLearn)} placeholder="a programme" label="What you'd like to learn" />
               , and I’m{' '}
               <InlineSelect value={level} options={levelStep.options} onChange={pick(setLevel)} placeholder="how much you know" label="How much you already know" />.
-            </p>
+            </div>
 
             <div className="mt-5 flex items-center justify-between gap-4 border-t border-white/10 pt-4">
               <p className="flex items-center gap-2 font-mono text-xs text-white/50" aria-live="polite">
@@ -283,8 +283,23 @@ function StartPage() {
             </div>
           </div>
 
+          {/* What a first-time visitor should know before trusting the sentence with anything. */}
+          <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/70">
+            {[
+              { icon: BadgeCheck, label: 'Free to start' },
+              { icon: GraduationCap, label: 'Verified mentors' },
+              { icon: Briefcase, label: 'Real internships' },
+              { icon: Award, label: 'Certificates you can share' },
+            ].map(({ icon: Icon, label }) => (
+              <li key={label} className="inline-flex items-center gap-1.5">
+                <Icon size={15} className="text-brand-200" />
+                {label}
+              </li>
+            ))}
+          </ul>
+
           {/* Partners have a way in from here too: every partner page leads to the portal's sign-up. */}
-          <p className="mt-4 text-sm text-white/55">
+          <p className="mt-3 text-sm text-white/55">
             A mentor, company or institute?{' '}
             <Link to="/community" search={{ partners: true }} className="font-semibold text-white underline-offset-4 hover:underline">
               Partner with MySkills
