@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight, BarChart3, Briefcase, Building2, Check, Globe2, GraduationCap, HeartHandshake, LayoutGrid, Megaphone, Rocket, Sparkles } from 'lucide-react'
-import { trackEvent, trackSignUp } from '@/lib/analytics'
+import { trackEvent, trackLead, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { setAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
 import { submitProgrammeLead, type LeadProgramme } from '@/lib/programmes'
@@ -97,7 +97,7 @@ function LeadForm({ programme, title }: { programme: LeadProgramme; title: strin
     setError(undefined)
     try {
       await submitProgrammeLead(programme, { full_name: name, phone, email })
-      trackEvent('programme_lead', { programme, start: 'mobile' })
+      trackLead('programme_waitlist', { programme, start: 'mobile' })
       setState('done')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not send that. Please try again.')
