@@ -1,0 +1,134 @@
+{
+ "verdict": "needs_work",
+ "summary": "Round 2 was fixed properly in almost every case. The 20 judgement questions now hinge on a fact in the scenario, 10 of them pointing away from the textbook answer, and the options-only clue test fell from 46 to 39 of 55, and 28 of those 39 are questions that were not rebuilt, mostly the code and fact items we agreed may stay answerable. m10-q4 is now right in profit (₹38 lakh × 60% ≈ ₹23 lakh, minus ₹15 lakh), f15, f12, f07, the titles and cases, and the three card lines are all in, and check.mjs is clean. Three questions still have a second defensible answer, each because a wrong option is a sensible extra step that the scenario does not make pointless and that a Learn card actually recommends: m01-q1 (card 1 says write down what will be decided, and the founder never says it), f05 (M3 card 3 says to ask whether the missing rows differ) and m10-q1 (the fee was proven on metro customers, not Tier-3 ones, and M10 card 3 says to propose a pilot). Each has an exact rewrite below; after those, m09-q4's dominant key and the blueprint's broken question map are the only other changes, so the next revision should be the last.",
+ "strengths": [
+  "The rebuilds pass the self-test: in m01-q3, m01-q4, m03-q1, m06-q4, m08-q1, m08-q3, m08-q4, m09-q2, m10-q2, m10-q3, m10-q4, f02, f04, f10, f11 and f14, changing the stated fact (sponsorships ending, users choosing the setting, payment references matching, a lopsided scale, a CEO audience, an average target, two owners, a different funnel, a staggered launch, a test stopped early) makes a different option right, and the why_wrong lines say which.",
+  "The flips work: the options-only prober now picks the textbook answer and misses m01-q3 (the mean for a budget), m01-q4 (act on a random test), m08-q1 (sorted bars, not a line, chosen with certainty), m09-q2 (the PivotTable repeats the item-level error), m10-q3 (Diwali data for a Diwali decision) and f05.",
+  "The arithmetic is now exact and checkable: m10-q4 (₹38, ₹61, ₹45 and ₹20 lakh at 60% give ₹23, ₹37, ₹27 and ₹12 lakh), m01-q3 (₹1.84–2.08 lakh against ₹1.0–1.25 lakh and ₹8 lakh), m10-q2 (drops of 70, 80, 90 and 420), f11 (84 against 75 sales), f14 (1,200 ÷ 11,000 ≈ 10.9%) and m06-q4 (±3 points for 400 replies at 90%).",
+  "The round-2 should-fix items are done as written: m08-q3 states the target as a rate, m09-q1's key carries the exact definition, f12 names item_value, f07 is an applied count, M8 card 1 has the ₹99 lakh axis, M10 card 2 says extra profit, and M1, M6 and M10 cards carry the three new lines inside 160 words."
+ ],
+ "findings": [
+  {
+   "target": "module:da-m01",
+   "severity": "must_fix",
+   "problem": "m01-q1 has a second defensible answer, confirmed by two clue tests: the blind run chose “Ask the founder what she will decide with the report, and agree which measure of delay she means”, and the cards run chose it with certainty. They are right. M1 card 1 says that before you open a spreadsheet you write down who will decide, what they will decide and the measure, and the founder's message never says what she will decide. “Missing our 30-minute promise” also gives no threshold: the key assumes a weekly share of orders, but she could equally mean an average or a share below some level. The why_wrong claim that she “has already defined the measure” is therefore not true of the scenario as written.",
+   "fix": "Put the decision, the threshold and the period in her message, so asking is clearly redundant.\nscenario → “The founder of Saffron Basket, an online grocer, writes: “Customers keep saying deliveries take ages. On Friday I'll decide which cities get extra riders, so show me every city that delivered fewer than 90% of its orders within our 30-minute promise over the last four weeks.” You have 18 months of orders (date, city, basket value, delivery minutes, customer ID) and two days.”\noption 0 (key) → “Work out each city's share of orders delivered within 30 minutes over the last four weeks”\nKeep options 1, 2 and 3 as they are.\nexplanation → “The founder has already given the decision (where extra riders go), the measure (the share of orders within 30 minutes, against 90%), the breakdown (each city) and the period (the last four weeks). The question is ready to answer, so the first step is to work out that share for each city.”\nwhy_wrong, first clause → “Asking what she will decide and which measure she means is the right first step when a request is vague, such as “orders feel slower”, but she has already named the decision, the measure and the period, so it spends one of your two days on questions she has answered;” (keep the other two clauses). Update the blueprint row for m01-q1.",
+   "source": "Clue tests (blind and cards), ai-powered-data-analytics.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m01",
+   "severity": "should_fix",
+   "problem": "M1 card 1 teaches only the vague case (“pin down every vague word … agree on the measure and the period before you start”). It never says what to do when the request is already specific, which is what m01-q1 tests, so a learner who follows the card always asks first.",
+   "fix": "In M1 card 1, after “Agree on the measure and the period before you start.”, add: “If the request already names the decision, the measure and the period, it is ready: start the analysis instead of asking again.” The card goes from 121 to about 140 words.",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null
+  },
+  {
+   "target": "final",
+   "severity": "must_fix",
+   "problem": "f05 has a second defensible answer. The blind clue test chose “The average of the 1,400 answers, the share missing, and whether those who skipped differ”, and the options-only run chose it with certainty. That option is not wrong, only more than needed: it gives the same average and the share missing, and checking whether the 600 households differ on other survey questions (district, household size) is exactly how a careful analyst would confirm that the screen fault really was random. M3 card 3 calls this “the most important question: are the missing rows different from the rest?” So the card teaches the wrong option. Its only flaw is the word “skipped”, which is too thin a reason to mark a learner wrong.",
+   "fix": "Replace option 0 with an over-cautious action that the scenario's facts rule out, and add the deadline.\nscenario → add a last sentence: “The report is due to the funder next week.”\noption 0 → “No average yet: re-survey the 600 households first, so the figure covers all 2,000”\nwhy_wrong, first clause → “Re-surveying the 600 would be right if the gap were not random, for example if the screen failed only on the tablets used in rural blocks, but a random fault leaves 1,400 answers that stand for all 2,000, and the report is due next week;” (keep the median and margin-of-error clauses).\nKeep the key, options 1 and 3, the explanation and the learning_outcome. Update the blueprint row for f05.",
+   "source": "Clue tests (blind and options), ai-powered-data-analytics.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m10",
+   "severity": "must_fix",
+   "problem": "m10-q1 has a second defensible answer: “Recommendation: test a ₹49 COD fee in two Tier-3 cities for a month, before deciding for the rest of the tier.” The blind clue test found it defensible and the cards test chose it. They are right. The only evidence for the fee comes from metro customers, and Tier-3 customers, 70% of whom pay by COD, may drop their orders far more readily than metro customers did. So the why_wrong claim that “a year in metros has already shown how customers react” doesn't hold for the customers the decision is about. M10 card 3 says “If a limit is serious enough to change the decision, propose a small test or pilot”, and an expert would defend a short Tier-3 pilot here.",
+   "fix": "Make the evidence come from Tier-3 cities, so a further test is clearly redundant.\nscenario → “An online fashion store sells ₹60 lakh a month in Tier-3 cities, and 70% of those orders are cash on delivery (COD). Tier-3 COD orders are returned at 31%, costing about ₹4 lakh a month; elsewhere COD is returned at 10%, close to prepaid orders. Last quarter a ₹49 COD fee ran for eight weeks in six Tier-3 cities picked at random: COD returns there fell to 19%, while orders were only 2% lower than in the other Tier-3 cities.”\noption 0 (key) → “Recommendation: add the ₹49 COD fee in every Tier-3 city, where COD returns cost about ₹4 lakh a month.”\nKeep options 1, 2 and 3 as they are.\nexplanation → “COD is 70% of Tier-3 sales, about ₹42 lakh a month, so pausing it risks far more than the ₹4 lakh of returns. A random trial in six Tier-3 cities has already shown the fee cutting COD returns from 31% to 19% for 2% fewer orders, so extending it to every Tier-3 city is the specific, scoped action the evidence supports.”\nwhy_wrong, last clause → “a test first would be right if the fee were untried in Tier-3 cities, but the random six-city trial has already shown how Tier-3 customers react.” (keep the first two clauses).\nUpdate the blueprint row for m10-q1 and its arithmetic line.",
+   "source": "Clue tests (blind and cards), ai-powered-data-analytics.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m09",
+   "severity": "should_fix",
+   "problem": "m09-q4 still doesn't really depend on its scenario. The options-only prober was certain of it, and rightly so: the key (“Give it the real table definitions, then re-check the whole query it returns”) is at least as good as option 0 (“Ask it again, telling it to use only columns that exist, and run what it returns”) in every situation, because it adds the re-check that option 0 lacks. So no change to the scenario could make option 0 the better answer, and the deciding fact (“never pasted their definitions”) isn't needed to answer. The key is correct and the question is fair, so this is not a must-fix.",
+   "fix": "Give option 0 the same re-check, so the two differ only in what the scenario decides (whether the assistant ever had the definitions).\noption 0 → “Ask it again, telling it to use only columns that exist, then re-check the query it returns”\nwhy_wrong, first clause → “Asking it to use only existing columns would be right if it already had the definitions and overlooked one, but it never saw them, so it can only guess again, and a re-check would just find more guesses;” (keep the rest). Keep the key and the other options.",
+   "source": "Clue test (options), ai-powered-data-analytics.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "The assessment blueprint (ai-powered-data-analytics.assessment.md) is broken and out of step with the file. Its first line, before the “# AI powered Data Analytics: assessment blueprint” title, is 25 updated question-map rows run together with “||”. Meanwhile the real tables still hold the round-1 rows for the rebuilt questions: m01-q1 “Agree the decision and the measure before analysing”, m01-q3 “Median, not mean, with outliers”, m01-q4 “Self-selection … test it”, m08-q1 “Line chart for a trend”, m09-q2, m10-q1 to q4, f02, f04, f05 “Report who is missing; margin of error doesn't fix bias”, f07 “Concept B”, f10 “Tiny gap and peeking”, f14 and f15. The header, “Clue-test leads” and “Defects that remain known” still say the clue tests were run on the round-1 version and that the options test hasn't been re-run.",
+   "fix": "Delete the first line. Replace the stale rows in the Module quizzes and Final tables with those 25 rows, one per line, plus the new rows for m01-q1, m10-q1, m09-q4 and f05 from this round. Set **Run** to round 3 and **Inputs** to review-3 and the 22 October clue tests. In “Clue-test leads”, record options 39 of 55 (11 of the 20 rebuilds right, certain only on m06-q4 and m09-q4), cards 38 of 40 and blind 53 of 55, and remove the “not re-run yet” defect. Then run node agents/blueprint.mjs again so the tables file matches.",
+   "source": "",
+   "owner": "assessment",
+   "category": "coverage",
+   "rule": null
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "Answer integrity (carried from rounds 1 and 2): every student still sees the options in the same order, so keys can be shared. The project still has no pass rule or rubric weights in the engine.",
+   "fix": "Paul to decide, as in the blueprint's “For the team” items 1 and 3: shuffle options for each student on the page and map the answer back on the server; set the project's pass rule and weights.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  }
+ ],
+ "round2_check": [
+  { "finding": 1, "status": "fixed", "note": "All 20 rebuilt. Options-only fell from 46 to 39 of 55, with 11 of the 20 rebuilds right. That is above the round-2 aim of about 30, but 28 of the 39 were not rebuilt and are mostly the agreed code and fact items, and I checked that each rebuild except m09-q4 turns on a stated fact (see the m09-q4 finding). m06-q4 was answered with certainty, but it passes the self-test: if only current members had been asked, if 40 had replied, or if the scale were lopsided, a different option would be right. The certainty comes from non-response being the most common flaw, not from a clue in the options." },
+  { "finding": 2, "status": "partly", "note": "m01-q3 and m01-q4 are fixed as specified. m01-q1 was rebuilt but is still open (new must-fix): the message names the measure but not the decision or a threshold." },
+  { "finding": 3, "status": "fixed", "note": "m03-q1: 150 exact copies against 50 pairs with different payment references; the keep-the-later-row option is right only if the references matched." },
+  { "finding": 4, "status": "fixed", "note": "m06-q4: random draw including leavers, a balanced scale, 400 replies (±3 points)." },
+  { "finding": 5, "status": "fixed", "note": "m08-q1 ranks months (sorted bars); m08-q3 is for the ops head and the target is a rate; m08-q4 has both definitions and the owner's." },
+  { "finding": 6, "status": "partly", "note": "m09-q2 is fixed and is a good flip. m09-q4 has its deciding fact, but the key dominates option 0 (new should-fix)." },
+  { "finding": 7, "status": "partly", "note": "m10-q2, m10-q3 and m10-q4 are fixed. m10-q1 has its facts, but metro evidence leaves a Tier-3 pilot defensible (new must-fix)." },
+  { "finding": 8, "status": "partly", "note": "f02, f04, f10, f11 and f14 are fixed. f05 has its random cause, but the old key, left in as a wrong option, is still defensible (new must-fix)." },
+  { "finding": 9, "status": "fixed", "note": "m10-q4 is in gross profit at 60%, with distinct ₹ figures in every option." },
+  { "finding": 10, "status": "fixed", "note": "m08-q3's target is 92% within 30 minutes." },
+  { "finding": 11, "status": "fixed", "note": "m09-q1's key defines that month's customers with an earlier order." },
+  { "finding": 12, "status": "fixed", "note": "f15's scenario and key state the randomised comparison." },
+  { "finding": 13, "status": "fixed in the file, not the blueprint", "note": "m03-q2, f06 and f07 have titles and cases, and f07 is applied. The blueprint's map is broken (new should-fix)." },
+  { "finding": 14, "status": "fixed", "note": "f12 names items(order_id, product, item_value)." },
+  { "finding": 15, "status": "fixed", "note": "M8 card 1: ₹100 to ₹103 lakh with the axis at ₹99 lakh." },
+  { "finding": 16, "status": "fixed", "note": "M10 card 2 says extra profit (extra sales × margin) against a similar group." },
+  { "finding": 17, "status": "fixed", "note": "M1 card 3, M6 card 3 and M10 card 3 have the lines, each card under 160 words." },
+  { "finding": 18, "status": "open (idea)", "note": "Carried." }
+ ],
+ "probe_leads": {
+  "confirmed": "m01-q1 (blind and cards), f05 (blind and options), m10-q1 (blind and cards), m09-q4 (options, certain). See the findings.",
+  "dropped": [
+   "m02-q1 “sort and filter, which a plain range can't do”: false, since a plain range can already be sorted and filtered, and the scenario's problem is re-selecting ranges.",
+   "m03-q3 TRIM and PROPER: the scenario lists “BLR” and “Bangalore” beside “Bengaluru”, which no change of case or spacing makes one spelling.",
+   "m06-q4 “400 replies are too few”: 400 replies at 90% give about ±3 points; the flaw is who replied (13%, mostly members of five years or more).",
+   "m08-q3 national % with a 12-week trend: the ops head is deciding which city managers to call, and a national figure names no city.",
+   "m08-q4 both figures with notes: the marketing head owns the dashboard and has defined the term, so a second, undefined-by-her figure doesn't belong on it.",
+   "m09-q1 the definition-only prompt: it names no columns, so the assistant must invent them; the key gives the schema and the same definition.",
+   "m09-q2 PivotTable recompute: the scenario says each row is an item, and the option averages the same value column, so it repeats the error.",
+   "m10-q3 “not typical of the year, re-check in January”: the decision is next Diwali's stock, so the Diwali weeks are the typical data for it.",
+   "m10-q4 Shillong: it is the chain's only café in a tourist town, so its sales follow different visitors.",
+   "f01 “most new customers”: the founder spent ₹12 lakh, and “working” means customers for that spend; a count ignores each channel's cost.",
+   "f02 7-day average: managers act the next morning on a one-day problem (a stock-out or a closed counter), which a 7-day average hides.",
+   "f11 metro and Tier-2 only: 3,000 visitors a group make the Tier-3 fall 84 against 75 sales, well within chance.",
+   "f15 method first: the memo goes to an operations head, and M10 card 1 says to lead with the recommendation."
+  ]
+ },
+ "lessons": [
+  {
+   "rule": "When a wrong option is a sensible extra step (ask first, check whether the missing rows differ, pilot first, re-check), the scenario must state the fact that makes that step pointless: the decision and measure already given, a cause known to be random, a trial already run on the same customers. Then check the option against the module's own Learn cards. If a card recommends that step in general, the scenario must say why it doesn't apply here, or the option is a second right answer.",
+   "why": "In Data Analytics round 3, m01-q1, f05 and m10-q1 each kept an over-cautious option that the scenario didn't rule out and that M1 card 1, M3 card 3 and M10 card 3 actually recommend. The blind and cards clue tests picked them. A step that is only unnecessary is not wrong."
+  },
+  {
+   "rule": "The key must not beat a wrong option in every situation. If the key does everything a wrong option does plus a further good step (a re-check, a note, a caveat), give the wrong option that step too, so the two differ only in what the scenario decides.",
+   "why": "m09-q4's key added “re-check the whole query” to the remedy, so it was the better answer whatever the scenario said, and the options-only prober was certain of it."
+  },
+  {
+   "rule": "When you revise questions, update the blueprint's question map rows in place, one row per line, and record which clue-test run the blueprint reflects. Then re-run blueprint.mjs and check that the file still starts with its title.",
+   "why": "In round 3 the updated rows for 25 questions were pasted as one line above the title, while the tables kept their round-1 descriptions, so the blueprint contradicted the file it describes."
+  }
+ ]
+}

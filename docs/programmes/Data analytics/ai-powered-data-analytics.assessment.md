@@ -1,10 +1,11 @@
 # AI powered Data Analytics: assessment blueprint
 
-**File:** `docs/programmes/Data analytics/ai-powered-data-analytics.json`. This is an engine programme, a draft that hasn't been published.
-**Run:** review only, on 21 October 2026, by the Assessment Architect. The programme file was not edited.
-**Earlier review:** `ai-powered-data-analytics-review.md`. Those fixes are in place and are not repeated here: the longest-option clue, the hours, the rubric, the DPDP wording and the pandas "can" wording.
+**File:** `docs/programmes/Data analytics/ai-powered-data-analytics.json`. An engine programme, a draft that hasn't been published.
+**Run:** `/course-team improve`, review-5 assessment findings (round 5), 23 October 2026, by the Assessment Architect. Two titles corrected (m07-q3, m07-q4); two review-5 ideas taken (m08-q4 scenario, m10-q3 first option); this blueprint brought up to the latest clue-test run and the hands-on tasks. Keys and ids unchanged.
+**Inputs:** review `ai-powered-data-analytics.review-5.json`, reviews 1 to 4, research brief `ai-powered-data-analytics.research.md` (section 4: beginner mistakes), clue tests `ai-powered-data-analytics.probes.json` (latest run, on this exact version before the two idea edits: options 39 of 55, cards 40 of 40, blind 52 of 55, with review 5's rulings on m01-q1, m08-q4 and m10-q3 and its 11 dismissed leads).
+**Counts and keys:** [`ai-powered-data-analytics.assessment-tables.md`](ai-powered-data-analytics.assessment-tables.md), written by `node agents/blueprint.mjs`. This blueprint doesn't copy them.
 
-Ids are written without the `da-` prefix in the tables below (`m03-q4` means `da-m03-q4`).
+Ids are written without the `da-` prefix below (`m03-q4` means `da-m03-q4`).
 
 ---
 
@@ -12,10 +13,10 @@ Ids are written without the `da-` prefix in the tables below (`m03-q4` means `da
 
 | Part | Purpose and skills | Format | Count | Est. time | Scoring | Pass |
 | --- | --- | --- | --- | --- | --- | --- |
-| Starting self-check (`aptitude`) | The learner's own view of where they start, for each of the 9 skills. It is not demonstrated readiness. | First-person statements rated Never / Sometimes / Often / Always. One statement per skill is reversed. | 27 (3 per skill) | 5 min | Scored per skill on the server. The reversed item is inverted. No pass or fail. | None. It is not a gate. |
-| Module quizzes (`modules[].quiz`) | Whether the learner can apply that module's outcome. One skill per module. | Multiple choice, 4 options, one right answer | 4 per module, 40 in all | 4–6 min each | Percentage = marks earned ÷ marks available × 100. Marks come from difficulty, set by code (Beginner 5, Intermediate 10, Advanced 15, Expert 20). No negative marking. The engine won't accept a submission until every question is answered. | 60% (fixed in SQL). A module is done when its tasks and reflection are written and its quiz is passed. Retake after 24 hours. |
-| Final (`final`) | All 5 outcomes and all 9 skills, combined across modules | Multiple choice, 4 options | 15 | 30 min (`minutes`). About 20 min of reading and thinking, with extra time for second-language readers. | As for quizzes. The draft's total is 140 marks; after the corrections below it is 155. | 60% (`pass_percent`). Once passed, it is done. A failed final can be retaken after 7 days. Tell learners this before they start; the final page already does. |
-| Project (`project.rubric`) | Practical competence: the real evidence of job-ready skill | Mentor-graded portfolio project with 5 deliverables | 5 criteria, 0–5 each | About 20 h of work, then a 3-min walkthrough | Mentor scores each criterion 0–5 against the descriptors in Practical evidence. Proposed weights are below; the engine doesn't store weights yet. | Not set: engine programmes have no project or certificate step yet (step 3). The proposal is under For the team. |
+| Starting self-check (`aptitude`) | The learner's own view of where they start, for each of the 9 skills. Not demonstrated readiness. | First-person statements about behaviour, rated Never / Sometimes / Often / Always. One per skill is reversed. | 27 (3 per skill) | 5 min | Scored per skill on the server; the reversed item is inverted. No pass or fail. | None. Not a gate. |
+| Module quizzes (`modules[].quiz`) | Whether the learner can apply that module's outcome. One skill per module. | Multiple choice, 4 options, one right answer; mostly scenario-based | 4 per module, 40 in all | 4–6 min each | Percentage = marks earned ÷ marks available × 100. Marks come from difficulty, set by code (Beginner 5, Intermediate 10, Advanced 15, Expert 20). No negative marking; an unanswered question earns 0 (the engine won't accept a submission until every question is answered). | 60% (fixed in SQL). A module is done when its tasks and reflection are written and the quiz is passed. Retake after 24 hours. In every module, 3 of 4 right now passes. |
+| Final (`final`) | All 6 outcomes and all 9 skills; 9 of 15 questions combine two or more modules | Multiple choice, 4 options, every question with a title and a scenario (true from round 2) | 15 (165 marks) | 30 min (`minutes`): about 19 min of reading and thinking, with slack for second-language readers | As for quizzes | 60% (`pass_percent`). A failed final can be retaken after 7 days; the final page tells learners this before they start. |
+| Project (`project.rubric`) | Practical competence: the real evidence of job-ready skill | Mentor-graded portfolio project, 5 deliverables, a 3-minute walkthrough | 5 criteria, 0–5 each | About 20 h | Mentor scores each criterion against the descriptors in Practical evidence. Proposed weights below; the engine doesn't store weights yet. | Not set: engine programmes have no project pass rule yet (For the team). |
 
 A high quiz or final score shows understanding, not job-ready skill. The project is the evidence of practical competence. New engine programmes earn a badge only (no Global Readiness points) until score v8 is decided.
 
@@ -23,98 +24,79 @@ A high quiz or final score shows understanding, not job-ready skill. The project
 
 ## Question map
 
-**Columns.**
-- **Diff:** the current label, and the honest one where they differ (shown as `current→proposed`).
-- **Sec:** the estimated seconds to answer.
-- **Pre:** the earlier modules the question relies on.
+**Outcomes** (`overview.outcomes`, now six):
+- O1 frame the question · O2 clean, combine, summarise · O3 tell a real change from noise (statistics, added this round, closes gap G1) · O4 dashboard · O5 use AI and verify it · O6 recommend.
 
-**Outcomes** (from `overview.outcomes`):
-- O1: frame the question.
-- O2: clean, combine and summarise.
-- O3: build a dashboard.
-- O4: use AI and verify it.
-- O5: present a recommendation.
-- "St": statistics, which no overview outcome covers (gap G1).
-
-**Types:** Concept, Applied, Code (code, formula or query), Interp (interpreting data), Scenario (a decision in a scenario).
+**Types:** Concept, Applied, Code (code, formula or query), Interp (interpreting data), Scenario (a decision). **Sec:** estimated seconds. **Pre:** earlier modules relied on.
 
 ### Module quizzes
 
-| Id | Module | Skill | Outcome | Tests | Type | Diff | Sec | Pre |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| m01-q1 | M1 | data-literacy | O1 | Agree on the decision and measure first | Scenario | B | 60 | – |
-| m01-q2 | M1 | data-literacy | O1 | Numbers that are labels (PIN code) | Concept | B | 30 | – |
-| m01-q3 | M1 | data-literacy | O1 | Median, not mean, with outliers | Interp | I | 60 | – |
-| m01-q4 | M1 | data-literacy | O1 | Correlation isn't causation | Scenario | I | 75 | **M6 content** (gap T1) |
-| m02-q1 | M2 | spreadsheets | O2 | Why use an Excel Table | Concept | B | 45 | – |
-| m02-q2 | M2 | spreadsheets | O2 | XLOOKUP with a not-found value | Code | I | 75 | – |
-| m02-q3 | M2 | spreadsheets | O2 | Average of a 1/0 column gives a rate | Applied | I | 75 | – |
-| m02-q4 | M2 | spreadsheets | O2 | Absolute reference `$F$1` | Code | B | 45 | **not taught** (T2) |
-| m03-q1 | M3 | data-cleaning | O2 | Remove true duplicates, log it | Scenario | B | 60 | – |
-| m03-q2 | M3 | data-cleaning | O2 | Infer date format from impossible values | Interp | B | 45 | – |
-| m03-q3 | M3 | data-cleaning | O2 | Map category variants, then verify | Applied | I | 60 | M2 |
-| m03-q4 | M3 | data-cleaning | O2, O5 | Missing not at random biases the average | Interp | A→I | 75 | – |
-| m04-q1 | M4 | sql | O2 | GROUP BY + COUNT | Code | B | 60 | – |
-| m04-q2 | M4 | sql | O2 | HAVING filters totals | Code | I | 60 | – |
-| m04-q3 | M4 | sql | O2 | `IS NULL`, not `= NULL` | Code | I | 75 | **not taught** (T3) |
-| m04-q4 | M4 | sql | O2 | AVG skips NULLs | Interp | A→I | 75 | **not taught** (T3), M3 |
-| m05-q1 | M5 | sql | O2 | LEFT JOIN + IS NULL for "never ordered" | Code | I | 90 | M4 |
-| m05-q2 | M5 | sql | O2 | Join fan-out inflates revenue | Interp | I | 75 | M4 |
-| m05-q3 | M5 | sql | O2 | ROW_NUMBER with PARTITION BY | Code | A→I | 75 | M4 |
-| m05-q4 | M5 | sql | O2 | AVG() OVER keeps every row | Code | A | 90 | M4 |
-| m06-q1 | M6 | statistics | St | Why randomise | Concept | B | 45 | – |
-| m06-q2 | M6 | statistics | St | Small samples are uncertain | Interp | I | 60 | M1 |
-| m06-q3 | M6 | statistics | St | Peeking and stopping early | Scenario | A | 75 | – |
-| m06-q4 | M6 | statistics | St | Selection bias (renewers only) | Scenario | I | 75 | – |
-| m07-q1 | M7 | python | O2 | `groupby` + sum | Code | B | 45 | M4 |
-| m07-q2 | M7 | python | O2 | `dayfirst=True` | Code | I | 75 | M3 |
-| m07-q3 | M7 | python | O2 | Left merge keeps rows, NaN | Code | I | 60 | M5 |
-| m07-q4 | M7 | python | O2 | `&` with brackets | Code | A→I | 75 | **not taught** (T4) |
-| m08-q1 | M8 | visualisation | O3 | Line chart for a trend | Concept | B | 30 | – |
-| m08-q2 | M8 | visualisation | O3 | Truncated axis exaggerates | Interp | I | 60 | – |
-| m08-q3 | M8 | visualisation | O3 | Dashboard top = decision metric vs target | Scenario | I | 75 | M1 |
-| m08-q4 | M8 | visualisation | O3, O4 | Reconcile a Copilot measure with SQL | Scenario | A | 90 | M5 |
-| m09-q1 | M9 | ai-analytics | O4 | Prompt with schema, definition, dialect | Applied | B | 75 | M4, M5 |
-| m09-q2 | M9 | ai-analytics | O4 | Verify independently | Scenario | I | 60 | M2, M7 |
-| m09-q3 | M9 | ai-analytics | O4 | Personal data and approved tools | Scenario | I | 60 | – |
-| m09-q4 | M9 | ai-analytics | O4 | An invented column means re-check all | Scenario | A→I | 60 | M4 |
-| m10-q1 | M10 | storytelling | O5 | Lead with the recommendation | Applied | B | 45 | – |
-| m10-q2 | M10 | storytelling | O5 | Finding vs insight with action | Applied | I | 60 | – |
-| m10-q3 | M10 | storytelling | O5 | State data limits | Scenario | I | 60 | M6 |
-| m10-q4 | M10 | storytelling | O5, St | Net impact against a matched group | Scenario | A | 90 | M6 |
+| Id | Outcome | Tests | Type | Diff | Sec | Pre |
+| --- | --- | --- | --- | --- | --- | --- |
+| m01-q1 | O1 | Decision (extra riders), measure (under 90% within 30 min) and period (last four weeks) already given: answer it, don’t re-ask (flip) | Scenario | B | 60 | – |
+| m01-q2 | O1 | A label in digits (PIN) can't be averaged | Interp | B | 30 | – |
+| m01-q3 | O1 | Budget total: mean × 50, not the median (flip; M1 card 3) | Interp | I | 75 | – |
+| m01-q4 | O1, O3 | Random assignment already done: act on it (flip) | Scenario | I | 75 | – |
+| m02-q1 | O2 | What an Excel Table does (and doesn't) | Applied | B | 45 | – |
+| m02-q2 | O2 | XLOOKUP argument order; VLOOKUP's approximate default | Code | I | 75 | – |
+| m02-q3 | O2 | Average of a 1/0 column is a rate | Applied | I | 60 | – |
+| m02-q4 | O2 | Absolute vs mixed references | Code | I (was B) | 60 | – |
+| m03-q1 | O2 | 150 exact copies vs 50 pairs with different payment refs | Scenario | I (was B) | 75 | – |
+| m03-q2 | O2 | Infer the date format from impossible values (clinic export; title and case added) | Interp | B | 45 | – |
+| m03-q3 | O2 | Reusable mapping table beats TRIM/fuzzy/Find-Replace | Scenario | I | 75 | M2 |
+| m03-q4 | O2, O6 | Missing not at random biases the average | Interp | I (was A) | 75 | – |
+| m04-q1 | O2 | GROUP BY + COUNT | Code | B | 60 | – |
+| m04-q2 | O2 | HAVING vs WHERE vs MAX | Code | I | 75 | – |
+| m04-q3 | O2 | `IS NULL`, not `= NULL` | Code | I | 60 | – |
+| m04-q4 | O2 | AVG skips NULLs; who is in the average | Interp | I (was A) | 75 | M3 |
+| m05-q1 | O2 | LEFT JOIN from the right table + IS NULL | Code | I | 90 | M4 |
+| m05-q2 | O2 | Join fan-out inflates revenue | Interp | I | 75 | M4 |
+| m05-q3 | O2 | ROW_NUMBER partition (per doctor) and sort direction | Code | I (was A) | 75 | M4 |
+| m05-q4 | O2 | Window partition decides the group | Code | A | 90 | M4 |
+| m06-q1 | O3 | Random assignment: balanced on average, not sampling | Concept | I (was B) | 60 | – |
+| m06-q2 | O3 | Small samples are uncertain | Interp | I | 60 | M1 |
+| m06-q3 | O3 | Peeking: fix length, judge at the end | Scenario | A | 75 | – |
+| m06-q4 | O3 | Fair draw, but non-response by keen members: which flaw is present | Scenario | I | 75 | M1 |
+| m07-q1 | O2 | `groupby` + the right aggregate | Code | B | 45 | M4 |
+| m07-q2 | O2 | `dayfirst=True` (and strict `format=`) | Code | I | 75 | M3 |
+| m07-q3 | O2 | Left merge keeps rows, NaN not 0 | Code | I | 60 | M3, M5 |
+| m07-q4 | O2 | `&` with brackets | Code | I (was A) | 60 | – |
+| m08-q1 | O4 | Rank the top 3 months: sorted bar, not line (flip) | Concept | B | 45 | – |
+| m08-q2 | O4 | Truncated axis exaggerates | Interp | I | 60 | – |
+| m08-q3 | O4 | Ops head calling city managers; target is a rate (95% within 30 min) | Scenario | I | 75 | M1, M2 |
+| m08-q4 | O4, O5 | Two definitions in the case; the owner’s definition decides | Scenario | A | 90 | M5 |
+| m09-q1 | O5 | Prompt with schema, exact definition, period, dialect | Applied | I | 90 | M4, M5 |
+| m09-q2 | O5 | Item-level file: the PivotTable check repeats the error (flip) | Scenario | I | 75 | M2, M5 |
+| m09-q3 | O5 | Personal data: approved tools, not settings or initials | Scenario | I | 60 | – |
+| m09-q4 | O5 | Never had the schema: give it the definitions (both remedies now re-check, so only the missing schema decides) | Scenario | I | 60 | M4 |
+| m10-q1 | O6 | COD is 70% of Tier-3 sales; a random six-city Tier-3 trial already proved the fee: extend it, no further pilot | Scenario | I (was B) | 90 | M6 |
+| m10-q2 | O6 | Funnel decides the step: insight + action at payment | Interp | B (was I) | 60 | – |
+| m10-q3 | O6 | School-reopening data for a reopening decision is typical (flip; M10 card 3) | Scenario | I | 60 | M6 |
+| m10-q4 | O6, O3 | Gross profit vs a matched group, minus cost; four comparisons | Scenario | A | 120 | M1, M6 |
 
 ### Final
 
-The rows for f02, f03, f04, f11 and f15 describe the **proposed replacements** (QUALITY REVIEW, MJ-1). The current versions are noted in brackets.
+Every final question has a title, a scenario, a `why_wrong` and a `learning_outcome` (f06 and f07 got theirs in round 2; f07 is now an applied count). Round-2 rebuilds: f02, f04, f05, f10, f11, f14, plus f15 and f12 wording. Round 3: f05's over-cautious option is now a re-survey that the random fault and next week's deadline rule out.
 
-| Id | Skills | Outcome | Tests | Type | Diff | Sec | Pre |
+| Id | Skills | Outcome | Modules combined | Tests | Type | Diff | Sec |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| f01 | data-literacy | O1 | Answerable version of "is marketing working?" | Applied | B | 60 | M1 |
-| f02 | visualisation, statistics | O3, St | Alert rule against normal variation (now: category vs quantity, which duplicates m01-q2) | Scenario | I (now B) | 90 | M6, M8 |
-| f03 | spreadsheets, data-cleaning | O2 | Lookup fails on spaces or text vs number (now: SUMIFS, which isn't taught) | Scenario | I | 90 | M2, M3 |
-| f04 | data-cleaning, python, ai-analytics | O2, O4 | AI-suggested drop_duplicates removes real students (now: true duplicate, which duplicates m03-q1) | Scenario | A (now B) | 100 | M3, M7, M9 |
-| f05 | data-cleaning, storytelling | O2, O5 | Report what is missing, and whether it differs | Applied | I | 60 | M3, M10 |
-| f06 | sql | O2 | Read WHERE + GROUP BY + COUNT | Code | I→B | 45 | M4 |
-| f07 | sql | O2 | What an INNER JOIN returns | Concept | I→B | 45 | M5 |
-| f08 | sql | O2 | LAG gives the previous row | Code | A | 75 | M5 (**LAG not taught**, T5) |
-| f09 | data-literacy, statistics | O1 | Mean far above median means right skew | Interp | I | 60 | M1 |
-| f10 | statistics | St | A tiny gap may be chance; planned length | Interp | A | 90 | M6 |
-| f11 | statistics, storytelling | St, O5 | Act on the overall result; small subgroup is uncertain (now: `df.shape`) | Scenario | E (now B) | 120 | M6, M10 |
-| f12 | python, sql | O2 | One-to-many merge repeats rows | Code | A→I | 75 | M5, M7 |
-| f13 | visualisation | O3 | Sorted bar for 9 categories | Concept | I→B | 45 | M8 |
-| f14 | ai-analytics | O4 | Reproduce an AI figure before use | Scenario | I | 60 | M9 |
-| f15 | storytelling, ai-analytics | O5, O4 | Choose an AI-drafted opening that leads and states the evidence exactly (now: "memo opens with", which duplicates m10-q1) | Scenario | I (now B) | 90 | M6, M9, M10 |
+| f01 | data-literacy, storytelling | O1 | M1, M10 | An answerable "is marketing working?" (cost per first order + decision) | Scenario | I | 75 |
+| f02 | visualisation, statistics | O4, O3 | M6, M8 | Weekly cycle + next-morning action: same-weekday range | Scenario | I | 90 |
+| f03 | spreadsheets, data-cleaning | O2 | M2, M3 | Lookup fails on spaces / text vs number | Scenario | I | 90 |
+| f04 | data-cleaning, python, ai-analytics | O2, O5 | M3, M7, M9 | Replace the AI’s key: name + phone + course | Code | A | 90 |
+| f05 | data-cleaning, statistics, storytelling | O2, O6 | M3, M6, M10 | Missing at random (screen fault), report due next week: report the gap, don’t re-survey (flip) | Scenario | I | 75 |
+| f06 | sql | O2 | M4 | Read WHERE + GROUP BY + COUNT (fintech case added) | Code | B | 45 |
+| f07 | sql | O2 | M4, M5 | Count an INNER JOIN’s rows and who drops out | Applied | I (was B) | 75 |
+| f08 | sql | O2 | M4, M5 | LAG gives the previous row; NULL on the first | Code | A | 75 |
+| f09 | data-literacy, statistics | O1, O3 | M1 | Mean far above median = right skew | Interp | I | 60 |
+| f10 | statistics | O3 | M6 | Finished test, no clear gap, B costs more: keep A (flip; M6 card 3) | Scenario | A | 90 |
+| f11 | statistics, storytelling | O3, O6 | M6, M10 | Act on the overall result, watching Tier-3: its fall (84 against 75 sales) is within chance | Scenario | E | 120 |
+| f12 | python, sql | O2 | M5, M7 | Fix one-to-many double counting in pandas | Code | I | 75 |
+| f13 | visualisation | O4 | M8 | Sorted bar for 9 categories | Concept | B | 45 |
+| f14 | ai-analytics | O5 | M9 | AI’s working shown but wrong base: recompute on the board’s definition | Scenario | I | 75 |
+| f15 | storytelling, statistics, ai-analytics | O6, O5 | M6, M9, M10 | Opening that states the randomised comparison exactly | Scenario | I | 90 |
 
-**Difficulty mix:**
-
-| | Beginner | Intermediate | Advanced | Expert | Mean marks per question |
-| --- | --- | --- | --- | --- | --- |
-| Final now | 5 | 7 | 3 | 0 | 9.33 |
-| Final after the corrections | 4 | 7 | 3 | 1 | 10.33 |
-| Quizzes now | 12 | 19 | 9 | 0 | 9.63 |
-| Quizzes after the relabels | 12 | 24 | 4 | 0 | 9.00 |
-
-`finalPrompt()` asks for about 4/6/4/1, harder on average than the quizzes. The draft's final is *easier* than the quizzes; after the corrections it is harder.
+**Difficulty:** quizzes 8 B / 28 I / 4 A (9.5 marks per question); final 2 B / 9 I / 3 A / 1 E (11.0). The final stays harder than the quizzes, as `finalPrompt()` asks. f07 moved to Intermediate because it now asks for a row count and who drops out. Sum of estimated seconds: about 20 minutes, inside the 30.
 
 ---
 
@@ -122,30 +104,30 @@ The rows for f02, f03, f04, f11 and f15 describe the **proposed replacements** (
 
 ### Outcomes
 
-| Outcome | Module quizzes | Final (after the corrections) | Project criterion | Gaps |
+| Outcome | Module quizzes | Final | Project criterion | Gaps |
 | --- | --- | --- | --- | --- |
-| O1 Frame a vague question | m01-q1, q3, q4, m08-q3 | f01, f09 | framing | None. O1 has light coverage in the final, which suits its weight. |
-| O2 Clean, combine, summarise (Excel, SQL, pandas) | M2–M5, M7 (20 questions) | f03, f04, f05, f06, f07, f08, f12 | data, analysis | None |
-| O3 Dashboard that tracks and flags | m08-q1–q4 | f02, f13 | dashboard | The draft's final tests chart choice only (f13); f02-new adds "flags problems early" |
-| O4 Use AI and verify it | m08-q4, m09-q1–q4 | f04, f14, f15 | analysis (proposed wording) | Draft: 1 final question and no rubric line. Personal data appears only in m09-q3 (accepted). |
-| O5 Recommend, with limits | m10-q1–q4, m03-q4 | f05, f11, f15 | recommendation | None |
-| Statistics (no outcome) | m06-q1–q4, m10-q4 | f02, f09, f10, f11 | analysis ("sound statistics") | **G1:** overview.outcomes has no statistics outcome (Course Architect) |
+| O1 Frame a vague question | m01-q1–q4 | f01, f09 | framing | None |
+| O2 Clean, combine, summarise | M2–M5, M7 (20) | f03, f04, f05, f06, f07, f08, f12 | data, analysis | None |
+| O3 Real change vs noise | M6 (4), m01-q4, m10-q4 | f02, f05, f09, f10, f11, f15 | analysis | None (closed by the new outcome) |
+| O4 Dashboard that tracks and flags | M8 (4) | f02, f13 | dashboard | None |
+| O5 Use AI and verify it | M9 (4), m08-q4 | f04, f14, f15 | analysis (now names AI checks) | None |
+| O6 Recommend, with limits | M10 (4), m03-q4 | f01, f05, f11, f15 | recommendation | None |
 
 ### Skills
 
-| Skill | Self-check items | Quiz questions | Final now | Final after the corrections | Project |
-| --- | --- | --- | --- | --- | --- |
-| data-literacy | a01–a03 | 4 | f01, f02, f09 | f01, f09 | framing |
-| spreadsheets | a04–a06 | 4 | f03 | f03 | analysis, dashboard |
-| data-cleaning | a07–a09 | 4 | f04, f05 | f03, f04, f05 | data |
-| sql | a10–a12 | 8 | f06, f07, f08 | f06, f07, f08, (f12) | analysis |
-| statistics | a13–a15 | 4 (+m10-q4) | f10, (f09) | f02, f09, f10, f11 | analysis |
-| python | a16–a18 | 4 | f11, f12 | f04, f12 | analysis |
-| visualisation | a19–a21 | 4 | f13 | f02, f13 | dashboard |
-| ai-analytics | a22–a24 | 4 (+m08-q4) | f14 | f04, f14, f15 | analysis (proposed) |
-| storytelling | a25–a27 | 4 | f15 | f05, f11, f15 | recommendation |
+| Skill | Self-check | Quiz questions | Final | Project |
+| --- | --- | --- | --- | --- |
+| data-literacy | a01–a03 | 4 | f01, f09 | framing |
+| spreadsheets | a04–a06 | 4 | f03 | analysis, dashboard |
+| data-cleaning | a07–a09 | 4 | f03, f04, f05 | data |
+| sql | a10–a12 | 8 | f06, f07, f08, f12 | analysis |
+| statistics | a13–a15 | 4 (+m01-q4, m10-q4) | f02, f05, f09, f10, f11, f15 | analysis |
+| python | a16–a18 | 4 | f04, f12 | analysis |
+| visualisation | a19–a21 | 4 | f02, f13 | dashboard |
+| ai-analytics | a22–a24 | 4 (+m08-q4) | f04, f14, f15 | analysis |
+| storytelling | a25–a27 | 4 | f01, f05, f11, f15 | recommendation |
 
-SQL has two modules and 8 quiz questions, in proportion to what employers ask for. Every skill appears in the final.
+Every skill appears in the final; SQL and statistics carry the most weight, in line with what employers ask for (research §1).
 
 ---
 
@@ -159,22 +141,23 @@ The engine stores task answers but doesn't grade them. A mentor, or a later AI c
 | --- | --- | --- | --- |
 | M1 t1 Sharpen a vague question | 2–3 specific questions about the café, each with its data and decision | Defines "lost" in the data (e.g. no visit in 60 days), a period and the customers meant; each question links to an action | Restates the vague question; no definition of "losing"; no decision |
 | M1 t2 Spot the wrong type | 5 columns, each with a type and a mistake | Correctly separates quantities, label-numbers (order ID, PIN, phone), categories, dates and text; the mistake is realistic | Calls order ID or PIN a number; dates as text not mentioned |
-| M2 t1 Plan a PivotTable | Rows = payment method; Values = Count of orders, plus the returned count or the Average of a 1/0 column | The rate = returned ÷ all orders per method. Explains the denominator. | Uses Sum of returned alone, or % of column total (each method's share of returns, not its rate) |
-| M2 t2 Write the lookup | `=XLOOKUP([@SKU], Prices[SKU], Prices[Category], "Not found")` or the cell-reference equivalent | Exact match; the not-found text explained; notes that missing SKUs need adding to the price list | VLOOKUP with approximate match; no not-found value |
-| M3 t1 Cleaning plan | Step-by-step, per column | Resolves 03/04/2026 by finding values above 12; maps department variants after trimming and case-folding; strips "₹" and converts the fee to a number; keeps the raw file; logs each step | Assumes the date format without checking; deletes inconsistent rows |
-| M3 t2 Blanks | 2 options and their effect on the average | Exclude-and-state, or flag; reasons about *who* is missing (slow or cancelled) and the direction of the bias | Fills with 0, or with the mean, without comment |
-| M4 t1 Query | `SELECT method, COUNT(*) AS payments, SUM(amount) AS total FROM payments WHERE paid_at >= '2026-04-01' AND paid_at < '2026-05-01' GROUP BY method ORDER BY total DESC;` | Correct filter, group and sort. A half-open date range, so payments late on 30 April are kept. | `BETWEEN '2026-04-01' AND '2026-04-30'` drops payments made after midnight on 30 April when paid_at holds a time. This was checked in SQLite. |
-| M4 t2 Explain a query | A plain-English paragraph | Average delivery minutes per city, delivered orders only, only cities with ≥ 50 deliveries (so small samples don't mislead), fastest first | Says HAVING filters rows; misses the reason for the ≥ 50 |
-| M5 t1 Silent customers | `SELECT c.customer_id, c.name FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE c.signed_up >= '2026-01-01' AND c.signed_up < '2027-01-01' AND o.order_id IS NULL;` | LEFT JOIN + IS NULL on the order side; filter on sign-up date | INNER JOIN; putting a filter on an `o.` column in WHERE, which empties the result (checked) |
-| M5 t2 First or repeat | ROW_NUMBER over each customer's **whole history**, then filter April and take the repeat share of revenue | Numbers orders before filtering April. In the test data, the right method gives 63% and numbering only April gives 42% (checked). | Numbers only April orders, so a customer's first April order looks like a first-ever order |
-| M6 t1 Design a test | A plan: who, split, measure, length and decision rule | Random split at the same time, in all cities; one primary measure (paid sign-ups); a fixed length that covers full weeks; decided before the start | Splits by city or week; stops when it looks good |
-| M6 t2 Noise or signal | A message to the owner, and checks | ₹54,000 is just above a 60-day range of ₹38,000–52,000: promising, not proof. Checks the weekday or salary day and watches 2–3 more weeks, ideally comparing with stores that didn't change. | "The layout worked" |
-| M7 t1 Plan the notebook | Steps or code | Filter `status == "success"`; parse `txn_time`; filter May 2026; `groupby("merchant_category")["amount"].sum().nlargest(5)`; a shape and total check | Sums all statuses; counts transactions instead of value |
-| M7 t2 Read the code | A line-by-line explanation and one risk | Dropping on phone alone can merge different people (family phones); also blank phones and formatting differences ("+91") | Explains the syntax only |
-| M8 t1 Sketch the dashboard | One page described | 3–4 KPIs against target (sales, stock-outs, expiry, footfall); a breakdown by store; a trend; filters (week, region); each part tied to a call to a store manager | A list of charts with no targets or decisions |
-| M8 t2 Fix a bad chart | Diagnosis and redraw | Names the distortion (3D, truncated axis, too many colours) and the better form (sorted bar, zero baseline) | A taste-only critique |
-| M9 t1 Prompt and checks | A prompt and 3 checks | The prompt gives the schema, a defined "repeat customer", the month logic and the SQL dialect. The checks are a hand-checked month, the row counts, and a total against the source. | No definition; checks like "ask the AI again" |
-| M9 t2 Catch the error | A verification plan | Recomputes Q2 vs Q1 from raw data with stated date bounds; checks Chennai's contribution to the change | Accepts it, or checks only one part |
+| M2 t1 Build a return-rate PivotTable | The 12 saree orders in Google Sheets or Excel; a PivotTable with payment in Rows and the Average of `returned` in Values; one rate checked by hand | COD 60% (3 of 5), Card 33% (1 of 3), UPI 25% (1 of 4); the hand check is returned ÷ all orders for one method. About 35 min. | Values set to Sum (counts, not rates); a share of all returns read as a rate |
+| M2 t2 Write the lookup | A price tab, an SKU column for four orders, and an XLOOKUP with "Not found" as its fourth argument | SR-101 gives Silk and SR-205 gives Cotton; SR-999 and "SR-102 " say "Not found", but only SR-999 is missing: the trailing space blocks the match and TRIM fixes it. About 35 min. | Calls both "Not found" rows missing; VLOOKUP with approximate match; no not-found value |
+| M3 t1 Clean a clinic export | The 8 rows on a raw tab (kept untouched), a cleaned tab, a cleaning log (step, why, rows affected) and row counts | 8 rows become 7: only the second P04 row goes. One date format (03/04/2026 resolved from 13/04 and 14/04), two department names, fees as numbers, P06's blank fee left blank and flagged, not 0. About 35 min. | Assumes the date format; removes rows that are not true duplicates; blank fee set to 0; no log |
+| M3 t2 Decide about blanks | Two options and their effect on the average | Filling 300 blanks with 0 pulls 31 down to about 29 (31 × 0.94); leaving them out keeps 31 from 4,700 rows, and says so. Reasons about who is missing. About 20 min. | Fills with 0 or the mean without comment; ignores who is missing |
+| M4 t1 Write and run the query | The 6 payments created in a free SQL playground; a query by method for April 2026, largest total first; the result pasted | Card 1 payment, 2300; Wallet 1 payment, 800; UPI 2 payments, 570. A half-open date range keeps payment 3 (9 pm on 30 April) and drops payments 5 and 6. About 35 min. | `BETWEEN '2026-04-01' AND '2026-04-30'` drops payments made after midnight on 30 April when paid_at holds a time (checked in SQLite); sorting the wrong way |
+| M4 t2 Explain a query | A plain-English paragraph, then a six-row deliveries table of the learner's own, with 50 changed to 2 and the query run | Average delivery minutes per city, delivered orders only, fastest first; cities with fewer than 50 delivered orders are left out because their averages are shaky. On six rows with 2, a city with one delivered order is missing from the result. About 35 min. | Says HAVING filters rows; misses the reason for the threshold; runs it with 50 and gets an empty result |
+| M5 t1 Find the silent customers | The two tables created and filled in the playground; a LEFT JOIN query; the result; the joined row count before filtering | The result is Ravi and Imran. Farah signed up in 2025 and Asha, Meena and Sana have orders. The joined count before filtering is 8. About 35 min. | INNER JOIN; a filter on an `o.` column in WHERE, which empties the result (checked); a wrong sign-up year filter |
+| M5 t2 First order or repeat | ROW_NUMBER over each customer's whole history in a CTE, then March only in the outer query; the repeat share of March revenue | March has three orders (₹450, ₹300, ₹250); orders 102 and 104 are repeats, so ₹750 of ₹1,000 is 75%. About 35 min. | Numbers only March orders, so every customer looks new; filters before numbering |
+| M6 t1 Design a test | A plan: who, split, measure, length and decision rule | Random split at the same time over the same two or more whole weeks; one primary measure (paid sign-ups per user); a winner picked only if a significance test says the gap is not chance; decided before the start. About 25 min. | Splits by city or week; stops when it looks good |
+| M6 t2 Noise or signal | A message to the owner, and checks | ₹54,000 is just above the 60-day range (₹38,000–52,000): a gap of ₹2,000 on a range of ₹14,000. A hint, not proof; compares like weekdays over a week or two. About 20 min. | "The layout worked" |
+| M7 t1 Run your first notebook | A Colab notebook with the 6 transactions read from text; May's successful value by category, highest first; df.shape printed after each step | Travel 5,200, Food 1,450, Grocery 450. The 30 April Travel payment and the failed Grocery one are left out; dates read day-first (`dayfirst=True`). About 40 min. | Sums all statuses; reads dates month-first; counts transactions instead of value |
+| M7 t2 Read the code | A line-by-line explanation, one risk, and the code run on six leads | It drops 1 lead, Rohan, who shares a family phone with Meena and is a different person; the summary shows google 3 and instagram 2. About 30 min. | Explains the syntax only; calls the dropped lead a true duplicate |
+| M7 t3 Join and check | A merchants table read from text; a left merge; shape and total before and after; the fixed merge | The shape goes from (6, 5) to (8, 6) and the total from 9,900 to 17,600 because both Travel rows repeat; keeping one row per category brings the total back to 9,900. About 30 min. | Trusts the merge without printing the total; leaves the repeat in place |
+| M8 t1 Build the weekly page | One page for 8 stores: the chain total against target, a sorted bar chart of % of target with stores below 100% in red, and a line naming whom to call | Total ₹32.6 lakh against ₹32 lakh (102%). S07, S02, S04 and S05 are below target, S07 first. About 35 min. | Charts raw sales, not % of target; no named stores to call |
+| M8 t2 Fix a bad chart | Diagnosis, a redraw in Google Sheets from made-up numbers, both versions shared | Names the distortion (3D, truncated axis, too many colours) and redraws as a sorted bar chart with an axis from zero, one highlight colour and a title that states the point. About 35 min. | A taste-only critique |
+| M9 t1 Write a good prompt | A prompt, three checks, the SQL a free AI assistant returns (given column names and made-up rows only), run in the module 5 playground | With module 5's rows, March has three ordering customers, two of them (Asha and Meena) ordered before: 2 of 3, about 67%. The prompt defines "repeat customer"; a mismatch is traced to the definition the SQL used. About 35 min. | No definition; real customer data pasted; checks like "ask the AI again" |
+| M9 t2 Catch the error | A verification plan | Recomputes Q2 vs Q1 from raw data with stated date bounds; checks Chennai's contribution to the change. About 25 min. | Accepts it, or checks only one part |
 | M10 t1 First paragraph | A memo opening | Recommendation first, the 2.3× with n and period, and one honest caveat: trial-kit buyers may differ (self-selection), so suggest a test | Method first; claims trial kits *cause* loyalty |
 | M10 t2 Findings to actions | 3 insights and 3 actions | Each action is specific and doable within a week (pre-order counter, second till, menu pre-pack) and tied to its finding | Restates the findings |
 
@@ -198,7 +181,7 @@ The engine stores `id`, `name` and a one-line `description`, and the mentor grad
 | dashboard | A collection of charts with no purpose | Right chart types, but no target or decision; cluttered | Built around the decision: key numbers against targets, the problem breakdown and a trend; honest axes; readable on one screen | As 3, plus problems flagged by colour or alert against the normal range, and filters that matter | As 4, plus a user tested it and the design changed because of that |
 | recommendation | No recommendation, or it doesn't follow from the analysis | A recommendation buried after the method; no number | Opens with the decision and its ₹ impact, gives the evidence and states limits; in the walkthrough the learner explains their own steps | As 3, plus the risks, what to monitor and a next step with an owner | As 4, plus it would persuade a sceptical manager: alternatives weighed, and the uncertainty in numbers |
 
-**Proposed one-line descriptions** (Competent level; replace the current ones when the file is next revised):
+**One-line descriptions** (Competent level; applied to `project.rubric` in round 1):
 
 | id | description |
 | --- | --- |
@@ -212,224 +195,135 @@ The engine stores `id`, `name` and a one-line `description`, and the mentor grad
 
 ## QUALITY REVIEW
 
-### How it was checked
+### Round 4 (review-4 teaching changes)
 
-- I solved all 55 questions before looking at `correct_index`. **All 55 keys match my answers.**
-- I ran the code, formula and query answers:
-  - pandas 3.0.6 in a scratch virtual environment;
-  - SQLite 3.50.4;
-  - SciPy, for the A/B arithmetic.
+The Course Architect made 19 teaching changes. Every quiz and final question in M1 to M10 was checked against the cards and hints as they now stand. Aptitude, final and rubric: no change. Nothing else in the quizzes needed a change; every key position is unchanged and every id kept.
 
-  Confirmed:
-  - `dayfirst=True` reads 05/04/2026 as 5 April. `errors="coerce"`, `astype` and `%m/%d/%Y` all give 4 May (or an error).
-  - Python `and` on Series raises a ValueError. `df.filter("success", 5000)` raises a TypeError. `df.pivot("city","value")` raises a TypeError.
-  - A left merge gives NaN. A merge on int vs str keys raises an error.
-  - `= NULL` counts 0 and `IS NULL` counts the blanks. AVG skips NULLs; COUNT(*) does not.
-  - LAG returns the previous row.
-  - In m01-q3 the mean is ₹3,680–4,150 and the median ₹2,000–2,500.
-  - f10: z = 0.80, p ≈ 0.42.
-  - The M6 card's margins are right: ±12 points at n = 50, ±2 at n = 2,000.
-  - m08-q2: an axis starting at ₹99 lakh makes the bar 3×, not 5×.
-- **Clue check, by script:** the right answer is strictly the longest option in 10 of 55 (18%; target ≤ about 25%) and the shortest in 7. The ratio is outside 0.7–1.3× in only 2 questions. This passes.
-- **Facts:**
-  - XLOOKUP defaults to exact match and can return to the left ([Microsoft](https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929)).
-  - SUMIF's order is range, criteria, [sum_range] ([Microsoft](https://support.microsoft.com/en-us/office/sumif-function-169b8c99-c05c-4483-a712-1697a653039b)).
-  - Copilot in Power BI drafts DAX, but needs Fabric F2+ or Premium capacity ([Power BI blog tag page](https://powerbi.microsoft.com/en-us/blog/tag/fabric-copilot/), [Fabric community](https://community.fabric.microsoft.com/t5/Power-BI-Updates-Blog/Deep-dive-into-DAX-query-view-with-Copilot/ba-p/5174496)). m08-q4 needs judgement only, not access, so it stays fair.
+| Question | Why it changed | What changed |
+| --- | --- | --- |
+| m05-q3 | The new window card spells out "latest payment, DESC, keep row 1", so the old patient case was the card's own example. | Now one row per doctor (latest visit); the learner must choose the partition column as well as the direction. Run in SQLite: per-doctor, DESC picks each doctor's latest visit. Key position kept. |
+| m07-q1 | The new worked example prints the same groupby("city")["value"].sum() line. | Columns renamed to outlet and sales. Run in pandas. |
+| m07-q2 | The card's own example is 05/04/2026 read as 5 April. | Date is now 08/02/2026 (8 February; month-first would be 2 August). Run in pandas. |
+| m07-q3 | The card's guest-customer left merge with NaN is this question's case. | Now orders with a coupon_code removed from coupons; same idea, new case. Run in pandas: 12 rows kept, NaN in the coupon columns. |
+| m07-q4 | The card's example is the key line (status, amount, success, 5000). | Now cab bookings: Pune with fare above 800. Run in pandas: & gives 1 row, | gives 3, "and" and the unbracketed form raise errors. |
+| m08-q2 | The M8 card's axis example (₹100 to ₹103 lakh, axis from ₹99 lakh, bars 1 and 4) shared its shape and numbers. | Now ₹210 lakh against ₹200 lakh, axis near ₹198 lakh, bars 12 and 2, a 5% rise that looks sixfold (arithmetic checked). |
+| m08-q3 | The card's example uses a 92% target. | Target is now 95% throughout; the key (each city's rate against the target) is unchanged. |
+| m09-q3 | The new card names the initials, paid-plan and chat-history shortcuts as unsafe, which are this question's wrong options. | Two wrong options now test the same idea in new forms: names and diagnoses deleted but phones kept (a phone number alone can point to one person), and a "won't train on your data" setting. Key unchanged. |
+| m10-q3 | The card now says three Diwali weeks are the right evidence for next Diwali: the question's exact case. | Now two weeks of orders from this year's school reopening, for next June's stock. Key unchanged. |
+
+Checked and left alone: m01 to m04, m05-q1/q2/q4, m06 (the card range "about 60% to 84%" and the A/B and "Reading the result" cards quote no question; "85%" appears nowhere in the tests), m08-q1/q4, m09-q1/q2/q4, m10-q1/q2/q4 and f01 to f15. The old wording ("propose charts", "Power BI" in M9, ", so its assumptions show", the old card titles) is quoted in no explanation, why_wrong, learning outcome or this blueprint. The M7 split moved df.info() and describe() to "Check as you go"; no question tests them.
+
+Known leans, accepted because the card must teach the answer (rule 13): m05-q4 mirrors the card's AVG ... OVER (PARTITION BY city); f10 (a finished test with no clear gap, decide on cost) follows M6's "Reading the result"; f08 (LAG, NULL for the first month) follows M5's last card; m09-q2's wrong options are each dismissed by M9 card 2, while the key still needs the item-versus-order insight. Each applies the idea to new numbers or a new case.
+
+For the Course Architect: M5 task 2 asks for March 2026 revenue, but its hint says "filter to April only in the outer query"; it should say March.
+
+### Round 3 (review 3)
+
+| Finding | What was done |
+| --- | --- |
+| m01-q1 (must-fix) | The founder's message now gives the decision (which cities get extra riders, on Friday), the measure and threshold (fewer than 90% of orders within 30 minutes) and the period (the last four weeks). The key works out that share for each city over those four weeks; the explanation and `why_wrong` say asking is right only for a vague request. Learning outcome reworded to "decision, measure and period". M1 card 1 now says the same (Course Architect). |
+| f05 (must-fix) | The old key-like option ("…and whether those who skipped differ"), which M3 card 3 recommends, is replaced by "No average yet: re-survey the 600 households first, so the figure covers all 2,000". The scenario adds "The report is due to the funder next week." `why_wrong` says a re-survey is right only if the gap were not random (for example, only rural-block tablets failed). Key, other options and explanation kept. |
+| m10-q1 (must-fix) | The evidence is now Tier-3's own: a ₹49 COD fee ran eight weeks in six Tier-3 cities picked at random; COD returns fell from 31% to 19%, with orders only 2% lower than in other Tier-3 cities. The key extends the fee to every Tier-3 city; the "test in two Tier-3 cities" option is ruled out because that test has been run. Explanation and `why_wrong` updated as the review gave them. Pre is now M6 (reading a random trial). |
+| m09-q4 (should-fix) | The "ask it again" option now also re-checks ("…then re-check the query it returns"), so the key no longer beats it in every situation; only the missing schema decides. `why_wrong` adds that a re-check would just find more guesses. |
+| Blueprint (should-fix) | The run-together block above the title is gone; its rows are rebuilt in place in the question map, with this round's m01-q1, m09-q4, m10-q1 and f05 rows (and f11's). Header, clue-test leads, known defects and RESULT updated. |
+
+- **Rule checks this round** (review 3's lessons and the track record's weak spots): every over-cautious option in the three rebuilt questions (ask first, check whether the missing differ, pilot first) is now ruled out by a fact in the scenario, and checked against the module's cards: M1 card 1 now says a defined request is ready; M3 card 3's "are the missing rows different?" is answered by "a random 30%"; M10 card 3's "propose a pilot" is answered by the Tier-3 trial already run. No option is named by its letter. No key dominates a wrong option (m09-q4 fixed). Keys survived `--tidy` (55 of 55 unchanged, by script); every id kept.
+- **Run** (verification Python): m10-q1, 70% of ₹60 lakh = ₹42 lakh of Tier-3 COD sales at risk against ₹4 lakh of returns; f05, 30% of 2,000 = 600 missing and 1,400 answered. m01-q1 has no arithmetic to check (the learner computes a share; the 90% threshold is given).
+- **Length clue (by script):** the right answer is strictly the longest in 6 of 55 (11%): m03-q3, m04-q3, m06-q3, f05, f09, f12. f05's key (89 characters) is now longest by 6 characters over the re-survey option; the gap is small and the review's rewrite was kept as given.
+
+### How it was checked (round 2)
+
+- **Let the scenario decide (rule 10).** For each of the 20 rebuilt judgement questions I wrote the deciding fact into the scenario first. Then I made each wrong option the right answer under a different, plausible fact, and wrote that fact into `why_wrong` ("…would be right if…"). Finally I covered the stem and read only the options: no rebuilt question has an option that is best in every situation. Two wrong options stay as plain real mistakes, as the review allowed: m03-q1's "keep the first 5,000 by time" and m09-q4's "trust sensible row counts".
+- **Flips.** The facts point away from the textbook answer in 10 of the 20:
+  - m01-q1: don't re-ask a brief that is already defined;
+  - m01-q3: the mean for a total;
+  - m01-q4: act on a random test;
+  - m08-q1: a sorted bar, not a line;
+  - m09-q2: the PivotTable check repeats the error;
+  - m10-q1: don't pause COD;
+  - m10-q3: one reopening season's data for a reopening plan;
+  - f05: missing at random;
+  - f10: keep A on cost;
+  - f14: the working is shown, but on the wrong base.
+
+  In the other 10, the textbook option is still a wrong option that fits another situation, so recognising good practice isn't enough.
+- **Keys survived `--tidy`.** A script compared every key's text before and after (55 of 55 unchanged), and every id is kept.
+- **Run, not assumed** (verification Python: pandas 3.0.6, SQLite, SciPy). New this round:
+  - m01-q3: the mean is ₹3,680–4,150, and × 50 gives ₹1.84–2.08 lakh; the median × 50 gives ₹1.0–1.25 lakh; the midpoint is ₹16,000 (× 50 = ₹8 lakh).
+  - m06-q4: 400 of 3,000 = 13%; the margin at n = 400, p = 0.9 is ±2.9 points.
+  - m10-q1: 70% of ₹60 lakh = ₹42 lakh of Tier-3 COD sales at risk, against ₹4 lakh of returns.
+  - m10-q2: the drops are 70 / 80 / 90 / 420.
+  - m10-q4: at a 60% margin, ₹38 / 61 / 45 / 20 lakh of extra sales give ₹22.8 / 36.6 / 27 / 12 lakh of gross profit; the key's net is about ₹8 lakh.
+  - m09-q2: on item-level rows, the item average is below the order average, and a PivotTable mean of the same column returns the item average.
+  - f04: the test frame has a repeat enquiry, a second course, a sibling on the same phone, and two students with one name. The key keeps 5 rows; name + phone keeps 4 (loses the second course); phone + course keeps 4 (loses the sibling); no subset keeps 6 (keeps the repeat).
+  - f07: the INNER JOIN gives 9,000 rows, a LEFT JOIN from customers 10,800, and 3,200 distinct customers (SQLite).
+  - f06: COUNT(*) per method for amount > 1000 (SQLite).
+  - f10: z = 0.80, p = 0.42.
+  - f11: overall z = 8.2; Tier-3 z = −0.72, p = 0.47. The same fall with 30,000 a group gives p = 0.02, which is when the metro-only option would be right.
+  - f14: 1,200 ÷ 10,000 = 12%; 1,200 ÷ 11,000 = 10.9%.
+  - Round 1's runs still hold for the 22 code and fact questions, which weren't changed.
+- **Length clue (by script).** The right answer is strictly the longest in 5 of 55 (9%; chance is about 25%). check.mjs flagged f04's key as 1.7× longer; I fixed it by giving each code option a realistic extra argument (`keep="first"`, `ignore_index=True`), checked in pandas.
+
+### Findings fixed this round (review 2)
+
+| Finding | What was done |
+| --- | --- |
+| Options clue test (programme, must-fix) | The 20 named judgement questions were rebuilt as above. The 22 code and fact questions are untouched. |
+| m01 (must-fix) | q1: the brief is already defined (the 30-minute promise, by city, by Friday). q3: the owner is budgeting fee income and the sponsorships continue. Its options are the median, the mean (key), the median of the 47 regular fees and the midpoint, each "× 50". q4: the app already assigned dark mode at random. |
+| m03-q1 (must-fix) | 150 pairs are identical; 50 have a different seat and payment reference. "Keep the later row" (right for a seat change with one payment reference) replaces "flag all", because it ties more closely to the deciding fact. Relabelled Intermediate. |
+| m06-q4 (must-fix) | A random draw from all 20,000 members, leavers included; a balanced 4-point scale; 400 replies (13%), mostly long-time members. All four options are real survey flaws, and only non-response is present. |
+| m08 (must-fix) | q1: rank the three best months for a campaign; the pie is dropped and an exact table added. q3: the target is stated as a rate (the should-fix is folded in), and each option suits a different user. q4: both definitions, and the owner's definition, are in the case. |
+| m09 (must-fix) | q2: an item-level file. The key divides the total by the distinct orders, and the PivotTable option now repeats the error. q4: "never pasted the definitions" is added, and why_wrong gives each option's situation. |
+| m10 (must-fix, two findings) | q1: all four options are specific and scoped, with ₹. The facts: COD is 70% of Tier-3 sales, COD returns are 10% elsewhere, and the fee is proven in metros. q2: the funnel is in the case, and every option is an insight and action at a different step. q3: stock for next Diwali. q4: in gross profit at a 60% margin, with four comparisons and four different ₹ figures (₹61 lakh for all non-members). The explanation and learning outcome say net impact = extra gross profit against a fair comparison, minus the cost. |
+| Final (must-fix) | f02: a weekly cycle and next-morning action. f04: the duplicate key is decided by siblings sharing phones and students taking two courses (now a code question). f05: a random screen fault. f10: a finished test with a cost difference. f11: every option carries one number from the case, and the key no longer states the verdict. f14: the AI's working and the board's definition are in the case. |
+| m09-q1 (should-fix) | The key now asks "what % of that month's customers had ordered before it". The no-columns option keeps its definition, and the other options' lengths are evened out. |
+| f15 (should-fix) | The scenario and key describe the randomised comparison (11% with a reminder against 18% without), not a before-and-after fall. |
+| m03-q2, f06, f07 (should-fix) | Titles and cases added. f07 is now an applied count: 9,000 rows, with the 1,800 customers who never ordered dropping out. |
+| f12 (should-fix) | The scenario names items(order_id, product, item_value). |
+| Answer integrity (idea) | Unchanged: For the team 1 and 3. |
+
+### Round 5 (review 5)
+
+| Item | What changed |
+| --- | --- |
+| m07-q3, m07-q4 (should-fix) | Titles now match the cases: "Removed coupon codes" and "Pune fares above ₹800". Questions, options and keys untouched. |
+| Blueprint (should-fix) | Clue-test record brought to the latest run; Practical evidence rewritten for M2 to M9 around the hands-on tasks (M7 t3 added). |
+| m10-q3 (idea) | The first option is now "Say the weeks may not be typical of the year, and that the numbers are only a rough guide". The review's wording ("wait for a second year of data") was not used: it would nearly repeat the second option ("Hold the memo until a full year of data is in"). The key is unchanged. |
+| m08-q4 (idea) | The scenario ends "She wants one repeat-customer rate on the page." The key is unchanged and the side-by-side option is now plainly wrong. |
 
 ### Verdicts
 
 | Dimension | Verdict | Basis |
 | --- | --- | --- |
-| Accuracy | **Good, with 3 minor errors** | Every key is right and every code answer behaves as claimed. Three explanation or scenario details are imprecise (MN-1 to MN-3). |
-| Alignment with outcomes | **Partly** | Quizzes match their modules' outcomes. 6 questions test content no module teaches yet (MJ-3). Statistics has no overview outcome (G1). |
-| Coverage | **Partly** | Every skill appears in the final. O3 and O4 are thin in the final, and nothing combines modules (MJ-1). |
-| Difficulty | **Not met** | The final is easier than the quizzes (9.33 vs 9.63 marks per question). 6 labels are inflated (MJ-5). |
-| Fairness and clarity | **Good** | Indian contexts, no paid tool needed to answer, plain English. One question has a second defensible answer (MJ-4) and one option has a copy error (MJ-6). |
-| Scoring validity | **Not met** | Answer positions follow a fixed pattern (CR-1). In M3, 3 of 4 right can fail (MJ-5). |
-| Integrity | **Not met until CR-1 is fixed** | The pattern lets a learner score 100% without knowing anything. The project relies on a mentor walkthrough, which is the right defence against AI-written work. |
+| Accuracy | **Good** | Every key re-solved; every new number and code option run; m10-q4 is now in profit. |
+| Alignment with outcomes | **Good** | Each rebuilt quiz question still tests its module's outcome, and the rebuilds rest on card lines that are now in the cards. |
+| Coverage | **Good** | All 6 outcomes and 9 skills are in the final; unchanged. |
+| Difficulty | **Met** | The final averages 11.0 marks per question, against 9.5 for the quizzes. |
+| Fairness and clarity | **Good** | Indian cases; every fact a rebuilt question turns on is in its scenario; no paid tool needed. |
+| Scoring validity | **Good** | Labels re-judged (m03-q1, m10-q1 and f07 up; m10-q2 down); positions 14/14/14/13. |
+| Integrity | **Acceptable** | Options-only fell from 46 to 39 of 55 on 22 October; 28 of the 39 are code and fact questions that may stay answerable, and every rebuilt judgement question turns on a stated fact (review 3). The project walkthrough remains the defence against AI-written work. |
 
-### Critical errors
+### Clue-test leads (probes.json, latest run on this exact version, before the round-5 idea edits)
 
-**CR-1. Every quiz and the final have the same answer pattern.**
-- **The problem.**
-  - Every module quiz is keyed **C, A, D, B**.
-  - The final is keyed **C A D B C A D B C A D B C A D**.
-  - The student pages show options in stored order (`src/components/programme/shared.tsx`), and every quiz review shows the right answers.
-  - A learner who notices the pattern after module 1 can score 100% on the other nine quizzes and the final.
-- **The cause.** `balancePositions()` in `agents/lib/content.mjs` places right answers on a fixed cycle (`CYCLE = [2, 0, 3, 1]`), and every quiz has exactly 4 questions.
-- **Fixed on 2026-10-21.** `balancePositions()` now spots patterns, as well as bunching, and gives every right answer a new place. It uses an even share of A to D, shuffled with a seed and checked until no pattern is left. `check.mjs` now reports a pattern as must-fix. The file was re-tidied:
-  - **Module keys:** AADD DDCC BCDB BBBC DCBD DCAD ABAA AADD BACB ABCC.
-  - **Final key:** AABACDCADCBCBBC.
-  - **Totals:** A 14, B 14, C 14, D 13.
-  - **What stayed the same:** the right answer and its options in every question. Only their order changed.
-  - **What this replaces:** the hand-made key table that was here.
-- **Option letters below.** Where a finding names an option by letter, the letter refers to the order before this re-tidy. The quoted wording identifies the option.
-
-### Major issues
-
-**MJ-1. The final doesn't do what a final must.**
-- **The problem.**
-  - None of its 15 questions combines modules.
-  - All 15 have no scenario.
-  - It is easier than the quizzes.
-  - Four questions repeat a quiz point or are pure recall:
-    - f02 (category vs quantity) repeats m01-q2;
-    - f04 (identical rows with the same ID) repeats m03-q1;
-    - f11 asks what `df.shape` returns;
-    - f15 (open with the recommendation) repeats m10-q1.
-  - f03 tests SUMIFS, which is never taught.
-- **The fix.** Replace those five with the questions below, keeping their ids, and relabel f06, f07 and f13 as Beginner and f12 as Intermediate. The final then mixes 4 Beginner, 7 Intermediate, 3 Advanced and 1 Expert, for 155 marks. The option lengths were checked by script: no new right answer is strictly the longest option.
-
-> **f02**: title "The red stores" · Intermediate · topic "Alerts and variation"
-> scenario: A pharmacy chain's dashboard turns a store red on any day its sales are below ₹45,000. Store 12's daily sales have been between ₹38,000 and ₹52,000 for 60 days, so it turns red on many ordinary days, and managers now ignore the colour.
-> question: Which change would make the red flag most useful?
-> options: (a) "Flag a store when its 7-day average falls below its own usual range, not on one low day" ✔ · (b) "Lower the red line to ₹35,000 for every store, so that the flag appears much less often" · (c) "Drop the colour and show every store's daily sales in a table, so managers judge for themselves" · (d) "Turn a store red whenever today's sales are below yesterday's, to catch every drop early"
-> explanation: Store 12's sales normally swing between ₹38,000 and ₹52,000, so one low day is noise. Comparing a 7-day average with the store's own usual range flags a real fall and keeps red meaningful.
-> why_wrong: One lower line for every store ignores that each store has its own normal level, so a big store could fall a long way before turning red; a table removes the at-a-glance signal the dashboard exists for; comparing with yesterday turns ordinary daily swings red even more often.
-> learning_outcome: Set alerts against normal variation, not single values.
-
-> **f03**: title "The SKUs that won't match" · Intermediate · topic "Lookup mismatches"
-> scenario: A wholesaler in Nagpur uses =XLOOKUP(B2, Master[SKU], Master[Category], "New SKU"). It shows "New SKU" on 300 of 4,000 invoice lines, but when you search the master by eye, those SKUs are there.
-> question: What is the most likely cause?
-> options: (a) "Some SKUs differ by hidden spaces, or are text in one sheet and numbers in the other" ✔ · (b) "The master isn't sorted A to Z, and XLOOKUP needs sorted data to find an exact match" · (c) "XLOOKUP is doing an approximate match, because the fourth argument wasn't set to exact" · (d) "Those 300 SKUs really are new, so add them to the master and run the lookup again"
-> explanation: A lookup matches only identical values. A trailing space, or a SKU stored as text in one sheet and as a number in the other, looks the same on screen but doesn't match. Trim and convert both columns, then look up again.
-> why_wrong: XLOOKUP's default exact match doesn't need sorted data; the fourth argument is the not-found value, and the default match is already exact; the SKUs are already in the master, so adding them again creates duplicates and leaves the real cause in place.
-> learning_outcome: When a lookup fails on values that look equal, check spaces and data types.
-
-> **f04**: title "The AI's cleaning step" · Advanced · topic "Verifying AI cleaning"
-> scenario: A coaching centre in Kota has 9,400 enquiry rows (student_name, phone, course, enquiry_date). An AI assistant suggests df = df.drop_duplicates(subset="student_name") to remove repeat enquiries. After it runs, 7,100 rows are left.
-> question: What should you do before keeping the result?
-> options: (a) "Check some removed rows: students can share a name, so match on name and phone" ✔ · (b) "Keep it, because the code ran without errors and repeat enquiries are very common" · (c) "Ask the assistant whether 7,100 is the right count, and keep the result if it agrees" · (d) "Run drop_duplicates() with no subset instead, so it catches every kind of repeated row"
-> explanation: Dropping duplicates on name alone treats every student with the same name as one person, so real students disappear. Looking at the removed rows shows the problem; matching on name and phone together keeps different people apart.
-> why_wrong: Code that runs can still remove the wrong rows; the assistant checking its own number isn't an independent check; with no subset only rows identical in every column go, so repeat enquiries on different dates stay.
-> learning_outcome: Check what an AI-written cleaning step removed before you trust it.
-
-> **f11**: title "The checkout test, city by city" · Expert · topic "Subgroups in A/B tests"
-> scenario: A D2C brand tested a new checkout for its planned 3 weeks, with 120,000 visitors in each group. Conversion rose from 3.0% to 3.6%, far beyond normal variation. In Tier-3 cities alone (3,000 visitors per group), conversion fell from 2.8% to 2.5%.
-> question: What should your memo recommend?
-> options: (a) "Roll it out, and keep watching Tier-3 cities: 3,000 visitors a group is too few to judge" ✔ · (b) "Roll it out only in metro and Tier-2 cities, since the Tier-3 result proves it fails there" · (c) "Hold the roll-out everywhere until Tier-3 cities also show a rise, so that no group loses out" · (d) "Roll it out everywhere, and report a 20% rise in conversion for every city, Tier-3 included"
-> explanation: Across 120,000 visitors a group, 3.0% to 3.6% is far beyond chance, and the test ran its planned length. In Tier-3 cities the fall is 84 against 75 sales out of 3,000 each, well within chance, so roll out and keep watching there.
-> why_wrong: 9 sales out of 3,000 a group can't prove the design fails in Tier-3 cities; holding everyone back gives up a clear, tested gain because of a result that may be chance; the 20% rise is for all visitors together, and Tier-3 cities didn't show it.
-> learning_outcome: Act on the overall result, and treat a small subgroup's result as uncertain.
-> *(Checked: overall z = 8.2; Tier-3 z = −0.72, p = 0.47.)*
-
-> **f15**: title "The memo's first line" · Intermediate · topic "Memo openings"
-> scenario: A randomised test in 8 of a Tamil Nadu clinic chain's 30 clinics (4,200 appointments over 6 weeks) found that SMS reminders sent the day before cut missed appointments from 18% to 11%. An AI assistant drafted four opening lines for your memo to the operations head.
-> question: Which opening line should you use?
-> options: (a) "Recommendation: send day-before SMS reminders in all 30 clinics; in an 8-clinic test, no-shows fell from 18% to 11%." ✔ · (b) "SMS reminders end missed appointments, as our test across the whole chain of clinics clearly proved." · (c) "We ran a 6-week randomised test in 8 clinics, covering 4,200 appointments; the method is described below." · (d) "Recommendation: send SMS reminders in every clinic; patients prefer them, and the test was a big success."
-> explanation: It leads with a decision the reader can act on and the number behind it, and it describes the evidence exactly: a test in 8 clinics, not proof for the whole chain.
-> why_wrong: "End" and "across the whole chain" overstate a test that cut no-shows to 11% in 8 clinics; starting with the method makes the reader hunt for the answer; nobody measured whether patients prefer SMS, and "a big success" replaces the number.
-> learning_outcome: Choose the opening that leads with the action and states the evidence exactly.
-
-**MJ-2. The final gives almost no feedback.**
-- 14 of 15 final questions have no `why_wrong`, and none has a `learning_outcome`. The live grader returns both to students (`programme_grade` in `docs/supabase-builtin-programmes.sql`).
-- `check.mjs` reports this as its 2 should-fix findings.
-- **The fix.** Add these lines. The replaced questions have theirs in MJ-1.
-
-| Id | why_wrong | learning_outcome |
-| --- | --- | --- |
-| f01 | Likes, clicks and reach measure attention, not whether marketing pays; every number by month answers no particular question; whether customers like or remember ads needs a survey and points to no decision. | A question becomes answerable when it names a measure, a period and a decision. |
-| f05 | Filling blanks with 0 invents zero incomes and drags the average down; filling with the average hides the gap and makes the result look more certain; staying silent about 30% missing hides a limit the reader needs. | Report who is missing from an average, and whether they differ. |
-| f06 | COUNT(*) counts payments, it doesn't add amounts; the 1,000 is a filter on each amount, not on the number of payments; COUNT isn't AVG. | Read WHERE as a row filter and COUNT(*) as a count per group. |
-| f07 | Keeping every customer with blanks is a LEFT JOIN; orders whose customer_id isn't in customers have no match, so an inner join drops them; every possible pair is a CROSS JOIN. *(with MN-4's new option)* | An inner join keeps only matching rows, once per match. |
-| f08 | Looking forward one row is LEAD, not LAG; a running total needs SUM() OVER; the lowest earlier value needs MIN() OVER. | Use LAG to put the previous period beside the current one. |
-| f09 | Even spending would put the mean and median close together; a gap between them is normal in skewed data, not a sign of errors; if most spent more than ₹31,000, the median would be above ₹31,000. | A mean well above the median signals a few very large values. |
-| f10 | A large sample can still show a gap that chance explains, and 0.1 points is tiny; one city shrinks the sample and makes chance bigger; adding version C changes the test without checking A against B. | A small gap needs checking against chance before you name a winner. |
-| f12 | A merge without how= is inner, so it never adds blank rows; keeping rows only in items needs an outer merge; text and number keys make pandas raise an error, not double rows. | A one-to-many merge repeats each order once per matching item. |
-| f13 | Nine slices are hard to compare by angle; a line implies an order between brands that doesn't exist; 3D distorts slice sizes, and a legend makes readers look back and forth. | Use a sorted bar chart to compare many categories. |
-| f14 | AI tools can calculate wrongly or use a different definition; asking again checks consistency, not correctness; rounding down a number you can't explain doesn't make it safe. | Reproduce an AI's figure before you use it. |
-
-**MJ-3. Six questions test content no module teaches.** These are for the Course Architect, because the questions themselves are sound.
-
-| Gap | Question | What the module must teach |
-| --- | --- | --- |
-| T1 | m01-q4 (correlation vs causation) | M1, card 3 or a new paragraph: two things moving together may share a cause (who chooses dark mode). Only a fair comparison or a test shows cause. At present only M6 teaches randomisation. |
-| T2 | m02-q4 (`$F$1`) | M2: relative vs absolute references, with one example (a GST rate in one cell, filled down). |
-| T3 | m04-q3, m04-q4 | M4: NULL means unknown; test it with `IS NULL`; AVG, SUM and COUNT(column) skip NULLs, and COUNT(*) does not. |
-| T4 | m07-q4 | M7, card 2: combining conditions, `df[(df["a"] == x) & (df["b"] > y)]`, with brackets, `&` and `\|`. |
-| T5 | f08 | M5, card 3: `LAG(revenue) OVER (ORDER BY month)` for last period's value. The card mentions "last month's value" but not the function. |
-| (idea) | (f03 is replaced) | M2 could still teach SUMIFS, which employers expect, but no question now depends on it. |
-
-**MJ-4. m03-q4 has a second defensible answer.**
-- **The problem.** "If you drop those rows and report the average delivery time, what happens?" Option (a), "Nothing changes, because rows with no delivery time are simply left out of every average", is literally true: an average skips blanks whether or not you drop them. A strong student could defend it.
-- **The rewrite:**
-  - **question:** "If you drop those rows, how does the average delivery time you report compare with what customers actually experienced?"
-  - **options:** "It matches, because orders with no delivery time would be left out of the average anyway" · "It looks better than reality, because the slowest cases are the ones left out" ✔ · "It looks worse than reality, because the cancelled orders were the slowest" · "It can't be compared at all, so no delivery figure should be reported"
-  - **why_wrong:** "Leaving those orders out, by dropping them or by letting the average skip them, removes the customers who waited longest; leaving out the slowest cases makes the average shorter, not longer; the average can still be reported if you say what it leaves out and report cancellations beside it."
-  - **difficulty:** Intermediate (see MJ-5).
-
-**MJ-5. Inflated difficulty labels distort scoring.**
-- **The problem.** In M3 (marks 5, 5, 10, 15), a learner who gets q1–q3 right and misses q4 scores 20/35 = 57% and **fails with 3 of 4 right**. No other module does this.
-- **The relabels.** These are honest judgements of what each question demands:
-
-| Id | Current | Proposed | Why |
-| --- | --- | --- | --- |
-| m03-q4 | Advanced | Intermediate | Card 3 teaches it directly. Afterwards 3 of 4 right always passes in M3. |
-| m04-q4 | Advanced | Intermediate | One fact (AVG skips NULLs) |
-| m05-q3 | Advanced | Intermediate | The answer repeats card 3's wording (see MN-6) |
-| m07-q4 | Advanced | Intermediate | A standard everyday pandas pattern, once taught |
-| m09-q4 | Advanced | Intermediate | The judgement is straightforward |
-| f12 | Advanced | Intermediate | The point was already tested in m05-q2 |
-| f06, f07, f13 | Intermediate | Beginner | Single-concept reading |
-
-**MJ-6. f05 has a copy error.** Option (a) says "…included in the average **satisfaction score**", but the question is about income. The error makes the option look absurd for the wrong reason. **Rewrite:** "Fill the blanks with 0, so that every respondent is included in the average income".
-
-### Minor improvements
-
-| # | Where | Problem | Exact fix |
-| --- | --- | --- | --- |
-| MN-1 | m08-q2 scenario | An axis starting near ₹99 lakh makes the bar 3× taller, not 5× (checked) | Scenario: "…but the new bar looks **three** times taller." |
-| MN-2 | m01-q3 explanation | The median is between ₹2,000 and ₹2,500, not "roughly ₹2,200–2,500" | "…The median stays at what the middle student pays, between ₹2,000 and ₹2,500." |
-| MN-3 | m04-q4 explanation | "Summary functions skip NULLs" is untrue for COUNT(*) | "AVG, like SUM and COUNT(stars), skips NULLs (only COUNT(*) counts every row), so 4.2 is the average among the 600 rated orders. A report should say so: '4.2 stars among the 60% of orders that were rated.'" |
-| MN-4 | Weak wrong options | Nobody who has read the module would pick these | m01-q4 (d) → "Agree, but switch it on first for the lowest scorers, since they have the most to gain from it" (and its why_wrong part → "targeting it at low scorers still assumes the setting causes the scores"). · m01-q3 (c) → "The midpoint of the lowest and highest fees" (why_wrong → "the midpoint, ₹16,000, is set by the extremes"). · m08-q1 (d), which repeats the pie's mistake as a donut → "A bar chart sorted by revenue" (why_wrong → "sorting by revenue breaks the time order"). · f07 (b) → "Every order, including those whose customer_id isn't in customers". · m09-q3 (c) → "Replace names with initials, keep the phones and diagnoses, and paste it into a free chatbot" (why_wrong → "initials don't hide anyone when phone numbers and diagnoses stay"). |
-| MN-5 | f10 explanation | Uses "significance check", which is never taught | "4.0% and 4.1% of 50,000 are about 2,000 and 2,050 conversions, a gap well within chance. Check it against normal variation (a significance test does this) and let the test run its planned length before naming a winner." |
-| MN-6 | m05-q3 | The right answer is the Learn card's line with the names changed, so it tests recall | title "Latest visit only"; scenario "A clinic's visits table has visit_id, patient_id, visit_date and doctor. You need one row per patient: their most recent visit."; question "Which expression, kept where it equals 1, picks each patient's latest visit?"; options `ROW_NUMBER() OVER (PARTITION BY patient_id ORDER BY visit_date DESC)` ✔ · `ROW_NUMBER() OVER (PARTITION BY patient_id ORDER BY visit_date)` · `ROW_NUMBER() OVER (PARTITION BY patient_id, visit_date ORDER BY visit_date DESC)` · `RANK() OVER (PARTITION BY visit_date ORDER BY patient_id)`; explanation "PARTITION BY patient_id restarts the numbering for each patient, and ORDER BY visit_date DESC puts the newest visit first, so row 1 is the latest."; why_wrong "Ascending order makes row 1 the first visit, not the latest; partitioning by patient and date restarts the count for every visit date, so nearly every row is 1; RANK partitioned by date ranks patients within each day." (Option lengths 68 ✔ / 63 / 80 / 57.); learning_outcome "Choose the partition and the sort direction to pick one row per group."; Intermediate. |
-| MN-7 | Self-check | a05, a10, a11, a14 and a16 rate ability, liking or knowledge rather than behaviour. a12 and a18 are near-twins across two skills. a05 overlaps a04. | a05 → "I sort or filter a spreadsheet to find the rows I need, instead of scrolling through it." · a10 → "When I need one number from a long list, I write down the steps (which rows, which groups, which total) before I start." · a11 → "I look up the exact syntax of a formula or command instead of guessing it." · a12 (reversed) → "When I need figures from a large table, I ask someone else to pull them for me." · a14 → "When I see an average, I look at the highest and lowest values behind it." · a16 → "When I repeat the same steps on a file every week, I look for a way to automate them." |
-| MN-8 | Rubric descriptions | No line covers outcome O4 (AI verification), and nothing makes the learner explain their own work | Use the proposed one-line descriptions in Practical evidence. |
-| MN-9 | 17 quiz questions | No scenario (house style: scenario-based). Acceptable for short code items, but m02-q1, m06-q1, m08-q1 and m10-q2 would test judgement better inside a case. | Optional. Add a 1–2 sentence case when next revised. |
-
-### Duplicate or weak questions
-
-| Pair | Verdict |
-| --- | --- |
-| f02 / m01-q2; f04 / m03-q1; f15 / m10-q1 | Same point, same way. Replaced (MJ-1). |
-| f11 (`df.shape`) | Pure recall of a Learn line. Replaced (MJ-1). |
-| f09 / m01-q3 | Same idea (skew) but reversed: m01-q3 picks the statistic, f09 interprets the gap. Keep. |
-| f12 / m05-q2 | Fan-out in pandas vs SQL. Keep, relabelled Intermediate. |
-| f14 / m09-q2 | Both say verify independently; different triggers. Keep. |
-| f06 / m04-q1, f13 / m08-q1 | Related but distinct. Keep. |
-
-**Wrong answers or explanations:** no key is wrong. The explanation defects are MN-2, MN-3, MN-5 and MJ-4's why_wrong.
-
-### Teaching notes (for the Course Architect, not test changes)
-
-- **G1.** Add a statistics outcome to `overview.outcomes`, for example "Tell a real change from noise using samples, spread and simple experiments". At present M6, five quiz questions and four final questions map to no outcome.
-- **M5 card 3.** "`ROW_NUMBER() … = 1` marks their first payment" can't be used directly in WHERE. Add "(filter on it in an outer query or CTE)".
-- **T1–T5,** as in MJ-3.
+- **options (39 of 55, down from 46 in round 1):** 11 of the 20 round-2 rebuilds right, certain only on m06-q4 and m09-q4. The other 28 right answers are mostly the code and fact questions agreed to stay as they are. m06-q4 is dismissed: it passes the self-test (only current members asked, 40 replies, or a lopsided scale would each make another option right), and its certainty comes from non-response being the commonest flaw. m09-q4 is confirmed (the key added a re-check the wrong option lacked) and fixed. The certain picks on code questions (M4, m05-q1, m05-q2, m07-q4, f08, f12) and on m01-q2, m02-q2, m03-q3, m06-q1, m06-q3, m08-q2, m09-q3, f09 and f13 are dismissed: each is a fact or code item with one right answer by design.
+- **cards (40 of 40):** every question answered as keyed from its card alone (38 of 40 in the earlier run; m01-q1 and m10-q1 were confirmed and fixed then).
+- **blind (52 of 55):** m01-q1, m08-q4 and m10-q3 chosen differently. Review 5 ruled on all three and the key stands for each. m01-q1: the founder names the decision, measure, breakdown and period, so the request is ready and asking spends a day on answered questions. m08-q4: the owner has defined the term; the scenario now also says she wants one rate on the page. m10-q3: the decision is next June's reopening, so two reopening weeks are the right evidence; the first option's vague "September" re-check is replaced by a plain over-caveat. Review 5 dismissed 11 further leads (m01-q4, m06-q4, m09-q1, m09-q4, m10-q1, m10-q4, f01, f05, f10, f11, f15). Earlier rulings still stand: m02-q1 (a plain range can already be sorted and filtered), m03-q3 (no change of case or spacing makes "BLR" and "Bangalore" one spelling), m06-q4 (400 replies give about ±3 points; the flaw is who replied), m08-q3 (a national figure names no city to call), m08-q4 (the owner has defined the term), m09-q1 (the definition-only prompt names no columns), m09-q2 (the PivotTable averages the same item-level column), m10-q3 (reopening weeks are typical for a reopening decision; case changed in round 4 from Diwali), m10-q4 (Shillong is a tourist town with different visitors), f01 (a count ignores each channel's cost), f02 (a 7-day average hides a one-day problem managers act on next morning), f11 (84 against 75 sales is within chance), f15 (the memo goes to an operations head: recommendation first).
+- The nine questions changed in round 4 (m05-q3, m07-q1 to q4, m08-q2, m08-q3, m09-q3, m10-q3) were clue-tested in this run: all answered as keyed from the cards, and in the blind run only m10-q3 was picked differently; review 5 kept its key.
 
 ### Defects that remain known
 
-- There is no objective baseline: the self-check is self-report only (For the team).
-- The project has no pass rule in the engine yet, so practical competence can't yet gate a certificate.
-- Personal data is tested once (m09-q3). It is accepted, but should appear in the project rubric's "professional standards" if a sixth criterion is ever allowed.
+- m08-q4 and m10-q3 were edited after the last clue-test run (the scenario now says she wants one rate; m10-q3's first option no longer names September). Neither key nor its meaning changed; a rerun would confirm.
+- Options-only is 39 of 55, above the aim of about half; the excess is the code and fact items, which the review accepted.
+- No objective baseline: the self-check is self-report only (For the team).
+- The project has no pass rule or rubric weights in the engine yet, and every student sees the options in the same order (For the team 1 and 3).
 
 ---
 
 ## RESULT
 
-**Ready after specified corrections.** All are in parts the assessment owns, except T1–T5 and G1:
+**Ready.** Round 5: review 5's two assessment findings are done (the m07-q3 and m07-q4 titles; the blueprint's clue-test record and Practical evidence), with the two low-risk ideas taken. Keys and ids are unchanged, and check.mjs reports no issues. Optional before publishing: one more clue-test run to confirm the two idea edits.
 
-1. CR-1: re-key every quiz and the final as tabled.
-2. MJ-1: replace f02, f03, f04, f11 and f15; relabel f06, f07, f13 and f12.
-3. MJ-2: add why_wrong and learning_outcome to the final.
-4. MJ-3: the Course Architect teaches T1–T5, or the five affected questions are rewritten to taught content.
-5. MJ-4, MJ-5 and MJ-6, as written.
-6. MN-1 to MN-8. MN-9 is optional.
-7. Then run `node agents/check.mjs "docs/programmes/Data analytics/ai-powered-data-analytics.json" --tidy` (weights follow the new labels), and confirm must_fix 0, should_fix 0, rightIsLongest ≤ 14, and no repeated module key pattern.
-
-**Counts:** 1 critical, 6 major, 9 minor.
-
-`check.mjs` on the file as reviewed: ready_to_publish true, must_fix 0, should_fix 2 (final why_wrong and learning_outcome), rightIsLongest 10, positions 14/13/14/14, difficulty B 17 / I 26 / A 12.
+`check.mjs --tidy` on the revised file: must_fix 0, should_fix 0, rightIsLongest 6 of 55, positions 14/14/14/13, difficulty B 10 / I 37 / A 7 / E 1.
 
 ---
 

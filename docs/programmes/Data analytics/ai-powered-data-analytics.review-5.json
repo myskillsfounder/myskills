@@ -1,0 +1,505 @@
+{
+ "verdict": "ready",
+ "summary": "Every review-4 course finding was fixed in the text as asked: the tasks that were descriptions now have data inside the prompt and run in a free tool, minutes add up against the stated task times, the over-full cards in M5, M6 and M7 are split with worked cases (the figures re-check), and M1's outcome now covers the whole module. The nine changed questions solve without the key and are taught by their cards without copying the cards' own example; the three blind misses are ruled on and the key stands for all three, including the rewritten m10-q3. check.mjs is clean, no finding is must-fix, and every module scores at least 4 on every dimension (seven modules rose). What is left is small: M4 t2's six-row run is empty, M5 t1's hint is wrong about Meena, M7 t1 needs two commands no card teaches, two M7 question titles don't match their cases, and the blueprint still describes the old tasks and an older clue-test run.",
+ "strengths": [
+  "The task rebuilds are real and checkable. Each has data in the prompt, a free route, minutes, and a hint that gives the answer to check; the figures all re-add (COD 60%, Card 33%, UPI 25%; 8 rows become 7; Card 2300, Wallet 800, UPI 570; Travel 5,200, Food 1,450, Grocery 450; 9,900 becomes 17,600; ₹32.6 lakh against ₹32 lakh).",
+  "M6's new worked test is statistically right: 160 of 4,000 against 200 of 4,000 gives p about 0.03, and 4.0% against 4.3% about 0.5. M7's six leads and merchants join behave as the hints say.",
+  "The nine changed questions: each has one clear best answer, the wrong options are named mistakes (ascending sort, wrong partition, month-first dates, 'and' without brackets, a log scale, an average time against a rate target), and none repeats its card's own numbers.",
+  "Rules 10 and 11 hold: m01-q1, f05 and m10-q1 each state the fact that makes the sensible extra step pointless.",
+  "M5 and M6 now show results beside their code and figures, and M10 card 2's profit example follows rule 14 (₹10 lakh at 40% is ₹4 lakh, less ₹1.5 lakh is ₹2.5 lakh)."
+ ],
+ "findings": [
+  {
+   "target": "module:da-m04",
+   "severity": "should_fix",
+   "problem": "M4 t2 now asks the learner to run the HAVING COUNT(*) >= 50 query on a deliveries table of six rows. With six rows every city has fewer than 50 delivered orders, so the result is empty and \"check whether the result matches what you said\" tests nothing.",
+   "fix": "End t2 with: \"Then create a deliveries table of your own with six rows (city, status, delivery_minutes), change 50 to 2 in the query, run it, and check that the result matches what you said.\"",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "practice"
+  },
+  {
+   "target": "module:da-m05",
+   "severity": "should_fix",
+   "problem": "M5 t1's hint says \"Meena signed up in 2025, so she is left out\". Meena has orders 103 and 104, so she is left out because she has ordered, not because of her sign-up year. No row in the data tests the 2026 sign-up filter, which the task asks for, and the blueprint's competent result filters on signed_up.",
+   "fix": "Add a sixth customer to the insert list, (6,'Farah','Delhi','2025-12-05'), with no orders. Change the hint's check to: \"the result is Ravi and Imran. Farah never ordered but signed up in 2025, so the 2026 filter leaves her out; Asha, Meena and Sana have orders.\" t2 and M9 t1 are unaffected (Farah has no orders).",
+   "source": "",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": null,
+   "standard": "practice"
+  },
+  {
+   "target": "module:da-m07",
+   "severity": "should_fix",
+   "problem": "M7 t1 asks for May 2026 transactions by category, highest first, but no card shows how to sort descending (sort_values) or pick a month out of a date column (.dt.month, or comparing dates). A beginner on a phone is stuck for the 40 minutes. The same gap holds for t3, which needs a small table built with pd.DataFrame, shown nowhere.",
+   "fix": "Add to t1's hint: \"After pd.to_datetime(..., dayfirst=True), df[\\\"txn_time\\\"].dt.month == 5 picks May; .sort_values(ascending=False) puts the largest first.\" Add to t3's prompt: \"Build the merchants table the way task 1 built the transactions: paste it as text and read it with pd.read_csv(io.StringIO(...)).\"",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "practice"
+  },
+  {
+   "target": "module:da-m07",
+   "severity": "should_fix",
+   "problem": "Two titles don't match their questions. m07-q3 is titled \"Guest checkouts\" but its case is coupon codes removed from a coupons table; m07-q4 is titled \"Large successful payments\" but its case is Pune cab bookings with a fare above ₹800. Learners see the title first.",
+   "fix": "Retitle m07-q3 \"Removed coupon codes\" and m07-q4 \"Pune fares above ₹800\" (and update the blueprint's rows if they quote the titles).",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": "feedback"
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "The blueprint is behind the file in two places. (1) Clue-test record: line 296 says the clue tests ran \"on the round-2 version\"; line 301 and the known-defects list (line 305) say the nine round-4 questions \"haven't been clue-tested in their new form\"; the Inputs line says blind 54 of 55 \"run on the file before this round's question edits\". probes.json now holds a run on this exact version: cards 40 of 40, options 39 of 55, blind 52 of 55 (m01-q1, m08-q4, m10-q3 chosen differently). (2) The Practical evidence table (lines 142 to 160) still describes the old written tasks: \"M2 t1 Plan a PivotTable\", \"M3 t1 Cleaning plan\", \"M7 t1 Plan the notebook\", \"M8 t1 Sketch the dashboard\", \"M9 t1 Prompt and checks\", and M4, M5 and M6 are the same. The tasks are now hands-on with data in the prompt, so the competent-result column no longer matches the work a mentor will see.",
+   "fix": "Update the Inputs line, the clue-test section and the known defects to the latest run, and say the nine round-4 questions were clue-tested (all nine answered as keyed in the blind run except m10-q3, ruled on in review 5: the key stands). Rewrite the Practical evidence rows for M2 to M9 around the tasks as they now read, taking the expected results from the hints (COD 60%, Card 33%, UPI 25%; 8 rows become 7; Card 2300 / Wallet 800 / UPI 570; Ravi and Imran; Travel 5,200, Food 1,450, Grocery 450; total 9,900 becomes 17,600; ₹32.6 lakh against ₹32 lakh; 2 of 3 customers).",
+   "source": "",
+   "owner": "assessment",
+   "category": "coverage",
+   "rule": null,
+   "standard": null
+  },
+  {
+   "target": "module:da-m10",
+   "severity": "idea",
+   "problem": "m10-q3 is keyed correctly (see probe_leads) but the blind test picked the first option because \"re-check in September\" sounds careful and its date is vague: for next June's stock a September re-check comes after the decision.",
+   "fix": "Change that option to \"Say the weeks may not be typical of the year, and that the plan should wait for a second year of data\" so it is clearly the over-caveat. Keep it within a few characters of the key's length.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": "feedback"
+  },
+  {
+   "target": "module:da-m08",
+   "severity": "idea",
+   "problem": "m08-q4 was picked differently in the blind run (\"show both figures side by side\"). The owner's definition rules it out, but the scenario doesn't say she wants a single figure.",
+   "fix": "Add to the scenario: \"She wants one repeat-customer rate on the page.\"",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": "feedback"
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "Every task hint now ends with a \"Check:\" line giving the right answer. That helps a learner who has finished, but it sits in the hint, so a stuck learner meets the answer before trying.",
+   "fix": "Show the check after the learner submits, as review 4 suggested; until the engine can do that, begin it with \"Only after you have tried: \" so it reads as a check, not a clue.",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "feedback"
+  },
+  {
+   "target": "module:da-m09",
+   "severity": "idea",
+   "problem": "Carried from review 4: card 3 doesn't mention that the DPDP Rules, 2025 bring most duties in by stages up to 2027.",
+   "fix": "After checking the Gazette dates, add \"The DPDP Rules, 2025 bring most duties in by stages up to 2027.\" to card 3.",
+   "source": "",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": null,
+   "standard": "relevance"
+  },
+  {
+   "target": "module:da-m10",
+   "severity": "idea",
+   "problem": "Carried from review 4: m10-q1's key gives the cost of the problem (₹4 lakh a month) but not the size of the action, though card 1 asks for \"its size in ₹\".",
+   "fix": "Optionally end the key with \"...in every Tier-3 city: the six-city trial cut COD returns from 31% to 19%.\" and check it is not strictly the longest option.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": "feedback"
+  },
+  {
+   "target": "module:da-m08",
+   "severity": "idea",
+   "problem": "M8 card 3 uses \"DAX\" and \"paid capacity\" without explaining them, and Power BI Desktop is Windows-only; a phone-only learner can do both tasks in Sheets but not the card's example.",
+   "fix": "Write \"DAX (Power BI's formula language)\" at first use, and add \"Windows-only: on a phone or Mac, do the same work in Looker Studio or Google Sheets.\"",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "inclusion"
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "Answer integrity, carried from rounds 1 to 4: every student sees the options in the same order, and the project has no pass rule or rubric weights in the engine.",
+   "fix": "Paul to decide, as in the blueprint's \"For the team\" items 1 and 3.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": null
+  }
+ ],
+ "module_scores": [
+  {
+   "module": "da-m01",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 4,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "Now covers framing, types, averages and cause, but in two clauses; a 5 would be one result a learner can tick off.",
+    "explanation": "Card 1 still does three jobs in 143 words and the \"request is ready\" case has no worked example.",
+    "practice": "t1 produces something real; t2 is still a list, and neither task has data in the prompt.",
+    "feedback": "Task hints nudge but don't show what good looks like (unchanged).",
+    "time": "70 minutes against about 55; tasks carry no stated minutes (unchanged).",
+    "progression": "m01-q4 asks learners to judge a gap \"far larger than chance\", which M6 teaches; the scenario states it, so it can be answered, but card 3 only points ahead.",
+    "inclusion": "About a tenth of sentences run past 20 words; the m01-q1 scenario has one of 48."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m02",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "Clear, but it covers three tools; a 5 would name the one result.",
+    "explanation": "Formulas are worked, but card 3's return-rate idea has only a one-line example (2 of 8).",
+    "practice": "Both tasks now have data in the prompt and run free in Google Sheets. Both have one fixed answer; a 5 would end with the learner's own question.",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "time": "Stated minutes now match the tasks' own stated minutes, but the standard's pace (about 20 minutes a task) would give about 57; the 35-minute tasks rest on setup and data entry that nobody has timed with a beginner.",
+    "inclusion": "Phone route and SKU fixed; 3 of 35 card sentences still run past 20 words (card 2's opening is 27)."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m03",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "\"Problems that make analysis wrong\" is broad, though t1 now lets the learner check it.",
+    "explanation": "Card 2 describes a mapping table but doesn't show one with rows.",
+    "practice": "t1 is a real cleaning job with a log; t2 is still \"give two ways\" and explain, with numbers but no data to work.",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "time": "Stated minutes now match the tasks' own stated minutes, but the standard's pace (about 20 minutes a task) would give about 57; the 35-minute tasks rest on setup and data entry that nobody has timed with a beginner. (t1 35, t2 20.)",
+    "inclusion": "Cards 1 and 2 have three sentences of 30 words or more; Power Query is named without explanation."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m04",
+   "scores": {
+    "outcome": 5,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "explanation": "Every query is shown, but none with the rows it returns.",
+    "practice": "t1 is run in a free playground with data and a checkable result. t2 still starts with explaining a query and its six-row run is empty (finding).",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "time": "Stated minutes now match the tasks' own stated minutes, but the standard's pace (about 20 minutes a task) would give about 57; the 35-minute tasks rest on setup and data entry that nobody has timed with a beginner.",
+    "inclusion": "Card 2's NULL passage has a 32-word sentence."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m05",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "Two skills in one sentence (joins, and window functions).",
+    "explanation": "Cards 3 and 4 now show result rows; the join cards still show no output.",
+    "practice": "Both tasks run on given rows with checkable results; t1's hint has a slip and the sign-up filter isn't tested (finding).",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "time": "Stated minutes now match the tasks' own stated minutes, but the standard's pace (about 20 minutes a task) would give about 57; the 35-minute tasks rest on setup and data entry that nobody has timed with a beginner.",
+    "inclusion": "Six card sentences run past 20 words; one is 28."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m06",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "\"Spread, samples and simple experiments\" names tools, not one checkable result; the quiz also covers bias.",
+    "explanation": "The worked A/B case and its significance figures are now there (checked: 4.0% vs 5.0% gives p about 0.03, 4.0% vs 4.3% about 0.5). Spread (card 1) is worked with a range only.",
+    "practice": "A real test design and a message to an owner; nothing calculated and no free tool (unchanged).",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "time": "75 minutes against about 60; fair for designing a test (unchanged).",
+    "inclusion": "Readable; three sentences past 20 words."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m07",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 4,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "Observable, and t1 to t3 now make the learner do it; four verbs in one sentence.",
+    "explanation": "The split card is worked with figures (Kochi 1000, Pune 1200). Cards still never show sort_values or .dt.month, which t1 needs.",
+    "practice": "Three runnable tasks with data in the prompt and a Colab route. Held at 4 because t1 needs commands no card teaches (finding).",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "time": "120 minutes against about 115 from the stated task minutes (40+30+30); same caveat on pace.",
+    "progression": "t1 and t3 assume sort_values, .dt.month and building a small DataFrame, none taught earlier (finding).",
+    "inclusion": "Phone route and the operator sentence are fixed; Python in Excel is still a paid route (named as such)."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m08",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 4,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "Two outcomes joined (choose a chart; build a dashboard).",
+    "explanation": "Card 3's checking step has no worked case.",
+    "practice": "t1 builds a real page from data in a free tool; t2 starts with a recalled chart and is open-ended.",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "relevance": "Power BI Desktop is Windows-only; Looker Studio and Sheets are now in the tasks but the card teaches Power BI.",
+    "time": "Stated minutes now match the tasks' own stated minutes, but the standard's pace (about 20 minutes a task) would give about 57; the 35-minute tasks rest on setup and data entry that nobody has timed with a beginner.",
+    "inclusion": "DAX and \"paid capacity\" aren't explained; seven card sentences past 20 words."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m09",
+   "scores": {
+    "outcome": 4,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 4,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "outcome": "Two parts (use AI; check it), and the privacy card and m09-q3 sit outside the sentence.",
+    "explanation": "Card 1 has a worked example; card 2's checks have none.",
+    "practice": "t1 now has the learner use a free assistant and run its SQL on given rows; t2 is still \"describe how you would check\".",
+    "feedback": "Quiz feedback is full and task hints now show what good looks like, but the answer sits in the hint, so a stuck learner meets it before trying (idea).",
+    "relevance": "The DPDP Rules, 2025 timeline isn't mentioned (idea).",
+    "time": "75 minutes against about 75 from the stated task minutes (35+25); same caveat on pace.",
+    "inclusion": "Dialect now explained; card 3 is clear but choppy."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "da-m10",
+   "scores": {
+    "outcome": 5,
+    "explanation": 4,
+    "practice": 4,
+    "feedback": 4,
+    "relevance": 5,
+    "time": 4,
+    "progression": 5,
+    "inclusion": 4
+   },
+   "notes": {
+    "explanation": "Card 2's profit example is added, but the card holds three jobs in 157 words.",
+    "practice": "Two real writing tasks; neither asks the learner to work out a ₹ impact (unchanged).",
+    "feedback": "Full quiz feedback; the m10-q1 key could show the action's ₹ size (idea).",
+    "time": "70 minutes against about 55; neither task has stated minutes (unchanged).",
+    "inclusion": "\"D2C\" in t1 isn't explained; the m10-q1 explanation has a 38-word sentence."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  }
+ ],
+ "verification_of_review_4": [
+  {
+   "finding": "1 M1 outcome",
+   "status": "fixed",
+   "note": "Outcome now names type, average and fair comparison."
+  },
+  {
+   "finding": "2-4 M2 tasks, time, phone/jargon",
+   "status": "fixed",
+   "note": "t1 and t2 as specified; 35+35 minutes; Convert to table, SKU defined, phone $ line, card splits."
+  },
+  {
+   "finding": "5-6 M3 tasks, time",
+   "status": "fixed",
+   "note": "Clinic export in the prompt with a log; t2 has 300 of 5,000 and a 31-minute mean; 35+20."
+  },
+  {
+   "finding": "7-8 M4 tasks, time",
+   "status": "fixed with a new slip",
+   "note": "t1 correct and runs; t2's six-row run returns nothing at the 50 threshold (finding)."
+  },
+  {
+   "finding": "9-11 M5 cards, tasks, time",
+   "status": "fixed with a small slip",
+   "note": "Cards 3 and 4 as written, tables in the prompt, expected Ravi and Imran, 75%; hint wrongly explains Meena (finding)."
+  },
+  {
+   "finding": "12 M6 cards",
+   "status": "fixed",
+   "note": "Cards 3 and 4 with the Jaipur example; p values check."
+  },
+  {
+   "finding": "13-16 M7 cards, tasks, time, phone",
+   "status": "fixed with a gap",
+   "note": "Four cards, three runnable tasks, phone sentence and operator sentence; t1 lacks sort/month commands (finding)."
+  },
+  {
+   "finding": "17-18 M8 task, time",
+   "status": "fixed",
+   "note": "Eight-store page in Sheets or Looker Studio; the totals and four below-target stores re-add."
+  },
+  {
+   "finding": "19 M9 t1",
+   "status": "fixed",
+   "note": "Free assistant, module 5 rows, March by hand: 2 of 3 customers re-adds."
+  },
+  {
+   "finding": "20 Blueprint clue-test record",
+   "status": "partly fixed",
+   "note": "Inputs line updated, but the section heading and known defects are stale, and the Practical evidence rows are old (finding)."
+  },
+  {
+   "finding": "ideas 23, 24 (dialect), 25",
+   "status": "done",
+   "note": "60% to 84%, dialect explained, profit line added. Idea 21 and the DPDP Rules sentence are carried."
+  }
+ ],
+ "checks_after_changes": "m05/m06/m07 now have 4 cards each, all 80 to 160 words, and every quiz question there is still taught by a card (m05-q4 by card 4, m06-q3 by cards 3 and 4, m07-q1 by card 2, q2 and q3 by card 3, q4 by card 2). Nothing in the nine changed questions contradicts a card. No progression break found.",
+ "probe_leads": [
+  {
+   "lead": "m01-q1 (blind)",
+   "ruling": "Dismissed, key upheld, re-ruled on the text. The founder names the decision (where extra riders go), the measure (share of orders within 30 minutes, against 90%), the breakdown (each city) and the period (four weeks); M1 card 1 says a request that names these is ready. Asking spends one of the two days on answered questions."
+  },
+  {
+   "lead": "m08-q4 (blind)",
+   "ruling": "Dismissed. The marketing head owns the dashboard and has defined a repeat customer as one who ordered before the quarter; the 74% measures something else, so the measure should be fixed and checked against the 41%. Side by side suits two teams with two agreed definitions. Idea raised to make 'one rate on the page' explicit."
+  },
+  {
+   "lead": "m10-q3 (blind)",
+   "ruling": "Dismissed, key upheld. The decision is next June's reopening and the data is two reopening weeks, so they are the right evidence; M10 card 3 says so for Diwali. 'Not typical of the year' is true but doesn't bear on the decision, and the key states the limit that does (one season). The rewrite did not add a second right answer: the first option's only support is a vague 'September' re-check. Idea raised to tighten that option."
+  },
+  {
+   "lead": "m01-q4",
+   "ruling": "Dismissed: the survey option tests preference, but the goal is scores and the test measured them; the random assignment is stated."
+  },
+  {
+   "lead": "m06-q4",
+   "ruling": "Dismissed: the scenario says the scale is balanced (two positive, two negative choices)."
+  },
+  {
+   "lead": "m09-q1",
+   "ruling": "Dismissed: the definition-only prompt names no table columns, so the assistant must invent them (M9 card 1)."
+  },
+  {
+   "lead": "m09-q4",
+   "ruling": "Dismissed: the assistant never saw the schema, so asking again can only produce another guess; the key supplies the definitions."
+  },
+  {
+   "lead": "m10-q1",
+   "ruling": "Dismissed: the six-city random trial has already run, so another test is pointless."
+  },
+  {
+   "lead": "m10-q4",
+   "ruling": "Dismissed: Shillong is a tourist town, so its sales follow other visitors; arithmetic re-adds (38 x 60% = 23; 61 x 60% = 37; 45 x 60% = 27; 20 x 60% = 12)."
+  },
+  {
+   "lead": "f01",
+   "ruling": "Dismissed: 'most new customers' ignores the ₹12 lakh spent and the decision to move budget."
+  },
+  {
+   "lead": "f05",
+   "ruling": "Dismissed: the margin-of-error option never tells the funder that 600 households are missing (M3 card 3), and the report is due next week."
+  },
+  {
+   "lead": "f10",
+   "ruling": "Dismissed: the test ran its planned 21 days; extending it is peeking."
+  },
+  {
+   "lead": "f11",
+   "ruling": "Dismissed: 84 against 75 sales out of 3,000 is within chance (z about 0.7), so holding back loses a clear gain."
+  },
+  {
+   "lead": "f15",
+   "ruling": "Dismissed: the opening names no action or number (M10 card 1); the clinics were chosen at random."
+  }
+ ],
+ "lessons": [
+  {
+   "rule": "After changing a task to run on a small table, run the task as written: check that every filter, threshold or condition in the given query still has rows to act on at that size.",
+   "why": "M4 t2's HAVING COUNT(*) >= 50 on a six-row table returns nothing."
+  },
+  {
+   "rule": "When a hint explains why a row is excluded, check the row against the data, not the reason you expect; give each filter a row that only that filter removes.",
+   "why": "M5 t1's hint said Meena was left out for her 2025 sign-up, but she was left out because she has orders, so the sign-up filter was never tested."
+  }
+ ]
+}

@@ -1,0 +1,206 @@
+{
+ "verdict": "needs_work",
+ "summary": "Round 1 was fixed properly. All 18 must-fix and 17 should-fix findings were applied and I found nothing broken by the revision. Every Learn card is now 115 to 157 words and teaches what its quiz needs (T6 included), the five final replacements are in, the relabels, aptitude and rubric fixes are done, and check.mjs reports must_fix 0, should_fix 0. The wrong options are now real beginner mistakes. But the options-only clue test still got 46 of 55 right. The prober knows data analytics, so this shows that the scenario rarely decides the answer: in 20 judgement questions the key is the textbook good practice (median, line chart, randomise, state the limits, reproduce the AI's number) and can be picked without reading the case. Those 20 must be rebuilt so the scenario's facts decide (directions below), and m10-q4's key treats extra revenue as profit. The 22 code and fact questions rightly test knowing a construct and can stay.",
+ "strengths": [
+  "Every round-1 finding was applied as written or better, with nothing broken: m02-q2's why_wrong now names options by content, m03-q4 follows MJ-4, m04-q4's explanation is exact about COUNT(*), m08-q2 says three times, and the blueprint's verification runs (pandas 3.0.6, SQLite) cover every code option.",
+  "The Learn cards now teach, and they name the beginner mistakes the wrong options use: NULL arithmetic and LAG's first row (T6), the LEFT JOIN WHERE trap, the CTE filter for ROW_NUMBER, dayfirst as a preference, the bar-chart zero baseline, the paid Copilot capacity with a free route, and the checks that feel safe but aren't (M9 card 2).",
+  "No careless, dishonest or throwaway options are left. The code questions are now good examples of rule 2: every m04, m05 and m07 option is complete, runnable-looking code with one realistic slip.",
+  "Several questions already make the decisive option the key and a wrong one over-cautious (m03-q4, m10-q3, f11, f15), and the five questions the prober missed (m01-q2, m05-q4, m07-q1, m07-q2, f15) show the standard to aim for."
+ ],
+ "findings": [
+  {
+   "target": "programme",
+   "severity": "must_fix",
+   "problem": "The options-only clue test is confirmed as a scenario-dependence problem. With only the four options showing, the prober picked the key in 46 of 55 (84%; chance 25%). It was 50 in round 1. I checked every question by hand. The wrong options are no longer careless, so this isn't a clue in wording. It is that in 20 judgement questions the key is the good practice an analyst would choose in almost any case, so the facts in the scenario don't matter: m01-q1, m01-q3, m01-q4, m03-q1, m06-q4, m08-q1, m08-q3, m08-q4, m09-q2, m09-q4, m10-q1, m10-q2, m10-q3, m10-q4, f02, f04, f05, f10, f11, f14. These test recall of the principle, not applying it (house style: “Test applying and judging”). The AI-verification set shows it most clearly: m08-q4, m09-q2, m09-q4, f04 and f14 all have the same key, “check it independently against the raw data”.\nLeads I dropped: 22 questions answered from the options alone rightly test knowing a construct, and can stay as they are: m02-q1 to q4, m03-q3, m03-q4, m04-q1 to q4, m05-q1 to q3, m06-q1, m07-q3, m07-q4, m08-q2, m09-q3, f03, f08, f09, f12, f13. I also keep m06-q2, m06-q3 and m09-q1 as construct questions (sample size, peeking, the parts of a prompt). m09-q1 still has a wording fix, below.",
+   "fix": "Rebuild the 20 listed questions using the per-module findings below. The method for each:\n1. Write the deciding fact first: a goal, a data shape, an audience, a deadline or a constraint, stated in the scenario.\n2. Make each wrong option the right answer in a different, plausible situation, and write that situation down in why_wrong (“…would be right if the founder needed the total, but…”).\n3. Self-test: change the deciding fact in the scenario and check that a different option becomes right. If no fact change would make an option right, it is a throwaway: replace it.\n4. In about half the rebuilds, let the facts point away from the textbook answer, so that “pick the textbook practice” stops working (for example, the mean is right for a budget, and acting now is right after a randomised test).\n5. Keep any reason inside an option to the same kind and length as the others, and never let the key alone restate the scenario's conclusion (f11's “3,000 visitors a group is too few to judge”).\nTarget: re-run the options clue test. With 22 code and fact items rightly answerable, about 30 of 55 or fewer is the realistic aim, and none of the 20 rebuilt items should be answered with certainty (sure 3).",
+   "source": "Clue test (options), ai-powered-data-analytics.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m01",
+   "severity": "must_fix",
+   "problem": "m01-q1, m01-q3 and m01-q4 were each answered from the options alone. The keys are “agree what to measure first”, “the median” and “test it at random”, which are right whatever the scenario says.",
+   "fix": "m01-q1: let the founder's message settle what “slower” means. Example: “Customers keep saying deliveries take ages; I need to know by Friday which cities are missing our 30-minute promise.” Key: “Pull each city's weekly delivery times against 30 minutes for recent weeks”. Wrong options: “Ask the founder what she'll decide and which ‘slower’ she means” (right when the request is vague, as in the old version, but here it is already defined); “Compare this week's order count with last week's, city by city” (right if she meant fewer orders); “Chart orders, basket value and delivery times for 18 months” (right for an open brief with no deadline). Keep it Beginner, and use M1 card 1 (pin down the vague word, agree the measure and the period).\nm01-q3: let the purpose decide between the median and the mean. Example: the owner is budgeting next term's fee income for 60 students, and the sponsored places continue. Then the mean × 60 is right. Options: the median (right for “what a typical student pays”, such as on a fees poster); the mean (key); the median of the 47 non-sponsored fees (right if the sponsored places were ending); the midpoint of the lowest and highest fees (never right, but a real mistake). The Course Architect must add the line on when the mean is right (course finding below). The blind lead on “the mean with the range beside it” is dropped for the current version, which asks for a single number.\nm01-q4: let the way the groups formed decide. Example: “Last month the app switched dark mode on for a randomly chosen half of 40,000 new users; they scored 12% higher.” Key: “Make it the default: the users were assigned at random, so the gap is down to the setting.” Wrong options: “Run a random test first, as dark-mode users may be keener students” (right when users chose it, as in the old version; now over-cautious); “Wait for a survey of whether students like it” (right if the goal were satisfaction); “Turn it on only for night-time study sessions” (right if the data were split by time of day). M1 card 3 already teaches this.",
+   "source": "Clue test (options)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m03",
+   "severity": "must_fix",
+   "problem": "m03-q1 was answered from the options alone with good confidence: “remove the exact copies and log it” is the textbook move once the scenario says every pair is identical, so the options alone give it away.",
+   "fix": "Let the rows decide what a duplicate is. Scenario: “200 booking IDs appear twice. In 150 pairs every column matches. In 50 pairs the seat number and payment reference differ.” Key: “Remove the 150 exact copies, and check the 50 pairs with payments before touching them, logging both.” Wrong options: “Remove the second row of all 200 pairs, since a booking ID should be unique” (right if all 200 were identical); “Keep all 5,200 rows and flag the 200 pairs” (right if you couldn't yet tell copies from real bookings and the report could wait); “Keep the first 5,000 rows by booking time to match payments” (a real mistake, kept). M3 card 2 already teaches “the same order ID with identical values in every column”.",
+   "source": "Clue test (options)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m06",
+   "severity": "must_fix",
+   "problem": "m06-q4 was answered from the options alone. “Only renewers were asked” is the one sampling flaw among three non-sampling ones, so a learner who knows selection bias picks it without reading the case.",
+   "fix": "Make all four options real survey flaws, and let the scenario's facts show which one is present. Example: the gym emailed a random 3,000 of all 20,000 members, including those who left this year; 400 replied (13%), most of them members of five years or more. Key: “Only 13% replied, mostly long-time members, so 90% speaks for the keenest.” Wrong options: “Only members who renewed were asked” (right in the old version, but contradicted here); “400 replies is too few for a chain of 20,000” (right if only about 40 had replied; 400 gives roughly ±3 points); “The scale has two positive answers to one negative, which tilts it” (right if the scale were lopsided; make the scale balanced in this scenario). M6 card 2 teaches who was asked, who replied and who is missing.",
+   "source": "Clue test (options)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m08",
+   "severity": "must_fix",
+   "problem": "m08-q1, m08-q3 and m08-q4 were answered from the options alone, two of them with certainty in round 1 and good confidence now. The keys are “a line chart for months”, “each city against the target” and “read the DAX”, which hold for almost any brief.",
+   "fix": "m08-q1: give the founder a goal other than the trend. Example: “to pick the three best months of the last 18 to repeat a festive campaign in next year”. Key: a bar chart of the 18 months, sorted highest to lowest. Wrong options: a line chart in time order (right for how revenue has moved); a histogram of the 18 monthly figures (right for how often a month reaches a revenue level); a table of the 18 months with exact ₹ figures (right when she needs exact values for a budget, as M8 card 1 says). Drop the pie.\nm08-q3: state who uses the top of the dashboard and what they decide, and make each option fit a different user. Key, for an operations head who calls the managers of cities under target: each city's on-time % against “92% of orders within 30 minutes”, with cities below it in red. Wrong options: the count of late orders per city (right for allocating extra riders by volume); the national on-time % with a 12-week trend (right for the CEO's monthly review); each city's average delivery time (right only if the target were an average). See also the separate finding on the target's wording.\nm08-q4: put both definitions in the scenario, and let the business's definition decide. Example: the DAX counts customers with two or more orders ever, out of this quarter's customers (74%); your SQL counts this quarter's customers with an order before the quarter (41%); the marketing head defines a repeat customer as “ordered before this quarter”. Question: what goes on the dashboard? Key: change the DAX to the marketing head's definition and check it returns 41%. Wrong options: keep 74% and relabel it “ever ordered twice” (right if the head wanted lifetime loyalty); show both figures with notes (right if two teams use two agreed definitions); publish 41% from SQL and delete the measure (right if the dashboard couldn't be refreshed from the model).",
+   "source": "Clue test (options)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m09",
+   "severity": "must_fix",
+   "problem": "m09-q2 and m09-q4 were answered from the options alone, m09-q4 with certainty. Both keys are the generic “check independently” or “give it the schema”. The blind clue test's lead on m09-q4 is confirmed: “Ask it again, telling it to use only columns that exist” is defensible, because the scenario doesn't say whether the assistant ever had the table definitions.",
+   "fix": "m09-q2: let the file's shape decide which check works. Scenario: “The file has one row for each item in an order (order_id repeats), and the code averages the value column.” Question: which check shows whether ₹1,240 is the average order value? Key: “Total the value column and divide by the number of distinct order_ids.” Wrong options: “Recompute one month's average of the value column with a PivotTable” (an independent tool, but it repeats the same item-level average, so it agrees with the wrong figure. This option breaks the textbook answer); “Check ₹1,240 sits in your usual ₹1,100–1,400 range” (right for catching a units slip, such as paise read as rupees); “Rerun the code on a fresh export” (right if the file might have changed since the run). M9 card 2 and M5 card 2 (one-to-many rows) teach this.\nm09-q4: add the deciding fact “You described the tables in a sentence but never pasted their definitions.” That fixes the blind lead. Make each wrong option right in another situation, and say so in why_wrong: “Ask it again to use only existing columns” (right if it already had the schema and overlooked it); “Swap in total_spent” (right if the data dictionary defines total_spent as lifetime spend and the rest of the query has been checked); “Fix the reference and trust sensible row counts” (a real mistake, kept). Keep the key.",
+   "source": "Clue test (options and blind)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m10",
+   "severity": "must_fix",
+   "problem": "All four M10 questions were answered from the options alone, m10-q3 with certainty. m10-q1 and m10-q2 are still picked by their form: only one option is a specific, scoped action with ₹ (q1), and only one ties an action to a specific step (q2). m10-q3's key is the textbook “state the limit, re-check later”. In m10-q4, only the key has both a comparison group and a cost. In m10-q1, the key “pause COD in Tier-3” also ignores the sales lost by pausing, which the scenario never gives.",
+   "fix": "m10-q1: make all four options specific recommendations with a scope and ₹, and put the deciding facts in the scenario: the COD return rate by tier, COD's share of Tier-3 orders, and what the operations head can change. Example facts: COD is 70% of Tier-3 orders, so pausing it would lose more sales than the ₹4 lakh of returns. Key: “Add a ₹49 COD fee in Tier-3 cities, and offer ₹30 off for UPI there”. Wrong options: “Pause COD in Tier-3 cities” (right if COD were a small share of Tier-3 sales); “Pause COD everywhere” (right if returns were high in every tier); “Test a COD fee in two Tier-3 cities for a month first” (right if the ₹ at stake were large and the evidence weaker).\nm10-q2: give the funnel in the scenario (for example, of 1,000 carts, 900 reach the address step, 820 the delivery-fee step, and 340 pay). Make all four options a specific insight and action at a different step. Only the step with the largest drop is right; each wrong option would be right with a different funnel.\nm10-q3: let the decision decide what “typical” means. Example: the memo recommends how much stock to hold for next Diwali. Key: “Use the three Diwali weeks as the guide for next Diwali, and say they come from one festive season.” Wrong options: “Say the weeks may not be typical of the year, and re-check in January” (the old key, right if the decision were year-round); “Hold the memo until a full year of data is in” (over-cautious); “Scale each week down by the usual Diwali uplift” (a real mistake, kept). Needs the M10 card 3 line (course finding below).\nm10-q4: give every option a cost and a comparison, with a different comparison group and a different ₹ figure in each, and state the facts that make one comparison fair. Example: members were already the top spenders before joining; the programme launched in every city on the same day; the café's gross margin is 60%. Key: matched non-members, extra gross profit against programme cost. Wrong options: all non-members (a larger, inflated gap); members before and after joining (seasonality and growth); a city without the programme (right if launch had been staggered by city, which the scenario rules out). See the separate accuracy finding on revenue and profit.",
+   "source": "Clue test (options)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "final",
+   "severity": "must_fix",
+   "problem": "f02, f04, f05, f10, f11 and f14 were answered from the options alone. Their keys are the M6/M3/M9 principles (each store's own range, look at removed rows, report who is missing, run the planned length, act on the overall result, reproduce the number), which hold whatever the case says. In f11, the key alone carries a reason that states the verdict (“3,000 visitors a group is too few to judge”). The blind leads on f01 (“most new customers”), f11 (“hold the roll-out”) and f15 (“method first”) are dropped: the current why_wrong lines answer each correctly.",
+   "fix": "f02: give the store's variation pattern in the scenario. Example: Store 12's sales are lowest every Tuesday, and the chain's stores differ three-fold in size. Key: compare each day with the same weekday's usual range for that store. Wrong options: a 7-day average against the store's own range (right with no weekly cycle); red after two low days in a row (right if dips were isolated one-day noise); one lower line for every store (right if the rule were a chain-wide minimum, such as covering rent). M6 card 1 teaches “this Saturday with recent Saturdays”.\nf04: let the facts decide the duplicate key. Example: families often share one phone; a student can enquire about two courses; the centre counts one enquiry per student per course. Key: drop_duplicates(subset=[\"student_name\", \"phone\", \"course\"]). Wrong options: subset name and phone (right if a student enquired about one course only); subset phone (right if each phone were one student); no subset (removes only rows identical in every column, so repeats on different dates stay).\nf05: say why the blanks happened, and let that decide. Example: the income question was on a tablet screen that failed to load for a random 30% of households. Key: the average of the 1,400 who answered, noting that the 600 were missed at random by the form fault. Wrong options: report the share missing and ask whether skippers differ (the old key, right when people chose to skip); fill the blanks with the median; give the margin of error only. M3 card 3 teaches that excluding a random mix changes little.\nf10: let the test be finished. Example: it has run its planned 21 days; A converts 4.0% and B 4.1% of 50,000 each, well within chance; B costs ₹1.5 lakh a month more to run. Key: keep A, since the finished test shows no clear gain worth B's cost. Wrong options: run three more weeks to see if the gap becomes significant (right only if the test had been stopped early); launch B, since it is ahead (right if the gap were significant); launch B as it is no worse (right if B were cheaper). Needs the M6 card 3 line (course finding below).\nf11: remove the verdict from the key, or give every option a reason of the same kind (for example, every option names one number from the scenario). Then the learner must judge the 3,000-a-group subgroup from the numbers. Keep the facts: as they stand, roll out and watch is right; with 30,000 a group and the same fall, rolling out only in metro and Tier-2 cities would be.\nf14: show the AI's working and the board's definition in the scenario. Example: it divided March's 1,200 cancellations by the 10,000 subscribers at the end of March; the board's churn is cancellations divided by subscribers at the start of the month (11,000). Key: recompute with start-of-month subscribers (10.9%), and say so. Wrong options: use 12%, since the working is shown and the sum is right (right if the definitions matched); check 12% is in the usual range for apps; ask a second AI.",
+   "source": "Clue test (options and blind)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m10",
+   "severity": "must_fix",
+   "problem": "m10-q4's key is wrong as economics. “Members spent ₹38 lakh more, costs were ₹22 lakh: ₹16 lakh net” subtracts the programme's cost from extra revenue. Extra spend isn't profit: at a typical café gross margin, ₹38 lakh of extra sales brings far less than ₹38 lakh of profit, so the programme may not have paid for itself. An expert would reject the key's arithmetic. The wrong option “members spent ₹38 lakh more than non-members” also uses the same ₹38 lakh as the matched comparison, which implies the comparison group made no difference.",
+   "fix": "Put the café's gross margin in the scenario (for example, 60%), and write the key in profit: “Yes: against a matched group, members spent ₹38 lakh more, about ₹23 lakh of gross profit, against ₹15 lakh of costs: about ₹8 lakh net.” Give the all-non-members option a larger, different gap (for example, ₹61 lakh), and fix the explanation and learning_outcome: “net impact = extra gross profit against a fair comparison, minus the cost”. Apply this inside the m10-q4 rebuild above.",
+   "source": "",
+   "owner": "assessment",
+   "category": "accuracy",
+   "rule": null
+  },
+  {
+   "target": "module:da-m08",
+   "severity": "should_fix",
+   "problem": "The blind clue test's lead on m08-q3 is confirmed. “Each city's average delivery time, sorted slowest to fastest” is defensible, because the scenario's “30-minute delivery target” doesn't say whether the target is an average or a share of orders. The key assumes a share (on-time %).",
+   "fix": "State the target as a rate: “…whether any city is missing its target of 92% of orders delivered within 30 minutes.” Then why_wrong can say that an average can be under 30 minutes while far fewer than 92% of orders arrive on time. Fold this into the m08-q3 rebuild.",
+   "source": "Clue test (blind)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m09",
+   "severity": "should_fix",
+   "problem": "m09-q1: the cards clue test picked the no-columns prompt (“In our data, a repeat customer has ordered before. Write PostgreSQL…”) with certainty, and the blind test found it defensible. I checked. The key is better, because it gives the columns M9 card 1 asks for. But its definition (“what % of customers had ordered before?”) is vaguer than that option's: it says neither before what nor which customers form the base. So a learner who follows the card's “defines any business term” points to the wrong option.",
+   "fix": "Key → “Table orders(order_id, customer_id, order_date, value). For each 2026 month, what % of that month's customers had an order before that month? PostgreSQL.” Keep the no-columns option's definition as it is, so the only difference is the missing schema. why_wrong for it: “it defines a repeat customer but names no columns, so the assistant must invent them”. Keep the options alike in length.",
+   "source": "Clue test (cards and blind)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f15's key, which the explanation says “states the evidence exactly”, misdescribes it. The test was randomised, with reminded and unreminded patients at the same time, but “no-shows fell 18% to 11%” reads as a before-and-after change. The scenario's “missed appointments fell from 18% to 11%” has the same problem.",
+   "fix": "Scenario → “…11% of patients who got a reminder missed their appointment, against 18% of those who didn't.” Key → “Recommendation: send day-before SMS reminders in all 30 clinics; in an 8-clinic random test, 11% missed with a reminder against 18% without.” Keep the length close to the other options.",
+   "source": "",
+   "owner": "assessment",
+   "category": "accuracy",
+   "rule": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "m03-q2, f06 and f07 have an empty title and no scenario, and f07 (“What does an INNER JOIN between customers and orders return?”) is pure recall in a final that should combine ideas. The blueprint says every final question now has a scenario (“Cases added to … all 15 final questions”), so the blueprint and the file disagree. The blueprint also still lists T6 as an open defect, though M4 card 2 and M5 card 3 now teach it.",
+   "fix": "Give each question a title and a one-line case. m03-q2: title “Whose date format?”; scenario “A clinic's appointment export from a new booking app has dates such as 04/05/2026, 13/05/2026 and 28/02/2026.” f06: title “Big payments by method”; put the query in the scenario, for a fintech app's payments table. f07: make it applied: “customers has 5,000 rows, 3,200 of them have ordered, and orders has 9,000 rows, every one with a known customer. How many rows does customers INNER JOIN orders return, and who is missing?” Key: 9,000 rows, with the 1,800 customers who never ordered left out. Wrong options: 10,800 rows (that is a LEFT JOIN from customers, which keeps the never-ordered), 3,200 rows (one per customer who ordered), and 5,000 rows (one per customer). Then update the blueprint's question map, its #22 line and its “Defects that remain known”.",
+   "source": "",
+   "owner": "assessment",
+   "category": "house-style",
+   "rule": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f12's key says “or sum the item values after it”, but the scenario says only that items “lists each product in an order”. It never says items has a value column, so a careful learner can't tell whether that half of the key is possible.",
+   "fix": "Scenario → “…where items(order_id, product, item_value) lists each product in an order…”.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  },
+  {
+   "target": "module:da-m08",
+   "severity": "should_fix",
+   "problem": "M8 card 1: “Start it at ₹95 lakh and a 3% rise can look like a bar several times taller” gives no starting value. A student who tries ₹100 lakh to ₹103 lakh with the axis at ₹95 lakh gets bars of 5 and 8, which is 1.6 times, not several.",
+   "fix": "Give the numbers: “If sales rise from ₹100 lakh to ₹103 lakh and the axis starts at ₹99 lakh, the bars are 1 and 4 units long: a 3% rise looks like four times as much.”",
+   "source": "",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": null
+  },
+  {
+   "target": "module:da-m10",
+   "severity": "should_fix",
+   "problem": "M10 card 2's “put a value on the action: the ₹ it earns or saves, minus what it costs” lets “earns” be read as revenue. That is the mistake in m10-q4's key.",
+   "fix": "→ “put a value on the action: the extra profit it brings (extra sales × your margin) or the cost it saves, minus what it costs, compared with a similar group that didn't get it.”",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "Three of the rebuilds above rest on a point no card states yet, so the questions would be unfair without a line in the cards: m01-q3 (the mean is the right number for totals and budgets), f10 (what to do when a finished test shows no clear difference) and m10-q3 (whether data is typical depends on the decision).",
+   "fix": "M1 card 3, after the median sentence: “The mean is still the right figure when you need a total: 50 students × the mean fee is the term's fee income.” M6 card 3, after “the test may be too small to see it”: “When a test has run its planned length and shows no clear difference, don't keep running it until one appears: decide on other grounds, such as cost or simplicity.” M10 card 3, after the IPL sentence: “Whether data is typical depends on the decision: three Diwali weeks are poor evidence for a normal month, but the right evidence for planning next Diwali.” Keep each card under 160 words.",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "Answer integrity (carried from round 1): every student still sees the same option order, so a key can be shared. The project still has no pass rule or rubric weights in the engine.",
+   "fix": "Paul to decide, as in the blueprint's “For the team” 1 and 3: shuffle options per student on the page and map the answer back on the server; set the project pass rule and the weights.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null
+  }
+ ],
+ "lessons": [
+  {
+   "rule": "For every judgement question, write the deciding fact into the scenario first, and make each wrong option the right answer under a different, plausible fact (another goal, data shape, audience, deadline or constraint). Test it: change that one fact and check that a different option becomes right. If no change of fact could make an option right, replace it.",
+   "why": "In Data Analytics round 2 the wrong options were all real mistakes, yet a prober who knows the field still picked the key from the options alone in 46 of 55, because the key was the textbook practice in every case. Plausible wrong options aren't enough: only a scenario that decides makes a question test applying."
+  },
+  {
+   "rule": "When a question or card asks whether something paid for itself, measure the gain in profit (extra sales × margin, or cost saved) against a fair comparison, minus the cost. Never subtract the cost from extra revenue.",
+   "why": "m10-q4's key subtracted the programme's cost from members' extra spend and called it net, and M10 card 2's “the ₹ it earns” allowed that reading."
+  },
+  {
+   "rule": "Every question has a title and a scenario. A bare code or recall question in the final becomes an applied case with numbers. check.mjs should flag an empty title or scenario.",
+   "why": "m03-q2, f06 and f07 have empty titles and no case, while the blueprint said every final question had one. No automatic check caught it."
+  }
+ ]
+}
