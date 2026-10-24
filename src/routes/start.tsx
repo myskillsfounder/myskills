@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { ArrowRight, Award, BadgeCheck, Briefcase, GraduationCap, LayoutGrid, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Award, BadgeCheck, Briefcase, Check, GraduationCap, LayoutGrid, Sparkles } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requireGuest } from '@/lib/guards'
 import { setAfterOnboarding } from '@/lib/afterOnboarding'
@@ -19,6 +19,7 @@ import { pendingAptitudeFor, savePendingAptitude, type TestRoute } from '@/lib/p
 import { peekGuideAnswers, saveGuideAnswers } from '@/lib/guideAnswers'
 import { strongestFor } from '@/lib/guestResult'
 import { setSiteMode } from '@/lib/siteMode'
+import { isPhone } from '@/lib/device'
 import type { LeadProgramme } from '@/lib/programmes'
 import { InlineSelect } from '@/components/onboarding/InlineSelect'
 import { AnswerPanel } from '@/components/onboarding/AnswerPanel'
@@ -93,6 +94,96 @@ const Rings = () => (
   </span>
 )
 
+/**
+ * The sentence on a phone: one blank to a screen, each answer one tap. The
+ * sentence builds at the top as it's answered; tapping a filled blank goes
+ * back to it. Made for a thumb, not a dropdown.
+ */
+function PhoneSentence({
+  values,
+  blanks,
+  onPick,
+}: {
+  values: string[]
+  blanks: { question: string; placeholder: string; options: SentenceOption[] }[]
+  /** The blank's index and the chosen option's id. */
+  onPick: (i: number, id: string) => void
+}) {
+  const firstEmpty = values.findIndex((v) => !v)
+  const [at, setAt] = useState(firstEmpty === -1 ? 0 : firstEmpty)
+  const blank = blanks[at]
+  const words = ['I’m', 'and I want to', '. I’d like to learn', ', and I’m']
+
+  // Each blank starts at the top, as a new screen would.
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [at])
+
+  return (
+    <div className="mt-5">
+      {/* The sentence so far: filled blanks are chips to go back to. */}
+      <p className="font-display text-[1.25rem] font-medium leading-[2.1] text-white">
+        {words.map((w, i) => {
+          const chosen = blanks[i].options.find((o) => o.id === values[i])
+          return (
+            <span key={w}>
+              {i === 0 || /^[.,]/.test(w) ? '' : ' '}
+              {w}{' '}
+              <button
+                type="button"
+                onClick={() => i <= (firstEmpty === -1 ? 3 : firstEmpty) && setAt(i)}
+                className={`rounded-lg px-2 py-0.5 ${
+                  i === at
+                    ? 'border border-dashed border-brand-300 text-brand-100'
+                    : chosen
+                      ? 'bg-brand-500/25 text-white'
+                      : 'border border-dashed border-white/25 text-white/40'
+                }`}
+              >
+                {chosen ? chosen.chip : blanks[i].placeholder}
+              </button>
+            </span>
+          )
+        })}
+        .
+      </p>
+
+      <div className="mt-6 flex items-center gap-1.5" aria-hidden>
+        {blanks.map((_, i) => (
+          <span key={i} className={`h-1.5 flex-1 rounded-full ${i <= at ? 'bg-brand-300' : 'bg-white/15'}`} />
+        ))}
+      </div>
+      <h2 className="mt-4 font-display text-[1.5rem] font-semibold leading-tight text-white">{blank.question}</h2>
+      <div className="mt-4 space-y-2.5">
+        {blank.options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => {
+              onPick(at, o.id)
+              if (at < blanks.length - 1) setAt(at + 1)
+            }}
+            className={`press flex w-full items-center gap-3.5 rounded-2xl border p-4 text-left transition-colors active:bg-white/15 ${
+              values[at] === o.id ? 'border-brand-300 bg-brand-500/20' : 'border-white/10 bg-white/[0.06]'
+            }`}
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold text-white">{o.label}</span>
+              <span className="block text-sm leading-snug text-white/60">{o.description}</span>
+            </span>
+            {values[at] === o.id && <Check size={18} className="shrink-0 text-brand-200" />}
+          </button>
+        ))}
+      </div>
+      {at > 0 && (
+        <button type="button" onClick={() => setAt(at - 1)} className="mt-4 inline-flex items-center gap-1.5 py-2 text-sm font-medium text-white/60">
+          <ArrowLeft size={15} /> Back
+        </button>
+      )}
+    </div>
+  )
+}
+
 function StartPage() {
   const router = useRouter()
 
@@ -117,12 +208,24 @@ function StartPage() {
   const [testError, setTestError] = useState<string>()
   const answerRef = useRef<HTMLDivElement>(null)
   const testRef = useRef<HTMLDivElement>(null)
+  // A phone gets the sentence one blank to a screen, and no standard website.
+  const phone = isPhone()
 
   const chosen = [stage, goal, learn, level].filter(Boolean).length
   const complete = chosen === 4
   const coming = COMING[learn]
   // The plan speaks of the open programmes; "not sure" lets the goal decide.
-  const plan = complete && !coming ? planFor(stage, goal, learn, level) : null
+  const basePlan = complete && !coming ? planFor(stage, goal, learn, level) : null
+  // "Based on" in the guide's own words: the programme by name.
+  const plan = basePlan && {
+    ...basePlan,
+    basedOn: [
+      careerStageStep.options.find((o) => o.id === stage)?.label,
+      goalStep.options.find((o) => o.id === goal)?.label,
+      LEARN.find((o) => o.id === learn)?.label,
+      levelStep.options.find((o) => o.id === level)?.label,
+    ].filter((x): x is string => Boolean(x)),
+  }
 
   // Changing any choice withdraws the answer: it no longer matches the sentence.
   function pick(set: (v: string) => void) {
@@ -139,9 +242,16 @@ function StartPage() {
     pick(setStage)(id)
   }
 
+  // The plan, once asked for, comes into view: on a phone it opens below the
+  // fold, so it goes to the top of the screen; after the panel has rendered.
   useEffect(() => {
-    if (asked && !arrival) answerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }, [asked, arrival])
+    if (!asked || arrival) return
+    const t = window.setTimeout(
+      () => answerRef.current?.scrollIntoView({ behavior: 'smooth', block: phone ? 'start' : 'nearest' }),
+      120,
+    )
+    return () => window.clearTimeout(t)
+  }, [asked, arrival, phone])
 
   // The test's statements, once one is started.
   useEffect(() => {
@@ -171,6 +281,18 @@ function StartPage() {
     setSiteMode('standard')
     trackEvent('site_mode', { mode: 'standard' })
     router.navigate({ to: '/' })
+  }
+
+  /** A blank answered on a phone; the last one asks for the plan. */
+  function pickOnPhone(i: number, id: string) {
+    if (i === 0) pickStage(id)
+    else if (i === 1) pick(setGoal)(id)
+    else if (i === 2) pick(setLearn)(id)
+    else {
+      pick(setLevel)(id)
+      trackEvent('guide_ask', { stage, goal, learn, level: id, phone: true })
+      setAsked(true)
+    }
   }
 
   function ask() {
@@ -207,8 +329,8 @@ function StartPage() {
             <span className="font-display text-lg font-semibold tracking-tight text-white">MySkills</span>
           </Link>
           <div className="flex items-center gap-4">
-            {/* The two ways in: this one, and the website as it always was. */}
-            <div className="flex rounded-full bg-white/10 p-1 text-xs font-semibold" role="group" aria-label="Experience">
+            {/* The two ways in: this one, and the website as it always was (a computer only). */}
+            <div className={`${phone ? 'hidden' : 'flex'} rounded-full bg-white/10 p-1 text-xs font-semibold`} role="group" aria-label="Experience">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-ink-900">
                 <Sparkles size={13} /> AI guide
               </span>
@@ -231,12 +353,26 @@ function StartPage() {
             Let’s find your starting point
           </h1>
           <p className="mt-2.5 max-w-xl text-base leading-relaxed text-white/70">
-            Complete the sentence, choose from each dropdown, and I’ll show you where to begin. Free, and no account
-            needed yet.
+            {phone
+              ? 'Four quick taps and I’ll show you where to begin. Free, and no account needed yet.'
+              : 'Complete the sentence, choose from each dropdown, and I’ll show you where to begin. Free, and no account needed yet.'}
           </p>
 
-          {/* The prompt: a sentence with four dropdowns in it. */}
-          <div className={`card-glass-dark relative mt-7 rounded-2xl p-5 transition-shadow duration-500 sm:p-7 ${complete ? 'glow-edge' : ''}`}>
+          {phone && !asked && (
+            <PhoneSentence
+              values={[stage, goal, learn, level]}
+              blanks={[
+                { question: 'Where are you right now?', placeholder: 'where you are', options: careerStageStep.options },
+                { question: 'What do you want most right now?', placeholder: 'your goal', options: goalOptions },
+                { question: 'What would you like to learn?', placeholder: 'a programme', options: LEARN },
+                { question: 'How much do you already know?', placeholder: 'how much you know', options: levelStep.options },
+              ]}
+              onPick={pickOnPhone}
+            />
+          )}
+
+          {/* The prompt: a sentence with four dropdowns in it (on a phone, once answered: to change). */}
+          <div className={`${phone && !asked ? 'hidden' : ''} card-glass-dark relative mt-7 rounded-2xl p-5 transition-shadow duration-500 sm:p-7 ${complete ? 'glow-edge' : ''}`}>
             <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/50">Your starting point</p>
             <div className="font-display text-[1.375rem] font-medium leading-[2.35] text-white sm:text-[1.75rem] sm:leading-[2.3]">
               I’m{' '}
@@ -337,7 +473,7 @@ function StartPage() {
             )}
 
             {asked && plan && !test && (
-              <AnswerPanel key={`${stage}|${goal}|${learn}|${level}`} plan={plan} busy={false} onPick={start} onSkip={standard} />
+              <AnswerPanel key={`${stage}|${goal}|${learn}|${level}`} plan={plan} busy={false} onPick={start} onSkip={phone ? undefined : standard} />
             )}
           </div>
 

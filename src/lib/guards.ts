@@ -93,29 +93,32 @@ export async function guestOrOnboarded(): Promise<void> {
 }
 
 /**
- * The phone's front door (/welcome): the welcome for someone signed out, the
- * three questions for a new account. A computer has no use for it, and an
- * account that has already answered goes home.
+ * The phone's onboarding (/welcome): the three questions for a new account,
+ * answered already when they came through the AI guide. Someone signed out
+ * goes to the guide; a computer has no use for it, and an account that has
+ * already answered goes home.
  */
 export async function requirePhoneWelcome(): Promise<void> {
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (!isPhone()) throw redirect({ to: session ? '/dashboard' : '/' })
+  if (!session) throw redirect({ to: '/start' })
   if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: homePath() })
 }
 
 /**
  * The site's address, '/'. On a phone it is the app's front door, not the
  * website's: someone signed in is taken to their LaunchPad, the way opening an
- * app takes you to the app, and someone signed out to the phone's own welcome.
- * On a computer a visitor meets the AI guide (/start) unless they chose the
- * standard website (lib/siteMode.ts); search engines always get the home page.
+ * app takes you to the app, and someone signed out to the AI guide (/start).
+ * On a computer a visitor meets the guide too, unless they chose the standard
+ * website (lib/siteMode.ts); search engines always get the home page.
  */
 export async function homeEntry(): Promise<void> {
   // A partner's confirm link can land here (the site's own address): on into the portal.
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
-  if (isPhone()) throw redirect({ to: session ? homePath() : '/welcome' })
+  // A phone has no standard website: a visitor there always meets the guide.
+  if (isPhone()) throw redirect({ to: session ? homePath() : '/start' })
   if (!session && siteMode() === 'ai' && !isBot()) throw redirect({ to: '/start' })
 }
 
