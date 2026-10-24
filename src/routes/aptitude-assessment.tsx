@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
+import { guestOrOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
-import { trackAptitudeComplete } from '@/lib/analytics'
+import { trackAptitudeComplete, trackEvent } from '@/lib/analytics'
 import {
   fetchAptitudeQuestions,
   submitAptitude,
@@ -12,11 +12,15 @@ import {
 } from '@/lib/dmAptitude'
 import { AptitudeResult } from '@/components/aptitude/AptitudeResult'
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
+import { SignUpToSee } from '@/components/self-assessment/SignUpToSee'
+import { useAuthUser } from '@/lib/useAuth'
+import { clearPendingAptitude, pendingAptitudeFor, savePendingAptitude } from '@/lib/pendingAptitude'
 import { SelfAssessmentQuiz, type QuizCopy } from '@/components/self-assessment/Quiz'
 
-// Not in PAGE_SEO on purpose — it's behind sign-in.
+// Not in PAGE_SEO on purpose: the result is behind sign-in. The test itself
+// can be taken signed out (lib/pendingAptitude.ts).
 export const Route = createFileRoute('/aptitude-assessment')({
-  beforeLoad: requireOnboarded,
+  beforeLoad: guestOrOnboarded,
   component: AptitudeAssessmentPage,
 })
 
@@ -34,26 +38,53 @@ const COPY: QuizCopy = {
 
 function AptitudeAssessmentPage() {
   const { result, loading, setResult } = useMyAptitudeResult()
-  const [questions, setQuestions] = useState<AptitudeQuestion[] | null>(null)
   const [error, setError] = useState<string>()
+  const { user, loading: authLoading } = useAuthUser()
+  // Answered before signing up: the result waits for an account.
+  const [waiting, setWaiting] = useState(() => pendingAptitudeFor('/aptitude-assessment') !== null)
+  const [scoring, setScoring] = useState(false)
+
+  // Signed in now, with answers from before: score them, once.
+  useEffect(() => {
+    if (authLoading || loading || !user) return
+    const pending = pendingAptitudeFor('/aptitude-assessment')
+    if (!pending) return
+    clearPendingAptitude()
+    setWaiting(false)
+    if (result) return
+    setScoring(true)
+    submitAptitude(pending.answers, pending.reflection)
+      .then((r) => {
+        trackAptitudeComplete()
+        setResult(r)
+      })
+      .catch((e) => setError(errorMessage(e)))
+      .finally(() => setScoring(false))
+  }, [authLoading, loading, user, result, setResult])
+  const [questions, setQuestions] = useState<AptitudeQuestion[] | null>(null)
 
   // Only fetch the statements once we know the learner hasn't taken it.
   useEffect(() => {
-    if (loading || result) return
+    if (loading || authLoading || result || waiting || scoring) return
     let active = true
     fetchAptitudeQuestions()
-      .then((q) => active && setQuestions(q))
+      .then((q) => {
+        if (!active) return
+        // None readable (a visitor, before docs/supabase-aptitude-before-signup.sql) reads as unavailable.
+        if (q.length === 0) setError('Please try again in a little while.')
+        else setQuestions(q)
+      })
       .catch((e) => active && setError(errorMessage(e)))
     return () => {
       active = false
     }
-  }, [loading, result])
+  }, [loading, authLoading, result, waiting, scoring])
 
   const taken = Boolean(result)
 
   return (
     <DarkShell
-      back={{ to: '/practice', label: 'Back to Practice' }}
+      back={user ? { to: '/practice', label: 'Back to Practice' } : { to: '/', label: 'Back' }}
       eyebrow="Digital Marketing"
       title={taken ? 'Your marketing aptitude' : 'Aptitude assessment'}
       description={
@@ -64,19 +95,29 @@ function AptitudeAssessmentPage() {
     >
       {error && <DarkError title="The assessment isn’t available right now." message={error} />}
 
-      {(loading || (!result && !questions && !error)) && (
+      {(loading || scoring || (!result && !waiting && !questions && !error)) && (
         <p className="flex items-center gap-2 text-sm text-white/60">
-          <Loader2 size={15} className="animate-spin" /> Loading…
+          <Loader2 size={15} className="animate-spin" /> {scoring ? 'Working out your results…' : 'Loading…'}
         </p>
       )}
 
       {result && <AptitudeResult result={result} />}
 
-      {!result && questions && questions.length > 0 && (
+      {!result && waiting && !user && !authLoading && <SignUpToSee route="/aptitude-assessment" />}
+
+      {!result && !waiting && !scoring && questions && questions.length > 0 && (
         <SelfAssessmentQuiz
           questions={questions}
           copy={COPY}
           onSubmit={async (answers, reflection) => {
+            // Signed out: keep the answers, and ask for an account to see the result.
+            if (!user) {
+              savePendingAptitude('/aptitude-assessment', answers, reflection)
+              trackEvent('aptitude_answered_guest', { programme: 'digital-marketing' })
+              setWaiting(true)
+              window.scrollTo({ top: 0 })
+              return
+            }
             const r = await submitAptitude(answers, reflection)
             trackAptitudeComplete()
             setResult(r)

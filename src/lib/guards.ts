@@ -1,6 +1,7 @@
 import { redirect } from '@tanstack/react-router'
 import { supabase } from './supabase'
 import { homePath, inPhoneApp, isPhone } from './device'
+import { pendingAptitudeRoute } from './pendingAptitude'
 import { ensureLiveContent } from './liveContent'
 
 /** What a route guard is handed: enough to know which page is being opened. */
@@ -69,7 +70,24 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
     throw redirect({ to: notOnboardedPath(session) })
   }
   if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: homePath() })
+  // A test answered before signing up is scored first: signing in (email or
+  // Google) lands on the LaunchPad, which sends them back to it.
+  const waiting = ctx?.location.pathname === '/dashboard' ? pendingAptitudeRoute() : null
+  if (waiting) throw redirect({ to: waiting })
   // The programmes' published wording from the course engine (lib/liveContent.ts).
+  await ensureLiveContent()
+}
+
+/**
+ * An aptitude test: open to a visitor who hasn't signed up, so they can try
+ * the programme before making an account (the result waits for one, lib/
+ * pendingAptitude.ts). Signed in, it is like any page: onboarding first.
+ */
+export async function guestOrOnboarded(): Promise<void> {
+  const session = await currentSession()
+  if (session && session.user.user_metadata?.onboarded !== true) {
+    throw redirect({ to: notOnboardedPath(session) })
+  }
   await ensureLiveContent()
 }
 

@@ -7,6 +7,8 @@
  * sessionStorage, not localStorage: it survives the Google sign-in redirect
  * (same tab) but not a visit days later, when the intent is stale.
  */
+import { pendingAptitudeRoute } from './pendingAptitude'
+
 const KEY = 'myskills.afterOnboarding'
 
 /** Only in-app paths we expect — never an arbitrary URL from storage. */
@@ -24,9 +26,9 @@ export function setAfterOnboarding(path: string): void {
 export function peekAfterOnboarding(): string | null {
   try {
     const path = sessionStorage.getItem(KEY)
-    return path && ALLOWED.has(path) ? path : null
+    return path && ALLOWED.has(path) ? path : pendingAptitudeRoute()
   } catch {
-    return null
+    return pendingAptitudeRoute()
   }
 }
 
@@ -35,8 +37,10 @@ export function takeAfterOnboarding(): string | null {
   try {
     const path = sessionStorage.getItem(KEY)
     sessionStorage.removeItem(KEY)
-    return path && ALLOWED.has(path) ? path : null
+    // A test answered before sign-up still waits, even when sign-up went
+    // through an email link in another tab (lib/pendingAptitude.ts).
+    return path && ALLOWED.has(path) ? path : pendingAptitudeRoute()
   } catch {
-    return null
+    return pendingAptitudeRoute()
   }
 }
