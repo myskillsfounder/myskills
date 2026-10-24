@@ -43,6 +43,7 @@ const HIDE_EXACT = new Set([
   '/login',
   '/signup',
   '/welcome',
+  '/start',
   '/onboarding',
   '/assessment',
   '/certificate',
