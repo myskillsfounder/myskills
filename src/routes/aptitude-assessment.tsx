@@ -13,6 +13,7 @@ import {
 import { AptitudeResult } from '@/components/aptitude/AptitudeResult'
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
 import { SignUpToSee } from '@/components/self-assessment/SignUpToSee'
+import { strongestFor } from '@/lib/guestResult'
 import { useAuthUser } from '@/lib/useAuth'
 import { clearPendingAptitude, pendingAptitudeFor, savePendingAptitude } from '@/lib/pendingAptitude'
 import { SelfAssessmentQuiz, type QuizCopy } from '@/components/self-assessment/Quiz'
@@ -112,7 +113,7 @@ function AptitudeAssessmentPage() {
           onSubmit={async (answers, reflection) => {
             // Signed out: keep the answers, and ask for an account to see the result.
             if (!user) {
-              savePendingAptitude('/aptitude-assessment', answers, reflection)
+              savePendingAptitude('/aptitude-assessment', answers, reflection, strongestFor('/aptitude-assessment', questions, answers))
               trackEvent('aptitude_answered_guest', { programme: 'digital-marketing' })
               setWaiting(true)
               window.scrollTo({ top: 0 })

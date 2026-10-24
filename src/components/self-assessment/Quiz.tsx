@@ -84,9 +84,11 @@ export function SelfAssessmentQuiz({
   copy: QuizCopy
   onSubmit: (answers: Record<string, number>, reflection: string) => Promise<void>
 }) {
-  const { user } = useAuthUser()
-  const userId = user?.id
-  const key = userId ? `${copy.draftPrefix}.${userId}` : undefined
+  const { user, loading: authLoading } = useAuthUser()
+  // Whose draft: the account's, or this device's for a visitor taking the test
+  // before signing up (a long test shouldn't be lost to a closed tab).
+  const owner = authLoading ? undefined : (user?.id ?? 'guest')
+  const key = owner ? `${copy.draftPrefix}.${owner}` : undefined
 
   const [phase, setPhase] = useState<Phase>('intro')
   const [index, setIndex] = useState(0)
@@ -106,15 +108,15 @@ export function SelfAssessmentQuiz({
   // Offer to resume once the session resolves (useAuthUser is null on first render).
   const checked = useRef(false)
   useEffect(() => {
-    if (!userId || checked.current) return
+    if (!owner || checked.current) return
     checked.current = true
-    const d = loadDraft(`${copy.draftPrefix}.${userId}`, questions)
+    const d = loadDraft(`${copy.draftPrefix}.${owner}`, questions)
     if (d) {
       setAnswers(d.answers)
       setIndex(d.index)
       setResumable(true)
     }
-  }, [userId, questions, copy.draftPrefix])
+  }, [owner, questions, copy.draftPrefix])
 
   useEffect(() => {
     if (!key || answeredCount === 0 || phase === 'intro') return
