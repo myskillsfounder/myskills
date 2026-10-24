@@ -2,6 +2,7 @@ import type { ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CheckCircle2, ChevronDown } from 'lucide-react'
 import { GridBackdrop } from '@/components/landing/GridBackdrop'
+import type { PortalRole } from '@/lib/portalAccess'
 import content from '@/content/partner-pages.json'
 
 /**
@@ -42,7 +43,19 @@ function Breadcrumb({ current }: { current: string }) {
 }
 
 /** The page's H1, a one-paragraph pitch and a button that jumps to the form. */
-export function PartnerHero({ page, icon: Icon, breadcrumb }: { page: PartnerPage; icon: IconType; breadcrumb: string }) {
+/** `signup`: the button opens the partner sign-up with that role chosen,
+ *  instead of scrolling to the page's own form. */
+export function PartnerHero({
+  page,
+  icon: Icon,
+  breadcrumb,
+  signup,
+}: {
+  page: PartnerPage
+  icon: IconType
+  breadcrumb: string
+  signup?: PortalRole
+}) {
   return (
     <section className="surface-wood-dark relative overflow-hidden">
       <GridBackdrop mask="ellipse 75% 65% at 30% 20%" />
@@ -56,13 +69,17 @@ export function PartnerHero({ page, icon: Icon, breadcrumb }: { page: PartnerPag
           {page.h1}
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{page.intro}</p>
-        <a
-          href="#apply"
-          className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-        >
-          {page.cta}
-          <ArrowRight size={17} />
-        </a>
+        {signup ? (
+          <Link to="/community-portal/signup" search={{ role: signup }} className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50">
+            {page.cta}
+            <ArrowRight size={17} />
+          </Link>
+        ) : (
+          <a href="#apply" className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50">
+            {page.cta}
+            <ArrowRight size={17} />
+          </a>
+        )}
       </div>
     </section>
   )
