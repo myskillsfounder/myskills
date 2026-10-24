@@ -202,7 +202,7 @@ export function AppShell({
           everything, the profile (where signing out is) included, is in the
           bottom bar, so the top bar is just the name. */}
       <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] px-4 backdrop-blur lg:hidden">
-        <Link to={phone ? '/community' : '/dashboard'} className="flex items-center gap-2">
+        <Link to="/dashboard" className="flex items-center gap-2">
           <img src="/logo-mark.png" alt="" className="h-8 w-8" />
           <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
             MySkills

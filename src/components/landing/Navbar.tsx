@@ -57,10 +57,10 @@ export function Navbar() {
           {!loading &&
             (user ? (
               <Link
-                to={isPhone() ? '/community' : '/profile'}
+                to={isPhone() ? '/dashboard' : '/profile'}
                 className="press inline-flex h-10 items-center rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
               >
-                {isPhone() ? 'Open Community' : 'Go to profile'}
+                {isPhone() ? 'Open LaunchPad' : 'Go to profile'}
               </Link>
             ) : (
               <>
@@ -125,11 +125,11 @@ export function Navbar() {
             {!loading &&
               (user ? (
                 <Link
-                  to={isPhone() ? '/community' : '/profile'}
+                  to={isPhone() ? '/dashboard' : '/profile'}
                   onClick={() => setOpen(false)}
                   className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                 >
-                  {isPhone() ? 'Open Community' : 'Go to profile'}
+                  {isPhone() ? 'Open LaunchPad' : 'Go to profile'}
                 </Link>
               ) : (
                 <>

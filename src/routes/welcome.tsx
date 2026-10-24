@@ -3,7 +3,7 @@ import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight, BarChart3, Briefcase, Building2, Check, Globe2, GraduationCap, HeartHandshake, LayoutGrid, Megaphone, Rocket, Sparkles } from 'lucide-react'
 import { trackEvent, trackLead, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
-import { setAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
+import { takeAfterOnboarding } from '@/lib/afterOnboarding'
 import { submitProgrammeLead, type LeadProgramme } from '@/lib/programmes'
 import { requirePhoneWelcome } from '@/lib/guards'
 import { GOAL_ICONS } from '@/lib/goalIcons'
@@ -138,16 +138,15 @@ function Intro() {
   const router = useRouter()
   const [opened, setOpened] = useState<string | null>(null)
 
-  // An open programme starts with its aptitude test, after sign-up; onboarding
-  // sends them on to it (lib/afterOnboarding.ts).
+  // An open programme starts with its aptitude test, before any account: the
+  // result is what signing up unlocks (lib/pendingAptitude.ts).
   function start(l: Learn) {
     if (!l.open) {
       setOpened((cur) => (cur === l.id ? null : l.id))
       return
     }
     trackEvent('welcome_programme', { programme: l.id })
-    setAfterOnboarding(l.test)
-    router.navigate({ to: '/signup' })
+    router.navigate({ to: l.test })
   }
 
   return (
