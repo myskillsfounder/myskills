@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
-import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { ArrowRight, Briefcase, ClipboardCheck, Dumbbell, GraduationCap } from 'lucide-react'
 import { Eyebrow } from './Eyebrow'
 import { GridBackdrop } from './GridBackdrop'
@@ -25,11 +24,10 @@ interface StepDef {
 /**
  * The four-step path to mastery, as a card grid to match Pillars/SkillTracks
  * above it — a first-time explainer rather than an in-app checklist. Badges are static (no
- * per-user progress pre-signup); every CTA goes to /signup rather than
- * deep-linking into practice/mentors — those routes require an account, and
- * requireOnboarded has no return-to path, so a deep link would strand a
- * signed-out visitor on a bare login screen instead of taking them anywhere
- * useful.
+ * per-user progress pre-signup); every CTA goes to the aptitude test rather
+ * than deep-linking into practice/mentors — those routes require an account,
+ * while the test can be taken signed out and signing up shows its result
+ * (lib/pendingAptitude.ts). Everything else follows from it.
  */
 const steps: StepDef[] = [
   {
@@ -105,8 +103,7 @@ export function HowItWorks() {
               </p>
 
               <Link
-                to="/signup"
-                onClick={() => setAfterOnboarding('/aptitude-assessment')}
+                to="/aptitude-assessment"
                 className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-200 hover:text-white"
               >
                 {step.cta}

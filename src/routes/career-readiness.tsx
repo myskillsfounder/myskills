@@ -16,7 +16,6 @@ import {
 import { useAuthUser } from '@/lib/useAuth'
 import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import career from '@/content/career-readiness.json'
-import { setAfterOnboarding } from '@/lib/afterOnboarding'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { Navbar } from '@/components/landing/Navbar'
@@ -107,7 +106,8 @@ function StartCta({ dark = false }: { dark?: boolean }) {
     )
   }
   return (
-    <Link to="/signup" onClick={() => setAfterOnboarding('/career-readiness-assessment')} className={cls}>
+    // Signed out too: the test comes first, and signing up shows the result (lib/pendingAptitude.ts).
+    <Link to="/career-readiness-assessment" onClick={() => rememberProgramme(2)} className={cls}>
       Take the Leadership Aptitude Test
       <ArrowRight size={16} />
     </Link>
