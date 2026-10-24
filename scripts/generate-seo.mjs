@@ -499,7 +499,12 @@ ${jsonLd ? `    <script type="application/ld+json">${JSON.stringify(jsonLd)}</sc
  *
  * The prerendered markup goes *inside* #root. React clears the container when
  * it mounts, so users see the real app and crawlers see the content — no
- * hidden text, no cloaking.
+ * cloaking: the text is the page's own.
+ *
+ * While the app loads it is invisible, though: on a phone the unstyled text
+ * flashed up before the app replaced it and looked like code. If the app never
+ * mounts (no JavaScript), it shows after a few seconds, so the page is never
+ * left blank.
  */
 function renderPage(shell, { headHtml, bodyHtml }) {
   let out = shell
@@ -524,7 +529,11 @@ function renderPage(shell, { headHtml, bodyHtml }) {
   out = out.replace('</head>', `${headHtml}\n  </head>`)
 
   if (bodyHtml) {
-    out = out.replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`)
+    out = out.replace(
+      '</head>',
+      `  <style>.seo-prerender{visibility:hidden;animation:seo-show 0s 4s forwards}@keyframes seo-show{to{visibility:visible}}</style>\n  </head>`,
+    )
+    out = out.replace('<div id="root"></div>', `<div id="root"><div class="seo-prerender">${bodyHtml}</div></div>`)
   }
   return out
 }
