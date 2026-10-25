@@ -1,28 +1,34 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ArrowLeft, ArrowRight, Briefcase, Building2, Check, GraduationCap, HeartHandshake, LayoutGrid, Sparkles } from 'lucide-react'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { ArrowLeft, ArrowRight, BarChart3, Briefcase, Building2, Check, Globe2, GraduationCap, HeartHandshake, LayoutGrid, Megaphone, Rocket, Sparkles } from 'lucide-react'
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { takeAfterOnboarding } from '@/lib/afterOnboarding'
-import { clearGuideAnswers, peekGuideAnswers } from '@/lib/guideAnswers'
-import { setProgrammePath } from '@/lib/foundationPath'
-import { homePath } from '@/lib/device'
+import type { LeadProgramme } from '@/lib/programmes'
+import { ProgrammeLeadForm } from '@/components/programmes/ProgrammeLeadForm'
 import { requirePhoneWelcome } from '@/lib/guards'
 import { GOAL_ICONS } from '@/lib/goalIcons'
-import { START_PROGRAMME, careerStageStep, goalsFor } from '@/lib/onboardingContent'
+import { careerStageStep, goalsFor } from '@/lib/onboardingContent'
 import { ensureProfile } from '@/lib/profile'
 import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 import type { Category } from '@/components/community/Marketplace'
 
 /**
- * The phone's own onboarding, for a new account.
+ * The phone's front door, and its own onboarding.
  *
- * A visitor on a phone meets the AI guide (routes/start.tsx) before signing up;
- * its sentence answers these questions, so an account that came through it is
- * onboarded straight away and sent on to its result. Anyone else gets three
- * taps that say who they are, what they want, and what they came to find, then
- * the Community, already open on that. Anyone else is sent on by the guard.
+ * A phone opens on the Community marketplace (lib/device.ts), so it doesn't get
+ * the website's home page or the computer's onboarding, which is about
+ * choosing a programme to practise. It gets this: what the marketplace
+ * is, a way in, and, for a new account, three taps that say who they are, what
+ * they want, and what they came to find. Then the marketplace, already open
+ * on that.
+ *
+ * Signed out: "I want to learn…", four programmes. The open ones (Digital
+ * Marketing, Global Leadership) go to their aptitude test through sign-up;
+ * the coming ones (Entrepreneurship, Data Analytics) take a lead.
+ * Signed in and new: the three questions. Anyone
+ * else is sent on by the guard.
  */
 export const Route = createFileRoute('/welcome')({
   beforeLoad: requirePhoneWelcome,
@@ -53,6 +59,110 @@ const Brand = () => (
   </span>
 )
 
+/* --------------------------------------------------------------- signed out */
+
+type Learn = {
+  id: string
+  label: string
+  body: string
+  icon: typeof GraduationCap
+  tile: string
+} & ({ open: true; test: '/aptitude-assessment' | '/career-readiness-assessment' } | { open: false; lead: LeadProgramme })
+
+/**
+ * What a visitor can come to learn. The two open programmes start with their
+ * free aptitude test; the two that aren't open yet take a name and number so
+ * the team can call when they do.
+ */
+const LEARN: Learn[] = [
+  { id: 'dm', label: 'Digital Marketing', body: 'Ads, content, SEO and data, with practice and a mentor.', icon: Megaphone, tile: 'from-brand-400 to-brand-700', open: true, test: '/aptitude-assessment' },
+  { id: 'gl', label: 'Global Leadership', body: 'Goals, communication and leading people: the Global Readiness programme.', icon: Globe2, tile: 'from-amber-400 to-orange-500', open: true, test: '/career-readiness-assessment' },
+  { id: 'en', label: 'Entrepreneurship', body: 'Turn an idea into a business people pay for.', icon: Rocket, tile: 'from-rose-400 to-pink-600', open: false, lead: 'entrepreneurship' },
+  { id: 'da', label: 'Data Analytics', body: 'Spreadsheets, SQL and dashboards that answer real questions.', icon: BarChart3, tile: 'from-emerald-400 to-teal-600', open: false, lead: 'data-analytics' },
+]
+
+function Intro() {
+  const router = useRouter()
+  const [opened, setOpened] = useState<string | null>(null)
+
+  // An open programme starts with its aptitude test, before any account: the
+  // result is what signing up unlocks (lib/pendingAptitude.ts).
+  function start(l: Learn) {
+    if (!l.open) {
+      setOpened((cur) => (cur === l.id ? null : l.id))
+      return
+    }
+    trackEvent('welcome_programme', { programme: l.id })
+    router.navigate({ to: l.test })
+  }
+
+  return (
+    <Frame>
+      <header>
+        <Brand />
+      </header>
+
+      <main className="flex flex-1 flex-col justify-center py-6">
+        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
+          <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          Free to start
+        </span>
+        <h1 className="mt-3.5 font-display text-[1.75rem] font-semibold leading-[1.15] tracking-tight text-white">
+          I want to learn…
+        </h1>
+        <p className="mt-2.5 text-[15px] leading-relaxed text-white/70">
+          Pick one. Open programmes start with a free aptitude test that shows where to begin.
+        </p>
+
+        <ul className="mt-5 space-y-2.5">
+          {LEARN.map((l) => (
+            <li key={l.id} className="card-glass-dark p-3">
+              <button
+                type="button"
+                onClick={() => start(l)}
+                aria-expanded={l.open ? undefined : opened === l.id}
+                className="flex w-full items-center gap-3.5 text-left"
+              >
+                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${l.tile}`}>
+                  <l.icon size={20} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span className="text-[15px] font-semibold text-white">{l.label}</span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${l.open ? 'bg-emerald-400/20 text-emerald-200' : 'bg-white/10 text-white/60'}`}
+                    >
+                      {l.open ? 'Open' : 'Soon'}
+                    </span>
+                  </span>
+                  <span className="block text-sm leading-snug text-white/60">{l.body}</span>
+                  {l.open && <span className="mt-1 block text-xs font-semibold text-brand-200">Take the aptitude test →</span>}
+                </span>
+              </button>
+              {!l.open && opened === l.id && <ProgrammeLeadForm programme={l.lead} title={l.label} start="mobile" />}
+            </li>
+          ))}
+        </ul>
+      </main>
+
+      <footer className="space-y-3">
+        <Link
+          to="/login"
+          className="press flex min-h-[3.25rem] w-full items-center justify-center rounded-full border border-white/25 text-base font-semibold text-white"
+        >
+          I already have an account
+        </Link>
+        <p className="pt-1 text-center text-sm text-white/55">
+          A mentor, company or institute?{' '}
+          <Link to="/community" search={{ partners: true }} className="font-semibold text-white underline underline-offset-4">
+            Partner with MySkills
+          </Link>
+        </p>
+      </footer>
+    </Frame>
+  )
+}
+
 /* ------------------------------------------------------ signed in, and new */
 
 /** One question to a screen, each answer one tap: made for a thumb, not a mouse. */
@@ -74,35 +184,6 @@ function Questions() {
   }, [step])
 
   const goals = goalsFor(stage)
-
-  // Came through the AI guide: the sentence has answered these already
-  // (lib/guideAnswers.ts), so onboarding finishes by itself, on to the result
-  // of the test they took there.
-  const [fromGuide] = useState(() => peekGuideAnswers())
-  useEffect(() => {
-    if (!fromGuide || !user) return
-    let active = true
-    void (async () => {
-      try {
-        const method = await completeOnboarding({ career_stage: fromGuide.stage, goals: [fromGuide.goal], start_level: fromGuide.level })
-        if (fromGuide.focus === 'marketing') await setProgrammePath(START_PROGRAMME.marketing, fromGuide.level).catch(() => {})
-        try {
-          await ensureProfile()
-        } catch {
-          /* created again by whatever needs it next */
-        }
-        clearGuideAnswers()
-        trackSignUp(method)
-        trackEvent('onboarding_finish', { start: 'guide-mobile', goal: fromGuide.goal })
-        if (active) router.navigate({ to: takeAfterOnboarding() ?? homePath() })
-      } catch (e) {
-        if (active) setError(e instanceof Error ? e.message : 'Could not save that. Please try again.')
-      }
-    })()
-    return () => {
-      active = false
-    }
-  }, [fromGuide, user, router])
 
   async function finish(looking: Category | 'all') {
     setFind(looking)
@@ -131,17 +212,6 @@ function Questions() {
   async function handleSignOut() {
     await signOut()
     router.navigate({ to: '/welcome' })
-  }
-
-  if (fromGuide && !error) {
-    return (
-      <Frame>
-        <main className="flex flex-1 flex-col items-center justify-center text-center">
-          <span className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white" aria-hidden />
-          <p className="mt-4 text-[15px] text-white/75">Setting up your account, {first}…</p>
-        </main>
-      </Frame>
-    )
   }
 
   const option =
@@ -283,6 +353,6 @@ function WelcomePage() {
   const { user, loading } = useAuthUser()
   // The guard has already sent on anyone who doesn't belong here, so all that
   // is left to decide is which half to show; nothing until that is known.
-  if (loading || !user) return <Frame>{null}</Frame>
-  return <Questions />
+  if (loading) return <Frame>{null}</Frame>
+  return user ? <Questions /> : <Intro />
 }
