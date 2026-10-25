@@ -24,8 +24,7 @@ export function AnswerPanel({
   busy: boolean
   /** Where the chosen button leads. */
   onPick: (to: string) => void
-  /** "I'll look around first"; left out, the button isn't shown. */
-  onSkip?: () => void
+  onSkip: () => void
 }) {
   const still = prefersReducedMotion()
   const total = plan.headline.length
@@ -132,16 +131,14 @@ export function AnswerPanel({
         >
           {plan.secondary.label}
         </button>
-        {onSkip && (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={onSkip}
-            className="px-2 py-3 text-sm font-medium text-white/65 transition-colors hover:text-white disabled:opacity-60"
-          >
-            I’ll look around first
-          </button>
-        )}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={onSkip}
+          className="px-2 py-3 text-sm font-medium text-white/65 transition-colors hover:text-white disabled:opacity-60"
+        >
+          I’ll look around first
+        </button>
       </div>
     </section>
   )
