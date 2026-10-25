@@ -122,7 +122,17 @@ function StartPage() {
   const complete = chosen === 4
   const coming = COMING[learn]
   // The plan speaks of the open programmes; "not sure" lets the goal decide.
-  const plan = complete && !coming ? planFor(stage, goal, learn, level) : null
+  const basePlan = complete && !coming ? planFor(stage, goal, learn, level) : null
+  // "Based on" in the guide's own words: the programme by name.
+  const plan = basePlan && {
+    ...basePlan,
+    basedOn: [
+      careerStageStep.options.find((o) => o.id === stage)?.label,
+      goalStep.options.find((o) => o.id === goal)?.label,
+      LEARN.find((o) => o.id === learn)?.label,
+      levelStep.options.find((o) => o.id === level)?.label,
+    ].filter((x): x is string => Boolean(x)),
+  }
 
   // Changing any choice withdraws the answer: it no longer matches the sentence.
   function pick(set: (v: string) => void) {
