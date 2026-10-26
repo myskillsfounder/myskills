@@ -1,0 +1,151 @@
+{
+  "programme": "ai-powered-entrepreneurship.json",
+  "rows": [
+    {
+      "date": "2026-10-26",
+      "stage": "draft (review 1)",
+      "reviewFile": "docs/programmes/Entrepreneurship/ai-powered-entrepreneurship.review-1.json",
+      "learnersFile": null,
+      "questions": 43,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 2,
+        "should": 7,
+        "ideas": 6,
+        "byOwner": {
+          "course": 5,
+          "assessment": 4
+        },
+        "byCategory": {
+          "accuracy": 3,
+          "coverage": 1,
+          "teaching": 1,
+          "house-style": 1,
+          "question-design": 3
+        },
+        "rulesBroken": {
+          "5": 3
+        },
+        "lessons": 3
+      },
+      "mustPer10": 0.5,
+      "shouldPer10": 1.6,
+      "rightIsLongestPct": 11.6,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 16,
+        "modules": 7.2
+      },
+      "difficulty": {
+        "Beginner": 14,
+        "Intermediate": 21,
+        "Advanced": 7,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 7,
+          "missing": [],
+          "min": 3,
+          "mean": 4.7,
+          "byDimension": {
+            "outcome": 4.4,
+            "explanation": 4.6,
+            "practice": 4.9,
+            "feedback": 4.9,
+            "relevance": 4.4,
+            "time": 4.6,
+            "progression": 5,
+            "inclusion": 4.6
+          },
+          "belowBar": [
+            "ape-m03: relevance 3",
+            "ape-m06: relevance 3"
+          ],
+          "meetsBar": false
+        }
+      }
+    },
+    {
+      "date": "2026-10-26",
+      "stage": "round 2",
+      "reviewFile": "docs/programmes/Entrepreneurship/ai-powered-entrepreneurship.review-2.json",
+      "learnersFile": null,
+      "questions": 43,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 3,
+        "ideas": 9,
+        "byOwner": {
+          "assessment": 1,
+          "course": 2
+        },
+        "byCategory": {
+          "question-design": 1,
+          "house-style": 2
+        },
+        "rulesBroken": {},
+        "lessons": 1
+      },
+      "mustPer10": 0,
+      "shouldPer10": 0.7,
+      "rightIsLongestPct": 11.6,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 16,
+        "modules": 7.2
+      },
+      "difficulty": {
+        "Beginner": 14,
+        "Intermediate": 22,
+        "Advanced": 6,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 7,
+          "missing": [],
+          "min": 4,
+          "mean": 4.9,
+          "byDimension": {
+            "outcome": 4.7,
+            "explanation": 5,
+            "practice": 5,
+            "feedback": 5,
+            "relevance": 5,
+            "time": 4.6,
+            "progression": 5,
+            "inclusion": 4.6
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
+    }
+  ]
+}
