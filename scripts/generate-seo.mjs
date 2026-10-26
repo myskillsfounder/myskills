@@ -92,8 +92,24 @@ const STATIC_PAGES = [
     path: '/',
     changefreq: 'weekly',
     priority: '1.0',
-    title: 'MySkills — Personal & Professional Development, Powered by AI',
-    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free aptitude assessment.',
+    title: 'MySkills — The Student Development Platform, Powered by AI',
+    description: 'Everything a student needs in one place: courses with an AI coach, mentors, study abroad, career guidance, internships and wellness. Start with a free aptitude test.',
+  },
+  {
+    path: '/courses',
+    changefreq: 'weekly',
+    priority: '0.9',
+    title: 'Courses — Digital Marketing, Leadership, Entrepreneurship & Data Analytics | MySkills',
+    description:
+      'Every MySkills course in one place: a free aptitude test first, short modules with an AI coach, and a project graded by a real mentor. Free to start.',
+  },
+  {
+    path: '/entrepreneurship',
+    changefreq: 'weekly',
+    priority: '0.9',
+    title: 'AI-Powered Entrepreneurship Course for Students in India | MySkills',
+    description:
+      'Take your business idea from a guess to its first paying customers: 7 modules with AI tools at every step, Indian examples, and a mentor-graded project. Free aptitude test.',
   },
   {
     path: '/digital-marketing',

@@ -1,29 +1,24 @@
-import type { ComponentType } from 'react'
 import { homeEntry } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
   BadgeCheck,
-  Bot,
+  BookOpen,
   Briefcase,
-  ClipboardCheck,
-  Clock,
+  Building2,
   GraduationCap,
-  HeartHandshake,
-  Lock,
+  Heart,
+  Plane,
   Sparkles,
-  Target,
+  Users,
+  type LucideIcon,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
-import { skillTracks } from '@/lib/skillTracks'
-import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import { setSiteMode } from '@/lib/siteMode'
+import { trackEvent } from '@/lib/analytics'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
-import { Eyebrow } from '@/components/landing/Eyebrow'
-import { AiCoachPreview } from '@/components/landing/AiCoachPreview'
-import { GridBackdrop } from '@/components/landing/GridBackdrop'
-
-type IconType = ComponentType<{ size?: number; className?: string }>
+import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 
 export const Route = createFileRoute('/')({
   beforeLoad: homeEntry,
@@ -31,480 +26,294 @@ export const Route = createFileRoute('/')({
 })
 
 /*
- * The homepage is MySkills as a whole: personal and professional skills,
- * built together with AI, so nothing is impossible for a student who's
- * ready to work for it. It shares the Global Leadership page's dark theme.
- * Each programme has its own page — /digital-marketing (live) and
- * /career-readiness (both live) — and this page routes to both, then
- * makes room for the three things beyond the skill tracks: mentors,
- * internships, and wellness support.
- * Nothing here names a price, a date or a guaranteed outcome — "nothing is
- * impossible" is a rallying line, not a claim about any specific result.
+ * The home page of the standard website: MySkills as "the student development
+ * platform" (Paul, 26 Oct 2026), the student at the centre and everything they
+ * need around them, in the platform picture's dark, glowing purple. Five
+ * pillars: learning programmes, mentorship, study abroad, career guidance and
+ * wellness. Learning leads to /courses; the other four live inside the app, so
+ * a visitor is asked to make a free account and a student goes straight there.
+ * The partner side is one band that leads to "Partner with MySkills".
  */
 
-const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
+type To = '/courses' | '/signup' | '/community' | '/study-abroad'
+
+interface Pillar {
+  id: string
+  title: string
+  body: string
+  icon: LucideIcon
+  /** Where a visitor goes, and where a signed-in student goes. */
+  visitor: To
+  student: { to: To; search?: Record<string, string> }
+  cta: string
+}
+
+const PILLARS: Pillar[] = [
   {
-    icon: ClipboardCheck,
-    title: 'Find out where you stand',
-    body: 'A free aptitude assessment shows where marketing comes naturally to you, so you know exactly where to start.',
-    tag: 'Free',
+    id: 'learning',
+    title: 'Learning Programmes',
+    body: 'Courses with an AI coach, mentor-graded projects and certificates.',
+    icon: BookOpen,
+    visitor: '/courses',
+    student: { to: '/courses' },
+    cta: 'Explore courses',
   },
   {
-    icon: Bot,
-    title: 'Practise with AI',
-    body: 'Real scenarios and AI coaching, on demand — so you improve fast, with instant feedback instead of waiting for it.',
-    tag: 'You + AI',
+    id: 'mentorship',
+    title: 'Mentorship',
+    body: '1:1 and group sessions with industry experts who have done it.',
+    icon: Users,
+    visitor: '/signup',
+    student: { to: '/community', search: { category: 'mentors' } },
+    cta: 'Find a mentor',
   },
   {
-    icon: GraduationCap,
-    title: 'Get reviewed by a mentor',
-    body: 'A real person reads your results and signs your practice off — or tells you what to work on.',
-    tag: 'Human',
+    id: 'study-abroad',
+    title: 'Study Abroad',
+    body: 'University guidance, applications and test prep, with partner universities.',
+    icon: Plane,
+    visitor: '/signup',
+    student: { to: '/study-abroad' },
+    cta: 'See programmes',
   },
   {
+    id: 'career',
+    title: 'Career Guidance',
+    body: 'Career counselling, internships and your first job opportunities.',
     icon: Briefcase,
-    title: 'Complete an internship',
-    body: 'Roles posted by partner companies — the last step, and work experience you can show.',
-    tag: 'Open',
+    visitor: '/signup',
+    student: { to: '/community', search: { category: 'internships' } },
+    cta: 'Find internships',
+  },
+  {
+    id: 'wellness',
+    title: 'Wellness & Mental Health',
+    body: 'Counselling, workshops and wellness resources, privately.',
+    icon: Heart,
+    visitor: '/signup',
+    student: { to: '/community', search: { category: 'wellness' } },
+    cta: 'Talk to someone',
   },
 ]
 
-/**
- * The three things students said they actually needed, beyond the skill
- * tracks themselves — each a real card with its own status and CTA, not a
- * decorative footnote. Counsellors and career guidance used to be two
- * separate tiles; they're one Wellness card now, since both are the same
- * request form on /wellness.
- */
-const CONCEPTS: {
-  icon: IconType
-  title: string
-  body: string
-  tag: string
-  live: boolean
-  to: string
-  cta: string
-}[] = [
-  {
-    icon: GraduationCap,
-    title: 'Expert career mentors',
-    body: 'Working marketers and career professionals meet you one to one, grade the project you build, and tell you what a score alone can’t.',
-    tag: 'Live',
-    live: true,
-    to: '/community/mentors',
-    cta: 'Meet the mentors',
-  },
-  {
-    icon: Briefcase,
-    title: 'Land your first internship',
-    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Global Readiness Score — proof that turns practice into a resume.',
-    tag: 'Open now',
-    live: true,
-    to: '/community',
-    cta: 'See open roles',
-  },
+const PARTNERS: { icon: LucideIcon; title: string; body: string }[] = [
+  { icon: Building2, title: 'Institutions', body: 'Colleges, training institutes and skill centres' },
+  { icon: Users, title: 'Mentors', body: 'Industry experts, professionals and coaches' },
+  { icon: Plane, title: 'Study abroad partners', body: 'Universities and overseas education providers' },
+  { icon: Briefcase, title: 'Career partners', body: 'Companies, internship providers and hiring partners' },
+  { icon: Heart, title: 'Wellness partners', body: 'Therapists, counsellors and wellness platforms' },
 ]
 
-/** The shared finish line, under both programme cards: whichever you pick,
- *  it ends the same way. */
-function CompletionPath() {
-  return (
-    <div className="card-glass-dark mt-6 p-4 sm:p-5">
-      <Eyebrow dark>Every programme finishes the same way</Eyebrow>
-      <ol className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm font-medium text-white">
-        {['Practice', 'Mentor review', 'Internship'].map((s, i, all) => (
-          <li key={s} className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-              {i + 1}
-            </span>
-            {s}
-            {i < all.length - 1 && <ArrowRight size={14} className="text-white/30" />}
-          </li>
-        ))}
-      </ol>
-    </div>
-  )
-}
+const JOURNEY = ['Learn', 'Get guidance', 'Build skills', 'Grow']
 
-function PillarCard({
-  kind,
-  title,
-  body,
-  items,
-  live,
-  to,
-  cta,
-}: {
-  kind: string
-  title: string
-  body: string
-  items: string[]
-  live: boolean
-  to: string
-  cta: string
-}) {
+/** One pillar, as a card around the student or in the list below. */
+function PillarCard({ p, signedIn, className = '' }: { p: Pillar; signedIn: boolean; className?: string }) {
+  const target = signedIn ? p.student : { to: p.visitor }
   return (
-    <div className="card-glass-dark flex flex-col p-6 sm:p-8">
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-brand-200">{kind}</p>
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
-          }`}
-        >
-          {live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
-          {live ? 'Live now' : 'Opens soon'}
-        </span>
-      </div>
-      <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p>
-      <div className="mt-5 flex flex-1 flex-wrap content-start gap-2">
-        {items.map((i) => (
-          <span key={i} className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-white/80">
-            {i}
-          </span>
-        ))}
-      </div>
-      <Link
-        to={to}
-        className="group mt-6 inline-flex items-center gap-1.5 self-start text-sm font-semibold text-brand-200 hover:text-white"
-      >
-        {cta}
-        <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-      </Link>
-    </div>
-  )
-}
-
-/**
- * The phone hero's one action: the aptitude test, which is step 1 of the
- * Digital Marketing programme and unlocks Practice. A signed-out visitor
- * takes it first and signs up to see the result (lib/pendingAptitude.ts).
- */
-function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment'; signedIn: boolean }) {
-  return (
-    <div className="card-glass-dark mt-7 p-5 lg:hidden">
-      <div className="flex items-center gap-3.5">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-[0_6px_14px_-6px_rgba(111,99,226,0.8)] ring-1 ring-white/25">
-          <Target size={20} />
-        </span>
-        <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-200">Step 1 · Free</p>
-          <p className="mt-0.5 font-display text-xl font-semibold leading-tight text-white">Take the aptitude test</p>
-        </div>
-      </div>
-      <p className="mt-3 text-sm leading-relaxed text-white/70">
-        A quick look at how you already notice ads, offers and trends. It shows where to start and unlocks
-        Practice.
+    <Link
+      to={target.to}
+      search={target.search as never}
+      onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn })}
+      className={`group block rounded-2xl border border-white/10 bg-ink-900/70 p-4 shadow-[0_0_40px_-12px_rgba(143,133,238,0.45)] backdrop-blur-md transition-colors hover:border-brand-300/50 hover:bg-ink-900/90 ${className}`}
+    >
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/20 text-brand-100 ring-1 ring-brand-300/30">
+        <p.icon size={19} />
+      </span>
+      <p className="mt-3 font-display text-[17px] font-semibold leading-tight text-white">{p.title}</p>
+      <p className="mt-1 text-[13px] leading-snug text-white/60">{p.body}</p>
+      <p className="mt-2.5 inline-flex items-center gap-1 text-xs font-semibold text-brand-200 group-hover:text-white">
+        {signedIn || p.visitor === '/courses' ? p.cta : 'Free account'} <ArrowRight size={13} />
       </p>
-      <ul className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-white/80">
-        {[
-          { icon: Clock, label: '5 minutes' },
-          { icon: Sparkles, label: 'No right answers' },
-          { icon: BadgeCheck, label: 'Free' },
-        ].map(({ icon: Icon, label }) => (
-          <li key={label} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1">
-            <Icon size={12} className="text-brand-200" />
-            {label}
-          </li>
-        ))}
-      </ul>
-      <Link
-        to={to}
-        className="press mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-      >
-        Start the aptitude test
-        <ArrowRight size={17} />
-      </Link>
-      {!signedIn && (
-        <p className="mt-3 text-center text-sm text-white/60">
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-white underline-offset-2 hover:underline">
-            Sign in
-          </Link>
-        </p>
-      )}
+    </Link>
+  )
+}
+
+/** The student at the centre, glowing, with the journey under them. */
+function StudentCore({ size = 'lg' }: { size?: 'lg' | 'sm' }) {
+  const big = size === 'lg'
+  return (
+    <div className="flex flex-col items-center text-center">
+      <div className={`relative flex items-center justify-center ${big ? 'h-56 w-56' : 'h-40 w-40'}`}>
+        <span aria-hidden className="absolute inset-0 rounded-full bg-brand-500/30 blur-2xl" />
+        <span aria-hidden className="absolute inset-0 rounded-full border border-brand-300/40" />
+        <span aria-hidden className="absolute inset-3 rounded-full border border-brand-300/20" />
+        <span className="relative flex h-[78%] w-[78%] flex-col items-center justify-center rounded-full bg-gradient-to-br from-brand-400 via-brand-600 to-ink-900 shadow-[0_0_80px_-10px_rgba(143,133,238,0.9)] ring-2 ring-white/20">
+          <GraduationCap size={big ? 44 : 32} className="text-white" />
+          <span className={`mt-1 font-display font-semibold text-white ${big ? 'text-3xl' : 'text-2xl'}`}>You</span>
+        </span>
+      </div>
+      <p className="mt-4 font-display text-xl font-semibold tracking-[0.18em] text-white">STUDENT</p>
+      <p className="mt-1 text-sm text-white/60">{JOURNEY.join(' · ')}</p>
     </div>
   )
 }
 
 function HomePage() {
   const { user } = useAuthUser()
-  // Signed out too: the test comes first, and signing up shows the result (lib/pendingAptitude.ts).
-  const assessmentTo = '/aptitude-assessment'
+  const signedIn = Boolean(user)
+  const byId = Object.fromEntries(PILLARS.map((p) => [p.id, p]))
 
   return (
     <div className="min-h-screen bg-ink-900">
       <Navbar />
 
       <main>
-        {/* Hero */}
+        {/* The promise, and the student at the centre of everything. */}
         <section className="surface-wood-dark relative overflow-hidden">
-          <GridBackdrop mask="ellipse 75% 65% at 30% 20%" />
-          <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 opacity-[0.12]">
-            <svg width="420" height="420" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.2">
-              <circle cx="100" cy="100" r="96" />
-              <circle cx="100" cy="100" r="74" />
-              <circle cx="100" cy="100" r="52" />
-              <circle cx="100" cy="100" r="30" />
-            </svg>
-          </span>
+          <GridBackdrop mask="ellipse 75% 60% at 50% 10%" />
+          <GlowOrb className="-left-40 top-0 h-[28rem] w-[28rem]" />
+          <GlowOrb className="-right-40 top-72 h-[28rem] w-[28rem]" color="rgba(143,133,238,0.18)" />
 
-          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-8 pb-12 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-12 lg:px-8">
-            <div className="rise-in">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
-                <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
-                <Sparkles size={13} />
-                Powered by AI · Reviewed by people
-              </span>
-              <h1 className="mt-5 font-display text-[2.125rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Personal &amp; Professional Development
-              </h1>
-              <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
-
-              {/* On desktop the hero is the idea, not the click — "Take the
-                  aptitude assessment" is the final CTA further down. On a
-                  phone that's several screens away, so the phone hero gets
-                  the aptitude test as its first and only action. */}
-              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/70 sm:mt-5 sm:text-lg">
-                Personal skills and professional skills, built together — practising with AI so you move
-                fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
-                for it. Free to start.
+          <div className="relative mx-auto max-w-6xl px-4 pt-14 sm:px-6 sm:pt-20 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-200">The student development platform</p>
+                <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl">
+                  A platform that puts{' '}
+                  <span className="bg-gradient-to-r from-brand-200 to-brand-400 bg-clip-text text-transparent">students at the centre.</span>
+                </h1>
+              </div>
+              <p className="border-l border-white/15 pl-5 text-base leading-relaxed text-white/70">
+                Everything a student needs in one place, from learning to career: courses with an AI coach, mentors, study
+                abroad, career guidance and wellness. Powered by AI, reviewed by people.
               </p>
-
-              <AptitudeHeroCta to={assessmentTo} signedIn={Boolean(user)} />
             </div>
 
-            <AiCoachPreview />
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                to="/courses"
+                onClick={() => trackEvent('home_cta', { cta: 'courses' })}
+                className="press inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+              >
+                Find your course and take the free aptitude test <ArrowRight size={17} />
+              </Link>
+              <Link
+                to="/start"
+                onClick={() => setSiteMode('ai')}
+                className="press inline-flex h-12 items-center gap-2 rounded-full border border-white/25 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                <Sparkles size={16} /> Not sure? Ask the AI guide
+              </Link>
+            </div>
           </div>
 
-          {/* The three trust points moved out of the left column to sit
-              here instead — one compact row, center-aligned, directly above
-              the closing statement, so the two read as a single beat at the
-              bottom of the hero rather than split across the layout. Same
-              "always one line" requirement as the statement below: a fluid,
-              viewport-scaled font size instead of fixed steps, shrinking
-              enough that three phrases plus icons still fit at 375px. */}
-          {/* Phones: the one-line row below would shrink to ~8px text, so
-              here the three points wrap at a readable size instead. */}
-          <ul className="relative flex flex-wrap justify-center gap-x-4 gap-y-2 px-4 text-xs text-white/70 sm:hidden">
-            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
-              <li key={t} className="inline-flex items-center gap-1.5">
-                <BadgeCheck size={13} className="shrink-0 text-brand-200" />
-                {t}
-              </li>
-            ))}
-          </ul>
-          <ul
-            className="relative mx-auto hidden max-w-6xl items-center justify-center whitespace-nowrap px-4 pt-2 text-white/70 sm:flex sm:px-6 lg:px-8"
-            style={{ fontSize: 'clamp(0.4rem, 2.15vw, 0.875rem)' }}
-          >
-            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t, i, all) => (
-              <li key={t} className="flex items-center gap-1">
-                <BadgeCheck size={12} className="shrink-0 text-brand-200" />
-                {t}
-                {i < all.length - 1 && (
-                  <span aria-hidden className="mx-2 h-3 w-px bg-white/15 sm:mx-5" />
-                )}
-              </li>
-            ))}
-          </ul>
-
-          {/* A fluid, viewport-scaled size instead of fixed breakpoint
-              steps — "one line, always" is a hard requirement here, and a
-              vw-based size keeps the line's width proportional to the
-              viewport at any point in between, not just at the
-              breakpoints a step scale happens to cover. */}
-          <p
-            className="relative mx-auto max-w-6xl px-4 pt-4 pb-10 text-center font-display font-semibold whitespace-nowrap text-white sm:pt-5 sm:pb-14 sm:px-6 lg:px-8"
-            style={{ fontSize: 'clamp(0.75rem, 3.4vw, 1.5rem)' }}
-          >
-            Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
-          </p>
-        </section>
-
-        {/* Two kinds of skill */}
-        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
-          <GridBackdrop mask="ellipse 55% 50% at 95% 0%" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="max-w-2xl">
-              <Eyebrow dark>Two programmes, one goal</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Whatever your goal, these two skill sets get you there.
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-white/70">
-                Professional skills get you shortlisted. Personal skills get you hired, and help you grow
-                once you’re in. Build both with AI, and there’s nothing standing between you and your goal.
+          {/* The hub: on a computer the five pillars sit around the student;
+              narrower, the student comes first and the pillars follow. */}
+          <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-14 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <p className="font-display text-4xl font-semibold tracking-tight text-white">
+                My<span className="text-brand-300">Skills</span>
               </p>
+              <p className="mt-1 text-sm text-white/60">The Student Development Platform</p>
             </div>
-            <div className="mt-10 grid gap-5 lg:grid-cols-2">
-              <PillarCard
-                kind="Professional skills"
-                title="Digital Marketing Programme"
-                body="Scenario-based practice across the skills marketing teams hire for — including AI-assisted marketing and answer-engine SEO — with a free certificate."
-                items={skillTracks.map((t) => t.name)}
-                live
-                to="/digital-marketing"
-                cta="Explore Digital Marketing"
-              />
-              <PillarCard
-                kind="Personal skills"
-                title={CAREER_READINESS.name}
-                body="Fourteen modules on the life skills that decide careers, each practised in writing and reviewed by a mentor."
-                items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
-                live
-                to={CAREER_READINESS.path}
-                cta="Explore Global Leadership"
-              />
+
+            <div className="relative mx-auto mt-8 hidden h-[40rem] max-w-4xl lg:block">
+              <span aria-hidden className="absolute left-1/2 top-[40%] h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-300/15" />
+              <span aria-hidden className="absolute left-1/2 top-[40%] h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-300/10" />
+              <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2">
+                <StudentCore />
+              </div>
+              <PillarCard p={byId.learning} signedIn={signedIn} className="absolute left-[4%] top-0 w-60" />
+              <PillarCard p={byId.mentorship} signedIn={signedIn} className="absolute right-[4%] top-0 w-60" />
+              <PillarCard p={byId['study-abroad']} signedIn={signedIn} className="absolute left-0 top-[42%] w-60" />
+              <PillarCard p={byId.career} signedIn={signedIn} className="absolute right-0 top-[42%] w-60" />
+              <PillarCard p={byId.wellness} signedIn={signedIn} className="absolute bottom-0 left-1/2 w-64 -translate-x-1/2" />
             </div>
-            <CompletionPath />
+
+            <div className="mt-8 lg:hidden">
+              <StudentCore size="sm" />
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {PILLARS.map((p) => (
+                  <PillarCard key={p.id} p={p} signedIn={signedIn} />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how-it-works" className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
-          <GridBackdrop mask="ellipse 60% 50% at 5% 100%" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="max-w-2xl">
-              <Eyebrow dark>How it works</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Four steps. One system.
-              </h2>
-            </div>
-            <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {STEPS.map((s, i) => (
-                <li key={s.title} className="card-glass-dark flex flex-col p-6">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
-                      <s.icon size={20} />
-                    </span>
-                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">{s.tag}</span>
-                  </div>
-                  <p className="mt-4 font-mono text-[11px] font-bold uppercase tracking-wide text-brand-200">
-                    Step_{String(i + 1).padStart(2, '0')}
-                  </p>
-                  <h3 className="mt-1 text-lg font-semibold text-white">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/70">{s.body}</p>
+        {/* The journey, end to end. */}
+        <section className="relative overflow-hidden border-t border-white/[0.06] bg-ink-900">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">From learning to career</h2>
+            <p className="mt-2 max-w-2xl text-white/65">
+              Every step adds to your Global Readiness Score, the one number companies look at when they choose interns.
+            </p>
+            <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                { t: 'Know your aptitude', b: 'A free test before any course shows your strengths.' },
+                { t: 'Learn with an AI coach', b: 'Short modules and real scenarios, with feedback.' },
+                { t: 'Work with a mentor', b: 'An industry mentor guides you and grades your project.' },
+                { t: 'Land your first internship', b: 'Hands-on, real experience with a partner company.' },
+                { t: 'Grow your score', b: 'Proof of what you can do, for every company you apply to.' },
+              ].map((s, i) => (
+                <li key={s.t} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <span className="font-mono text-xs text-brand-200">0{i + 1}</span>
+                  <p className="mt-2 font-semibold text-white">{s.t}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/60">{s.b}</p>
                 </li>
               ))}
             </ol>
           </div>
         </section>
 
-        {/* Real people, real experience — mentors and internships. Wellness
-            gets its own section next: mental health isn't a feature bullet
-            next to "internships", it deserves the room on its own. */}
-        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
-          <GridBackdrop mask="ellipse 55% 45% at 90% 100%" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="max-w-2xl">
-              <Eyebrow dark>You’re not doing this alone</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Real people, at every step.
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-white/70">
-                AI is tireless and instant — perfect for practice. It’s also confidently wrong sometimes,
-                which is why real mentors and real internships are part of the experience, not an
-                afterthought.
-              </p>
+        {/* The partners who make it possible. */}
+        <section className="relative overflow-hidden border-t border-white/[0.06] bg-ink-900">
+          <GlowOrb className="-right-40 top-0 h-96 w-96" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-200">Our partners &amp; providers</p>
+                <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                  We partner with the people students need
+                </h2>
+              </div>
+              <Link
+                to="/community"
+                search={{ partners: true }}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white"
+              >
+                Partner with MySkills <ArrowRight size={15} />
+              </Link>
             </div>
-
-            <ul className="mt-10 grid gap-5 sm:grid-cols-2">
-              {CONCEPTS.map((c) => (
-                <li key={c.title}>
-                  <Link to={c.to} className="card-glass-dark lift group flex h-full flex-col p-6 sm:p-7">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
-                        <c.icon size={22} />
-                      </span>
-                      <span
-                        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                          c.live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
-                        }`}
-                      >
-                        {c.live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
-                        {c.tag}
-                      </span>
-                    </div>
-                    <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-white">
-                      {c.title}
-                    </h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-white/70">{c.body}</p>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200">
-                      {c.cta}
-                      <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </Link>
+            <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {PARTNERS.map((x) => (
+                <li key={x.title} className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent p-5">
+                  <x.icon size={22} className="text-brand-200" />
+                  <p className="mt-3 font-semibold text-white">{x.title}</p>
+                  <p className="mt-1 text-sm leading-snug text-white/60">{x.body}</p>
                 </li>
               ))}
             </ul>
           </div>
         </section>
 
-        {/* Wellness — its own main section, not a card sharing space with
-            mentors and internships. Same treatment as the final CTA panel
-            below: the gradient/glow "vibe" that's the site's signature. */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start gap-8 overflow-hidden rounded-xl p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
-            <GridBackdrop mask="ellipse 65% 70% at 15% 30%" />
-            <div className="relative max-w-lg">
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e2">
-                <HeartHandshake size={26} />
-              </span>
-              <div className="mt-4">
-                <Eyebrow dark>Wellness support</Eyebrow>
+        {/* Start. */}
+        <section className="relative overflow-hidden border-t border-white/[0.06] bg-ink-900">
+          <div className="mx-auto max-w-6xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
+            <div className="relative overflow-hidden rounded-3xl border border-brand-300/20 bg-gradient-to-br from-brand-600/40 via-brand-500/15 to-transparent p-8 sm:p-10">
+              <GlowOrb className="-right-20 -top-20 h-72 w-72" />
+              <div className="relative flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+                <div>
+                  <h2 className="font-display text-3xl font-semibold tracking-tight text-white">Start with what you’re good at</h2>
+                  <p className="mt-2 max-w-xl text-white/70">
+                    Pick a course and take its free aptitude test: no account needed until you want your results.
+                  </p>
+                  <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/60">
+                    {['Free to start', 'Verified mentors', 'Real internships'].map((t) => (
+                      <span key={t} className="inline-flex items-center gap-1.5">
+                        <BadgeCheck size={15} className="text-emerald-300" /> {t}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+                <Link
+                  to="/courses"
+                  className="press inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2"
+                >
+                  Take the free aptitude test <ArrowRight size={17} />
+                </Link>
               </div>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Your mental health matters as much as your skills.
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-white/70">
-                Exams, deadlines, and the pressure to have it all figured out take a real toll.
-                Confidential counselling and career guidance are built into MySkills — private
-                and one message away — not an afterthought bolted onto a skills app.
-              </p>
-              <Link
-                to="/wellness"
-                className="press relative mt-7 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-              >
-                Get support
-                <ArrowRight size={16} />
-              </Link>
             </div>
-            <div className="card-glass-gradient-dark relative w-full p-5 sm:p-6 lg:w-auto">
-              <ul className="grid gap-3 sm:grid-cols-2 lg:max-w-xs">
-                {['Confidential, always', 'No diagnosis, just support', 'No appointment needed', 'A real person replies'].map(
-                  (t) => (
-                    <li key={t} className="flex items-center gap-2 text-sm text-white/80">
-                      <BadgeCheck size={16} className="shrink-0 text-brand-200" />
-                      {t}
-                    </li>
-                  ),
-                )}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
-            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
-            <div className="relative">
-              <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Nothing is impossible. Start with where you stand.
-              </h2>
-              <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-                The aptitude assessment is free and takes about five minutes. Everything else builds from it.
-              </p>
-            </div>
-            <Link
-              to={assessmentTo}
-              className="press relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-            >
-              <Target size={16} />
-              Take the aptitude assessment
-              <ArrowRight size={16} />
-            </Link>
           </div>
         </section>
       </main>
