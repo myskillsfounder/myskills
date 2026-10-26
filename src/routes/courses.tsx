@@ -93,24 +93,25 @@ function CourseCard({ c }: { c: Course }) {
 
       <div className="relative mt-auto pt-6">
         {open ? (
-          <div className="flex flex-wrap items-center gap-3">
-            {c.page && (
-              <Link
-                to={c.page}
-                onClick={() => trackEvent('courses_open', { course: c.id })}
-                className="press inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-              >
-                Explore the course <ArrowRight size={16} />
-              </Link>
-            )}
+          // The aptitude test is every course's first step, so it leads.
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
             {c.test && (
               <a
                 href={c.test}
                 onClick={() => trackEvent('courses_test', { course: c.id })}
+                className="press inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+              >
+                Take the free aptitude test <ArrowRight size={16} />
+              </a>
+            )}
+            {c.page && (
+              <Link
+                to={c.page}
+                onClick={() => trackEvent('courses_open', { course: c.id })}
                 className="text-sm font-semibold text-brand-200 transition-colors hover:text-white"
               >
-                Take the free aptitude test →
-              </a>
+                Explore the course →
+              </Link>
             )}
           </div>
         ) : notify ? (
