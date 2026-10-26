@@ -246,12 +246,13 @@ function HomePage() {
 
       <main className="relative overflow-hidden bg-[#0b0a1c] bg-[radial-gradient(50rem_34rem_at_75%_8%,rgba(108,92,231,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(108,92,231,0.14),transparent_70%),radial-gradient(44rem_30rem_at_100%_60%,rgba(143,133,238,0.12),transparent_70%),radial-gradient(40rem_30rem_at_10%_95%,rgba(108,92,231,0.16),transparent_70%)]">
         {/* 1. Everything a student needs, laid out like the partners section
-            (Paul, 27 Oct): the words on the left, the five pillars on the
-            right. Learning goes to the courses; the others go straight to
-            sign-in, then to the Community or Study Abroad. */}
+            (Paul, 27 Oct): the five pillars on the left, the words on the
+            right, with no buttons (the pillars are the way in). Learning goes
+            to the courses; the others go straight to sign-in, then to the
+            Community or Study Abroad. On a narrow window the words come first. */}
         <section className="relative mx-auto max-w-[72rem] px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="lg:order-2">
               <p className={eyebrow}>Made for students in the AI era</p>
               <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
                 Everything you need, <span className={gradientText}>in one place.</span>
@@ -260,16 +261,8 @@ function HomePage() {
                 Courses with an AI coach, real mentors, your first internship, study abroad and wellness support: one
                 platform for every need a student has as you step into the AI era.
               </p>
-              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'top' })} className={primaryCta}>
-                  Take the free aptitude test <ArrowRight size={17} />
-                </Link>
-                <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white">
-                  See all courses <ArrowRight size={15} />
-                </Link>
-              </div>
             </div>
-            <div className="grid gap-2.5 sm:grid-cols-2">
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:order-1">
               <PillarCard p={P.learning} signedIn={signedIn} wide />
               <PillarCard p={P.mentorship} signedIn={signedIn} />
               <PillarCard p={P.career} signedIn={signedIn} />
