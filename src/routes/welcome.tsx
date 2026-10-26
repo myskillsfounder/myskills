@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, BarChart3, Briefcase, Building2, Check, Globe2, 
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { takeAfterOnboarding } from '@/lib/afterOnboarding'
+import type { TestRoute } from '@/lib/pendingAptitude'
 import type { LeadProgramme } from '@/lib/programmes'
 import { ProgrammeLeadForm } from '@/components/programmes/ProgrammeLeadForm'
 import { requirePhoneWelcome } from '@/lib/guards'
@@ -67,17 +68,17 @@ type Learn = {
   body: string
   icon: typeof GraduationCap
   tile: string
-} & ({ open: true; test: '/aptitude-assessment' | '/career-readiness-assessment' } | { open: false; lead: LeadProgramme })
+} & ({ open: true; test: TestRoute } | { open: false; lead: LeadProgramme })
 
 /**
- * What a visitor can come to learn. The two open programmes start with their
- * free aptitude test; the two that aren't open yet take a name and number so
- * the team can call when they do.
+ * What a visitor can come to learn. The open programmes start with their free
+ * aptitude test (Entrepreneurship's is the course engine's); the one that isn't
+ * open yet takes a name and number so the team can call when it is.
  */
 const LEARN: Learn[] = [
   { id: 'dm', label: 'Digital Marketing', body: 'Ads, content, SEO and data, with practice and a mentor.', icon: Megaphone, tile: 'from-brand-400 to-brand-700', open: true, test: '/aptitude-assessment' },
   { id: 'gl', label: 'Global Leadership', body: 'Goals, communication and leading people: the Global Readiness programme.', icon: Globe2, tile: 'from-amber-400 to-orange-500', open: true, test: '/career-readiness-assessment' },
-  { id: 'en', label: 'Entrepreneurship', body: 'Turn an idea into a business people pay for.', icon: Rocket, tile: 'from-rose-400 to-pink-600', open: false, lead: 'entrepreneurship' },
+  { id: 'en', label: 'Entrepreneurship', body: 'Turn an idea into a business people pay for, with AI at every step.', icon: Rocket, tile: 'from-rose-400 to-pink-600', open: true, test: '/programmes/ai-powered-entrepreneurship/aptitude' },
   { id: 'da', label: 'Data Analytics', body: 'Spreadsheets, SQL and dashboards that answer real questions.', icon: BarChart3, tile: 'from-emerald-400 to-teal-600', open: false, lead: 'data-analytics' },
 ]
 
@@ -93,7 +94,7 @@ function Intro() {
       return
     }
     trackEvent('welcome_programme', { programme: l.id })
-    router.navigate({ to: l.test })
+    router.history.push(l.test)
   }
 
   return (

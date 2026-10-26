@@ -10,12 +10,14 @@ import {
   goalsFor,
   levelStep,
   planFor,
+  type Plan,
   type SentenceOption,
 } from '@/lib/onboardingContent'
 import { GOAL_ICONS } from '@/lib/goalIcons'
 import { fetchAptitudeQuestions } from '@/lib/dmAptitude'
 import { fetchAssessmentQuestions } from '@/lib/careerReadinessAssessment'
-import { pendingAptitudeFor, savePendingAptitude, type TestRoute } from '@/lib/pendingAptitude'
+import { isTestRoute, pendingAptitudeRoute, savePendingAptitude, type EngineTestRoute, type TestRoute } from '@/lib/pendingAptitude'
+import { fetchGuestAptitude } from '@/lib/programmeStudent'
 import { peekGuideAnswers, saveGuideAnswers } from '@/lib/guideAnswers'
 import { strongestFor } from '@/lib/guestResult'
 import { setSiteMode } from '@/lib/siteMode'
@@ -47,16 +49,15 @@ export const Route = createFileRoute('/start')({
 const LEARN: SentenceOption[] = [
   { id: 'marketing', label: 'Digital Marketing', description: 'SEO, ads, content and analytics, practised on real scenarios.', chip: 'digital marketing' },
   { id: 'personal', label: 'Global Leadership', description: 'Communication, decisions and leading people: 14 skills employers hire for.', chip: 'global leadership' },
-  { id: 'entrepreneurship', label: 'Entrepreneurship', description: 'Opens soon. Turn an idea into a business people pay for.', chip: 'entrepreneurship' },
+  { id: 'entrepreneurship', label: 'Entrepreneurship', description: 'Turn an idea into a business people pay for, with AI at every step.', chip: 'entrepreneurship' },
   { id: 'data-analytics', label: 'Data Analytics', description: 'Opens soon. Spreadsheets, SQL and dashboards that answer real questions.', chip: 'data analytics' },
   { id: 'unsure', label: 'Not sure yet', description: 'I’ll suggest one from your goal.', chip: 'whatever you suggest' },
 ]
 const COMING: Record<string, { lead: LeadProgramme; title: string }> = {
-  entrepreneurship: { lead: 'entrepreneurship', title: 'Entrepreneurship' },
   'data-analytics': { lead: 'data-analytics', title: 'Data Analytics' },
 }
 
-const QUIZ_COPY: Record<TestRoute, QuizCopy> = {
+const QUIZ_COPY: Partial<Record<TestRoute, QuizCopy>> = {
   '/aptitude-assessment': {
     draftPrefix: 'myskills.dmAptitudeDraft',
     intro: 'One statement at a time. Say how often it’s true for you: there are no right answers, so answer as you really are.',
@@ -79,7 +80,35 @@ const QUIZ_COPY: Record<TestRoute, QuizCopy> = {
   },
 }
 
-const isTest = (to: string): to is TestRoute => to === '/aptitude-assessment' || to === '/career-readiness-assessment'
+/** A course-engine programme's test: its statements only, no closing question. */
+const ENGINE_COPY: QuizCopy = {
+  draftPrefix: 'myskills.programmeAptitude',
+  intro: 'One statement at a time. Say how often it’s true for you: there are no right answers. Your modules start with the skills you rate lowest.',
+}
+
+/** AI-Powered Entrepreneurship, a course-engine programme (published 26 Oct 2026). */
+const ENTREPRENEURSHIP_TEST: EngineTestRoute = '/programmes/ai-powered-entrepreneurship/aptitude'
+const engineSlug = (route: TestRoute) => route.split('/')[2]
+
+/** The plan for Entrepreneurship, in the same shape as planFor()'s. */
+function entrepreneurshipPlan(stageId: string, goalId: string): Plan {
+  const stage = careerStageStep.options.find((o) => o.id === stageId)
+  const goal = goalStep.options.find((o) => o.id === goalId)
+  return {
+    start: 'marketing',
+    other: 'personal',
+    basedOn: [],
+    level: 'beginner',
+    headline: `As ${stage?.who ?? 'you'}, working to ${goal?.you ?? 'reach your goal'}, I’d start with the Entrepreneurship aptitude test: it shows which founder skills come naturally, and your modules start with the rest.`,
+    steps: [
+      { title: 'Take the Entrepreneurship aptitude test', body: '21 statements, about five minutes, on the seven skills a first-time founder needs.' },
+      { title: 'Work through seven modules', body: 'Test an idea, build a scrappy first version, sell, market, network, price and build a team, with AI at every step.' },
+      { title: 'Prove your idea with a mentor', body: 'Five real customer conversations and a one-page plan, graded by a mentor.' },
+    ],
+    primary: { label: 'Start the Entrepreneurship aptitude test', to: ENTREPRENEURSHIP_TEST },
+    secondary: { label: 'Take the Marketing aptitude instead', to: '/aptitude-assessment' },
+  }
+}
 
 /** Rings, as on the landing hero and onboarding: faint, top right. */
 const Rings = () => (
@@ -100,13 +129,13 @@ function StartPage() {
   // their results waiting. Read once, on arrival.
   const [arrival] = useState(() => {
     const g = peekGuideAnswers()
-    const route: TestRoute | null = g ? (g.focus === 'marketing' ? '/aptitude-assessment' : '/career-readiness-assessment') : null
-    return g && route && pendingAptitudeFor(route) ? { ...g, route } : null
+    const route = pendingAptitudeRoute()
+    return g && route ? { ...g, route } : null
   })
 
   const [stage, setStage] = useState(arrival?.stage ?? '')
   const [goal, setGoal] = useState(arrival?.goal ?? '')
-  const [learn, setLearn] = useState<string>(arrival?.focus ?? '')
+  const [learn, setLearn] = useState<string>(arrival?.learn ?? (arrival?.focus === 'unsure' ? '' : (arrival?.focus ?? '')))
   const [level, setLevel] = useState(arrival?.level ?? '')
   const [asked, setAsked] = useState(Boolean(arrival))
   // The test they started from the plan, and whether it's done.
@@ -115,6 +144,8 @@ function StartPage() {
   // The statements with their skill and reverse flag: the teaser is worked out from them.
   const [questions, setQuestions] = useState<(QuizStatement & { skill: string; reverse?: boolean })[] | null>(null)
   const [testError, setTestError] = useState<string>()
+  // An engine programme's skill names, for its strongest-skill teaser.
+  const [skillNames, setSkillNames] = useState<Record<string, string>>({})
   const answerRef = useRef<HTMLDivElement>(null)
   const testRef = useRef<HTMLDivElement>(null)
 
@@ -122,7 +153,7 @@ function StartPage() {
   const complete = chosen === 4
   const coming = COMING[learn]
   // The plan speaks of the open programmes; "not sure" lets the goal decide.
-  const basePlan = complete && !coming ? planFor(stage, goal, learn, level) : null
+  const basePlan = !complete || coming ? null : learn === 'entrepreneurship' ? entrepreneurshipPlan(stage, goal) : planFor(stage, goal, learn, level)
   // "Based on" in the guide's own words: the programme by name.
   const plan = basePlan && {
     ...basePlan,
@@ -159,7 +190,15 @@ function StartPage() {
     let active = true
     setQuestions(null)
     setTestError(undefined)
-    const load = test === '/aptitude-assessment' ? fetchAptitudeQuestions() : fetchAssessmentQuestions().then((r) => r.questions)
+    const load =
+      test === '/aptitude-assessment'
+        ? fetchAptitudeQuestions()
+        : test === '/career-readiness-assessment'
+          ? fetchAssessmentQuestions().then((r) => r.questions)
+          : fetchGuestAptitude(engineSlug(test)).then((g) => {
+              if (active) setSkillNames(Object.fromEntries((g?.skills ?? []).map((s) => [s.id, s.name])))
+              return g?.items ?? []
+            })
     load
       .then((q) => {
         if (!active) return
@@ -173,8 +212,8 @@ function StartPage() {
     }
   }, [test, done])
 
-  function remember(focus: 'marketing' | 'personal') {
-    saveGuideAnswers({ stage, goal, focus, level: level === 'experienced' ? 'experienced' : 'beginner' })
+  function remember(focus: 'marketing' | 'personal' | 'unsure') {
+    saveGuideAnswers({ stage, goal, focus, learn, level: level === 'experienced' ? 'experienced' : 'beginner' })
   }
 
   function standard() {
@@ -192,7 +231,7 @@ function StartPage() {
   /** A button on the plan: a test starts here; the Foundation needs an account first. */
   function start(to: string) {
     if (!plan) return
-    if (isTest(to)) {
+    if (isTestRoute(to)) {
       trackEvent('guide_test', { test: to })
       setTest(to)
       return
@@ -363,10 +402,10 @@ function StartPage() {
                   {questions && (
                     <SelfAssessmentQuiz
                       questions={questions}
-                      copy={QUIZ_COPY[test]}
+                      copy={QUIZ_COPY[test] ?? { ...ENGINE_COPY, draftPrefix: `${ENGINE_COPY.draftPrefix}.${engineSlug(test)}` }}
                       onSubmit={async (answers, reflection) => {
-                        savePendingAptitude(test, answers, reflection, strongestFor(test, questions, answers))
-                        remember(test === '/aptitude-assessment' ? 'marketing' : 'personal')
+                        savePendingAptitude(test, answers, reflection, strongestFor(test, questions, answers, skillNames))
+                        remember(test === '/aptitude-assessment' ? 'marketing' : test === '/career-readiness-assessment' ? 'personal' : 'unsure')
                         trackEvent('aptitude_answered_guest', { test, start: 'guide' })
                         setDone(true)
                       }}

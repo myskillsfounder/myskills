@@ -12,6 +12,8 @@ export function strongestFor(
   route: TestRoute,
   questions: { id: string; skill: string; reverse?: boolean }[],
   answers: Record<string, number>,
+  /** An engine programme's skills, id to name (its test's own names). */
+  skillNames?: Record<string, string>,
 ): string | undefined {
   const totals: Record<string, number> = {}
   for (const q of questions) {
@@ -21,6 +23,11 @@ export function strongestFor(
   }
   if (Object.keys(totals).length === 0) return undefined
   if (route === '/aptitude-assessment') return strongestAptitude(totals as Record<AptitudeKey, number>).name
+  if (route !== '/career-readiness-assessment') {
+    // An engine programme: the highest total, named by the programme (ties go to the first).
+    const [top] = Object.entries(totals).reduce((a, b) => (b[1] > a[1] ? b : a))
+    return skillNames?.[top] ?? top
+  }
   const skills = skillsFor(totals as Partial<Record<SkillKey, number>>)
   return skills.reduce((a, b) => (b.score > a.score ? b : a), skills[0])?.name
 }
