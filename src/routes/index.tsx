@@ -131,6 +131,9 @@ const JOURNEY: { icon: LucideIcon; title: string; body: string }[] = [
   { icon: Trophy, title: 'Grow your score', body: 'Every step adds to your Global Readiness Score.' },
 ]
 
+/** Each step's card a little taller than the last (from 1024px), so they climb. */
+const STEP_HEIGHT = ['lg:min-h-[15rem]', 'lg:min-h-[16.5rem]', 'lg:min-h-[18rem]', 'lg:min-h-[19.5rem]', 'lg:min-h-[21rem]']
+
 /** The AI at every step of the platform. */
 const AI_STEPS: { icon: LucideIcon; title: string; body: string }[] = [
   { icon: Sparkles, title: 'AI-powered courses', body: 'Learn the AI tools of your field as you learn the skill itself.' },
@@ -275,19 +278,42 @@ function HomePage() {
         {/* 2. The journey every course follows. */}
         <section className="relative mx-auto max-w-[72rem] px-4 py-16 sm:px-6 lg:px-8">
           <SectionHead kicker="Your journey" title="From your first test to" accent="your first internship." />
-          <ol className="relative mt-10 grid gap-8 md:grid-cols-5 md:gap-4">
-            {/* The line of light the steps sit on. */}
-            <span aria-hidden className="absolute left-[10%] right-[10%] top-6 hidden h-px bg-gradient-to-r from-brand-300/0 via-brand-300/70 to-brand-300/0 md:block" />
-            {JOURNEY.map((s, i) => (
-              <li key={s.title} className="relative text-center">
-                <span className="relative mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-[0_0_24px_rgba(143,133,238,0.7)] ring-4 ring-[#0b0a1c]">
-                  <s.icon size={20} strokeWidth={1.8} />
-                </span>
-                <span className="mt-4 block font-mono text-[11px] text-brand-200">STEP 0{i + 1}</span>
-                <span className="mt-1 block font-semibold text-white">{s.title}</span>
-                <span className="mx-auto mt-1 block max-w-[14rem] text-sm leading-relaxed text-white/60">{s.body}</span>
-              </li>
-            ))}
+          {/* A staircase: each step a glass card a little taller than the last,
+              climbing to the score, with a bar that fills as you go. */}
+          <ol className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+            {JOURNEY.map((s, i) => {
+              const last = i === JOURNEY.length - 1
+              return (
+                <li
+                  key={s.title}
+                  className={`${glass} relative flex flex-col overflow-hidden p-5 ${STEP_HEIGHT[i]} ${
+                    last ? 'border-brand-200/50 ring-1 ring-brand-300/40 sm:col-span-2 lg:col-span-1' : ''
+                  }`}
+                >
+                  {/* The top step glows: the score is where the climb leads. */}
+                  {last && (
+                    <span aria-hidden className="absolute inset-0 bg-gradient-to-br from-brand-500/45 via-brand-600/10 to-fuchsia-500/25" />
+                  )}
+                  <span aria-hidden className="absolute -right-1 -top-3 font-display text-7xl font-bold text-white/[0.06]">
+                    0{i + 1}
+                  </span>
+                  <span className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-[0_0_24px_rgba(143,133,238,0.6)] ring-1 ring-white/25">
+                    <s.icon size={20} strokeWidth={1.8} />
+                  </span>
+                  <span className="relative mt-4 block text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-200">Step {i + 1}</span>
+                  <span className="relative mt-1 block font-display text-lg font-semibold leading-snug text-white">{s.title}</span>
+                  <span className="relative mt-1.5 block text-sm leading-relaxed text-white/60">{s.body}</span>
+                  <span aria-hidden className="relative mt-auto block pt-5">
+                    <span className="block h-1 overflow-hidden rounded-full bg-white/10">
+                      <span
+                        className="block h-full rounded-full bg-gradient-to-r from-brand-300 to-fuchsia-300"
+                        style={{ width: `${((i + 1) / JOURNEY.length) * 100}%` }}
+                      />
+                    </span>
+                  </span>
+                </li>
+              )
+            })}
           </ol>
         </section>
 
