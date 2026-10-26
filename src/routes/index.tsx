@@ -5,11 +5,11 @@ import {
   BookOpen,
   Bot,
   Briefcase,
-  Compass,
   GraduationCap,
   Heart,
   MessageSquareText,
   Plane,
+  Sparkles,
   Target,
   Trophy,
   Users,
@@ -133,7 +133,7 @@ const JOURNEY: { icon: LucideIcon; title: string; body: string }[] = [
 
 /** The AI at every step of the platform. */
 const AI_STEPS: { icon: LucideIcon; title: string; body: string }[] = [
-  { icon: Compass, title: 'An AI guide', body: 'Tell it what you want in one sentence and it shows you where to start.' },
+  { icon: Sparkles, title: 'AI-powered courses', body: 'Learn the AI tools of your field as you learn the skill itself.' },
   { icon: Target, title: 'Aptitude tests first', body: 'Know your strongest skills before you spend an hour learning.' },
   { icon: Bot, title: 'An AI coach in every course', body: 'Practise on real scenarios and get feedback on every answer.' },
   { icon: MessageSquareText, title: 'Notes from your coach', body: 'A personal note on what you did well and what to work on next.' },

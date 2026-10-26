@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { isPhone } from '@/lib/device'
 import { Link } from '@tanstack/react-router'
 import { Menu, Sparkles, X } from 'lucide-react'
-import { setSiteMode } from '@/lib/siteMode'
+import { GUIDE_ON, setSiteMode } from '@/lib/siteMode'
 import { useAuthUser } from '@/lib/useAuth'
 
 // Home, then every course in one place (/courses, Paul 26 Oct 2026): the
@@ -95,7 +95,7 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
             ) : (
               <>
                 {/* Back to the AI guide, the computer's other way in (lib/siteMode.ts). */}
-                {!isPhone() && (
+                {GUIDE_ON && !isPhone() && (
                   <Link
                     to="/start"
                     onClick={() => setSiteMode('ai')}

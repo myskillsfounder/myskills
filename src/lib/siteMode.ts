@@ -8,11 +8,19 @@
  */
 export type SiteMode = 'ai' | 'standard'
 
+/**
+ * The AI guide is switched off for now (Paul, 26 Oct 2026: "unnecessary at
+ * this point"): every computer visitor gets the standard website, /start goes
+ * home, and the links to the guide are hidden. Set true to bring it back.
+ */
+export const GUIDE_ON = false
+
 import { setAnalyticsUser } from './analytics'
 
 const KEY = 'myskills.siteMode'
 
 export function siteMode(): SiteMode {
+  if (!GUIDE_ON) return 'standard'
   try {
     return localStorage.getItem(KEY) === 'standard' ? 'standard' : 'ai'
   } catch {
