@@ -158,6 +158,7 @@ function GlassRow({
   body,
   photo,
   wide = false,
+  large = false,
   children,
 }: {
   icon: LucideIcon
@@ -165,6 +166,8 @@ function GlassRow({
   body: string
   photo: string
   wide?: boolean
+  /** The page's opening: a taller row, the photo filling half of it. */
+  large?: boolean
   /** The link itself, wrapping the row. */
   children: (className: string, inner: React.ReactNode) => React.ReactNode
 }) {
@@ -173,19 +176,21 @@ function GlassRow({
       <img
         src={`/home/${photo}.webp`}
         alt=""
-        className="absolute inset-y-0 right-0 h-full w-28 object-cover opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)]"
+        className={`absolute inset-y-0 right-0 h-full object-cover opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)] ${large ? 'w-[48%]' : 'w-28'}`}
       />
-      <span className="relative flex items-center gap-3">
-        <Icon size={22} className="shrink-0 text-white" />
+      <span className={`relative flex items-center ${large ? 'gap-4' : 'gap-3'}`}>
+        <Icon size={large ? 28 : 22} fill={large ? 'currentColor' : 'none'} className="shrink-0 text-white" />
         <span className="min-w-0">
-          <span className="block font-display text-[15px] font-semibold leading-tight text-white">{title}</span>
-          <span className="mt-0.5 block text-[12px] leading-snug text-white/65">{body}</span>
+          <span className={`block font-display font-semibold leading-tight text-white ${large ? 'text-lg' : 'text-[15px]'}`}>{title}</span>
+          <span className={`mt-0.5 block leading-snug text-white/65 ${large ? 'text-[13px]' : 'text-[12px]'}`}>{body}</span>
         </span>
       </span>
     </>
   )
   return children(
-    `${glass} group relative flex min-h-[5.5rem] items-center overflow-hidden py-3 pl-4 pr-24 transition-colors hover:border-brand-300/50 ${wide ? 'sm:col-span-2' : ''}`,
+    `${glass} group relative flex items-center overflow-hidden py-3 transition-colors hover:border-brand-300/50 ${
+      large ? 'min-h-[5.75rem] pl-5 pr-[44%]' : 'min-h-[5.5rem] pl-4 pr-24'
+    } ${wide ? 'sm:col-span-2' : ''}`,
     inner,
   )
 }
@@ -208,10 +213,10 @@ function PartnerCard({ p, wide = false }: { p: (typeof PARTNERS)[number]; wide?:
 }
 
 /** A pillar in the page's opening: the courses, or sign-in and then its place. */
-function PillarCard({ p, signedIn, wide = false }: { p: Pillar; signedIn: boolean; wide?: boolean }) {
+function PillarCard({ p, signedIn }: { p: Pillar; signedIn: boolean }) {
   const target = signedIn ? p.student : p.visitor
   return (
-    <GlassRow icon={p.icon} title={p.title} body={p.body} photo={p.photo} wide={wide}>
+    <GlassRow icon={p.icon} title={p.title} body={p.body} photo={p.photo} large>
       {(className, inner) => (
         <Link
           to={target.to}
@@ -254,7 +259,7 @@ function HomePage() {
             to the courses; the others go straight to sign-in, then to the
             Community or Study Abroad. On a narrow window the words come first. */}
         <section className="relative mx-auto max-w-[72rem] px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,32rem)_1fr] lg:items-center lg:gap-14">
             <div className="lg:order-2">
               <p className={eyebrow}>Made for students in the AI era</p>
               <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
@@ -265,8 +270,9 @@ function HomePage() {
                 platform for every need a student has as you step into the AI era.
               </p>
             </div>
-            <div className="grid gap-2.5 sm:grid-cols-2 lg:order-1">
-              <PillarCard p={P.learning} signedIn={signedIn} wide />
+            {/* One column of tall rows, like the partners picture (Paul, 27 Oct). */}
+            <div className="grid gap-2.5 lg:order-1">
+              <PillarCard p={P.learning} signedIn={signedIn} />
               <PillarCard p={P.mentorship} signedIn={signedIn} />
               <PillarCard p={P.career} signedIn={signedIn} />
               <PillarCard p={P.abroad} signedIn={signedIn} />
