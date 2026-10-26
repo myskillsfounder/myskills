@@ -1058,6 +1058,7 @@
       {
         "id": "ape-f01",
         "title": "Ten different answers",
+        "skill": "idea-validation",
         "scenario": "Riya plans a study-planner service for “all college students in Delhi”. She has done 10 interviews. Each person described a different problem: exam stress, hostel noise, too many apps, slow Wi-Fi and more.",
         "question": "What does this tell her to do next?",
         "options": [
@@ -1077,6 +1078,7 @@
       {
         "id": "ape-f02",
         "title": "A big crore figure",
+        "skill": "idea-validation",
         "scenario": "Faisal is planning a doubt-solving service for Class 12 students in Lucknow. A free AI chatbot told him the coaching market in India is worth thousands of crores, but gave no source he could open. His mentor asks him for a market estimate.",
         "question": "What should he give his mentor?",
         "options": [
@@ -1096,6 +1098,7 @@
       {
         "id": "ape-f03",
         "title": "The problem is real",
+        "skill": "mvp-testing",
         "scenario": "Kavya interviewed 8 working parents in Kochi about weekday dinners. Seven already pay a neighbour or a tiffin service ₹3,000 to ₹4,000 a month. She plans a weekly dinner subscription at ₹3,500 a month, paid in advance. Nobody has paid her anything yet.",
         "question": "What is her best next step?",
         "options": [
@@ -1115,6 +1118,7 @@
       {
         "id": "ape-f04",
         "title": "Fourteen yeses",
+        "skill": "mvp-testing",
         "scenario": "Before his test, Aman wrote: “At least 5 of 20 hostel students pay a ₹100 advance for laundry pickup within 3 days.” After 3 days, 14 students said they would definitely use it, and 3 paid the advance.",
         "question": "How should Aman report the result to his mentor?",
         "options": [
@@ -1134,6 +1138,7 @@
       {
         "id": "ape-f05",
         "title": "The maybe",
+        "skill": "first-sales",
         "scenario": "Two days ago, a customer told Zoya “maybe next week” about her ₹999 skincare kit. Zoya sent one follow-up message yesterday. There is no reply yet.",
         "question": "What should Zoya do now?",
         "options": [
@@ -1153,6 +1158,7 @@
       {
         "id": "ape-f06",
         "title": "The screenshot",
+        "skill": "first-sales",
         "scenario": "A buyer sends Mohit a screenshot of a ₹600 UPI payment for two T-shirts. Mohit labels his WhatsApp Business chats “New”, “Paid” and “Delivered”.",
         "question": "When should he label this chat “Paid”?",
         "options": [
@@ -1172,6 +1178,7 @@
       {
         "id": "ape-f07",
         "title": "Two channels, one margin",
+        "skill": "lean-marketing",
         "scenario": "Tanvi sells homemade granola in Mumbai. Each order brings her ₹60 of contribution, and a customer orders about twice. In her ₹1,000 test, ₹600 of samples at a yoga studio won 6 customers, and a ₹400 boosted post won 2 customers.",
         "question": "What should she do with her next marketing budget?",
         "options": [
@@ -1191,6 +1198,7 @@
       {
         "id": "ape-f08",
         "title": "For everyone who loves food",
+        "skill": "lean-marketing",
         "scenario": "Kiran in Chennai sells ready-to-cook dosa batter. Her positioning is “for everyone who loves good food”, and she posts a little on four platforms. After a month she has 2 orders. Her interviews showed that couples who both work need quick breakfasts, and hear about home sellers through apartment WhatsApp groups.",
         "question": "What is the best advice for her?",
         "options": [
@@ -1210,6 +1218,7 @@
       {
         "id": "ape-f09",
         "title": "Ten lakh from investors",
+        "skill": "startup-finance",
         "scenario": "Rahul, a second-year student in Hyderabad, has an idea for a campus delivery app. He has no customers yet. He plans to message 100 angel investors on LinkedIn, asking for ₹10 lakh.",
         "question": "What is the best advice for Rahul?",
         "options": [
@@ -1229,6 +1238,7 @@
       {
         "id": "ape-f10",
         "title": "The canteen deal",
+        "skill": "founder-networking",
         "scenario": "Divya’s college canteen in Jaipur has agreed to stock her millet energy bars and keep a share of each sale. They shook hands on it yesterday.",
         "question": "What should Divya do next?",
         "options": [
@@ -1248,6 +1258,7 @@
       {
         "id": "ape-f11",
         "title": "Phone stands",
+        "skill": "startup-finance",
         "scenario": "Ravi sells personalised phone stands for ₹400 through a payment link. Each stand costs ₹220 in materials, packing and delivery. Today he checked the gateway’s own pricing page, which lists a total fee of 2.36% of each payment. His CAC is ₹150, and each customer buys one stand.",
         "question": "How much does each customer leave him after the CAC?",
         "options": [
@@ -1267,6 +1278,7 @@
       {
         "id": "ape-f12",
         "title": "Leaving before the cliff",
+        "skill": "team-building",
         "scenario": "Neel, Farah and Joseph signed a split of 30%, 35% and 35%, each vesting over four years with a one-year cliff. Neel leaves after 11 months to take a job.",
         "question": "How much of the company does Neel keep?",
         "options": [
@@ -1286,6 +1298,7 @@
       {
         "id": "ape-f13",
         "title": "A six-week intern",
+        "skill": "team-building",
         "scenario": "Your E-cell offers you a first-year student as an intern for six weeks, to help with your snack-box business’s Instagram page.",
         "question": "Which plan is fairest and most useful?",
         "options": [
@@ -1305,6 +1318,7 @@
       {
         "id": "ape-f14",
         "title": "The one-page plan",
+        "skill": "startup-finance",
         "scenario": "A mentor reviews Sana’s plan for a weekly snack box in Pune. She has 7 interviews, 3 introductions and 2 paid advances. Her price is ₹199, and each box costs ₹170 to make and deliver. Her ₹1,000 test on her one channel, college WhatsApp groups, won 8 customers. Most customers buy only once. She plans to spend ₹10,000 on marketing next month.",
         "question": "What is the most serious problem in her plan?",
         "options": [
@@ -1324,6 +1338,7 @@
       {
         "id": "ape-f15",
         "title": "AI and interview notes",
+        "skill": "idea-validation",
         "scenario": "Rohan has notes from 6 customer interviews, including names and phone numbers. He wants a free AI chatbot to group the notes into patterns for his mentor.",
         "question": "Which way of using the chatbot is sound?",
         "options": [

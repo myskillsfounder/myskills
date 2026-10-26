@@ -88,6 +88,8 @@ export function cleanQuestion(q, id) {
     ...(clean(q.learning_outcome) ? { learning_outcome: clean(q.learning_outcome) } : {}),
     difficulty,
     topic: clean(q.topic),
+    // A final question's skill: the Foundation assessment places students by it.
+    ...(clean(q.skill) ? { skill: clean(q.skill) } : {}),
     weight: WEIGHT[difficulty],
   }
 }
