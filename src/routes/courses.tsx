@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, BadgeCheck, Bell, Check, GraduationCap, Sparkles, Target, Trophy, type LucideIcon } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Bell, Briefcase, Check, GraduationCap, Sparkles, Target, Trophy, type LucideIcon } from 'lucide-react'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
@@ -31,7 +31,8 @@ const STEPS: { icon: LucideIcon; title: string; body: string }[] = [
   { icon: Target, title: 'Know your aptitude', body: 'A free test before you start shows your strengths and where to begin.' },
   { icon: Sparkles, title: 'Learn with an AI coach', body: 'Short modules and real scenarios, with feedback as you practise.' },
   { icon: GraduationCap, title: 'Prove it with a mentor', body: 'A real project, graded by an industry mentor, not a multiple-choice quiz.' },
-  { icon: Trophy, title: 'Grow your score', body: 'Every course adds to your Global Readiness Score, what companies look at.' },
+  { icon: Briefcase, title: 'Land your first internship', body: 'Hands-on, real experience with a partner company: work you can show, not just a certificate.' },
+  { icon: Trophy, title: 'Grow your score', body: 'Every step adds to your Global Readiness Score, what companies look at when they hire.' },
 ]
 
 function CourseCard({ c }: { c: Course }) {
@@ -150,7 +151,7 @@ function CoursesPage() {
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
               Personal and professional skills, each built the same way: a free aptitude test first, short modules with an
-              AI coach, and a real project a mentor grades. Every course grows your Global Readiness Score.
+              AI coach, a real project a mentor grades, and then your first internship: hands-on, real experience.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Show courses">
@@ -181,7 +182,7 @@ function CoursesPage() {
         <section className="relative overflow-hidden border-t border-white/[0.06] bg-ink-900">
           <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
             <h2 className="font-display text-3xl font-semibold tracking-tight text-white">How every course works</h2>
-            <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {STEPS.map((s, i) => (
                 <li key={s.title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
                   <span className="flex items-center gap-2 text-brand-200">
