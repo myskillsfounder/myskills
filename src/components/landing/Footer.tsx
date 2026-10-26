@@ -2,11 +2,12 @@ const year = new Date().getFullYear()
 
 const columns = [
   {
-    title: 'Programmes',
+    title: 'Courses',
     links: [
-      { label: 'Home', href: '/' },
+      { label: 'All courses', href: '/courses' },
       { label: 'Digital Marketing', href: '/digital-marketing' },
       { label: 'Global Leadership', href: '/career-readiness' },
+      { label: 'AI-Powered Entrepreneurship', href: '/entrepreneurship' },
     ],
   },
   {

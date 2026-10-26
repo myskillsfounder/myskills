@@ -33,8 +33,10 @@ import { Route as GamesRouteImport } from './routes/games'
 import { Route as FoundationAssessmentRouteImport } from './routes/foundation-assessment'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as EntrepreneurshipRouteImport } from './routes/entrepreneurship'
 import { Route as DigitalMarketingRouteImport } from './routes/digital-marketing'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as CareerReadinessWaitlistRouteImport } from './routes/career-readiness-waitlist'
@@ -228,6 +230,11 @@ const FeedbackRoute = FeedbackRouteImport.update({
   path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrepreneurshipRoute = EntrepreneurshipRouteImport.update({
+  id: '/entrepreneurship',
+  path: '/entrepreneurship',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DigitalMarketingRoute = DigitalMarketingRouteImport.update({
   id: '/digital-marketing',
   path: '/digital-marketing',
@@ -236,6 +243,11 @@ const DigitalMarketingRoute = DigitalMarketingRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesRoute = CoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -629,8 +641,10 @@ export interface FileRoutesByFullPath {
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/digital-marketing': typeof DigitalMarketingRoute
+  '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/foundation-assessment': typeof FoundationAssessmentRoute
@@ -728,8 +742,10 @@ export interface FileRoutesByTo {
   '/career-readiness-assessment': typeof CareerReadinessAssessmentRoute
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/digital-marketing': typeof DigitalMarketingRoute
+  '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/foundation-assessment': typeof FoundationAssessmentRoute
@@ -827,8 +843,10 @@ export interface FileRoutesById {
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/digital-marketing': typeof DigitalMarketingRoute
+  '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/foundation-assessment': typeof FoundationAssessmentRoute
@@ -929,8 +947,10 @@ export interface FileRouteTypes {
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/community'
+    | '/courses'
     | '/dashboard'
     | '/digital-marketing'
+    | '/entrepreneurship'
     | '/feedback'
     | '/forgot-password'
     | '/foundation-assessment'
@@ -1028,8 +1048,10 @@ export interface FileRouteTypes {
     | '/career-readiness-assessment'
     | '/career-readiness-waitlist'
     | '/certificate'
+    | '/courses'
     | '/dashboard'
     | '/digital-marketing'
+    | '/entrepreneurship'
     | '/feedback'
     | '/forgot-password'
     | '/foundation-assessment'
@@ -1126,8 +1148,10 @@ export interface FileRouteTypes {
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/community'
+    | '/courses'
     | '/dashboard'
     | '/digital-marketing'
+    | '/entrepreneurship'
     | '/feedback'
     | '/forgot-password'
     | '/foundation-assessment'
@@ -1227,8 +1251,10 @@ export interface RootRouteChildren {
   CareerReadinessWaitlistRoute: typeof CareerReadinessWaitlistRoute
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
+  CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
   DigitalMarketingRoute: typeof DigitalMarketingRoute
+  EntrepreneurshipRoute: typeof EntrepreneurshipRoute
   FeedbackRoute: typeof FeedbackRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   FoundationAssessmentRoute: typeof FoundationAssessmentRoute
@@ -1440,6 +1466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrepreneurship': {
+      id: '/entrepreneurship'
+      path: '/entrepreneurship'
+      fullPath: '/entrepreneurship'
+      preLoaderRoute: typeof EntrepreneurshipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/digital-marketing': {
       id: '/digital-marketing'
       path: '/digital-marketing'
@@ -1452,6 +1485,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/courses': {
+      id: '/courses'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -2116,8 +2156,10 @@ const rootRouteChildren: RootRouteChildren = {
   CareerReadinessWaitlistRoute: CareerReadinessWaitlistRoute,
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,
+  CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
   DigitalMarketingRoute: DigitalMarketingRoute,
+  EntrepreneurshipRoute: EntrepreneurshipRoute,
   FeedbackRoute: FeedbackRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   FoundationAssessmentRoute: FoundationAssessmentRoute,

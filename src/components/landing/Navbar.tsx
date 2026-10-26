@@ -5,13 +5,12 @@ import { Menu, Sparkles, X } from 'lucide-react'
 import { setSiteMode } from '@/lib/siteMode'
 import { useAuthUser } from '@/lib/useAuth'
 
-// Home (the Personal & Professional Development page) leads, followed by
-// the two programme pages. "How it works" and "Skill tracks" used to be two
-// homepage anchors here; both now live on /digital-marketing.
+// Home, then every course in one place (/courses, Paul 26 Oct 2026): the
+// course pages (Digital Marketing, Global Leadership, Entrepreneurship) are
+// reached from there.
 const navLinks = [
   { label: 'Home', href: '/', exact: true },
-  { label: 'Digital Marketing', href: '/digital-marketing' },
-  { label: 'Global Leadership', href: '/career-readiness' },
+  { label: 'Courses', href: '/courses' },
 ]
 
 export function Navbar() {
