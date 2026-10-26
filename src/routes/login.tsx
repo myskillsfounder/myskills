@@ -6,10 +6,13 @@ import { TextField } from '@/components/auth/TextField'
 import { GoogleButton } from '@/components/auth/GoogleButton'
 import { AuthError, signIn, signInWithGoogle } from '@/lib/auth'
 import { requireGuest } from '@/lib/guards'
+import { isAfterLoginPath, saveAfterLogin } from '@/lib/afterLogin'
 import { Button } from '@/components/ui'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: requireGuest,
+  // ?next=: a home page card's place to open after signing in (lib/afterLogin.ts).
+  validateSearch: (s: Record<string, unknown>): { next?: string } => (isAfterLoginPath(s.next) ? { next: s.next } : {}),
   component: LoginPage,
 })
 
@@ -17,6 +20,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function LoginPage() {
   const router = useRouter()
+  const { next } = Route.useSearch()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
@@ -39,8 +43,9 @@ function LoginPage() {
     try {
       await signIn({ email, password })
       // /dashboard redirects to /onboarding if the user hasn't onboarded yet.
-      // On a phone, home is the marketplace.
-      router.navigate({ to: homePath() })
+      // On a phone, home is the marketplace. From a home page card, its place.
+      if (next) router.history.push(next)
+      else router.navigate({ to: homePath() })
     } catch (err) {
       if (err instanceof AuthError && err.field) {
         setErrors((prev) => ({ ...prev, [err.field!]: err.message }))
@@ -55,6 +60,7 @@ function LoginPage() {
   async function handleGoogle() {
     setFormError(undefined)
     setSubmitting(true)
+    if (next) saveAfterLogin(next)
     try {
       await signInWithGoogle()
     } catch (err) {
