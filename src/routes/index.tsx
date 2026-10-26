@@ -40,16 +40,19 @@ type Target = { to: To; search?: Record<string, unknown> }
 
 /** Liquid glass: see-through, frosted, a light top edge and a purple glow. */
 const glass =
-  'rounded-2xl border border-white/15 bg-gradient-to-br from-white/[0.10] to-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_12px_40px_-18px_rgba(108,92,231,0.75)] backdrop-blur-xl'
+  'rounded-2xl border border-[#6d7bff]/20 bg-gradient-to-br from-[#1b2470]/45 via-[#0b1438]/40 to-[#060b24]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_44px_-18px_rgba(76,86,240,0.7)] backdrop-blur-xl'
 
-const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.32em] text-brand-200'
+/** The page: deep navy-blue, as in Paul's picture. */
+const PAGE = '#040a1e'
+
+const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.32em] text-[#b9a6ff]'
 const h2 = 'mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl'
-const gradientText = 'bg-gradient-to-r from-brand-200 via-brand-300 to-fuchsia-300 bg-clip-text text-transparent'
+const gradientText = 'bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff] bg-clip-text text-transparent'
 /** Paul's handwritten notes beside the student. */
 const hand = "font-['Caveat',cursive] text-white/80"
 
 const primaryCta =
-  'press inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-brand-400 to-brand-600 px-6 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(143,133,238,0.9)] transition-opacity hover:opacity-90'
+  'press inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#7b6cf6] to-[#4f46e5] px-6 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.9)] transition-opacity hover:opacity-90'
 const secondaryCta =
   'press inline-flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/[0.03] px-6 text-[15px] font-semibold text-white backdrop-blur transition-colors hover:bg-white/10'
 
@@ -151,7 +154,7 @@ function Faces({ faces, size = 'h-9 w-9' }: { faces: string[]; size?: string }) 
   return (
     <span className="flex -space-x-2.5">
       {faces.map((f) => (
-        <img key={f} src={`/home/${f}.webp`} alt="" className={`${size} rounded-full object-cover ring-2 ring-[#0b0a1c]`} />
+        <img key={f} src={`/home/${f}.webp`} alt="" className={`${size} rounded-full object-cover ring-2 ring-[#040a1e]`} />
       ))}
     </span>
   )
@@ -161,7 +164,7 @@ function Faces({ faces, size = 'h-9 w-9' }: { faces: string[]; size?: string }) 
 function Note({ icon: Icon, title, className = '', children }: { icon: LucideIcon; title: string; className?: string; children?: React.ReactNode }) {
   return (
     <div className={`${glass} absolute flex items-start gap-3 p-4 ${className}`}>
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-[0_0_20px_rgba(143,133,238,0.6)] ring-1 ring-white/25">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
         <Icon size={20} />
       </span>
       <div className="min-w-0">
@@ -172,25 +175,35 @@ function Note({ icon: Icon, title, className = '', children }: { icon: LucideIco
   )
 }
 
+/** How far each of the five parts rises on the curved bar, its ends highest. */
+const BAR_LIFT = ['-translate-y-7', '-translate-y-2', 'translate-y-0.5', '-translate-y-2', '-translate-y-7']
+
 /** The student at the centre: a ring of light, three notes, the curved bar of the five parts. */
 function StudentStage({ signedIn }: { signedIn: boolean }) {
   return (
-    <div className="relative mx-auto h-[36rem] w-full max-w-[40rem]">
-      {/* The ring of light. */}
-      <span aria-hidden className="absolute left-1/2 top-4 h-[27rem] w-[27rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_50%_40%,rgba(143,133,238,0.45),rgba(76,58,190,0.25)_45%,transparent_70%)]" />
-      <span aria-hidden className="absolute left-1/2 top-4 h-[27rem] w-[27rem] -translate-x-1/2 rounded-full border-2 border-brand-300/60 shadow-[0_0_40px_rgba(143,133,238,0.55),inset_0_0_40px_rgba(143,133,238,0.35)]" />
-      <span aria-hidden className="absolute left-1/2 top-10 h-[25.5rem] w-[25.5rem] -translate-x-1/2 rounded-full border border-brand-200/20" />
+    <div className="relative mx-auto h-[38rem] w-full max-w-[44rem]">
+      {/* The ring: indigo light inside, a bright violet-blue line around. */}
+      <span aria-hidden className="absolute left-1/2 top-0 h-[33rem] w-[33rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_50%_45%,rgba(70,80,220,0.55),rgba(40,46,150,0.35)_45%,rgba(4,10,30,0)_72%)]" />
+      <span
+        aria-hidden
+        className="absolute left-1/2 top-0 h-[33rem] w-[33rem] -translate-x-1/2 rounded-full p-[2px] [mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)] bg-[conic-gradient(from_200deg,rgba(124,92,246,0.15),#8f6bff_25%,#c9b8ff_38%,#6d7bff_55%,rgba(109,123,255,0.2)_75%,rgba(124,92,246,0.15))]"
+        style={{ filter: 'drop-shadow(0 0 14px rgba(124,108,255,0.85))' }}
+      />
+      <span aria-hidden className="absolute left-1/2 top-7 h-[30rem] w-[30rem] -translate-x-1/2 rounded-full border border-[#8f9bff]/15" />
 
       {/* The student, rising out of the ring. */}
       <img
         src="/home/hero-student.webp"
         alt="A student looking ahead"
-        className="absolute left-1/2 top-0 h-[28rem] w-auto -translate-x-1/2 object-cover"
-        style={{ WebkitMaskImage: 'radial-gradient(ellipse 62% 75% at 50% 42%, black 62%, transparent 80%)', maskImage: 'radial-gradient(ellipse 62% 75% at 50% 42%, black 62%, transparent 80%)' }}
+        className="absolute left-1/2 top-2 h-[31rem] w-auto -translate-x-1/2 object-cover"
+        style={{
+          WebkitMaskImage: 'radial-gradient(ellipse 64% 78% at 50% 40%, black 64%, transparent 82%)',
+          maskImage: 'radial-gradient(ellipse 64% 78% at 50% 40%, black 64%, transparent 82%)',
+        }}
       />
 
       {/* Paul's handwriting. */}
-      <p aria-hidden className={`${hand} absolute left-[2%] top-[4%] -rotate-[10deg] text-[1.35rem] leading-tight`}>
+      <p aria-hidden className={`${hand} absolute left-[6%] top-[1%] -rotate-[10deg] text-[1.35rem] leading-tight`}>
         Learn
         <br />
         Build Skills
@@ -199,19 +212,23 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
         <br />
         Grow
       </p>
-      <svg aria-hidden className="absolute left-[20%] top-[22%] h-12 w-16 text-white/60" viewBox="0 0 64 48" fill="none">
+      <svg aria-hidden className="absolute left-[22%] top-[17%] h-12 w-16 text-white/60" viewBox="0 0 64 48" fill="none">
         <path d="M4 6 C 30 4, 48 18, 52 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <path d="M44 34 L52 41 L56 31" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      <p aria-hidden className={`${hand} absolute -bottom-2 right-[1%] rotate-[-8deg] text-right text-[1.3rem] leading-tight`}>
+      <p aria-hidden className={`${hand} absolute -bottom-1 right-0 rotate-[-10deg] text-right text-[1.3rem] leading-tight`}>
         More
         <br />
         than just
         <br />
         courses
       </p>
+      <svg aria-hidden className="absolute bottom-[6%] right-[13%] h-10 w-10 text-white/55" viewBox="0 0 40 40" fill="none">
+        <path d="M6 34 C 20 30, 30 20, 33 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M27 11 L33 5 L37 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
 
-      <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[42%] w-56">
+      <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[24%] w-56">
         <span className="mt-2.5 flex items-center gap-2">
           <Faces faces={['paul-mentor', 'face-2', 'face-3']} size="h-8 w-8" />
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80">
@@ -222,14 +239,14 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
       <Link
         to="/courses"
         onClick={() => trackEvent('home_note', { note: 'path' })}
-        className="group absolute right-0 top-[8%] w-60 transition-transform hover:-translate-y-0.5"
+        className="group absolute right-0 top-[7%] w-60 transition-transform hover:-translate-y-0.5"
       >
         <Note icon={BarChart3} title="Personalised Learning Path" className="relative inset-auto w-full pr-10">
-          <p className="mt-1 text-xs font-medium text-brand-200">Powered by AI</p>
-          <ArrowRight size={16} className="absolute bottom-4 right-4 text-brand-200 transition-transform group-hover:translate-x-0.5" />
+          <p className="mt-1 text-xs font-medium text-[#b9a6ff]">Powered by AI</p>
+          <ArrowRight size={16} className="absolute bottom-4 right-4 text-[#b9a6ff] transition-transform group-hover:translate-x-0.5" />
         </Note>
       </Link>
-      <Note icon={Briefcase} title="Real-world Opportunities" className="right-0 top-[40%] w-60">
+      <Note icon={Briefcase} title="Real-world Opportunities" className="right-[-2%] top-[30%] w-60">
         <p className="mt-1.5 text-xs leading-relaxed text-white/60">
           Internships · Jobs
           <br />
@@ -237,24 +254,37 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
         </p>
       </Note>
 
-      {/* The curved glass bar: the five parts of the platform. */}
-      <nav
-        aria-label="The platform"
-        className="absolute inset-x-[4%] bottom-[12%] border border-brand-200/30 bg-gradient-to-b from-brand-500/25 to-[#141130]/80 px-3 pb-4 pt-7 shadow-[0_-8px_40px_-10px_rgba(143,133,238,0.7),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-xl"
-        style={{ borderRadius: '50% 50% 1.75rem 1.75rem / 3rem 3rem 1.75rem 1.75rem' }}
-      >
-        <ul className="grid grid-cols-5 divide-x divide-white/10">
-          {PILLARS.map((p) => {
+      {/* The curved glass bar, the ring's lower edge: the five parts of the platform. */}
+      <nav aria-label="The platform" className="absolute inset-x-[2%] bottom-[9%] h-36">
+        <svg aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 600 144" preserveAspectRatio="none" fill="none">
+          <defs>
+            <linearGradient id="bar-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#2a2f8f" stopOpacity="0.55" />
+              <stop offset="1" stopColor="#070c28" stopOpacity="0.85" />
+            </linearGradient>
+            <linearGradient id="bar-edge" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#6d7bff" stopOpacity="0.35" />
+              <stop offset="0.5" stopColor="#a48bff" />
+              <stop offset="1" stopColor="#6d7bff" stopOpacity="0.35" />
+            </linearGradient>
+          </defs>
+          <path d="M6 18 Q 300 92 594 18 L 594 78 Q 300 150 6 78 Z" fill="url(#bar-fill)" />
+          <path d="M6 18 Q 300 92 594 18" stroke="url(#bar-edge)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" style={{ filter: 'drop-shadow(0 0 6px rgba(140,120,255,0.9))' }} />
+          <path d="M6 78 Q 300 150 594 78" stroke="#6d7bff" strokeOpacity="0.25" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <path d="M6 18 L 6 78 M594 18 L 594 78" stroke="#6d7bff" strokeOpacity="0.3" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        </svg>
+        <ul className="relative grid h-full grid-cols-5 px-3 pt-10">
+          {PILLARS.map((p, i) => {
             const to = target(p, signedIn)
             return (
-              <li key={p.id}>
+              <li key={p.id} className={BAR_LIFT[i]}>
                 <Link
                   to={to.to}
                   search={to.search as never}
                   onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'bar' })}
-                  className="flex flex-col items-center gap-2 px-1 text-center text-[12.5px] font-medium leading-tight text-white/85 transition-colors hover:text-white"
+                  className="flex flex-col items-center gap-1.5 px-1 text-center text-[12.5px] font-medium leading-tight text-white transition-colors hover:text-[#dcc7ff]"
                 >
-                  <p.icon size={24} strokeWidth={1.6} className="text-brand-200" />
+                  <p.icon size={26} strokeWidth={1.5} className="text-[#d6bcff] drop-shadow-[0_0_8px_rgba(180,150,255,0.8)]" />
                   {p.short}
                 </Link>
               </li>
@@ -284,12 +314,12 @@ function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolea
         style={{ WebkitMaskComposite: 'source-in' }}
       />
       <span className="relative">
-        <p.icon size={28} strokeWidth={1.5} className="text-brand-200" />
+        <p.icon size={28} strokeWidth={1.5} className="text-[#cdb5f8]" />
       </span>
       <span className="relative mt-4 font-mono text-[11px] text-white/50">0{n}</span>
-      <span className="relative mt-1 block max-w-[85%] font-display text-lg font-semibold leading-snug text-white [text-shadow:0_1px_14px_rgba(11,10,28,0.95)]">{p.title}</span>
-      <span className="relative mt-1.5 block max-w-[80%] text-[13px] leading-relaxed text-white/70 [text-shadow:0_1px_10px_rgba(11,10,28,0.95)]">{p.body}</span>
-      <span className="relative mt-auto inline-flex w-fit items-center gap-2 rounded-lg border border-white/25 bg-[#0b0a1c]/40 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors group-hover:border-brand-200/60 group-hover:bg-white/10">
+      <span className="relative mt-1 block max-w-[85%] font-display text-lg font-semibold leading-snug text-white [text-shadow:0_1px_14px_rgba(4,10,30,0.95)]">{p.title}</span>
+      <span className="relative mt-1.5 block max-w-[80%] text-[13px] leading-relaxed text-white/70 [text-shadow:0_1px_10px_rgba(4,10,30,0.95)]">{p.body}</span>
+      <span className="relative mt-auto inline-flex w-fit items-center gap-2 rounded-lg border border-white/25 bg-[#040a1e]/50 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors group-hover:border-brand-200/60 group-hover:bg-white/10">
         {p.cta} <ArrowRight size={14} />
       </span>
     </Link>
@@ -337,20 +367,20 @@ function HomePage() {
   const signedIn = Boolean(user)
 
   return (
-    <div className="min-h-screen bg-[#0b0a1c]">
+    <div className="min-h-screen" style={{ background: PAGE }}>
       <Navbar dark />
 
-      <main className="relative overflow-hidden bg-[#0b0a1c] bg-[radial-gradient(48rem_36rem_at_72%_18%,rgba(108,92,231,0.32),transparent_70%),radial-gradient(36rem_28rem_at_0%_20%,rgba(108,92,231,0.14),transparent_70%),radial-gradient(44rem_30rem_at_100%_70%,rgba(143,133,238,0.10),transparent_70%)]">
+      <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
         {/* 1. Your future won't wait. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14 lg:px-8">
-          <div className="grid items-center gap-8 xl:grid-cols-[1fr_40rem] xl:gap-6">
+          <div className="grid items-center gap-8 xl:grid-cols-[1fr_44rem] xl:gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/70">
-                Learn <span className="mx-1.5 text-brand-300">•</span> Get guidance <span className="mx-1.5 text-brand-300">•</span> Build skills{' '}
-                <span className="mx-1.5 text-brand-300">•</span> Grow
+              <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/75">
+                Learn <span className="mx-1.5 text-[#8f6bff]">•</span> Get guidance <span className="mx-1.5 text-[#8f6bff]">•</span> Build skills{' '}
+                <span className="mx-1.5 text-[#8f6bff]">•</span> Grow
               </p>
-              <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-[4.6rem]">
-                Your future won’t wait. <span className="bg-gradient-to-r from-brand-300 via-brand-200 to-fuchsia-300 bg-clip-text text-transparent">Neither should your learning.</span>
+              <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-[4rem]">
+                Your future won’t wait. <span className={gradientText}>Neither should your learning.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/75">
                 AI-guided learning, expert mentorship, career guidance and real-world opportunities: everything a student needs,
@@ -408,7 +438,7 @@ function HomePage() {
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHead kicker="Learning programmes" title="Skills for" accent="the AI era." />
-            <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white">
+            <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#b9a6ff] hover:text-white">
               All courses <ArrowRight size={15} />
             </Link>
           </div>
