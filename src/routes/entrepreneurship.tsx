@@ -24,7 +24,7 @@ function EntrepreneurshipPage() {
   const total = ENTREPRENEURSHIP.modules.reduce((n, m) => n + m.minutes, 0)
   return (
     <div className="min-h-screen bg-ink-900">
-      <Navbar />
+      <Navbar dark />
 
       <main>
         <section className="surface-wood-dark relative overflow-hidden">
