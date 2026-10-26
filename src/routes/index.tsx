@@ -67,9 +67,9 @@ interface Pillar {
   id: string
   title: string
   /** The line on its card. */
-  more: string
+  body: string
   icon: LucideIcon
-  photo?: string
+  photo: string
   visitor: Target2
   student: Target2
 }
@@ -78,7 +78,7 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   learning: {
     id: 'learning',
     title: 'Learning Programmes',
-    more: 'AI-powered courses in personal and professional skills, each starting with a free aptitude test and ending with a project a mentor grades.',
+    body: 'AI-powered courses, certificates, free aptitude tests',
     icon: BookOpen,
     photo: 'institutions',
     visitor: { to: '/courses' },
@@ -87,7 +87,7 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   mentorship: {
     id: 'mentorship',
     title: 'Mentorship',
-    more: 'Industry experts who guide you through live sessions and grade the real project you build.',
+    body: 'Industry experts, 1:1 and group sessions',
     icon: Users,
     photo: 'mentors',
     visitor: { to: '/login', search: { next: '/community?category=mentors' } },
@@ -96,7 +96,7 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   career: {
     id: 'career',
     title: 'Career & Internships',
-    more: 'Career guidance and your first internship with a partner company: hands-on, real experience you can show.',
+    body: 'Career guidance, jobs, your first internship',
     icon: Briefcase,
     photo: 'career',
     visitor: { to: '/login', search: { next: '/community?category=internships' } },
@@ -105,7 +105,7 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   abroad: {
     id: 'study-abroad',
     title: 'Study Abroad',
-    more: 'Partner universities abroad, help with your applications and the tests you need to get in.',
+    body: 'Universities, applications, test prep',
     icon: Plane,
     photo: 'study-abroad',
     visitor: { to: '/login', search: { next: '/study-abroad' } },
@@ -114,7 +114,7 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   wellness: {
     id: 'wellness',
     title: 'Wellness & Mental Health',
-    more: 'Someone to talk to, privately, when you need it, and resources to look after yourself.',
+    body: 'Counselling and wellness support, privately',
     icon: Heart,
     photo: 'wellness',
     visitor: { to: '/login', search: { next: '/community?category=wellness' } },
@@ -148,59 +148,78 @@ const SCORE_PARTS: { title: string; body: string; points: number; bar: string }[
 
 const BANDS = ['Getting started', 'Building', 'Strong', 'Standout']
 
-function PartnerCard({ p, wide = false }: { p: (typeof PARTNERS)[number]; wide?: boolean }) {
-  return (
-    <Link
-      to={PARTNERS_HUB.to}
-      search={PARTNERS_HUB.search as never}
-      onClick={() => trackEvent('home_partner', { partner: p.title })}
-      className={`${glass} group relative flex min-h-[5.5rem] items-center overflow-hidden py-3 pl-4 pr-24 transition-colors hover:border-brand-300/50 ${wide ? 'sm:col-span-2' : ''}`}
-    >
-      {/* The photo on the right, fading into the glass. */}
+/** A liquid-glass row: icon, title and line, its photo fading in from the right. */
+function GlassRow({
+  icon: Icon,
+  title,
+  body,
+  photo,
+  wide = false,
+  children,
+}: {
+  icon: LucideIcon
+  title: string
+  body: string
+  photo: string
+  wide?: boolean
+  /** The link itself, wrapping the row. */
+  children: (className: string, inner: React.ReactNode) => React.ReactNode
+}) {
+  const inner = (
+    <>
       <img
-        src={`/home/${p.photo}.webp`}
+        src={`/home/${photo}.webp`}
         alt=""
-        loading="lazy"
         className="absolute inset-y-0 right-0 h-full w-28 object-cover opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)]"
       />
       <span className="relative flex items-center gap-3">
-        <p.icon size={22} className="shrink-0 text-white" />
+        <Icon size={22} className="shrink-0 text-white" />
         <span className="min-w-0">
-          <span className="block font-display text-[15px] font-semibold leading-tight text-white">{p.title}</span>
-          <span className="mt-0.5 block text-[12px] leading-snug text-white/65">{p.body}</span>
+          <span className="block font-display text-[15px] font-semibold leading-tight text-white">{title}</span>
+          <span className="mt-0.5 block text-[12px] leading-snug text-white/65">{body}</span>
         </span>
       </span>
-    </Link>
+    </>
+  )
+  return children(
+    `${glass} group relative flex min-h-[5.5rem] items-center overflow-hidden py-3 pl-4 pr-24 transition-colors hover:border-brand-300/50 ${wide ? 'sm:col-span-2' : ''}`,
+    inner,
   )
 }
 
-/** A pillar as a large card in "everything you need". */
-function NeedCard({ p, signedIn, wide = false }: { p: Pillar; signedIn: boolean; wide?: boolean }) {
+function PartnerCard({ p, wide = false }: { p: (typeof PARTNERS)[number]; wide?: boolean }) {
+  return (
+    <GlassRow icon={p.icon} title={p.title} body={p.body} photo={p.photo} wide={wide}>
+      {(className, inner) => (
+        <Link
+          to={PARTNERS_HUB.to}
+          search={PARTNERS_HUB.search as never}
+          onClick={() => trackEvent('home_partner', { partner: p.title })}
+          className={className}
+        >
+          {inner}
+        </Link>
+      )}
+    </GlassRow>
+  )
+}
+
+/** A pillar in the page's opening: the courses, or sign-in and then its place. */
+function PillarCard({ p, signedIn, wide = false }: { p: Pillar; signedIn: boolean; wide?: boolean }) {
   const target = signedIn ? p.student : p.visitor
   return (
-    <Link
-      to={target.to}
-      search={target.search as never}
-      onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'needs' })}
-      className={`${glass} group relative flex min-h-[13rem] flex-col justify-end overflow-hidden p-5 transition-colors hover:border-brand-300/50 ${wide ? 'lg:col-span-2' : ''}`}
-    >
-      {p.photo && (
-        <img
-          src={`/home/${p.photo}.webp`}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-35 transition-opacity duration-300 [mask-image:linear-gradient(to_top,transparent_15%,black_85%)] group-hover:opacity-50"
-        />
+    <GlassRow icon={p.icon} title={p.title} body={p.body} photo={p.photo} wide={wide}>
+      {(className, inner) => (
+        <Link
+          to={target.to}
+          search={target.search as never}
+          onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'top' })}
+          className={className}
+        >
+          {inner}
+        </Link>
       )}
-      <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400/80 to-brand-700/80 text-white shadow-[0_0_20px_rgba(143,133,238,0.6)] ring-1 ring-white/25">
-        <p.icon size={19} strokeWidth={1.8} />
-      </span>
-      <span className="relative mt-4 block font-display text-xl font-semibold text-white">{p.title}</span>
-      <span className="relative mt-1.5 block max-w-md text-sm leading-relaxed text-white/70">{p.more}</span>
-      <span className="relative mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 transition-colors group-hover:text-white">
-        {p.id === 'learning' ? 'See the courses' : signedIn ? 'Open' : 'Sign in'} <ArrowRight size={14} />
-      </span>
-    </Link>
+    </GlassRow>
   )
 }
 
@@ -226,25 +245,37 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#0b0a1c] bg-[radial-gradient(50rem_34rem_at_75%_8%,rgba(108,92,231,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(108,92,231,0.14),transparent_70%),radial-gradient(44rem_30rem_at_100%_60%,rgba(143,133,238,0.12),transparent_70%),radial-gradient(40rem_30rem_at_10%_95%,rgba(108,92,231,0.16),transparent_70%)]">
-        {/* 1. Everything a student needs: the page opens on the five pillars
-            (Paul, 26 Oct). Learning goes to the courses; the others go
-            straight to sign-in, then to the Community or Study Abroad. */}
+        {/* 1. Everything a student needs, laid out like the partners section
+            (Paul, 27 Oct): the words on the left, the five pillars on the
+            right. Learning goes to the courses; the others go straight to
+            sign-in, then to the Community or Study Abroad. */}
         <section className="relative mx-auto max-w-[72rem] px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-          <div className="max-w-4xl">
-            <p className={eyebrow}>One platform · Powered by AI</p>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              Everything you need, <span className={gradientText}>in one place.</span>
-            </h1>
-            <p className="mt-3 text-base leading-relaxed text-white/70 sm:text-lg">
-              Learning is only one part of growing into a career. MySkills takes care of the rest too.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <NeedCard p={P.learning} signedIn={signedIn} wide />
-            <NeedCard p={P.mentorship} signedIn={signedIn} />
-            <NeedCard p={P.career} signedIn={signedIn} />
-            <NeedCard p={P.abroad} signedIn={signedIn} />
-            <NeedCard p={P.wellness} signedIn={signedIn} />
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <p className={eyebrow}>Made for students in the AI era</p>
+              <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
+                Everything you need, <span className={gradientText}>in one place.</span>
+              </h1>
+              <p className="mt-4 text-base leading-relaxed text-white/70 sm:text-lg">
+                Courses with an AI coach, real mentors, your first internship, study abroad and wellness support: one
+                platform for every need a student has as you step into the AI era.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'top' })} className={primaryCta}>
+                  Take the free aptitude test <ArrowRight size={17} />
+                </Link>
+                <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 hover:text-white">
+                  See all courses <ArrowRight size={15} />
+                </Link>
+              </div>
+            </div>
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              <PillarCard p={P.learning} signedIn={signedIn} wide />
+              <PillarCard p={P.mentorship} signedIn={signedIn} />
+              <PillarCard p={P.career} signedIn={signedIn} />
+              <PillarCard p={P.abroad} signedIn={signedIn} />
+              <PillarCard p={P.wellness} signedIn={signedIn} />
+            </div>
           </div>
         </section>
 
