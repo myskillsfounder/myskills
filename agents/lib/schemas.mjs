@@ -88,7 +88,10 @@ export const module = obj({
   quiz: { type: 'array', items: question },
 })
 
-export const final = obj({ questions: { type: 'array', items: question } })
+// A final question also names the skill it tests: the Foundation assessment
+// places students per skill, and publishing needs 2+ per foundation skill.
+const finalQuestion = obj({ ...question.properties, skill: str })
+export const final = obj({ questions: { type: 'array', items: finalQuestion } })
 
 export const SEVERITY = ['must_fix', 'should_fix', 'idea']
 

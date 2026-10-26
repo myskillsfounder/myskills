@@ -8,7 +8,15 @@ import { Cancelled, runJob } from '../lib/pipeline.mjs'
 import { publishProblems, qualityFindings } from '../lib/checks.mjs'
 import { prefixFor, structureOf } from '../lib/content.mjs'
 
-const DA = JSON.parse(fs.readFileSync(new URL('../../docs/programmes/Data analytics/ai-powered-data-analytics.json', import.meta.url), 'utf8'))
+// The Data Analytics draft, with its final questions tagged two per
+// foundation skill (the Foundation publish rule), so these tests are about the
+// revisions they set up rather than that rule.
+const DA = (() => {
+  const c = JSON.parse(fs.readFileSync(new URL('../../docs/programmes/Data analytics/ai-powered-data-analytics.json', import.meta.url), 'utf8'))
+  const base = [...new Set(c.modules.filter((m) => m.level === 'foundation').map((m) => m.skill))]
+  c.final.questions = c.final.questions.map((q, i) => ({ ...q, skill: base[Math.floor(i / 2) % base.length] }))
+  return c
+})()
 const words = (n) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ')
 const clone = (x) => JSON.parse(JSON.stringify(x))
 
@@ -82,7 +90,8 @@ function fakeClaude({ review, revise }) {
         if (label === 'module 3') m.skill = 'network-basics'
         return m
       }
-      if (label === 'final') return { questions: [1, 2, 3, 4, 5].map((n) => question(n, 'Advanced')) }
+      // Each foundation skill needs 2+ final questions tagged with it.
+      if (label === 'final') return { questions: [1, 2, 3, 4, 5].map((n) => ({ ...question(n, 'Advanced'), skill: n <= 3 ? 'data-literacy' : 'network-basics' })) }
       if (label.startsWith('review')) return review(++round)
       if (label.startsWith('revise')) return revise(label, prompt)
       throw new Error(`unexpected call ${label}`)

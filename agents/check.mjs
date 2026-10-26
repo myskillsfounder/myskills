@@ -37,10 +37,10 @@ const standard = [...standardFindings(c), ...(flags.includes('--links') ? await 
 console.log(
   JSON.stringify(
     {
-      ready_to_publish: publishProblems(c).length === 0,
+      ready_to_publish: publishProblems(c, locked).length === 0,
       must_fix: findings.filter((f) => f.severity === 'must_fix').length,
       should_fix: findings.filter((f) => f.severity === 'should_fix').length,
-      stats: stats(c),
+      stats: stats(c, { locked }),
       findings,
       standard: {
         should_fix: standard.length,
