@@ -108,16 +108,20 @@ function Intro() {
       {/* What MySkills is, what this page gives them, and what happens after
           the tap, before they choose. */}
       <main className="flex flex-1 flex-col justify-center py-6">
-        <p className="text-xs font-semibold text-brand-200">
-          Personal &amp; professional development, powered by AI
-        </p>
-        <h1 className="mt-2.5 font-display text-[1.875rem] font-semibold leading-[1.12] tracking-tight text-white">
-          Find out where you’d start
+        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-500/40 to-brand-400/20 px-3 py-1 text-xs font-semibold text-brand-100 ring-1 ring-brand-300/30">
+          <Sparkles size={13} />
+          Powered by AI
+        </span>
+        <h1 className="mt-3 font-display text-[1.875rem] font-semibold leading-[1.12] tracking-tight text-white">
+          Know your aptitude before you learn
         </h1>
-        <p className="mt-2 text-[15px] text-white/70">Free · a few minutes · no account yet</p>
+        <p className="mt-2.5 text-[15px] leading-relaxed text-white/70">
+          Take a short aptitude test first. Your AI coach reads your strengths and shows you where to start. Free, and
+          no account needed yet.
+        </p>
 
         <ol className="mt-5 grid grid-cols-3 gap-2" aria-label="How it works">
-          {['Pick a programme', 'A short test', 'Your results'].map((s, i) => (
+          {['Pick a programme', 'Take the aptitude test', 'Your AI coach’s read'].map((s, i) => (
             <li key={s} className="flex flex-col items-center gap-1.5 rounded-xl bg-white/[0.06] px-2 py-2.5 text-center">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-500/40 font-display text-xs font-semibold text-white">
                 {i + 1}
