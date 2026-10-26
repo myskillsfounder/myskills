@@ -8,6 +8,7 @@ const columns = [
       { label: 'Digital Marketing', href: '/digital-marketing' },
       { label: 'Global Leadership', href: '/career-readiness' },
       { label: 'AI-Powered Entrepreneurship', href: '/entrepreneurship' },
+      { label: 'Blog', href: '/blog' },
     ],
   },
   {
