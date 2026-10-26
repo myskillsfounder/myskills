@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
 import { ArrowRight, Award, BadgeCheck, Briefcase, GraduationCap, LayoutGrid, Sparkles } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requireGuest } from '@/lib/guards'
@@ -20,7 +20,7 @@ import { isTestRoute, pendingAptitudeRoute, savePendingAptitude, type EngineTest
 import { fetchGuestAptitude } from '@/lib/programmeStudent'
 import { peekGuideAnswers, saveGuideAnswers } from '@/lib/guideAnswers'
 import { strongestFor } from '@/lib/guestResult'
-import { setSiteMode } from '@/lib/siteMode'
+import { GUIDE_ON, setSiteMode } from '@/lib/siteMode'
 import type { LeadProgramme } from '@/lib/programmes'
 import { InlineSelect } from '@/components/onboarding/InlineSelect'
 import { AnswerPanel } from '@/components/onboarding/AnswerPanel'
@@ -40,8 +40,12 @@ import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
  * "Standard website" switches to the usual site (lib/siteMode.ts).
  */
 export const Route = createFileRoute('/start')({
-  // Someone with an account has nothing to be onboarded into: home.
-  beforeLoad: requireGuest,
+  // Someone with an account has nothing to be onboarded into: home. While the
+  // guide is off (lib/siteMode.ts), everyone goes to the home page.
+  beforeLoad: async () => {
+    if (!GUIDE_ON) throw redirect({ to: '/' })
+    await requireGuest()
+  },
   component: StartPage,
 })
 

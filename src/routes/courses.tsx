@@ -5,7 +5,7 @@ import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 import { ProgrammeLeadForm } from '@/components/programmes/ProgrammeLeadForm'
-import { setSiteMode } from '@/lib/siteMode'
+import { GUIDE_ON, setSiteMode } from '@/lib/siteMode'
 import { trackEvent } from '@/lib/analytics'
 import { COURSES, type Course } from '@/content/courses'
 
@@ -198,19 +198,21 @@ function CoursesPage() {
               ))}
             </ol>
 
-            <div className="mt-10 flex flex-col items-start justify-between gap-4 rounded-2xl border border-brand-300/20 bg-gradient-to-r from-brand-600/30 to-brand-400/10 p-6 sm:flex-row sm:items-center">
-              <div>
-                <p className="font-display text-xl font-semibold text-white">Not sure which course is for you?</p>
-                <p className="mt-1 text-sm text-white/70">Four quick choices, and the AI guide shows you where to start.</p>
+            {GUIDE_ON && (
+              <div className="mt-10 flex flex-col items-start justify-between gap-4 rounded-2xl border border-brand-300/20 bg-gradient-to-r from-brand-600/30 to-brand-400/10 p-6 sm:flex-row sm:items-center">
+                <div>
+                  <p className="font-display text-xl font-semibold text-white">Not sure which course is for you?</p>
+                  <p className="mt-1 text-sm text-white/70">Four quick choices, and the AI guide shows you where to start.</p>
+                </div>
+                <Link
+                  to="/start"
+                  onClick={() => setSiteMode('ai')}
+                  className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2"
+                >
+                  <Sparkles size={15} /> Find my starting point
+                </Link>
               </div>
-              <Link
-                to="/start"
-                onClick={() => setSiteMode('ai')}
-                className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2"
-              >
-                <Sparkles size={15} /> Find my starting point
-              </Link>
-            </div>
+            )}
             <p className="mt-6 flex items-center gap-2 text-sm text-white/50">
               <Check size={14} className="text-emerald-300" /> Free to start · No account needed for the aptitude test
             </p>
