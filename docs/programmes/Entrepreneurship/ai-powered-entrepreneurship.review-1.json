@@ -1,0 +1,266 @@
+{
+  "verdict": "needs_work",
+  "summary": "A strong first draft. The teaching is concrete and Indian, every module has two hands-on tasks with free tools, the questions test judgement with plausible wrong options, and check.mjs passes with 0 findings (right answer longest in 5 of 43). Two dated payment facts are wrong today: Module 6 says the UPI merchant fee began on 15 October 2026, but NPCI postponed it to after Diwali with no date, and Module 3 says UPI apps let you request a payment, which NPCI stopped for person-to-person payments on 1 October 2025. Those are the only must-fixes; Module 3 and Module 6 score 3 on relevance until they are fixed. On Paul's open points: keep 16 hours (an 8-hour project is realistic), keep Module 6 at 70 minutes, accept 4 to 5 Learn cards (one idea each, the app renders any number), and make the equity outcome conditional on having co-founders and add it to the project deliverables.",
+  "strengths": [
+    "Every Learn card teaches one idea with a worked Indian example in rupees (Ananya's laundry ladder, Simran's ₹1,000 test with code words, Sneha's week-by-week cash, Arjun and Priya's 18-month vesting sum), and names the common mistake. Keep this pattern.",
+    "Fast-changing facts are handled as method: AI builder limits, LinkedIn limits and gateway fees are dated or sent to the provider's own page, and no quiz or final question tests a fee, limit or price as a number (m06-q3, f11).",
+    "The wrong options are the brief's real first-founder mistakes (compliments as evidence, 'would you' questions, likes over orders, cost-plus pricing, handshake equity, AI personas as customers), with a reason for each in why_wrong. Every numeric item was recomputed and is correct (m01-q3, m04-q2, m05-q4, m06-q2, m06-q4, m07-q1, f07, f11, f12, f14).",
+    "The project and rubric are specific to the field and hard to fake: 5 real conversations, a commitment shown live, a success goal written before the MVP test, and an evidence-ladder rung for each piece of evidence."
+  ],
+  "findings": [
+    {
+      "target": "module:ape-m06",
+      "severity": "must_fix",
+      "problem": "Card 3 'Count payment fees, and date them' says the UPI fee 'began on 15 October 2026', resting on news reports, and adds 'We could not see NPCI's own circular'. NPCI's FAQ of 15 September 2026 is on npci.org.in and set 15 October (Q5), but NPCI then postponed the start to after Diwali, with the date to be notified. So the card teaches something false today, and tells students we couldn't check the source.",
+      "fix": "Replace the UPI paragraph with: \"UPI (checked 26 October 2026): NPCI's FAQ of 15 September 2026 sets a fee of 0.4% on UPI payments to merchants above ₹2,000, capped at ₹300 a payment. Payments up to ₹2,000 stay free, and so do payments between people. Small sellers who receive up to ₹1 lakh a month through a UPI QR into their own account pay nothing. Sellers can't add the fee to the customer's price. The fee was due on 15 October 2026, but NPCI postponed it to after Diwali. Check npci.org.in or your bank for the start date.\" Then add one line of worked example: \"Sneha's ₹349 candles are under ₹2,000, so UPI costs her nothing either way. A payment gateway does charge her.\" Delete 'We could not see NPCI's own circular'. Keep the Razorpay paragraph. Task t1's hint ('Check the dated card') still works after this change.",
+      "source": "https://www.npci.org.in/uploads/FA_Qs_Merchant_Discount_Rate_MDR_on_Select_UPI_P2_M_Transactions_58dba1d39e.pdf ; https://www.medianama.com/2026/10/223-npci-delays-upi-mdr-festive-season/",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 5,
+      "standard": "relevance"
+    },
+    {
+      "target": "module:ape-m03",
+      "severity": "must_fix",
+      "problem": "Card 4 'Turn a yes into a payment, then follow up' says 'Most UPI apps also let you request a payment.' NPCI stopped person-to-person UPI collect requests from 1 October 2025. Only merchants can still send them. A student taking payments into a personal UPI ID, as this module teaches, can't request a payment, so a learner who tries will fail.",
+      "fix": "Replace the sentence with: \"The customer pays by scanning your QR code or by sending money to your UPI ID. Since October 2025, UPI doesn't let one person send another a payment request, so you can't 'request' the money.\" Or simply delete the sentence.",
+      "source": "https://www.businesstoday.in/amp/personal-finance/banking/story/npci-to-tighten-upi-rules-peer-to-peer-collect-feature-to-end-in-october-489244-2025-08-13",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 5,
+      "standard": "relevance"
+    },
+    {
+      "target": "overview",
+      "severity": "should_fix",
+      "problem": "Overview outcome 5 promises 'a written equity split with vesting', but no project deliverable asks for it. Deliverable 5 asks only for 'who is on the team', and the rubric mentions vesting only at level 5 of 'plan'. In Module 7 the learner writes a split only for the invented pickle founders (t1); t2 asks for a hiring brief and team habits, not their own roles or split. A solo founder can't show the outcome at all. (Blueprint gap G2.)",
+      "fix": "1. Reword outcome 5: \"Plan a founding team: one owner for each area and, if you have co-founders, a written equity split with vesting\". 2. Change project deliverable 5's team part to: \"who owns which area; if you have co-founders, the equity split and vesting you have agreed in writing (a solo founder writes the split and vesting they would offer a co-founder)\". 3. Add a part 3 to Module 7 task t2: \"Write who owns each area of your business. If you have, or want, a co-founder, write the split and vesting you would propose, in two lines.\" 4. The Assessment Architect then adds the team agreement at Competent (3) in the 'plan' rubric descriptor, not only at Advanced (5).",
+      "source": "",
+      "owner": "course",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m01",
+      "severity": "should_fix",
+      "problem": "Card 5's bottom-up example prices Ananya's laundry at ₹800 a month. The module's own evidence argues against that price: card 3 says students pay a dhobi about ₹150 a week (about ₹600 a month), and card 4 says two real students called ₹150 'already too much'. A module about trusting evidence then builds its estimate on a price the evidence contradicts, and never says so.",
+      "fix": "In card 5, use the price the evidence supports and say where it comes from: \"If 1 in 10 would pay ₹600 a month, what four students already pay a dhobi, that is 360 × ₹600 = ₹2.16 lakh a month.\" Keep the line that marks '1 in 10' as a guess to test.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m05",
+      "severity": "should_fix",
+      "problem": "'D2C' is never explained, though it appears four times in Module 5 (card 1 'an alumnus who works at a D2C brand', card 2 'a D2C tea brand', m05-q2 'D2C skincare brand') and once in the overview. 'PG' is also unexplained in Module 1 (card 5, t2, m01-q3). Second-language readers and students outside metros may not know either term.",
+      "fix": "At the first use in Module 5 card 1, write \"a D2C (direct-to-consumer) brand, one that sells online straight to customers rather than through shops\". In the overview summary, write \"D2C (direct-to-consumer) brands\". In Module 1 card 5, write \"a washing machine in a PG (paying-guest housing)\".",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m03",
+      "severity": "should_fix",
+      "problem": "m03-q1 copies task t1's scenario with the name changed. t1 is Karthik's ₹1,500-a-month weekend spoken-English class in Coimbatore; the quiz is Karan's ₹1,500-a-month weekend spoken-English class in Coimbatore. The question then rewards remembering the task rather than applying the idea to a new case, and two names for one business confuses readers.",
+      "fix": "Give m03-q1 a new context and keep its four kinds of ending. For example, scenario: \"Sunita in Nashik sells handmade rakhi gift sets for ₹450 to college students sending them to brothers in other cities. She has described the problem, the set, what early buyers did and the price.\" Right answer: \"Shall I keep one for you to post by Friday? A ₹150 advance by UPI holds it.\" Adapt the three wrong options in the same way: 'let me know', asking about others, asking for support.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m01",
+      "severity": "should_fix",
+      "problem": "m01-q2 can be argued two ways. The stem asks for 'the strongest evidence that her idea can work'. Mr Khan has paid a college student ₹500 a month for coding help since June, which is ongoing money spent on almost exactly Lakshmi's service, and a strong student or an expert could defend it as the best sign the idea can work. The key (Mrs Iyer's introduction) is right only under the ladder's ranking. The blueprint already flags this risk.",
+      "fix": "Make the stem ask for the ladder judgement the module teaches: \"Which note sits highest on the evidence ladder?\" Then make Mr Khan's note clearly rung 2 without being the same service: \"Mr Khan bought his son a ₹400 coding workbook last term.\" Update the explanation and why_wrong to match.",
+      "source": "https://mtlynch.io/book-reports/the-mom-test/",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "should_fix",
+      "problem": "f04 'Fourteen yeses' is labelled Advanced (15 marks), but it is the single step that m02-q3 tests at Intermediate: judge the result against the goal written in advance, and don't move the goal. Knowing that promises are the bottom rung adds little. The label isn't honest, and it overweights the item.",
+      "fix": "Relabel f04 as Intermediate. The final becomes 4 Beginner, 7 Intermediate, 3 Advanced and 1 Expert, still harder than the quizzes (10 B, 15 I, 3 A). Update the blueprint's question map and total marks (155). If you'd rather keep 4 Advanced items, make f04 a two-step judgement: add that 2 of the 3 who paid are Aman's wing-mates, and ask what he should report and test next.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "The assessment blueprint (item 7 of 'For the team', and the Accuracy row) still says the UPI MDR rules rest on news reports and that NPCI's circular could not be opened. Both are now out of date: the NPCI FAQ is readable on npci.org.in, and the start was postponed.",
+      "fix": "In ai-powered-entrepreneurship.assessment.md, replace item 7 with: \"M6 card 3 states the UPI MDR from NPCI's FAQ of 15 September 2026 (npci.org.in). The start was postponed to after Diwali 2026, date to be notified. Not tested. Recheck before publishing.\"",
+      "source": "https://www.medianama.com/2026/10/223-npci-delays-upi-mdr-festive-season/",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": 5,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Paul's open point: each module has 4 or 5 Learn cards, while the house style says 3. I don't count this as a defect. Each card teaches one idea in 130 to 160 words, with a worked example. Reading takes about 6 minutes a module, which fits inside the stated minutes (check.mjs estimates 58 to 60). The app renders any number of cards (ModuleFlow.tsx and programmes.$slug.m.$module.tsx map over m.learn). Squeezing 5 ideas into 3 cards would break the Module Standard's 'one idea each' rule.",
+      "fix": "Keep the cards. Change houseStyle() in agents/lib/prompts.mjs to \"3 to 5 Learn cards (one idea each)\" so future reviews don't flag it.",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Paul's open points on time. 16 hours adds up: 430 module minutes, plus a 30-minute final and an 8-hour project, is 15.7 hours. 8 hours for the project is realistic: about 4 hours to arrange and hold 5 conversations, about 2 hours for the MVP and 5 user tests, about 1.5 hours for the money and plan, and the write-up. Module 6 at 70 minutes is honest: t2 (price, a four-week cash flow in Sheets and a funding choice) is the heaviest task in the programme. The summary doesn't say how the 16 hours split, so a learner may expect 16 hours of lessons.",
+      "fix": "Keep 16 hours and Module 6 at 70 minutes. In the overview summary, add: \"About 7 hours of modules, then about 8 hours of project work spread over two weeks.\"",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": 3,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m06",
+      "severity": "idea",
+      "problem": "Card 4 defines runway as 'Cash ÷ monthly loss' with no worked example, and nothing in the module uses it. Card 5 says an investor's ₹5 lakh for 10% 'values the business at ₹50 lakh' without saying that figure includes the new money.",
+      "fix": "Add to card 4: \"Example: ₹6,000 left and losing ₹2,000 a month gives 3 months of runway.\" In card 5, write \"values the business at ₹50 lakh, including the investor's ₹5 lakh\".",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:ape-m04",
+      "severity": "idea",
+      "problem": "The module is built around a ₹1,000 test (outcome, card 4, t2). Some learners can't spend ₹1,000. The task only asks for a plan, but nothing says a zero-rupee test counts.",
+      "fix": "Add to t2's hint: \"No budget? Plan a ₹0 test instead: free posts in one group and samples you make yourself, measured the same way.\"",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:ape-m03",
+      "severity": "idea",
+      "problem": "The outcome holds two things, one of which the module can't deliver: 'Run a sales conversation that ends with a clear ask, and take a first payment or pre-order by UPI with a follow-up plan'. The tasks produce a pitch and a sales kit; a real payment happens only in the project. The same two-in-one pattern appears in Module 5 ('Map ... and write ...') and Module 7 (roles, equity and a brief).",
+      "fix": "Module 3 outcome: \"Write a one-minute pitch that ends with a clear ask for a UPI payment or pre-order, with replies to common doubts and a follow-up.\" Tighten Modules 5 and 7 the same way, naming the one artefact the tasks produce.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "outcome"
+    },
+    {
+      "target": "aptitude",
+      "severity": "idea",
+      "problem": "a09 'I stop contacting people who don't reply at once, because following up feels pushy' joins a behaviour to a reason. A learner who stops for another reason can't answer it cleanly.",
+      "fix": "\"When someone doesn't reply to my first message, I don't contact them again.\" (reversed)",
+      "source": "",
+      "owner": "assessment",
+      "category": "aptitude",
+      "rule": null,
+      "standard": null
+    }
+  ],
+  "module_scores": [
+    {
+      "module": "ape-m01",
+      "scores": { "outcome": 4, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "outcome": "The outcome covers only the interview script. The module also teaches and tests the evidence ladder and bottom-up sizing (q2, q3, t2).",
+        "explanation": "Card 5 prices the estimate at ₹800 a month, against the module's own evidence (₹150 a week, 'too much').",
+        "feedback": "m01-q2's key can be argued: Mr Khan's ongoing ₹500 a month for the same service.",
+        "time": "t2 has four parts, including a sourced estimate and editing 8 AI questions; it will take more than 20 minutes for most learners.",
+        "inclusion": "'PG' is not explained."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m02",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "time": "t2 asks for an MVP built and checked on a phone, an AI-drafted text with changes marked, and a five-user test plan, all in about 20 minutes. That is tight for a first-timer."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m03",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 3, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "outcome": "Two outcomes in one, and 'take a first payment' can't happen inside the module.",
+        "relevance": "Card 4 says UPI apps let you request a payment; NPCI ended person-to-person collect requests on 1 October 2025."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m04",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "inclusion": "The whole module assumes a ₹1,000 test budget, with no ₹0 route for learners who have no money to spend."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m05",
+      "scores": { "outcome": 4, "explanation": 4, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "outcome": "Two outcomes in one: map the network and write three messages.",
+        "explanation": "'D2C' is used four times without explanation.",
+        "time": "t1 needs 20 entries, each with an ask and an offer, plus finding the college's E-cell or incubator. That is more than 20 minutes.",
+        "inclusion": "'D2C' is unexplained jargon for second-language readers."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m06",
+      "scores": { "outcome": 5, "explanation": 4, "practice": 5, "feedback": 5, "relevance": 3, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "explanation": "Runway has no worked example. The valuation line doesn't say it includes the new money.",
+        "relevance": "Card 3 says the UPI fee began on 15 October 2026; NPCI postponed it to after Diwali, with no date yet."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m07",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 4, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "outcome": "Three products in one outcome: roles, an equity split with vesting, and a brief.",
+        "practice": "The learner writes roles and a split only for an invented team (t1). Neither task asks them to write their own roles or proposed split, which is what the outcome and the overview promise."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": [
+    {
+      "rule": "On the day of review, re-check any regulatory or payment fact whose start date falls within the last 60 days or the next 90 days on the regulator's own site (NPCI, RBI, a ministry). Until a start is confirmed, write 'is due to start on' or 'from a date NPCI will announce', not 'began on'. Check payment steps against current NPCI rules too: for example, person-to-person UPI collect requests ended on 1 October 2025.",
+      "why": "Module 6 said the UPI MDR 'began on 15 October 2026'. NPCI had postponed it two weeks earlier. Module 3 told learners to 'request a payment', which UPI stopped allowing for person-to-person payments a year ago. Scheduled payment rules in India are often deferred."
+    },
+    {
+      "rule": "Every overview outcome must be shown by the learner's own work: a project deliverable, or a module task done on their own idea. If an outcome depends on circumstances (co-founders, a budget, existing customers), say so in the outcome and give a route for learners without them.",
+      "why": "The overview promised 'a written equity split with vesting', but only the quizzes and an invented case asked for one. A solo founder had no way to show it."
+    },
+    {
+      "rule": "Don't reuse a Practise task's scenario (the same business, city and price) for a quiz question in the same module, even with the person renamed. Quiz scenarios need a new context, so they test transfer rather than memory.",
+      "why": "m03-q1 (Karan) copied t1 (Karthik): the same ₹1,500 weekend spoken-English class in Coimbatore."
+    }
+  ]
+}

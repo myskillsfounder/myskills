@@ -27,6 +27,45 @@
         "rulesBroken": {}
       },
       "note": "Seeded from ai-powered-data-analytics-review.md: the first draft's right answer was the longest in 45 of 55; hours said 50 against 9 of modules. Its review lessons became playbook rules 1-8. No per-finding counts were kept, so the first numbers are partial."
+    },
+    {
+      "date": "2026-10-26",
+      "programme": "ai-powered-entrepreneurship",
+      "job": "draft",
+      "rounds": 2,
+      "lessonsAdded": null,
+      "first": {
+        "stage": "draft (review 1)",
+        "questions": 43,
+        "mustPer10": 0.5,
+        "shouldPer10": 1.6,
+        "rightIsLongestPct": 11.6,
+        "verdict": "needs_work",
+        "byCategory": {
+          "accuracy": 3,
+          "coverage": 1,
+          "teaching": 1,
+          "house-style": 1,
+          "question-design": 3
+        },
+        "rulesBroken": {
+          "5": 3
+        }
+      },
+      "last": {
+        "stage": "round 2",
+        "questions": 43,
+        "mustPer10": 0,
+        "shouldPer10": 0.7,
+        "rightIsLongestPct": 11.6,
+        "verdict": "ready",
+        "byCategory": {
+          "question-design": 1,
+          "house-style": 2
+        },
+        "rulesBroken": {}
+      },
+      "note": ""
     }
   ],
   "outcomes": []

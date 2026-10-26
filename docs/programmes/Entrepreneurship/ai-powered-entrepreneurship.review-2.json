@@ -1,0 +1,213 @@
+{
+  "verdict": "ready",
+  "summary": "All nine round-1 findings are resolved in substance, and so are most of the ideas. Module 6 now gives the UPI MDR terms from NPCI's 15 September 2026 FAQ with the start 'to be announced', Module 3 no longer suggests a UPI payment request, the equity outcome is conditional and evidenced (O5, deliverable 5, M7 t2, rubric 'plan' at Competent), and m01-q2, m03-q1, f04 and a09 are fixed. check.mjs passes with 0 findings, the final is 4B/7I/3A/1E = 155 marks (pass 93), and every arithmetic item was recomputed and is correct. No must-fix remains and every module scores at least 4 on every dimension, so the programme meets the ready rule. Three small should-fixes came from the revisions themselves: m03-q1 still says 'his pitch' for Sunita, and the ₹600 fix in M1 card 5 and the D2C fix in M5 card 1 made 28- and 32-word sentences. Recheck the UPI MDR start date on npci.org.in on the day of publishing.",
+  "strengths": [
+    "The round-1 fixes were made properly, not just reworded: M1's estimate now uses the price the module's own evidence supports, M6's runway and valuation lines have worked examples, and M4 t2 gives a ₹0 route for learners with no budget.",
+    "The equity outcome is now shown by the learner's own work with a route for solo founders: overview O5, project deliverable 5, M7 t2 part 1 and the 'plan' descriptor at Competent all say the same thing.",
+    "Dated payment facts are handled as method and stated exactly: M6 card 3 dates the NPCI FAQ, gives the ₹2,000 threshold, the ₹300 cap and the small-merchant exemption, says the start is to be announced, and no question tests a fee as a number.",
+    "The wrong options remain real first-founder mistakes with a reason each; every numeric item (m01-q3, m04-q2, m05-q4, m06-q2, m06-q4, m07-q1, f07, f11, f12, f14) and the M1, M6 and M7 worked examples recompute correctly."
+  ],
+  "findings": [
+    {
+      "target": "module:ape-m03",
+      "severity": "should_fix",
+      "problem": "m03-q1's question still reads 'Which last line is the best way to end his pitch?', but the new scenario's seller is Sunita. The pronoun is a leftover from the old Karan scenario. A second-language reader may think a different person is pitching. The blueprint's self-review says every question was answered without the key, but this slip got through.",
+      "fix": "Change the question to: \"Which last line is the best way to end her pitch?\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:ape-m01",
+      "severity": "should_fix",
+      "problem": "The round-1 fix to card 5 'Size the market from the bottom up' made a 28-word sentence with a clause nested inside the sum: 'If 1 in 10 would pay ₹600 a month, what students already pay a dhobi (₹150 a week), that is 360 × ₹600 = ₹2.16 lakh a month.' It is hard to parse in a second language, and the card is now 161 words.",
+      "fix": "Replace that sentence with three: \"Her guess: 1 in 10 would pay ₹600 a month. That is what four students already pay a dhobi (₹150 a week). 360 students × ₹600 = ₹2.16 lakh a month.\" Keep the next line about marking the guesses.",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:ape-m05",
+      "severity": "should_fix",
+      "problem": "The round-1 fix to card 1 'Map your network from zero' put the D2C definition inside a 32-word sentence: 'They included an uncle with a tea-estate contact, an E-cell mentor and an alumnus who works at a D2C (direct-to-consumer) brand, one that sells online straight to customers rather than through shops.'",
+      "fix": "Split it: \"They included an uncle with a tea-estate contact, an E-cell mentor and an alumnus who works at a D2C (direct-to-consumer) brand. A D2C brand sells online straight to its customers, not through shops.\"",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:ape-m04",
+      "severity": "idea",
+      "problem": "Card 4 says 'Meta does not publish a fixed minimum budget for ads.' This is defensible: Meta's 'Best practices for minimum budgets' says the minimum depends on the goal, bid strategy, currency and other settings. But a learner may read it as 'there is no minimum', and Ads Manager will refuse a budget that is too low.",
+      "fix": "Write: \"Meta's minimum daily budget depends on your ad's goal and currency, and Ads Manager warns you if yours is too low. Small budgets also give noisy results.\"",
+      "source": "https://www.facebook.com/business/help/203183363050448",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 8,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m07",
+      "severity": "idea",
+      "problem": "Task t2 part 1 says the co-founder line twice: 'If you have, or want, a co-founder, write the split and vesting you would propose, in two lines. Working alone? Write the split and vesting you would offer a co-founder.' Both cases end in the same instruction, so a solo learner may wonder which sentence applies.",
+      "fix": "Write: \"Then, in two lines, write the equity split and vesting: the one you have agreed or would propose to your co-founders, or, if you work alone, the one you would offer a co-founder.\"",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "module:ape-m06",
+      "severity": "idea",
+      "problem": "Card 3's UPI example uses 'Imran's ₹1,200 phone stands', but Imran is the textbook reseller in M4 t1, and f11 is Ravi's phone stands. Reusing a name for a different business is a small source of confusion.",
+      "fix": "Use a new name and business: \"Worked example: Pallavi's ₹1,200 brass diyas are under ₹2,000, so UPI adds no fee.\"",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "overview",
+      "severity": "idea",
+      "problem": "After the hours sentence was added, the summary has 4 sentences; the house style asks for 2 to 3.",
+      "fix": "Merge the second and third: \"Seven practical modules (about 7 hours) cover evidence, a first version of your product, selling, marketing, networking, money and your team; then a two-week project with a mentor (about 8 hours) takes your idea to real customer conversations.\"",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m05",
+      "severity": "idea",
+      "problem": "Outcome 4, not 5: it still holds two products, 'Map your founder network and write an introduction request, a LinkedIn note and a referral or partnership offer'. Modules 3 and 7 were tightened to one artefact; Module 5 wasn't. t1 and t2 also each take more than 20 minutes (20 map entries with an ask and an offer, plus finding the E-cell), which holds time at 4.",
+      "fix": "Outcome: \"Write three outreach messages people are glad to answer (an introduction request, a LinkedIn note and a referral or partnership offer), aimed at contacts you chose from your own network map.\" In t1, lower the map to at least 15 entries.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "outcome"
+    },
+    {
+      "target": "module:ape-m01",
+      "severity": "idea",
+      "problem": "Outcome 4, not 5: it names only the interview script, but the module also teaches and tests the evidence ladder and bottom-up sizing (q2, q3, t2). Time 4: t2 has four parts (problem sentence, 8 AI questions edited, a sourced estimate, 3 substitutes), more than 20 minutes for most learners.",
+      "fix": "Outcome: \"Write an interview plan for your idea: a problem statement for one named group, past-behaviour questions, and a bottom-up estimate with each guess marked.\" Cut t2's AI questions from 8 to 5.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "outcome"
+    },
+    {
+      "target": "module:ape-m02",
+      "severity": "idea",
+      "problem": "Time 4, not 5: t2 asks for an MVP built and checked on a phone, an AI-drafted text with changes marked, and a five-user test plan in about 20 minutes. That is tight for a first-timer.",
+      "fix": "Move the five-user test plan into t1 (which already writes the success goal), so t2 is only the build and the marked AI changes.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "The blueprint's question map still describes O5 as 'set up a team with roles, and equity with vesting', but the overview outcome is now 'Plan a founding team: one owner for each area and, if you have co-founders, a written equity split with vesting'.",
+      "fix": "In ai-powered-entrepreneurship.assessment.md, change O5 to: \"plan a founding team: an owner for each area and, with co-founders, a written split with vesting (solo: the split they would offer)\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Carried from round 1: houseStyle() in agents/lib/prompts.mjs still says '3 Learn cards', while this programme uses 4 or 5 by Paul's decision (one idea each). Future reviews will keep flagging it. The MDR start date is also still to be announced.",
+      "fix": "Change houseStyle() to \"3 to 5 Learn cards (one idea each)\". Before publishing, recheck npci.org.in for the UPI MDR start date and update M6 card 3's 'checked' date.",
+      "source": "https://www.medianama.com/2026/10/223-npci-delays-upi-mdr-festive-season/",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": null
+    }
+  ],
+  "module_scores": [
+    {
+      "module": "ape-m01",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "outcome": "Unchanged: covers only the script, while the module also teaches the ladder and sizing.",
+        "time": "Unchanged: t2 has four parts and will take more than 20 minutes.",
+        "inclusion": "PG is now explained, but the ₹600 fix made a 28-word nested sentence in card 5."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m02",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "time": "Unchanged: t2 (build, AI changes marked, five-user test plan) is tight in about 20 minutes."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m03",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "inclusion": "m03-q1 says 'his pitch' for Sunita, which can confuse a second-language reader."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m04",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {},
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m05",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "outcome": "Unchanged: two products in one outcome (a map and three messages).",
+        "time": "Unchanged: t1's 20 entries with an ask and an offer, plus finding the E-cell, take more than 20 minutes.",
+        "inclusion": "D2C is now explained, but inside a 32-word sentence in card 1."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m06",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {},
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m07",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {},
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": [
+    {
+      "rule": "After any fix that changes a person, business or number, re-read every sentence that refers to it in the same item (stem, options, explanation, why_wrong) and the sentence you edited: update pronouns and names, and split any sentence the fix pushed over 20 words.",
+      "why": "In round 2, m03-q1's new seller Sunita was still called 'his', and the fixes to M1 card 5 and M5 card 1 turned short sentences into 28- and 32-word ones. Fixes are written fast and checked less than first drafts."
+    }
+  ]
+}
