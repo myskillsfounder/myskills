@@ -48,6 +48,8 @@ const PHONE_APP = [
   '/foundation-assessment',
   '/certificate',
   '/profile',
+  // A course-engine programme (Entrepreneurship): its test, modules and final.
+  '/programmes',
 ]
 
 export const inPhoneApp = (pathname: string) => PHONE_APP.some((p) => pathname === p || pathname.startsWith(`${p}/`))

@@ -74,7 +74,8 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   // A test answered before signing up is scored first: signing in (email or
   // Google) lands on the LaunchPad, which sends them back to it.
   const waiting = ctx?.location.pathname === '/dashboard' ? pendingAptitudeRoute() : null
-  if (waiting) throw redirect({ to: waiting })
+  // href: an engine programme's test has its own address (/programmes/<slug>/aptitude).
+  if (waiting) throw redirect({ href: waiting })
   // The programmes' published wording from the course engine (lib/liveContent.ts).
   await ensureLiveContent()
 }

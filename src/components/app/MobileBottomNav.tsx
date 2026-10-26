@@ -110,6 +110,8 @@ export function MobileBottomNav() {
   const hidden =
     HIDE_EXACT.has(pathname) ||
     HIDE_PREFIX.some((p) => pathname.startsWith(p)) ||
+    // A course-engine programme's aptitude test: a focused one-shot flow, like the others.
+    /^\/programmes\/[^/]+\/aptitude$/.test(pathname) ||
     (onPublicForSignedOut && !user) ||
     // A phone's tabs are all inside the app: nothing to show a visitor who
     // isn't signed in, wherever they are.

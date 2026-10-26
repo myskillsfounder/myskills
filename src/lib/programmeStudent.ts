@@ -118,6 +118,23 @@ export async function fetchMyProgramme(slug: string, preview = false): Promise<M
   return data as MyProgramme
 }
 
+/** A published programme's aptitude test for a visitor who hasn't signed up:
+ *  the statements and skill names only (docs/supabase-programme-guest-aptitude.sql).
+ *  Null when the programme isn't published, or before that SQL is run. */
+export interface GuestAptitude {
+  slug: string
+  title: string
+  skills: { id: string; name: string }[]
+  items: { id: string; skill: string; statement: string; reverse: boolean }[]
+}
+
+export async function fetchGuestAptitude(slug: string): Promise<GuestAptitude | null> {
+  const { data, error } = await supabase.rpc('programme_guest_aptitude', { p_slug: slug })
+  if (error || !data) return null
+  const g = data as GuestAptitude
+  return g.items?.length ? g : null
+}
+
 export async function enrol(slug: string): Promise<void> {
   const { error } = await supabase.rpc('enrol_programme', { p_slug: slug })
   if (error) fail(error)
