@@ -2,7 +2,6 @@ import { homeEntry } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Briefcase, Heart, Plane, Sparkles, Target, Users, type LucideIcon } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
-import { setSiteMode } from '@/lib/siteMode'
 import { trackEvent } from '@/lib/analytics'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -67,40 +66,12 @@ function HomePage() {
       <Navbar />
 
       <main className="relative overflow-hidden bg-[#0b0a1c] bg-[radial-gradient(60rem_40rem_at_60%_60%,rgba(108,92,231,0.20),transparent_70%),radial-gradient(40rem_30rem_at_100%_0%,rgba(143,133,238,0.12),transparent_70%)]">
-        <section className="relative mx-auto max-w-[72rem] px-4 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-          <p className="text-xs font-medium uppercase tracking-[0.42em] text-brand-200">MySkills · The student development platform</p>
-          <div className="mt-5 grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-end">
-            <h1 className="font-display text-[2.6rem] font-bold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Learning centred
-              <br />
-              around{' '}
-              <span className="bg-gradient-to-r from-brand-200 via-brand-300 to-brand-400 bg-clip-text text-transparent">the student.</span>
-            </h1>
-            <p className="border-l border-white/20 pl-5 text-[15px] leading-relaxed text-white/75 sm:text-base">
-              We bring together institutions, mentors and service providers to deliver everything a student needs in one
-              place, from learning to career. Powered by AI, reviewed by people.
-            </p>
-          </div>
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Link
-              to="/courses"
-              onClick={() => trackEvent('home_cta', { cta: 'courses' })}
-              className="press inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(143,133,238,0.8)] transition-colors hover:bg-brand-50"
-            >
-              Take the free aptitude test <ArrowRight size={17} />
-            </Link>
-            <Link
-              to="/start"
-              onClick={() => setSiteMode('ai')}
-              className="press inline-flex h-12 items-center gap-2 rounded-full border border-brand-300/40 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-white/10"
-            >
-              <Sparkles size={16} /> Not sure? Ask the AI guide
-            </Link>
-          </div>
-        </section>
+        {/* The page opens on the artwork (Paul, 26 Oct 2026); the heading stays
+            for search engines and screen readers, not on screen. */}
+        <h1 className="sr-only">Learning centred around the student: MySkills, the student development platform</h1>
 
         {/* The platform artwork, with each card a link over it. */}
-        <section className="relative mx-auto mt-10 max-w-[72rem] px-4 sm:px-6 lg:px-8">
+        <section className="relative mx-auto max-w-[72rem] px-4 pt-10 sm:px-6 sm:pt-14 lg:px-8">
           <div className="relative overflow-hidden rounded-2xl" style={{ aspectRatio: '1095 / 633' }}>
             <img
               src="/home/platform.webp"
