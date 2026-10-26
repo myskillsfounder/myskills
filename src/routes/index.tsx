@@ -1,5 +1,4 @@
 import { homeEntry } from '@/lib/guards'
-import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
@@ -69,8 +68,6 @@ interface Pillar {
   title: string
   /** The line on its card. */
   body: string
-  /** The longer line in the hero's panel. */
-  more: string
   icon: LucideIcon
   photo: string
   visitor: Target2
@@ -82,9 +79,8 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
     id: 'learning',
     title: 'Learning Programmes',
     body: 'AI-powered courses, certificates, free aptitude tests',
-    more: 'AI-powered courses in personal and professional skills, each starting with a free aptitude test and ending with a project a mentor grades.',
     icon: BookOpen,
-    photo: 'institutions',
+    photo: 'paul-learning',
     visitor: { to: '/courses' },
     student: { to: '/courses' },
   },
@@ -92,9 +88,8 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
     id: 'mentorship',
     title: 'Mentorship',
     body: 'Industry experts, 1:1 and group sessions',
-    more: 'Industry experts who guide you through live sessions and grade the real project you build.',
     icon: Users,
-    photo: 'mentors',
+    photo: 'paul-mentorship',
     visitor: { to: '/login', search: { next: '/community?category=mentors' } },
     student: { to: '/community', search: { category: 'mentors' } },
   },
@@ -102,7 +97,6 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
     id: 'career',
     title: 'Career & Internships',
     body: 'Career guidance, jobs, your first internship',
-    more: 'Career guidance and your first internship with a partner company: hands-on, real experience you can show.',
     icon: Briefcase,
     photo: 'career',
     visitor: { to: '/login', search: { next: '/community?category=internships' } },
@@ -112,7 +106,6 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
     id: 'study-abroad',
     title: 'Study Abroad',
     body: 'Universities, applications, test prep',
-    more: 'Partner universities abroad, help with your applications and the tests you need to get in.',
     icon: Plane,
     photo: 'study-abroad',
     visitor: { to: '/login', search: { next: '/study-abroad' } },
@@ -122,7 +115,6 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
     id: 'wellness',
     title: 'Wellness & Mental Health',
     body: 'Counselling and wellness support, privately',
-    more: 'Someone to talk to, privately, when you need it, and resources to look after yourself.',
     icon: Heart,
     photo: 'wellness',
     visitor: { to: '/login', search: { next: '/community?category=wellness' } },
@@ -167,7 +159,6 @@ function GlassRow({
   photo,
   wide = false,
   large = false,
-  active = false,
   children,
 }: {
   icon: LucideIcon
@@ -177,18 +168,15 @@ function GlassRow({
   wide?: boolean
   /** The page's opening: a taller row, the photo filling half of it. */
   large?: boolean
-  /** Lit by the hero's scan: a brighter edge and a band of light sweeping across. */
-  active?: boolean
   /** The link itself, wrapping the row. */
   children: (className: string, inner: React.ReactNode) => React.ReactNode
 }) {
   const inner = (
     <>
-      {active && <span aria-hidden className="hero-sweep pointer-events-none absolute inset-0 z-10" />}
       <img
         src={`/home/${photo}.webp`}
         alt=""
-        className={`absolute inset-y-0 right-0 h-full object-cover opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)] ${large ? 'w-[48%]' : 'w-28'}`}
+        className={`absolute inset-y-0 right-0 h-full object-cover object-[50%_25%] opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)] ${large ? 'w-[48%]' : 'w-28'}`}
       />
       <span className={`relative flex items-center ${large ? 'gap-4' : 'gap-3'}`}>
         <Icon size={large ? 28 : 22} fill={large ? 'currentColor' : 'none'} className="shrink-0 text-white" />
@@ -202,7 +190,7 @@ function GlassRow({
   return children(
     `${glass} group relative flex items-center overflow-hidden py-3 transition-colors hover:border-brand-300/50 ${
       large ? 'min-h-[5.75rem] pl-5 pr-[44%]' : 'min-h-[5.5rem] pl-4 pr-24'
-    } ${wide ? 'sm:col-span-2' : ''} ${active ? 'border-brand-200/60 ring-1 ring-brand-300/40' : ''}`,
+    } ${wide ? 'sm:col-span-2' : ''}`,
     inner,
   )
 }
@@ -225,10 +213,10 @@ function PartnerCard({ p, wide = false }: { p: (typeof PARTNERS)[number]; wide?:
 }
 
 /** A pillar in the page's opening: the courses, or sign-in and then its place. */
-function PillarCard({ p, signedIn, active }: { p: Pillar; signedIn: boolean; active: boolean }) {
+function PillarCard({ p, signedIn }: { p: Pillar; signedIn: boolean }) {
   const target = signedIn ? p.student : p.visitor
   return (
-    <GlassRow icon={p.icon} title={p.title} body={p.body} photo={p.photo} large active={active}>
+    <GlassRow icon={p.icon} title={p.title} body={p.body} photo={p.photo} large>
       {(className, inner) => (
         <Link
           to={target.to}
@@ -244,142 +232,73 @@ function PillarCard({ p, signedIn, active }: { p: Pillar; signedIn: boolean; act
 }
 
 const HERO_ORDER = ['learning', 'mentorship', 'career', 'abroad', 'wellness'] as const
-const SCAN_MS = 2800
 
-/** The panel's three facts under the lit need. */
-const HUD: { v: string; k: string }[] = [
-  { v: '5 needs', k: 'one platform' },
-  { v: 'AI coach', k: 'in every course' },
-  { v: 'Free', k: 'aptitude test' },
+/** What sits beside the portrait: the AI and the people, side by side. */
+const HERO_NOTES: { icon: LucideIcon; title: string; body: string; place: string }[] = [
+  { icon: Bot, title: 'An AI coach', body: 'Feedback on every answer', place: 'left-0 top-10 -translate-x-1/3' },
+  { icon: Users, title: 'Real mentors', body: 'They grade your project', place: 'right-0 top-1/2 translate-x-1/4' },
 ]
-
-/** Small points of light in the hero, in percent of its width and height. */
-const SPARKS: [number, number][] = [
-  [12, 30], [22, 62], [35, 12], [64, 8], [78, 36], [92, 64], [52, 88], [6, 82], [70, 80], [46, 44],
-]
-
-/** Which need the hero's scan has lit: it moves on by itself, and holds still
- * while a card is pointed at or for anyone who asks for reduced motion. */
-function useScan(count: number, paused: boolean): number {
-  const [i, setI] = useState(0)
-  useEffect(() => {
-    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const t = window.setInterval(() => setI((n) => (n + 1) % count), SCAN_MS)
-    return () => window.clearInterval(t)
-  }, [count, paused])
-  return i
-}
 
 /**
- * The page's opening (Paul, 27 Oct: "futuristic, everything a student needs in
- * the AI era"). An aurora and a glowing grid floor drifting towards you; the
- * five needs on a line of light, lit one after another by a scan; and a panel
- * that reads out the lit need, as an AI system would. No buttons: the cards
- * are the way in.
+ * The page's opening, human first (Paul, 27 Oct: "more human centric, use
+ * images of real students or mentors like myself"). The words and the five
+ * needs on the left; on the right Paul himself, a founder and mentor, with
+ * the AI coach and the mentors noted beside him. No buttons: the cards are
+ * the way in. The photos are Paul's, cleaned of the app logos they carried
+ * (public/home/paul-*.webp; larger originals can replace them).
  */
-function FutureHero({ signedIn }: { signedIn: boolean }) {
-  const [hover, setHover] = useState<number | null>(null)
-  const scan = useScan(HERO_ORDER.length, hover !== null)
-  const active = hover ?? scan
+function HumanHero({ signedIn }: { signedIn: boolean }) {
   const pillars = HERO_ORDER.map((k) => PILLAR[k])
-  const lit = pillars[active]
-
   return (
-    <section className="relative overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <span className="absolute -left-40 top-0 h-[30rem] w-[30rem] rounded-full bg-brand-600/30 blur-[120px] motion-safe:animate-[aurora_14s_ease-in-out_infinite]" />
-        <span className="absolute -right-32 top-24 h-[26rem] w-[26rem] rounded-full bg-fuchsia-500/20 blur-[120px] motion-safe:animate-[aurora_18s_ease-in-out_infinite_reverse]" />
-        <div className="absolute inset-x-0 bottom-0 h-[50%] overflow-hidden [mask-image:linear-gradient(to_top,black_10%,transparent)]">
-          <div className="hero-floor absolute inset-x-[-25%] -top-1/2 h-[200%] origin-top" />
+    <section className="relative mx-auto max-w-[72rem] px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8">
+      <div className="grid gap-12 lg:grid-cols-[1fr_24rem] lg:items-center xl:grid-cols-[1fr_27rem] xl:gap-16">
+        <div>
+          <p className={eyebrow}>Made for students in the AI era</p>
+          <h1 className="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl">
+            Everything you need, <span className={gradientText}>in one place.</span>
+          </h1>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+            AI to learn faster, and real people beside you: mentors, counsellors and companies. One platform for every
+            need a student has as you step into the AI era.
+          </p>
+          <ol className="mt-8 grid gap-2.5">
+            {pillars.map((p) => (
+              <li key={p.id}>
+                <PillarCard p={p} signedIn={signedIn} />
+              </li>
+            ))}
+          </ol>
         </div>
-        <span className="absolute inset-x-0 bottom-[18%] h-24 bg-brand-500/20 blur-3xl" />
-        {SPARKS.map(([x, y], i) => (
-          <span
-            key={i}
-            className="absolute h-1 w-1 rounded-full bg-brand-100 shadow-[0_0_8px_2px_rgba(196,190,255,0.8)] motion-safe:animate-pulse"
-            style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${(i % 5) * 0.4}s` }}
-          />
-        ))}
-      </div>
 
-      <div className="relative mx-auto max-w-[72rem] px-4 pb-20 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,32rem)_1fr] lg:items-center lg:gap-16">
-          <div className="lg:order-2">
-            <p className={`${eyebrow} inline-flex items-center gap-2.5`}>
-              <span className="live-ping relative h-1.5 w-1.5 rounded-full bg-brand-200 text-brand-200" />
-              Made for students in the AI era
-            </p>
-            <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl xl:text-[3.5rem]">
-              Everything you need, <span className={gradientText}>in one place.</span>
-            </h1>
-            <p className="mt-5 text-base leading-relaxed text-white/70 sm:text-lg">
-              Courses with an AI coach, real mentors, your first internship, study abroad and wellness support: one
-              platform for every need a student has as you step into the AI era.
-            </p>
-
-            {/* The panel: reads out the need the scan has lit. */}
-            <div className={`${glass} mt-8 overflow-hidden`}>
-              <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brand-200">
-                <span className="inline-flex items-center gap-2">
-                  <span className="live-ping relative h-2 w-2 rounded-full bg-emerald-400 text-emerald-400" />
-                  MySkills AI · online
-                </span>
-                <span aria-hidden>
-                  {String(active + 1).padStart(2, '0')} / {String(pillars.length).padStart(2, '0')}
-                </span>
-              </div>
-              <div className="px-4 py-4">
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">For you</p>
-                <div key={lit.id} className="fade-in">
-                  <p className="mt-1 flex items-center gap-2 font-display text-xl font-semibold text-white">
-                    <lit.icon size={18} className="text-brand-200" /> {lit.title}
-                  </p>
-                  <p className="mt-1 min-h-[2.75rem] text-sm leading-relaxed text-white/65">{lit.more}</p>
-                </div>
-                <span aria-hidden className="mt-3 block h-0.5 overflow-hidden rounded-full bg-white/10">
-                  <span
-                    key={`${lit.id}-${hover === null}`}
-                    className={`block h-full rounded-full bg-gradient-to-r from-brand-300 to-fuchsia-300 ${hover === null ? 'fill-x' : ''}`}
-                    style={{ animationDuration: `${SCAN_MS}ms` }}
-                  />
-                </span>
-              </div>
-              <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 text-center">
-                {HUD.map((h) => (
-                  <div key={h.k} className="px-2 py-3">
-                    <p className="font-display text-base font-semibold text-white">{h.v}</p>
-                    <p className="mt-0.5 text-[11px] text-white/50">{h.k}</p>
-                  </div>
-                ))}
-              </div>
+        {/* Paul: a real mentor, not a stock photo. */}
+        <figure className="relative mx-auto w-full max-w-sm lg:max-w-none">
+          <span aria-hidden className="absolute -inset-8 rounded-[3rem] bg-brand-600/30 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/15 shadow-[0_30px_80px_-30px_rgba(108,92,231,0.85)]">
+            <img
+              src="/home/paul-mentor.webp"
+              alt="Paul Thomas, founder of MySkills and a mentor"
+              className="h-[30rem] w-full object-cover object-[50%_15%] sm:h-[36rem]"
+            />
+            {/* Darker shades, into the page's navy. */}
+            <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0b0a1c] via-[#0b0a1c]/25 to-brand-900/30" />
+            <figcaption className={`${glass} absolute inset-x-4 bottom-4 p-4`}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-200">Mentors, not just modules</p>
+              <p className="mt-1.5 font-display text-lg font-semibold text-white">Paul Thomas</p>
+              <p className="text-sm text-white/65">Founder, MySkills · Mentor</p>
+            </figcaption>
+          </div>
+          {HERO_NOTES.map((n) => (
+            <div key={n.title} className={`${glass} absolute hidden items-center gap-3 px-3.5 py-3 xl:flex ${n.place}`}>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white ring-1 ring-white/25">
+                <n.icon size={17} />
+              </span>
+              <span>
+                <span className="block text-sm font-semibold text-white">{n.title}</span>
+                <span className="block text-xs text-white/60">{n.body}</span>
+              </span>
             </div>
-          </div>
-
-          {/* The five needs on a line of light; the lit one glows. */}
-          <div className="relative sm:pl-6 lg:order-1">
-            <span aria-hidden className="absolute bottom-8 left-0 top-8 hidden w-px bg-gradient-to-b from-brand-300/0 via-brand-300/60 to-brand-300/0 sm:block" />
-            <ol className="grid gap-2.5">
-              {pillars.map((p, i) => (
-                <li
-                  key={p.id}
-                  className="relative"
-                  onMouseEnter={() => setHover(i)}
-                  onMouseLeave={() => setHover(null)}
-                  onFocus={() => setHover(i)}
-                  onBlur={() => setHover(null)}
-                >
-                  <span
-                    aria-hidden
-                    className={`absolute -left-6 top-1/2 hidden h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300 sm:block ${
-                      i === active ? 'scale-125 bg-brand-100 shadow-[0_0_14px_4px_rgba(196,190,255,0.85)]' : 'bg-brand-400/50'
-                    }`}
-                  />
-                  <PillarCard p={p} signedIn={signedIn} active={i === active} />
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
+          ))}
+        </figure>
       </div>
     </section>
   )
@@ -406,10 +325,10 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#0b0a1c] bg-[radial-gradient(50rem_34rem_at_75%_8%,rgba(108,92,231,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(108,92,231,0.14),transparent_70%),radial-gradient(44rem_30rem_at_100%_60%,rgba(143,133,238,0.12),transparent_70%),radial-gradient(40rem_30rem_at_10%_95%,rgba(108,92,231,0.16),transparent_70%)]">
-        {/* 1. Everything a student needs: the five pillars, lit one after
-            another. Learning goes to the courses; the others go straight to
-            sign-in, then to the Community or Study Abroad. */}
-        <FutureHero signedIn={signedIn} />
+        {/* 1. Everything a student needs, with the people behind it. Learning
+            goes to the courses; the others go straight to sign-in, then to
+            the Community or Study Abroad. */}
+        <HumanHero signedIn={signedIn} />
 
         {/* 2. The journey every course follows. */}
         <section className="relative mx-auto max-w-[72rem] px-4 py-16 sm:px-6 lg:px-8">

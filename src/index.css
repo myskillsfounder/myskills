@@ -302,29 +302,6 @@ body {
   to   { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
 }
 
-/* The home hero (routes/index.tsx): a glowing grid floor drifting towards
- * the viewer, an aurora that slowly moves, and a band of light sweeping
- * across the card the scan has lit. */
-.hero-floor {
-  background-image:
-    linear-gradient(rgba(164, 154, 255, 0.32) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(164, 154, 255, 0.32) 1px, transparent 1px);
-  background-size: 56px 56px;
-  transform: perspective(520px) rotateX(64deg);
-  animation: floor-drift 5s linear infinite;
-}
-@keyframes floor-drift { to { background-position: 0 56px; } }
-@keyframes aurora {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%      { transform: translate(40px, -30px) scale(1.15); }
-}
-.hero-sweep {
-  background: linear-gradient(100deg, transparent 30%, rgba(196, 190, 255, 0.16) 50%, transparent 70%);
-  background-size: 250% 100%;
-  animation: hero-sweep 2.8s ease-in-out infinite;
-}
-@keyframes hero-sweep { from { background-position: 150% 0; } to { background-position: -100% 0; } }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
