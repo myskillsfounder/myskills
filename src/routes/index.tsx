@@ -2,7 +2,6 @@ import { homeEntry } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  BadgeCheck,
   BookOpen,
   Bot,
   Briefcase,
@@ -11,7 +10,6 @@ import {
   Heart,
   MessageSquareText,
   Plane,
-  Sparkles,
   Target,
   Trophy,
   Users,
@@ -19,7 +17,6 @@ import {
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { trackEvent } from '@/lib/analytics'
-import { setSiteMode } from '@/lib/siteMode'
 import { COURSES } from '@/content/courses'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
@@ -32,14 +29,14 @@ export const Route = createFileRoute('/')({
 /*
  * The home page of the standard website (Paul, 26 Oct 2026): one platform for
  * every need a student has as they step into the AI era. It reads top to
- * bottom as the student's story: step into the AI zone, the journey every
- * course follows, the five needs the platform takes care of, the courses, the
+ * bottom as the student's story: the five needs the platform takes care of,
+ * the journey every course follows, the courses, the
  * Global Readiness Score, the AI at every step, and the partners behind it.
  * Liquid-glass cards on deep navy, in the brand's purple. Every pillar and
  * course is a link; the aptitude test is the highlighted call to action.
  */
 
-type To = '/courses' | '/signup' | '/community' | '/study-abroad'
+type To = '/courses' | '/signup' | '/login' | '/community' | '/study-abroad'
 type Target2 = { to: To; search?: Record<string, unknown> }
 
 /** Liquid glass: see-through, frosted, a light top edge and a purple glow. */
@@ -69,8 +66,7 @@ const PARTNERS: { icon: LucideIcon; title: string; body: string; photo: string }
 interface Pillar {
   id: string
   title: string
-  body: string
-  /** The longer line on the "everything you need" cards. */
+  /** The line on its card. */
   more: string
   icon: LucideIcon
   photo?: string
@@ -82,7 +78,6 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   learning: {
     id: 'learning',
     title: 'Learning Programmes',
-    body: 'Courses, certificates, micro-learning',
     more: 'AI-powered courses in personal and professional skills, each starting with a free aptitude test and ending with a project a mentor grades.',
     icon: BookOpen,
     photo: 'institutions',
@@ -92,41 +87,37 @@ const PILLAR: Record<'learning' | 'mentorship' | 'abroad' | 'career' | 'wellness
   mentorship: {
     id: 'mentorship',
     title: 'Mentorship',
-    body: '1:1 and group sessions with experts',
     more: 'Industry experts who guide you through live sessions and grade the real project you build.',
     icon: Users,
     photo: 'mentors',
-    visitor: { to: '/signup' },
+    visitor: { to: '/login', search: { next: '/community?category=mentors' } },
     student: { to: '/community', search: { category: 'mentors' } },
   },
   career: {
     id: 'career',
     title: 'Career & Internships',
-    body: 'Counselling, jobs and internships',
     more: 'Career guidance and your first internship with a partner company: hands-on, real experience you can show.',
     icon: Briefcase,
     photo: 'career',
-    visitor: { to: '/signup' },
+    visitor: { to: '/login', search: { next: '/community?category=internships' } },
     student: { to: '/community', search: { category: 'internships' } },
   },
   abroad: {
     id: 'study-abroad',
     title: 'Study Abroad',
-    body: 'Universities, applications, test prep',
     more: 'Partner universities abroad, help with your applications and the tests you need to get in.',
     icon: Plane,
     photo: 'study-abroad',
-    visitor: { to: '/signup' },
+    visitor: { to: '/login', search: { next: '/study-abroad' } },
     student: { to: '/study-abroad' },
   },
   wellness: {
     id: 'wellness',
     title: 'Wellness & Mental Health',
-    body: 'Counselling and wellness resources',
     more: 'Someone to talk to, privately, when you need it, and resources to look after yourself.',
     icon: Heart,
     photo: 'wellness',
-    visitor: { to: '/signup' },
+    visitor: { to: '/login', search: { next: '/community?category=wellness' } },
     student: { to: '/community', search: { category: 'wellness' } },
   },
 }
@@ -183,27 +174,6 @@ function PartnerCard({ p, wide = false }: { p: (typeof PARTNERS)[number]; wide?:
   )
 }
 
-/** A pillar as a floating holographic chip around the AI zone. */
-function HoloChip({ p, signedIn, className = '' }: { p: Pillar; signedIn: boolean; className?: string }) {
-  const target = signedIn ? p.student : p.visitor
-  return (
-    <Link
-      to={target.to}
-      search={target.search as never}
-      onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'zone' })}
-      className={`${glass} group flex items-start gap-2.5 rounded-xl px-3 py-2.5 transition-[border-color,transform] hover:-translate-y-0.5 hover:border-brand-200/60 ${className}`}
-    >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-400/70 to-brand-700/70 text-white shadow-[0_0_16px_rgba(143,133,238,0.6)] ring-1 ring-white/25">
-        <p.icon size={16} strokeWidth={1.8} />
-      </span>
-      <span className="min-w-0">
-        <span className="block text-[13.5px] font-semibold leading-tight text-white">{p.title}</span>
-        <span className="mt-0.5 block text-[11px] leading-snug text-white/60">{p.body}</span>
-      </span>
-    </Link>
-  )
-}
-
 /** A pillar as a large card in "everything you need". */
 function NeedCard({ p, signedIn, wide = false }: { p: Pillar; signedIn: boolean; wide?: boolean }) {
   const target = signedIn ? p.student : p.visitor
@@ -228,119 +198,9 @@ function NeedCard({ p, signedIn, wide = false }: { p: Pillar; signedIn: boolean;
       <span className="relative mt-4 block font-display text-xl font-semibold text-white">{p.title}</span>
       <span className="relative mt-1.5 block max-w-md text-sm leading-relaxed text-white/70">{p.more}</span>
       <span className="relative mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200 transition-colors group-hover:text-white">
-        {p.id === 'learning' ? 'See the courses' : signedIn ? 'Open' : 'Join free'} <ArrowRight size={14} />
+        {p.id === 'learning' ? 'See the courses' : signedIn ? 'Open' : 'Sign in'} <ArrowRight size={14} />
       </span>
     </Link>
-  )
-}
-
-/** The student stepping into the AI zone: a glowing portal with a turning ring of light. */
-function AiPortal({ size = 'lg' }: { size?: 'lg' | 'sm' }) {
-  const ring = size === 'lg' ? 'h-56 w-56' : 'h-44 w-44'
-  return (
-    <Link to="/courses" aria-label="Step in: start with a course" className={`group relative block ${ring}`}>
-      <span aria-hidden className="absolute -inset-10 rounded-full bg-brand-500/40 blur-3xl" />
-      {/* The turning ring of light. */}
-      <span
-        aria-hidden
-        className="absolute -inset-1.5 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,#8f85ee_70deg,#e4e0ff_110deg,transparent_160deg,transparent_200deg,#6c5ce7_270deg,transparent_330deg)] [mask:radial-gradient(farthest-side,transparent_calc(100%-3px),black_calc(100%-2px))] motion-safe:animate-[spin_14s_linear_infinite]"
-      />
-      <span aria-hidden className="absolute inset-2 rounded-full border border-brand-200/30" />
-      <img
-        src="/home/student.webp"
-        alt="A student stepping into the AI zone"
-        className="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)] rounded-full object-cover shadow-[0_0_60px_rgba(143,133,238,0.7)] ring-2 ring-white/25"
-      />
-      {/* A band of light passing over the portal. */}
-      <span aria-hidden className="absolute inset-4 overflow-hidden rounded-full">
-        <span className="absolute inset-x-0 top-1/3 h-8 bg-gradient-to-b from-transparent via-brand-200/25 to-transparent motion-safe:animate-pulse" />
-      </span>
-    </Link>
-  )
-}
-
-/** The glowing grid floor of the AI zone, receding to a bright horizon. */
-function GridFloor() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-[-8%] bottom-0 h-[46%] overflow-hidden [mask-image:linear-gradient(to_top,black_30%,transparent)]">
-      <div
-        className="absolute inset-x-0 -top-1/2 h-[200%] origin-top"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(164,154,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(164,154,255,0.35) 1px, transparent 1px)',
-          backgroundSize: '44px 44px',
-          transform: 'perspective(420px) rotateX(62deg)',
-        }}
-      />
-    </div>
-  )
-}
-
-/** Small points of light in the zone, in percent of its width and height. */
-const SPARKS: [number, number][] = [
-  [12, 30], [22, 62], [35, 18], [64, 12], [78, 36], [88, 64], [52, 78], [8, 80], [70, 82], [44, 40],
-]
-
-/** The AI zone: the student in the portal, the five pillars floating around them. */
-function AiZone({ signedIn }: { signedIn: boolean }) {
-  const P = PILLAR
-  return (
-    <>
-      <div className="relative mx-auto hidden h-[30rem] w-full max-w-[36rem] sm:block">
-        <GridFloor />
-        <span aria-hidden className="absolute bottom-[40%] left-1/2 h-20 w-[85%] -translate-x-1/2 rounded-[50%] bg-brand-400/35 blur-3xl" />
-        <span aria-hidden className="absolute left-1/2 top-[43%] h-[62%] w-[96%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-brand-200/20" />
-        {SPARKS.map(([x, y], i) => (
-          <span
-            key={i}
-            aria-hidden
-            className="absolute h-1 w-1 rounded-full bg-brand-100 shadow-[0_0_8px_2px_rgba(196,190,255,0.8)] motion-safe:animate-pulse"
-            style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${(i % 5) * 0.4}s` }}
-          />
-        ))}
-
-        {/* Beams from each pillar to the student. */}
-        <svg aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 576 480" preserveAspectRatio="none" fill="none">
-          <defs>
-            <linearGradient id="beam" x1="0" x2="1" y1="0" y2="0">
-              <stop offset="0" stopColor="#c4beff" stopOpacity="0.7" />
-              <stop offset="1" stopColor="#8f85ee" stopOpacity="0.1" />
-            </linearGradient>
-          </defs>
-          {[
-            [160, 80],
-            [416, 80],
-            [160, 262],
-            [416, 262],
-            [288, 410],
-          ].map(([x, y]) => (
-            <path key={`${x}-${y}`} d={`M${x} ${y} L288 206`} stroke="url(#beam)" strokeWidth="1" strokeDasharray="3 5" vectorEffect="non-scaling-stroke" />
-          ))}
-        </svg>
-
-        <div className="absolute left-1/2 top-[43%] -translate-x-1/2 -translate-y-1/2">
-          <AiPortal />
-        </div>
-        <p className="absolute left-1/2 top-[71%] -translate-x-1/2 whitespace-nowrap text-center text-xs font-medium tracking-wide text-white/75">
-          <span className="font-display text-base font-bold text-white">You</span>
-          <span className="mx-2 text-brand-300">·</span>Learn · Get guidance · Build skills · Grow
-        </p>
-
-        <HoloChip p={P.learning} signedIn={signedIn} className="absolute left-[1%] top-[8%] w-40" />
-        <HoloChip p={P.mentorship} signedIn={signedIn} className="absolute right-[1%] top-[8%] w-40" />
-        <HoloChip p={P.abroad} signedIn={signedIn} className="absolute left-0 top-[46%] w-40" />
-        <HoloChip p={P.career} signedIn={signedIn} className="absolute right-0 top-[46%] w-40" />
-        <HoloChip p={P.wellness} signedIn={signedIn} className="absolute bottom-[2%] left-1/2 w-56 -translate-x-1/2" />
-      </div>
-
-      {/* A narrow window: the portal alone; the pillars follow as cards below. */}
-      <div className="mt-4 flex flex-col items-center sm:hidden">
-        <AiPortal size="sm" />
-        <p className="mt-6 text-xs text-white/75">
-          <span className="font-display text-base font-bold text-white">You</span> · Learn · Get guidance · Build skills · Grow
-        </p>
-      </div>
-    </>
   )
 }
 
@@ -366,51 +226,25 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#0b0a1c] bg-[radial-gradient(50rem_34rem_at_75%_8%,rgba(108,92,231,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(108,92,231,0.14),transparent_70%),radial-gradient(44rem_30rem_at_100%_60%,rgba(143,133,238,0.12),transparent_70%),radial-gradient(40rem_30rem_at_10%_95%,rgba(108,92,231,0.16),transparent_70%)]">
-        {/* 1. Step into the AI era. */}
-        <section className="relative mx-auto max-w-[72rem] px-4 pb-8 pt-10 sm:px-6 sm:pt-14 lg:px-8">
-          <div className="grid items-center gap-6 xl:grid-cols-[1fr_36rem] xl:gap-10">
-            <div className="text-center xl:text-left">
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-200/25 bg-white/[0.06] px-3 py-1 text-xs font-semibold text-brand-100 backdrop-blur">
-                <Sparkles size={13} /> The student development platform · Powered by AI
-              </span>
-              <h1 className="mt-5 font-display text-4xl font-bold leading-[1.06] tracking-tight text-white sm:text-5xl xl:text-[3.6rem]">
-                Learning centred around you, <span className={gradientText}>as you step into the AI era.</span>
-              </h1>
-              <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg xl:mx-0">
-                Courses with an AI coach, real mentors, your first internship, study abroad and wellness support. Every
-                need a student has, in one place. Start by finding out your aptitude, free.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3 xl:justify-start">
-                <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'hero' })} className={primaryCta}>
-                  Take the free aptitude test <ArrowRight size={17} />
-                </Link>
-                {signedIn ? (
-                  <Link to="/dashboard" className={secondaryCta}>
-                    Go to my dashboard
-                  </Link>
-                ) : (
-                  <Link
-                    to="/start"
-                    onClick={() => {
-                      setSiteMode('ai')
-                      trackEvent('home_cta', { cta: 'guide', place: 'hero' })
-                    }}
-                    className={secondaryCta}
-                  >
-                    <Compass size={16} /> Let AI find my starting point
-                  </Link>
-                )}
-              </div>
-              <ul className="mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-white/60 xl:justify-start">
-                {['Free to start', 'No account for the test', 'Mentor-graded projects'].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
-                    <BadgeCheck size={15} className="text-emerald-300" /> {t}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <AiZone signedIn={signedIn} />
+        {/* 1. Everything a student needs: the page opens on the five pillars
+            (Paul, 26 Oct). Learning goes to the courses; the others go
+            straight to sign-in, then to the Community or Study Abroad. */}
+        <section className="relative mx-auto max-w-[72rem] px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8">
+          <div className="max-w-4xl">
+            <p className={eyebrow}>One platform · Powered by AI</p>
+            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
+              Everything you need, <span className={gradientText}>in one place.</span>
+            </h1>
+            <p className="mt-3 text-base leading-relaxed text-white/70 sm:text-lg">
+              Learning is only one part of growing into a career. MySkills takes care of the rest too.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <NeedCard p={P.learning} signedIn={signedIn} wide />
+            <NeedCard p={P.mentorship} signedIn={signedIn} />
+            <NeedCard p={P.career} signedIn={signedIn} />
+            <NeedCard p={P.abroad} signedIn={signedIn} />
+            <NeedCard p={P.wellness} signedIn={signedIn} />
           </div>
         </section>
 
@@ -431,23 +265,6 @@ function HomePage() {
               </li>
             ))}
           </ol>
-        </section>
-
-        {/* 3. Everything a student needs. */}
-        <section className="relative mx-auto max-w-[72rem] px-4 py-16 sm:px-6 lg:px-8">
-          <SectionHead
-            kicker="One platform"
-            title="Everything you need,"
-            accent="in one place."
-            body="Learning is only one part of growing into a career. MySkills takes care of the rest too."
-          />
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <NeedCard p={P.learning} signedIn={signedIn} wide />
-            <NeedCard p={P.mentorship} signedIn={signedIn} />
-            <NeedCard p={P.career} signedIn={signedIn} />
-            <NeedCard p={P.abroad} signedIn={signedIn} />
-            <NeedCard p={P.wellness} signedIn={signedIn} />
-          </div>
         </section>
 
         {/* 4. The courses. */}

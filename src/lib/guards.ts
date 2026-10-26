@@ -2,6 +2,7 @@ import { redirect } from '@tanstack/react-router'
 import { supabase } from './supabase'
 import { homePath, inPhoneApp, isPhone } from './device'
 import { pendingAptitudeRoute } from './pendingAptitude'
+import { takeAfterLogin } from './afterLogin'
 import { isBot, siteMode } from './siteMode'
 import { ensureLiveContent } from './liveContent'
 
@@ -76,6 +77,9 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const waiting = ctx?.location.pathname === '/dashboard' ? pendingAptitudeRoute() : null
   // href: an engine programme's test has its own address (/programmes/<slug>/aptitude).
   if (waiting) throw redirect({ href: waiting })
+  // Back from Google sign-in, started on a home page card (lib/afterLogin.ts).
+  const after = ctx?.location.pathname === '/dashboard' ? takeAfterLogin() : null
+  if (after) throw redirect({ href: after })
   // The programmes' published wording from the course engine (lib/liveContent.ts).
   await ensureLiveContent()
 }
