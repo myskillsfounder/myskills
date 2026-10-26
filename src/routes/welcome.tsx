@@ -98,23 +98,37 @@ function Intro() {
 
   return (
     <Frame>
-      <header>
+      <header className="flex items-center justify-between">
         <Brand />
+        <Link to="/login" className="text-sm font-semibold text-white/80">
+          Sign in
+        </Link>
       </header>
 
+      {/* What MySkills is, what this page gives them, and what happens after
+          the tap, before they choose. */}
       <main className="flex flex-1 flex-col justify-center py-6">
-        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
-          <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          Free to start
-        </span>
-        <h1 className="mt-3.5 font-display text-[1.75rem] font-semibold leading-[1.15] tracking-tight text-white">
-          I want to learn…
-        </h1>
-        <p className="mt-2.5 text-[15px] leading-relaxed text-white/70">
-          Pick one. Open programmes start with a free aptitude test that shows where to begin.
+        <p className="text-xs font-semibold text-brand-200">
+          Personal &amp; professional development, powered by AI
         </p>
+        <h1 className="mt-2.5 font-display text-[1.875rem] font-semibold leading-[1.12] tracking-tight text-white">
+          Find out where you’d start
+        </h1>
+        <p className="mt-2 text-[15px] text-white/70">Free · a few minutes · no account yet</p>
 
-        <ul className="mt-5 space-y-2.5">
+        <ol className="mt-5 grid grid-cols-3 gap-2" aria-label="How it works">
+          {['Pick a programme', 'A short test', 'Your results'].map((s, i) => (
+            <li key={s} className="flex flex-col items-center gap-1.5 rounded-xl bg-white/[0.06] px-2 py-2.5 text-center">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-500/40 font-display text-xs font-semibold text-white">
+                {i + 1}
+              </span>
+              <span className="text-xs font-medium leading-tight text-white/80">{s}</span>
+            </li>
+          ))}
+        </ol>
+
+        <h2 className="mt-6 font-display text-lg font-semibold text-white">What do you want to learn?</h2>
+        <ul className="mt-3 space-y-2.5">
           {LEARN.map((l) => (
             <li key={l.id} className="card-glass-dark p-3">
               <button
@@ -140,6 +154,15 @@ function Intro() {
                 </span>
               </button>
               {!l.open && opened === l.id && <ProgrammeLeadForm programme={l.lead} title={l.label} start="mobile" />}
+            </li>
+          ))}
+        </ul>
+
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-white/65">
+          {['Verified mentors', 'Internships', 'Certificates you can share'].map((t) => (
+            <li key={t} className="inline-flex items-center gap-1.5">
+              <Check size={14} className="text-emerald-300" />
+              {t}
             </li>
           ))}
         </ul>
