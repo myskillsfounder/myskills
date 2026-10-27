@@ -48,7 +48,7 @@ function BlogIndexPage() {
 
   return (
     <div className="min-h-screen bg-ink-900">
-      <Navbar />
+      <Navbar dark />
       <main>
         <BlogHero>
           <div className="mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 sm:pt-16 lg:px-8">
