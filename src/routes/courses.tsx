@@ -144,18 +144,10 @@ function CoursesPage() {
           <GlowOrb className="-left-32 top-10 h-96 w-96" />
           <GlowOrb className="-right-32 top-40 h-96 w-96" color="rgba(143,133,238,0.16)" />
 
-          <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 sm:pt-20 lg:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-200">Learning programmes</p>
-            <h1 className="mt-4 max-w-3xl font-display text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl">
-              Courses that put{' '}
-              <span className="bg-gradient-to-r from-brand-200 to-brand-400 bg-clip-text text-transparent">you at the centre.</span>
-            </h1>
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
-              Personal and professional skills, each built the same way: a free aptitude test first, short modules with an
-              AI coach, a real project a mentor grades, and then your first internship: hands-on, real experience.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Show courses">
+          {/* The courses first (Paul, 27 Oct 2026): the filters, the cards, then
+              the heading under them, smaller. */}
+          <div className="relative mx-auto max-w-6xl px-4 pb-6 pt-10 sm:px-6 sm:pt-12 lg:px-8">
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Show courses">
               {FILTERS.map((f) => (
                 <button
                   key={f.id}
@@ -172,10 +164,22 @@ function CoursesPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto grid max-w-6xl gap-5 px-4 pb-20 sm:px-6 md:grid-cols-2 lg:px-8">
+          <div className="relative mx-auto grid max-w-6xl gap-5 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
             {shown.map((c) => (
               <CourseCard key={c.id} c={c} />
             ))}
+          </div>
+
+          <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-200">Learning programmes</p>
+            <h1 className="mt-3 max-w-3xl font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
+              Courses that put{' '}
+              <span className="bg-gradient-to-r from-brand-200 to-brand-400 bg-clip-text text-transparent">you at the centre.</span>
+            </h1>
+            <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/70">
+              Personal and professional skills, each built the same way: a free aptitude test first, short modules with an
+              AI coach, a real project a mentor grades, and then your first internship: hands-on, real experience.
+            </p>
           </div>
         </section>
 
