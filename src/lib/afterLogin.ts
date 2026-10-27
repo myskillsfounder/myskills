@@ -1,7 +1,8 @@
 /**
  * Where a student goes straight after signing in, when they came from a home
  * page card other than the courses (Paul, 26 Oct 2026): Mentorship, Career,
- * Wellness open the Community, Study Abroad opens Study Abroad. Only these
+ * Wellness open the Community, Study Abroad opens Study Abroad (or one of its
+ * programmes, from the glimpse's trending card). Only these
  * addresses are accepted, so a link can't send anyone off the site.
  *
  * Email sign-in goes there directly. Google sign-in comes back through
@@ -9,7 +10,7 @@
  * and the dashboard's guard sends them on.
  */
 const KEY = 'myskills.afterLogin'
-const ALLOWED = /^\/(community|study-abroad)(\?category=[a-z-]+)?$/
+const ALLOWED = /^\/(community(\?category=[a-z-]+)?|study-abroad(\/[a-z0-9]+(-[a-z0-9]+)*)?)$/
 
 export const isAfterLoginPath = (path: unknown): path is string => typeof path === 'string' && ALLOWED.test(path)
 

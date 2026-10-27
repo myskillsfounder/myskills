@@ -75,6 +75,19 @@ export const STUDY_ABROAD_GLIMPSE: GlimpseProps = {
       { title: 'Test prep', sub: 'Before you apply' },
     ],
   },
+  // Trending now (Paul, 27 Oct 2026): nursing in Albania, where MySkills is a
+  // top partner of the university. Facts from docs/supabase-study-abroad-v2.sql;
+  // fees, dates and entry rules stay on the programme's own page.
+  trending: {
+    title: 'Study Nursing in Albania',
+    where: 'Our Lady of Good Counsel University (UNIZKM), Tirana',
+    partner: 'MySkills · Top partner',
+    body: 'A Bachelor’s in Nursing with clinical training in hospitals, taught in Italian, and a joint degree from the University of Rome Tor Vergata: a way to work as a nurse in Italy and the EU after the usual registration steps. MySkills guides you from application to arrival.',
+    points: ['Taught in Italian', 'Joint degree with Tor Vergata (Rome)', 'Recognised in Albania and Italy', 'Clinical training in hospitals'],
+    country: 'al',
+    art: 'nurse',
+    next: '/study-abroad/nursing-albania',
+  },
   next: '/study-abroad',
 }
 
