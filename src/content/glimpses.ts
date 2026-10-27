@@ -134,5 +134,7 @@ export const INTERNSHIPS_GLIMPSE: GlimpseProps = {
       { title: 'Operations intern', sub: 'Hybrid · 10 weeks' },
     ],
   },
+  // The page opens on the open internships, with no hero (Paul, 27 Oct 2026).
+  rolesFirst: true,
   next: '/community?category=internships',
 }
