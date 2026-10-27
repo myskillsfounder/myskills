@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BadgeCheck, Check, Flame, Lock, type LucideIcon } from 'lucide-react'
 import { Flag, Nurse } from '@/components/studyAbroad/Cards'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { trackEvent } from '@/lib/analytics'
+import { fetchMentors, type Mentor } from '@/lib/mentors'
 
 /*
  * A glimpse of a part of the platform that lives behind sign-in (Paul,
@@ -20,10 +22,10 @@ const gradientText = 'bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff]
 const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.32em] text-[#b9a6ff]'
 /** The hero cards' colours: a tinted glass and a matching icon. */
 const TONES = {
-  violet: { card: 'from-[#5b3fd6]/45 to-[#1b1550]/60 border-[#a48bff]/35', icon: 'from-[#8f6bff] to-[#5b3fd6]' },
-  blue: { card: 'from-[#2f4fd6]/45 to-[#0f1a52]/60 border-[#7b9bff]/35', icon: 'from-[#5b8bff] to-[#2f4fd6]' },
-  pink: { card: 'from-[#b03ea8]/40 to-[#2a1040]/60 border-[#f08bdc]/30', icon: 'from-[#ec4899] to-[#a12d9a]' },
-  amber: { card: 'from-[#b8661f]/40 to-[#2a1a10]/60 border-[#f7b46b]/30', icon: 'from-[#f59e0b] to-[#c2410c]' },
+  violet: { card: 'from-[#6d4fff]/35 via-[#2a1f7a]/25 to-white/[0.04] border-white/25', icon: 'from-[#8f6bff] to-[#5b3fd6]' },
+  blue: { card: 'from-[#3b63ff]/35 via-[#16257a]/25 to-white/[0.04] border-white/25', icon: 'from-[#5b8bff] to-[#2f4fd6]' },
+  pink: { card: 'from-[#e04ab8]/35 via-[#5a1a6a]/25 to-white/[0.04] border-white/25', icon: 'from-[#ec4899] to-[#a12d9a]' },
+  amber: { card: 'from-[#f59e0b]/30 via-[#6a3410]/25 to-white/[0.04] border-white/25', icon: 'from-[#f59e0b] to-[#c2410c]' },
 }
 
 const tile =
@@ -36,6 +38,16 @@ export interface GlimpseItem {
   photo?: string
   /** Shown clearly; the rest of the look inside is blurred until sign-in. */
   open?: boolean
+}
+
+/** A card in the hero; with `match`, it shows the published mentors whose
+ *  expertise or headline fits it (lib/mentors.ts, public by design). */
+export interface HeroCard {
+  icon: LucideIcon
+  title: string
+  body: string
+  tone: keyof typeof TONES
+  match?: RegExp
 }
 
 /** One thing to put in front of a visitor first: "Trending now". */
@@ -65,7 +77,7 @@ export interface GlimpseProps {
   /** Short chips under the hero's line, e.g. the mentors' industries. */
   tags?: string[]
   /** Cards in place of the hero's photo, e.g. the mentors' industries. */
-  heroCards?: { icon: LucideIcon; title: string; body: string; tone: keyof typeof TONES }[]
+  heroCards?: HeroCard[]
   photo: string
   photoAlt: string
   features: { icon: LucideIcon; title: string; body: string }[]
@@ -78,7 +90,56 @@ export interface GlimpseProps {
   next: string
 }
 
+/** The published mentors, once, for hero cards that show them. */
+function useListedMentors(wanted: boolean): Mentor[] | undefined {
+  const [list, setList] = useState<Mentor[]>()
+  useEffect(() => {
+    if (!wanted) return
+    let live = true
+    fetchMentors().then(
+      (l) => live && setList(l),
+      () => live && setList([]),
+    )
+    return () => {
+      live = false
+    }
+  }, [wanted])
+  return list
+}
+
+/** Who fits a card: matched on what they list as expertise, then their headline. */
+function mentorsFor(card: HeroCard, list: Mentor[] | undefined): Mentor[] | undefined {
+  if (!card.match || !list) return undefined
+  const re = card.match
+  return list.filter((m) => re.test([...(m.expertise ?? []), m.headline].join(' '))).slice(0, 2)
+}
+
+function MentorChip({ m }: { m: Mentor }) {
+  const initials = m.full_name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('')
+  return (
+    <li className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/[0.08] p-2 backdrop-blur-md">
+      {m.avatar_url ? (
+        <img src={m.avatar_url} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white/30" />
+      ) : (
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold text-white ring-2 ring-white/30">
+          {initials}
+        </span>
+      )}
+      <span className="min-w-0">
+        <span className="block truncate text-[13px] font-semibold text-white">{m.full_name}</span>
+        <span className="block truncate text-[11px] text-white/65">{m.headline}</span>
+      </span>
+    </li>
+  )
+}
+
 export function Glimpse(g: GlimpseProps) {
+  const mentors = useListedMentors(Boolean(g.heroCards?.some((c) => c.match)))
   const login = { to: '/login' as const, search: { next: g.next } }
   return (
     <div className="min-h-screen bg-[#040a1e]">
@@ -130,21 +191,47 @@ export function Glimpse(g: GlimpseProps) {
                 <div className="relative">
                   <span aria-hidden className="absolute -inset-6 rounded-[2.5rem] bg-[#4c56f0]/25 blur-3xl" />
                   <ul className="relative grid grid-cols-2 gap-3 sm:gap-4">
-                    {g.heroCards.map((c, i) => (
-                      <li
-                        key={c.title}
-                        className={`group relative flex min-h-[11rem] flex-col justify-between overflow-hidden rounded-2xl border bg-gradient-to-br p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_18px_50px_-24px_rgba(76,86,240,0.9)] backdrop-blur-xl transition-transform hover:-translate-y-1 sm:min-h-[12.5rem] ${TONES[c.tone].card} ${i % 2 ? 'sm:translate-y-6 sm:hover:translate-y-5' : ''}`}
-                      >
-                        <span aria-hidden className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
-                        <span className={`relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-[0_0_24px_rgba(255,255,255,0.25)] ring-1 ring-white/25 ${TONES[c.tone].icon}`}>
-                          <c.icon size={22} />
-                        </span>
-                        <span className="relative">
-                          <span className="block font-display text-lg font-bold leading-snug text-white">{c.title}</span>
-                          <span className="mt-1 block text-[13px] leading-snug text-white/70">{c.body}</span>
-                        </span>
-                      </li>
-                    ))}
+                    {g.heroCards.map((c, i) => {
+                      const fit = mentorsFor(c, mentors)
+                      return (
+                        <li
+                          key={c.title}
+                          className={`group relative flex min-h-[15rem] flex-col overflow-hidden rounded-3xl border bg-gradient-to-br p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.06),0_24px_60px_-24px_rgba(76,86,240,0.95)] backdrop-blur-2xl backdrop-saturate-150 transition-transform duration-300 hover:-translate-y-1 sm:p-5 ${TONES[c.tone].card} ${i % 2 ? 'sm:translate-y-6 sm:hover:translate-y-5' : ''}`}
+                        >
+                          {/* Liquid glass: a soft light from the top corner, a sheen across, colour pooling below. */}
+                          <span aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_70%_at_0%_0%,rgba(255,255,255,0.22),transparent_55%)]" />
+                          <span aria-hidden className="pointer-events-none absolute -left-1/4 top-0 h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent transition-transform duration-700 group-hover:translate-x-[160%]" />
+                          <span aria-hidden className="pointer-events-none absolute -bottom-10 -right-10 h-36 w-36 rounded-full bg-white/10 blur-3xl" />
+                          <span className="relative flex items-center gap-3">
+                            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-[0_0_24px_rgba(255,255,255,0.25)] ring-1 ring-white/30 ${TONES[c.tone].icon}`}>
+                              <c.icon size={20} />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block font-display text-[15px] font-bold leading-tight text-white sm:text-base">{c.title}</span>
+                              <span className="mt-0.5 block text-[12px] leading-snug text-white/70">{c.body}</span>
+                            </span>
+                          </span>
+                          {c.match && (
+                            <span className="relative mt-auto block pt-4">
+                              <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-white/55">Mentors</span>
+                              {fit === undefined ? (
+                                <span aria-hidden className="mt-2 block h-[3.25rem] animate-pulse rounded-xl bg-white/[0.06]" />
+                              ) : fit.length ? (
+                                <ul className="mt-2 space-y-1.5">
+                                  {fit.map((m) => (
+                                    <MentorChip key={m.id} m={m} />
+                                  ))}
+                                </ul>
+                              ) : (
+                                <span className="mt-2 block rounded-xl border border-dashed border-white/20 px-3 py-3 text-[12px] text-white/60">
+                                  Mentors joining soon
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </li>
+                      )
+                    })}
                   </ul>
                 </div>
               ) : (
