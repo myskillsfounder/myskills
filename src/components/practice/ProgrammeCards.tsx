@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Bell, Globe2, Layers, Megaphone, Plus, Rocket, Sparkles, type LucideIcon } from 'lucide-react'
+import { ArrowRight, BarChart3, Bell, Globe2, Layers, Megaphone, Plus, Rocket, Sparkles, type LucideIcon } from 'lucide-react'
 import { COURSES, type Course } from '@/content/courses'
 import { resolveGoal } from '@/lib/onboardingContent'
 import type { CourseProgress } from '@/lib/programmes'
@@ -28,6 +28,7 @@ interface Card {
 
 const ENGINE_LOOK: Record<string, { icon: LucideIcon; tile: string }> = {
   'ai-powered-entrepreneurship': { icon: Rocket, tile: 'from-rose-400 to-pink-600' },
+  'data-analytics': { icon: BarChart3, tile: 'from-emerald-400 to-teal-600' },
 }
 
 /** An engine programme's progress: the aptitude test, each module, the Foundation assessment. */

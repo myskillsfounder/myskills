@@ -1,9 +1,6 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, ArrowRight, BadgeCheck, Clock, Rocket, Users } from 'lucide-react'
-import { Navbar } from '@/components/landing/Navbar'
-import { Footer } from '@/components/landing/Footer'
-import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
-import { trackEvent } from '@/lib/analytics'
+import { createFileRoute } from '@tanstack/react-router'
+import { Rocket } from 'lucide-react'
+import { EngineCoursePage } from '@/components/landing/EngineCoursePage'
 import { COURSES, ENTREPRENEURSHIP } from '@/content/courses'
 
 /**
@@ -18,129 +15,19 @@ export const Route = createFileRoute('/entrepreneurship')({
 })
 
 const course = COURSES.find((c) => c.id === 'entrepreneurship')!
-const TEST = course.test!
 
 function EntrepreneurshipPage() {
-  const total = ENTREPRENEURSHIP.modules.reduce((n, m) => n + m.minutes, 0)
   return (
-    <div className="min-h-screen bg-ink-900">
-      <Navbar dark />
-
-      <main>
-        <section className="surface-wood-dark relative overflow-hidden">
-          <GridBackdrop mask="ellipse 70% 60% at 30% 0%" />
-          <GlowOrb className="-left-32 top-10 h-96 w-96" color="rgba(244,114,182,0.14)" />
-          <GlowOrb className="-right-24 top-32 h-96 w-96" />
-
-          <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-14 lg:px-8">
-            <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-medium text-white/60 hover:text-white">
-              <ArrowLeft size={15} /> All courses
-            </Link>
-
-            <div className="mt-8 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-              <div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/85">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Open · Professional skills
-                </span>
-                <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl">
-                  AI-Powered{' '}
-                  <span className="bg-gradient-to-r from-rose-300 to-brand-300 bg-clip-text text-transparent">Entrepreneurship</span>
-                </h1>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">{ENTREPRENEURSHIP.summary}</p>
-                <p className="mt-3 max-w-xl text-sm text-white/55">{ENTREPRENEURSHIP.audience}</p>
-
-                <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <a
-                    href={TEST}
-                    onClick={() => trackEvent('course_page_test', { course: 'entrepreneurship' })}
-                    className="press inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-                  >
-                    Take the free aptitude test <ArrowRight size={17} />
-                  </a>
-                  <span className="text-sm text-white/55">About 5 minutes · no account needed yet</span>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur">
-                <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white ring-1 ring-white/20 ${course.tile}`}>
-                  <Rocket size={22} />
-                </span>
-                <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
-                  {[
-                    { k: 'Modules', v: `${ENTREPRENEURSHIP.modules.length}` },
-                    { k: 'Learning', v: `About ${Math.round(total / 60)} hours` },
-                    { k: 'Project', v: 'About 2 weeks' },
-                    { k: 'Level', v: 'Beginner' },
-                  ].map((x) => (
-                    <div key={x.k}>
-                      <dt className="text-white/50">{x.k}</dt>
-                      <dd className="mt-0.5 font-semibold text-white">{x.v}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <ul className="mt-5 space-y-1.5 border-t border-white/10 pt-4">
-                  {course.earn.map((e) => (
-                    <li key={e} className="flex items-center gap-2 text-sm text-white/80">
-                      <BadgeCheck size={15} className="shrink-0 text-brand-200" /> {e}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-t border-white/[0.06] bg-ink-900">
-          <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
-            <div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-white">What you’ll be able to do</h2>
-              <ul className="mt-6 space-y-3">
-                {ENTREPRENEURSHIP.outcomes.map((o) => (
-                  <li key={o} className="flex gap-3 text-[15px] leading-relaxed text-white/75">
-                    <BadgeCheck size={18} className="mt-0.5 shrink-0 text-emerald-300" />
-                    {o}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-white">Seven modules</h2>
-              <ol className="mt-6 space-y-2.5">
-                {ENTREPRENEURSHIP.modules.map((m, i) => (
-                  <li key={m.title} className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                    <span className="font-mono text-xs text-brand-200">0{i + 1}</span>
-                    <span className="flex-1 font-medium text-white">{m.title}</span>
-                    <span className="inline-flex items-center gap-1 text-xs text-white/50">
-                      <Clock size={12} /> {m.minutes} min
-                    </span>
-                  </li>
-                ))}
-              </ol>
-              <div className="mt-5 rounded-xl border border-brand-300/20 bg-brand-500/10 p-4">
-                <p className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <Users size={16} className="text-brand-200" /> The project
-                </p>
-                <p className="mt-1.5 text-sm leading-relaxed text-white/70">{ENTREPRENEURSHIP.project}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-rose-500/20 to-brand-500/20 p-6 sm:flex-row sm:items-center">
-              <div>
-                <p className="font-display text-xl font-semibold text-white">Start with what you’re already good at</p>
-                <p className="mt-1 text-sm text-white/70">The aptitude test shows your strongest founder skill; your modules start with the rest.</p>
-              </div>
-              <a href={TEST} className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2">
-                Take the aptitude test <ArrowRight size={16} />
-              </a>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+    <EngineCoursePage
+      course={course}
+      content={ENTREPRENEURSHIP}
+      icon={Rocket}
+      accent={{ title: 'from-rose-300 to-brand-300', band: 'from-rose-500/20 to-brand-500/20' }}
+      glow="rgba(244,114,182,0.14)"
+      closing={{
+        title: 'Start with what you’re already good at',
+        body: 'The aptitude test shows your strongest founder skill; your modules start with the rest.',
+      }}
+    />
   )
 }

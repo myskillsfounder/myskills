@@ -79,7 +79,7 @@ const LEARN: Learn[] = [
   { id: 'dm', label: 'Digital Marketing', body: 'Ads, content, SEO and data, with practice and a mentor.', icon: Megaphone, tile: 'from-brand-400 to-brand-700', open: true, test: '/aptitude-assessment' },
   { id: 'gl', label: 'Global Leadership', body: 'Goals, communication and leading people: the Global Readiness programme.', icon: Globe2, tile: 'from-amber-400 to-orange-500', open: true, test: '/career-readiness-assessment' },
   { id: 'en', label: 'Entrepreneurship', body: 'Turn an idea into a business people pay for, with AI at every step.', icon: Rocket, tile: 'from-rose-400 to-pink-600', open: true, test: '/programmes/ai-powered-entrepreneurship/aptitude' },
-  { id: 'da', label: 'Data Analytics', body: 'Spreadsheets, SQL and dashboards that answer real questions.', icon: BarChart3, tile: 'from-emerald-400 to-teal-600', open: false, lead: 'data-analytics' },
+  { id: 'da', label: 'Data Analytics', body: 'Spreadsheets, SQL and dashboards that answer real questions.', icon: BarChart3, tile: 'from-emerald-400 to-teal-600', open: true, test: '/programmes/data-analytics/aptitude' },
 ]
 
 function Intro() {

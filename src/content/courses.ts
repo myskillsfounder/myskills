@@ -15,7 +15,7 @@ export interface Course {
   /** Open now, or taking names until it opens. */
   status: 'open' | 'soon'
   /** Its own page on the website. */
-  page?: '/digital-marketing' | '/career-readiness' | '/entrepreneurship'
+  page?: '/digital-marketing' | '/career-readiness' | '/entrepreneurship' | '/data-analytics'
   /** The aptitude test that starts it (open to visitors). */
   test?: string
   facts: string[]
@@ -71,20 +71,35 @@ export const COURSES: Course[] = [
   {
     id: 'data-analytics',
     title: 'AI-Powered Data Analytics',
-    tagline: 'Turn raw business data into decisions with spreadsheets, SQL, Python, dashboards and AI assistants.',
+    tagline: 'Turn raw business data into decisions with spreadsheets, SQL, Python, dashboards and AI assistants, on free tools and real practice data.',
     kind: 'professional',
-    status: 'soon',
-    facts: ['10 modules', 'About 35 hours', 'Beginner'],
-    skills: ['Excel', 'SQL', 'Python', 'Dashboards'],
+    status: 'open',
+    page: '/data-analytics',
+    test: '/programmes/data-analytics/aptitude',
+    facts: ['10 modules', 'About 34 hours', 'Beginner'],
+    skills: ['Spreadsheets', 'SQL', 'Python', 'Dashboards'],
     earn: ['Foundation certificate', 'Portfolio project', 'Professional points'],
     icon: BarChart3,
     tile: 'from-emerald-400 to-teal-600',
   },
 ]
 
+/** What a course-engine programme's own page shows (components/landing/
+ *  EngineCoursePage.tsx), taken from its programme file. */
+export interface EngineCourseContent {
+  summary: string
+  audience: string
+  outcomes: string[]
+  modules: { title: string; minutes: number }[]
+  project: string
+  /** How long the project takes, for the facts box. */
+  projectTime: string
+}
+
 /** AI-Powered Entrepreneurship's own page (routes/entrepreneurship.tsx),
  *  from docs/programmes/Entrepreneurship/ai-powered-entrepreneurship.json. */
-export const ENTREPRENEURSHIP = {
+export const ENTREPRENEURSHIP: EngineCourseContent = {
+  projectTime: 'About 2 weeks',
   summary:
     'Take your own business idea from a guess to its first paying customers, with free AI tools at every step and Indian examples from campus ventures to D2C (direct-to-consumer) brands.',
   audience: 'Students and recent graduates in India starting their first venture. No business experience needed.',
@@ -107,4 +122,36 @@ export const ENTREPRENEURSHIP = {
   ],
   project:
     'Over about two weeks, with your mentor’s guidance, take one real idea from a guess to evidence: talk to at least 5 real people in your customer group, win at least one commitment, and write a one-page plan your mentor grades.',
+}
+
+/** AI-Powered Data Analytics' own page (routes/data-analytics.tsx), from
+ *  docs/programmes/Data analytics/ai-powered-data-analytics.json (published
+ *  27 Oct 2026). Keep the two in step when the programme changes. */
+export const DATA_ANALYTICS: EngineCourseContent = {
+  summary:
+    'Turn raw business data into decisions with spreadsheets, SQL, Python, dashboards and AI assistants, and learn to check what the AI produces. Every module uses free tools and one practice dataset from Masala Mart, a fictional Indian spice brand.',
+  audience: 'Students and graduates in India who want an entry-level data analyst role, or to use data well in any job. No coding experience needed.',
+  outcomes: [
+    'Turn a vague business question into an analysis plan with a clear decision',
+    'Clean, combine and summarise data in spreadsheets, SQL and Python (pandas)',
+    'Tell a real change from noise using spread, samples and simple A/B tests',
+    'Build a dashboard that tracks what matters and flags problems early',
+    'Use AI assistants to work faster, and check everything they produce',
+    'Present a recommendation a manager can act on, backed by a portfolio project',
+  ],
+  modules: [
+    { title: 'Thinking like an analyst', minutes: 60 },
+    { title: 'Spreadsheets that answer questions', minutes: 90 },
+    { title: 'Cleaning messy data', minutes: 90 },
+    { title: 'SQL foundations: asking a database questions', minutes: 90 },
+    { title: 'SQL for real questions: joins and windows', minutes: 90 },
+    { title: 'Statistics that change decisions', minutes: 75 },
+    { title: 'Python and pandas for analysis', minutes: 90 },
+    { title: 'Dashboards people use', minutes: 90 },
+    { title: 'AI as your analysis partner', minutes: 75 },
+    { title: 'From numbers to decisions', minutes: 60 },
+  ],
+  project:
+    'Over 3 to 4 weeks, with your mentor, analyse 12 months of data for a real or realistic Indian business and recommend one change that would grow revenue or cut costs: a cleaned dataset, the analysis, a dashboard, an AI log and a one-page memo your mentor grades.',
+  projectTime: 'About 3–4 weeks',
 }

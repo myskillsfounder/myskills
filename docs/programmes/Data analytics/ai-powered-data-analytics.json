@@ -1,22 +1,23 @@
 {
   "overview": {
-    "summary": "Learn to turn raw business data into decisions with spreadsheets, SQL, Python, dashboards and AI assistants, and to check what the AI produces. Ten practical modules set in Indian businesses, a final assessment, and a portfolio project with a mentor.",
+    "summary": "Learn to turn raw business data into decisions with spreadsheets, SQL, Python, dashboards and AI assistants, and to check what the AI produces. Ten practical modules use free tools and one practice dataset from Masala Mart, a fictional Indian spice brand. Then a final assessment, and a portfolio project with a mentor.",
     "audience": "students and graduates who want an entry-level data analyst role, or to use data well in any job",
     "outcomes": [
       "Turn a vague business question into an analysis plan with a clear decision",
-      "Clean, combine and summarise data in Excel, SQL and Python (pandas)",
+      "Clean, combine and summarise data in spreadsheets, SQL and Python (pandas)",
+      "Tell a real change from noise using spread, samples and simple A/B tests",
       "Build a dashboard that tracks what matters and flags problems early",
-      "Use AI assistants to work faster, and verify everything they produce",
+      "Use AI assistants to work faster, and check everything they produce",
       "Present a recommendation a manager can act on, backed by a portfolio project"
     ],
     "level": "beginner",
-    "hours": 35
+    "hours": 34
   },
   "skills": [
     {
       "id": "data-literacy",
       "name": "Data Literacy & Analytical Thinking",
-      "description": "Framing questions, knowing data types, and reading numbers critically."
+      "description": "Framing questions, knowing data types, and reading numbers critically, including correlation and cause."
     },
     {
       "id": "data-cleaning",
@@ -26,7 +27,7 @@
     {
       "id": "sql",
       "name": "SQL & Database Analytics",
-      "description": "Querying databases: filtering, grouping, joining tables and window functions."
+      "description": "Querying databases: filtering, grouping, handling NULLs, joining tables and window functions such as LAG."
     },
     {
       "id": "python",
@@ -35,8 +36,8 @@
     },
     {
       "id": "spreadsheets",
-      "name": "Spreadsheet Analysis with Excel",
-      "description": "Tables, lookups, PivotTables and formulas that answer business questions."
+      "name": "Spreadsheet Analysis with Sheets and Excel",
+      "description": "Tables, lookups, SUMIFS, pivot tables and formulas that answer business questions, in Google Sheets or Excel."
     },
     {
       "id": "statistics",
@@ -46,12 +47,12 @@
     {
       "id": "visualisation",
       "name": "Data Visualisation & Dashboards",
-      "description": "Choosing the right chart and building dashboards around decisions, in Power BI or Excel."
+      "description": "Choosing the right chart and building dashboards around decisions, in Looker Studio, Google Sheets or Power BI."
     },
     {
       "id": "ai-analytics",
       "name": "AI-Assisted Analysis",
-      "description": "Using AI assistants and Copilot to speed up analysis, checking their output, and protecting personal data."
+      "description": "Using free AI assistants (and Copilot where an employer provides it) to speed up analysis, checking their output, and protecting personal data."
     },
     {
       "id": "storytelling",
@@ -88,7 +89,7 @@
       {
         "id": "da-a05",
         "skill": "spreadsheets",
-        "statement": "I can summarise a long list in a spreadsheet quickly.",
+        "statement": "I sort or filter a spreadsheet to find the rows I need, instead of scrolling through it.",
         "reverse": false
       },
       {
@@ -118,19 +119,19 @@
       {
         "id": "da-a10",
         "skill": "sql",
-        "statement": "I enjoy breaking a question into small, logical steps.",
+        "statement": "When I need one number from a long list, I write down the steps (which rows, which groups, which total) before I start.",
         "reverse": false
       },
       {
         "id": "da-a11",
         "skill": "sql",
-        "statement": "I’m comfortable learning an exact syntax step by step, like spreadsheet formulas.",
+        "statement": "I look up the exact syntax of a formula or command instead of guessing it.",
         "reverse": false
       },
       {
         "id": "da-a12",
         "skill": "sql",
-        "statement": "Writing even simple code feels out of reach for me.",
+        "statement": "When I need figures from a large table, I ask someone else to pull them for me.",
         "reverse": true
       },
       {
@@ -142,7 +143,7 @@
       {
         "id": "da-a14",
         "skill": "statistics",
-        "statement": "I know an average can hide very different situations.",
+        "statement": "When I see an average, I look at the highest and lowest values behind it.",
         "reverse": false
       },
       {
@@ -154,7 +155,7 @@
       {
         "id": "da-a16",
         "skill": "python",
-        "statement": "I like automating tasks I have to repeat.",
+        "statement": "When I repeat the same steps on a file every week, I look for a way to automate them.",
         "reverse": false
       },
       {
@@ -229,37 +230,37 @@
     {
       "id": "da-m01",
       "title": "Thinking like an analyst",
-      "summary": "Turn vague questions into answerable ones, know your data types, and read averages critically.",
+      "summary": "Turn vague questions into answerable ones, know your data types, and read numbers critically.",
       "skill": "data-literacy",
       "level": "foundation",
-      "outcome": "Turn a vague business question into one you can answer with data.",
+      "outcome": "Turn a vague business question into a specific one you can answer with data.",
       "minutes": 60,
       "learn": [
         {
           "title": "Start with the decision, not the data",
-          "body": "An analysis is only useful if it changes a decision. Before you open a spreadsheet, write down who will decide, what they will decide, and what would change their mind. “How are sales doing?” becomes “Should we keep the Diwali discount running in Pune next week?”: a question with an owner, a deadline and an action."
+          "body": "An analysis is useful only if it changes a decision. So before you open a spreadsheet, answer four questions. Who will decide? What will they decide? What measure would change their mind? Over what period?\n\nWorked example. Meera owns a bakery in Pune. She asks, “How are sales doing?”\n- Who decides: Meera.\n- The decision: whether to keep the ₹50-off Diwali offer next week.\n- The measure: orders a day, and money earned after the discount.\n- The period: the 10 days of the offer against the 10 days before it.\n\nHer question becomes: “Did the ₹50 offer bring enough extra orders to cover the discount?” It has an owner, a deadline and an action.\n\nThe common mistake is to start pulling every number you can find. You end up with a long report and no answer."
         },
         {
           "title": "Know your data types",
-          "body": "Some numbers can be added (revenue in ₹, minutes, quantities). Some only look like numbers (PIN codes, phone numbers, order IDs). Then there are categories (city, payment method), dates, and free text. Many early mistakes come from treating one type as another: averaging PIN codes, or sorting dates stored as text."
+          "body": "Every column has a type, and the type decides what you can do with it.\n- Numbers you can add: order value in ₹, quantity, minutes.\n- Numbers and codes that are really labels: order ID, product code (SKU), phone number, PIN code.\n- Categories: city, payment method. You count and group them.\n- Dates: you sort them and group them by month.\n- Free text: a customer’s comment.\n\nWorked example. An orders file has six columns: order_id, pin_code, order_date, city, payment_method and order_value. Only order_value should be added up. Average the pin_code column and you get a number like 411037. It looks precise and means nothing.\n\nWatch for numbers and dates stored as text. “₹1,250” typed with the ₹ sign can be stored as text, and a SUM skips text. A date stored as text, such as 05/04/2026, sorts like a word, not like a date."
         },
         {
-          "title": "Averages hide, distributions tell",
-          "body": "An average order value of ₹850 can mean every order is about ₹850, or that most orders are ₹300 and a few bulk orders are ₹20,000. Before you trust a single number, look at the spread: the minimum, the maximum and the median (the middle value)."
+          "title": "Read numbers critically",
+          "body": "An average can hide what is going on. An average order of ₹850 could mean most orders are near ₹850. Or it could mean most are ₹300 and a few bulk orders are ₹20,000. So look at the spread too: the minimum, the maximum and the median (the middle value when you sort them).\n\nNext, two numbers moving together does not prove that one causes the other. Worked example: at a coaching centre in Kota, students who attend doubt-clearing sessions score 15% higher. Does attending cause it? Maybe keen students attend, and also study more at home. Both could share a cause.\n\nOnly a fair comparison shows cause. One example is a test where students are picked at random to attend. You will learn to design one in the statistics module."
         }
       ],
       "tasks": [
         {
           "id": "t1",
           "title": "Sharpen a vague question",
-          "prompt": "A café chain’s owner asks: “Why are we losing customers?” Rewrite this as two or three specific questions you could answer with data. For each, say what data you would need and what decision it would inform.",
-          "hint": "Name the time period, which customers you mean, and what “losing” looks like in the data (for example, no visit in 60 days)."
+          "prompt": "A café chain’s owner in Hyderabad asks: “Why are we losing customers?” Rewrite this as two or three specific questions you could answer with data. For each one, write the four parts from the first card: who decides, the decision, the measure and the period. Then say what data you would need.",
+          "hint": "Say what “losing” looks like in the data, for example no visit in 60 days. Name which customers you mean: regulars, new ones, or one branch."
         },
         {
           "id": "t2",
           "title": "Spot the wrong type",
-          "prompt": "List five columns you would expect in an online store’s orders file. For each, give its data type and one mistake someone could make if they treated it as a different type.",
-          "hint": "An order ID looks like a number. Would you ever add order IDs together?"
+          "prompt": "You will analyse Masala Mart, a fictional online spice brand. Its raw orders file has nine columns: order_id, order_date, customer_id, city, sku, quantity, order_value, payment_method, returned. Three of its rows: [Row 1] MM10002 | 01/10/2025 | C0009 | Kochi | MM-BL-03 | 1 | ₹150 | UPI | 0 [Row 2] MM10004 | 01/10/2025 | C0117 | bengaluru | MM-GS-03 | 4 | ₹380 | UPI | 0 [Row 3] MM10001 | 01/10/2025 | C0035 | Hyderabad | MM-BL-02 | 4 | 520 | COD | 0. Now: label each column’s type. Which two columns would break a total or a sort, and how? Name one other problem. “returned” is 1 if returned, 0 if kept: what would its average tell you?",
+          "hint": "Would a SUM count “₹150”? Stored as text, would 01/10/2025 sort before or after 02/09/2025? Look at how each city is typed."
         }
       ],
       "reflection": {
@@ -288,7 +289,7 @@
             "Ask the tech team for every table they have, so nothing is missing when you start"
           ],
           "correct_index": 0,
-          "explanation": "Agreeing on the decision and the measure (for example, orders per week for the last 8 weeks against the same weeks last year) makes the work answerable and useful.",
+          "explanation": "Agreeing on the decision and the measure makes the work answerable and useful. For example, compare orders per week for the last 8 weeks with the same weeks last year.",
           "why_wrong": "A dashboard of everything answers nothing in particular; one week against the last is noisy (festivals, salary days); asking for more data delays the work without knowing what is needed.",
           "learning_outcome": "Frame the question before touching the data.",
           "difficulty": "Beginner",
@@ -298,17 +299,17 @@
         {
           "id": "da-m01-q2",
           "title": "The delivery app’s customer table",
-          "scenario": "",
-          "question": "Which of these columns should never be averaged?",
+          "scenario": "A grocery delivery app in Guwahati exports its customer table. An intern adds a row of averages under every column that holds numbers.",
+          "question": "Which column’s average will mean nothing?",
           "options": [
-            "Customer PIN code",
+            "Store code (such as 1043)",
             "Delivery time in minutes",
-            "Order value in ₹",
+            "Order value in ₹ (such as 450)",
             "Items per order"
           ],
           "correct_index": 0,
-          "explanation": "A PIN code is a label written in digits. Its average is a meaningless number.",
-          "why_wrong": "Delivery time, order value and items per order are real quantities, where an average (or a median) means something.",
+          "explanation": "A store code is a label written in digits: 1043 names a store and measures nothing. Its average is a number that matches no store and means nothing.",
+          "why_wrong": "Delivery time in minutes is a real quantity, so its average (or median) is meaningful; order value in ₹ is an amount you can add and average; items per order is a count, and its average shows the typical basket size.",
           "learning_outcome": "Check a column’s type before you summarise it.",
           "difficulty": "Beginner",
           "topic": "Data types",
@@ -322,12 +323,12 @@
           "options": [
             "The mean (average) fee",
             "The highest fee",
-            "The total fees divided by 12",
+            "The midpoint of the lowest and highest fees",
             "The median fee"
           ],
           "correct_index": 3,
-          "explanation": "The three large fees pull the mean far above what most students pay (to about ₹4,000). The median stays around what the middle student pays, roughly ₹2,200–2,500.",
-          "why_wrong": "The mean is distorted by the three outliers; the highest fee describes the exception; dividing by 12 confuses monthly and yearly figures.",
+          "explanation": "The three ₹30,000 fees pull the mean up to between ₹3,680 and ₹4,150, above what 47 of the 50 students pay. The median stays at what the middle student pays, between ₹2,000 and ₹2,500.",
+          "why_wrong": "The mean is pulled up by the three ₹30,000 fees; the highest fee describes the exception, not the typical student; the midpoint of the lowest and highest fees, about ₹16,000, is set by the two extremes.",
           "learning_outcome": "Use the median when a few extreme values distort the mean.",
           "difficulty": "Intermediate",
           "topic": "Summary statistics",
@@ -341,12 +342,12 @@
           "options": [
             "Agree, because a 12% difference across thousands of students is far too large to be a coincidence",
             "Reject it, because a 12% rise is too small to justify changing the app’s default",
-            "Ask for light-mode users’ scores too, since the comparison needs both groups",
+            "Agree, but switch it on first for the lowest scorers, since they have the most to gain",
             "Say dark-mode users may differ in other ways (more engaged, studying late), so test it first"
           ],
           "correct_index": 3,
-          "explanation": "Correlation is not causation: keen, heavy users may simply be the ones who pick dark mode. A randomised test, where some new users get dark mode by default, shows whether the setting itself changes scores.",
-          "why_wrong": "A large gap can still come from who chooses dark mode rather than the setting itself; 12% would matter if it were real; light-mode scores are already in the comparison, and more of them can’t show cause.",
+          "explanation": "Keen, heavy users may be the ones who pick dark mode, and they would score higher anyway. Only a fair test, where some new users get dark mode by chance, shows whether the setting itself changes scores.",
+          "why_wrong": "A large gap can still come from who chooses dark mode rather than from the setting; 12% would matter if the setting really caused it; switching it on for low scorers still assumes the setting causes the scores.",
           "learning_outcome": "Two things moving together doesn’t mean one causes the other.",
           "difficulty": "Intermediate",
           "topic": "Correlation and causation",
@@ -357,37 +358,37 @@
     {
       "id": "da-m02",
       "title": "Spreadsheets that answer questions",
-      "summary": "Tables, XLOOKUP and PivotTables: answer business questions in Excel or Google Sheets.",
+      "summary": "Tables, fixed references, XLOOKUP, SUMIFS and pivot tables: answer business questions in Google Sheets or Excel.",
       "skill": "spreadsheets",
       "level": "foundation",
-      "outcome": "Use tables, lookups and PivotTables to answer a business question in a spreadsheet.",
+      "outcome": "Answer a business question, such as a return rate by payment method, with lookups, SUMIFS and pivot tables in a spreadsheet.",
       "minutes": 90,
       "learn": [
         {
-          "title": "Make it a table first",
-          "body": "Format your data as a table (Ctrl+T in Excel): one header row, one row per record, no blank rows and no merged cells. A table grows with new data, so formulas, filters and PivotTables keep working, and you can refer to columns by name, like Orders[Value]."
+          "title": "Set up the sheet: tables and fixed references",
+          "body": "Start with a clean layout: one header row, one row per record, no blank rows and no merged cells. Then turn the range into a table. In Google Sheets, use Format > Convert to table. In Excel, press Ctrl+T. A table grows with new rows, so formulas and pivot tables keep working.\n\nNext, fixed references. Worked example: the GST rate, 18%, is in cell F1. Prices are in column B. In C2 you write:\n=B2*$F$1\nThen you fill it down the column. B2 becomes B3, B4 and so on, but $F$1 stays fixed. The $ before F fixes the column, and the $ before 1 fixes the row.\n\nThe common mistake is writing =B2*F1. Filled down, row 3 becomes =B3*F2. F2 is empty, so every result after row 2 shows 0."
         },
         {
           "title": "Look things up with XLOOKUP",
-          "body": "XLOOKUP finds a value in one column and returns the matching value from another, such as a product’s category from a price list. Unlike VLOOKUP it can look left, matches exactly by default, and lets you say what to show when nothing is found: =XLOOKUP(A2, Products[SKU], Products[Category], \"Not found\")."
+          "body": "XLOOKUP finds a value in one column and returns the matching value from another. Worked example: a stationery shop’s Prices tab lists codes in column A and categories in column B. P-101 is Pens, N-202 is Notebooks and F-303 is Files. An order in A2 has the code N-202.\n=XLOOKUP(A2, Prices!A:A, Prices!B:B, \"Not found\")\nIn order: what to find, where to look, what to bring back, and what to show if it is missing. The result is Notebooks. For a code like X-999, it shows Not found.\n\nXLOOKUP works in Google Sheets and in Excel 2021 or later. It isn’t in Excel 2016 or 2019. There, use =VLOOKUP(A2, Prices!A:B, 2, FALSE).\n\nCommon mistakes: leaving VLOOKUP’s last argument out, or setting it to TRUE. That asks for an approximate match, which can quietly return the wrong row. Also, “N-202 ” with a trailing space won’t match “N-202”."
         },
         {
-          "title": "Summarise with a PivotTable",
-          "body": "A PivotTable groups and totals thousands of rows in seconds: revenue by city by month, or orders by payment method. Drag fields into Rows, Columns and Values, then switch Values between Sum, Count and Average as the question needs."
+          "title": "Summarise with a pivot table or SUMIFS",
+          "body": "A pivot table groups and totals thousands of rows in seconds. In Google Sheets, use Insert > Pivot table; in Excel, Insert > PivotTable. Choose Rows and Values, then set each value to Sum, Count or Average.\n\nWorked example: a Surat saree store wants its return rate by payment method. Its Returned column holds 1 for returned and 0 for kept. Put payment method in Rows. Put Returned in Values as Average. The average of 1s and 0s is the share returned: Card 4%, UPI 7%, cash on delivery (COD) 19%.\n\nCommon mistake: showing Returned as “Sum, % of column total”. That gives each method’s share of all returns, not its return rate.\n\nSUMIFS answers the same kind of question with a formula. =SUMIFS(F:F, C:C, \"COD\") adds column F where column C is COD. COUNTIFS counts rows the same way, so the COD return rate is:\n=SUMIFS(F:F, C:C, \"COD\")/COUNTIFS(C:C, \"COD\")"
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Plan a PivotTable",
-          "prompt": "An online saree store’s orders table has: order date, city, category, payment method (UPI, card, cash on delivery), order value and returned (yes or no). Describe the PivotTable you would build to find which payment method has the highest return rate: what goes in Rows, what goes in Values, and how you calculate the rate.",
-          "hint": "A return rate needs two numbers: returned orders and all orders."
+          "title": "Return rate by payment method",
+          "prompt": "Open a blank Google Sheet, in the app or a browser. In cell A1, type =IMPORTDATA(\"https://myskills.org.in/practice-data/masala-mart/orders.csv\") to load Masala Mart’s 2,030 orders from October 2025 to September 2026. (Or download the file and use File > Import.) Build a pivot table: payment_method in Rows, returned in Values as Average. Report the return rate for UPI, Card and COD, to one decimal place. Then check the COD rate with a formula: =SUMIFS(I:I, H:H, \"COD\")/COUNTIFS(H:H, \"COD\").",
+          "hint": "Check yourself: all three rates are under 20%. If one is over 50%, you showed a share of all returns, not a rate. The pivot and the formula must agree."
         },
         {
           "id": "t2",
-          "title": "Write the lookup",
-          "prompt": "You have an orders sheet with SKU codes, and a separate price list with SKU, product name and category. Write the formula that brings the category into the orders sheet, and explain what happens when a SKU is missing from the price list.",
-          "hint": "Look at XLOOKUP’s fourth argument."
+          "title": "Bring in the category",
+          "prompt": "Add a second tab to the same Google Sheet and name it products. In its cell A1, type =IMPORTDATA(\"https://myskills.org.in/practice-data/masala-mart/products.csv\"). Back in the orders tab, write an XLOOKUP in J2 that brings in each order’s category from the products tab. It should show \"Not found\" when the SKU is missing. Fill it down every row. Report how many rows show Not found, and which SKUs they are. Then find revenue by category with a pivot table or SUMIFS.",
+          "hint": "The SKU is in column E of orders, and in columns A (SKU) and C (category) of products. To fill down on a phone, copy J2, select the column below it and paste. Count the misses with =COUNTIF(J:J, \"Not found\")."
         }
       ],
       "reflection": {
@@ -397,27 +398,27 @@
       "quiz": [
         {
           "id": "da-m02-q1",
-          "title": "",
-          "scenario": "",
-          "question": "Why turn a range of data into an Excel Table before analysing it?",
+          "title": "The rows the pivot table misses",
+          "scenario": "Every Monday, a Vadodara electronics shop pastes last week’s sales under the old rows of its Google Sheet. Its pivot table and its total formulas keep leaving out the new rows.",
+          "question": "Which change fixes this for good?",
           "options": [
-            "It compresses the data, so large files open and recalculate noticeably faster",
-            "It checks new rows and removes duplicate records automatically as you type",
-            "It protects the range, so values can’t be changed without unlocking the sheet",
-            "Formulas and PivotTables pick up new rows, and columns can be used by name"
+            "Sort the sheet by date each Monday, so that the newest rows are at the top",
+            "Paste each week into a new tab, so the old rows can never be changed by mistake",
+            "Leave a blank row between weeks, so each week’s sales are easy to find",
+            "Convert the range to a table, so formulas and the pivot table include new rows"
           ],
           "correct_index": 3,
-          "explanation": "Tables expand as rows are added and give columns names, so everything built on them stays correct as the data grows.",
-          "why_wrong": "A table doesn’t shrink the file, remove duplicates or lock the data.",
-          "learning_outcome": "Structure data as a table before analysing it.",
+          "explanation": "A table grows as rows are added. So everything built on it, pivot tables and formulas alike, picks up each new week without being edited.",
+          "why_wrong": "Sorting changes the order of the rows, not the range the pivot table reads; a new tab each week splits the data, so the pivot table and totals cover even less of it; blank rows break the one-block layout that tables and pivot tables need.",
+          "learning_outcome": "Turn data into a table so new rows are included automatically.",
           "difficulty": "Beginner",
-          "topic": "Excel tables",
+          "topic": "Tables",
           "weight": 5
         },
         {
           "id": "da-m02-q2",
           "title": "Invoices and a product master",
-          "scenario": "A distributor in Indore is matching 4,000 invoice lines to a 900-row product master. Some SKUs on the invoices are new and not yet in the master.",
+          "scenario": "A distributor in Ludhiana is matching 4,000 invoice lines to a 900-row product master. Some SKUs on the invoices are new and not yet in the master.",
           "question": "Which formula returns the product category, and shows “New SKU” when there is no match?",
           "options": [
             "=IFERROR(VLOOKUP(B2, Master, 2, TRUE), \"New SKU\")",
@@ -426,8 +427,8 @@
             "=XLOOKUP(B2, Master[SKU], Master[Category], \"New SKU\")"
           ],
           "correct_index": 3,
-          "explanation": "XLOOKUP takes the value to find, where to find it, what to return, and what to show if it isn’t found.",
-          "why_wrong": "VLOOKUP with TRUE does an approximate match, so it can quietly return the wrong category instead of “New SKU”; the third option has the first two arguments swapped; SUMIF adds numbers and can’t return a text category.",
+          "explanation": "XLOOKUP takes what to find (B2), where to look (Master[SKU]), what to bring back (Master[Category]) and what to show if it is missing. Its default is an exact match, so a new SKU gets “New SKU”, not a wrong category.",
+          "why_wrong": "VLOOKUP with TRUE does an approximate match, so it can quietly return the wrong category instead of “New SKU”; XLOOKUP(Master[SKU], B2, …) has the value to find and the place to look swapped; SUMIF adds numbers and can’t return a text category.",
           "learning_outcome": "Use an exact-match lookup with a clear “not found” value.",
           "difficulty": "Intermediate",
           "topic": "Lookups",
@@ -435,78 +436,78 @@
         },
         {
           "id": "da-m02-q3",
-          "title": "Return rate by payment method",
-          "scenario": "Your orders sheet has a Returned column with 1 for a returned order and 0 for a kept one. Payment method is in the Rows of your PivotTable.",
-          "question": "Which Values setting shows the return rate for each payment method directly?",
+          "title": "Trial classes that turn into members",
+          "scenario": "A gym in Dehradun logs every free trial class in a sheet. Its Joined column holds 1 if the person then bought a membership and 0 if not. Source (Instagram, walk-in or referral) is in the Rows of a pivot table.",
+          "question": "Which Values setting shows each source’s joining rate directly?",
           "options": [
-            "Sum of Returned, shown as % of Column Total",
-            "Count of Returned",
-            "Average of Returned",
-            "Max of Returned"
+            "Sum of Joined, shown as % of column total",
+            "Count of Joined",
+            "Average of Joined",
+            "Max of Joined"
           ],
           "correct_index": 2,
-          "explanation": "The average of a column of 1s and 0s is the share of 1s: the return rate.",
-          "why_wrong": "Sum counts the returns, and as % of Column Total it shows each method’s share of all returns, not its own rate; Count counts every order; Max is 1 as soon as one order is returned.",
+          "explanation": "The average of a column of 1s and 0s is the share of 1s. So the average of Joined for each source is the share of that source’s trial visitors who joined.",
+          "why_wrong": "Sum of Joined as % of column total gives each source’s share of all new members, not its own joining rate; Count of Joined counts every trial, 1s and 0s alike; Max of Joined shows 1 as soon as one person from that source joins.",
           "learning_outcome": "Averaging a 1/0 column gives a rate.",
           "difficulty": "Intermediate",
-          "topic": "PivotTables",
+          "topic": "Pivot tables",
           "weight": 10
         },
         {
           "id": "da-m02-q4",
-          "title": "GST on every row",
-          "scenario": "Cell F1 holds the GST rate. In C2 you write =B2*$F$1 and fill it down to C500.",
-          "question": "What do the dollar signs in $F$1 do?",
+          "title": "Commission on every row",
+          "scenario": "A Belagavi electronics shop keeps each sale’s amount in column B and its 3% commission rate in cell H1. You want the commission in C2, and then you will fill the formula down to C400.",
+          "question": "What should C2 contain?",
           "options": [
-            "Tell Excel to treat F1 as currency, so every result shows in rupees",
-            "Make F1 a named constant that nobody else can edit",
-            "Keep the reference fixed on F1 in every row, while B2 becomes B3, B4…",
-            "Round each row’s result to two decimal places, as GST requires"
+            "=$B$2*H1",
+            "=B2*$H1",
+            "=B2*$H$1",
+            "=$B2*H1"
           ],
           "correct_index": 2,
-          "explanation": "The dollar signs make an absolute reference: it doesn’t change when the formula is copied.",
-          "why_wrong": "Dollar signs don’t format currency, lock cells or round anything.",
-          "learning_outcome": "Use absolute references for values every row should share.",
-          "difficulty": "Beginner",
+          "explanation": "Filled down, B2 must move to B3, B4 and so on, but every row must use the rate in H1. $H$1 fixes both the column and the row, so the rate stays put.",
+          "why_wrong": "$B$2 fixes the amount instead, so every row uses the first sale while H1 slides down to empty cells; $H1 fixes only the column, so row 3 reads H2, which is empty; $B2 fixes the amount’s column, but the rate still slides down to H2.",
+          "learning_outcome": "Fix a shared value with $ on both its column and its row.",
+          "difficulty": "Intermediate",
           "topic": "Cell references",
-          "weight": 5
+          "weight": 10
         }
       ]
     },
     {
       "id": "da-m03",
       "title": "Cleaning messy data",
-      "summary": "Profile data, fix duplicates, dates and inconsistent categories, and handle blanks honestly.",
+      "summary": "Profile data, fix duplicates, dates, text amounts and inconsistent categories, and handle blanks honestly.",
       "skill": "data-cleaning",
       "level": "foundation",
-      "outcome": "Find and fix the problems that make analysis wrong, and keep a record of each fix.",
+      "outcome": "Clean a messy sales export so its row count and totals can be trusted, with a log of every fix.",
       "minutes": 90,
       "learn": [
         {
           "title": "Profile before you clean",
-          "body": "Count the rows, then check every column: how many blanks, how many unique values, the minimum and maximum. Profiling shows what is broken: “Bengaluru”, “Bangalore” and “BLR” in one city column, ages of 0 and 212, dates in two formats."
+          "body": "Profiling means measuring the data before you change it. Count the rows. Then, for each column, count the blanks and the different values, and look at the smallest and largest values.\n\nWorked example: a Jaipur coaching centre’s enquiry list has 1,200 rows. Profiling shows:\n- city: 14 different values for 6 real cities (“Jaipur”, “jaipur”, “JAIPUR ”).\n- age: smallest 0, largest 212. Both are typing errors.\n- enquiry_date: some as 03/04/2026, some as 2026-04-03.\n- 37 rows appear twice.\nNow you have a list of what to fix, and a way to measure each fix.\n\nFree tools in Google Sheets: =COUNTA(A:A) counts filled cells, and =COUNTUNIQUE(D:D) counts different values. Data > Column stats profiles one column. A pivot table of a column shows every spelling in it."
         },
         {
-          "title": "Fix the cause, and keep a record",
-          "body": "Standardise categories with a mapping table, trim spaces, convert text into proper dates and numbers, and remove true duplicates, such as the same order ID twice. Never do it silently: keep the raw file untouched and write down each step so anyone can repeat it. Power Query in Excel, or a Python script, makes the steps repeatable."
+          "title": "Fix the cause, and keep a log",
+          "body": "Keep the raw file untouched and clean a copy. Fix one problem at a time and write each step down.\n\nWorked example, continuing the enquiry list:\nStep 1: removed exact duplicate rows (Data > Data cleanup > Remove duplicates). 1,200 → 1,163 rows.\nStep 2: trimmed spaces in city (Data > Data cleanup > Trim whitespace). 41 cells changed.\nStep 3: mapped “jaipur” and “JAIPUR” to “Jaipur” with a two-column mapping tab and XLOOKUP. 212 rows.\nStep 4: set age to blank where it was 0 or over 100. 9 rows.\n\nEach line says what changed and how many rows. Anyone can repeat your work, and a manager can trust the totals. In Excel, Power Query records the same steps so you can rerun them next month.\n\nThe common mistake is cleaning silently. If the totals change and nobody knows why, nobody trusts them."
         },
         {
           "title": "Missing is not zero",
-          "body": "A blank delivery time is unknown, not 0 minutes. Decide column by column: leave it blank and exclude it, fill it from another source, or flag it. Say how many rows each choice affects, and ask whether the missing rows are different from the rest."
+          "body": "A blank is unknown, not zero. Decide column by column. You can leave it out, fill it from another source, or flag it. Then say how many rows your choice affects.\n\nWorked example: a Kochi food delivery app logs 100 deliveries. 6 have no delivery time, and the riders say all 6 were very late. The 94 recorded deliveries average 28 minutes. If the 6 took about 80 minutes each, the true average is about 31 minutes. Typing 0 into the blanks gives 26 minutes.\n\nSo leaving the blanks out makes deliveries look a little faster than they are. Filling them with 0 makes it worse.\n\nAlways ask: are the missing rows different from the rest? If the slow deliveries are the ones missing, say so beside your number."
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Write a cleaning plan",
-          "prompt": "A hospital chain’s appointment export has: patient ID, appointment date (some as 03/04/2026, some as 2026-04-03), department (“Cardio”, “cardiology”, “CARDIOLOGY ”), doctor, fee (some “₹500”, some “500”) and status. Write a step-by-step cleaning plan: what you would check and fix in each column.",
-          "hint": "Is 03/04/2026 the 3rd of April or the 4th of March? How could you find out?"
+          "title": "Clean Masala Mart’s raw export",
+          "prompt": "Open a blank Google Sheet and type in A1: =IMPORTDATA(\"https://myskills.org.in/practice-data/masala-mart/orders_raw.csv\"). Copy everything, then paste it into a new tab with Edit > Paste special > Values only, so you can edit it. Profile it, then clean it. Remove duplicate rows and make the city names consistent. Make sure order_value is a number and order_date is read as day/month/year. Fill blank cities from customers.csv (https://myskills.org.in/practice-data/masala-mart/customers.csv) with XLOOKUP on customer_id. Submit your cleaning log with a row count for each step, and your final row count and total order value.",
+          "hint": "Check yourself against the clean file orders.csv: you should end with 10 cities and the same row count and total. For order_value, type =ISNUMBER(G3) next to the “₹150” cell. With the India locale, Sheets may already read ₹150 as a number, so you get TRUE: nothing to fix. If you get FALSE, it is text: use =VALUE(SUBSTITUTE(SUBSTITUTE(G3,\"₹\",\"\"),\",\",\"\")) in a new column. You will meet the text version again in Module 7, Python and pandas for analysis. For dates, look at File > Settings > Locale. With India, 01/10/2025 is read as 1 October; with United States, it can be read as 10 January."
         },
         {
           "id": "t2",
           "title": "Decide about blanks",
-          "prompt": "In a delivery dataset, 6% of rows have no delivery time. Give two ways to handle them, and explain how each choice could change the average delivery time you report.",
-          "hint": "Who is likely to be missing: fast deliveries, slow ones, or a random mix?"
+          "prompt": "A Lucknow pharmacy’s delivery sheet has 50 deliveries. 45 have a delivery time, and they average 40 minutes. 5 are blank, and the delivery staff say those 5 took about 90 minutes each because of a road closure. Work out the average three ways: leaving the blanks out, filling them with 0, and using the staff’s estimate. Say which number you would report, and write the one-line note you would put beside it.",
+          "hint": "Average = total minutes ÷ number of deliveries counted. Start with the total for the 45: 45 × 40."
         }
       ],
       "reflection": {
@@ -535,18 +536,18 @@
         },
         {
           "id": "da-m03-q2",
-          "title": "",
-          "scenario": "",
-          "question": "An export’s dates look like 04/05/2026, 13/05/2026 and 28/02/2026. What format are they in?",
+          "title": "The courier’s dates",
+          "scenario": "A Bhubaneswar courier company exports its booking dates as text. The first three read 04/05/2026, 13/05/2026 and 28/02/2026.",
+          "question": "What format are the dates in?",
           "options": [
             "Month/day/year",
             "Year/month/day",
             "Day/month/year",
-            "It can’t be worked out"
+            "It can’t be worked out from these values"
           ],
           "correct_index": 2,
-          "explanation": "Values like 13 and 28 in the first position can’t be months, so the first number is the day.",
-          "why_wrong": "Month/day/year would have no first number above 12; year/month/day would start with the year; the large first values settle it.",
+          "explanation": "13 and 28 can’t be months, so the first number must be the day. That makes 04/05/2026 4 May 2026, not 5 April.",
+          "why_wrong": "In month/day/year no first number could be above 12, but 13 and 28 are; year/month/day would start with a four-digit year, not end with one; the values above 12 settle it, so it can be worked out.",
           "learning_outcome": "Use impossible values to work out an ambiguous date format.",
           "difficulty": "Beginner",
           "topic": "Dates",
@@ -554,18 +555,18 @@
         },
         {
           "id": "da-m03-q3",
-          "title": "",
-          "scenario": "",
-          "question": "A city column contains “Bengaluru”, “Bangalore”, “bangalore ” and “BLR”. What is the most reliable fix?",
+          "title": "One city, four spellings",
+          "scenario": "A salon chain’s booking export has a city column. Profiling shows “Bengaluru”, “Bangalore”, “bangalore ” and “BLR”, all for the same city.",
+          "question": "What is the most reliable fix?",
           "options": [
             "Delete the rows that don’t say “Bengaluru”, since they were entered incorrectly",
-            "Leave them as they are, because a PivotTable groups similar spellings together",
+            "Leave them as they are, because a pivot table groups similar spellings together",
             "Use Find and Replace on “Bangalore”, the most common variant, and leave the rest as they are",
             "Trim spaces, map every variant to one name in a lookup table, then check nothing is left"
           ],
           "correct_index": 3,
-          "explanation": "A mapping table handles every variant the same way, is easy to extend, and the final check catches anything new.",
-          "why_wrong": "Deleting rows loses real data; a PivotTable treats each spelling as a different city; one Find and Replace misses the other variants and the trailing space.",
+          "explanation": "Trimming removes stray spaces, and a mapping table turns every variant into one name the same way each time. The final check, such as a pivot table of the column, catches any spelling the map missed.",
+          "why_wrong": "Deleting rows loses real bookings; a pivot table doesn’t merge different spellings such as Bengaluru, Bangalore and BLR; one Find and Replace misses the other variants and the trailing space.",
           "learning_outcome": "Standardise categories with a mapping, then verify.",
           "difficulty": "Intermediate",
           "topic": "Standardising categories",
@@ -573,59 +574,59 @@
         },
         {
           "id": "da-m03-q4",
-          "title": "The missing delivery times",
-          "scenario": "In a food-delivery dataset, 8% of orders have no delivery time. Most of them are orders the customer cancelled after a long wait.",
-          "question": "If you drop those rows and report the average delivery time, what happens?",
+          "title": "The patients who left",
+          "scenario": "A Vellore hospital’s outpatient log records when each patient arrived and when a doctor saw them. 9% of rows have no “seen at” time. Most are patients who left after a long wait without being seen.",
+          "question": "If you drop those rows, how does the average waiting time you report compare with what patients actually experienced?",
           "options": [
-            "Nothing changes, because rows with no delivery time are simply left out of every average",
-            "The average looks better than reality, because the slowest cases are the ones left out",
-            "The average looks longer than reality, because the cancelled orders were the slowest",
-            "The average can’t be trusted at all, so no delivery figure should be reported"
+            "It matches, because rows with no “seen at” time would be left out of the average anyway",
+            "It looks better than reality, because the longest waits are the ones left out",
+            "It looks worse than reality, because the patients who left had the longest waits",
+            "It can’t be compared at all, so no waiting-time figure should be reported"
           ],
           "correct_index": 1,
-          "explanation": "The missing rows aren’t random: they are mostly the slowest orders. Dropping them makes delivery look faster than it is.",
-          "why_wrong": "Missing rows matter when they differ from the rest; leaving out the slowest orders makes the average shorter, not longer; the average can still be reported, as long as you say what it leaves out.",
+          "explanation": "The missing rows aren’t random: they are mostly the patients who waited longest. Leaving them out makes waiting look shorter than patients found it, so report the average with a note on how many left unseen.",
+          "why_wrong": "Dropping the rows or letting the average skip them leaves out the longest waits, so the figure isn’t what patients went through; leaving out the longest waits makes the average shorter, not longer; the average can still be reported if you say what it leaves out.",
           "learning_outcome": "Ask why data is missing before you drop it.",
-          "difficulty": "Advanced",
+          "difficulty": "Intermediate",
           "topic": "Missing data",
-          "weight": 15
+          "weight": 10
         }
       ]
     },
     {
       "id": "da-m04",
       "title": "SQL foundations: asking a database questions",
-      "summary": "SELECT, WHERE, GROUP BY and HAVING: filter, group and summarise data in a database.",
+      "summary": "SELECT, WHERE, GROUP BY, HAVING and NULLs: filter, group and summarise data in a free database in your browser.",
       "skill": "sql",
       "level": "foundation",
-      "outcome": "Write SELECT queries that filter, sort, group and summarise data.",
+      "outcome": "Write and run SELECT queries that filter, group and summarise a table, and handle blanks (NULL) correctly.",
       "minutes": 90,
       "learn": [
         {
           "title": "One question, one query",
-          "body": "SQL reads almost like a sentence: SELECT the columns, FROM a table, WHERE rows match a condition, ORDER BY a column.\n\nSELECT city, order_value\nFROM orders\nWHERE order_date >= '2026-04-01'\nORDER BY order_value DESC;"
+          "body": "SQL reads almost like a sentence: SELECT the columns, FROM a table, WHERE rows match, ORDER BY a column. Worked example: a payments table has 5 rows.\npayment_id | city | amount\n1 | Pune | 400\n2 | Indore | 1200\n3 | Pune | 900\n4 | Nagpur | 250\n5 | Pune | 650\n\nSELECT payment_id, amount\nFROM payments\nWHERE city = 'Pune' AND amount > 500\nORDER BY amount DESC;\nResult: 2 rows. Payment 3 (900), then payment 5 (650). Text goes in single quotes; numbers don’t.\n\nRun SQL free in the DuckDB shell at shell.duckdb.org. It works in any browser, phone included, and the queries run on your device. Load a CSV file with one line:\nCREATE TABLE orders AS SELECT * FROM 'https://myskills.org.in/practice-data/masala-mart/orders.csv';\nThe table lasts until you close the tab."
         },
         {
           "title": "GROUP BY turns rows into answers",
-          "body": "COUNT, SUM, AVG, MIN and MAX summarise rows, and GROUP BY decides the groups.\n\nSELECT city, COUNT(*) AS orders, SUM(order_value) AS revenue\nFROM orders\nGROUP BY city;\n\nEvery column in SELECT is either in the GROUP BY or inside a summary function."
+          "body": "COUNT, SUM, AVG, MIN and MAX summarise rows. GROUP BY decides the groups. With the same 5 payments:\nSELECT city, COUNT(*) AS payments, SUM(amount) AS total\nFROM payments\nGROUP BY city;\nResult: Pune 3 payments, 1950. Indore 1, 1200. Nagpur 1, 250.\nEvery column in SELECT must be in the GROUP BY or inside a summary function.\n\nCommon mistake with dates. Say paid_at holds a date and a time. This misses almost all of 30 April:\nWHERE paid_at BETWEEN '2026-04-01' AND '2026-04-30'\n'2026-04-30' means midnight at the start of 30 April. Write a half-open range instead:\nWHERE paid_at >= '2026-04-01' AND paid_at < '2026-05-01'\nIt works for dates with or without times."
         },
         {
-          "title": "WHERE filters rows, HAVING filters groups",
-          "body": "WHERE works before grouping (only paid orders); HAVING works after (only cities with more than 100 orders). A query runs in this order: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY. Knowing the order explains most “why won’t this work?” moments."
+          "title": "WHERE, HAVING and NULL",
+          "body": "WHERE filters rows before grouping. HAVING filters groups after it. A query runs in this order: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY.\n\nA blank in a database is NULL, meaning unknown. Test it with IS NULL or IS NOT NULL. Writing = NULL never finds a row, because nothing equals unknown.\n\nAVG, SUM and COUNT(column) skip NULLs. COUNT(*) counts every row. Worked example: four reviews of a Chennai café.\nreview_id | stars\n1 | 5\n2 | NULL\n3 | 3\n4 | NULL\nCOUNT(*) is 4. COUNT(stars) is 2. AVG(stars) is 4.0: the average of the 2 rated reviews, not (5 + 3) ÷ 4.\nTo list the unrated reviews:\nSELECT review_id FROM reviews WHERE stars IS NULL;"
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Write the query",
-          "prompt": "A table payments(payment_id, user_id, method, amount, paid_at) holds a fintech app’s transactions. Write a query that shows, for each payment method, the number of payments and the total amount in April 2026, largest total first.",
-          "hint": "Filter the dates in WHERE, then GROUP BY method."
+          "title": "Orders by payment method in April",
+          "prompt": "Open shell.duckdb.org and load Masala Mart’s orders with the CREATE TABLE line from the first card. The table has order_id, order_date, customer_id, city, sku, quantity, order_value, payment_method and returned. Write and run a query that shows, for each payment_method, the number of orders and the total order_value in April 2026, largest total first. Paste your query and its result.",
+          "hint": "Use the half-open date range from the second card. Check yourself: your three order counts should add up to 165, the number of April orders."
         },
         {
           "id": "t2",
-          "title": "Explain a query in plain words",
-          "prompt": "Explain what this query returns, as you would to a manager who doesn’t know SQL:\nSELECT city, AVG(delivery_minutes) AS avg_minutes FROM deliveries WHERE status = 'delivered' GROUP BY city HAVING COUNT(*) >= 50 ORDER BY avg_minutes;",
-          "hint": "Why might the HAVING line be there?"
+          "title": "Run it, then explain it",
+          "prompt": "Run this query on the same table: SELECT city, AVG(order_value) AS avg_value FROM orders WHERE returned = 0 GROUP BY city HAVING COUNT(*) >= 100 ORDER BY avg_value DESC; Then explain in plain words, for a manager who doesn’t know SQL, what it returns. How many cities are in the result, and why are the others missing?",
+          "hint": "Write a second query that counts each city’s kept orders (returned = 0). Which cities have fewer than 100? Why might a manager want them left out?"
         }
       ],
       "reflection": {
@@ -635,8 +636,8 @@
       "quiz": [
         {
           "id": "da-m04-q1",
-          "title": "",
-          "scenario": "",
+          "title": "Orders in each city",
+          "scenario": "A Jamshedpur hardware chain keeps its sales in a table orders(order_id, city, order_value).",
           "question": "Which query counts the orders in each city?",
           "options": [
             "SELECT COUNT(DISTINCT city) FROM orders;",
@@ -646,7 +647,7 @@
           ],
           "correct_index": 1,
           "explanation": "GROUP BY city makes one group per city, and COUNT(*) counts the rows in each.",
-          "why_wrong": "COUNT(DISTINCT city) counts how many cities there are; mixing city and COUNT(*) without GROUP BY is an error in most databases, and ORDER BY only sorts; adding up order IDs means nothing.",
+          "why_wrong": "COUNT(DISTINCT city) gives one number, how many cities there are; without GROUP BY, mixing city and COUNT(*) is an error in most databases, and ORDER BY only sorts; adding up order IDs gives a meaningless total.",
           "learning_outcome": "GROUP BY plus a summary function answers “for each …”.",
           "difficulty": "Beginner",
           "topic": "GROUP BY",
@@ -654,9 +655,9 @@
         },
         {
           "id": "da-m04-q2",
-          "title": "",
-          "scenario": "",
-          "question": "You want cities whose total revenue is above ₹10 lakh. Which clause filters on that total?",
+          "title": "Cities above ₹10 lakh",
+          "scenario": "A Lucknow sweet-shop chain has a table orders(order_id, city, order_value). The owner wants the cities whose total revenue is above ₹10 lakh.",
+          "question": "Which clause filters on that total?",
           "options": [
             "WHERE SUM(order_value) > 1000000",
             "HAVING SUM(order_value) > 1000000",
@@ -664,8 +665,8 @@
             "GROUP BY SUM(order_value) > 1000000"
           ],
           "correct_index": 1,
-          "explanation": "Totals exist only after grouping, so they are filtered with HAVING.",
-          "why_wrong": "WHERE runs before grouping and can’t use SUM; ORDER BY sorts, it doesn’t filter; you can’t group by a condition on a total.",
+          "explanation": "WHERE filters rows before they are grouped, so the city totals don’t exist yet. HAVING filters after GROUP BY, so it can test SUM(order_value) > 1000000 (₹10 lakh).",
+          "why_wrong": "WHERE runs before grouping, so SUM(order_value) can’t be used there and the query fails; ORDER BY sorts the result but removes nothing; GROUP BY sets the groups and can’t filter them.",
           "learning_outcome": "Filter groups with HAVING, rows with WHERE.",
           "difficulty": "Intermediate",
           "topic": "HAVING",
@@ -674,8 +675,8 @@
         {
           "id": "da-m04-q3",
           "title": "Leads without a phone number",
-          "scenario": "SELECT COUNT(*) FROM leads WHERE phone = NULL; returns 0, though many leads have no phone number.",
-          "question": "Why?",
+          "scenario": "A Kolkata property agency runs SELECT COUNT(*) FROM leads WHERE phone = NULL; and gets 0, though many leads have no phone number.",
+          "question": "Why does it return 0?",
           "options": [
             "The table has no leads with a missing phone number, so 0 is right",
             "“= NULL” is never true; it should be WHERE phone IS NULL",
@@ -683,7 +684,7 @@
             "NULL needs quotes, as in WHERE phone = 'NULL'"
           ],
           "correct_index": 1,
-          "explanation": "NULL means unknown, so “phone = NULL” is never true. SQL uses IS NULL and IS NOT NULL.",
+          "explanation": "NULL means unknown, and nothing equals unknown, so “phone = NULL” is never true and no row passes. WHERE phone IS NULL finds the blanks.",
           "why_wrong": "The leads do have missing phones; COUNT(*) counts rows whatever their values; 'NULL' in quotes is just the text NULL.",
           "learning_outcome": "Test for missing values with IS NULL.",
           "difficulty": "Intermediate",
@@ -692,59 +693,59 @@
         },
         {
           "id": "da-m04-q4",
-          "title": "Ratings with gaps",
-          "scenario": "A table ratings(order_id, stars) has 1,000 orders. 400 have no rating (NULL). AVG(stars) returns 4.2.",
+          "title": "Rides with no rating",
+          "scenario": "A Patna cab app’s table rides(ride_id, rating) has 1,000 rides. 400 riders gave no rating, so their rating is NULL. SELECT AVG(rating) FROM rides; returns 4.2.",
           "question": "What does 4.2 describe?",
           "options": [
-            "The average across all 1,000 orders, counting missing ratings as 0",
-            "The median rating",
-            "The average of the 600 rated orders; AVG ignores NULLs",
-            "Nothing: the NULLs cause an error"
+            "The total of all ratings divided by all 1,000 rides",
+            "The middle rating of the 600 rated rides, since AVG skips the NULLs",
+            "The average of the 600 rides that have a rating",
+            "Nothing useful, because the NULLs make AVG return an error"
           ],
           "correct_index": 2,
-          "explanation": "Summary functions skip NULLs, so 4.2 is the average among the 60% who rated. A report should say so: “4.2 stars among the 60% of orders that were rated.”",
-          "why_wrong": "Missing ratings aren’t treated as 0; AVG is a mean, not a median; NULLs don’t cause an error.",
+          "explanation": "AVG, like SUM and COUNT(rating), skips NULLs; only COUNT(*) counts every row. So 4.2 is the average of the 600 rated rides. A report should say “4.2 stars from the 60% of rides that were rated”.",
+          "why_wrong": "Dividing by all 1,000 rides would treat the 400 missing ratings as 0 and give a much lower number; AVG is a mean, not the middle value, even after it skips the NULLs; NULLs don’t cause an error, because AVG simply leaves them out.",
           "learning_outcome": "Know who is in an average before you report it.",
-          "difficulty": "Advanced",
+          "difficulty": "Intermediate",
           "topic": "Aggregates and NULLs",
-          "weight": 15
+          "weight": 10
         }
       ]
     },
     {
       "id": "da-m05",
       "title": "SQL for real questions: joins and windows",
-      "summary": "Combine tables with joins, avoid double counting, and compare rows with window functions.",
+      "summary": "Combine tables with joins, avoid double counting, and compare rows with window functions such as ROW_NUMBER and LAG.",
       "skill": "sql",
       "level": "intermediate",
-      "outcome": "Combine tables with joins and compare rows with window functions.",
+      "outcome": "Combine tables with joins without double counting, and compare rows with window functions such as ROW_NUMBER and LAG.",
       "minutes": 90,
       "learn": [
         {
           "title": "Joins connect facts to context",
-          "body": "An orders table knows each customer_id; a customers table knows their city and sign-up date. An INNER JOIN keeps only rows that match in both tables. A LEFT JOIN keeps every row from the left table and leaves blanks where nothing matches: the way to find customers who never ordered."
+          "body": "An orders table knows each customer_id. A customers table knows their city and sign-up date. A join connects them. INNER JOIN keeps only rows that match in both tables. LEFT JOIN keeps every row from the left table, and fills in NULL where nothing matches.\n\nWorked example: customers A, B and C. A has 2 orders, B has 1 and C has none.\nSELECT c.customer_id, o.order_id\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.customer_id;\nResult: 4 rows. A twice, B once, and C with order_id NULL. Add WHERE o.order_id IS NULL, and only C is left: a customer who never ordered.\n\nCommon trap: after a LEFT JOIN, a WHERE condition on an orders column, such as o.order_date >= '2026-04-01', drops C. NULL fails the test, so the LEFT JOIN quietly becomes an INNER JOIN. Put that condition in the ON clause instead."
         },
         {
           "title": "Watch the row count",
-          "body": "A join can multiply rows. If one customer has three saved addresses and you join orders to addresses, each order appears three times and revenue triples. Count the rows, and check a total, before and after every join."
+          "body": "A join can multiply rows. This is called fan-out.\n\nWorked example: Ravi, a customer in Indore, has 3 orders of ₹500 each, ₹1,500 in all. He also has 2 saved addresses. Join orders to addresses on customer_id, and each order matches both addresses. You get 6 rows, and SUM(order_value) says ₹3,000. Revenue has doubled, but nothing more was sold.\n\nCatch it by counting rows and a total before and after every join:\nSELECT COUNT(*), SUM(order_value) FROM orders;\nRun the same count on the joined result. If either number grows, the key is not unique on the other side.\n\nFix it by joining to a table with one row per key, or by summarising the other table first. Before any join, ask: one row per what?"
         },
         {
-          "title": "Window functions compare without collapsing",
-          "body": "GROUP BY squashes rows into groups; a window function keeps every row and adds context: a running total, a rank within a city, last month’s value.\n\nSUM(amount) OVER (PARTITION BY user_id ORDER BY paid_at) gives each user a running total.\nROW_NUMBER() OVER (PARTITION BY user_id ORDER BY paid_at) = 1 marks their first payment."
+          "title": "Window functions compare rows",
+          "body": "GROUP BY squashes rows into groups. A window function keeps every row and adds context to it.\nROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date) numbers each customer’s orders.\nSummary functions work as windows too: AVG(order_value) OVER (PARTITION BY city) puts each city’s average on every order row, so you can compare each order with it.\nLAG(x) OVER (ORDER BY …) brings in the value from the row before. LEAD looks one row ahead.\n\nWorked example: monthly revenue for a Nashik shop.\nSELECT month, revenue, LAG(revenue) OVER (ORDER BY month) AS last_month\nFROM monthly;\nJan | ₹4.1 lakh | NULL\nFeb | ₹4.6 lakh | ₹4.1 lakh\nMar | ₹4.3 lakh | ₹4.6 lakh\nrevenue - last_month is the change: +₹0.5 lakh in February, −₹0.3 lakh in March.\n\nYou can’t use a window function in WHERE. Work it out in a WITH step (a CTE) or a subquery first, then filter, for example WHERE rn = 1."
         }
       ],
       "tasks": [
         {
           "id": "t1",
           "title": "Find the silent customers",
-          "prompt": "Tables: customers(customer_id, name, city, signed_up) and orders(order_id, customer_id, order_date, value). Write a query that lists customers who signed up in 2026 but have never ordered.",
-          "hint": "LEFT JOIN, then keep the rows where the order side is empty."
+          "prompt": "In shell.duckdb.org, load orders as in Module 4 (SQL foundations), and the customers table: CREATE TABLE customers AS SELECT * FROM 'https://myskills.org.in/practice-data/masala-mart/customers.csv'; It has customer_id, city, signed_up and channel. Write a query that lists customers who signed up in 2026 but have never ordered. Report how many there are, and paste your query.",
+          "hint": "LEFT JOIN customers to orders, then keep the rows where the order side IS NULL. Check: run it again without the 2026 condition. That count must be bigger."
         },
         {
           "id": "t2",
           "title": "First order or repeat?",
-          "prompt": "Using the orders table, describe (or write) how you would mark each order as a customer’s first order or a repeat order, then work out what share of April 2026 revenue came from repeat orders.",
-          "hint": "ROW_NUMBER over each customer’s orders, by date."
+          "prompt": "Use ROW_NUMBER to number each customer’s orders by date, across all their orders since October 2025. Then work out what share of April 2026 revenue came from repeat orders (row number 2 or more). Paste your query and the share, to one decimal place.",
+          "hint": "Number the orders in a WITH step before you filter to April. If you filter April first, each customer’s first April order looks like a first order, and the share comes out far too small. Order by order_date, then order_id, so ties are numbered the same way every time."
         }
       ],
       "reflection": {
@@ -754,22 +755,22 @@
       "quiz": [
         {
           "id": "da-m05-q1",
-          "title": "",
-          "scenario": "",
-          "question": "Which query lists customers who have no orders?",
+          "title": "Students who haven’t applied",
+          "scenario": "A college placement cell has students(student_id, branch) and applications(student_id, company, applied_on). The placement officer wants every student who hasn’t applied to any company since 1 August 2026, including those who never applied.",
+          "question": "Which query lists them?",
           "options": [
-            "SELECT c.customer_id FROM customers c INNER JOIN orders o ON o.customer_id = c.customer_id WHERE o.order_id IS NULL;",
-            "SELECT customer_id FROM orders WHERE order_id IS NULL;",
-            "SELECT c.customer_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.order_id IS NOT NULL;",
-            "SELECT c.customer_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.order_id IS NULL;"
+            "SELECT s.student_id FROM students s LEFT JOIN applications a ON a.student_id = s.student_id WHERE a.applied_on >= '2026-08-01' AND a.student_id IS NULL;",
+            "SELECT s.student_id FROM students s INNER JOIN applications a ON a.student_id = s.student_id AND a.applied_on >= '2026-08-01' WHERE a.student_id IS NULL;",
+            "SELECT s.student_id FROM students s LEFT JOIN applications a ON a.student_id = s.student_id AND a.applied_on >= '2026-08-01' WHERE a.student_id IS NOT NULL;",
+            "SELECT s.student_id FROM students s LEFT JOIN applications a ON a.student_id = s.student_id AND a.applied_on >= '2026-08-01' WHERE a.student_id IS NULL;"
           ],
           "correct_index": 3,
-          "explanation": "The LEFT JOIN keeps every customer, and those with no orders have NULL on the order side.",
-          "why_wrong": "An INNER JOIN drops customers without orders, so the filter finds nothing; the orders table alone can’t show customers who never ordered; IS NOT NULL keeps the customers who did order.",
-          "learning_outcome": "LEFT JOIN plus IS NULL finds what’s missing.",
-          "difficulty": "Intermediate",
-          "topic": "Joins",
-          "weight": 10
+          "explanation": "The LEFT JOIN keeps every student. With the date test in ON, only applications from 1 August join. A student with none gets NULL on the applications side, and IS NULL keeps them.",
+          "why_wrong": "With the date test in WHERE, rows whose applied_on is NULL fail it, so the students you want vanish and the query returns nothing; an INNER JOIN drops students with no matching application, so IS NULL finds nothing; IS NOT NULL keeps the students who did apply.",
+          "learning_outcome": "After a LEFT JOIN, put conditions on the right-hand table in ON, not WHERE.",
+          "difficulty": "Advanced",
+          "topic": "LEFT JOIN filters",
+          "weight": 15
         },
         {
           "id": "da-m05-q2",
@@ -792,37 +793,37 @@
         },
         {
           "id": "da-m05-q3",
-          "title": "",
-          "scenario": "",
-          "question": "Which expression numbers each customer’s orders 1, 2, 3… from the first?",
+          "title": "Latest visit only",
+          "scenario": "A physiotherapy centre in Kozhikode has a table visits(visit_id, patient_id, visit_date, therapist). You need one row per patient: their most recent visit.",
+          "question": "Which expression, kept where it equals 1, picks each patient’s latest visit?",
           "options": [
-            "ROW_NUMBER() OVER (ORDER BY customer_id, order_date)",
-            "ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date)",
-            "RANK() OVER (PARTITION BY order_date ORDER BY customer_id)",
-            "SUM(order_id) OVER (PARTITION BY customer_id ORDER BY order_date)"
+            "ROW_NUMBER() OVER (PARTITION BY patient_id ORDER BY visit_date)",
+            "ROW_NUMBER() OVER (PARTITION BY patient_id ORDER BY visit_date DESC)",
+            "ROW_NUMBER() OVER (PARTITION BY patient_id, visit_date ORDER BY visit_date DESC)",
+            "RANK() OVER (PARTITION BY visit_date ORDER BY patient_id)"
           ],
           "correct_index": 1,
-          "explanation": "PARTITION BY restarts the numbering for each customer, and ORDER BY order_date puts the first order first.",
-          "why_wrong": "Without PARTITION BY customer_id the numbering never restarts for each customer; RANK partitioned by date ranks customers within each day; a running sum of order IDs isn’t a count.",
-          "learning_outcome": "Use ROW_NUMBER to find firsts and sequences.",
-          "difficulty": "Advanced",
+          "explanation": "PARTITION BY patient_id restarts the numbering for each patient, and ORDER BY visit_date DESC puts the newest visit first. So row 1 is each patient’s latest visit.",
+          "why_wrong": "Ascending order makes row 1 the first visit, not the latest; partitioning by patient and date restarts the count for every visit date, so nearly every row is 1; RANK partitioned by date ranks patients within each day, not visits within each patient.",
+          "learning_outcome": "Choose the partition and the sort direction to pick one row per group.",
+          "difficulty": "Intermediate",
           "topic": "Window functions",
-          "weight": 15
+          "weight": 10
         },
         {
           "id": "da-m05-q4",
-          "title": "",
-          "scenario": "",
-          "question": "You need every order shown next to its city’s average order value, to flag unusually large orders. Which approach keeps every order row?",
+          "title": "Each order against its city",
+          "scenario": "A Siliguri tea trader’s orders table has order_id, city and value. You need every order shown next to its city’s average order value, to flag unusually large orders.",
+          "question": "Which approach puts each city’s own average next to every order?",
           "options": [
-            "GROUP BY city, then compare each order with the averages by eye",
-            "SELECT DISTINCT city, AVG(value), sorted by the average",
+            "AVG(value) OVER (ORDER BY city) alongside each order",
+            "SELECT DISTINCT city, AVG(value), then sort by the average",
             "HAVING AVG(value) > value after a GROUP BY on city",
             "AVG(value) OVER (PARTITION BY city) alongside each order"
           ],
           "correct_index": 3,
-          "explanation": "A window average adds the city’s average to every order row without collapsing the rows.",
-          "why_wrong": "Reading averages by eye doesn’t put them on the order rows; DISTINCT with AVG returns one row per city; HAVING filters groups and can’t compare each order with its group.",
+          "explanation": "AVG(value) OVER (PARTITION BY city) works out the average inside each city and adds it to every order row, without collapsing the rows.",
+          "why_wrong": "ORDER BY without PARTITION BY gives a running average that mixes in the cities before it, not each city’s own average; putting city next to AVG with no GROUP BY or OVER stops with an error in DuckDB, and even with GROUP BY it gives one row per city, not every order; HAVING filters groups and can’t compare each order with its group.",
           "learning_outcome": "Window functions add group context without losing detail.",
           "difficulty": "Advanced",
           "topic": "Window functions",
@@ -836,34 +837,34 @@
       "summary": "Variation, samples, bias and A/B tests: tell a real change from noise.",
       "skill": "statistics",
       "level": "intermediate",
-      "outcome": "Use spread, samples and simple experiments to tell a real change from noise.",
+      "outcome": "Use spread, samples and a simple A/B test to tell a real change from noise.",
       "minutes": 75,
       "learn": [
         {
           "title": "Variation is normal",
-          "body": "Daily orders bounce around even when nothing has changed: weekends, salary days, rain, festivals. Before celebrating a jump, compare it with how much the number usually moves, for example the range or the standard deviation over recent weeks. A change inside the usual range is probably noise."
+          "body": "Numbers move around even when nothing has changed: weekends, salary days, rain, festivals. These ordinary ups and downs are called noise.\n\nWorked example: for the last 8 weeks, a Bhopal clinic saw 110 to 150 patients a day. The average was about 130. On Monday it saw 158. That is above the usual range, but only just, and only for one day. Before calling it a change, watch the next week. If most days stay above 150, something has changed. If they fall back to 110 to 150, Monday was noise.\n\nStandard deviation measures how far a typical day is from the average. In Google Sheets, =STDEV(B2:B57) gives it for 56 days. A day more than about 2 standard deviations from the average is unusual. Check that before you celebrate or panic."
         },
         {
-          "title": "Samples, margins and who answered",
-          "body": "A survey of 200 students isn’t every student. The smaller the sample, the wider the range around the result: “72% are satisfied” from 50 answers could easily be 60% or 85% for everyone, while from 2,000 answers it is within a couple of points. Ask who answered too: happy or angry customers reply more than everyone else."
+          "title": "Samples and who answered",
+          "body": "A survey of 200 students is not every student. It is a sample. Its result has a range of error around it, called the margin of error.\n\nWorked example: 72% of students who answered say they are satisfied.\n- From 50 answers, the figure for all students could be anywhere from about 60% to 85%.\n- From 2,000 answers, it is within about 2 points.\nBigger samples give narrower ranges.\n\nThen ask who answered. Say a college emails a survey and only 1 in 10 students replies. The replies may come mostly from the happiest and the angriest students. This is called non-response bias.\n\nA bigger sample does not fix bias. 5,000 replies from the wrong people still mislead. Ask how people were chosen before you trust the number."
         },
         {
           "title": "A/B tests answer “did it work?”",
-          "body": "Split users at random: half see the old checkout, half the new one, at the same time. Random assignment balances everything else, so a clear difference can be credited to the change. Decide the measure and how long the test runs before you start: stopping the moment it “looks good” fools you."
+          "body": "An A/B test splits people at random into two groups at the same time. Group A sees the old version and group B the new one. Random assignment balances everything else, such as city, phone and income. So a clear difference can be credited to the change.\n\nWorked example: a Jaipur online tutor tests a new sign-up page. Before starting, she decides three things. The measure: paid sign-ups per visitor. The run: 2 full weeks, so both weekends count. The size: about 1,000 visitors per page.\nResult: old page 40 of 1,000 (4.0%); new page 64 of 1,000 (6.4%).\n\nIs a 2.4-point gap more than chance? A free online A/B test calculator compares the two groups. Here, a gap this big would rarely happen by chance alone.\n\nThe common mistake: checking every day and stopping the moment it “looks good”. Early gaps are often noise."
         }
       ],
       "tasks": [
         {
           "id": "t1",
           "title": "Design a test",
-          "prompt": "An edtech app wants to know whether a ₹99 first-month offer brings more paid sign-ups than a 7-day free trial. Design an A/B test: who is in it, how they are split, what you measure, how long it runs, and what result would make you pick a winner.",
-          "hint": "What could go wrong if the offer ran only in one city, or only in the first week?"
+          "prompt": "An edtech app wants to know whether a ₹99 first-month offer brings more paid sign-ups than a 7-day free trial. Write a one-page A/B test plan under five headings. Who is in it? How are they split? What do you measure? How long does it run? What result would make you pick a winner?",
+          "hint": "What could go wrong if the offer ran only in one city, or only in the first week? Decide the run length before you start."
         },
         {
           "id": "t2",
           "title": "Noise or signal?",
-          "prompt": "A shop’s daily sales were between ₹38,000 and ₹52,000 for the last 60 days. Yesterday, after a new shelf layout, sales were ₹54,000. Write what you would tell the owner, and what you would check before concluding that the layout worked.",
-          "hint": "One day against a pattern."
+          "prompt": "A Coimbatore shop’s daily sales for the last 10 days, in ₹ thousand, were: 44, 41, 49, 38, 52, 46, 43, 47, 40, 45. Yesterday, after a new shelf layout, sales were ₹54,000. Put the 10 numbers in Google Sheets and find the average, the lowest, the highest and the standard deviation. Then write 3 or 4 sentences for the owner: is ₹54,000 unusual, and what would you check before saying the layout worked?",
+          "hint": "Use =AVERAGE, =MIN, =MAX and =STDEV. How many standard deviations above the average is 54? Is one day enough to decide?"
         }
       ],
       "reflection": {
@@ -873,18 +874,18 @@
       "quiz": [
         {
           "id": "da-m06-q1",
-          "title": "",
-          "scenario": "",
-          "question": "In an A/B test, why are users assigned to the two groups at random?",
+          "title": "Opt in, or random?",
+          "scenario": "A Kanpur online pharmacy wants to test a new checkout page. A manager suggests showing it only to users who opt in, and comparing them with users who don’t.",
+          "question": "Why should users be assigned to the two pages at random instead?",
           "options": [
-            "So the test finishes sooner, because users don’t have to be sorted into groups",
+            "So the test finishes sooner, because nobody has to stop and choose which page to see",
             "So both groups end up with exactly the same number of users every day",
-            "So users can’t choose a version, which would break the app’s terms of use",
-            "So the groups are alike except for the change, and a difference can be credited to it"
+            "So users can’t pick a page, which would break the app’s terms of use",
+            "So the groups are alike except for the page, and a difference can be credited to it"
           ],
           "correct_index": 3,
-          "explanation": "Randomisation spreads every other difference (age, city, device, habits) evenly between the groups.",
-          "why_wrong": "Randomising doesn’t make a test faster, guarantee equal group sizes, or exist to stop users choosing.",
+          "explanation": "Users who opt in may be keener or more used to the app, so they could buy more anyway. Random assignment spreads those differences evenly, so a gap between the groups comes from the page.",
+          "why_wrong": "Random assignment doesn’t make a test faster; it gives groups of roughly equal size, not exactly equal every day; it is there to make the comparison fair, not to follow any terms of use.",
           "learning_outcome": "Random assignment is what makes a test fair.",
           "difficulty": "Beginner",
           "topic": "Experiments",
@@ -952,37 +953,37 @@
     {
       "id": "da-m07",
       "title": "Python and pandas for analysis",
-      "summary": "Load, clean, summarise and join data with pandas, and check each step.",
+      "summary": "Load, clean, filter, summarise and join data with pandas in a free Google Colab notebook, and check each step.",
       "skill": "python",
       "level": "intermediate",
-      "outcome": "Load, clean, summarise and join data with pandas in a notebook.",
-      "minutes": 120,
+      "outcome": "Clean and summarise a real CSV file with pandas in a notebook, checking the row count and totals at each step.",
+      "minutes": 90,
       "learn": [
         {
-          "title": "Why Python when there’s Excel?",
-          "body": "Python repeats your steps exactly on next month’s file, handles millions of rows, and records every step in a notebook anyone can rerun. pandas is its table library: a DataFrame is a sheet you can program. You can run it free in Google Colab, or inside Excel with Python in Excel."
+          "title": "Why Python, and where to run it free",
+          "body": "Python repeats your steps exactly on next month’s file. It handles millions of rows, and a notebook records every step so anyone can rerun it. pandas is Python’s table library. A DataFrame, usually called df, is a sheet you can program.\n\nRun it free in Google Colab (colab.research.google.com) with a Google account. There is nothing to install. A laptop or a college computer is easier than a phone. Free sessions can stop when idle; if that happens, run the cells again from the top. Python in Excel also exists, but it needs a paid Microsoft 365 plan.\n\nWorked example: your first cell.\nimport pandas as pd\ndf = pd.read_csv(\"https://myskills.org.in/practice-data/masala-mart/orders.csv\")\ndf.shape\nThe output (2030, 9) means 2,030 rows and 9 columns. df.head() shows the first 5 rows, and df.info() shows each column’s type and blanks."
         },
         {
-          "title": "The everyday moves",
-          "body": "df = pd.read_csv(\"orders.csv\") loads a file.\ndf.info() and df.describe() profile it.\ndf[df[\"city\"] == \"Pune\"] filters rows.\ndf.groupby(\"city\")[\"value\"].sum() summarises.\ndf.merge(customers, on=\"customer_id\", how=\"left\") joins tables.\npd.to_datetime(df[\"order_date\"], dayfirst=True) turns Indian-style dates into real dates."
+          "title": "From file to answer",
+          "body": "A whole small analysis: a Hyderabad tiffin service’s file payments.csv has 4 rows:\ntxn_time,customer,amount,status\n02/05/2026 08:10,R1,120,success\n02/05/2026 13:05,R2,150,failed\n03/05/2026 08:20,R1,120,success\n05/05/2026 19:30,R2,150,success\n\ndf = pd.read_csv(\"payments.csv\")\ndf[\"txn_time\"] = pd.to_datetime(df[\"txn_time\"], format=\"%d/%m/%Y %H:%M\")\nok = df[df[\"status\"] == \"success\"]\nok.groupby(\"customer\")[\"amount\"].sum()\nOutput: R1 240, R2 150.\n\nWhy format=? 02/05/2026 could be 2 May or 5 February. format= says exactly which, and stops with an error if a row doesn’t fit. dayfirst=True only prefers day-first; it is not strict.\n\nThe common mistake is letting pandas guess. Read month-first, 02/05/2026 becomes 5 February. Always look at a few converted dates with df.head() before you go on.\n\nTo bring in another table’s columns, merge on a shared key:\nareas = pd.DataFrame({\"customer\": [\"R1\"], \"area\": [\"Kondapur\"]})\ndf = df.merge(areas, on=\"customer\", how=\"left\")\nhow=\"left\" keeps every payment, like a LEFT JOIN. R2 has no match, so its area is NaN, pandas’ blank. Leave how= out and only matching rows stay."
         },
         {
-          "title": "Check as you go",
-          "body": "After every step, look at the shape (df.shape), a few rows (df.head()) and a total you know. If revenue changes after a merge, rows were duplicated. Leave a short comment saying why each step exists: next month, you will be the person who needs it."
+          "title": "Filter, clean, then check",
+          "body": "To filter on two conditions, use & for “and” and | for “or”. Put brackets round each condition:\ndf[(df[\"status\"] == \"success\") & (df[\"amount\"] > 5000)]\nPython’s word and gives an error on whole columns, and so does leaving out the brackets.\n\nTo change values in matching rows, use df.loc[df[\"amount\"] < 0, \"status\"] = \"check\". The older form df[df[\"amount\"] < 0][\"status\"] = \"check\" never changes df in pandas 3 (January 2026). Colab may run an older pandas, so check pd.__version__.\n\nTo clean: df = df.drop_duplicates() removes rows identical in every column. subset=\"customer_id\" compares only that column, so it would also delete every repeat order.\nTo turn “₹1,250” into a number:\ndf[\"order_value\"] = df[\"order_value\"].str.replace(\"₹\", \"\").str.replace(\",\", \"\").astype(int)\n\nAfter each step, compare df.shape and a total with the step before. If either grows after a merge, rows were duplicated, like a fan-out in SQL."
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Plan the notebook",
-          "prompt": "You receive a monthly CSV of 300,000 UPI transactions (txn_id, user_id, merchant_category, amount, txn_time, status). Write the pandas steps, as code or in plain words, to find the five merchant categories with the highest value of successful transactions in May 2026.",
-          "hint": "Filter on status, turn txn_time into a date, then group."
+          "title": "Clean and summarise the raw export",
+          "prompt": "Open a new notebook in Google Colab and load the messy export: df = pd.read_csv(\"https://myskills.org.in/practice-data/masala-mart/orders_raw.csv\"). Then: drop exact duplicate rows; turn order_date into dates with format=\"%d/%m/%Y\"; turn order_value into numbers (remove \"₹\" and commas with .str.replace, then .astype(int)); merge in category from https://myskills.org.in/practice-data/masala-mart/products.csv with how=\"left\". Finally, filter to kept orders (returned == 0) from April to June 2026, and total order_value by category, largest first. Report that table and df.shape after each step.",
+          "hint": "Check yourself: after dropping duplicates you should have as many rows as orders.csv. After the merge, 58 rows have no category (new SKUs). If the filter gives an error, look for a missing bracket."
         },
         {
           "id": "t2",
-          "title": "Read the code",
-          "prompt": "Explain what this code does, line by line, and one thing that could go wrong:\ndf = pd.read_csv(\"leads.csv\")\ndf = df.drop_duplicates(subset=\"phone\")\ndf[\"source\"] = df[\"source\"].str.strip().str.lower()\nsummary = df.groupby(\"source\").size().sort_values(ascending=False)",
-          "hint": "Are two leads with the same phone number always the same person?"
+          "title": "Read the code, then run it",
+          "prompt": "Read this code and explain each line in plain words. df = pd.read_csv(\"https://myskills.org.in/practice-data/masala-mart/orders_raw.csv\") / before = len(df) / df = df.drop_duplicates(subset=\"customer_id\") / print(before - len(df)). Now run it. How many rows did it remove? Then reload the file and run df.drop_duplicates() with no subset instead. Which version removes only true duplicates? What would the other do to a revenue total?",
+          "hint": "A customer who orders three times appears in three rows. Is that a duplicate?"
         }
       ],
       "reflection": {
@@ -992,8 +993,8 @@
       "quiz": [
         {
           "id": "da-m07-q1",
-          "title": "",
-          "scenario": "",
+          "title": "Totals by city",
+          "scenario": "A Jalandhar sports-goods seller has loaded its orders into a DataFrame df with the columns order_id, city and value.",
           "question": "Which line gives the total order value for each city?",
           "options": [
             "df.groupby(\"city\")[\"value\"].sum()",
@@ -1003,7 +1004,7 @@
           ],
           "correct_index": 0,
           "explanation": "groupby makes one group per city; selecting \"value\" and summing gives each city’s total.",
-          "why_wrong": "Grouping by value and summing city mixes up the two columns; total value divided by the number of cities is one average, not a total per city; pivot with these arguments doesn’t give city totals.",
+          "why_wrong": "Grouping by value and summing city mixes up the two columns; total value divided by the number of cities is one average, not a total per city; this df.pivot call stops with an error and wouldn’t add anything up anyway.",
           "learning_outcome": "groupby plus an aggregate summarises by category.",
           "difficulty": "Beginner",
           "topic": "groupby",
@@ -1011,28 +1012,28 @@
         },
         {
           "id": "da-m07-q2",
-          "title": "Indian dates in pandas",
-          "scenario": "A column holds dates written the Indian way, such as \"05/04/2026\" for 5 April 2026.",
-          "question": "Which line reads them correctly as dates?",
+          "title": "The dairy’s monthly file",
+          "scenario": "A Kolhapur dairy sends a delivery log every month. Its date column is written day first, such as 05/04/2026 for 5 April 2026. The owner wants the code to stop with an error if any row doesn’t follow that pattern, instead of guessing.",
+          "question": "Which line should you use?",
           "options": [
-            "pd.to_datetime(df[\"date\"], errors=\"coerce\")",
             "pd.to_datetime(df[\"date\"], dayfirst=True)",
-            "df[\"date\"].astype(\"datetime64[ns]\")",
-            "pd.to_datetime(df[\"date\"], format=\"%m/%d/%Y\")"
+            "pd.to_datetime(df[\"date\"], format=\"%d/%m/%Y\")",
+            "pd.to_datetime(df[\"date\"], format=\"%m/%d/%Y\")",
+            "pd.to_datetime(df[\"date\"], errors=\"coerce\")"
           ],
           "correct_index": 1,
-          "explanation": "dayfirst=True tells pandas the first number is the day. Without it, pandas guesses the format and can read an ambiguous date like 05/04/2026 month-first, as 4 May.",
-          "why_wrong": "errors=\"coerce\" only blanks dates it can’t read, and astype also reads 05/04 month-first, so April and May still swap; the format %m/%d/%Y says the month comes first, the wrong way round.",
-          "learning_outcome": "Tell pandas the date format; never let it guess.",
+          "explanation": "format=\"%d/%m/%Y\" says exactly how every date is written, so 05/04/2026 becomes 5 April. pandas stops with an error at any row that doesn’t fit.",
+          "why_wrong": "dayfirst=True only prefers day first: if the first date is 04/13/2026, pandas can read every date month-first, with only a warning; %m/%d/%Y puts the month first, so 05/04/2026 becomes 4 May; errors=\"coerce\" never stops, and quietly turns dates it can’t read into blanks (NaT).",
+          "learning_outcome": "Give pandas the exact date format, so a bad row stops the code.",
           "difficulty": "Intermediate",
           "topic": "Dates",
           "weight": 10
         },
         {
           "id": "da-m07-q3",
-          "title": "",
-          "scenario": "",
-          "question": "orders.merge(customers, on=\"customer_id\", how=\"left\"): what happens to orders whose customer_id isn’t in customers?",
+          "title": "Orders with unknown customers",
+          "scenario": "A Dhanbad electronics store runs orders.merge(customers, on=\"customer_id\", how=\"left\"). A few orders have a customer_id that isn’t in customers.",
+          "question": "What happens to those orders?",
           "options": [
             "They are kept, with the customer columns empty (NaN)",
             "They are dropped, because they have nothing to match in customers",
@@ -1041,7 +1042,7 @@
           ],
           "correct_index": 0,
           "explanation": "A left merge keeps every row of the left table; unmatched rows get NaN in the right table’s columns.",
-          "why_wrong": "Dropping unmatched rows is what an inner merge does; pandas doesn’t raise an error for unmatched keys; it never matches to a “nearest” key.",
+          "why_wrong": "Dropping unmatched rows is what an inner merge does; pandas doesn’t raise an error for keys with no match; a merge only matches equal keys, never a “nearest” one.",
           "learning_outcome": "Choose the merge type for the rows you must keep.",
           "difficulty": "Intermediate",
           "topic": "Joins in pandas",
@@ -1049,59 +1050,59 @@
         },
         {
           "id": "da-m07-q4",
-          "title": "",
-          "scenario": "",
+          "title": "Big successful payments",
+          "scenario": "A Gwalior payment company has a DataFrame df of transactions, with status and amount columns.",
           "question": "Which line keeps only successful transactions above ₹5,000?",
           "options": [
             "df[(df[\"status\"] == \"success\") & (df[\"amount\"] > 5000)]",
-            "df[df[\"status\"] == \"success\" and df[\"amount\"] > 5000]",
-            "df.filter(\"success\", 5000)",
+            "df[(df[\"status\"] == \"success\") and (df[\"amount\"] > 5000)]",
+            "df[df[\"status\"] == \"success\" & df[\"amount\"] > 5000]",
             "df[(df[\"status\"] == \"success\") | (df[\"amount\"] > 5000)]"
           ],
           "correct_index": 0,
-          "explanation": "pandas combines conditions with & (and) and | (or), and each condition needs its own brackets.",
-          "why_wrong": "Python’s “and” raises an error with whole columns; filter selects columns by name; | means “or”, which would keep failed transactions above ₹5,000 too.",
+          "explanation": "pandas combines conditions on whole columns with & for “and”. Each condition needs its own brackets, so each comparison is worked out before & joins them.",
+          "why_wrong": "Python’s word and can’t combine whole columns, so it raises an error; without brackets, & is applied first, to \"success\" and the amount column, which raises an error; | means “or”, so it would also keep failed transactions above ₹5,000.",
           "learning_outcome": "Combine pandas conditions with & and brackets.",
-          "difficulty": "Advanced",
+          "difficulty": "Intermediate",
           "topic": "Filtering",
-          "weight": 15
+          "weight": 10
         }
       ]
     },
     {
       "id": "da-m08",
       "title": "Dashboards people use",
-      "summary": "Choose the right chart, design dashboards around decisions, and check what Copilot drafts.",
+      "summary": "Choose the right chart, design a dashboard around decisions, build it with free tools, and check any number a tool drafts.",
       "skill": "visualisation",
       "level": "intermediate",
-      "outcome": "Choose the right chart and build a dashboard around the decisions it supports.",
+      "outcome": "Build a one-page dashboard that shows key numbers against targets, where the problem is, and what changed.",
       "minutes": 90,
       "learn": [
         {
           "title": "Pick the chart for the question",
-          "body": "Change over time: a line chart. Comparing categories: a bar chart, sorted. Part of a whole: a stacked bar, or a pie for two or three parts only. Relationship between two numbers: a scatter plot. When people need exact values, a well-formatted table is fine."
+          "body": "Match the chart to the question.\n- Change over time: a line chart.\n- Comparing categories: a bar chart, sorted largest first.\n- Part of a whole: a stacked bar, or a pie with only two or three slices.\n- Two numbers together: a scatter plot.\n- Exact values: a well-formatted table.\n\nCommon mistake: a bar chart whose axis doesn’t start at zero. Worked example: three stores sold ₹100 lakh, ₹101 lakh and ₹102 lakh. If the axis starts at ₹99 lakh, the bars are 1, 2 and 3 units tall. ₹102 lakh now looks three times ₹100 lakh, though it is only 2% more. Bars must start at zero.\n\nA pie with nine slices is another trap. People can’t compare angles well, but a sorted bar chart shows the order at once."
         },
         {
           "title": "A dashboard answers three questions",
-          "body": "Are we on track (the key number against its target)? Where is the problem (a breakdown by city, channel or product)? What changed (the trend against last period)? Put the most important number top left, keep each page to one purpose, and use colour only to draw attention to what needs action."
+          "body": "A good dashboard page answers three questions, from top to bottom.\n1. Are we on track? Key numbers against their targets.\n2. Where is the problem? A breakdown by city, centre, channel or product.\n3. What changed? A trend against earlier periods.\n\nWorked example: a coaching chain with 6 centres in Nagpur, Indore and Raipur.\n- Top row: admissions this month, 412 against a target of 450. Fees collected, ₹38 lakh against ₹40 lakh.\n- Middle: a sorted bar chart of admissions by centre. Centres below target are red; the rest are grey.\n- Bottom: a line chart of weekly admissions for the last 12 weeks.\nThe area head sees at once that 2 centres are behind, and calls them.\n\nPut the most important number top left. Keep each page to one purpose. Use colour only to point at what needs action."
         },
         {
-          "title": "Power BI in practice",
-          "body": "Power BI connects to Excel, databases and files, and builds an interactive report on a data model. Measures written in DAX, such as Revenue = SUM(Orders[Value]), are reused across visuals, and visual calculations add running totals or moving averages inside a chart. Copilot can draft measures and pages; always check its numbers against a total you trust before sharing."
+          "title": "Build it free",
+          "body": "You can build a dashboard free in three ways.\n- Looker Studio (lookerstudio.google.com): free in any browser. Connect it to a Google Sheet, then add scorecards, charts and filters. It is easiest on a laptop.\n- Google Sheets charts: Insert > Chart. They work on a phone too, and are enough for a simple one-page view.\n- Power BI Desktop: free on a Windows computer, and used by many employers in India. It has no Mac or phone version.\n\nIn Power BI you write measures in DAX, its formula language. For example:\nReturn rate = DIVIDE(SUM(Orders[returned]), COUNTROWS(Orders))\nEvery chart reuses the measure, so the number is the same everywhere.\n\nCopilot in Power BI can draft measures and pages. It is a paid feature some employers provide. Whatever drafted a number, check it against a total you trust before you share it."
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Sketch the dashboard",
-          "prompt": "The regional manager of a 40-store pharmacy chain wants a weekly dashboard. Describe one page: the 3–4 key numbers at the top, the charts below, the filters, and what decision each part helps them make.",
-          "hint": "What would make them pick up the phone to a store manager?"
+          "title": "Build Masala Mart’s dashboard",
+          "prompt": "Build a one-page dashboard for Masala Mart’s founder from orders.csv, loaded into a Google Sheet as in Module 2 (Spreadsheets that answer questions). Use Looker Studio connected to your Sheet, or Google Sheets charts; Power BI Desktop is fine if you have Windows. Include: three key numbers for September 2026 against their targets (revenue, target ₹85,000; orders, target 200; return rate, target under 5%); a sorted bar chart of revenue by city; and a line chart of monthly revenue from October 2025. Submit a link or a screenshot, and one sentence on what the founder should act on.",
+          "hint": "Check your September revenue against a SUMIFS or pivot total before you share. Colour only the numbers that miss their target. Does the line chart show the Diwali season?"
         },
         {
           "id": "t2",
           "title": "Fix a bad chart",
-          "prompt": "Describe a chart you have seen that was hard to read (a 3D pie, too many colours, an axis that doesn’t start at zero). Explain what was wrong, and how you would redraw it.",
-          "hint": "Would a sorted bar chart say it more clearly?"
+          "prompt": "A colleague shows Masala Mart’s revenue by city as a 3D pie with 10 slices. Make that pie yourself in Google Sheets from a pivot of revenue by city, then redraw it as a better chart. Which city is third, and how easy was that to see in each chart? Write two sentences on why your redraw is easier to read.",
+          "hint": "Would a sorted bar chart say it more clearly? Check that its axis starts at zero."
         }
       ],
       "reflection": {
@@ -1111,18 +1112,18 @@
       "quiz": [
         {
           "id": "da-m08-q1",
-          "title": "",
-          "scenario": "",
-          "question": "Which chart best shows monthly revenue over the last 18 months?",
+          "title": "Is revenue rising?",
+          "scenario": "A fertiliser dealer in Guntur has 18 months of revenue figures. The owner wants to see whether monthly revenue has risen, and whether it dips in the same months each year.",
+          "question": "Which chart shows this best?",
           "options": [
-            "A line chart",
-            "A pie chart",
-            "A scatter plot",
-            "A donut chart"
+            "A line chart of revenue by month",
+            "A pie chart of revenue by month",
+            "A scatter plot of revenue by month",
+            "A bar chart sorted by revenue"
           ],
           "correct_index": 0,
-          "explanation": "A line chart shows change over time and makes trends and seasonality easy to see.",
-          "why_wrong": "Pie and donut charts show parts of a whole, not time; a scatter plot shows the relationship between two numbers.",
+          "explanation": "Change over time is a line chart’s job. The months run left to right in order, so a rise, a fall or a yearly dip shows at once.",
+          "why_wrong": "A pie shows parts of a whole and loses the order of the months; a scatter plot is for two measures that move together, and its separate dots make a trend harder to follow; sorting bars by revenue breaks the time order the owner needs.",
           "learning_outcome": "Use line charts for trends over time.",
           "difficulty": "Beginner",
           "topic": "Chart choice",
@@ -1131,17 +1132,17 @@
         {
           "id": "da-m08-q2",
           "title": "The giant jump",
-          "scenario": "A bar chart shows this quarter’s sales at ₹102 lakh against ₹100 lakh last quarter, but the new bar looks five times taller.",
+          "scenario": "A Madurai jewellery chain’s bar chart shows this quarter’s sales at ₹52 lakh against ₹50 lakh last quarter. The new bar looks twice as tall as the old one.",
           "question": "What is most likely wrong?",
           "options": [
-            "The value axis starts near ₹99 lakh instead of zero, exaggerating a 2% rise",
-            "The data is wrong: a 2% rise can’t produce a bar that much taller",
+            "The value axis starts near ₹48 lakh instead of zero, exaggerating a 4% rise",
+            "The data is wrong: a 4% rise can’t produce a bar that much taller",
             "The bars are drawn in 3D, which makes the nearer bar look larger",
             "The two quarters are measured in different units, so the bars can’t be compared directly"
           ],
           "correct_index": 0,
-          "explanation": "Bar lengths are read as sizes; starting the axis near the values makes a small difference look huge.",
-          "why_wrong": "The numbers are fine; nothing suggests 3D or a units mix-up; the axis scale is what exaggerates the difference.",
+          "explanation": "Readers judge bars by their length. With the axis starting at ₹48 lakh, the bars are 2 and 4 units tall, so a 4% rise looks like 100%. Bars must start at zero.",
+          "why_wrong": "The numbers can be right while the drawing misleads; 3D can distort sizes a little, but it can’t double a bar; nothing suggests a units mix-up, and an axis starting at ₹48 lakh explains the doubling exactly.",
           "learning_outcome": "Start bar chart axes at zero.",
           "difficulty": "Intermediate",
           "topic": "Misleading charts",
@@ -1190,37 +1191,37 @@
     {
       "id": "da-m09",
       "title": "AI as your analysis partner",
-      "summary": "Prompt AI assistants well, check everything they produce, and keep personal data safe.",
+      "summary": "Prompt free AI assistants well, check everything they produce against the data, and keep personal data safe.",
       "skill": "ai-analytics",
       "level": "intermediate",
-      "outcome": "Use AI assistants to speed up analysis, and check their work before anyone relies on it.",
+      "outcome": "Use a free AI assistant to draft analysis, then check its output against the data before anyone relies on it.",
       "minutes": 75,
       "learn": [
         {
-          "title": "What AI is good at",
-          "body": "Drafting SQL and pandas code from a plain-English question, explaining unfamiliar formulas, suggesting cleaning steps, summarising findings and proposing charts. Copilot in Excel and Power BI, and general assistants such as ChatGPT, Claude and Gemini, can all do this. They work best when you give them the table names, the columns and what each column means."
+          "title": "What AI is good at, and how to ask",
+          "body": "AI assistants can draft SQL and pandas code from a plain-English question. They can explain a formula, suggest cleaning steps and propose charts. Free assistants such as ChatGPT, Claude and Gemini can all do this. Copilot in Excel and Power BI does too, on paid plans some employers provide.\n\nThey work best when you give them context. Worked example of a strong prompt:\n“I use DuckDB. Table orders has order_id, order_date (a DATE), customer_id, order_value in ₹, and returned (1 or 0). Write a query for monthly revenue from kept orders (returned = 0) in 2026. One row per month, oldest first. Explain each line.”\n\nIt names the tool, the table, the columns, what they mean, and the output wanted. A weak prompt, “write SQL for monthly sales”, leaves the AI to guess all of that."
         },
         {
-          "title": "Where it goes wrong",
-          "body": "AI can write code that runs but answers a different question, invent column names, mishandle dates or missing values, and state wrong numbers confidently. Treat its output like a new colleague’s first draft: read it, run it on a small sample you can check by hand, and compare totals with a source you trust."
+          "title": "Catch it before it costs you",
+          "body": "AI can write code that runs but answers a different question. It can invent column names, mishandle dates or blanks, and state wrong numbers confidently. Treat its output like a new colleague’s first draft.\n\nWorked example: a Kochi pharmacy asks for “monthly active customers”. The AI writes:\nSELECT month, COUNT(customer_id) FROM orders GROUP BY month;\nIt runs. But COUNT(customer_id) counts orders, not people. You check 10 orders from one month by hand: 7 different customers placed them, but the query says 10. The fix:\nSELECT month, COUNT(DISTINCT customer_id) FROM orders GROUP BY month;\n\nThree checks catch most mistakes.\n1. Run it on a small sample you can count by hand.\n2. Compare a total with a source you trust.\n3. Read the code for the definition: what exactly is counted?\nAsking the same AI “is this right?” is not a check."
         },
         {
           "title": "Protect people’s data",
-          "body": "Don’t paste personal data (names, phone numbers, Aadhaar numbers, health details) into public AI tools. India’s Digital Personal Data Protection Act, 2023 allows personal data to be used only for a lawful purpose, with the person’s consent or for a few uses the Act permits, and it must be kept safe. Use the tools your organisation approves; otherwise share only column names and a few made-up rows, and run the resulting code on the real data yourself."
+          "body": "Don’t paste personal data into public AI tools. That includes names, phone numbers, Aadhaar numbers and health details.\n\nIndia’s Digital Personal Data Protection Act, 2023 sets the rules. Personal data may be used only for a lawful purpose. That needs the person’s consent, or one of a few legitimate uses the Act lists. The data must also be kept safe. The DPDP Rules, 2025 bring in the duties in phases, and most apply to organisations from May 2027. Good practice starts now.\n\nWorked example: you want AI help with a clinic’s appointments file. Use the tools your organisation approves. Otherwise, share only the column names and a made-up row:\npatient_id, visit_date, department, fee\nP001, 2026-05-02, ENT, 500\nThen run the code the AI writes on the real data yourself."
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Write a good prompt",
-          "prompt": "You need the share of repeat customers in each month, from tables orders(order_id, customer_id, order_date, value) and customers(customer_id, city, signed_up). Write the prompt you would give an AI assistant to draft the SQL, then list three checks you would run on what it returns.",
-          "hint": "Define “repeat customer” in the prompt, or the assistant will choose a definition for you."
+          "title": "Prompt, then check",
+          "prompt": "Use any free AI assistant, such as ChatGPT, Claude or Gemini. Give it only the column names of Masala Mart’s orders.csv, not the data. Ask it for a DuckDB query that shows, for each month, the share of customers who were repeat customers. Define “repeat customer” in your prompt yourself. Run the query in shell.duckdb.org on orders.csv. Then run the three checks from the second card. Submit your prompt, the query, one month’s result, and what each check found.",
+          "hint": "Decide first: is a repeat customer someone who ordered in an earlier month, or someone with 2 or more orders this month? The two give very different numbers."
         },
         {
           "id": "t2",
           "title": "Catch the error",
-          "prompt": "An AI assistant summarises a sales file: “Revenue grew 40% in Q2, driven by Chennai.” Describe how you would check both parts of that sentence before putting it in a report.",
-          "hint": "Recalculate from the raw data, and check which dates it used for Q2."
+          "prompt": "An AI assistant read Masala Mart’s orders.csv and wrote: “Revenue grew 60% from Q1 to Q2 2026, driven by Bengaluru.” Check both parts against the data with a pivot table or SUMIFS in Google Sheets. Q1 is January to March and Q2 is April to June. Find the mistake, work out what the AI most likely did wrong, and rewrite the sentence correctly.",
+          "hint": "Recalculate both quarters from the rows yourself. If your growth figure differs, try other date ranges to see which one gives 60%."
         }
       ],
       "reflection": {
@@ -1230,18 +1231,18 @@
       "quiz": [
         {
           "id": "da-m09-q1",
-          "title": "",
-          "scenario": "",
+          "title": "Average fare per route",
+          "scenario": "A bus-booking app keeps its data in DuckDB, in a table bookings(booking_id, user_id, route, booked_at, fare). The operations head wants the average fare on each route for October 2026.",
           "question": "Which prompt is most likely to get correct SQL from an AI assistant?",
           "options": [
-            "“Write a SQL query that finds repeat customers in my orders table for 2026, month by month. Make it efficient and easy to read.”",
-            "“Table orders(order_id, customer_id, order_date, value): for each 2026 month, what % of customers had ordered before? PostgreSQL.”",
-            "“You are an expert data analyst with 20 years of experience. Analyse my sales data thoroughly and tell me about repeat customers.”",
-            "“Using my company database, calculate the repeat customer rate for every month of 2026 and show the results as a line chart.”"
+            "“Write SQL for the average fares on my bus booking app last month. Make it efficient and easy to read.”",
+            "“DuckDB. Table bookings(booking_id, user_id, route, booked_at, fare): average fare per route, October 2026, highest first.”",
+            "“You are an expert data analyst with 20 years of experience. Analyse my bus booking data and tell me everything about fares.”",
+            "“Using my company database, work out the average fare for each route last month and draw it as a bar chart.”"
           ],
           "correct_index": 1,
-          "explanation": "It names the table and columns, defines the measure precisely, sets the period and says which database, leaving little to guess.",
-          "why_wrong": "They leave out the table and its columns, a precise definition of a repeat customer, or both, so the assistant has to guess.",
+          "explanation": "It names the tool, the table and its columns, the measure, the period and the order of the output. The assistant has nothing to guess.",
+          "why_wrong": "“Make it efficient” gives no table, columns or exact period, so the assistant must invent them; the expert persona names neither the table nor the measure; “my company database” gives the assistant no schema to work from.",
           "learning_outcome": "Give AI the schema, the definition and the goal.",
           "difficulty": "Beginner",
           "topic": "Prompting",
@@ -1275,11 +1276,11 @@
             "Paste the whole file into a free AI chatbot, since it deletes conversations once you close the window",
             "Remove the diagnosis column first, then share the names and phone numbers, which aren’t sensitive",
             "Use an approved tool, or share only the column names and made-up rows and run the code yourself",
-            "Email the file to a friend who is good with AI and ask them to clean it"
+            "Replace names with initials, keep the phones and diagnoses, and paste it into a free chatbot"
           ],
           "correct_index": 2,
           "explanation": "Personal and health data must stay within approved systems. Sharing the structure with made-up rows gets the help without exposing anyone.",
-          "why_wrong": "You can’t be sure a free chatbot doesn’t keep what you paste; names and phone numbers are personal data on their own; sending the file to a friend exposes it too.",
+          "why_wrong": "You can’t be sure a free chatbot doesn’t keep what you paste; names and phone numbers are personal data on their own; initials don’t hide anyone while phone numbers and diagnoses stay.",
           "learning_outcome": "Never share personal data with unapproved AI tools.",
           "difficulty": "Intermediate",
           "topic": "Data privacy",
@@ -1300,9 +1301,9 @@
           "explanation": "An invented column shows the assistant was guessing, so other parts may be guesses too. Supply the schema and re-check everything.",
           "why_wrong": "lifetime_value was invented, not missing; filling it with made-up values corrupts the result; a query that runs can still be wrong.",
           "learning_outcome": "An invented detail means: re-check the whole answer.",
-          "difficulty": "Advanced",
+          "difficulty": "Intermediate",
           "topic": "Verifying AI output",
-          "weight": 15
+          "weight": 10
         }
       ]
     },
@@ -1312,34 +1313,34 @@
       "summary": "Lead with the recommendation, turn findings into actions, and be honest about limits.",
       "skill": "storytelling",
       "level": "advanced",
-      "outcome": "Turn an analysis into a clear recommendation a manager can act on.",
+      "outcome": "Write a recommendation a manager can act on from its first two lines, with the evidence and its honest limits.",
       "minutes": 60,
       "learn": [
         {
           "title": "Lead with the answer",
-          "body": "Start with the recommendation and the number behind it: “Move ₹2 lakh from Meta to Google Search in Pune: Search brings customers at ₹310 each against ₹780 on Meta.” Then the evidence, then the caveats. Most managers read the first two lines and decide whether to read on."
+          "body": "Most managers read the first two lines, then decide whether to read on. So start with the recommendation and the number behind it.\n\nBefore: “This report analyses six months of marketing data from January to June 2026 across two channels.”\nAfter: “Move ₹2 lakh a month from Meta ads to Google Search in Pune. Search brings in a customer for ₹310, against ₹780 on Meta.”\n\nWhat changed? The action comes first. It names the amount, the place and the channel. The one number that justifies it comes next. After that come the evidence and then the limits.\n\nThe common mistake is telling the story of your work in the order you did it. The manager needs the decision, not your journey."
         },
         {
           "title": "So what, and now what?",
-          "body": "For every chart, say what it shows and what it means for the decision. “Returns are 18% for cash-on-delivery orders and 6% for UPI” is a finding. “Offering ₹30 off for paying by UPI could cut returns” is the insight, with an action."
+          "body": "For every chart, say what it shows and what it means for the decision. A finding says what the data shows. An insight says why it matters. An action says what to do next.\n\nWorked example from a Nagpur bookshop:\n- Finding: weekend sales are 40% of the week’s sales, but the same 2 staff work every day.\n- Insight: at weekends customers wait at the counter, and some leave without buying.\n- Action: add a part-time staff member at weekends for a month. Then compare weekend sales with last month.\n\nThe action is small, specific and testable. “Improve the weekend experience” is not an action, because nobody knows what to do on Monday.\n\nWrite job titles and terms in full the first time: finance head (CFO), cash on delivery (COD)."
         },
         {
           "title": "Be honest about uncertainty",
-          "body": "State the period, the data source, the sample size and what you couldn’t check. A recommendation with clear limits earns more trust than a confident one that later falls apart, and it tells the reader what to watch next."
+          "body": "State the period, the data source, the sample size and what you couldn’t check. A recommendation with clear limits earns more trust than a confident one that later falls apart.\n\nWorked example: a one-line caveat under a skincare brand’s recommendation.\n“Based on 14,000 customers, January to June 2026. Customers chose the trial kit themselves, so keen buyers may have picked it. A 4-week A/B test would confirm it.”\n\nThat line does three jobs. It says how much data there is. It names the main doubt: people chose for themselves (you met this in the first module and the statistics module). And it says what would settle the doubt.\n\nThe common mistake is hiding limits in a footnote, or leaving them out. If your manager finds a limit you didn’t mention, they stop trusting the rest."
         }
       ],
       "tasks": [
         {
           "id": "t1",
-          "title": "Write the first paragraph",
-          "prompt": "You found that a D2C skincare brand’s customers who start with the trial kit are 2.3 times more likely to buy again within 60 days than customers who start with a full-size product (14,000 customers, January–June 2026). Write the opening paragraph of a memo to the founder, with your recommendation.",
-          "hint": "Recommendation first, evidence second, one honest caveat."
+          "title": "Write the memo opening",
+          "prompt": "In Module 2 (Spreadsheets that answer questions) you found Masala Mart’s return rate by payment method (orders.csv, October 2025 to September 2026). Cash on delivery (COD) orders are returned far more often than UPI or card orders. Assume each return costs the brand about ₹90 in shipping both ways. Write the first paragraph of a memo to the founder: your recommendation first, the numbers behind it, and one honest caveat.",
+          "hint": "Recommendation first, evidence second, one caveat. Did customers choose how to pay? What would a test show?"
         },
         {
           "id": "t2",
           "title": "Turn findings into actions",
           "prompt": "Three findings from a college canteen’s sales data: 60% of sales happen between 12:30 and 1:30 pm; the queue takes 14 minutes at peak; 30% of students who arrive at peak leave without buying. Write one insight and one action for each finding.",
-          "hint": "What could the canteen change by next week?"
+          "hint": "What could the canteen change by next week? Make each action small enough to test."
         }
       ],
       "reflection": {
@@ -1349,18 +1350,18 @@
       "quiz": [
         {
           "id": "da-m10-q1",
-          "title": "",
-          "scenario": "",
-          "question": "Which opening line is best for an update to a busy manager?",
+          "title": "Two minutes with the operations head",
+          "scenario": "You analysed a year of returns for an Agra footwear brand that sells online. The operations head has two minutes before a meeting and will read only your first line.",
+          "question": "Which opening line should you send?",
           "options": [
-            "“Recommendation: pause cash on delivery in Tier-3 cities, where COD returns cost about ₹4 lakh a month.”",
+            "“Recommendation: offer free size exchanges instead of refunds; size returns cost us about ₹4 lakh a month.”",
             "“This report analyses 14 tables and 2.1 million rows from our order, return and payment systems.”",
-            "“Data was collected from several sources over six months and cleaned with a documented process.”",
-            "“Here are 25 charts covering sales, returns and payments, organised by region and by month.”"
+            "“Data was collected from several sources over twelve months and cleaned with a documented process.”",
+            "“Here are 25 charts covering sales, returns, exchanges and payments, organised by region, by store and by month.”"
           ],
           "correct_index": 0,
-          "explanation": "It leads with an action, the evidence and the cost, so the manager can decide straight away.",
-          "why_wrong": "They describe the work done, not what was found or what to do.",
+          "explanation": "It leads with an action and the money behind it, so the head can decide in the two minutes available. The evidence and the limits can follow.",
+          "why_wrong": "The count of tables and rows says how big the work was, not what to do; how the data was collected is method, which belongs lower down; 25 charts leave the reader to find the point alone.",
           "learning_outcome": "Lead with the recommendation and its impact.",
           "difficulty": "Beginner",
           "topic": "Executive summaries",
@@ -1368,18 +1369,18 @@
         },
         {
           "id": "da-m10-q2",
-          "title": "",
-          "scenario": "",
-          "question": "Which is an insight with an action, rather than just a finding?",
+          "title": "The weekly update",
+          "scenario": "An analyst at a Mysuru online furniture store drafts four lines for the weekly update to the founder.",
+          "question": "Which line is an insight with an action, not just a finding?",
           "options": [
-            "“The average order value is ₹640, slightly higher than in the same month last year.”",
-            "“40% of carts are abandoned at the delivery fee; showing it on the product page could help.”",
-            "“We now have 12,000 customers, most of them in Maharashtra and Karnataka, up from 9,000 last year.”",
+            "“The average order value is ₹6,400, slightly higher than in the same month last year.”",
+            "“40% of carts are dropped at the delivery fee; show it on product pages for a month and compare.”",
+            "“We now have 12,000 customers, most in Maharashtra and Karnataka, up from 9,000 last year.”",
             "“Sales were higher in October, when the festive season began across the country.”"
           ],
           "correct_index": 1,
-          "explanation": "It links a specific problem to a cause and a change worth testing.",
-          "why_wrong": "They are facts, even with context added; none says what to do about it.",
+          "explanation": "It links a specific problem, carts dropped at the delivery fee, to a likely cause. It also names a small change and a way to test it.",
+          "why_wrong": "₹6,400 against last year is a finding with no “so what”; the customer count by state is growth with no action attached; linking October sales to the festive season explains a finding but says nothing to do next.",
           "learning_outcome": "Turn findings into insights by adding “so what” and “now what”.",
           "difficulty": "Intermediate",
           "topic": "Insights",
@@ -1407,17 +1408,17 @@
         {
           "id": "da-m10-q4",
           "title": "Did the loyalty programme pay?",
-          "scenario": "The CFO asks whether the new loyalty programme paid for itself.",
+          "scenario": "The chief financial officer (CFO) of a Pune supermarket chain asks whether the loyalty programme it launched six months ago has paid for itself.",
           "question": "Which answer is most useful?",
           "options": [
-            "“Yes: engagement is up across app opens, reviews and referrals since the launch.”",
-            "“Yes: members spent ₹38 lakh more than non-members over six months, so it has clearly paid off.”",
-            "“Yes: against a matched group, members spent ₹38 lakh more, costs were ₹22 lakh: ₹16 lakh net.”",
+            "“Yes: engagement is up across app opens, product reviews and referrals in the six months since the launch.”",
+            "“Yes: members spent ₹38 lakh more than shoppers who aren’t members over six months, so it has clearly paid off.”",
+            "“Yes: members spent ₹38 lakh more than similar shoppers who didn’t join; it cost ₹22 lakh, so ₹16 lakh net.”",
             "“It’s too early to say; loyalty programmes usually take a year to show results.”"
           ],
           "correct_index": 2,
-          "explanation": "It answers yes or no, in money, against a fair comparison, and says how the comparison was made.",
-          "why_wrong": "Engagement doesn’t answer a money question; comparing members with all non-members ignores that loyal customers already spent more, and leaves out the cost; six months of data can already answer it.",
+          "explanation": "It answers in money, subtracts the cost, and compares members with similar shoppers who didn’t join, because keen shoppers spent more even before they joined.",
+          "why_wrong": "Engagement doesn’t answer a money question; comparing members with all non-members ignores that keen shoppers already spent more, and leaves out the cost; six months of data can already answer it.",
           "learning_outcome": "Answer the question asked, in its own terms.",
           "difficulty": "Advanced",
           "topic": "Business impact",
@@ -1432,9 +1433,9 @@
     "questions": [
       {
         "id": "da-f01",
-        "title": "",
-        "scenario": "",
-        "question": "A manager asks, “Is our marketing working?” Which version of the question can an analysis actually answer?",
+        "title": "Is marketing working?",
+        "scenario": "Hamsa runs marketing for a Bhubaneswar snack brand that sells online. From April to June she spent ₹6 lakh on Instagram ads and ₹6 lakh on Google ads. She asks you, “Is our marketing working?” She must set next quarter’s budget by Friday.",
+        "question": "Which version of her question can an analysis actually answer?",
         "options": [
           "“Did Q2 Instagram customers cost less per first order than Google ones, and should budget move?”",
           "“Are our Instagram and Google campaigns working, judging by the likes, clicks and reach they got in Q2?”",
@@ -1442,85 +1443,99 @@
           "“Do customers like our ads, and which of them do they remember best?”"
         ],
         "correct_index": 0,
-        "explanation": "It names the channels, the period, the measure and the decision it informs.",
+        "explanation": "It names the channels, the period (Q2), one measure (cost per first order) and the decision it feeds (moving budget). So the data can answer it before Friday.",
         "difficulty": "Beginner",
         "topic": "Problem framing",
-        "weight": 5
+        "weight": 5,
+        "skill": "data-literacy",
+        "why_wrong": "Likes, clicks and reach measure attention, not whether the ads bring paying customers; every number by month answers no particular question; whether customers like or remember ads needs a survey and points to no decision.",
+        "learning_outcome": "A question becomes answerable when it names a measure, a period and a decision."
       },
       {
         "id": "da-f02",
-        "title": "",
-        "scenario": "",
-        "question": "Which of these is a category, not a quantity?",
+        "title": "The red stores",
+        "scenario": "A Tiruchirappalli grocery chain’s dashboard turns a store red on any day its sales fall below ₹68,000. Store 12’s daily sales have been between ₹60,000 and ₹80,000 for 60 days. So it turns red on many ordinary days, and managers now ignore the colour.",
+        "question": "Which change would make the red flag most useful?",
         "options": [
-          "Payment method",
-          "Order value",
-          "Delivery minutes",
-          "Quantity ordered"
+          "Flag a store when its 7-day average falls below its own usual range, not on one low day",
+          "Lower the red line to ₹55,000 for every store, so that the flag appears much less often",
+          "Drop the colour and show every store’s daily sales in a table, so managers judge for themselves",
+          "Turn a store red whenever today’s sales are below yesterday’s, to catch every drop early"
         ],
         "correct_index": 0,
-        "explanation": "Payment method (UPI, card, cash on delivery) is a label; the others are amounts you can add or average.",
-        "difficulty": "Beginner",
-        "topic": "Data types",
-        "weight": 5
+        "explanation": "Store 12’s sales normally swing between ₹60,000 and ₹80,000, so one low day is noise. Comparing a 7-day average with the store’s own usual range flags a real fall and keeps red meaningful.",
+        "difficulty": "Intermediate",
+        "topic": "Alerts and variation",
+        "weight": 10,
+        "skill": "visualisation",
+        "why_wrong": "One line for every store ignores each store’s own normal level, so a big store could fall a long way before turning red; a table removes the at-a-glance signal the dashboard exists for; comparing with yesterday turns ordinary daily swings red even more often.",
+        "learning_outcome": "Set alerts against normal variation, not single values."
       },
       {
         "id": "da-f03",
-        "title": "",
-        "scenario": "",
-        "question": "Which formula totals the order value for Pune from an Excel table called Orders?",
+        "title": "The SKUs that won’t match",
+        "scenario": "A Vijayawada wholesaler copies SKUs from suppliers’ PDF invoices into a sheet. It uses =XLOOKUP(B2, Master[SKU], Master[Category], \"New SKU\"). 300 of 4,000 lines show “New SKU”, but when you search the master by eye, those SKUs are there.",
+        "question": "What is the most likely cause?",
         "options": [
-          "=SUMIF(Orders[City], Orders[Value], \"Pune\")",
-          "=SUMIFS(Orders[Value], Orders[City], \"Pune\")",
-          "=COUNTIFS(Orders[City], \"Pune\", Orders[Value], \">0\")",
-          "=VLOOKUP(\"Pune\", Orders[[City]:[Value]], 2, FALSE)"
+          "The master isn’t sorted A to Z, and XLOOKUP needs sorted data to find an exact match",
+          "Some copied SKUs carry hidden spaces, so they aren’t exactly equal to the master’s",
+          "XLOOKUP is doing an approximate match, because the fourth argument wasn’t set to exact",
+          "Those 300 SKUs really are new, so add them to the master and run the lookup again"
         ],
         "correct_index": 1,
-        "explanation": "SUMIFS adds the values in one column where another column matches a condition.",
-        "why_wrong": "SUMIF takes the range to check, then the condition, then the values to add, so these arguments are in the wrong order; COUNTIFS counts Pune orders instead of adding their value; VLOOKUP returns only the first Pune order.",
+        "explanation": "A lookup matches only identical values. A SKU copied with a space before or after it looks the same on screen but doesn’t match. Trim the column, then check that the count of “New SKU” falls.",
+        "why_wrong": "XLOOKUP’s exact match works on unsorted data; its fourth argument is the not-found value, and its default match is already exact; the SKUs are already in the master, so adding them again creates duplicates and leaves the real cause in place.",
         "difficulty": "Intermediate",
-        "topic": "Formulas",
-        "weight": 10
+        "topic": "Lookup mismatches",
+        "weight": 10,
+        "skill": "spreadsheets",
+        "learning_outcome": "When a lookup fails on values that look equal, check for hidden spaces."
       },
       {
         "id": "da-f04",
-        "title": "",
-        "scenario": "",
-        "question": "Which pair of rows is a true duplicate that should be removed?",
+        "title": "The AI’s cleaning step",
+        "scenario": "A Shillong music school has 9,400 trial-class sign-ups (student_name, phone, instrument, signup_date). An AI assistant suggests df = df.drop_duplicates(subset=\"student_name\") to remove repeat sign-ups. After it runs, 7,100 rows are left.",
+        "question": "What should you do before keeping the result?",
         "options": [
-          "Two rows with the same order ID and identical values in every column",
-          "Two orders from the same customer, for the same product, on the same day",
-          "Two customers with the same name, living in the same city",
-          "Two rows with the same order value, date and payment method"
+          "Look at some removed rows: students can share a name, so match on name and phone",
+          "Keep it, because the code ran without errors and repeat sign-ups are very common",
+          "Ask the assistant whether 7,100 is the right count, and keep it if it agrees",
+          "Run drop_duplicates() with no subset instead, so it catches every repeated sign-up"
         ],
         "correct_index": 0,
-        "explanation": "Only identical records with the same ID are duplicates; the others can be genuinely different records.",
-        "difficulty": "Beginner",
-        "topic": "Duplicates",
-        "weight": 5
+        "explanation": "Dropping duplicates on name alone treats every student with the same name as one person, so real students disappear. Looking at the removed rows shows the problem, and matching on name and phone together keeps different people apart.",
+        "difficulty": "Advanced",
+        "topic": "Verifying AI cleaning",
+        "weight": 15,
+        "skill": "data-cleaning",
+        "why_wrong": "Code that runs can still remove the wrong rows; the assistant checking its own number isn’t an independent check; with no subset, only rows identical in every column go, so repeat sign-ups on different dates stay.",
+        "learning_outcome": "Check what an AI-written cleaning step removed before you trust it."
       },
       {
         "id": "da-f05",
-        "title": "",
-        "scenario": "",
-        "question": "30% of survey respondents left their income blank. What is the best practice when reporting average income?",
+        "title": "The income question",
+        "scenario": "An NGO in Ranchi surveys 800 households about their monthly income. 240 of them (30%) leave the income question blank. You are asked to report the average income.",
+        "question": "What is the best practice?",
         "options": [
-          "Fill the blanks with 0, so that every respondent is included in the average satisfaction score",
+          "Fill the blanks with 0, so that every respondent is included in the average income",
           "Fill each blank with the average of those who answered, so the sample size isn’t reduced",
           "Report the average for those who answered, the share missing, and whether skippers differ",
           "Report the average of those who answered, without mentioning the blanks"
         ],
         "correct_index": 2,
-        "explanation": "Being clear about who is included, and checking for a pattern in who skipped, keeps the result honest.",
+        "explanation": "A blank is unknown, not zero. Saying who is included, how many are missing, and whether the households that skipped look different keeps the average honest.",
         "difficulty": "Intermediate",
         "topic": "Missing data",
-        "weight": 10
+        "weight": 10,
+        "skill": "data-cleaning",
+        "why_wrong": "Filling blanks with 0 invents zero incomes and drags the average down; filling with the average hides the gap and makes the result look more certain than it is; staying silent about 30% missing hides a limit the reader needs.",
+        "learning_outcome": "Report who is missing from an average, and whether they differ."
       },
       {
         "id": "da-f06",
-        "title": "",
-        "scenario": "",
-        "question": "What does this return? SELECT method, COUNT(*) FROM payments WHERE amount > 1000 GROUP BY method;",
+        "title": "Big payments by method",
+        "scenario": "A bill-payment app in Visakhapatnam keeps a payments table with payment_id, method (UPI, card or net banking) and amount in ₹. An analyst runs: SELECT method, COUNT(*) FROM payments WHERE amount > 1000 GROUP BY method;",
+        "question": "What does the result show?",
         "options": [
           "The total amount paid above ₹1,000, for each payment method",
           "The payment methods that have more than 1,000 payments",
@@ -1528,101 +1543,119 @@
           "The number of payments above ₹1,000 for each method"
         ],
         "correct_index": 3,
-        "explanation": "WHERE keeps payments above ₹1,000; GROUP BY method with COUNT(*) counts them per method.",
-        "difficulty": "Intermediate",
+        "explanation": "WHERE keeps only payments above ₹1,000. GROUP BY method then makes one group per method, and COUNT(*) counts the payments in each.",
+        "difficulty": "Beginner",
         "topic": "GROUP BY",
-        "weight": 10
+        "weight": 5,
+        "skill": "sql",
+        "why_wrong": "COUNT(*) counts payments, it doesn’t add their amounts; the 1,000 filters each payment’s amount, not the number of payments; COUNT gives a count, not an average.",
+        "learning_outcome": "Read WHERE as a row filter and COUNT(*) as a count per group."
       },
       {
         "id": "da-f07",
-        "title": "",
-        "scenario": "",
-        "question": "What does an INNER JOIN between customers and orders return?",
+        "title": "The pivot table that won’t add up",
+        "scenario": "A Tiruppur garment wholesaler pastes 6,000 order lines into Google Sheets and builds a pivot table of order_value by city. It shows a count of order_value, and switching to SUM gives 0 for every city. The order_value column holds entries like “Rs 1,250/-” and “Rs 980/-”.",
+        "question": "What should you do so the pivot table shows each city’s total?",
         "options": [
-          "Every customer, with blank order columns for those without orders",
-          "Only customers without orders, with the order columns left blank",
-          "Only customers who have orders, repeated once for each order",
-          "Every possible pair of a customer and an order, matched or not"
+          "Change the pivot table’s summary from SUM to AVERAGE, which works on text and numbers alike",
+          "Format the order_value column as Currency (₹), so the sheet reads it as money",
+          "Convert order_value to numbers (remove Rs, commas and /-), then refresh the pivot table",
+          "Add order_value to Rows as well as Values, so each amount is shown separately"
         ],
         "correct_index": 2,
-        "explanation": "An inner join keeps only rows that match in both tables, repeating a customer once per order.",
+        "explanation": "SUM skips text, and “Rs 1,250/-” is text, not a number. Once the column holds real numbers, the pivot table can add it up for each city.",
         "difficulty": "Intermediate",
-        "topic": "Joins",
-        "weight": 10
+        "topic": "Numbers stored as text",
+        "weight": 10,
+        "skill": "spreadsheets",
+        "why_wrong": "AVERAGE skips text too, so it fails in the same way; a currency format changes how a number looks but doesn’t turn text into a number; putting the amount in Rows lists each value instead of totalling it.",
+        "learning_outcome": "A pivot table can only add a column stored as numbers."
       },
       {
         "id": "da-f08",
-        "title": "",
-        "scenario": "",
-        "question": "In a monthly revenue table, what does LAG(revenue) OVER (ORDER BY month) give on each row?",
+        "title": "Months when orders fell",
+        "scenario": "A quick-commerce dark store in Navi Mumbai keeps a table monthly_orders(month, orders), with one row per month. The manager wants the months in which orders fell compared with the month before.",
+        "question": "Which query lists those months?",
         "options": [
-          "The previous month’s revenue, for working out month-on-month change",
-          "Next month’s revenue, for comparing each month with the one after it",
-          "The running total of revenue from the first month up to that row",
-          "The lowest revenue in any earlier month, for spotting the worst month"
+          "WITH m AS (SELECT month, orders, LAG(orders) OVER (ORDER BY month) AS prev FROM monthly_orders) SELECT month FROM m WHERE orders < prev;",
+          "SELECT month FROM monthly_orders WHERE orders < LAG(orders) OVER (ORDER BY month);",
+          "WITH m AS (SELECT month, orders, LEAD(orders) OVER (ORDER BY month) AS prev FROM monthly_orders) SELECT month FROM m WHERE orders < prev;",
+          "WITH m AS (SELECT month, orders, LAG(orders) OVER (PARTITION BY month ORDER BY month) AS prev FROM monthly_orders) SELECT month FROM m WHERE orders < prev;"
         ],
         "correct_index": 0,
-        "explanation": "LAG looks back one row in the given order; LEAD would look forward.",
+        "explanation": "LAG(orders) OVER (ORDER BY month) puts the previous month’s orders on each row. A window function can’t go in WHERE. So the WITH step works it out first, and the outer query keeps the months where orders < prev.",
         "difficulty": "Advanced",
         "topic": "Window functions",
-        "weight": 15
+        "weight": 15,
+        "skill": "sql",
+        "why_wrong": "A window function in WHERE stops with an error, because WHERE runs before windows are worked out; LEAD brings in the next month, so the query lists the months just before a rise, not the months that fell; PARTITION BY month makes each month its own window, so prev is always NULL and no month is listed.",
+        "learning_outcome": "Use LAG in a WITH step, then filter, to compare each period with the one before."
       },
       {
         "id": "da-f09",
-        "title": "",
-        "scenario": "",
-        "question": "Median household spending is ₹18,000 and the mean is ₹31,000. What does this suggest?",
+        "title": "Two figures for spending",
+        "scenario": "A survey of 2,000 households in Anand district, Gujarat, finds median monthly spending of ₹18,000 and mean spending of ₹31,000.",
+        "question": "What does the gap between the two figures suggest?",
         "options": [
           "Spending is spread evenly, and most households spend about ₹31,000",
-          "The data must contain errors, since the median and mean should be close",
+          "The data must contain errors, since the median and the mean should be close",
           "Most households spend more than ₹31,000, and a few spend very little",
-          "A few very high spenders pull the mean up: the data is skewed to the right"
+          "A few households with very high spending pull the mean above the median"
         ],
         "correct_index": 3,
-        "explanation": "When the mean is far above the median, a small number of large values is pulling it up.",
+        "explanation": "When the mean is far above the median, a small number of large values is pulling it up. Half the households spend ₹18,000 or less, so ₹31,000 isn’t typical.",
         "difficulty": "Intermediate",
         "topic": "Summary statistics",
-        "weight": 10
+        "weight": 10,
+        "skill": "data-literacy",
+        "why_wrong": "Even spending would put the mean and the median close together; a gap between them is normal when a few values are very large, not a sign of errors; if most households spent more than ₹31,000, the median would be above ₹31,000.",
+        "learning_outcome": "A mean well above the median signals a few very large values."
       },
       {
         "id": "da-f10",
-        "title": "",
-        "scenario": "",
-        "question": "In an A/B test, version A converts 4.0% of 50,000 visitors and version B 4.1% of 50,000. Before calling B the winner, you should:",
+        "title": "A 0.1-point lead",
+        "scenario": "A train-ticket app is testing a new booking button. So far, version A converts 4.0% of 50,000 visitors and version B converts 4.1% of 50,000. The test has run 5 of its planned 14 days.",
+        "question": "What should you do before calling B the winner?",
         "options": [
           "Declare B the winner, since 50,000 visitors per version is plenty of data for a clear result",
           "Run the test again in a single city, to see whether B wins there too",
-          "Check the gap is bigger than random variation, and that the test ran its planned length",
+          "Check the gap against chance with an A/B test calculator, and run all 14 days",
           "Add a third version, C, to see whether the gap between them grows"
         ],
         "correct_index": 2,
-        "explanation": "A 0.1-point gap can easily be chance even with 50,000 visitors each; a significance check and the planned run length guard against a false winner.",
+        "explanation": "4.0% and 4.1% of 50,000 are 2,000 and 2,050 conversions, a gap well within chance. An A/B test calculator would show this, and stopping on day 5 risks crowning a lucky early lead.",
         "difficulty": "Advanced",
         "topic": "Experiments",
-        "weight": 15
+        "weight": 15,
+        "skill": "statistics",
+        "why_wrong": "A large sample can still show a gap that chance explains, and 0.1 points is tiny; one city shrinks the sample and makes chance bigger; adding version C changes the test without checking A against B.",
+        "learning_outcome": "A small gap needs checking against chance, over the planned run, before you name a winner."
       },
       {
         "id": "da-f11",
-        "title": "",
-        "scenario": "",
-        "question": "df.shape returns (48210, 12). What does that mean?",
+        "title": "The checkout test, city by city",
+        "scenario": "A D2C brand tested a new checkout for its planned 3 weeks, with 120,000 visitors in each group. Conversion rose from 3.0% to 3.6%, far beyond normal variation. In Tier-3 cities alone (3,000 visitors per group), conversion fell from 2.8% to 2.5%.",
+        "question": "What should your memo recommend?",
         "options": [
-          "48,210 columns and 12 rows",
-          "48,210 rows and 12 columns",
-          "48,210 missing values",
-          "12 duplicate rows"
+          "Roll it out only in metro and Tier-2 cities, since the Tier-3 result proves it fails there",
+          "Roll it out, and keep watching Tier-3 cities: 3,000 visitors a group is too few to judge",
+          "Hold the roll-out everywhere until Tier-3 cities also show a rise, so that no group loses out",
+          "Roll it out everywhere, and report a 20% rise in conversion for every city, Tier-3 included"
         ],
         "correct_index": 1,
-        "explanation": "shape is (rows, columns).",
-        "difficulty": "Beginner",
-        "topic": "pandas basics",
-        "weight": 5
+        "explanation": "Across 120,000 visitors a group, 3.0% to 3.6% is far beyond chance, and the test ran its planned length. In Tier-3 cities the fall is 84 against 75 sales out of 3,000 each, well within chance. So roll out, and keep watching there.",
+        "difficulty": "Expert",
+        "topic": "Subgroups in A/B tests",
+        "weight": 20,
+        "skill": "statistics",
+        "why_wrong": "9 sales out of 3,000 a group can’t prove the design fails in Tier-3 cities; holding everyone back gives up a clear, tested gain because of a result that may be chance; the 20% rise is for all visitors together, and Tier-3 cities didn’t show it.",
+        "learning_outcome": "Act on the overall result, and treat a small subgroup’s result as uncertain."
       },
       {
         "id": "da-f12",
-        "title": "",
-        "scenario": "",
-        "question": "After df = orders.merge(items, on=\"order_id\"), the row count rises from 10,000 to 26,000. Why?",
+        "title": "Rows that multiplied",
+        "scenario": "A Nellore kitchenware seller has an orders table with 10,000 rows, one per order, and an order_total column. Its items table has one row per item in an order. An analyst runs df = orders.merge(items, on=\"order_id\"), and the row count rises from 10,000 to 26,000.",
+        "question": "Why did the row count rise?",
         "options": [
           "pandas added a blank row for every item with no matching order",
           "The merge kept orders from both tables, including ones only in items",
@@ -1630,33 +1663,39 @@
           "Some order IDs were read as text and others as numbers, so they doubled"
         ],
         "correct_index": 2,
-        "explanation": "Joining one order to many items gives one row per item; summing order totals now would overcount.",
-        "difficulty": "Advanced",
+        "explanation": "Each order matches every one of its items, so it appears once per item. Summing order_total on the merged table would now count each order several times.",
+        "difficulty": "Intermediate",
         "topic": "Joins in pandas",
-        "weight": 15
+        "weight": 10,
+        "skill": "python",
+        "why_wrong": "A merge without how= is an inner merge, so it never adds blank rows; keeping rows found only in items needs an outer merge; text and number keys make pandas stop with an error, not double the rows.",
+        "learning_outcome": "A one-to-many merge repeats each order once per matching item."
       },
       {
         "id": "da-f13",
-        "title": "",
-        "scenario": "",
-        "question": "You are comparing the market share of 9 brands. Which chart is clearest?",
+        "title": "Eleven tea brands",
+        "scenario": "A marketing intern must show the market share of 11 tea brands in Assam on one slide. The team wants to see which brands lead and how they rank.",
+        "question": "Which chart is clearest?",
         "options": [
-          "A pie chart with 9 labelled slices",
-          "A sorted horizontal bar chart",
+          "A pie chart with 11 slices, each labelled with its share",
+          "A horizontal bar chart, sorted largest first",
           "A line chart of share by brand",
           "A 3D pie chart with a legend"
         ],
         "correct_index": 1,
-        "explanation": "Sorted bars make it easy to compare many categories and read their order; nine pie slices are hard to compare.",
-        "difficulty": "Intermediate",
+        "explanation": "Bars of different lengths are easy to compare, and sorting them puts the brands in rank order. Eleven pie slices are hard to compare by angle.",
+        "difficulty": "Beginner",
         "topic": "Chart choice",
-        "weight": 10
+        "weight": 5,
+        "skill": "visualisation",
+        "why_wrong": "Eleven slices are hard to compare by angle; a line suggests an order between brands that doesn’t exist; 3D distorts slice sizes, and a legend makes readers look back and forth.",
+        "learning_outcome": "Use a sorted bar chart to compare many categories."
       },
       {
         "id": "da-f14",
-        "title": "",
-        "scenario": "",
-        "question": "An AI assistant says, “Your churn rate is 12%,” without showing how it worked it out. What should you do?",
+        "title": "The 12% churn figure",
+        "scenario": "Your employer gives you an approved AI assistant. You ask it about a meal-kit company’s subscription sheet. It replies, “Your churn rate (the share of subscribers who cancelled) is 12%,” but doesn’t show how it worked that out. The figure is going into a board report.",
+        "question": "What should you do?",
         "options": [
           "Use it, since AI tools calculate rates more reliably than spreadsheets do",
           "Ask how it was calculated (definition, period, data), reproduce it, then use it",
@@ -1664,64 +1703,71 @@
           "Round it down to 10% to be safe, and note that it came from AI"
         ],
         "correct_index": 1,
-        "explanation": "A number without a method can’t be trusted or explained; reproducing it confirms both.",
-        "difficulty": "Intermediate",
+        "explanation": "A number without a method can’t be trusted or explained. Asking for the definition, period and data, then reproducing the figure yourself, checks it before the board sees it.",
+        "difficulty": "Beginner",
         "topic": "Verifying AI output",
-        "weight": 10
+        "weight": 5,
+        "skill": "ai-analytics",
+        "why_wrong": "AI tools can calculate wrongly or use a different definition; asking again checks that it repeats itself, not that it is right; rounding down a number you can’t explain doesn’t make it safe.",
+        "learning_outcome": "Reproduce an AI’s figure before you use it."
       },
       {
         "id": "da-f15",
-        "title": "",
-        "scenario": "",
-        "question": "A one-page memo to a manager should open with:",
+        "title": "The memo’s first line",
+        "scenario": "A Tamil Nadu clinic chain ran a randomised test in 8 of its 30 clinics, covering 4,200 appointments over 6 weeks. SMS reminders sent the day before cut missed appointments from 18% to 11%. An AI assistant drafted four opening lines for your memo to the operations head.",
+        "question": "Which opening line should you use?",
         "options": [
-          "The method you used, so readers trust what follows",
-          "A list of the data sources and the period covered",
-          "The recommendation and the key number behind it",
-          "The background to the question and why it was asked"
+          "“SMS reminders end missed appointments for good, as our six-week test across the whole chain of clinics clearly proved.”",
+          "“We ran a 6-week randomised test in 8 clinics, covering 4,200 appointments; the method is described below.”",
+          "“Recommendation: send day-before SMS reminders in all 30 clinics; in an 8-clinic test, no-shows fell from 18% to 11%.”",
+          "“Recommendation: send SMS reminders in every clinic; patients prefer them, and the test was a big success.”"
         ],
         "correct_index": 2,
-        "explanation": "Busy readers decide from the first lines; method and sources belong further down.",
-        "difficulty": "Beginner",
-        "topic": "Executive summaries",
-        "weight": 5
+        "explanation": "It leads with a decision the reader can act on and the number behind it. It also describes the evidence exactly: a test in 8 clinics, not proof for the whole chain.",
+        "difficulty": "Intermediate",
+        "topic": "Memo openings",
+        "weight": 10,
+        "skill": "storytelling",
+        "why_wrong": "“End” and “across the whole chain” overstate a test that cut no-shows to 11% in 8 clinics; starting with the method makes the reader hunt for the answer; nobody measured whether patients prefer SMS, and “a big success” replaces the number.",
+        "learning_outcome": "Choose the opening that leads with the action and states the evidence exactly."
       }
     ]
   },
   "project": {
-    "brief": "Analyse 12 months of data for a real or realistic Indian business (for example a D2C brand, a café chain, a clinic or a coaching centre) and recommend one change that would grow revenue or cut costs. Your mentor helps you choose the business, the question and a dataset (a public dataset, or anonymised data a business shares with you).",
+    "brief": "Analyse 12 months of data for a real or realistic Indian business (for example a D2C brand, a café chain, a clinic or a coaching centre) and recommend one change that would grow revenue or cut costs.\nYour mentor helps you choose the business, the question and a dataset: a public dataset (for example from data.gov.in), or data a business shares with you. If a business shares data, get its written permission. Remove names, phone numbers and other personal details before you analyse it, and never paste personal data into an AI tool.\nPlan for about 20 hours over 3 to 4 weeks, with regular check-ins with your mentor. Every step can be done with free tools: Google Sheets, DuckDB in the browser, Google Colab and Looker Studio.",
     "deliverables": [
       "A one-page problem statement: the decision, who makes it, and how success will be measured",
-      "The cleaned dataset, with a short data dictionary and a cleaning log",
+      "The cleaned dataset, with a short data dictionary and a cleaning log (each step and the rows it changed)",
       "Your SQL queries or Python notebook, with comments explaining each step",
-      "A one-page dashboard (Power BI, Excel or Looker Studio) built around the decision",
-      "A one-page recommendation memo, and a 3-minute recorded walkthrough"
+      "A one-page dashboard (Looker Studio, Google Sheets or Power BI) built around the decision",
+      "A one-page recommendation memo with honest limits and how you know the pattern is more than noise, and a 3-minute recorded walkthrough",
+      "An AI log: each prompt you used, what the AI produced, how you checked it and what you changed (or \"no AI used\")"
     ],
     "rubric": [
       {
         "id": "framing",
         "name": "Problem framing",
-        "description": "A clear decision, who makes it, and how success is measured"
+        "description": "One decision, who makes it, how success is measured, and the period, agreed with the mentor"
       },
       {
         "id": "data",
         "name": "Data quality",
-        "description": "Cleaning is logged and checked, and gaps in the data are stated"
+        "description": "Raw file kept; every cleaning step logged with rows affected; gaps in the data stated"
       },
       {
         "id": "analysis",
         "name": "Analysis",
-        "description": "Correct SQL or Python, sound statistics, key numbers cross-checked"
+        "description": "Correct SQL or Python, joins checked, a key number reproduced; AI help disclosed and checked"
       },
       {
         "id": "dashboard",
         "name": "Dashboard",
-        "description": "Built around the decision, honest scales, readable at a glance"
+        "description": "Built around the decision: key numbers against target, honest axes, readable at a glance"
       },
       {
         "id": "recommendation",
         "name": "Recommendation",
-        "description": "Leads with the decision, puts a number on it, and states its limits"
+        "description": "Leads with the decision and its ₹ impact, states its limits, and the learner can explain every step"
       }
     ]
   }

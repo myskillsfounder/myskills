@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Masala Mart practice data | MySkills</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.55; color: #1f2937; }
+  code { background: #f3f4f6; padding: 0 .25rem; border-radius: 4px; }
+  li { margin: .4rem 0; }
+</style>
+</head>
+<body>
+<h1>Masala Mart practice data</h1>
+<p>Masala Mart is a fictional spice brand that sells online across India. These files are made up for practice in the MySkills programme <em>AI-Powered Data Analytics</em>. No real person or business is in them.</p>
+<ul>
+  <li><a href="orders.csv">orders.csv</a>: 2,030 clean orders, October 2025 to September 2026. Columns: order_id, order_date, customer_id, city, sku, quantity, order_value (₹), payment_method (UPI, Card, COD), returned (1 or 0).</li>
+  <li><a href="orders_raw.csv">orders_raw.csv</a>: the same orders as a messy export, for cleaning practice: dd/mm/yyyy dates, cities typed different ways, “₹” amounts, some blank cities and some rows sent twice.</li>
+  <li><a href="customers.csv">customers.csv</a>: 800 customers. Columns: customer_id, city, signed_up, channel. Some never ordered.</li>
+  <li><a href="products.csv">products.csv</a>: the price list. Columns: sku, product_name, category, pack_grams, price. Two new SKUs are not on it yet.</li>
+</ul>
+<h2>Open them free</h2>
+<ul>
+  <li>Google Sheets: in cell A1 of a blank sheet, type <code>=IMPORTDATA("https://myskills.org.in/practice-data/masala-mart/orders.csv")</code></li>
+  <li>SQL in your browser at <a href="https://shell.duckdb.org">shell.duckdb.org</a>: <code>CREATE TABLE orders AS SELECT * FROM 'https://myskills.org.in/practice-data/masala-mart/orders.csv';</code></li>
+  <li>Python in Google Colab: <code>pd.read_csv("https://myskills.org.in/practice-data/masala-mart/orders.csv")</code></li>
+</ul>
+</body>
+</html>

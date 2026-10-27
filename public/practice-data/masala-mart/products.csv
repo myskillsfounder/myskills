@@ -1,0 +1,20 @@
+sku,product_name,category,pack_grams,price
+MM-WS-01,Whole black pepper,Whole spices,100,180
+MM-WS-02,Green cardamom,Whole spices,50,260
+MM-WS-03,Cloves,Whole spices,50,140
+MM-WS-04,Cinnamon sticks,Whole spices,100,120
+MM-WS-05,Cumin seeds,Whole spices,200,150
+MM-GS-01,Turmeric powder,Ground spices,200,110
+MM-GS-02,Kashmiri chilli powder,Ground spices,200,190
+MM-GS-03,Coriander powder,Ground spices,200,95
+MM-GS-04,Black pepper powder,Ground spices,100,170
+MM-GS-05,Dry ginger powder,Ground spices,100,130
+MM-BL-01,Garam masala,Masala blends,100,160
+MM-BL-02,Chole masala,Masala blends,100,120
+MM-BL-03,Sambar powder,Masala blends,200,150
+MM-BL-04,Biryani masala,Masala blends,100,175
+MM-BL-05,Chai masala,Masala blends,50,140
+MM-BL-06,Pav bhaji masala,Masala blends,100,110
+MM-GB-01,Festive spice box,Gift boxes,600,899
+MM-GB-02,Kerala spice trail box,Gift boxes,450,749
+MM-GB-03,Chai lovers box,Gift boxes,300,549

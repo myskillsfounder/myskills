@@ -1,5 +1,7 @@
 # AI powered Data Analytics: draft and review
 
+> **Superseded (27 October 2026).** This is the 21 October hand review. It no longer describes the file: its claims about scenarios, `why_wrong` and `learning_outcome` on every question were not true of the file then. The current assessment record is `ai-powered-data-analytics.assessment.md`; the current review is `ai-powered-data-analytics.review-1.json`.
+
 Drafted and reviewed on 21 October 2026, doing by hand what the Course Architect and the Assessment
 Agent will do once they are built. The file to load is `ai-powered-data-analytics.json`, next to this
 report.

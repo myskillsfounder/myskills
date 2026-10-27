@@ -64,6 +64,11 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Your first internship, hands-on and real: partner companies reviewed by our team, apply with your Global Readiness Score, and get your work signed off.',
   },
+  '/data-analytics': {
+    title: 'Data Analytics Course for Students in India: SQL, Python & Dashboards | MySkills',
+    description:
+      'Turn business data into decisions with spreadsheets, SQL, Python, dashboards and AI, on free tools and a real practice dataset. 10 modules and a mentor-graded project. Free aptitude test.',
+  },
   '/entrepreneurship': {
     title: 'AI-Powered Entrepreneurship Course for Students in India | MySkills',
     description:
