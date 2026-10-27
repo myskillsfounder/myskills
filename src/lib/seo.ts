@@ -50,9 +50,9 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       'Every MySkills course in one place: a free aptitude test first, short modules with an AI coach, and a project graded by a real mentor. Free to start.',
   },
   '/mentors': {
-    title: 'Mentors — Learn from Industry Experts | MySkills',
+    title: 'Mentors — Learn from Top Industry Leaders | MySkills',
     description:
-      'Learn from people who have done it: industry mentors for 1:1 and group sessions, who guide you and grade the real project you build. Free to start.',
+      'Learn from top industry leaders in entrepreneurship, AI product development, growth hacking and leadership: live sessions, 1:1 time and a project they grade.',
   },
   '/study-abroad': {
     title: 'Study Abroad — Partner Universities, Applications & Test Prep | MySkills',

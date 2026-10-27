@@ -54,6 +54,8 @@ export interface GlimpseProps {
   title: string
   accent: string
   body: string
+  /** Short chips under the hero's line, e.g. the mentors' industries. */
+  tags?: string[]
   photo: string
   photoAlt: string
   features: { icon: LucideIcon; title: string; body: string }[]
@@ -87,6 +89,15 @@ export function Glimpse(g: GlimpseProps) {
                   {g.title} <span className={`block pb-1 ${gradientText}`}>{g.accent}</span>
                 </h1>
                 <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">{g.body}</p>
+                {g.tags && (
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {g.tags.map((t) => (
+                      <li key={t} className="rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[13px] font-semibold text-[#d8c9ff]">
+                        {t}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
                     to="/signup"
