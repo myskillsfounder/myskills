@@ -174,7 +174,7 @@ export function applySeo(path: string, override?: Partial<PageSeo>) {
   // Unlisted paths are signed-in app pages: title them, but keep them out of
   // the index.
   const seo: PageSeo = {
-    title: base?.title ?? `${SITE_NAME} — Digital marketing skills`,
+    title: base?.title ?? `${SITE_NAME} — The Student Development Platform`,
     description: base?.description ?? PAGE_SEO['/'].description,
     noindex: base ? base.noindex : true,
     ...override,

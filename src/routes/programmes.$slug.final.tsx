@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, Award, Clock } from 'lucide-react'
+import { ArrowRight, Award, Clock, Eye, Loader2, Lock } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { TIERS } from '@/lib/certificates'
 import { gradeLocally, submitFinal, type MyProgramme } from '@/lib/programmeStudent'
-import { PageHeader } from '@/components/app/PageHeader'
-import { ProgrammeFrame, QuizRunner, previewSearch, useMyProgramme } from '@/components/programme/shared'
-import { Alert, Button, buttonClass } from '@/components/ui'
+import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
+import { previewSearch, useMyProgramme } from '@/components/programme/shared'
+import { DARK_TIER, FocusedQuiz, darkPrimaryButton } from '@/components/programme/FocusedQuiz'
 
+// On the dark test screen, like every aptitude test and Digital Marketing's
+// Foundation assessment: a test looks the same in every programme.
 export const Route = createFileRoute('/programmes/$slug/final')({
   beforeLoad: requireOnboarded,
   validateSearch: previewSearch,
@@ -27,106 +29,95 @@ function Countdown({ minutes, onEnd }: { minutes: number; onEnd: () => void }) {
   const mm = Math.floor(left / 60)
   const ss = String(left % 60).padStart(2, '0')
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold tabular-nums ${left < 120 ? 'bg-red-50 text-red-700' : 'bg-ink-100 text-ink-700'}`}>
-      <Clock size={14} /> {mm}:{ss}
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[11px] font-bold tabular-nums ${
+        left < 120 ? 'bg-red-500/20 text-red-200' : 'bg-white/10 text-white/80'
+      }`}
+    >
+      <Clock size={12} /> {mm}:{ss}
     </span>
   )
 }
 
-function Final({ p, preview, reload }: { p: MyProgramme; preview: boolean; reload: () => Promise<void> }) {
+/** A dark card for the page's other states: taken, locked, before you start. */
+function Panel({ children }: { children: ReactNode }) {
+  return <div className="card-glass-dark glow-edge mx-auto max-w-2xl rounded-xl p-6 sm:p-8">{children}</div>
+}
+
+function Final({ p, preview, reload, backTo }: { p: MyProgramme; preview: boolean; reload: () => Promise<void>; backTo: () => void }) {
   const { slug } = Route.useParams()
-  const navigate = useNavigate()
   const [started, setStarted] = useState(false)
   const [timeUp, setTimeUp] = useState(false)
   // Just submitted: keep the result and the review on screen.
   const [taken, setTaken] = useState(false)
   const f = p.content.final
-  const search = preview ? { preview: 1 as const } : {}
-  // Global Leadership's modules live on /practice, not the engine's pages.
-  const back = p.source === 'built-in' ? '/practice' : null
 
   if (f.questions.length === 0) {
-    return (
-      <Alert tone="info" title="No Foundation assessment yet">
-        <p>This programme’s Foundation assessment isn’t ready yet. Keep going with the modules.</p>
-      </Alert>
-    )
+    return <DarkError title="No Foundation assessment yet." message="This programme’s Foundation assessment isn’t ready. Keep going with the modules." />
   }
   if (p.final && !taken) {
     const t = TIERS[p.final.kind]
     return (
-      <div className={`rounded-2xl border p-5 ${t.ui.border} ${t.ui.bg}`}>
-        <p className={`inline-flex items-center gap-1.5 text-sm font-semibold ${t.ui.text}`}>
+      <Panel>
+        <p className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${DARK_TIER[p.final.kind]}`}>
           <Award size={15} /> {t.certLabel}
         </p>
-        <p className="mt-2 text-sm text-ink-700">
+        <p className="mt-3 text-sm leading-relaxed text-white/75">
           You took the Foundation assessment on{' '}
           {new Date(p.final.completed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })} and scored{' '}
           {p.final.percent}%. It is taken once, and it earned your Foundation certificate in {p.title}.
         </p>
         <CertificateLink slug={p.slug} />
-      </div>
+      </Panel>
     )
   }
   if (!p.foundation_unlocked && !preview) {
     return (
-      <Alert tone="info" title="Finish the foundation modules first">
-        <p>
-          The Foundation assessment opens once each foundation module is done.{' '}
-          {back ? (
-            <Link to={back} className="font-semibold underline">
-              Back to {p.title}
-            </Link>
-          ) : (
-            <Link to="/programmes/$slug" params={{ slug }} className="font-semibold underline">
-              Back to {p.title}
-            </Link>
-          )}
+      <Panel>
+        <p className="inline-flex items-center gap-2 font-display text-lg font-semibold text-white">
+          <Lock size={17} className="text-brand-200" /> Finish the foundation modules first
         </p>
-      </Alert>
+        <p className="mt-2 text-sm leading-relaxed text-white/70">The Foundation assessment opens once each foundation module is done.</p>
+        <button type="button" onClick={backTo} className={`mt-5 ${darkPrimaryButton}`}>
+          Back to {p.title} <ArrowRight size={16} />
+        </button>
+      </Panel>
     )
   }
   if (!started) {
     return (
-      <div className="card p-5 sm:p-6">
-        <h2 className="font-display text-lg font-semibold text-ink-900">Before you start</h2>
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-700">
+      <Panel>
+        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-brand-200">[ Before you start ]</p>
+        <p className="mt-3 font-display text-2xl font-semibold text-white">
+          {f.questions.length} questions. {f.minutes} minutes.
+        </p>
+        <ul className="mt-4 space-y-2 text-sm leading-relaxed text-white/75">
+          <li>One question at a time, on the foundations of every skill in the programme.</li>
           <li>
-            {f.questions.length} questions on the foundations of every skill, {f.minutes} minutes.
-          </li>
-          <li>
-            You take it once. Every finished attempt earns a Foundation certificate: Gold from {TIERS.gold.min}%, Silver from{' '}
-            {TIERS.silver.min}%, Bronze below that.
+            You take it once. Every finished attempt earns a Foundation certificate: Gold from {TIERS.gold.min}%, Silver from {TIERS.silver.min}%,
+            Bronze below that.
           </li>
           <li>Once you start, the timer runs. When it ends, answer anything left and submit straight away.</li>
         </ul>
-        <Button className="mt-4" iconRight={ArrowRight} onClick={() => setStarted(true)}>
-          Start the Foundation assessment
-        </Button>
-      </div>
+        <button type="button" onClick={() => setStarted(true)} className={`mt-6 ${darkPrimaryButton}`}>
+          Start <ArrowRight size={16} />
+        </button>
+      </Panel>
     )
   }
   return (
     <>
-      <div className="sticky top-20 z-10 flex justify-end">
-        {!timeUp && !taken && <Countdown minutes={f.minutes} onEnd={() => setTimeUp(true)} />}
-      </div>
-      {timeUp && (
-        <Alert tone="warning" title="Time is up">
-          <p>Answer any questions left and submit now.</p>
-        </Alert>
+      {timeUp && !taken && (
+        <p role="alert" className="mx-auto mb-4 max-w-2xl rounded-lg border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <span className="font-semibold">Time is up.</span> Answer any questions left and submit now.
+        </p>
       )}
-      <QuizRunner
+      <FocusedQuiz
         questions={f.questions}
-        banded
+        aside={!timeUp && !taken ? <Countdown minutes={f.minutes} onEnd={() => setTimeUp(true)} /> : null}
         resultNote={(r) =>
-          r.certificate ? (
-            <CertificateLink slug={p.slug} />
-          ) : (
-            <p className="mt-1 text-sm text-ink-600">Preview: no certificate is issued.</p>
-          )
+          r.certificate ? <CertificateLink slug={p.slug} /> : <p className="mt-4 text-sm text-white/55">Preview: no certificate is issued.</p>
         }
-        submitLabel="Submit the Foundation assessment"
         onSubmit={async (answers) => {
           if (preview) return gradeLocally(f.questions, answers)
           const r = await submitFinal(slug, answers)
@@ -134,7 +125,7 @@ function Final({ p, preview, reload }: { p: MyProgramme; preview: boolean; reloa
           void reload()
           return r
         }}
-        onDone={() => (back ? void navigate({ to: back }) : void navigate({ to: '/programmes/$slug', params: { slug }, search }))}
+        onDone={backTo}
         doneLabel={`Back to ${p.title}`}
       />
     </>
@@ -143,7 +134,7 @@ function Final({ p, preview, reload }: { p: MyProgramme; preview: boolean; reloa
 
 function CertificateLink({ slug }: { slug: string }) {
   return (
-    <Link to="/certificate" search={{ programme: slug }} className={`mt-3 ${buttonClass('primary', 'sm')}`}>
+    <Link to="/certificate" search={{ programme: slug }} className={`mt-5 ${darkPrimaryButton}`}>
       See your certificate <ArrowRight size={15} />
     </Link>
   )
@@ -153,19 +144,38 @@ function CertificateLink({ slug }: { slug: string }) {
 function FinalPage() {
   const { slug } = Route.useParams()
   const preview = Boolean(Route.useSearch().preview)
+  const navigate = useNavigate()
   const { p, error, reload } = useMyProgramme(slug, preview)
+  const search = preview ? { preview: 1 as const } : {}
+  // Global Leadership's modules live on /practice, not the engine's pages.
+  const builtIn = p?.source === 'built-in'
+  const backTo = () => (builtIn ? void navigate({ to: '/practice' }) : void navigate({ to: '/programmes/$slug', params: { slug }, search }))
+
   return (
-    <ProgrammeFrame slug={slug} preview={preview} back="programme" p={p} error={error}>
-      {(p) => (
-        <div className="space-y-4">
-          <PageHeader
-            eyebrow={`${p.title} · Foundation assessment`}
-            title="Foundation assessment"
-            description="The foundations of the programme, in one test. It earns your Foundation certificate."
-          />
-          <Final p={p} preview={preview} reload={reload} />
-        </div>
+    <DarkShell
+      back={builtIn ? { to: '/practice', label: p.title } : { to: '/programmes/$slug', params: { slug }, search, label: p?.title ?? 'Back' }}
+      eyebrow={p ? `${p.title} · Foundation assessment` : 'Foundation assessment'}
+      title="Foundation assessment"
+      description="The foundations of the programme, in one test. It earns your Foundation certificate."
+    >
+      {preview && (
+        <p className="mx-auto mb-5 flex max-w-2xl items-start gap-2.5 rounded-lg border border-gold-300/30 bg-gold-400/10 px-4 py-3 text-sm text-gold-100">
+          <Eye size={16} className="mt-0.5 shrink-0" />
+          <span>
+            <span className="font-semibold">Preview{p?.preview ? ` of the ${p.preview.status === 'draft' ? 'draft' : 'live version'}, v${p.version}` : ''}.</span>{' '}
+            Nothing is saved, and answers are checked in your browser.
+          </span>
+        </p>
       )}
-    </ProgrammeFrame>
+      {error ? (
+        <DarkError title="Couldn’t open this programme." message={error} />
+      ) : !p ? (
+        <p className="flex items-center gap-2 text-sm text-white/60">
+          <Loader2 size={15} className="animate-spin" /> Loading…
+        </p>
+      ) : (
+        <Final p={p} preview={preview} reload={reload} backTo={backTo} />
+      )}
+    </DarkShell>
   )
 }
