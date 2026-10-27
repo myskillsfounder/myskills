@@ -13,7 +13,7 @@ import { useAuthUser } from '@/lib/useAuth'
  * Abroad and Internships are inside the platform, so a visitor gets a glimpse
  * of each first (components/landing/Glimpse.tsx) and a student goes straight in.
  */
-type To = '/' | '/courses' | '/community' | '/study-abroad' | '/mentors' | '/internships'
+type To = '/' | '/courses' | '/community' | '/community/mentors' | '/community/internships' | '/study-abroad' | '/mentors' | '/internships'
 interface NavLink {
   label: string
   /** Where it goes: the same for everyone, or a visitor's way in via sign-in. */
@@ -26,9 +26,9 @@ interface NavLink {
 const navLinks: NavLink[] = [
   { label: 'Home', to: '/', exact: true },
   { label: 'Learning', to: '/courses' },
-  { label: 'Mentors', to: '/community', search: { category: 'mentors' }, visitor: { to: '/mentors' } },
+  { label: 'Mentors', to: '/community/mentors', visitor: { to: '/mentors' } },
   { label: 'Study Abroad', to: '/study-abroad' },
-  { label: 'Internships', to: '/community', search: { category: 'internships' }, visitor: { to: '/internships' } },
+  { label: 'Internships', to: '/community/internships', visitor: { to: '/internships' } },
   { label: 'Community', to: '/community', exact: true },
 ]
 

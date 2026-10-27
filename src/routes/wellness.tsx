@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2, Compass, HeartHandshake, Send, Sparkles } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { CheckCircle2, Compass, Heart, HeartHandshake, Leaf, Lock, Phone, Send, Sparkles } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useProfile } from '@/lib/useProfile'
@@ -13,7 +13,7 @@ import {
   type WellnessRequestType,
 } from '@/lib/wellness'
 import { AppShell } from '@/components/app/AppShell'
-import { PageHeader } from '@/components/app/PageHeader'
+import { CommunityHero, HowItWorks } from '@/components/community/CommunityHero'
 import { Alert, Button, Input, Skeleton, Textarea } from '@/components/ui'
 
 export const Route = createFileRoute('/wellness')({
@@ -166,7 +166,7 @@ function SupportSection({ type }: { type: WellnessRequestType }) {
   return (
     <div id={type === 'career_mentor' ? 'career-guidance' : 'counselling'} className="card scroll-mt-24 p-6 shadow-sm">
       <div className="flex items-start gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md">
+        <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md ${type === 'psychologist' ? 'from-rose-400 to-pink-500' : 'from-brand-500 to-brand-700'}`}>
           <Icon size={22} />
         </span>
         <div className="min-w-0 flex-1">
@@ -201,49 +201,82 @@ function SupportSection({ type }: { type: WellnessRequestType }) {
   )
 }
 
+/** What a student can count on here, said before anything is asked of them. */
+const PROMISES: { icon: typeof Heart; title: string; body: string }[] = [
+  { icon: Lock, title: 'Private', body: 'Only the MySkills team sees what you write. Never your mentors, companies or classmates.' },
+  { icon: HeartHandshake, title: 'A real person', body: 'Every request is read by someone who cares, never a bot.' },
+  { icon: Leaf, title: 'At your pace', body: 'Share as much or as little as you like. There is no wrong way to ask.' },
+]
+
+/**
+ * Wellness, wellbeing first (Paul, 27 Oct 2026: "wellness should prioritise
+ * the wellbeing of a student"): a calm page that says it is safe to ask,
+ * points to help right away if they are in danger, and then offers a
+ * counsellor before career guidance.
+ */
 function WellnessPage() {
   return (
-    <AppShell>
-      <div className="mx-auto max-w-2xl">
-        <Link
-          to="/dashboard"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
-        >
-          <ArrowLeft size={16} /> Back to LaunchPad
-        </Link>
-
-        <PageHeader
+    <AppShell wide>
+      <div className="space-y-6">
+        <CommunityHero
+          tone="wellness"
+          icon={Heart}
           eyebrow="Wellness"
-          title={<>Wellness &amp; Guidance</>}
-          description={
-            <>
-              <p>
-                We know student life isn't just about grades and job-readiness — it's exams,
-                deadlines, uncertainty about the future, and a lot of pressure that doesn't always
-                show. Your wellbeing matters to us as much as your skills do, and we built this space
-                so asking for support is as easy as asking for a mentor.
-              </p>
-              <p className="mt-2">
-                Whatever you're carrying — stress, self-doubt, or just not knowing what's next — you
-                don't have to figure it out alone. Reach out below, privately and without judgment.
-              </p>
-            </>
-          }
+          title="How are you, really?"
+          accent="Your wellbeing comes first."
+          body="Exams, deadlines, worrying about what comes next: student life carries a lot of pressure that doesn’t always show. You don’t have to carry it alone. Talk to someone, privately and without judgment."
+          points={[
+            { icon: Lock, label: 'Private' },
+            { icon: HeartHandshake, label: 'Real people' },
+            { icon: Leaf, label: 'At your pace' },
+          ]}
         />
 
-        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50 p-4">
-          <Sparkles size={17} className="mt-0.5 shrink-0 text-brand-700" />
-          <p className="text-sm leading-relaxed text-brand-900">
-            <span className="font-semibold">We're onboarding counsellors and mentors</span> so
-            these conversations are handled by real people who care. Until then, every request
-            below is read personally by the MySkills team, and we'll get back to you.
+        {/* Before anything else: help right now, for anyone who needs it. */}
+        <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-white p-4 sm:p-5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+            <Phone size={18} />
+          </span>
+          <p className="text-sm leading-relaxed text-ink-700">
+            <span className="font-semibold text-ink-900">If you feel unsafe or are thinking of harming yourself, please talk to someone now.</span>{' '}
+            Call <a href="tel:14416" className="font-semibold text-rose-600 underline-offset-2 hover:underline">Tele-MANAS on 14416</a>, India’s free
+            mental health helpline, open 24 hours, or call <a href="tel:112" className="font-semibold text-rose-600 underline-offset-2 hover:underline">112</a> in an emergency.
           </p>
         </div>
 
-        <div className="space-y-5">
+        <ul className="grid gap-4 sm:grid-cols-3">
+          {PROMISES.map((p) => (
+            <li key={p.title} className="rounded-2xl bg-gradient-to-br from-rose-50/80 to-amber-50/60 p-5 ring-1 ring-rose-100">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-rose-500 shadow-e1">
+                <p.icon size={18} />
+              </span>
+              <p className="mt-3 font-semibold text-ink-900">{p.title}</p>
+              <p className="mt-1 text-sm leading-relaxed text-ink-600">{p.body}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mx-auto max-w-2xl space-y-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-rose-100 bg-rose-50/60 p-4">
+            <Sparkles size={17} className="mt-0.5 shrink-0 text-rose-500" />
+            <p className="text-sm leading-relaxed text-ink-700">
+              <span className="font-semibold text-ink-900">We're onboarding counsellors and mentors</span> so these conversations
+              are handled by people who care. Until then, every request is read personally by the MySkills team, and we'll get
+              back to you.
+            </p>
+          </div>
           <SupportSection type="psychologist" />
           <SupportSection type="career_mentor" />
         </div>
+
+        <HowItWorks
+          tone="wellness"
+          steps={[
+            { title: 'Send a private request', body: 'Only the MySkills team can see it.' },
+            { title: 'A real person reads it', body: 'Never a bot, and never shared with anyone else.' },
+            { title: 'We reach out', body: 'By email or phone, at your pace.' },
+          ]}
+        />
       </div>
     </AppShell>
   )

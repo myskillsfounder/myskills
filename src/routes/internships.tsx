@@ -7,6 +7,6 @@ import { INTERNSHIPS_GLIMPSE } from '@/content/glimpses'
 // for: a signed-in student goes straight there. A visitor gets a glimpse of
 // them first (Paul, 27 Oct 2026).
 export const Route = createFileRoute('/internships')({
-  beforeLoad: () => glimpseOr('/community?category=internships'),
+  beforeLoad: () => glimpseOr('/community/internships'),
   component: () => <Glimpse {...INTERNSHIPS_GLIMPSE} />,
 })

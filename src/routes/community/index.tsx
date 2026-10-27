@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
-  ArrowRight,
   Briefcase,
   Building2,
   GraduationCap,
@@ -16,8 +15,8 @@ import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institu
 import { SearchHeader } from '@/components/community/SearchHeader'
 import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { InternshipRoleCard, InternshipRoleDialog, YourInternships, useInternships } from '@/components/community/Internships'
-import { useMyMatch, type StudentMatch } from '@/lib/mentorMatches'
-import { rememberProgramme } from '@/lib/practiceProgramme'
+import { useMyMatch } from '@/lib/mentorMatches'
+import { YourMentors } from '@/components/community/YourMentors'
 import { isPhone } from '@/lib/device'
 import {
   BrowseTiles,
@@ -173,51 +172,6 @@ function popularSearches(mentors: MentorListing[], institutions: InstitutionPart
   return [...skills, ...cities, 'Internship']
 }
 
-/**
- * The student's own mentor, ahead of the directory: who they're working with
- * (or waiting to hear from) in each programme. Shown only when there is one —
- * a student without a mentor gets the listings, which is the way to find one.
- */
-function YourMentors({ matches }: { matches: { match: StudentMatch | null; programme: 1 | 2; label: string }[] }) {
-  const mine = matches.filter((m) => m.match && (m.match.status === 'active' || m.match.status === 'requested'))
-  if (mine.length === 0) return null
-  return (
-    <section className="card p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Your mentor</p>
-      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-        {mine.map(({ match, programme, label }) => {
-          const name = match!.mentor?.full_name ?? 'Your mentor'
-          const waiting = match!.status === 'requested'
-          return (
-            <li key={programme}>
-              <Link
-                to="/practice"
-                onClick={() => rememberProgramme(programme)}
-                className="group flex items-center gap-3 rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
-              >
-                {match!.mentor?.avatar_url ? (
-                  <img src={match!.mentor.avatar_url} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover" />
-                ) : (
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-800">
-                    {name.slice(0, 1).toUpperCase()}
-                  </span>
-                )}
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-ink-900">{name}</span>
-                  <span className="block truncate text-xs text-ink-500">
-                    {label} · {waiting ? 'waiting for them to accept' : 'working with you'}
-                  </span>
-                </span>
-                <ArrowRight size={15} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-600" />
-              </Link>
-            </li>
-          )
-        })}
-      </ul>
-    </section>
-  )
-}
-
 /** How many of a kind the front page shows before "See all". */
 const PREVIEW = 3
 
@@ -241,7 +195,14 @@ function CommunityHub() {
   // shared, and survives a refresh; "All" is the bare /community.
   const { category: fromUrl } = Route.useSearch()
   const navigate = Route.useNavigate()
-  const category: Category = fromUrl ?? 'all'
+  // Each kind of support has its own page now (Paul, 27 Oct 2026): an older
+  // ?category= link goes straight there.
+  useEffect(() => {
+    if (!fromUrl) return
+    const page = GROUPS.find((g) => g.id === groupOf(fromUrl))?.to
+    if (page) void navigate({ to: page, replace: true })
+  }, [fromUrl, navigate])
+  const category: Category = 'all'
   const setCategory = (next: Category) => {
     void navigate({ search: { category: next === 'all' ? undefined : next }, replace: true })
     window.scrollTo({ top: 0 })
@@ -311,6 +272,22 @@ function CommunityHub() {
           resultCount={loading ? null : group === null ? total : counts[group]}
         />
 
+        {/* The four ways in, right under the search: each opens its own page. */}
+        {front && (
+          <BrowseTiles
+            meta={
+              loading
+                ? {}
+                : {
+                    mentors: mentors.length ? plural(mentors.length, 'mentor', 'mentors') : 'Coming soon',
+                    support: 'Ask privately',
+                    internships: hasRoles ? plural(internships.roles.length, 'open role', 'open roles') : 'Opening soon',
+                    institutions: institutions.length ? plural(institutions.length, 'institution', 'institutions') : 'Coming soon',
+                  }
+            }
+          />
+        )}
+
         {front && (
           <>
             {/* A partner asking to see this student's record, and who sees it now. */}
@@ -321,20 +298,6 @@ function CommunityHub() {
                 { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
                 { match: crMatch.match, programme: 2, label: 'Global Leadership' },
               ]}
-            />
-            {/* The four ways in, side by side: none is buried under another's listings. */}
-            <BrowseTiles
-              onPick={setCategory}
-              meta={
-                loading
-                  ? {}
-                  : {
-                      mentors: mentors.length ? plural(mentors.length, 'mentor', 'mentors') : 'Coming soon',
-                      support: 'Ask privately',
-                      internships: hasRoles ? plural(internships.roles.length, 'open role', 'open roles') : 'Opening soon',
-                      institutions: institutions.length ? plural(institutions.length, 'institution', 'institutions') : 'Coming soon',
-                    }
-              }
             />
           </>
         )}
@@ -361,7 +324,7 @@ function CommunityHub() {
             icon={Briefcase}
             title="Internships"
             subtitle="Real work with partner companies: the step that turns practice into experience you can show."
-            seeAll={front && internshipCount > PREVIEW ? { onClick: () => setCategory('internships'), label: `All ${internshipCount} roles` } : undefined}
+            seeAll={front ? { to: '/community/internships', label: hasRoles ? `All ${internshipCount} roles` : 'See internships' } : undefined}
           >
             {/* With the section opened on its own, the student's applications lead it. */}
             {group === 'internships' && internships.applications.length > 0 && (
@@ -385,7 +348,7 @@ function CommunityHub() {
             icon={GraduationCap}
             title="Mentors"
             subtitle="People who’ve done the work. Open a profile to ask them to mentor you."
-            seeAll={front && mentorHits.length > PREVIEW ? { onClick: () => setCategory('mentors'), label: `All ${mentorHits.length} mentors` } : undefined}
+            seeAll={front ? { to: '/community/mentors', label: mentorHits.length > PREVIEW ? `All ${mentorHits.length} mentors` : 'See mentors' } : undefined}
           >
             {loading ? (
               <ListingSkeletons />
@@ -415,8 +378,8 @@ function CommunityHub() {
             title="Institutions"
             subtitle="Verified training institutions for classroom and offline learning."
             seeAll={
-              front && institutionHits.length > PREVIEW
-                ? { onClick: () => setCategory('institutions'), label: `All ${institutionHits.length} institutions` }
+              front
+                ? { to: '/community/institutions', label: institutionHits.length > PREVIEW ? `All ${institutionHits.length} institutions` : 'See institutions' }
                 : undefined
             }
           >
@@ -446,6 +409,7 @@ function CommunityHub() {
             icon={HeartHandshake}
             title="Wellness & Guidance"
             subtitle="For the moments practice alone can’t fix: overwhelm, self-doubt, or not knowing what’s next."
+            seeAll={front ? { to: '/wellness', label: 'Your wellbeing' } : undefined}
           >
             <div className="grid gap-4 lg:grid-cols-2">
               {support.map((s) => (
