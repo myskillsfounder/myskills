@@ -1,5 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Globe2, Layers, Megaphone, Plus, Rocket, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Bell, Globe2, Layers, Megaphone, Plus, Rocket, Sparkles, type LucideIcon } from 'lucide-react'
+import { COURSES, type Course } from '@/content/courses'
+import { resolveGoal } from '@/lib/onboardingContent'
 import type { CourseProgress } from '@/lib/programmes'
 import type { MyEnrolment } from '@/lib/programmeStudent'
 import type { Programme } from '@/lib/practiceProgramme'
@@ -169,6 +171,92 @@ export function ProgrammeCards({
             <span className="text-sm">Browse every course and take its free aptitude test.</span>
           </Link>
         </li>
+      </ul>
+    </section>
+  )
+}
+
+/**
+ * Which courses suit each goal from onboarding, best first (Paul, 27 Oct 2026:
+ * "show recommended programmes based on your goal"). A goal not listed, or no
+ * goal, gets the courses in their usual order.
+ */
+const FOR_GOAL: Record<string, Course['id'][]> = {
+  job: ['global-leadership', 'digital-marketing', 'data-analytics', 'entrepreneurship'],
+  business: ['entrepreneurship', 'digital-marketing', 'global-leadership', 'data-analytics'],
+  skill: ['digital-marketing', 'data-analytics', 'entrepreneurship', 'global-leadership'],
+  grow: ['global-leadership', 'data-analytics', 'digital-marketing', 'entrepreneurship'],
+  freelance: ['digital-marketing', 'entrepreneurship', 'data-analytics', 'global-leadership'],
+  confidence: ['global-leadership', 'entrepreneurship', 'digital-marketing', 'data-analytics'],
+  mentor: ['global-leadership', 'digital-marketing', 'entrepreneurship', 'data-analytics'],
+  practise: ['digital-marketing', 'data-analytics', 'global-leadership', 'entrepreneurship'],
+  assess: ['digital-marketing', 'global-leadership', 'entrepreneurship', 'data-analytics'],
+}
+
+/** The engine programme behind a course, by the slug in its test's address. */
+const engineSlugOf = (c: Course) => c.test?.match(/^\/programmes\/([a-z0-9-]+)\//)?.[1]
+
+/** Up to three courses the student hasn't joined, in the order that suits their goal. */
+export function recommendFor(goalId: string | undefined, joined: { dm: boolean; cr: boolean; engine: string[] }): Course[] {
+  const goal = resolveGoal(goalId)
+  const order = (goal && FOR_GOAL[goal.id]) || COURSES.map((c) => c.id)
+  const isJoined = (c: Course) =>
+    (c.id === 'digital-marketing' && joined.dm) ||
+    (c.id === 'global-leadership' && joined.cr) ||
+    Boolean(engineSlugOf(c) && joined.engine.includes(engineSlugOf(c)!))
+  return order
+    .map((id) => COURSES.find((c) => c.id === id))
+    .filter((c): c is Course => Boolean(c) && !isJoined(c!))
+    .slice(0, 3)
+}
+
+export function RecommendedProgrammes({ goalId, courses }: { goalId: string | undefined; courses: Course[] }) {
+  if (courses.length === 0) return null
+  const goal = resolveGoal(goalId)
+  return (
+    <section aria-labelledby="recommended" className="mt-10">
+      <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-700">
+        <Sparkles size={13} /> Recommended for you
+      </p>
+      <h2 id="recommended" className="mt-1 font-display text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
+        {goal ? <>For your goal: {goal.you}</> : 'Programmes to add next'}
+      </h2>
+      <ul className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {courses.map((c, i) => {
+          const open = c.status === 'open'
+          return (
+            <li key={c.id} className="relative flex h-full flex-col rounded-2xl border border-ink-900/[0.08] bg-gradient-to-br from-white to-brand-50/40 p-5 shadow-e1">
+              {i === 0 && goal && (
+                <span className="absolute right-4 top-4 rounded-full bg-brand-600 px-2.5 py-1 text-[11px] font-semibold text-white">Best fit</span>
+              )}
+              <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ring-1 ring-white/30 ${c.tile}`}>
+                <c.icon size={22} />
+              </span>
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
+                {c.kind === 'personal' ? 'Personal' : 'Professional'} skills · {open ? 'Open' : 'Opens soon'}
+              </p>
+              <h3 className="mt-1 font-display text-lg font-semibold leading-snug text-ink-900">{c.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{c.tagline}</p>
+              <div className="mt-auto pt-5">
+                {open && c.test ? (
+                  <a
+                    href={c.test}
+                    className="press inline-flex h-10 items-center gap-1.5 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+                  >
+                    Take the free aptitude test <ArrowRight size={15} />
+                  </a>
+                ) : (
+                  <Link
+                    to="/courses"
+                    className="press inline-flex h-10 items-center gap-1.5 rounded-xl border border-ink-900/15 px-4 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-900/[0.04]"
+                  >
+                    <Bell size={15} /> Tell me when it opens
+                  </Link>
+                )}
+              </div>
+            </li>
+          )
+        })}
       </ul>
     </section>
   )
