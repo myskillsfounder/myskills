@@ -29,7 +29,7 @@ export const Route = createFileRoute('/')({
  * of light with the platform's five parts on a curved glass bar; then the
  * five parts as photo cards, the partners, the courses, the Global Readiness
  * Score and a last call to take the test. The photos are cut from his
- * picture (public/home/hero-student, card-*, face-*; sharper originals can
+ * picture (public/home/card-*, face-*; the ring holds Paul's own photo; sharper originals can
  * replace them). Learning goes to the courses; Mentorship, Careers, Study
  * Abroad and Wellness are inside the platform, so a visitor signs in first
  * and lands on them (lib/afterLogin.ts). Partners go to the partner sign-up.
@@ -163,12 +163,12 @@ function Faces({ faces, size = 'h-9 w-9' }: { faces: string[]; size?: string }) 
 /** A glass note floating beside the student. */
 function Note({ icon: Icon, title, className = '', children }: { icon: LucideIcon; title: string; className?: string; children?: React.ReactNode }) {
   return (
-    <div className={`${glass} absolute flex items-start gap-3 p-4 ${className}`}>
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
+    <div className={`${glass} absolute flex items-start gap-3 p-3.5 ${className}`}>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
         <Icon size={20} />
       </span>
       <div className="min-w-0">
-        <p className="font-display text-[15px] font-semibold leading-snug text-white">{title}</p>
+        <p className="font-display text-[14px] font-semibold leading-snug text-white">{title}</p>
         {children}
       </div>
     </div>
@@ -176,34 +176,34 @@ function Note({ icon: Icon, title, className = '', children }: { icon: LucideIco
 }
 
 /** How far each of the five parts rises on the curved bar, its ends highest. */
-const BAR_LIFT = ['-translate-y-7', '-translate-y-2', 'translate-y-0.5', '-translate-y-2', '-translate-y-7']
+const BAR_LIFT = ['-translate-y-6', '-translate-y-1.5', 'translate-y-0.5', '-translate-y-1.5', '-translate-y-6']
 
 /** The student at the centre: a ring of light, three notes, the curved bar of the five parts. */
 function StudentStage({ signedIn }: { signedIn: boolean }) {
   return (
-    <div className="relative mx-auto h-[38rem] w-full max-w-[44rem]">
-      {/* The ring: indigo light inside, a bright violet-blue line around. */}
-      <span aria-hidden className="absolute left-1/2 top-0 h-[33rem] w-[33rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_50%_45%,rgba(70,80,220,0.55),rgba(40,46,150,0.35)_45%,rgba(4,10,30,0)_72%)]" />
+    <div className="relative mx-auto h-[31rem] w-full max-w-[38rem]">
+      {/* Indigo light around the ring. */}
+      <span aria-hidden className="absolute left-1/2 top-0 h-[27rem] w-[27rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(70,80,220,0.45),rgba(40,46,150,0.2)_55%,rgba(4,10,30,0)_72%)] blur-2xl" />
+
+      {/* A real photo, framed in the ring (Paul, 27 Oct: "more realistic, not
+          a cut-out"): it fills the circle, tinted into the page's blues and
+          shaded at the foot where the bar crosses it. */}
+      <div className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 overflow-hidden rounded-full">
+        <img src="/home/paul-mentor.webp" alt="Paul Thomas, MySkills mentor" className="h-full w-full object-cover object-[50%_22%]" />
+        <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/25 mix-blend-color" />
+        <span aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_45%,rgba(4,10,30,0.55)_100%)]" />
+        <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#040a1e]/90 to-transparent" />
+      </div>
+      {/* The ring's line: bright violet-blue. */}
       <span
         aria-hidden
-        className="absolute left-1/2 top-0 h-[33rem] w-[33rem] -translate-x-1/2 rounded-full p-[2px] [mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)] bg-[conic-gradient(from_200deg,rgba(124,92,246,0.15),#8f6bff_25%,#c9b8ff_38%,#6d7bff_55%,rgba(109,123,255,0.2)_75%,rgba(124,92,246,0.15))]"
-        style={{ filter: 'drop-shadow(0 0 14px rgba(124,108,255,0.85))' }}
+        className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full p-[2px] [mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)] bg-[conic-gradient(from_200deg,rgba(124,92,246,0.2),#8f6bff_25%,#c9b8ff_38%,#6d7bff_55%,rgba(109,123,255,0.25)_75%,rgba(124,92,246,0.2))]"
+        style={{ filter: 'drop-shadow(0 0 12px rgba(124,108,255,0.8))' }}
       />
-      <span aria-hidden className="absolute left-1/2 top-7 h-[30rem] w-[30rem] -translate-x-1/2 rounded-full border border-[#8f9bff]/15" />
-
-      {/* The student, rising out of the ring. */}
-      <img
-        src="/home/hero-student.webp"
-        alt="A student looking ahead"
-        className="absolute left-1/2 top-2 h-[31rem] w-auto -translate-x-1/2 object-cover"
-        style={{
-          WebkitMaskImage: 'radial-gradient(ellipse 64% 78% at 50% 40%, black 64%, transparent 82%)',
-          maskImage: 'radial-gradient(ellipse 64% 78% at 50% 40%, black 64%, transparent 82%)',
-        }}
-      />
+      <span aria-hidden className="absolute left-1/2 top-0 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full border border-[#8f9bff]/15" />
 
       {/* Paul's handwriting. */}
-      <p aria-hidden className={`${hand} absolute left-[6%] top-[1%] -rotate-[10deg] text-[1.35rem] leading-tight`}>
+      <p aria-hidden className={`${hand} absolute left-[2%] top-0 -rotate-[10deg] text-[1.15rem] leading-tight`}>
         Learn
         <br />
         Build Skills
@@ -212,25 +212,21 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
         <br />
         Grow
       </p>
-      <svg aria-hidden className="absolute left-[22%] top-[17%] h-12 w-16 text-white/60" viewBox="0 0 64 48" fill="none">
+      <svg aria-hidden className="absolute left-[17%] top-[15%] h-10 w-14 text-white/60" viewBox="0 0 64 48" fill="none">
         <path d="M4 6 C 30 4, 48 18, 52 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <path d="M44 34 L52 41 L56 31" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      <p aria-hidden className={`${hand} absolute -bottom-1 right-0 rotate-[-10deg] text-right text-[1.3rem] leading-tight`}>
+      <p aria-hidden className={`${hand} absolute right-0 top-[64%] rotate-[-10deg] text-right text-[1.1rem] leading-tight`}>
         More
         <br />
         than just
         <br />
         courses
       </p>
-      <svg aria-hidden className="absolute bottom-[6%] right-[13%] h-10 w-10 text-white/55" viewBox="0 0 40 40" fill="none">
-        <path d="M6 34 C 20 30, 30 20, 33 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M27 11 L33 5 L37 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
 
-      <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[24%] w-56">
+      <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[30%] w-52">
         <span className="mt-2.5 flex items-center gap-2">
-          <Faces faces={['paul-mentor', 'face-2', 'face-3']} size="h-8 w-8" />
+          <Faces faces={['face-2', 'face-3', 'paul-mentorship']} size="h-8 w-8" />
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80">
             <Plus size={14} />
           </span>
@@ -239,14 +235,14 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
       <Link
         to="/courses"
         onClick={() => trackEvent('home_note', { note: 'path' })}
-        className="group absolute right-0 top-[7%] w-60 transition-transform hover:-translate-y-0.5"
+        className="group absolute right-0 top-[5%] w-56 transition-transform hover:-translate-y-0.5"
       >
         <Note icon={BarChart3} title="Personalised Learning Path" className="relative inset-auto w-full pr-10">
           <p className="mt-1 text-xs font-medium text-[#b9a6ff]">Powered by AI</p>
           <ArrowRight size={16} className="absolute bottom-4 right-4 text-[#b9a6ff] transition-transform group-hover:translate-x-0.5" />
         </Note>
       </Link>
-      <Note icon={Briefcase} title="Real-world Opportunities" className="right-[-2%] top-[30%] w-60">
+      <Note icon={Briefcase} title="Real-world Opportunities" className="right-0 top-[33%] w-56">
         <p className="mt-1.5 text-xs leading-relaxed text-white/60">
           Internships · Jobs
           <br />
@@ -255,7 +251,7 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
       </Note>
 
       {/* The curved glass bar, the ring's lower edge: the five parts of the platform. */}
-      <nav aria-label="The platform" className="absolute inset-x-[2%] bottom-[9%] h-36">
+      <nav aria-label="The platform" className="absolute inset-x-0 bottom-0 h-32">
         <svg aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 600 144" preserveAspectRatio="none" fill="none">
           <defs>
             <linearGradient id="bar-fill" x1="0" y1="0" x2="0" y2="1">
@@ -273,7 +269,7 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
           <path d="M6 78 Q 300 150 594 78" stroke="#6d7bff" strokeOpacity="0.25" strokeWidth="1" vectorEffect="non-scaling-stroke" />
           <path d="M6 18 L 6 78 M594 18 L 594 78" stroke="#6d7bff" strokeOpacity="0.3" strokeWidth="1" vectorEffect="non-scaling-stroke" />
         </svg>
-        <ul className="relative grid h-full grid-cols-5 px-3 pt-10">
+        <ul className="relative grid h-full grid-cols-5 px-2 pt-9">
           {PILLARS.map((p, i) => {
             const to = target(p, signedIn)
             return (
@@ -282,9 +278,9 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
                   to={to.to}
                   search={to.search as never}
                   onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'bar' })}
-                  className="flex flex-col items-center gap-1.5 px-1 text-center text-[12.5px] font-medium leading-tight text-white transition-colors hover:text-[#dcc7ff]"
+                  className="flex flex-col items-center gap-1.5 px-1 text-center text-[12px] font-medium leading-tight text-white transition-colors hover:text-[#dcc7ff]"
                 >
-                  <p.icon size={26} strokeWidth={1.5} className="text-[#d6bcff] drop-shadow-[0_0_8px_rgba(180,150,255,0.8)]" />
+                  <p.icon size={22} strokeWidth={1.5} className="text-[#d6bcff] drop-shadow-[0_0_8px_rgba(180,150,255,0.8)]" />
                   {p.short}
                 </Link>
               </li>
@@ -373,14 +369,14 @@ function HomePage() {
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
         {/* 1. Your future won't wait. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14 lg:px-8">
-          <div className="grid items-center gap-8 xl:grid-cols-[1fr_44rem] xl:gap-4">
+          <div className="grid items-center gap-8 xl:grid-cols-[1fr_38rem] xl:gap-10">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/75">
                 Learn <span className="mx-1.5 text-[#8f6bff]">•</span> Get guidance <span className="mx-1.5 text-[#8f6bff]">•</span> Build skills{' '}
                 <span className="mx-1.5 text-[#8f6bff]">•</span> Grow
               </p>
               <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-[4rem]">
-                Your future won’t wait. <span className={gradientText}>Neither should your learning.</span>
+                <span className="block">Your future won’t wait.</span> <span className={`block pb-2 ${gradientText}`}>Neither should your learning.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/75">
                 AI-guided learning, expert mentorship, career guidance and real-world opportunities: everything a student needs,
