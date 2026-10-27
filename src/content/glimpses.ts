@@ -1,4 +1,4 @@
-import { Award, BookOpen, Building2, CalendarCheck, Compass, FileText, Globe2, GraduationCap, MessageSquare, Plane, Trophy, Users, Briefcase, Target } from 'lucide-react'
+import { Bot, Crown, Rocket, TrendingUp, Award, BookOpen, Building2, CalendarCheck, Compass, FileText, Globe2, GraduationCap, MessageSquare, Plane, Trophy, Users, Briefcase, Target } from 'lucide-react'
 import type { GlimpseProps } from '@/components/landing/Glimpse'
 
 /*
@@ -16,7 +16,13 @@ export const MENTORS_GLIMPSE: GlimpseProps = {
   title: 'Learn from top',
   accent: 'industry leaders.',
   body: 'AI can explain almost anything. A leader who has done it knows what matters: live sessions with people at the top of their field, answers when you are stuck, and a real project they grade.',
-  tags: ['Entrepreneurship', 'AI product development', 'Growth hacking', 'Leadership'],
+  // The industries as cards where the photo was (Paul, 27 Oct 2026).
+  heroCards: [
+    { icon: Rocket, title: 'Entrepreneurship', body: 'From an idea to first paying customers.', tone: 'pink' },
+    { icon: Bot, title: 'AI product development', body: 'Build products with AI at the core.', tone: 'violet' },
+    { icon: TrendingUp, title: 'Growth hacking', body: 'Grow fast on a startup budget.', tone: 'blue' },
+    { icon: Crown, title: 'Leadership', body: 'Lead people, teams and decisions.', tone: 'amber' },
+  ],
   photo: 'paul-mentorship',
   photoAlt: 'Paul Thomas, a MySkills mentor, at his desk',
   features: [
