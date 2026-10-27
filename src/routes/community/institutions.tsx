@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
@@ -14,7 +15,9 @@ import {
   School,
   Send,
   Star,
+  Trophy,
   Users,
+  X,
 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
@@ -93,8 +96,9 @@ function RatingStars({
 }
 
 /**
- * "I'm interested": the student's enquiry, which goes to the MySkills team as a
- * lead (docs/supabase-institution-leads.sql). Their name and email come from
+ * "Get a quote" (Paul, 27 Oct 2026): the student's request for fees and batch
+ * dates, which goes to the MySkills team as a lead
+ * (docs/supabase-institution-leads.sql). Their name and email come from
  * their account; the phone from their profile, which they can change here.
  */
 function EnquiryForm({
@@ -132,10 +136,10 @@ function EnquiryForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-4 border-t border-ink-200 pt-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <p className="text-sm text-ink-600">
-        The MySkills team will call you within two working days to help you choose, and to set up a visit to{' '}
-        {partner.legal_name}.
+        Tell us what you want to learn. The MySkills team will send you {partner.legal_name}’s fees and batch dates
+        within two working days, and can set up a visit.
       </p>
       {courses.length > 0 && (
         <label className="block text-sm font-medium text-ink-800">
@@ -171,18 +175,18 @@ function EnquiryForm({
         required={false}
         rows={2}
         maxLength={2000}
-        placeholder="Batch timing, fees, or a question for the team"
+        placeholder="Your budget, batch timing, or a question for the team"
       />
       <p className="text-xs text-ink-500">Your name, email and phone go to the MySkills team only.</p>
 
       {submitError && (
-        <Alert tone="danger" title="Couldn't send your enquiry">
+        <Alert tone="danger" title="Couldn't send your request">
           <p>{submitError}</p>
         </Alert>
       )}
 
       <Button type="submit" size="sm" icon={Send} disabled={submitting}>
-        {submitting ? 'Sending…' : 'Send my enquiry'}
+        {submitting ? 'Sending…' : 'Request a quote'}
       </Button>
     </form>
   )
@@ -208,6 +212,47 @@ function EnquiryStatus({ enquiry }: { enquiry: MyEnquiry }) {
   )
 }
 
+/** The quote request, over the page. */
+function QuoteDialog({ partner, courses, onClose, onDone }: { partner: InstitutionPartner; courses: string[]; onClose: () => void; onDone: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = overflow
+      previous?.focus()
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label={`Get a quote from ${partner.legal_name}`}>
+      <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-ink-900/50" />
+      <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-e2 sm:max-w-lg sm:rounded-3xl">
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-900"
+        >
+          <X size={18} />
+        </button>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-700">Get a quote</p>
+        <h2 className="mt-1 pr-10 font-display text-xl font-semibold text-ink-900">{partner.legal_name}</h2>
+        <div className="mt-4">
+          <EnquiryForm partner={partner} courses={courses} onDone={onDone} />
+        </div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
 function PartnerCard({
   partner,
   courses,
@@ -216,6 +261,7 @@ function PartnerCard({
   ratingBusy,
   enquiry,
   onEnquired,
+  top,
 }: {
   partner: InstitutionPartner
   courses: InstitutionPartnerCourse[]
@@ -225,57 +271,57 @@ function PartnerCard({
   /** The student's latest enquiry with this institution, if any. */
   enquiry?: MyEnquiry
   onEnquired: () => void
+  /** The best rated, marked as such. */
+  top: boolean
 }) {
-  const [showForm, setShowForm] = useState(false)
-  // An open or successful enquiry replaces the button; a closed one lets them ask again.
+  const [quoting, setQuoting] = useState(false)
+  // An open or successful request replaces the button; a closed one lets them ask again.
   const open = enquiry && enquiry.stage !== 'lost'
   const courseNames = courses.length > 0 ? courses.map((c) => c.name) : partner.courses_offered
 
   return (
-    <div className="card p-6 shadow-sm">
-      <div className="flex items-start gap-4">
+    <article className="card relative flex h-full flex-col p-5 shadow-sm transition-shadow hover:shadow-e2">
+      {top && (
+        <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200">
+          <Trophy size={12} /> Top rated
+        </span>
+      )}
+      <div className="flex items-start gap-3.5 pr-20">
         {partner.logo_url ? (
-          <img
-            src={partner.logo_url}
-            alt=""
-            className="h-16 w-16 shrink-0 rounded-2xl border border-ink-100 object-contain"
-          />
+          <img src={partner.logo_url} alt="" className="h-14 w-14 shrink-0 rounded-2xl border border-ink-100 object-contain" />
         ) : (
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white">
-            <Building2 size={26} />
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-700 text-white">
+            <Building2 size={24} />
           </span>
         )}
-
-        <div className="min-w-0 flex-1">
-          <h2 className="font-display text-lg font-semibold text-ink-900">{partner.legal_name}</h2>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-600">
+        <div className="min-w-0">
+          <h2 className="font-display text-lg font-semibold leading-snug text-ink-900">{partner.legal_name}</h2>
+          <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px] text-ink-600">
             {partner.city && (
               <span className="inline-flex items-center gap-1">
-                <MapPin size={13} className="text-ink-400" /> {partner.city}
+                <MapPin size={12} className="text-ink-400" /> {partner.city}
               </span>
             )}
             <span className="inline-flex items-center gap-1">
-              <Award size={13} className="text-ink-400" />
-              {partner.years_in_education} {partner.years_in_education === 1 ? 'year' : 'years'} in
-              education
+              <Award size={12} className="text-ink-400" />
+              {partner.years_in_education} {partner.years_in_education === 1 ? 'year' : 'years'} in education
             </span>
-            {partner.google_rating != null && (
-              <span className="text-ink-400">Google {partner.google_rating.toFixed(1)}</span>
-            )}
-          </div>
-          <div className="mt-2">
-            <RatingStars stats={stats} onRate={onRate} busy={ratingBusy} />
-          </div>
+          </p>
         </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <RatingStars stats={stats} onRate={onRate} busy={ratingBusy} />
+        {partner.google_rating != null && <span className="text-xs text-ink-400">Google {partner.google_rating.toFixed(1)}</span>}
       </div>
 
       {courses.length > 0 ? (
         <ul className="mt-4 divide-y divide-ink-100 rounded-xl border border-ink-100">
-          {courses.map((c) => (
-            <li key={c.id} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
-              <span className="inline-flex items-center gap-2 font-medium text-ink-800">
-                <BookOpen size={14} className="shrink-0 text-brand-600" />
-                {c.name}
+          {courses.slice(0, 3).map((c) => (
+            <li key={c.id} className="flex items-center justify-between gap-3 px-3.5 py-2 text-sm">
+              <span className="inline-flex min-w-0 items-center gap-2 font-medium text-ink-800">
+                <BookOpen size={14} className="shrink-0 text-sky-600" />
+                <span className="truncate">{c.name}</span>
               </span>
               {c.duration && (
                 <span className="inline-flex shrink-0 items-center gap-1 text-xs text-ink-500">
@@ -284,15 +330,13 @@ function PartnerCard({
               )}
             </li>
           ))}
+          {courses.length > 3 && <li className="px-3.5 py-2 text-xs text-ink-500">+{courses.length - 3} more courses</li>}
         </ul>
       ) : (
         partner.courses_offered.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-1.5">
             {partner.courses_offered.map((c) => (
-              <span
-                key={c}
-                className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700"
-              >
+              <span key={c} className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700">
                 {c}
               </span>
             ))}
@@ -300,47 +344,42 @@ function PartnerCard({
         )
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-ink-200 pt-4 text-sm">
+      {enquiry && <EnquiryStatus enquiry={enquiry} />}
+
+      <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5 text-sm">
         {partner.website_url && (
-          <a
-            href={partner.website_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-ink-600 hover:text-brand-700"
-          >
+          <a href={partner.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-ink-600 hover:text-sky-700">
             <ExternalLink size={14} /> Website
           </a>
         )}
         {partner.google_profile_url && (
-          <a
-            href={partner.google_profile_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-ink-600 hover:text-brand-700"
-          >
-            <ExternalLink size={14} /> Google profile
+          <a href={partner.google_profile_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-ink-600 hover:text-sky-700">
+            <ExternalLink size={14} /> Google
           </a>
         )}
-        {!open && !showForm && (
-          <Button size="sm" onClick={() => setShowForm(true)} className="ml-auto">
-            {enquiry ? 'Enquire again' : 'I’m interested'}
-          </Button>
+        {!open && (
+          <button
+            type="button"
+            onClick={() => setQuoting(true)}
+            className="press ml-auto inline-flex h-10 items-center gap-1.5 rounded-xl bg-sky-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-sky-700"
+          >
+            <Send size={14} /> {enquiry ? 'Ask again' : 'Get a quote'}
+          </button>
         )}
       </div>
 
-      {enquiry && !showForm && <EnquiryStatus enquiry={enquiry} />}
-
-      {showForm && !open && (
-        <EnquiryForm
+      {quoting && (
+        <QuoteDialog
           partner={partner}
           courses={courseNames}
+          onClose={() => setQuoting(false)}
           onDone={() => {
-            setShowForm(false)
+            setQuoting(false)
             onEnquired()
           }}
         />
       )}
-    </div>
+    </article>
   )
 }
 
@@ -407,6 +446,17 @@ function InstitutionsPage() {
     return map
   }, [partners, ratings, user?.id])
 
+  const ranked = useMemo(() => {
+    const st = (id: string) => statsByInstitution.get(id) ?? { average: 0, count: 0, mine: null }
+    return [...partners].sort(
+      (a, b) =>
+        st(b.id).average - st(a.id).average ||
+        st(b.id).count - st(a.id).count ||
+        (b.google_rating ?? 0) - (a.google_rating ?? 0) ||
+        a.legal_name.localeCompare(b.legal_name),
+    )
+  }, [partners, statsByInstitution])
+
   async function handleRate(institutionId: string, rating: number) {
     if (!user) return
     setRatingBusyId(institutionId)
@@ -451,7 +501,7 @@ function InstitutionsPage() {
           ]}
         />
       </div>
-      <div className="mx-auto max-w-2xl">
+      <div>
 
         {error && (
           <div className="mb-5">
@@ -470,10 +520,11 @@ function InstitutionsPage() {
             description="We're onboarding the first ones now. Run a training institute — or know one?"
           />
         ) : (
-          <div className="space-y-5">
-            {partners.map((p) => (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {ranked.map((p, i) => (
               <PartnerCard
                 key={p.id}
+                top={i === 0 && (statsByInstitution.get(p.id)?.count ?? 0) > 0}
                 partner={p}
                 courses={coursesByInstitution.get(p.id) ?? []}
                 stats={statsByInstitution.get(p.id) ?? { average: 0, count: 0, mine: null }}
