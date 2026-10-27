@@ -94,6 +94,11 @@ export interface EngineCourseContent {
   project: string
   /** How long the project takes, for the facts box. */
   projectTime: string
+  /** Learning hours, when the modules' minutes don't add up to them (Digital
+   *  Marketing's tracks are practised far longer than their lessons). */
+  hours?: number
+  /** What the modules are called on the page: "modules" unless said. */
+  unit?: string
 }
 
 /** AI-Powered Entrepreneurship's own page (routes/entrepreneurship.tsx),
@@ -154,4 +159,69 @@ export const DATA_ANALYTICS: EngineCourseContent = {
   project:
     'Over 3 to 4 weeks, with your mentor, analyse 12 months of data for a real or realistic Indian business and recommend one change that would grow revenue or cut costs: a cleaned dataset, the analysis, a dashboard, an AI log and a one-page memo your mentor grades.',
   projectTime: 'About 3–4 weeks',
+}
+
+/** Digital Marketing's own page (routes/digital-marketing.tsx), from
+ *  docs/programmes/Digital marketing/digital-marketing.json and the skill
+ *  tracks in lib/skillTracks.ts. */
+export const DIGITAL_MARKETING: EngineCourseContent = {
+  summary:
+    'Eight skill tracks of real business scenarios, from marketing fundamentals to analytics and AI, practised with an AI coach. Then the Foundation assessment and a project with a mentor.',
+  audience: 'Students and graduates in India who want to work in digital marketing, or to market their own work well. No experience needed.',
+  outcomes: [
+    'Make the marketing decisions a real business faces, and explain why',
+    'Plan, run and measure campaigns on Google and Meta',
+    'Get found in search and AI answers with SEO and AEO',
+    'Use content, analytics and AI tools the way employers expect',
+    'Earn the Foundation certificate and a mentor-graded project',
+  ],
+  modules: [
+    { title: 'Marketing Fundamentals', minutes: 30 },
+    { title: 'Market Research', minutes: 30 },
+    { title: 'Meta Ads', minutes: 30 },
+    { title: 'Google Ads', minutes: 30 },
+    { title: 'SEO & AEO', minutes: 30 },
+    { title: 'Analytics', minutes: 30 },
+    { title: 'Content Marketing', minutes: 30 },
+    { title: 'Marketing Automation & AI', minutes: 30 },
+  ],
+  project: 'A marketing project for a real or realistic business, guided and graded by a mentor on relevance, quality, how you apply the skills, and presentation.',
+  projectTime: 'With a mentor',
+  hours: 40,
+  unit: 'skill tracks',
+}
+
+/** Global Leadership's own page (routes/career-readiness.tsx), from
+ *  content/career-readiness.json (which the prerender also reads) and the
+ *  modules' minutes in lib/careerReadinessContent.ts. */
+export const GLOBAL_LEADERSHIP: EngineCourseContent = {
+  summary:
+    'Skills get you shortlisted; how you know yourself, think, decide, work with people and handle pressure gets you hired. Learn and practise all fourteen in writing, with AI as your coach, and get a mentor’s honest feedback.',
+  audience: 'Every student. One module for each skill in the Leadership Aptitude Test: the first five are the core, the other nine build the rest of WHO’s life skills.',
+  outcomes: [
+    'Clear, measurable goals, and a plan to reach them',
+    'Confident communication in writing, presentations and interviews',
+    'Leadership experience you can point to, not just describe',
+    'Hands-on fluency with agile ways of working',
+    'A growth mindset backed by habits, not slogans',
+    'Mentor feedback on your progress, not just automated scores',
+  ],
+  modules: [
+    { title: 'Goal Setting', minutes: 45 },
+    { title: 'Communication', minutes: 45 },
+    { title: 'Leadership', minutes: 45 },
+    { title: 'Agile Methodology', minutes: 45 },
+    { title: 'Growth Mindset', minutes: 45 },
+    { title: 'Self-Awareness', minutes: 25 },
+    { title: 'Empathy', minutes: 25 },
+    { title: 'Critical Thinking', minutes: 25 },
+    { title: 'Creative Thinking', minutes: 25 },
+    { title: 'Decision-Making', minutes: 25 },
+    { title: 'Problem-Solving', minutes: 25 },
+    { title: 'Interpersonal Relationships', minutes: 25 },
+    { title: 'Coping with Stress', minutes: 25 },
+    { title: 'Coping with Emotions', minutes: 25 },
+  ],
+  project: 'Once the five core modules are done, a project you lead and a mentor reviews: your written work in every module is the evidence, not an automated score.',
+  projectTime: 'With a mentor',
 }
