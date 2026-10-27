@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Check, Lock, type LucideIcon } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Check, Flame, Lock, type LucideIcon } from 'lucide-react'
+import { Flag, Nurse } from '@/components/studyAbroad/Cards'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { trackEvent } from '@/lib/analytics'
@@ -29,6 +30,23 @@ export interface GlimpseItem {
   open?: boolean
 }
 
+/** One thing to put in front of a visitor first: "Trending now". */
+export interface GlimpseTrending {
+  title: string
+  /** Who it is with: the university, the company. */
+  where: string
+  /** A partner ribbon, e.g. "MySkills · Top partner". */
+  partner: string
+  body: string
+  points: string[]
+  /** A two-letter country for the flag. */
+  country?: string
+  /** Nursing gets the drawn nurse (components/studyAbroad/Cards.tsx). */
+  art?: 'nurse'
+  /** Where a visitor lands after logging in to see it. */
+  next: string
+}
+
 export interface GlimpseProps {
   id: 'mentors' | 'study-abroad' | 'internships'
   icon: LucideIcon
@@ -41,6 +59,7 @@ export interface GlimpseProps {
   features: { icon: LucideIcon; title: string; body: string }[]
   steps: { title: string; body: string }[]
   peek: { title: string; note: string; items: GlimpseItem[] }
+  trending?: GlimpseTrending
   /** Where a visitor lands after logging in. */
   next: string
 }
@@ -90,6 +109,8 @@ export function Glimpse(g: GlimpseProps) {
             </figure>
           </div>
         </section>
+
+        {g.trending && <Trending id={g.id} t={g.trending} />}
 
         {/* What you get. */}
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -181,5 +202,63 @@ export function Glimpse(g: GlimpseProps) {
 
       <Footer />
     </div>
+  )
+}
+
+/** "Trending now": one programme or role, large, with the partner ribbon. */
+function Trending({ id, t }: { id: GlimpseProps['id']; t: GlimpseTrending }) {
+  return (
+    <section className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden rounded-3xl border border-[#f0a35e]/30 bg-gradient-to-br from-[#3a1f5c]/70 via-[#14123f]/70 to-[#0a0f2e]/80 p-6 shadow-[0_24px_70px_-30px_rgba(240,140,80,0.6)] backdrop-blur-xl sm:p-8">
+        <span aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#f08c50]/20 blur-3xl" />
+        <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_15rem]">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#f97316] to-[#ec4899] px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(249,115,22,0.5)]">
+                <Flame size={13} /> Trending now
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/40 bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+                <BadgeCheck size={13} /> {t.partner}
+              </span>
+            </div>
+            <h2 className="mt-4 flex flex-wrap items-center gap-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              {t.title}
+              <Flag code={t.country} className="h-6 w-9" />
+            </h2>
+            <p className="mt-1.5 text-sm font-medium text-[#f7c79c]">{t.where}</p>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/75">{t.body}</p>
+            <ul className="mt-5 flex flex-wrap gap-2">
+              {t.points.map((pt) => (
+                <li key={pt} className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[13px] font-medium text-white/85">
+                  <Check size={14} className="text-emerald-300" /> {pt}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                to="/signup"
+                onClick={() => trackEvent('glimpse_cta', { page: id, cta: 'trending_signup' })}
+                className="press inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-[#f97316] to-[#ec4899] px-5 text-sm font-semibold text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,0.8)] transition-opacity hover:opacity-90"
+              >
+                Apply with MySkills <ArrowRight size={16} />
+              </Link>
+              <Link
+                to="/login"
+                search={{ next: t.next }}
+                onClick={() => trackEvent('glimpse_cta', { page: id, cta: 'trending_login' })}
+                className="press inline-flex h-11 items-center rounded-xl border border-white/25 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                Log in to see the programme
+              </Link>
+            </div>
+          </div>
+          {t.art === 'nurse' && (
+            <div className="relative mx-auto hidden h-56 w-56 items-end justify-center overflow-hidden rounded-full bg-gradient-to-b from-[#f9a66c]/30 to-[#7c3aed]/20 ring-1 ring-white/15 lg:flex">
+              <Nurse className="h-48 w-auto" />
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
   )
 }
