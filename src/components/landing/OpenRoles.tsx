@@ -77,40 +77,27 @@ export function OpenRoles() {
   }, [])
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-10 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] backdrop-blur">
-            <span className="live-ping relative h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
-            {roles?.length ? `${roles.length} open ${roles.length === 1 ? 'internship' : 'internships'}` : 'Internships'}
-          </p>
-          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl">
-            Open internships. <span className="bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff] bg-clip-text text-transparent">Apply today.</span>
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-white/70 sm:text-lg">
-            Real work experience with partner companies our team has reviewed. You apply with your Global Readiness Score, and
-            the company signs off the work you do.
-          </p>
-        </div>
-        <Link {...APPLY} className="text-sm font-semibold text-[#b9a6ff] hover:text-white">
-          Have an account? Log in to apply →
-        </Link>
-      </div>
+    // The roles come first (Paul, 27 Oct 2026); the heading follows, smaller.
+    <section className="mx-auto max-w-7xl px-4 pb-10 pt-10 sm:px-6 sm:pt-12 lg:px-8">
+      <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] backdrop-blur">
+        <span className="live-ping relative h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
+        {roles?.length ? `${roles.length} open ${roles.length === 1 ? 'internship' : 'internships'}` : 'Internships'}
+      </p>
 
       {roles === undefined ? (
-        <ul className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-hidden>
+        <ul className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-hidden>
           {[0, 1, 2].map((i) => (
             <li key={i} className={`${glass} h-72 animate-pulse`} />
           ))}
         </ul>
       ) : roles.length ? (
-        <ul className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {roles.map((r) => (
             <RoleCard key={r.id} r={r} />
           ))}
         </ul>
       ) : (
-        <div className={`${glass} mt-8 flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between`}>
+        <div className={`${glass} mt-5 flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between`}>
           <div>
             <p className="font-display text-lg font-semibold text-white">New internships are opening soon.</p>
             <p className="mt-1 text-sm text-white/65">Sign up free and build your score now, so you are ready to apply when they open.</p>
@@ -123,6 +110,21 @@ export function OpenRoles() {
           </Link>
         </div>
       )}
+
+      <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
+        <div className="max-w-2xl">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Open internships. <span className="bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff] bg-clip-text text-transparent">Apply today.</span>
+          </h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-white/70">
+            Real work experience with partner companies our team has reviewed. You apply with your Global Readiness Score, and
+            the company signs off the work you do.
+          </p>
+        </div>
+        <Link {...APPLY} className="text-sm font-semibold text-[#b9a6ff] hover:text-white">
+          Have an account? Log in to apply →
+        </Link>
+      </div>
     </section>
   )
 }
