@@ -1,7 +1,8 @@
-import type { ComponentType } from 'react'
+import { useEffect, useRef, useState, type ComponentType } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from '@tanstack/react-router'
-import { AlertTriangle, ArrowRight, ChevronRight, Lightbulb, Sparkles, TrendingUp } from 'lucide-react'
-import type { Readiness } from '@/lib/readinessScore'
+import { AlertTriangle, ArrowRight, ChevronRight, Lightbulb, Lock, Sparkles, TrendingUp, X } from 'lucide-react'
+import { ACTIVITY_HELD_CAP, PROJECT_PASS, PROJECT_MAX, type NextAction, type Readiness } from '@/lib/readinessScore'
 import type { ModuleProgress } from '@/lib/careerReadinessProgramme'
 import type { ScoreTrend } from '@/lib/scoreTrend'
 import type { Activity } from '@/lib/activity'
@@ -23,9 +24,174 @@ interface Row {
   value: string
 }
 
-/** One programme inside the Skills growth panel: its points and what is behind them. */
+/**
+ * A part of the score, opened from Skills growth (Paul, 27 Oct 2026: "these
+ * should clearly show how the score is calculated, the next steps to improve
+ * it, and the current breakdown affecting it", not send the student to
+ * Practice). Its points, each piece with what is earned and the rule behind
+ * it, anything held until the project passes, and the steps that raise it.
+ */
+function ScoreBreakdownDialog({ programme, readiness, onClose }: { programme: 1 | 2; readiness: Readiness; onClose: () => void }) {
+  const look = LOOK[programme]
+  const course = COURSE_LOOK[programme]
+  const Icon = course.icon
+  const part = programme === 1 ? readiness.professional : readiness.personal
+  const closeRef = useRef<HTMLButtonElement>(null)
+  // This programme's steps, in journey order: the Foundation assessment is Digital Marketing's.
+  const steps: NextAction[] = readiness.nextActions.filter((a) => (a.programme ?? 1) === programme)
+  const several = programme === 1 && (part.programmes?.length ?? 0) > 1
+
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = overflow
+      previous?.focus()
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label={`${look.label} score`}>
+      <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-ink-900/50" />
+      <div className="relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white shadow-e2 sm:max-w-2xl sm:rounded-3xl">
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-900"
+        >
+          <X size={18} />
+        </button>
+
+        {/* The number. */}
+        <div className="border-b border-ink-900/[0.06] p-6 pr-14">
+          <div className="flex items-center gap-4">
+            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white ${course.tile}`}>
+              <Icon size={22} />
+            </span>
+            <div>
+              <p className={`text-xs font-semibold uppercase tracking-[0.14em] ${look.text}`}>{look.label} development</p>
+              <p className="font-display text-lg font-semibold text-ink-900">{look.name}</p>
+            </div>
+            <p className="ml-auto font-display text-4xl font-semibold tabular-nums text-ink-900">
+              {Math.round(part.points)}
+              <span className="text-lg font-medium text-ink-400">/{part.max}</span>
+            </p>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-ink-600">
+            {programme === 1
+              ? `Worth ${part.max} of your 100-point Global Readiness Score: practice, the Foundation assessment and live training (up to 20), and a project a mentor grades (up to 20).`
+              : `Worth ${part.max} of your 100-point Global Readiness Score: the modules (up to 25) and a project a mentor grades (up to 15).`}
+            {several && ' With more than one professional programme started, this is the average of them.'}
+          </p>
+        </div>
+
+        <div className="space-y-6 p-6">
+          {/* Where the points are now, and how each is worked out. */}
+          <section>
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Your breakdown</h3>
+            <ul className="mt-3 space-y-4">
+              {(part.parts ?? []).map((p) => (
+                <li key={p.label}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="font-semibold text-ink-900">{p.label}</span>
+                    <span className="shrink-0 tabular-nums text-sm text-ink-700">
+                      <span className="font-semibold text-ink-900">{Math.round(p.earned * 10) / 10}</span> / {p.max}
+                    </span>
+                  </div>
+                  <div className={`mt-1.5 h-2 overflow-hidden rounded-full ${look.track}`}>
+                    <div className={`h-full rounded-full ${look.bar}`} style={{ width: `${Math.min(100, (p.earned / p.max) * 100)}%` }} />
+                  </div>
+                  <p className="mt-1.5 text-sm text-ink-700">{p.status}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink-500">{p.how}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* The hold: why earned points may not all count yet. */}
+          {(part.held ?? 0) > 0 && (
+            <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+              <Lock size={17} className="mt-0.5 shrink-0 text-amber-600" />
+              <p className="text-sm leading-relaxed text-amber-900">
+                <span className="font-semibold">{Math.round((part.held ?? 0) * 10) / 10} points are held.</span> Until your project passes
+                ({PROJECT_PASS} of {PROJECT_MAX}), only the first {ACTIVITY_HELD_CAP} activity points count. The rest are released the moment it
+                passes.
+              </p>
+            </div>
+          )}
+          {(part.held ?? 0) === 0 && part.projectStatus !== 'approved' && (
+            <p className="text-xs leading-relaxed text-ink-500">
+              Until your project passes, at most {ACTIVITY_HELD_CAP} of your activity points count; the rest wait for it.
+            </p>
+          )}
+
+          {several && (
+            <section>
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Your professional programmes</h3>
+              <ul className="mt-2 divide-y divide-ink-900/[0.06] rounded-xl border border-ink-900/[0.08]">
+                {part.programmes!.map((p) => (
+                  <li key={p.slug} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                    <span className="text-ink-800">{p.title}</span>
+                    <span className="tabular-nums text-ink-600">{Math.round(p.points)} / 40{p.completed ? ' · Completed' : ''}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* What raises it next. */}
+          <section>
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">Next steps to raise it</h3>
+            {steps.length === 0 ? (
+              <p className="mt-2 text-sm text-ink-600">Nothing left here: this part is complete.</p>
+            ) : (
+              <ol className="mt-3 space-y-2">
+                {steps.map((st, i) => (
+                  <li key={st.label}>
+                    <Link
+                      to={st.to}
+                      onClick={() => st.programme && rememberProgramme(st.programme)}
+                      className="group flex items-center gap-3 rounded-xl border border-ink-900/[0.08] p-3 transition-colors hover:border-brand-300"
+                    >
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink-900 font-display text-xs font-semibold text-white">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0 flex-1 text-sm font-medium text-ink-900">{st.label}</span>
+                      {st.upTo > 0 && <span className={`shrink-0 text-xs font-semibold ${look.text}`}>up to +{st.upTo}</span>}
+                      <ArrowRight size={15} className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-600" />
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+
+          <Link
+            to="/practice"
+            onClick={() => rememberProgramme(programme)}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800"
+          >
+            Open {look.name} in Practice <ArrowRight size={14} />
+          </Link>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
+/** One programme inside the Skills growth panel: its points and what is behind them.
+ *  Opening it shows how its part of the score adds up (ScoreBreakdownDialog). */
 function ProgrammeGrowth({
   programme,
+  readiness,
   points,
   max,
   summary,
@@ -33,6 +199,7 @@ function ProgrammeGrowth({
   empty,
 }: {
   programme: 1 | 2
+  readiness: Readiness
   points: number
   max: number
   summary: string
@@ -43,53 +210,57 @@ function ProgrammeGrowth({
   const course = COURSE_LOOK[programme]
   const Icon = course.icon
   const entered = useEntered()
+  const [open, setOpen] = useState(false)
   return (
-    <Link
-      to="/practice"
-      onClick={() => rememberProgramme(programme)}
-      className="group flex flex-col rounded-2xl border border-ink-900/[0.08] bg-white p-4 transition-colors hover:border-ink-900/20"
-      aria-label={`${look.name}: ${Math.round(points)} of ${max} points. Open in Practice.`}
-    >
-      <div className="flex items-center gap-3">
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ${course.tile}`}>
-          <Icon size={18} />
-        </span>
-        <div className="min-w-0">
-          <p className="font-display text-2xl font-semibold leading-none tabular-nums text-ink-900">
-            {Math.round(points)}
-            <span className="text-sm font-medium text-ink-400">/{max}</span>
-          </p>
-          <p className={`mt-1 text-xs font-semibold ${look.text}`}>{look.label}</p>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="group flex flex-col rounded-2xl border border-ink-900/[0.08] bg-white p-4 text-left transition-colors hover:border-ink-900/20"
+        aria-label={`${look.name}: ${Math.round(points)} of ${max} points. See how it adds up.`}
+      >
+        <div className="flex items-center gap-3">
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white ${course.tile}`}>
+            <Icon size={18} />
+          </span>
+          <div className="min-w-0">
+            <p className="font-display text-2xl font-semibold leading-none tabular-nums text-ink-900">
+              {Math.round(points)}
+              <span className="text-sm font-medium text-ink-400">/{max}</span>
+            </p>
+            <p className={`mt-1 text-xs font-semibold ${look.text}`}>{look.label}</p>
+          </div>
+          <ChevronRight size={16} className="ml-auto shrink-0 text-ink-300 transition-transform group-hover:translate-x-0.5" />
         </div>
-        <ChevronRight size={16} className="ml-auto shrink-0 text-ink-300 transition-transform group-hover:translate-x-0.5" />
-      </div>
-      <p className="mt-2 text-xs text-ink-500">
-        {look.name} · {summary}
-      </p>
-      {rows.length === 0 ? (
-        <p className="mt-3 text-sm text-ink-600">{empty}</p>
-      ) : (
-        <ul className="mt-3 space-y-3">
-          {rows.map((r, i) => (
-            <li key={r.name}>
-              <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="min-w-0 truncate text-ink-800">{r.name}</span>
-                <span className="shrink-0 tabular-nums text-ink-500">{r.value}</span>
-              </div>
-              <div className={`mt-1.5 h-1.5 overflow-hidden rounded-full ${look.track}`}>
-                <div
-                  className={`h-full rounded-full ${look.bar}`}
-                  style={{
-                    width: entered ? `${Math.max(r.pct, 3)}%` : '0%',
-                    transition: `width 0.9s cubic-bezier(0.22, 1, 0.36, 1) ${120 + i * 90}ms`,
-                  }}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </Link>
+        <p className="mt-2 text-xs text-ink-500">
+          {look.name} · {summary}
+        </p>
+        {rows.length === 0 ? (
+          <p className="mt-3 text-sm text-ink-600">{empty}</p>
+        ) : (
+          <ul className="mt-3 space-y-3">
+            {rows.map((r, i) => (
+              <li key={r.name}>
+                <div className="flex items-baseline justify-between gap-3 text-sm">
+                  <span className="min-w-0 truncate text-ink-800">{r.name}</span>
+                  <span className="shrink-0 tabular-nums text-ink-500">{r.value}</span>
+                </div>
+                <div className={`mt-1.5 h-1.5 overflow-hidden rounded-full ${look.track}`}>
+                  <div
+                    className={`h-full rounded-full ${look.bar}`}
+                    style={{
+                      width: entered ? `${Math.max(r.pct, 3)}%` : '0%',
+                      transition: `width 0.9s cubic-bezier(0.22, 1, 0.36, 1) ${120 + i * 90}ms`,
+                    }}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </button>
+      {open && <ScoreBreakdownDialog programme={programme} readiness={readiness} onClose={() => setOpen(false)} />}
+    </>
   )
 }
 
@@ -121,6 +292,7 @@ export function SkillsGrowthPanel({
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <ProgrammeGrowth
           programme={1}
+          readiness={readiness}
           points={readiness.professional.points}
           max={readiness.professional.max}
           summary={`${tracks.length} of 8 tracks practised`}
@@ -129,6 +301,7 @@ export function SkillsGrowthPanel({
         />
         <ProgrammeGrowth
           programme={2}
+          readiness={readiness}
           points={readiness.personal.points}
           max={readiness.personal.max}
           summary={`${doneModules} of ${modules.length} modules done`}
