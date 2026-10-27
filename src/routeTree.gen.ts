@@ -57,6 +57,7 @@ import { Route as StudyAbroadSlugRouteImport } from './routes/study-abroad.$slug
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
 import { Route as MentorPortalSplatRouteImport } from './routes/mentor-portal.$'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
+import { Route as CommunityInternshipsRouteImport } from './routes/community/internships'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
 import { Route as CommunityPortalSignupRouteImport } from './routes/community-portal/signup'
 import { Route as CommunityPortalLoginRouteImport } from './routes/community-portal/login'
@@ -352,6 +353,11 @@ const MentorPortalSplatRoute = MentorPortalSplatRouteImport.update({
 const CommunityMentorsRoute = CommunityMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityInternshipsRoute = CommunityInternshipsRouteImport.update({
+  id: '/internships',
+  path: '/internships',
   getParentRoute: () => CommunityRoute,
 } as any)
 const CommunityInstitutionsRoute = CommunityInstitutionsRouteImport.update({
@@ -684,6 +690,7 @@ export interface FileRoutesByFullPath {
   '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
+  '/community/internships': typeof CommunityInternshipsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -784,6 +791,7 @@ export interface FileRoutesByTo {
   '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
+  '/community/internships': typeof CommunityInternshipsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -888,6 +896,7 @@ export interface FileRoutesById {
   '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
+  '/community/internships': typeof CommunityInternshipsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -993,6 +1002,7 @@ export interface FileRouteTypes {
     | '/community-portal/login'
     | '/community-portal/signup'
     | '/community/institutions'
+    | '/community/internships'
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
@@ -1093,6 +1103,7 @@ export interface FileRouteTypes {
     | '/community-portal/login'
     | '/community-portal/signup'
     | '/community/institutions'
+    | '/community/internships'
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
@@ -1196,6 +1207,7 @@ export interface FileRouteTypes {
     | '/community-portal/login'
     | '/community-portal/signup'
     | '/community/institutions'
+    | '/community/internships'
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
@@ -1647,6 +1659,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityMentorsRouteImport
       parentRoute: typeof CommunityRoute
     }
+    '/community/internships': {
+      id: '/community/internships'
+      path: '/internships'
+      fullPath: '/community/internships'
+      preLoaderRoute: typeof CommunityInternshipsRouteImport
+      parentRoute: typeof CommunityRoute
+    }
     '/community/institutions': {
       id: '/community/institutions'
       path: '/institutions'
@@ -2023,12 +2042,14 @@ declare module '@tanstack/react-router' {
 
 interface CommunityRouteChildren {
   CommunityInstitutionsRoute: typeof CommunityInstitutionsRoute
+  CommunityInternshipsRoute: typeof CommunityInternshipsRoute
   CommunityMentorsRoute: typeof CommunityMentorsRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
 }
 
 const CommunityRouteChildren: CommunityRouteChildren = {
   CommunityInstitutionsRoute: CommunityInstitutionsRoute,
+  CommunityInternshipsRoute: CommunityInternshipsRoute,
   CommunityMentorsRoute: CommunityMentorsRoute,
   CommunityIndexRoute: CommunityIndexRoute,
 }

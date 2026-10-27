@@ -38,7 +38,7 @@ export const Route = createFileRoute('/')({
  * Wellness signs them in and lands on it (lib/afterLogin.ts). Partners go to the partner sign-up.
  */
 
-type To = '/courses' | '/login' | '/community' | '/study-abroad' | '/mentors' | '/internships' | '/community-portal/signup'
+type To = '/courses' | '/login' | '/community' | '/community/mentors' | '/community/internships' | '/wellness' | '/study-abroad' | '/mentors' | '/internships' | '/community-portal/signup'
 type Target = { to: To; search?: Record<string, unknown> }
 
 /** Liquid glass: see-through, frosted, a light top edge and a purple glow. */
@@ -97,7 +97,7 @@ const PILLARS: Pillar[] = [
     icon: Users,
     photo: 'card-mentorship',
     visitor: { to: '/mentors' },
-    student: { to: '/community', search: { category: 'mentors' } },
+    student: { to: '/community/mentors' },
   },
   {
     id: 'study-abroad',
@@ -120,7 +120,7 @@ const PILLARS: Pillar[] = [
     icon: Briefcase,
     photo: 'card-career',
     visitor: { to: '/internships' },
-    student: { to: '/community', search: { category: 'internships' } },
+    student: { to: '/community/internships' },
   },
   {
     id: 'wellness',
@@ -131,7 +131,7 @@ const PILLARS: Pillar[] = [
     icon: Heart,
     photo: 'card-wellness',
     visitor: signIn('/community?category=wellness'),
-    student: { to: '/community', search: { category: 'wellness' } },
+    student: { to: '/wellness' },
   },
 ]
 

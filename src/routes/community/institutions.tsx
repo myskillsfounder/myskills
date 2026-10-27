@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
-  ArrowLeft,
   Award,
+  BadgeCheck,
   BookOpen,
   Building2,
   CheckCircle2,
@@ -11,8 +11,10 @@ import {
   ExternalLink,
   GraduationCap,
   MapPin,
+  School,
   Send,
   Star,
+  Users,
 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
@@ -28,7 +30,7 @@ import {
 } from '@/lib/institutionPartners'
 import { STUDENT_STAGE, enquireInstitution, fetchMyEnquiries, type EnquiryInput, type MyEnquiry } from '@/lib/institutionLeads'
 import { AppShell } from '@/components/app/AppShell'
-import { PageHeader } from '@/components/app/PageHeader'
+import { CommunityHero, HowItWorks } from '@/components/community/CommunityHero'
 import { Alert, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
 
 // The parent /community layout allows signed-out visitors through (its index
@@ -423,20 +425,33 @@ function InstitutionsPage() {
   }
 
   return (
-    <AppShell>
-      <div className="mx-auto max-w-2xl">
-        <Link
-          to="/community"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
-        >
-          <ArrowLeft size={16} /> Back to Community
-        </Link>
-
-        <PageHeader
-          eyebrow="Community"
-          title="Institutions"
-          description="Training institutions verified as MySkills partners, for classroom and offline learning. Tell us which one interests you and the MySkills team will help you choose and visit."
+    <AppShell wide>
+      {/* Offline and peer learning (Paul, 27 Oct 2026): a classroom, people
+          beside you, learning out loud together. */}
+      <div className="mb-6 space-y-6">
+        <CommunityHero
+          tone="institutions"
+          icon={Users}
+          eyebrow="Institutions"
+          title="Learn in a room,"
+          accent="together."
+          body="Some things are learnt best in person: a classroom, a trainer who sees you, and classmates to practise with. These are verified training institutions near you, for offline and peer learning."
+          points={[
+            { icon: School, label: 'Offline classes' },
+            { icon: Users, label: 'Learn with peers' },
+            { icon: BadgeCheck, label: 'Verified partners' },
+          ]}
         />
+        <HowItWorks
+          tone="institutions"
+          steps={[
+            { title: 'Find one near you', body: 'See each institution’s city, courses and ratings from students.' },
+            { title: 'Tell us your interest', body: 'Say what you want to learn and when you are free.' },
+            { title: 'Visit and join a class', body: 'The MySkills team helps you choose, visit and enrol.' },
+          ]}
+        />
+      </div>
+      <div className="mx-auto max-w-2xl">
 
         {error && (
           <div className="mb-5">

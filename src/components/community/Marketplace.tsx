@@ -45,7 +45,10 @@ export type Group = 'mentors' | 'support' | 'internships' | 'institutions'
 
 export const groupOf = (c: Category): Group | null => (c === 'all' ? null : c === 'wellness' || c === 'guidance' ? 'support' : c)
 
-export const GROUPS: { id: Group; category: Category; label: string; blurb: string; icon: IconType; tile: string }[] = [
+/** Each group's own page (Paul, 27 Oct 2026), opened from its tile. */
+export type GroupPage = '/community/internships' | '/community/mentors' | '/community/institutions' | '/wellness'
+
+export const GROUPS: { id: Group; category: Category; label: string; blurb: string; icon: IconType; tile: string; to: GroupPage }[] = [
   {
     id: 'internships',
     category: 'internships',
@@ -53,6 +56,7 @@ export const GROUPS: { id: Group; category: Category; label: string; blurb: stri
     blurb: 'Real work with partner companies.',
     icon: Briefcase,
     tile: 'from-emerald-400 to-teal-600',
+    to: '/community/internships',
   },
   {
     id: 'mentors',
@@ -61,6 +65,7 @@ export const GROUPS: { id: Group; category: Category; label: string; blurb: stri
     blurb: 'Work one to one with someone who has done it.',
     icon: GraduationCap,
     tile: 'from-brand-400 to-brand-700',
+    to: '/community/mentors',
   },
   {
     id: 'institutions',
@@ -69,6 +74,7 @@ export const GROUPS: { id: Group; category: Category; label: string; blurb: stri
     blurb: 'Verified places for classroom learning.',
     icon: Building2,
     tile: 'from-sky-400 to-blue-600',
+    to: '/community/institutions',
   },
   {
     id: 'support',
@@ -77,25 +83,20 @@ export const GROUPS: { id: Group; category: Category; label: string; blurb: stri
     blurb: 'Talk privately to a counsellor or a career guide.',
     icon: HeartHandshake,
     tile: 'from-rose-400 to-pink-600',
+    to: '/wellness',
   },
 ]
 
 /**
- * The four groups as large tiles, in the order students come for them:
- * internships first, then mentors, institutions, and wellness & guidance.
- * The first thing on the page after search, so
- * each of them is one tap away and none is buried under another's listings.
+ * The four groups as tiles, in the order students come for them: internships
+ * first, then mentors, institutions, and wellness & guidance. Right under the
+ * search, and each opens the group's own page (Paul, 27 Oct 2026).
  */
-export function BrowseTiles({ meta, onPick }: { meta: Partial<Record<Group, string>>; onPick: (c: Category) => void }) {
+export function BrowseTiles({ meta }: { meta: Partial<Record<Group, string>> }) {
   return (
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       {GROUPS.map((g) => (
-        <button
-          key={g.id}
-          type="button"
-          onClick={() => onPick(g.category)}
-          className="card lift group flex flex-col items-start p-4 text-left sm:p-5"
-        >
+        <Link key={g.id} to={g.to} className="card lift group flex flex-col items-start p-4 text-left sm:p-5">
           <span className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${g.tile}`}>
             <g.icon size={20} />
           </span>
@@ -105,7 +106,7 @@ export function BrowseTiles({ meta, onPick }: { meta: Partial<Record<Group, stri
             {meta[g.id] ?? 'Browse'}
             <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
           </span>
-        </button>
+        </Link>
       ))}
     </div>
   )
