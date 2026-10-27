@@ -18,10 +18,11 @@ export const MENTORS_GLIMPSE: GlimpseProps = {
   body: 'AI can explain almost anything. A leader who has done it knows what matters: live sessions with people at the top of their field, answers when you are stuck, and a real project they grade.',
   // The industries as cards where the photo was (Paul, 27 Oct 2026).
   heroCards: [
-    { icon: Rocket, title: 'Entrepreneurship', body: 'From an idea to first paying customers.', tone: 'pink' },
-    { icon: Bot, title: 'AI product development', body: 'Build products with AI at the core.', tone: 'violet' },
-    { icon: TrendingUp, title: 'Growth hacking', body: 'Grow fast on a startup budget.', tone: 'blue' },
-    { icon: Crown, title: 'Leadership', body: 'Lead people, teams and decisions.', tone: 'amber' },
+    // Each card shows the published mentors whose expertise or headline fits it.
+    { icon: Rocket, title: 'Entrepreneurship', body: 'From an idea to first paying customers.', tone: 'pink', match: /entrepreneur|start-?up|founder|business/i },
+    { icon: Bot, title: 'AI product development', body: 'Build products with AI at the core.', tone: 'violet', match: /\bai\b|artificial intelligence|machine learning|\bml\b|product/i },
+    { icon: TrendingUp, title: 'Growth hacking', body: 'Grow fast on a startup budget.', tone: 'blue', match: /growth|marketing|seo|\bads\b/i },
+    { icon: Crown, title: 'Leadership', body: 'Lead people, teams and decisions.', tone: 'amber', match: /leader|management|manager|coach|communicat|behaviou?r|\bhr\b/i },
   ],
   photo: 'paul-mentorship',
   photoAlt: 'Paul Thomas, a MySkills mentor, at his desk',
