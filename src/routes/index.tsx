@@ -186,10 +186,10 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
       <span aria-hidden className="absolute left-1/2 top-0 h-[27rem] w-[27rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(70,80,220,0.45),rgba(40,46,150,0.2)_55%,rgba(4,10,30,0)_72%)] blur-2xl" />
 
       {/* A real photo, framed in the ring (Paul, 27 Oct: "more realistic, not
-          a cut-out"): it fills the circle, tinted into the page's blues and
+          a cut-out"; the learning pose in the black sweatshirt): it fills the circle, tinted into the page's blues and
           shaded at the foot where the bar crosses it. */}
       <div className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 overflow-hidden rounded-full">
-        <img src="/home/paul-mentor.webp" alt="Paul Thomas, MySkills mentor" className="h-full w-full object-cover object-[50%_22%]" />
+        <img src="/home/paul-study.webp" alt="A student learning at his desk" className="h-full w-full object-cover object-[50%_35%]" />
         <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/25 mix-blend-color" />
         <span aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_45%,rgba(4,10,30,0.55)_100%)]" />
         <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#040a1e]/90 to-transparent" />
@@ -226,7 +226,7 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
 
       <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[30%] w-52">
         <span className="mt-2.5 flex items-center gap-2">
-          <Faces faces={['face-2', 'face-3', 'paul-mentorship']} size="h-8 w-8" />
+          <Faces faces={['paul-mentor', 'face-2', 'face-3']} size="h-8 w-8" />
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80">
             <Plus size={14} />
           </span>
