@@ -216,7 +216,21 @@ export function bandFor(score: number): ReadinessBand {
   return BANDS.find((b) => score >= b.min)!.band
 }
 
+/** One piece of a programme's points, for the score breakdown: what it is,
+ *  what has been earned, what it is worth, and how it is worked out. */
+export interface ScorePart {
+  label: string
+  earned: number
+  max: number
+  /** Where the student is on it, in a few words. */
+  status: string
+  /** The rule, in plain words. */
+  how: string
+}
+
 export interface ReadinessComponent {
+  /** The pieces behind the points, in the order they are earned. */
+  parts?: ScorePart[]
   points: number
   max: number
   /** Short human summary of what was counted. */
@@ -277,6 +291,14 @@ function projectDetail(p: ProjectStanding, points = p.points, worth = PROJECT_MA
   return `project worth ${worth}`
 }
 
+/** Where a project stands, for the breakdown; `before` while it can't be or hasn't been sent. */
+function projectWords(p: ProjectStanding, before: string): string {
+  if (p.status === 'approved') return `Passed · ${round1(p.points)} of ${PROJECT_MAX}`
+  if (p.status === 'requested') return 'With your mentor'
+  if (p.status === 'changes_requested') return `Changes asked · ${round1(p.points)} of ${PROJECT_MAX} so far`
+  return before
+}
+
 export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Readiness {
   const s = standing
   const modulesDone = Math.min(s.modulesDone, PROGRAMME_MODULES)
@@ -333,6 +355,22 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
     selfReportedPoints: round1(selfReported),
     source: 'estimate',
     personal: {
+      parts: [
+        {
+          label: 'Modules',
+          earned: round2(modulePts),
+          max: MODULES_MAX_POINTS,
+          status: `${modulesDone} of ${PROGRAMME_MODULES} finished`,
+          how: `The ${PROGRAMME_MODULES} modules share ${MODULES_MAX_POINTS} points, about ${round1(POINTS_PER_MODULE)} each. A module counts once all its tasks and the reflection are written.`,
+        },
+        {
+          label: 'Project, graded by a mentor',
+          earned: round2(personalProjectPoints(s.crProject.points)),
+          max: PERSONAL_PROJECT_POINTS,
+          status: projectWords(s.crProject, s.crCoreDone ? 'Ready to submit' : 'Opens after the 5 core modules'),
+          how: `Your mentor grades it out of ${PROJECT_MAX} on relevance, quality, applying the skills and presentation; it counts out of ${PERSONAL_PROJECT_POINTS}. It passes at ${PROJECT_PASS} of ${PROJECT_MAX}.`,
+        },
+      ],
       points: personalPts,
       max: PERSONAL_MAX,
       detail: [
@@ -345,6 +383,36 @@ export function computeReadiness(standing: ProgrammeStanding = NO_STANDING): Rea
       projectStatus: s.crProject.status,
     },
     professional: {
+      parts: [
+        {
+          label: 'Practice tracks',
+          earned: round2(practicePoints(s.dmTrackPercents)),
+          max: PRACTICE_MAX_POINTS,
+          status: `${tracksPassed} of ${PRACTICE_TRACKS} at ${TRACK_PASS_PERCENT}% or more`,
+          how: `Each of the ${PRACTICE_TRACKS} tracks: nothing below ${TRACK_PASS_PERCENT}%, then ${TRACK_POINTS_MIN} at ${TRACK_PASS_PERCENT}% rising to ${TRACK_POINTS_MAX} at 100%. Your best of the last 3 attempts counts.`,
+        },
+        {
+          label: 'Foundation assessment',
+          earned: foundationPoints(s.foundationPercent),
+          max: FOUNDATION_MAX_POINTS,
+          status: s.foundationPercent === null ? 'Not taken yet' : `${s.foundationPercent}%`,
+          how: `Your percentage divided by 20: 100% earns ${FOUNDATION_MAX_POINTS}.`,
+        },
+        {
+          label: 'Live training',
+          earned: livePoints(s.dmLiveSessions),
+          max: LIVE_SESSIONS_MAX_POINTS,
+          status: plural(s.dmLiveSessions, 'session') + ' confirmed',
+          how: `${POINTS_PER_LIVE_SESSION} point for each live session your mentor confirms, up to ${LIVE_SESSIONS_MAX_POINTS}.`,
+        },
+        {
+          label: 'Project, graded by a mentor',
+          earned: s.dmProject.points,
+          max: PROJECT_MAX,
+          status: projectWords(s.dmProject, s.dmPracticeDone ? 'Ready to submit' : 'Opens after all 8 tracks'),
+          how: `Your mentor grades it out of ${PROJECT_MAX} on relevance, quality, applying the skills and presentation. It passes at ${PROJECT_PASS}.`,
+        },
+      ],
       points: professionalPts,
       max: PROFESSIONAL_MAX,
       detail: [
