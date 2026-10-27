@@ -6,6 +6,7 @@ import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { trackEvent } from '@/lib/analytics'
 import { fetchMentors, type Mentor } from '@/lib/mentors'
+import { OpenRoles } from '@/components/landing/OpenRoles'
 
 /*
  * A glimpse of a part of the platform that lives behind sign-in (Paul,
@@ -86,6 +87,8 @@ export interface GlimpseProps {
   trending?: GlimpseTrending
   /** Open on the trending card, with no hero (Study Abroad, Paul 27 Oct 2026). */
   trendingFirst?: boolean
+  /** Open on the live internships, with no hero (Internships, Paul 27 Oct 2026). */
+  rolesFirst?: boolean
   /** Where a visitor lands after logging in. */
   next: string
 }
@@ -147,7 +150,9 @@ export function Glimpse(g: GlimpseProps) {
 
       <main className="relative overflow-hidden bg-[radial-gradient(40rem_32rem_at_75%_15%,rgba(56,64,200,0.42),transparent_70%),radial-gradient(30rem_24rem_at_0%_30%,rgba(124,92,246,0.18),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
         {/* What it is, or what's trending when the page opens on that. */}
-        {g.trendingFirst && g.trending ? (
+        {g.rolesFirst ? (
+          <OpenRoles />
+        ) : g.trendingFirst && g.trending ? (
           <Trending id={g.id} t={g.trending} first />
         ) : (
           <section className="mx-auto max-w-7xl px-4 pb-14 pt-12 sm:px-6 sm:pt-16 lg:px-8">
