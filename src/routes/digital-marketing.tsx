@@ -1,34 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Navbar } from '@/components/landing/Navbar'
-import { Hero } from '@/components/landing/Hero'
-import { Pillars } from '@/components/landing/Pillars'
-import { SkillTracks } from '@/components/landing/SkillTracks'
-import { HowItWorks } from '@/components/landing/HowItWorks'
-import { CtaBanner } from '@/components/landing/CtaBanner'
-import { Footer } from '@/components/landing/Footer'
+import { Megaphone } from 'lucide-react'
+import { EngineCoursePage } from '@/components/landing/EngineCoursePage'
+import { COURSES, DIGITAL_MARKETING } from '@/content/courses'
 
 /**
- * The Digital Marketing Programme's own page — what used to be the homepage,
- * moved here when / became the Personal & Professional Development page.
- * "How it works" and "Skill tracks" live together on this one page (they
- * used to be two homepage anchors in the nav).
+ * The Digital Marketing Programme's own page, on the layout every course page
+ * shares (Paul, 28 Oct 2026: similar things shouldn't look different).
  */
 export const Route = createFileRoute('/digital-marketing')({
   component: DigitalMarketingPage,
 })
 
+const course = COURSES.find((c) => c.id === 'digital-marketing')!
+
 function DigitalMarketingPage() {
   return (
-    <div className="min-h-screen bg-ink-900">
-      <Navbar dark />
-      <main>
-        <Hero />
-        <HowItWorks />
-        <Pillars />
-        <SkillTracks />
-        <CtaBanner />
-      </main>
-      <Footer />
-    </div>
+    <EngineCoursePage
+      course={course}
+      content={DIGITAL_MARKETING}
+      icon={Megaphone}
+      accent={{ title: 'from-brand-300 to-sky-200', band: 'from-brand-500/25 to-sky-500/15' }}
+      glow="rgba(143,133,238,0.18)"
+      closing={{
+        title: 'Start with what you already notice',
+        body: 'The aptitude test shows the parts of marketing that come most naturally to you.',
+      }}
+    />
   )
 }

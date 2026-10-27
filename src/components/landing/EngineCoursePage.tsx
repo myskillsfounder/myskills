@@ -7,9 +7,9 @@ import { trackEvent } from '@/lib/analytics'
 import type { Course, EngineCourseContent } from '@/content/courses'
 
 /**
- * A course-engine programme's public page (Entrepreneurship, Data Analytics):
- * what it is, the facts, what you'll be able to do, the modules and the
- * project. Its lessons run on the engine (/programmes/<slug>, signed in); this
+ * Every course's public page (Digital Marketing, Global Leadership,
+ * Entrepreneurship, Data Analytics), so similar courses read the same: what it
+ * is, the facts, what you'll be able to do, the modules and the project. This
  * page is the way in, and its button opens the aptitude test, which a visitor
  * can take before signing up.
  */
@@ -32,7 +32,8 @@ export function EngineCoursePage({
   closing: { title: string; body: string }
 }) {
   const test = course.test!
-  const total = content.modules.reduce((n, m) => n + m.minutes, 0)
+  const hours = content.hours ?? Math.round(content.modules.reduce((n, m) => n + m.minutes, 0) / 60)
+  const unit = content.unit ?? 'modules'
   const words = course.title.split(' ')
   const last = words.pop()
   return (
@@ -79,8 +80,8 @@ export function EngineCoursePage({
                 </span>
                 <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
                   {[
-                    { k: 'Modules', v: `${content.modules.length}` },
-                    { k: 'Learning', v: `About ${Math.round(total / 60)} hours` },
+                    { k: unit[0].toUpperCase() + unit.slice(1), v: `${content.modules.length}` },
+                    { k: 'Learning', v: `About ${hours} hours` },
                     { k: 'Project', v: content.projectTime },
                     { k: 'Level', v: 'Beginner' },
                   ].map((x) => (
@@ -117,7 +118,7 @@ export function EngineCoursePage({
             </div>
 
             <div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-white">{content.modules.length} modules</h2>
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-white">{content.modules.length} {unit}</h2>
               <ol className="mt-6 space-y-2.5">
                 {content.modules.map((m, i) => (
                   <li key={m.title} className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
