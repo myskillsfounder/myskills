@@ -10,10 +10,10 @@ import { useAuthUser } from '@/lib/useAuth'
  * wordmark with "The Student Development Platform", the platform's parts
  * (Learning, Mentors, Study Abroad, Internships, Community), Log in and Get
  * Started. Learning and Community are open to visitors; Mentors, Study
- * Abroad and Internships are inside the platform, so a visitor signs in first and
- * lands on them (lib/afterLogin.ts), as the home page's cards do.
+ * Abroad and Internships are inside the platform, so a visitor gets a glimpse
+ * of each first (components/landing/Glimpse.tsx) and a student goes straight in.
  */
-type To = '/' | '/courses' | '/community' | '/study-abroad' | '/login'
+type To = '/' | '/courses' | '/community' | '/study-abroad' | '/mentors' | '/internships'
 interface NavLink {
   label: string
   /** Where it goes: the same for everyone, or a visitor's way in via sign-in. */
@@ -23,14 +23,12 @@ interface NavLink {
   exact?: boolean
 }
 
-const signInTo = (next: string) => ({ to: '/login' as const, search: { next } })
-
 const navLinks: NavLink[] = [
   { label: 'Home', to: '/', exact: true },
   { label: 'Learning', to: '/courses' },
-  { label: 'Mentors', to: '/community', search: { category: 'mentors' }, visitor: signInTo('/community?category=mentors') },
-  { label: 'Study Abroad', to: '/study-abroad', visitor: signInTo('/study-abroad') },
-  { label: 'Internships', to: '/community', search: { category: 'internships' }, visitor: signInTo('/community?category=internships') },
+  { label: 'Mentors', to: '/community', search: { category: 'mentors' }, visitor: { to: '/mentors' } },
+  { label: 'Study Abroad', to: '/study-abroad' },
+  { label: 'Internships', to: '/community', search: { category: 'internships' }, visitor: { to: '/internships' } },
   { label: 'Community', to: '/community', exact: true },
 ]
 

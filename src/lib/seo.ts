@@ -49,6 +49,21 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     description:
       'Every MySkills course in one place: a free aptitude test first, short modules with an AI coach, and a project graded by a real mentor. Free to start.',
   },
+  '/mentors': {
+    title: 'Mentors — Learn from Industry Experts | MySkills',
+    description:
+      'Learn from people who have done it: industry mentors for 1:1 and group sessions, who guide you and grade the real project you build. Free to start.',
+  },
+  '/study-abroad': {
+    title: 'Study Abroad — Partner Universities, Applications & Test Prep | MySkills',
+    description:
+      'Study abroad without the guesswork: partner universities, help with your applications and the tests you need, all in the platform where you learn.',
+  },
+  '/internships': {
+    title: 'Internships for Students — Real Work Experience | MySkills',
+    description:
+      'Your first internship, hands-on and real: partner companies reviewed by our team, apply with your Global Readiness Score, and get your work signed off.',
+  },
   '/entrepreneurship': {
     title: 'AI-Powered Entrepreneurship Course for Students in India | MySkills',
     description:

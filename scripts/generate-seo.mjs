@@ -93,7 +93,7 @@ const STATIC_PAGES = [
     changefreq: 'weekly',
     priority: '1.0',
     title: 'MySkills — The Student Development Platform, Powered by AI',
-    description: 'Everything a student needs in one place: courses with an AI coach, mentors, study abroad, career guidance, internships and wellness. Start with a free aptitude test.',
+    description: 'Everything a student needs in one place: courses with an AI coach, mentors, study abroad, internships and wellness. Start with a free aptitude test.',
   },
   {
     path: '/courses',
@@ -102,6 +102,30 @@ const STATIC_PAGES = [
     title: 'Courses — Digital Marketing, Leadership, Entrepreneurship & Data Analytics | MySkills',
     description:
       'Every MySkills course in one place: a free aptitude test first, short modules with an AI coach, and a project graded by a real mentor. Free to start.',
+  },
+  {
+    path: '/mentors',
+    changefreq: 'weekly',
+    priority: '0.8',
+    title: 'Mentors — Learn from Industry Experts | MySkills',
+    description:
+      'Learn from people who have done it: industry mentors for 1:1 and group sessions, who guide you and grade the real project you build. Free to start.',
+  },
+  {
+    path: '/study-abroad',
+    changefreq: 'weekly',
+    priority: '0.8',
+    title: 'Study Abroad — Partner Universities, Applications & Test Prep | MySkills',
+    description:
+      'Study abroad without the guesswork: partner universities, help with your applications and the tests you need, all in the platform where you learn.',
+  },
+  {
+    path: '/internships',
+    changefreq: 'weekly',
+    priority: '0.8',
+    title: 'Internships for Students — Real Work Experience | MySkills',
+    description:
+      'Your first internship, hands-on and real: partner companies reviewed by our team, apply with your Global Readiness Score, and get your work signed off.',
   },
   {
     path: '/entrepreneurship',
