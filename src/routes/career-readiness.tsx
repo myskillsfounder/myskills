@@ -166,7 +166,7 @@ function WorkflowCard() {
 function CareerReadinessPage() {
   return (
     <div className="min-h-screen bg-ink-900">
-      <Navbar />
+      <Navbar dark />
 
       <main>
         {/* Hero */}
