@@ -84,6 +84,25 @@ function fail(error: { message?: string }): never {
   throw new Error(error.message?.trim() || 'Something went wrong.')
 }
 
+/** A course-engine programme the student has joined, for Practice's cards. */
+export interface MyEnrolment {
+  slug: string
+  title: string
+  kind: 'professional' | 'personal'
+  started_at: string
+  modules_total: number
+  modules_done: number
+  aptitude_done: boolean
+  final_passed: boolean
+}
+
+/** Empty, not an error, before docs/supabase-my-programmes.sql is run. */
+export async function fetchMyProgrammes(): Promise<MyEnrolment[]> {
+  const { data, error } = await supabase.rpc('my_programmes')
+  if (error) return []
+  return (data ?? []) as MyEnrolment[]
+}
+
 /** Null until the SQL is run. */
 export async function fetchCatalogue(): Promise<CatalogueEntry[] | null> {
   const { data, error } = await supabase.rpc('list_programmes')

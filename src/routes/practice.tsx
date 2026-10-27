@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, Brain, Target } from 'lucide-react'
@@ -34,8 +34,10 @@ import { VocabularyQuiz } from '@/components/practice/VocabularyQuiz'
 import { VocabLevelPicker } from '@/components/practice/VocabLevelPicker'
 import {
   CAREER_READINESS,
+  careerReadinessProgress,
   completionStages,
   DIGITAL_MARKETING,
+  digitalMarketingProgress,
 } from '@/lib/programmes'
 import { CareerReadinessPractice } from '@/components/practice/CareerReadinessPractice'
 import { CareerReadinessOverview } from '@/components/practice/CareerReadinessOverview'
@@ -45,7 +47,9 @@ import { useMentorReview } from '@/lib/mentorReview'
 import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { useMyLiveSessions } from '@/lib/liveSessions'
 import { useHasStarted } from '@/lib/firstRun'
-import { rememberProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
+import { clearSavedProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
+import { fetchMyProgrammes, type MyEnrolment } from '@/lib/programmeStudent'
+import { ProgrammeCards } from '@/components/practice/ProgrammeCards'
 import { isPhone } from '@/lib/device'
 import { useInternshipDone } from '@/lib/internships'
 
@@ -68,68 +72,19 @@ function MigrationError({ message }: { message: string }) {
   )
 }
 
-/** The two programmes, side by side: one tap switches between them. Only the
- *  chosen programme's content is on the page, so neither buries the other.
- *  On a phone they are a switch that stays at the top while the page scrolls:
- *  two full cards would take a third of the screen before any practice. */
-function ProgrammeTabs({ active, onChange }: { active: Programme; onChange: (p: Programme) => void }) {
-  const items: { step: Programme; name: string }[] = [
-    { step: 1, name: DIGITAL_MARKETING.name },
-    { step: 2, name: CAREER_READINESS.name },
-  ]
-  if (isPhone()) {
-    return (
-      <div className="surface-paper sticky top-14 z-20 -mx-4 px-4 py-2">
-        <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-1 rounded-full bg-ink-900/[0.06] p-1">
-          {items.map((it) => {
-            const on = it.step === active
-            return (
-              <button
-                key={it.step}
-                type="button"
-                role="tab"
-                aria-selected={on}
-                onClick={() => onChange(it.step)}
-                className={`h-10 rounded-full px-3 text-[13px] font-semibold transition-colors ${
-                  on ? 'bg-ink-900 text-white shadow-e1' : 'text-ink-600'
-                }`}
-              >
-                {it.name.replace(/ Programme$/, '')}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
+/** Inside one programme: its name, and the way back to every programme. */
+function ProgrammeHeader({ programme, onBack }: { programme: Programme; onBack: () => void }) {
+  const name = programme === 1 ? DIGITAL_MARKETING.name : CAREER_READINESS.name
   return (
-    <div role="tablist" aria-label="Programmes" className="grid grid-cols-2 gap-3">
-      {items.map((it) => {
-        const on = it.step === active
-        return (
-          <button
-            key={it.step}
-            type="button"
-            role="tab"
-            aria-selected={on}
-            onClick={() => onChange(it.step)}
-            className={`press flex min-w-0 items-center gap-3 rounded-2xl border p-3.5 text-left transition-colors sm:p-4 ${
-              on
-                ? 'border-ink-900 bg-ink-900 text-white shadow-e2'
-                : 'border-ink-900/10 bg-white text-ink-900 hover:border-ink-900/25'
-            }`}
-          >
-            <span
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold ${
-                on ? 'bg-white text-ink-900' : 'bg-ink-900 text-white'
-              }`}
-            >
-              {it.step}
-            </span>
-            <span className="min-w-0 font-display text-sm font-semibold leading-snug sm:text-base">{it.name}</span>
-          </button>
-        )
-      })}
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={onBack}
+        className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+      >
+        <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> All programmes
+      </button>
+      <h1 className="font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">{name}</h1>
     </div>
   )
 }
@@ -188,22 +143,21 @@ function PracticePage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [mode, setMode] = useState<PracticeMode | null>(null)
   const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
-  const [programme, setProgramme] = useState<Programme>(savedProgramme)
+  // Null: the programme cards. A link that asked for a programme (a Global
+  // Leadership module, a dashboard card) opens it, once (lib/practiceProgramme.ts).
+  const [programme, setProgramme] = useState<Programme | null>(savedProgramme)
+  useEffect(() => clearSavedProgramme(), [])
 
-  function chooseProgramme(p: Programme) {
-    setProgramme(p)
-    rememberProgramme(p)
-  }
-
-  // Someone who has only taken the personal aptitude shouldn't land on a
-  // marketing page they can't use yet — open on the programme they started.
-  // Once, when the gate has loaded — never again, so it can't fight a tab tap.
-  const startTabChosen = useRef(false)
+  // The course-engine programmes the student has joined, for the cards.
+  const [engine, setEngine] = useState<MyEnrolment[]>()
   useEffect(() => {
-    if (gateLoading || startTabChosen.current) return
-    startTabChosen.current = true
-    if (crUnlocked && !dmUnlocked && programme === 1) setProgramme(2)
-  }, [gateLoading, crUnlocked, dmUnlocked, programme])
+    if (!unlocked) return
+    let live = true
+    fetchMyProgrammes().then((e) => live && setEngine(e))
+    return () => {
+      live = false
+    }
+  }, [unlocked])
 
   // Practice data loads as soon as Practice is unlocked, not only once the
   // Foundation assessment is done.
@@ -272,6 +226,28 @@ function PracticePage() {
   })
 
   const phone = isPhone()
+
+  // The cards' progress, the same numbers the dashboard shows.
+  const crStarted = crUnlocked || crProgress.started || crReview.state !== 'none' || liveSessions.length > 0
+  const dmCard = dmOpen
+    ? digitalMarketingProgress(
+        assessment != null,
+        practisedTracks.length,
+        skillTracks.length,
+        dmReview.state === 'approved',
+        internshipDone,
+        aptitude != null,
+      )
+    : null
+  const crCard = crStarted
+    ? careerReadinessProgress(
+        crAptitude.result != null,
+        crProgress.modulesDone,
+        crProgress.modulesTotal,
+        crReview.state === 'approved',
+        internshipDone,
+      )
+    : null
 
   // Each block of the Practice home, named, so the two layouts below are a
   // matter of order and not of two copies.
@@ -375,7 +351,8 @@ function PracticePage() {
             <p className="text-sm text-ink-600">Loading practice…</p>
           ) : (
             <>
-              <ProgrammeTabs active={programme} onChange={chooseProgramme} />
+              {programme === null && <ProgrammeCards dm={dmCard} cr={crCard} engine={engine} onOpen={setProgramme} />}
+              {programme !== null && <ProgrammeHeader programme={programme} onBack={() => setProgramme(null)} />}
 
               {/* Programme 1 is everything from the aptitude assessment through the
                   Foundation assessment, all 8 tracks and vocabulary. */}
