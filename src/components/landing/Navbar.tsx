@@ -8,9 +8,9 @@ import { useAuthUser } from '@/lib/useAuth'
 /*
  * The site's navbar, as in Paul's platform picture (27 Oct 2026): the
  * wordmark with "The Student Development Platform", the platform's parts
- * (Learning, Mentors, Study Abroad, Careers, Community), Log in and Get
+ * (Learning, Mentors, Study Abroad, Internships, Community), Log in and Get
  * Started. Learning and Community are open to visitors; Mentors, Study
- * Abroad and Careers are inside the platform, so a visitor signs in first and
+ * Abroad and Internships are inside the platform, so a visitor signs in first and
  * lands on them (lib/afterLogin.ts), as the home page's cards do.
  */
 type To = '/' | '/courses' | '/community' | '/study-abroad' | '/login'
@@ -30,7 +30,7 @@ const navLinks: NavLink[] = [
   { label: 'Learning', to: '/courses' },
   { label: 'Mentors', to: '/community', search: { category: 'mentors' }, visitor: signInTo('/community?category=mentors') },
   { label: 'Study Abroad', to: '/study-abroad', visitor: signInTo('/study-abroad') },
-  { label: 'Careers', to: '/community', search: { category: 'internships' }, visitor: signInTo('/community?category=internships') },
+  { label: 'Internships', to: '/community', search: { category: 'internships' }, visitor: signInTo('/community?category=internships') },
   { label: 'Community', to: '/community', exact: true },
 ]
 
