@@ -1,0 +1,323 @@
+{
+  "round": 2,
+  "date": "2026-10-27",
+  "programme": "docs/programmes/Data analytics/ai-powered-data-analytics.json",
+  "verdict": "needs_work",
+  "summary": "The revision is a big step up: every Learn card now teaches with a worked example and a named mistake, every data task runs on the Masala Mart files with a number the learner can check, and every check number in the task hints and the blueprint matches the dataset (I recomputed them all). All 75 round-1 findings are fixed, apart from the CFO wording in da-m10-q4. Two things block publishing. First, the Masala Mart files are not live: every https://myskills.org.in/practice-data/masala-mart/ address returns the site's HTML home page with status 200, so check.mjs --links passed while no task can load its data, and the server sends no CORS header, which the DuckDB browser shell needs. Second, da-f08's why_wrong misdescribes the LEAD option, and the blueprint repeats the error. The three teaching gaps the Assessment Architect flagged are real; da-m07 is the only module still below 4 (explanation), because the pandas merge, drop_duplicates and text-to-number steps its tasks rely on are never shown on a card.",
+  "strengths": [
+    "One fictional, seeded dataset (Masala Mart) runs through spreadsheets, cleaning, SQL, pandas, dashboards, AI checking and the memo. Every check number in the task hints matches the data: 165 April orders, 58 Not found rows, 2,030 rows after de-duplication, 10 cities, a 75.1% repeat share, 259 silent 2026 sign-ups, and the planted 60% (Q2 read as April to July).",
+    "The Learn cards now teach before they test. Each one has a worked example with its result (query output, pivot rates, a cleaning log with row counts) and names the common mistake: BETWEEN on timestamps, WHERE after a LEFT JOIN, chained assignment in pandas 3, and a truncated axis.",
+    "The final is now a real Foundation test. All 15 questions are skill-tagged and set in Indian scenarios, they combine modules, and the statistics in f10 and f11 are right (z about 0.8 and 0.72 for the gaps called chance).",
+    "Free tools come first throughout, and paid ones are named honestly: Python in Excel and Copilot are marked as paid, and Power BI Desktop as Windows only. DPDP is stated exactly, with the 2025 Rules' phase-in."
+  ],
+  "findings": [
+    {
+      "target": "programme",
+      "severity": "must_fix",
+      "problem": "The practice data isn't live. Every task in da-m02 to da-m05 and da-m07 to da-m10 loads https://myskills.org.in/practice-data/masala-mart/*.csv, but on 27 October 2026 those addresses return the site's single-page-app HTML (Content-Type text/html, 6,104 bytes) with status 200, so check.mjs --links reported nothing. public/practice-data/ and scripts/make-masala-mart.mjs are untracked in git, so they have never been deployed. Even once deployed, the DuckDB shell (shell.duckdb.org, used in da-m04, da-m05 and da-m09) reads remote files only from a server that sends CORS headers. nginx sends none now, so the CREATE TABLE line in da-m04 card 1 would fail with a network error. Google Sheets IMPORTDATA and Colab fetch on the server side, so they need the file live but not CORS.",
+      "fix": "Commit public/practice-data/masala-mart/ (the 4 CSVs and index.html) and scripts/make-masala-mart.mjs, then deploy. In the nginx site config, add a block for location /practice-data/ that serves the files directly (try_files $uri =404, so a missing file is a 404, not the app), with add_header Access-Control-Allow-Origin \"*\" and the CSV type set to text/csv. Then verify three things: curl -I shows 200 and text/csv for each file; in shell.duckdb.org, CREATE TABLE orders AS SELECT * FROM 'https://myskills.org.in/practice-data/masala-mart/orders.csv'; SELECT COUNT(*) FROM orders; returns 2030; and =IMPORTDATA(...) in a Google Sheet loads 2,031 rows.",
+      "source": "https://duckdb.org/docs/2.0/clients/wasm/extensions.html",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "da-f08's why_wrong says the LEAD option \"lists the months just before a fall\". That is wrong. With LEAD(orders) AS prev, WHERE orders < prev keeps the months whose next month is higher, which are the months just before a rise. I checked it in SQLite on orders 100, 120, 90, 110, 80: LAG lists months 3 and 5 (the falls), and LEAD lists months 1 and 3 (each followed by a rise). The blueprint's Quality review repeats the error (\"LEAD lists the months before a fall\"), so the claimed run didn't check it.",
+      "fix": "In da-f08's why_wrong, replace the LEAD clause with: \"LEAD brings in the next month, so the query lists the months just before a rise, not the months that fell\". In the blueprint's Quality review, change the f08 line to \"LEAD lists the months before a rise\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "No da-m07 card shows a pandas merge, yet t1 merges products with how=\"left\", da-m07-q3 tests what a left merge does with unmatched rows (NaN), and da-f12 tests a merge's fan-out. Card 3 mentions \"after the merge\" but never shows one. The module summary promises \"join data with pandas\". The Assessment Architect's teaching note T3 is real.",
+      "fix": "In card 2 (122 words), after the groupby output, add a worked example: \"To bring in another table's columns, merge on a shared key: df = df.merge(products, on=\"sku\", how=\"left\"). how=\"left\" keeps every order, like a LEFT JOIN; where no product matches, the new columns are NaN, pandas' blank. Leave how= out and only matching rows stay.\" To stay under 160 words, cut the payments example to 4 rows (drop the 04/05 row and change the output to R1 240, R2 150).",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "drop_duplicates() and subset= appear only in the tasks (t1, t2). Turning \"₹1,250\" into a number with .str.replace and .astype(int) appears only in t1. No card shows either, though da-f04 tests drop_duplicates(subset=...) and the outcome is to clean a CSV in pandas. A learner meets these functions for the first time inside a task. This is the Assessment Architect's teaching note T4.",
+      "fix": "In card 3, replace the paragraph on checking after every step with a worked cleaning example that keeps the check: \"df = df.drop_duplicates() removes rows identical in every column. subset=\"customer_id\" compares only that column, so it would also delete every repeat order. To turn \"₹1,250\" into a number: df[\"order_value\"] = df[\"order_value\"].str.replace(\"₹\", \"\").str.replace(\",\", \"\").astype(int). After each step, compare df.shape and a total with the step before.\" Keep the card under 160 words by moving the pandas 3 note into one sentence.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "should_fix",
+      "problem": "da-m05-q4 (Advanced) needs AVG(value) OVER (PARTITION BY city). Card 3 shows ROW_NUMBER and LAG as window functions, but never shows a summary function (AVG, SUM) used as a window. A learner who has only seen AVG with GROUP BY may not know it can take OVER. This is the Assessment Architect's teaching note T2.",
+      "fix": "In card 3, after the ROW_NUMBER line, add: \"Summary functions work as windows too: AVG(order_value) OVER (PARTITION BY city) puts each city's average on every order row, so you can compare each order with it.\" To stay under 160 words, cut \"Number 1 is their first.\" and \"January has no row before it, so it gets NULL.\" (the table already shows the NULL).",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "should_fix",
+      "problem": "da-m05-q4's option \"GROUP BY city, then compare each order with the averages by eye\" isn't a mistake a learner would make in SQL, so the item has only two real distractors. The other three options are SQL, and this one is a manual step.",
+      "fix": "Replace it with a realistic window mistake: \"AVG(value) OVER (ORDER BY city) alongside each order\". In why_wrong, replace the by-eye clause with \"ORDER BY without PARTITION BY gives a running average across cities, not each city's own average\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 2,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "da-m01 t2 says the raw export's columns are \"order_id, order_date, customer_id, city, quantity, order_value, payment_method and returned\", and its three rows leave out sku. orders_raw.csv has 9 columns, with sku between city and quantity (for example MM10004,01/10/2025,C0117,bengaluru,MM-GS-03,4,₹380,UPI,0). Learners who open the file in da-m02 will find a column the task said wasn't there. The three rows also run inline inside a long paragraph, which is hard to read on a phone.",
+      "fix": "List all nine columns, including sku, and set the rows on their own lines with the sku added: \"MM10002 | 01/10/2025 | C0009 | Kochi | MM-BL-03 | 1 | ₹150 | UPI | 0\", \"MM10004 | 01/10/2025 | C0117 | bengaluru | MM-GS-03 | 4 | ₹380 | UPI | 0\", \"MM10001 | 01/10/2025 | C0035 | Hyderabad | MM-BL-02 | 4 | 520 | COD | 0\". Add sku to the list of labels (\"a label written as text\").",
+      "source": "",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:da-m10",
+      "severity": "should_fix",
+      "problem": "da-m10-q4 still says \"The CFO asks…\" with no expansion, though da-m10 card 2 now tells learners to write \"finance head (CFO)\" the first time (round-1 finding 63, only half fixed). The scenario has no business or Indian setting. The right option relies on \"a matched group\", a term no card teaches; the cards teach random tests and self-selection.",
+      "fix": "Scenario: \"The finance head (CFO) of a Pune supermarket chain asks whether the loyalty programme it launched six months ago has paid for itself.\" Right option: \"Yes: members spent ₹38 lakh more than similar shoppers who didn't join; it cost ₹22 lakh, so ₹16 lakh net.\" Explanation: \"It answers in money, subtracts the cost, and compares members with similar shoppers who didn't join, because keen shoppers spent more even before they joined.\" Check the option lengths afterwards, so the right one isn't the longest.",
+      "source": "",
+      "owner": "assessment",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Six quiz questions still have no business or Indian setting: da-m06-q2 (App A and App B), da-m06-q3 (\"A team\"), da-m09-q2 (\"AI-written pandas code\"), da-m09-q3 (\"a list of 20,000 patients\"), da-m09-q4 and da-m10-q3 (\"a jewellery brand\"). They are correct, but they are the reason those modules score 4, not 5, on relevance.",
+      "fix": "Add half a sentence of setting to each, in a context the module's cards and tasks don't use. For example: da-m06-q2, two Indian train-booking apps; da-m06-q3, a Jaipur ethnic-wear D2C brand's checkout test; da-m09-q2, a Mysuru stationery seller's sales file; da-m09-q3, a Guwahati diagnostic lab; da-m09-q4, a Vizag electronics store's database; da-m10-q3, a Surat jewellery brand.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "relevance"
+    },
+    {
+      "target": "module:da-m06",
+      "severity": "idea",
+      "problem": "da-m06-q3's why_wrong gives a weak reason for the server option (\"showing two designs isn't limited to a certain number of days\"), and the option itself is one few learners would pick.",
+      "fix": "Replace the option with a real misconception: \"9% is a big lead, so the test only needed enough days to reach 1,000 users\". why_wrong: \"a fixed user count reached early doesn't stop a lead from being chance; the length and size must be set before the start\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "final",
+      "severity": "idea",
+      "problem": "da-f03's explanation says \"Trim the column\". SKUs copied from PDFs often carry non-breaking spaces (character 160), and Microsoft documents that Excel's TRIM doesn't remove them. A learner who trims and still sees \"New SKU\" isn't told why.",
+      "fix": "Explanation's last sentence: \"Trim the column, then check that the count of \"New SKU\" falls. If it doesn't, the spaces may be non-breaking ones, which TRIM in Excel leaves in place; replace them with SUBSTITUTE(B2, CHAR(160), \"\").\"",
+      "source": "https://support.microsoft.com/en-us/office/trim-function-410388fa-c5df-49c6-b16c-9e5630b479f9",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "idea",
+      "problem": "I couldn't confirm how Google Sheets' IMPORTDATA treats \"₹150\" under the India locale. If Sheets reads it as a number with currency formatting, the \"text amounts\" problem in da-m03 t1 (and the \"would a SUM count ₹150?\" hint in da-m01 t2) won't show up in Sheets, and learners may think they missed a step.",
+      "fix": "Course Architect: import orders_raw.csv in a Google Sheet set to the India locale and test =ISNUMBER(G3) on a \"₹150\" cell. If it is TRUE, add to the da-m03 t1 hint: \"Google Sheets may already read ₹150 as a number. Check with =ISNUMBER. You will meet the text version in pandas in da-m07.\"",
+      "source": "",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 8,
+      "standard": "practice"
+    },
+    {
+      "target": "aptitude",
+      "severity": "idea",
+      "problem": "da-a25 (\"I can explain a complicated finding in two or three sentences\") rates ability, not behaviour, unlike the rewritten a05, a10 to a12, a14 and a16.",
+      "fix": "\"When I share a finding, I sum it up in two or three sentences before giving the detail.\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "aptitude",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "For Paul: check.mjs --links treats any 200 as a working link. This site answers every missing path with its home page and status 200, so a missing data file passes. That is how the Masala Mart addresses passed this round.",
+      "fix": "In agents/lib/standard.mjs linkFindings(), for links ending in .csv, .json or .xlsx, flag a response whose Content-Type is text/html. For myskills.org.in data links, also send an Origin header and flag a response with no Access-Control-Allow-Origin.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "For Paul: the three lessons from review 1 (name the card sentence each question relies on; never refer to an option by its position; give every tools task a dataset) are not in agents/playbook.md yet. The playbook still ends at rule 13. This revision followed them anyway, so they worked.",
+      "fix": "Add them to the playbook as rules 14 to 16, with the date, so the next programme follows them from the first draft.",
+      "source": "",
+      "owner": "course",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    }
+  ],
+  "round1_check": {
+    "fixed": "73 of 75 round-1 findings are fixed as asked. I verified each against the file: the skill tags and the new f07, the scenarios on all 17 quiz questions that had none, every card at 112 to 150 words with a worked example and a common mistake, data-backed tasks, the corrected module minutes (sum 810, hours 34 = 13.5 + 20 + 0.5), the free routes and paid-tool labels, the DPDP phase-in, the aptitude rewrites, the rubric, the AI log, the statistics outcome, and the old review marked superseded.",
+    "partly_fixed": [
+      "Finding 63 (CFO and COD written in full): da-m10 card 2 now says to do this, but da-m10-q4 still says \"The CFO\" unexpanded (see the da-m10 finding).",
+      "Finding 73 (blueprint matches the file): it now does, except its f08 LEAD claim, which is wrong (see the da-f08 finding)."
+    ],
+    "ideas_not_taken": "Finding 74 (Tableau Public): not taken, which is acceptable for an idea. SUMIFS and COUNTIFS are now taught."
+  },
+  "module_scores": [
+    {
+      "module": "da-m01",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 4, "feedback": 4, "relevance": 5, "time": 5, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "practice": "t2 uses real rows, but no tool is opened and the column list doesn't match the file (it leaves out sku). That is right for a first module, but it isn't yet guided-to-independent work on data.",
+        "feedback": "da-m01-q1 depends on its context block, with an empty scenario. The reflection hint is thin and doesn't say what a good answer looks like.",
+        "inclusion": "t2 runs three data rows inline inside one long paragraph, which is hard to read on a phone."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m02",
+      "scores": { "outcome": 5, "explanation": 4, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "explanation": "Card 3 does two jobs (pivot tables, then SUMIFS and COUNTIFS) at 150 words. It is still clear.",
+        "time": "90 minutes against a script estimate of 57. It is honest for a first IMPORTDATA, a pivot table, an XLOOKUP filled down 2,030 rows and a SUMIFS check, but generous at the top.",
+        "inclusion": "Filling a formula down 2,030 rows on a phone is fiddly. The hint gives a phone route, which helps."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m03",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "da-m03-q1's explanation is one sentence, and its why_wrong is terse (for example, \"averaging identical rows changes nothing\").",
+        "time": "90 minutes. Cleaning 2,065 rows with a log is realistic at 40 to 50 minutes, so this is honest, though the script estimates 56.",
+        "inclusion": "Copying and pasting values only, and building a mapping tab, is harder on a phone. No route for phone users is given."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m04",
+      "scores": { "outcome": 5, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "explanation": "Card 1 does two jobs: SELECT and WHERE syntax, and setting up DuckDB. Setup could be a short note at the end of the task instead.",
+        "feedback": "da-m04-q3's why_wrong is clipped (\"The leads do have missing phones\").",
+        "time": "90 minutes against an estimate of 56. A first DuckDB setup and two run-and-explain tasks justify most of it.",
+        "inclusion": "Typing SQL on a phone keyboard is slow. The shell works on a phone, but a laptop is easier, and the module doesn't say so."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m05",
+      "scores": { "outcome": 4, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 4, "inclusion": 4 },
+      "notes": {
+        "outcome": "Two outcomes in one sentence (joins without double counting, and window functions).",
+        "explanation": "Card 3 packs ROW_NUMBER, LAG and LEAD, CTEs and the rule against windows in WHERE into one card.",
+        "feedback": "da-m05-q4 has a distractor (\"compare by eye\") that no learner would pick.",
+        "time": "90 minutes against an estimate of 56. t2's ROW_NUMBER in a WITH step is a real 30 to 40 minutes for a beginner.",
+        "progression": "da-m05-q4 needs AVG(...) OVER (PARTITION BY ...), which no card shows (see the finding).",
+        "inclusion": "Long SQL on a phone keyboard."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m06",
+      "scores": { "outcome": 5, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "explanation": "Card 3 sends learners to \"a free online A/B test calculator\" without naming one or showing what to enter.",
+        "practice": "t1 is a plan with no data, which is the one describe-only task allowed. Only t2 uses numbers.",
+        "feedback": "da-m06-q3's why_wrong for the server option is weak (idea finding).",
+        "relevance": "da-m06-q2 (App A and App B) and da-m06-q3 (\"A team\") have no Indian or business setting.",
+        "time": "75 minutes against an estimate of 56. It is honest if the plan in t1 takes about 30 minutes.",
+        "inclusion": "Standard deviation and the margin of error are explained, but the module is dense for a second-language reader."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m07",
+      "scores": { "outcome": 5, "explanation": 3, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 4, "inclusion": 4 },
+      "notes": {
+        "explanation": "The cards never show merge (how=\"left\", NaN), drop_duplicates and subset=, or turning \"₹1,250\" into a number. t1, t2, da-m07-q3, da-f04 and da-f12 all rely on these, so the learner first meets them inside a task (see the two findings).",
+        "time": "90 minutes against an estimate of 56. A first Colab session and a seven-step t1 justify it.",
+        "progression": "da-m07-q3 relies on carrying LEFT JOIN over from da-m05. That transfer is fair, but the pandas form is never shown.",
+        "inclusion": "Colab is awkward on a phone. The card says so and points to a college computer, which is honest, but phone-only learners are still held back."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m08",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "da-m08-q3's why_wrong is brief (for example, \"busy cities aren't necessarily the late ones\").",
+        "time": "90 minutes against an estimate of 56. A first dashboard in Looker Studio is a realistic 40 to 50 minutes.",
+        "inclusion": "Looker Studio is easiest on a laptop. The Google Sheets charts route works on a phone and is offered."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m09",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "The explanations for da-m09-q2 and da-m09-q4 are short and don't show how to do the check.",
+        "relevance": "da-m09-q2, da-m09-q3 and da-m09-q4 have no business or Indian setting.",
+        "time": "75 minutes against an estimate of 56. t1 (prompt, run, three checks) is about 30 minutes, which is honest.",
+        "inclusion": "t1 needs both an AI assistant and the DuckDB shell open at once, which is awkward on one phone screen."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m10",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 4, "time": 5, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "da-m10-q3's why_wrong is brief. da-m10-q4's explanation leans on \"a fair comparison\" without saying what makes it fair.",
+        "relevance": "da-m10-q3 and da-m10-q4 have no Indian business setting.",
+        "inclusion": "da-m10-q4 uses \"CFO\" and \"matched group\" unexplained, against the module's own card 2."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": [
+    {
+      "rule": "Before review, open every data file a task links to and check what comes back, not only the status code. It must return the file itself (text/csv for a CSV, not the website's HTML), and a file read by a browser tool such as the DuckDB shell needs a CORS header (Access-Control-Allow-Origin). Commit and deploy the files before the tasks go to review.",
+      "why": "In AI-Powered Data Analytics round 2, every Masala Mart link returned the site's home page with status 200, so the link check passed while no task could load its data. The files had never been committed."
+    },
+    {
+      "rule": "A Practise task may ask the learner to use only functions a Learn card has shown with a worked example: the same module's cards or an earlier module's. If a task needs a new function (merge, drop_duplicates, astype), add it to a card first; don't introduce it in the task text.",
+      "why": "da-m07's tasks used pandas merge, drop_duplicates(subset=) and .astype(int), which no card showed, and da-m07-q3, da-f04 and da-f12 tested them."
+    },
+    {
+      "rule": "When a why_wrong describes what a wrong code option does, run that option on a small example and describe the output you actually get, not the mistake you meant to plant.",
+      "why": "da-f08's why_wrong said the LEAD query lists \"the months just before a fall\". Run, it lists the months before a rise. The blueprint said the query had been run and repeated the error."
+    }
+  ]
+}

@@ -36,6 +36,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as EntrepreneurshipRouteImport } from './routes/entrepreneurship'
 import { Route as DigitalMarketingRouteImport } from './routes/digital-marketing'
+import { Route as DataAnalyticsRouteImport } from './routes/data-analytics'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as CommunityRouteImport } from './routes/community'
@@ -245,6 +246,11 @@ const EntrepreneurshipRoute = EntrepreneurshipRouteImport.update({
 const DigitalMarketingRoute = DigitalMarketingRouteImport.update({
   id: '/digital-marketing',
   path: '/digital-marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataAnalyticsRoute = DataAnalyticsRouteImport.update({
+  id: '/data-analytics',
+  path: '/data-analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -655,6 +661,7 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRouteWithChildren
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/data-analytics': typeof DataAnalyticsRoute
   '/digital-marketing': typeof DigitalMarketingRoute
   '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
@@ -758,6 +765,7 @@ export interface FileRoutesByTo {
   '/certificate': typeof CertificateRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/data-analytics': typeof DataAnalyticsRoute
   '/digital-marketing': typeof DigitalMarketingRoute
   '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
@@ -861,6 +869,7 @@ export interface FileRoutesById {
   '/community': typeof CommunityRouteWithChildren
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/data-analytics': typeof DataAnalyticsRoute
   '/digital-marketing': typeof DigitalMarketingRoute
   '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
@@ -967,6 +976,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/courses'
     | '/dashboard'
+    | '/data-analytics'
     | '/digital-marketing'
     | '/entrepreneurship'
     | '/feedback'
@@ -1070,6 +1080,7 @@ export interface FileRouteTypes {
     | '/certificate'
     | '/courses'
     | '/dashboard'
+    | '/data-analytics'
     | '/digital-marketing'
     | '/entrepreneurship'
     | '/feedback'
@@ -1172,6 +1183,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/courses'
     | '/dashboard'
+    | '/data-analytics'
     | '/digital-marketing'
     | '/entrepreneurship'
     | '/feedback'
@@ -1277,6 +1289,7 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRouteWithChildren
   CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
+  DataAnalyticsRoute: typeof DataAnalyticsRoute
   DigitalMarketingRoute: typeof DigitalMarketingRoute
   EntrepreneurshipRoute: typeof EntrepreneurshipRoute
   FeedbackRoute: typeof FeedbackRoute
@@ -1510,6 +1523,13 @@ declare module '@tanstack/react-router' {
       path: '/digital-marketing'
       fullPath: '/digital-marketing'
       preLoaderRoute: typeof DigitalMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-analytics': {
+      id: '/data-analytics'
+      path: '/data-analytics'
+      fullPath: '/data-analytics'
+      preLoaderRoute: typeof DataAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -2199,6 +2219,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRouteWithChildren,
   CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
+  DataAnalyticsRoute: DataAnalyticsRoute,
   DigitalMarketingRoute: DigitalMarketingRoute,
   EntrepreneurshipRoute: EntrepreneurshipRoute,
   FeedbackRoute: FeedbackRoute,

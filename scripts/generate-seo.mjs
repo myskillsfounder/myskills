@@ -128,6 +128,14 @@ const STATIC_PAGES = [
       'Your first internship, hands-on and real: partner companies reviewed by our team, apply with your Global Readiness Score, and get your work signed off.',
   },
   {
+    path: '/data-analytics',
+    changefreq: 'weekly',
+    priority: '0.9',
+    title: 'Data Analytics Course for Students in India: SQL, Python & Dashboards | MySkills',
+    description:
+      'Turn business data into decisions with spreadsheets, SQL, Python, dashboards and AI, on free tools and a real practice dataset. 10 modules and a mentor-graded project. Free aptitude test.',
+  },
+  {
     path: '/entrepreneurship',
     changefreq: 'weekly',
     priority: '0.9',

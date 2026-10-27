@@ -54,7 +54,7 @@ function WriteStep({
   return (
     <section className="card p-5 sm:p-6">
       <h3 className="font-display text-xl font-semibold text-ink-900">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-ink-700">{prompt}</p>
+      <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-700">{prompt}</p>
       {hint && (
         <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-ink-500">
           <Lightbulb size={13} className="mt-0.5 shrink-0" /> {hint}
