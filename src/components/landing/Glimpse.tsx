@@ -18,6 +18,14 @@ const glass =
   'rounded-2xl border border-[#6d7bff]/20 bg-gradient-to-br from-[#1b2470]/45 via-[#0b1438]/40 to-[#060b24]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_44px_-18px_rgba(76,86,240,0.7)] backdrop-blur-xl'
 const gradientText = 'bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff] bg-clip-text text-transparent'
 const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.32em] text-[#b9a6ff]'
+/** The hero cards' colours: a tinted glass and a matching icon. */
+const TONES = {
+  violet: { card: 'from-[#5b3fd6]/45 to-[#1b1550]/60 border-[#a48bff]/35', icon: 'from-[#8f6bff] to-[#5b3fd6]' },
+  blue: { card: 'from-[#2f4fd6]/45 to-[#0f1a52]/60 border-[#7b9bff]/35', icon: 'from-[#5b8bff] to-[#2f4fd6]' },
+  pink: { card: 'from-[#b03ea8]/40 to-[#2a1040]/60 border-[#f08bdc]/30', icon: 'from-[#ec4899] to-[#a12d9a]' },
+  amber: { card: 'from-[#b8661f]/40 to-[#2a1a10]/60 border-[#f7b46b]/30', icon: 'from-[#f59e0b] to-[#c2410c]' },
+}
+
 const tile =
   'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20'
 
@@ -56,6 +64,8 @@ export interface GlimpseProps {
   body: string
   /** Short chips under the hero's line, e.g. the mentors' industries. */
   tags?: string[]
+  /** Cards in place of the hero's photo, e.g. the mentors' industries. */
+  heroCards?: { icon: LucideIcon; title: string; body: string; tone: keyof typeof TONES }[]
   photo: string
   photoAlt: string
   features: { icon: LucideIcon; title: string; body: string }[]
@@ -115,14 +125,38 @@ export function Glimpse(g: GlimpseProps) {
                   </Link>
                 </div>
               </div>
-              <figure className="relative mx-auto w-full max-w-md lg:max-w-none">
-                <span aria-hidden className="absolute -inset-6 rounded-[2.5rem] bg-[#4c56f0]/25 blur-3xl" />
-                <div className="relative overflow-hidden rounded-[2rem] border border-[#8f9bff]/25 shadow-[0_30px_80px_-30px_rgba(76,86,240,0.9)]">
-                  <img src={`/home/${g.photo}.webp`} alt={g.photoAlt} className="h-80 w-full object-cover object-[50%_30%] sm:h-[26rem]" />
-                  <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/20 mix-blend-color" />
-                  <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#040a1e]/80 via-transparent to-transparent" />
+              {g.heroCards ? (
+                // Cards in place of the photo (Paul, 27 Oct 2026: the mentors' industries).
+                <div className="relative">
+                  <span aria-hidden className="absolute -inset-6 rounded-[2.5rem] bg-[#4c56f0]/25 blur-3xl" />
+                  <ul className="relative grid grid-cols-2 gap-3 sm:gap-4">
+                    {g.heroCards.map((c, i) => (
+                      <li
+                        key={c.title}
+                        className={`group relative flex min-h-[11rem] flex-col justify-between overflow-hidden rounded-2xl border bg-gradient-to-br p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_18px_50px_-24px_rgba(76,86,240,0.9)] backdrop-blur-xl transition-transform hover:-translate-y-1 sm:min-h-[12.5rem] ${TONES[c.tone].card} ${i % 2 ? 'sm:translate-y-6 sm:hover:translate-y-5' : ''}`}
+                      >
+                        <span aria-hidden className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
+                        <span className={`relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-[0_0_24px_rgba(255,255,255,0.25)] ring-1 ring-white/25 ${TONES[c.tone].icon}`}>
+                          <c.icon size={22} />
+                        </span>
+                        <span className="relative">
+                          <span className="block font-display text-lg font-bold leading-snug text-white">{c.title}</span>
+                          <span className="mt-1 block text-[13px] leading-snug text-white/70">{c.body}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </figure>
+              ) : (
+                <figure className="relative mx-auto w-full max-w-md lg:max-w-none">
+                  <span aria-hidden className="absolute -inset-6 rounded-[2.5rem] bg-[#4c56f0]/25 blur-3xl" />
+                  <div className="relative overflow-hidden rounded-[2rem] border border-[#8f9bff]/25 shadow-[0_30px_80px_-30px_rgba(76,86,240,0.9)]">
+                    <img src={`/home/${g.photo}.webp`} alt={g.photoAlt} className="h-80 w-full object-cover object-[50%_30%] sm:h-[26rem]" />
+                    <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/20 mix-blend-color" />
+                    <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#040a1e]/80 via-transparent to-transparent" />
+                  </div>
+                </figure>
+              )}
             </div>
           </section>
         )}
