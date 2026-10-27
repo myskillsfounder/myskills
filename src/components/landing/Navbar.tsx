@@ -52,7 +52,7 @@ const THEMES = {
     mLogIn: 'w-full press inline-flex h-11 items-center justify-center rounded-xl border border-ink-300 px-4 text-center text-sm font-semibold text-ink-900',
   },
   dark: {
-    header: 'sticky top-0 z-50 border-b border-white/10 bg-[#0b0a1c]/70 backdrop-blur-xl',
+    header: 'sticky top-0 z-50 border-b border-white/10 bg-[#040a1e]/70 backdrop-blur-xl',
     my: 'text-white',
     skills: 'from-brand-300 to-fuchsia-300',
     tagline: 'text-white/60',
