@@ -9,6 +9,9 @@ import {
   Heart,
   Plane,
   Plus,
+  Sparkles,
+  Target,
+  Trophy,
   Users,
   type LucideIcon,
 } from 'lucide-react'
@@ -136,6 +139,14 @@ const PARTNERS: { icon: LucideIcon; title: string; body: string; photo: string }
   { icon: Users, title: 'Mentors', body: 'Industry experts, professionals, coaches', photo: 'paul-mentorship' },
   { icon: Plane, title: 'Study Abroad Partners', body: 'Universities, consultants, overseas education providers', photo: 'card-study-abroad' },
   { icon: Briefcase, title: 'Career Partners', body: 'Companies, internship providers, hiring partners', photo: 'card-career' },
+]
+
+/** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
+const AI_ERA: { icon: LucideIcon; title: string; body: string }[] = [
+  { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.' },
+  { icon: Users, title: 'People where it matters', body: 'Mentors, counsellors and companies who know you: real guidance, not just an app.' },
+  { icon: Target, title: 'Start with your strengths', body: 'A free aptitude test shows where you stand before you spend an hour learning.' },
+  { icon: Trophy, title: 'Proof employers trust', body: 'Your Global Readiness Score: every point graded by a mentor or checked by our team.' },
 ]
 
 /** The parts of the Global Readiness Score (method v8). */
@@ -371,16 +382,21 @@ function HomePage() {
         <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14 lg:px-8">
           <div className="grid items-center gap-8 xl:grid-cols-[1fr_38rem] xl:gap-10">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/75">
-                Learn <span className="mx-1.5 text-[#8f6bff]">•</span> Get guidance <span className="mx-1.5 text-[#8f6bff]">•</span> Build skills{' '}
-                <span className="mx-1.5 text-[#8f6bff]">•</span> Grow
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
+                <Sparkles size={14} className="text-[#b496ff]" /> Built for students in the AI era
               </p>
-              <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-[4rem]">
-                <span className="block">Your future won’t wait.</span> <span className={`block pb-2 ${gradientText}`}>Neither should your learning.</span>
+              <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1] tracking-tight text-white sm:text-6xl xl:text-[4rem]">
+                <span className="block">Your future</span>
+                <span className="block">won’t wait.</span>
+                <span className={`block pb-2 ${gradientText}`}>
+                  Neither should
+                  <br />
+                  your learning.
+                </span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/75">
-                AI-guided learning, expert mentorship, career guidance and real-world opportunities: everything a student needs,
-                in one place.
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
+                The AI era is changing every career. MySkills takes care of everything a student needs to keep up: AI-guided
+                learning, expert mentors, career guidance and real-world opportunities, in one place.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'explore', place: 'hero' })} className={primaryCta}>
@@ -413,7 +429,36 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 3. Our partners and providers. */}
+        {/* 3. Why now: what the AI era asks of a student. */}
+        <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+            <div>
+              <p className={eyebrow}>Why MySkills, why now</p>
+              <h2 className={h2}>
+                AI is changing every career. <span className={gradientText}>We help you keep up.</span>
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-white/70">
+                Students now need more than marks: skills they can show, the AI tools of their field, people to guide them and a
+                first real job. MySkills brings all of it together, from your first aptitude test to your first internship.
+              </p>
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {AI_ERA.map((a) => (
+                <li key={a.title} className={`${glass} flex gap-4 p-5`}>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
+                    <a.icon size={20} />
+                  </span>
+                  <span>
+                    <span className="block font-display text-[15px] font-semibold text-white">{a.title}</span>
+                    <span className="mt-1 block text-[13px] leading-relaxed text-white/65">{a.body}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* 4. Our partners and providers. */}
         <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className={`${glass} grid gap-4 p-4 lg:grid-cols-[14rem_1fr] lg:items-center`}>
             <div className="px-2 py-1">
@@ -430,7 +475,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 4. The courses. */}
+        {/* 5. The courses. */}
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHead kicker="Learning programmes" title="Skills for" accent="the AI era." />
@@ -479,7 +524,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 5. The Global Readiness Score. */}
+        {/* 6. The Global Readiness Score. */}
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className={`${glass} grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center`}>
             <div>
@@ -523,7 +568,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 6. Step in. */}
+        {/* 7. Step in. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl border border-brand-200/25 bg-gradient-to-br from-brand-600/40 via-brand-700/25 to-fuchsia-600/20 px-6 py-12 text-center shadow-[0_0_80px_-20px_rgba(143,133,238,0.7)] sm:px-12">
             <span aria-hidden className="absolute -top-24 left-1/2 h-48 w-[70%] -translate-x-1/2 rounded-full bg-brand-300/30 blur-3xl" />
