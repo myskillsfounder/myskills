@@ -60,6 +60,8 @@ export interface GlimpseProps {
   steps: { title: string; body: string }[]
   peek: { title: string; note: string; items: GlimpseItem[] }
   trending?: GlimpseTrending
+  /** Open on the trending card, with no hero (Study Abroad, Paul 27 Oct 2026). */
+  trendingFirst?: boolean
   /** Where a visitor lands after logging in. */
   next: string
 }
@@ -71,46 +73,50 @@ export function Glimpse(g: GlimpseProps) {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[radial-gradient(40rem_32rem_at_75%_15%,rgba(56,64,200,0.42),transparent_70%),radial-gradient(30rem_24rem_at_0%_30%,rgba(124,92,246,0.18),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
-        {/* What it is. */}
-        <section className="mx-auto max-w-7xl px-4 pb-14 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] backdrop-blur">
-                <g.icon size={14} className="text-[#b496ff]" /> {g.kicker}
-              </p>
-              <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.04] tracking-tight text-white sm:text-5xl xl:text-[3.6rem]">
-                {g.title} <span className={`block pb-1 ${gradientText}`}>{g.accent}</span>
-              </h1>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">{g.body}</p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  to="/signup"
-                  onClick={() => trackEvent('glimpse_cta', { page: g.id, cta: 'signup' })}
-                  className="press inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#7b6cf6] to-[#4f46e5] px-6 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.9)] transition-opacity hover:opacity-90"
-                >
-                  Get started free <ArrowRight size={18} />
-                </Link>
-                <Link
-                  {...login}
-                  onClick={() => trackEvent('glimpse_cta', { page: g.id, cta: 'login' })}
-                  className="press inline-flex h-12 items-center rounded-xl border border-white/30 bg-white/[0.03] px-6 text-[15px] font-semibold text-white backdrop-blur transition-colors hover:bg-white/10"
-                >
-                  I have an account
-                </Link>
+        {/* What it is, or what's trending when the page opens on that. */}
+        {g.trendingFirst && g.trending ? (
+          <Trending id={g.id} t={g.trending} first />
+        ) : (
+          <section className="mx-auto max-w-7xl px-4 pb-14 pt-12 sm:px-6 sm:pt-16 lg:px-8">
+            <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] backdrop-blur">
+                  <g.icon size={14} className="text-[#b496ff]" /> {g.kicker}
+                </p>
+                <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.04] tracking-tight text-white sm:text-5xl xl:text-[3.6rem]">
+                  {g.title} <span className={`block pb-1 ${gradientText}`}>{g.accent}</span>
+                </h1>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">{g.body}</p>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link
+                    to="/signup"
+                    onClick={() => trackEvent('glimpse_cta', { page: g.id, cta: 'signup' })}
+                    className="press inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#7b6cf6] to-[#4f46e5] px-6 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.9)] transition-opacity hover:opacity-90"
+                  >
+                    Get started free <ArrowRight size={18} />
+                  </Link>
+                  <Link
+                    {...login}
+                    onClick={() => trackEvent('glimpse_cta', { page: g.id, cta: 'login' })}
+                    className="press inline-flex h-12 items-center rounded-xl border border-white/30 bg-white/[0.03] px-6 text-[15px] font-semibold text-white backdrop-blur transition-colors hover:bg-white/10"
+                  >
+                    I have an account
+                  </Link>
+                </div>
               </div>
+              <figure className="relative mx-auto w-full max-w-md lg:max-w-none">
+                <span aria-hidden className="absolute -inset-6 rounded-[2.5rem] bg-[#4c56f0]/25 blur-3xl" />
+                <div className="relative overflow-hidden rounded-[2rem] border border-[#8f9bff]/25 shadow-[0_30px_80px_-30px_rgba(76,86,240,0.9)]">
+                  <img src={`/home/${g.photo}.webp`} alt={g.photoAlt} className="h-80 w-full object-cover object-[50%_30%] sm:h-[26rem]" />
+                  <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/20 mix-blend-color" />
+                  <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#040a1e]/80 via-transparent to-transparent" />
+                </div>
+              </figure>
             </div>
-            <figure className="relative mx-auto w-full max-w-md lg:max-w-none">
-              <span aria-hidden className="absolute -inset-6 rounded-[2.5rem] bg-[#4c56f0]/25 blur-3xl" />
-              <div className="relative overflow-hidden rounded-[2rem] border border-[#8f9bff]/25 shadow-[0_30px_80px_-30px_rgba(76,86,240,0.9)]">
-                <img src={`/home/${g.photo}.webp`} alt={g.photoAlt} className="h-80 w-full object-cover object-[50%_30%] sm:h-[26rem]" />
-                <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/20 mix-blend-color" />
-                <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#040a1e]/80 via-transparent to-transparent" />
-              </div>
-            </figure>
-          </div>
-        </section>
+          </section>
+        )}
 
-        {g.trending && <Trending id={g.id} t={g.trending} />}
+        {g.trending && !g.trendingFirst && <Trending id={g.id} t={g.trending} />}
 
         {/* What you get. */}
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -206,9 +212,11 @@ export function Glimpse(g: GlimpseProps) {
 }
 
 /** "Trending now": one programme or role, large, with the partner ribbon. */
-function Trending({ id, t }: { id: GlimpseProps['id']; t: GlimpseTrending }) {
+function Trending({ id, t, first = false }: { id: GlimpseProps['id']; t: GlimpseTrending; first?: boolean }) {
+  // At the top of the page it is the page's heading.
+  const Heading = first ? 'h1' : 'h2'
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
+    <section className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${first ? 'pb-10 pt-12 sm:pt-16' : 'pb-6'}`}>
       <div className="relative overflow-hidden rounded-3xl border border-[#f0a35e]/30 bg-gradient-to-br from-[#3a1f5c]/70 via-[#14123f]/70 to-[#0a0f2e]/80 p-6 shadow-[0_24px_70px_-30px_rgba(240,140,80,0.6)] backdrop-blur-xl sm:p-8">
         <span aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#f08c50]/20 blur-3xl" />
         <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_15rem]">
@@ -221,10 +229,10 @@ function Trending({ id, t }: { id: GlimpseProps['id']; t: GlimpseTrending }) {
                 <BadgeCheck size={13} /> {t.partner}
               </span>
             </div>
-            <h2 className="mt-4 flex flex-wrap items-center gap-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            <Heading className="mt-4 flex flex-wrap items-center gap-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
               {t.title}
               <Flag code={t.country} className="h-6 w-9" />
-            </h2>
+            </Heading>
             <p className="mt-1.5 text-sm font-medium text-[#f7c79c]">{t.where}</p>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/75">{t.body}</p>
             <ul className="mt-5 flex flex-wrap gap-2">
