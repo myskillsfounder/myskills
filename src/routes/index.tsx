@@ -33,7 +33,7 @@ export const Route = createFileRoute('/')({
  * five parts as photo cards, the partners, the courses, the Global Readiness
  * Score and a last call to take the test. The photos are cut from his
  * picture (public/home/card-*, face-*; the ring holds Paul's own photo; sharper originals can
- * replace them). Learning goes to the courses; Mentorship, Careers, Study
+ * replace them). Learning goes to the courses; Mentorship, Internships, Study
  * Abroad and Wellness are inside the platform, so a visitor signs in first
  * and lands on them (lib/afterLogin.ts). Partners go to the partner sign-up.
  */
@@ -112,10 +112,11 @@ const PILLARS: Pillar[] = [
   },
   {
     id: 'career',
-    short: 'Career Guidance',
-    title: 'Career Guidance',
-    body: 'Career counselling, jobs and your first internship.',
-    cta: 'Find Opportunities',
+    // MySkills offers internships, not jobs (Paul, 27 Oct 2026).
+    short: 'Internships',
+    title: 'Internships',
+    body: 'Your first internship with a partner company: hands-on, real experience.',
+    cta: 'Find Internships',
     icon: Briefcase,
     photo: 'card-career',
     visitor: signIn('/community?category=internships'),
@@ -138,7 +139,7 @@ const PARTNERS: { icon: LucideIcon; title: string; body: string; photo: string }
   { icon: GraduationCap, title: 'Institutions', body: 'Colleges, training institutes, skill centres', photo: 'institutions' },
   { icon: Users, title: 'Mentors', body: 'Industry experts, professionals, coaches', photo: 'paul-mentorship' },
   { icon: Plane, title: 'Study Abroad Partners', body: 'Universities, consultants, overseas education providers', photo: 'card-study-abroad' },
-  { icon: Briefcase, title: 'Career Partners', body: 'Companies, internship providers, hiring partners', photo: 'card-career' },
+  { icon: Briefcase, title: 'Internship Partners', body: 'Companies and organisations offering internships', photo: 'card-career' },
 ]
 
 /** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
@@ -255,9 +256,9 @@ function StudentStage({ signedIn }: { signedIn: boolean }) {
       </Link>
       <Note icon={Briefcase} title="Real-world Opportunities" className="right-0 top-[33%] w-56">
         <p className="mt-1.5 text-xs leading-relaxed text-white/60">
-          Internships · Jobs
+          Internships · Projects
           <br />
-          Projects · Global Exposure
+          Global Exposure
         </p>
       </Note>
 
@@ -396,7 +397,7 @@ function HomePage() {
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
                 The AI era is changing every career. MySkills takes care of everything a student needs to keep up: AI-guided
-                learning, expert mentors, career guidance and real-world opportunities, in one place.
+                learning, expert mentors, internships and real-world experience, in one place.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'explore', place: 'hero' })} className={primaryCta}>
@@ -439,7 +440,7 @@ function HomePage() {
               </h2>
               <p className="mt-4 text-base leading-relaxed text-white/70">
                 Students now need more than marks: skills they can show, the AI tools of their field, people to guide them and a
-                first real job. MySkills brings all of it together, from your first aptitude test to your first internship.
+                first internship. MySkills brings all of it together, from your first aptitude test to real work experience.
               </p>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2">
