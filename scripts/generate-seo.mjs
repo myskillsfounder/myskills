@@ -107,9 +107,9 @@ const STATIC_PAGES = [
     path: '/mentors',
     changefreq: 'weekly',
     priority: '0.8',
-    title: 'Mentors — Learn from Industry Experts | MySkills',
+    title: 'Mentors — Learn from Top Industry Leaders | MySkills',
     description:
-      'Learn from people who have done it: industry mentors for 1:1 and group sessions, who guide you and grade the real project you build. Free to start.',
+      'Learn from top industry leaders in entrepreneurship, AI product development, growth hacking and leadership: live sessions, 1:1 time and a project they grade.',
   },
   {
     path: '/study-abroad',
