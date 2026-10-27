@@ -33,12 +33,12 @@ export const Route = createFileRoute('/')({
  * five parts as photo cards, the partners, the courses, the Global Readiness
  * Score and a last call to take the test. The photos are cut from his
  * picture (public/home/card-*, face-*; the ring holds Paul's own photo; sharper originals can
- * replace them). Learning goes to the courses; Mentorship, Internships, Study
- * Abroad and Wellness are inside the platform, so a visitor signs in first
- * and lands on them (lib/afterLogin.ts). Partners go to the partner sign-up.
+ * replace them). Learning goes to the courses; Mentorship, Internships and
+ * Study Abroad show a visitor a glimpse first (components/landing/Glimpse.tsx);
+ * Wellness signs them in and lands on it (lib/afterLogin.ts). Partners go to the partner sign-up.
  */
 
-type To = '/courses' | '/login' | '/community' | '/study-abroad' | '/community-portal/signup'
+type To = '/courses' | '/login' | '/community' | '/study-abroad' | '/mentors' | '/internships' | '/community-portal/signup'
 type Target = { to: To; search?: Record<string, unknown> }
 
 /** Liquid glass: see-through, frosted, a light top edge and a purple glow. */
@@ -96,7 +96,7 @@ const PILLARS: Pillar[] = [
     cta: 'Meet Mentors',
     icon: Users,
     photo: 'card-mentorship',
-    visitor: signIn('/community?category=mentors'),
+    visitor: { to: '/mentors' },
     student: { to: '/community', search: { category: 'mentors' } },
   },
   {
@@ -107,7 +107,7 @@ const PILLARS: Pillar[] = [
     cta: 'Explore Universities',
     icon: Plane,
     photo: 'card-study-abroad',
-    visitor: signIn('/study-abroad'),
+    visitor: { to: '/study-abroad' },
     student: { to: '/study-abroad' },
   },
   {
@@ -119,7 +119,7 @@ const PILLARS: Pillar[] = [
     cta: 'Find Internships',
     icon: Briefcase,
     photo: 'card-career',
-    visitor: signIn('/community?category=internships'),
+    visitor: { to: '/internships' },
     student: { to: '/community', search: { category: 'internships' } },
   },
   {

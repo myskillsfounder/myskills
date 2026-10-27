@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plane } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
+import { glimpseOrOnboarded } from '@/lib/guards'
+import { Glimpse } from '@/components/landing/Glimpse'
+import { STUDY_ABROAD_GLIMPSE } from '@/content/glimpses'
 import { errorMessage } from '@/lib/errors'
 import { fetchStudyProgrammes, type StudyProgramme } from '@/lib/studyAbroad'
 import { AppShell } from '@/components/app/AppShell'
@@ -9,11 +11,17 @@ import { PageHeader } from '@/components/app/PageHeader'
 import { FeaturedCard, Flag, ProgrammeCard } from '@/components/studyAbroad/Cards'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
-// Behind sign-in, so not in PAGE_SEO.
+// The programmes are behind sign-in; a visitor sees a glimpse of them first
+// (Paul, 27 Oct 2026).
 export const Route = createFileRoute('/study-abroad/')({
-  beforeLoad: requireOnboarded,
-  component: StudyAbroadPage,
+  beforeLoad: (ctx) => glimpseOrOnboarded(ctx),
+  component: StudyAbroadRoute,
 })
+
+function StudyAbroadRoute() {
+  const { guest } = Route.useRouteContext()
+  return guest ? <Glimpse {...STUDY_ABROAD_GLIMPSE} /> : <StudyAbroadPage />
+}
 
 /** Real numbers only: what is on the page, nothing rounded up. */
 function Stats({ rows }: { rows: StudyProgramme[] }) {

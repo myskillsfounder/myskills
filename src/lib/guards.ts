@@ -98,6 +98,28 @@ export async function guestOrOnboarded(): Promise<void> {
 }
 
 /**
+ * A part of the platform with a public glimpse (components/landing/
+ * Glimpse.tsx: /mentors, /internships): signed out, the glimpse; signed in,
+ * onboarding first, then straight to the real place.
+ */
+export async function glimpseOr(href: string): Promise<void> {
+  const session = await currentSession()
+  if (!session) return
+  if (session.user.user_metadata?.onboarded !== true) throw redirect({ to: notOnboardedPath(session) })
+  throw redirect({ href })
+}
+
+/**
+ * The same for a page that is itself the real place (/study-abroad): signed
+ * out, it shows the glimpse ({ guest: true }); signed in, it is like any page.
+ */
+export async function glimpseOrOnboarded(ctx?: GuardContext): Promise<{ guest: boolean }> {
+  if (!(await currentSession())) return { guest: true }
+  await requireOnboarded(ctx)
+  return { guest: false }
+}
+
+/**
  * The phone's front door (/welcome): the welcome for someone signed out, the
  * three questions for a new account. A computer has no use for it, and an
  * account that has already answered goes home.

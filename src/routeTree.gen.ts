@@ -23,6 +23,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MentorsRouteImport } from './routes/mentors'
 import { Route as MentoringRouteImport } from './routes/mentoring'
 import { Route as MentorPortalRouteImport } from './routes/mentor-portal'
 import { Route as MentorRouteImport } from './routes/mentor'
@@ -178,6 +179,11 @@ const PartnershipsRoute = PartnershipsRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorsRoute = MentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentoringRoute = MentoringRouteImport.update({
@@ -655,6 +661,7 @@ export interface FileRoutesByFullPath {
   '/mentor': typeof MentorRoute
   '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
+  '/mentors': typeof MentorsRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -756,6 +763,7 @@ export interface FileRoutesByTo {
   '/mentor': typeof MentorRoute
   '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
+  '/mentors': typeof MentorsRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -857,6 +865,7 @@ export interface FileRoutesById {
   '/mentor': typeof MentorRoute
   '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
+  '/mentors': typeof MentorsRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -961,6 +970,7 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/mentor-portal'
     | '/mentoring'
+    | '/mentors'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -1062,6 +1072,7 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/mentor-portal'
     | '/mentoring'
+    | '/mentors'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -1162,6 +1173,7 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/mentor-portal'
     | '/mentoring'
+    | '/mentors'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -1265,6 +1277,7 @@ export interface RootRouteChildren {
   MentorRoute: typeof MentorRoute
   MentorPortalRoute: typeof MentorPortalRouteWithChildren
   MentoringRoute: typeof MentoringRoute
+  MentorsRoute: typeof MentorsRoute
   OnboardingRoute: typeof OnboardingRoute
   PartnershipsRoute: typeof PartnershipsRouteWithChildren
   PracticeRoute: typeof PracticeRoute
@@ -1394,6 +1407,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentors': {
+      id: '/mentors'
+      path: '/mentors'
+      fullPath: '/mentors'
+      preLoaderRoute: typeof MentorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentoring': {
@@ -2170,6 +2190,7 @@ const rootRouteChildren: RootRouteChildren = {
   MentorRoute: MentorRoute,
   MentorPortalRoute: MentorPortalRouteWithChildren,
   MentoringRoute: MentoringRoute,
+  MentorsRoute: MentorsRoute,
   OnboardingRoute: OnboardingRoute,
   PartnershipsRoute: PartnershipsRouteWithChildren,
   PracticeRoute: PracticeRoute,
