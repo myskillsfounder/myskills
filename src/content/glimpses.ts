@@ -88,6 +88,8 @@ export const STUDY_ABROAD_GLIMPSE: GlimpseProps = {
     art: 'nurse',
     next: '/study-abroad/nursing-albania',
   },
+  // The page opens on what's trending, with no hero (Paul, 27 Oct 2026).
+  trendingFirst: true,
   next: '/study-abroad',
 }
 
