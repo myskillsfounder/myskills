@@ -17,7 +17,7 @@ const TONE: Record<
 > = {
   // Deep violet: focused, personal, expert.
   mentors: {
-    box: 'bg-gradient-to-br from-[#2a1d6e] via-[#3b2a9a] to-[#5b3fd6] text-white',
+    box: 'theme-light bg-gradient-to-br from-[#2a1d6e] via-[#3b2a9a] to-[#5b3fd6] text-white',
     eyebrow: 'text-violet-200',
     title: 'text-white',
     accent: 'bg-gradient-to-r from-violet-200 to-fuchsia-200 bg-clip-text text-transparent',
@@ -29,7 +29,7 @@ const TONE: Record<
   },
   // Emerald and slate: professional, corporate, the first real job-like step.
   internships: {
-    box: 'bg-gradient-to-br from-[#0b2a2a] via-[#0f3d3a] to-[#0f766e] text-white',
+    box: 'theme-light bg-gradient-to-br from-[#0b2a2a] via-[#0f3d3a] to-[#0f766e] text-white',
     eyebrow: 'text-emerald-200',
     title: 'text-white',
     accent: 'bg-gradient-to-r from-emerald-200 to-teal-100 bg-clip-text text-transparent',
@@ -41,7 +41,7 @@ const TONE: Record<
   },
   // Bright sky: daylight, classrooms, people learning together.
   institutions: {
-    box: 'bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white',
+    box: 'theme-light bg-gradient-to-br from-sky-500 via-sky-600 to-blue-700 text-white',
     eyebrow: 'text-sky-100',
     title: 'text-white',
     accent: 'text-amber-200',
