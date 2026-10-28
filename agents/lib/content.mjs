@@ -367,7 +367,7 @@ export function answerPattern(c) {
 }
 
 // A small seeded generator, so the same programme always tidies the same way.
-const seededRandom = (text) => {
+export const seededRandom = (text) => {
   let h = 2166136261
   for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619)
   return () => {
