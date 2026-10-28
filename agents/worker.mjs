@@ -1,6 +1,8 @@
 // The course agents' worker. Runs on the MySkills server (see README.md):
 // every 30 seconds it checks in, queues any monthly checks that are due, and
-// takes the oldest job the team has asked for. One job at a time.
+// takes the oldest job the team has asked for. One job at a time. Beside
+// that, every 10 seconds, it writes any coach's notes waiting for a student
+// (lib/coach.mjs): small and quick, so they never wait behind a long job.
 //
 //   node --env-file=.env worker.mjs           run (as the systemd service does)
 //   node --env-file=.env worker.mjs --check   check the settings and keys, then stop
@@ -8,8 +10,9 @@
 import { createClient } from '@supabase/supabase-js'
 import { DEFAULT_MODEL, Usage, makeClaude } from './lib/claude.mjs'
 import { Cancelled, runJob } from './lib/pipeline.mjs'
+import { writeNote } from './lib/coach.mjs'
 
-const VERSION = '1.0.0'
+const VERSION = '1.1.0'
 const env = process.env
 const MODEL = env.AGENT_MODEL || DEFAULT_MODEL
 const JOB_BUDGET = Number(env.AGENT_JOB_BUDGET_USD || 10)
@@ -109,6 +112,48 @@ async function work() {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
+const NOTE_POLL_MS = 10_000
+// A note costs a fraction of a cent; stop writing them only when the month's
+// budget is all but gone.
+const NOTE_MINIMUM = 0.05
+
+/** Writes the oldest waiting coach's note, if any. Resolves to whether there was one. */
+async function noteWork() {
+  const claim = await rpc('coach_claim_note')
+  if (!claim) return false
+  const left = MONTH_BUDGET - Number(claim.month_cost_usd ?? 0)
+  if (left < NOTE_MINIMUM) {
+    await rpc('coach_finish_note', { p_id: claim.id, p_ok: false, p_note: null, p_usage: null, p_error: `The month's $${MONTH_BUDGET} agent budget is used up.` })
+    return true
+  }
+  try {
+    const { note, usage } = await writeNote(env.ANTHROPIC_API_KEY, claim)
+    await rpc('coach_finish_note', { p_id: claim.id, p_ok: true, p_note: note, p_usage: usage, p_error: null })
+    log(`Coach's note ${claim.id} (${claim.test}): $${usage.cost_usd}`)
+  } catch (e) {
+    log(`Coach's note ${claim.id} failed: ${e.message ?? e}`)
+    await rpc('coach_finish_note', { p_id: claim.id, p_ok: false, p_note: null, p_usage: null, p_error: `${e.message ?? e}`.slice(0, 1000) })
+  }
+  return true
+}
+
+/** The notes' own loop, beside the jobs. Before the SQL is run there is no
+ *  coach_claim_note: that is said once, and checked again every 10 minutes. */
+async function notesLoop() {
+  let quietUntil = 0
+  while (!stopping) {
+    if (Date.now() >= quietUntil) {
+      try {
+        while (!stopping && (await noteWork())) {}
+      } catch (e) {
+        log(`Coach's notes: ${e.message ?? e}`)
+        quietUntil = Date.now() + 10 * 60_000
+      }
+    }
+    await sleep(NOTE_POLL_MS)
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2)
   if (args.includes('--check')) {
@@ -124,6 +169,7 @@ async function main() {
     return
   }
   log(`Course agents worker ${VERSION} started (model ${MODEL}).`)
+  void notesLoop()
   let lastWeekly = 0
   while (!stopping) {
     try {

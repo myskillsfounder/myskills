@@ -17,7 +17,7 @@ export function DarkShell({
   description,
   children,
 }: {
-  back: { to: LinkProps['to']; label: string }
+  back: { to: LinkProps['to']; params?: LinkProps['params']; search?: LinkProps['search']; label: string }
   eyebrow: string
   title: ReactNode
   description: ReactNode
@@ -33,6 +33,8 @@ export function DarkShell({
         <div className="flex items-center justify-between">
           <Link
             to={back.to}
+            params={back.params}
+            search={back.search}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white"
           >
             <ArrowLeft size={16} /> {back.label}

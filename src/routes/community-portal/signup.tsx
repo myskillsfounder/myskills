@@ -180,7 +180,6 @@ function PortalSignupPage() {
       <aside className="bg-ink-900 px-6 py-6 text-white sm:px-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-between lg:px-14 lg:py-12">
         <div>
           <Link to="/community" search={{ partners: true }} className="inline-flex items-center gap-2.5">
-            <img src="/logo-mark.png" alt="" className="h-9 w-9" />
             <span className="font-display text-lg font-semibold">MySkills Community</span>
           </Link>
 

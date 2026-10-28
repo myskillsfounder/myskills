@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { ArrowLeft, ArrowRight, Briefcase, Building2, Check, GraduationCap, HeartHandshake, LayoutGrid, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BarChart3, Briefcase, Building2, Check, Globe2, GraduationCap, HeartHandshake, LayoutGrid, Megaphone, Rocket, Sparkles } from 'lucide-react'
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { takeAfterOnboarding } from '@/lib/afterOnboarding'
+import type { TestRoute } from '@/lib/pendingAptitude'
+import type { LeadProgramme } from '@/lib/programmes'
+import { ProgrammeLeadForm } from '@/components/programmes/ProgrammeLeadForm'
 import { requirePhoneWelcome } from '@/lib/guards'
 import { GOAL_ICONS } from '@/lib/goalIcons'
 import { careerStageStep, goalsFor } from '@/lib/onboardingContent'
@@ -22,7 +25,10 @@ import type { Category } from '@/components/community/Marketplace'
  * they want, and what they came to find. Then the marketplace, already open
  * on that.
  *
- * Signed out: the welcome. Signed in and new: the three questions. Anyone
+ * Signed out: "I want to learn…", four programmes. The open ones (Digital
+ * Marketing, Global Leadership) go to their aptitude test through sign-up;
+ * the coming ones (Entrepreneurship, Data Analytics) take a lead.
+ * Signed in and new: the three questions. Anyone
  * else is sent on by the guard.
  */
 export const Route = createFileRoute('/welcome')({
@@ -50,54 +56,124 @@ function Frame({ children }: { children: React.ReactNode }) {
 
 const Brand = () => (
   <span className="flex items-center gap-2.5">
-    <img src="/logo-mark.png" alt="" className="h-8 w-8" />
     <span className="font-display text-lg font-semibold tracking-tight text-white">MySkills</span>
   </span>
 )
 
 /* --------------------------------------------------------------- signed out */
 
+type Learn = {
+  id: string
+  label: string
+  body: string
+  icon: typeof GraduationCap
+  tile: string
+} & ({ open: true; test: TestRoute } | { open: false; lead: LeadProgramme })
+
+/**
+ * What a visitor can come to learn. The open programmes start with their free
+ * aptitude test (Entrepreneurship's is the course engine's); the one that isn't
+ * open yet takes a name and number so the team can call when it is.
+ */
+const LEARN: Learn[] = [
+  { id: 'dm', label: 'Digital Marketing', body: 'Ads, content, SEO and data, with practice and a mentor.', icon: Megaphone, tile: 'from-brand-400 to-brand-700', open: true, test: '/aptitude-assessment' },
+  { id: 'gl', label: 'Global Leadership', body: 'Goals, communication and leading people: the Global Readiness programme.', icon: Globe2, tile: 'from-amber-400 to-orange-500', open: true, test: '/career-readiness-assessment' },
+  { id: 'en', label: 'Entrepreneurship', body: 'Turn an idea into a business people pay for, with AI at every step.', icon: Rocket, tile: 'from-rose-400 to-pink-600', open: true, test: '/programmes/ai-powered-entrepreneurship/aptitude' },
+  { id: 'da', label: 'Data Analytics', body: 'Spreadsheets, SQL and dashboards that answer real questions.', icon: BarChart3, tile: 'from-emerald-400 to-teal-600', open: true, test: '/programmes/data-analytics/aptitude' },
+]
+
 function Intro() {
+  const router = useRouter()
+  const [opened, setOpened] = useState<string | null>(null)
+
+  // An open programme starts with its aptitude test, before any account: the
+  // result is what signing up unlocks (lib/pendingAptitude.ts).
+  function start(l: Learn) {
+    if (!l.open) {
+      setOpened((cur) => (cur === l.id ? null : l.id))
+      return
+    }
+    trackEvent('welcome_programme', { programme: l.id })
+    router.history.push(l.test)
+  }
+
   return (
     <Frame>
-      <header>
+      <header className="flex items-center justify-between">
         <Brand />
+        <Link to="/login" className="text-sm font-semibold text-white/80">
+          Sign in
+        </Link>
       </header>
 
+      {/* What MySkills is, what this page gives them, and what happens after
+          the tap, before they choose. */}
       <main className="flex flex-1 flex-col justify-center py-6">
-        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
-          <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          MySkills Community
+        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-500/40 to-brand-400/20 px-3 py-1 text-xs font-semibold text-brand-100 ring-1 ring-brand-300/30">
+          <Sparkles size={13} />
+          Powered by AI
         </span>
-        <h1 className="mt-3.5 font-display text-[1.75rem] font-semibold leading-[1.15] tracking-tight text-white">
-          Find the right person for what you need next
+        <h1 className="mt-3 font-display text-[1.875rem] font-semibold leading-[1.12] tracking-tight text-white">
+          Know your aptitude before you learn
         </h1>
         <p className="mt-2.5 text-[15px] leading-relaxed text-white/70">
-          Mentors, counsellors, internships and institutes, all verified, in one place.
+          Take a short aptitude test first. Your AI coach reads your strengths and shows you where to start. Free, and
+          no account needed yet.
         </p>
 
-        <ul className="mt-5 space-y-2.5">
-          {FINDS.map((f) => (
-            <li key={f.id} className="card-glass-dark flex items-center gap-3.5 p-3">
-              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${f.tile}`}>
-                <f.icon size={20} />
+        <ol className="mt-5 grid grid-cols-3 gap-2" aria-label="How it works">
+          {['Pick a programme', 'Take the aptitude test', 'Your AI coach’s read'].map((s, i) => (
+            <li key={s} className="flex flex-col items-center gap-1.5 rounded-xl bg-white/[0.06] px-2 py-2.5 text-center">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-500/40 font-display text-xs font-semibold text-white">
+                {i + 1}
               </span>
-              <span className="min-w-0">
-                <span className="block text-[15px] font-semibold text-white">{f.label}</span>
-                <span className="block text-sm leading-snug text-white/60">{f.body}</span>
-              </span>
+              <span className="text-xs font-medium leading-tight text-white/80">{s}</span>
+            </li>
+          ))}
+        </ol>
+
+        <h2 className="mt-6 font-display text-lg font-semibold text-white">What do you want to learn?</h2>
+        <ul className="mt-3 space-y-2.5">
+          {LEARN.map((l) => (
+            <li key={l.id} className="card-glass-dark p-3">
+              <button
+                type="button"
+                onClick={() => start(l)}
+                aria-expanded={l.open ? undefined : opened === l.id}
+                className="flex w-full items-center gap-3.5 text-left"
+              >
+                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${l.tile}`}>
+                  <l.icon size={20} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span className="text-[15px] font-semibold text-white">{l.label}</span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${l.open ? 'bg-emerald-400/20 text-emerald-200' : 'bg-white/10 text-white/60'}`}
+                    >
+                      {l.open ? 'Open' : 'Soon'}
+                    </span>
+                  </span>
+                  <span className="block text-sm leading-snug text-white/60">{l.body}</span>
+                  {l.open && <span className="mt-1 block text-xs font-semibold text-brand-200">Take the aptitude test →</span>}
+                </span>
+              </button>
+              {!l.open && opened === l.id && <ProgrammeLeadForm programme={l.lead} title={l.label} start="mobile" />}
+            </li>
+          ))}
+        </ul>
+
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-white/65">
+          {['Verified mentors', 'Internships', 'Certificates you can share'].map((t) => (
+            <li key={t} className="inline-flex items-center gap-1.5">
+              <Check size={14} className="text-emerald-300" />
+              {t}
             </li>
           ))}
         </ul>
       </main>
 
       <footer className="space-y-3">
-        <Link
-          to="/signup"
-          className="press flex h-13 min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-full bg-white text-base font-semibold text-ink-900 shadow-e2"
-        >
-          Get started <ArrowRight size={18} />
-        </Link>
         <Link
           to="/login"
           className="press flex min-h-[3.25rem] w-full items-center justify-center rounded-full border border-white/25 text-base font-semibold text-white"

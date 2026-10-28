@@ -38,6 +38,8 @@ export interface AptitudeQuestion {
   id: string
   skill: AptitudeKey
   statement: string
+  /** Worded negatively: scored 5 - answer. */
+  reverse?: boolean
 }
 
 export interface AptitudeResult {
@@ -160,7 +162,7 @@ function fail(error: { message?: string }): never {
 export async function fetchAptitudeQuestions(): Promise<AptitudeQuestion[]> {
   const { data, error } = await supabase
     .from('dm_aptitude_questions')
-    .select('id, skill, statement')
+    .select('id, skill, statement, reverse')
     .order('sort_order', { ascending: true })
   if (error) fail(error)
   return (data ?? []) as AptitudeQuestion[]

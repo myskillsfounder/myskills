@@ -20,8 +20,9 @@ function questionProblems(q, where) {
   return v
 }
 
-/** What stops Publish, worded as the editor words it. */
-export function publishProblems(p) {
+/** What stops Publish, worded as the editor words it. `builtIn`: Global
+ *  Leadership or Digital Marketing, which the Foundation rule skips. */
+export function publishProblems(p, builtIn = false) {
   const v = []
   if (blank(p.overview?.summary)) v.push('Overview: write a summary')
   if (!(p.overview?.outcomes ?? []).length) v.push('Overview: add at least one outcome')
@@ -57,6 +58,18 @@ export function publishProblems(p) {
   for (const q of final) {
     v.push(...questionProblems(q, 'Final assessment'))
     ids.push(q.id ?? '')
+  }
+  // The Foundation assessment (programme_foundation_problems in
+  // docs/supabase-foundation-certificates.sql): every question's skill must
+  // exist, and each skill a foundation module trains (every module's, when none
+  // is marked foundation) needs 2+ final questions tagged with it.
+  if (final.some((q) => !blank(q.skill) && !skills.includes(q.skill))) v.push('Foundation assessment: a question names a skill that does not exist')
+  if (!builtIn) {
+    const mods = p.modules ?? []
+    const base = mods.some((m) => m.level === 'foundation') ? mods.filter((m) => m.level === 'foundation') : mods
+    for (const s of new Set(base.map((m) => m.skill).filter((x) => !blank(x)))) {
+      if (final.filter((q) => q.skill === s).length < 2) v.push(`Foundation assessment: skill "${s}" needs at least 2 questions`)
+    }
   }
   if (new Set(ids).size !== ids.length) v.push('Two modules or questions share an id')
   if (blank(p.project?.brief)) v.push('Project: write the brief')
@@ -105,10 +118,10 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
   const out = []
   const where = targetsOf(c)
 
-  for (const p of publishProblems(c)) {
+  for (const p of publishProblems(c, locked)) {
     const m = /^Module "(.+?)"/.exec(p)
     const mod = m && (c.modules ?? []).find((x) => (x.title || x.id) === m[1])
-    const target = mod ? `module:${mod.id}` : p.startsWith('Final') ? 'final' : p.startsWith('Aptitude') ? 'aptitude' : p.startsWith('Skills') ? 'skills' : p.startsWith('Project') ? 'project' : p.startsWith('Overview') ? 'overview' : 'programme'
+    const target = mod ? `module:${mod.id}` : p.startsWith('Final') || p.startsWith('Foundation') ? 'final' : p.startsWith('Aptitude') ? 'aptitude' : p.startsWith('Skills') ? 'skills' : p.startsWith('Project') ? 'project' : p.startsWith('Overview') ? 'overview' : 'programme'
     out.push(finding(target, 'must_fix', `Publish check: ${p}.`, 'Complete or correct it.'))
   }
   if (locked && original && !sameStructure(c, original)) {
@@ -218,7 +231,7 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
 }
 
 /** The numbers for the report. */
-export function stats(c) {
+export function stats(c, { locked = false } = {}) {
   const qs = allQuestions(c).filter((q) => q.correct_index >= 0)
   let longest = 0
   for (const q of qs) {
@@ -242,6 +255,6 @@ export function stats(c) {
     difficulty,
     moduleHours: Math.round((moduleMinutes(c) / 60) * 10) / 10,
     hours: c.overview?.hours ?? 0,
-    publishProblems: publishProblems(c).length,
+    publishProblems: publishProblems(c, locked).length,
   }
 }

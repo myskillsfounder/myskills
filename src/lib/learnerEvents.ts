@@ -47,7 +47,7 @@ export const EVENT_KIND: Record<LearnerEventKind, string> = {
   certificate: 'Certificate',
   goal: 'Goals',
   programme_quiz: 'Programme quiz',
-  programme_final: 'Programme final',
+  programme_final: 'Foundation assessment',
 }
 
 /** Null until the SQL is run, so the page can say so instead of failing. */

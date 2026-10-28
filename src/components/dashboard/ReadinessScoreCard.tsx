@@ -78,7 +78,14 @@ export function Part({
           <span className="font-semibold text-ink-900">{Math.round(c.points)}</span> / {c.max}
         </span>
       </div>
-      {c.held !== undefined && c.held > 0.5 && (
+      {/* Method v8: several professional programmes are averaged. */}
+      {c.programmes && c.programmes.length > 1 && (
+        <p className="mt-0.5 text-xs text-ink-500">
+          Average of {c.programmes.length} programmes:{' '}
+          {c.programmes.map((p) => `${p.title} ${Math.round(p.points)}`).join(' · ')}
+        </p>
+      )}
+      {c.held !== undefined && c.held > 0.5 && !(c.programmes && c.programmes.length > 1) && (
         <p className="mt-0.5 text-xs text-ink-500">
           <span className="font-semibold text-amber-700">{Math.round(c.held)} more points</span> are earned and
           waiting for your project to pass.

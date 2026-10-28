@@ -1,73 +1,120 @@
-# AI powered Data Analytics: course team report
+# AI-Powered Data Analytics: course-team report
 
-*`/course-team improve`, 22 October 2026. Three reviews, three revisions. Paul's focus: wrong options should be real, reasonable-sounding mistakes.*
+**Verdict: ready to publish** (27 October 2026). `check.mjs` passes with 0 must-fix and 0 should-fix. Review 3
+found no must-fix, and every module scores at least 4 on all eight Module Standard dimensions.
 
-## Verdict
-**Ready, after you read it through.** Review 5 (23 October) found no must-fix. `check.mjs` passes with 0 must-fix, 0 should-fix and links checked, and **every module scores at least 4 on all eight Module Standard dimensions** (lowest 4, mean 4.2). The review's last five should-fix items were then fixed and re-checked.
+File to load: `docs/programmes/Data analytics/ai-powered-data-analytics.json`. The web address in the Course
+engine is `data-analytics`.
 
-## Rounds 4 and 5 (Module Standard)
-- **Review 4** scored the modules for the first time and found 19 dimensions below 4, mostly practice (tasks only described or planned) and time (stated minutes the content didn't fill).
-- **The Course Architect** made the tasks hands-on, with 6–12 rows of data inside each task prompt, a free tool (Google Sheets, a browser SQL playground, Colab, Looker Studio) and a worked expected answer in the hint. It set honest minutes per task, split three cards (M5, M6, M7) so each shows code with its output, added phone and browser routes (M2, M7), fixed M1's outcome and added a third M7 task.
-- **The Assessment Architect** rechecked every question against the new cards and changed nine whose scenarios copied a card's own worked example: m05-q3, m07-q1 to q4, m08-q2, m08-q3, m09-q3 and m10-q3. Keys and ids are unchanged.
-- **Review 5** scored every module, solved the nine changed questions blind and ruled on the clue-test leads. Its five should-fix items, three task bugs (a HAVING query that returned nothing on its six-row table, a hint that blamed the wrong filter, `.dt.month` and `sort_values` not taught) and two retitles, are fixed and the queries re-run.
+## Before learners get it (for Paul)
 
-## What changed
+1. **Deploy the practice data.** The tasks use a free fictional dataset, "Masala Mart":
+   - The files are in `public/practice-data/masala-mart/`: `orders.csv`, `orders_raw.csv`, `customers.csv`,
+     `products.csv` and `index.html`.
+   - `scripts/make-masala-mart.mjs` generates them with a fixed seed, so every number in the task hints stays true.
+   - The tasks link to `https://myskills.org.in/practice-data/masala-mart/…`. These files go out with the website PR.
+2. **One nginx change for the SQL tasks.** The DuckDB browser shell can only read the files if they are served as
+   `text/csv` with `Access-Control-Allow-Origin: *`. The website PR gives the exact lines.
+   - Google Sheets (`IMPORTDATA`) and Colab (`pd.read_csv`) don't need this.
+3. **Publish it:** Admin → Course engine → Data Analytics → Check & publish → **Replace the draft…** → paste the
+   whole file → **Use this file** → **Save draft** → read it → **Publish v1**.
+
+## What changed, round by round
+
 | Round | Teaching (Course Architect) | Tests (Assessment Architect) |
 | --- | --- | --- |
-| 1 | All 30 Learn cards rewritten to 115–157 words, each with the real beginner mistakes for its topic. Filled the gaps that questions relied on: correlation vs cause, `$F$1`, `IS NULL`/`COUNT(*)`, `LAG` and filtering `ROW_NUMBER` in a CTE, `&`/`\|` with brackets, a bar axis starting at zero, NULL arithmetic. Free routes added for Copilot in Power BI and Python in Excel. A statistics outcome added. | 54 of 55 questions rewritten so every wrong option is a named beginner mistake. Five final questions replaced. The final got its feedback lines and was made harder than the quizzes. Difficulty relabelled. Self-check wording and rubric fixed. |
-| 2 | Card lines on when the mean is right, a finished test with no clear difference, and typical data depending on the decision. "Profit, not revenue". M8's chart numbers fixed. | 20 judgement questions rebuilt so **the scenario decides**: each wrong option is what would be right in a different situation, and in 10 the facts point away from the textbook answer. m10-q4 put in profit terms. Titles and scenarios added to m03-q2, f06, f07 and f12. |
-| 3 | M1: "if the request already names the decision, measure and period, start". | m01-q1, f05 and m10-q1: the scenario now rules out the sensible extra step (ask, re-survey, pilot again). m09-q4's key no longer simply adds a step to a wrong option. The blueprint was rebuilt. |
+| 1 | <ul><li>Learn cards rewritten from 31–77 words to 112–150, each with a worked example and a common mistake.</li><li>Every concept the questions rely on is now taught (correlation vs cause, `$F$1`, SUMIFS, NULLs and `COUNT(*)`, the BETWEEN trap, LAG/LEAD, the LEFT JOIN WHERE trap, pandas `&`, `format=`, the truncated axis).</li><li>Every task now uses the Masala Mart data with free tools.</li><li>Paid and Windows-only tools are flagged, each with a free route.</li><li>Times fixed (m07 120 → 90 min).</li><li>Statistics outcome added.</li><li>The project gains an AI log and says about 20 hours.</li></ul> | <ul><li>All 15 final questions tagged by skill; each foundation skill has 2.</li><li>The INNER JOIN recall question is replaced by a spreadsheets question.</li><li>Every final question now has a scenario, why_wrong and learning_outcome.</li><li>Wrong explanations and a two-answer question fixed.</li><li>Quiz scenarios no longer repeat tasks or card examples.</li><li>Aptitude statements now describe behaviour.</li><li>Rubric rewritten.</li></ul> |
+| 2 | <ul><li>m07 cards now show a left merge, `drop_duplicates` vs `subset=`, and turning "₹1,250" into a number.</li><li>m05 card 3 shows `AVG(...) OVER (PARTITION BY ...)`.</li><li>The m03 cleaning task works however Sheets reads "₹150".</li></ul> | <ul><li>f08: why_wrong for LEAD corrected (it lists the months before a rise).</li><li>m05-q4: the fake option replaced with a real mistake.</li><li>m10-q4: "chief financial officer (CFO)" written in full, set in Pune.</li></ul> |
+| 3 | <ul><li>m07 card 2's merge line now runs on the card's own data.</li><li>m01 t2 is easier to read on a phone.</li><li>Module ids replaced by module number and title.</li></ul> | <ul><li>m05-q4: the DISTINCT why_wrong now describes DuckDB (it stops with an error), not SQLite.</li></ul> |
 
-## The clue tests (a Haiku model, from packets with no answers)
-| Run | Options only | Learn cards only | Full question, no key |
-| --- | --- | --- | --- |
-| Start | 50 / 55 | 40 / 40, 6 untaught | 55 / 55 |
-| After round 1 | 46 / 55 | 39 / 40 | 55 / 55 |
-| After round 2 | 39 / 55 (the 20 rebuilt: 11) | 38 / 40 | 53 / 55 |
-| After rounds 4–5 | 39 / 55 | **40 / 40** | 52 / 55 (m01-q1, m08-q4, m10-q3: keys upheld by review 5) |
+Every SQL and pandas answer, and every wrong option, was run against the real files in DuckDB 2.0 and pandas 3.1.
 
-- **Options only**: the prober knows data analytics, so this measures whether the scenario decides the answer, not whether a student could guess it. 22 code and fact questions rightly test knowing a construct and stay answerable this way. Of the 20 rebuilt judgement questions, it got 11 right, close to a guess for a prober who knows the subject.
-- **m01-q1** is the one disagreement left. The founder now names the decision, the measure and the period, and the right answer is to start the analysis. The prober still chose "ask the founder first", the textbook habit the question is designed to catch. Review 3 and I both judge the key correct, but **please read this question yourself.**
-- The other "also defensible" leads are the ones review 3 dismissed. For each, it named the fact in the scenario that rules the option out.
+## Numbers (`check.mjs`)
 
-## Scorecard (problems per 10 questions, automatic checks plus review)
-| Stage | Must-fix | Should-fix | Right answer longest |
-| --- | --- | --- | --- |
-| Start (review 1) | 3.3 | 3.6 | 18% |
-| Round 2 | 1.6 | 1.5 | 16% |
-| Round 3 | 0.5 | 0.5 | 9% |
-| Final | 0 | 0 | 11% (6 of 55) |
+| Item | Count |
+| --- | --- |
+| Skills | 9 |
+| Aptitude statements | 27 |
+| Modules | 10 |
+| Tasks | 20 |
+| Questions | 55, of which 15 are in the final |
+
+- **Hours:** 13.5 of modules, 34 in all (13.5 modules + 20 project + 0.5 final).
+- **Right answer is the longest option:** 8 of 55 (14.5%, chance is about 25%).
+- **Answer positions:** 14 / 14 / 14 / 13.
+- **Difficulty:** Beginner 15 · Intermediate 31 · Advanced 8 · Expert 1.
+
+## Scorecard: first row against last
+
+| Measure | Review 1 | Review 3 |
+| --- | --- | --- |
+| Review must-fix | 14 | 0 |
+| Must-fix per 10 questions | 3.3 | 0 |
+| Should-fix per 10 questions | 11.1 | 0.9 |
+| Right answer is the longest | 18.2% | 14.5% |
+| Questions with why_wrong | 74.5% | 100% |
+| Mean module score | 3.5 | 4.6 |
+| Lowest module score | 2 | 4 |
+| Module dimensions below 4 | 37 | 0 |
+
+## The Module Standard (review 3)
+
+| Module | Outcome | Explanation | Practice | Feedback | Relevance | Time | Progression | Inclusion |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 Thinking like an analyst | 5 | 5 | 4 | 4 | 5 | 5 | 5 | 4 |
+| 2 Spreadsheets | 5 | 4 | 5 | 5 | 5 | 4 | 5 | 4 |
+| 3 Cleaning messy data | 5 | 5 | 5 | 4 | 5 | 4 | 5 | 4 |
+| 4 SQL foundations | 5 | 4 | 5 | 4 | 5 | 4 | 5 | 4 |
+| 5 SQL joins and windows | 4 | 4 | 5 | 4 | 5 | 4 | 5 | 4 |
+| 6 Statistics | 5 | 4 | 4 | 4 | 4 | 4 | 5 | 4 |
+| 7 Python and pandas | 5 | 4 | 5 | 5 | 5 | 4 | 5 | 4 |
+| 8 Dashboards | 5 | 5 | 5 | 4 | 5 | 4 | 5 | 4 |
+| 9 AI as your analysis partner | 5 | 5 | 5 | 4 | 4 | 4 | 5 | 4 |
+| 10 From numbers to decisions | 5 | 5 | 5 | 4 | 4 | 5 | 5 | 4 |
+
+No score is below 4. These are the 4s worth improving in a later version:
+- **Time:** several modules give 90 minutes where review 3 estimates about 57.
+- **Inclusion:** some tools are easier on a laptop than a phone.
+- **Feedback:** a few why_wrong lines are brief.
+- **Relevance:** a few quiz questions have no Indian business setting.
 
 ## Still needs a person
-- **Read it through**, especially m01-q1, m10-q1 and f05 (changed last), and the 10 questions whose answers point away from the textbook (listed in the blueprint).
-- **Your decisions** (blueprint, "For the team"):
-  - shuffle the options for each student;
-  - a pass rule and weights for the project rubric;
-  - an objective starting test;
-  - whether the final's 30-minute timer should be enforced.
-- **Sources to check:**
-  - Copilot in Power BI licensing: the card says only that it "needs a paid capacity an employer provides";
-  - the DPDP Rules' commencement dates, against the Gazette: no question depends on them;
-  - Indian hiring figures, which weren't confirmed from a primary source and aren't used in any question.
 
-## Numbers from `check.mjs`
-Ready to publish, 0 must-fix, 0 should-fix. 9 skills, 27 self-check statements, 10 modules, 20 tasks, 55 questions (15 in the final). Right-answer positions 14/14/14/13. Difficulty: 10 Beginner, 37 Intermediate, 7 Advanced, 1 Expert. Modules take 14.3 hours; the overview says 35.
+- **The deploy and nginx change above.**
+- **Decisions for Paul,** from the blueprint's "For the team" section:
+  - shuffling option order per student;
+  - enforcing the final's 30-minute timer on the server;
+  - a project pass rule and rubric weights;
+  - an optional objective diagnostic.
+- **Python, AI-assisted analysis and storytelling** have one final question each. That meets the rule, but those
+  skills' Foundation placement rests on a single question.
+- **DPDP:** most duties under the DPDP Rules, 2025 apply from about May 2027, and sources differ on the exact day.
+  Module 9 deliberately gives no day. Check MeitY before the next review.
 
-## The playbook
-Rules 9 to 18 were added from the three reviews:
-- read the options alone before saving a question;
-- let the scenario decide;
-- rule out a sensible extra step;
-- never name an option by its letter (checked by `check.mjs`);
-- every question is taught by its own module's cards;
-- judge "paid for itself" in profit, not revenue;
-- every question has a title and a scenario;
-- tool modules need a hands-on task on data given in the task;
-- a card shows code with its output, and at most two new ideas;
-- run a task as written on its small table before writing the hint.
+## Sources worth checking
 
-## Files
-These are in `docs/programmes/Data analytics/` in the worktree `.claude/worktrees/assessment-probes`:
-- `ai-powered-data-analytics.json`: load this in the admin;
-- `.assessment.md` and `.assessment-tables.md`: the blueprint;
-- `.research.md`, `.review-1/2/3.json`, `.probes.json`, `.scorecard.json`: working files.
+These are in `ai-powered-data-analytics.research.md`:
+- **India hiring evidence:** career blogs and press reports. The review couldn't confirm any skill percentages
+  from Naukri or LinkedIn directly.
+- **DuckDB-Wasm docs:** on reading files from another site, which is why the CORS header is needed.
+- **The DPDP Rules, 2025:** notified on 13 November 2025.
+
+## Blueprint
+
+- **RESULT:** Ready (`ai-powered-data-analytics.assessment.md`).
+- **The question map** quotes the card sentence each question depends on.
+- **The rubric** has full 0–5 level descriptors.
+- **Task evidence** has expected results computed from the Masala Mart files.
+
+## Playbook
+
+Five rules were added from this job's reviews:
+- **14:** a question or task uses only what a card has shown.
+- **15:** never refer to an option by its position.
+- **16:** every tools task has free, genuinely live data, served as CSV with CORS where needed.
+- **17:** run every code option in the learners' own tool; a card's code line must run on that card's own example.
+- **18:** refer to modules by number and title.
+
+`track.mjs report` lists rules 4–8, 10, 11 and 13 as broken in this programme. The 21 October draft predates
+most of these rules and was written by hand, so these breaks don't show a written rule failing. No rule was
+changed for this.

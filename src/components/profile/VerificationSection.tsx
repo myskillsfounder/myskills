@@ -41,7 +41,7 @@ export function VerificationBadge({ status }: { status: EntryStatus }) {
   )
 }
 
-const fmtCall = (iso: string) =>
+export const fmtCall = (iso: string) =>
   new Date(iso).toLocaleString('en-IN', {
     weekday: 'short',
     day: 'numeric',
@@ -53,9 +53,9 @@ const fmtCall = (iso: string) =>
 
 /** Only https links become anchors — this one is typed by staff, but it's
  *  rendered to a student, so it gets the same care as any link. */
-const safeHttps = (url: string | null) => (url && /^https:\/\//i.test(url) ? url : null)
+export const safeHttps = (url: string | null) => (url && /^https:\/\//i.test(url) ? url : null)
 
-function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
+export function RequestForm({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
   const [times, setTimes] = useState('')
   const [phone, setPhone] = useState('')
   const [consent, setConsent] = useState(false)

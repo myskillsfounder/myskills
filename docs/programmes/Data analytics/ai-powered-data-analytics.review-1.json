@@ -1,396 +1,1103 @@
 {
- "verdict": "needs_work",
- "summary": "The content is accurate and well set in India, and every answer key is right (the Assessment Architect solved all 55, and the blind clue test agreed 55 of 55), but the quizzes and the final do not yet measure knowledge. With only the options showing, a cheap model picked the right answer in 50 of 55, because the wrong options are careless or off-topic behaviour while the right one is the only careful, checking or hedging choice. The fix is one rule for the Assessment Architect, applied to all 55 questions, with exact rewrites for the worst 35 or so below. Most of the 2026-10-21 blueprint is still open (the final's five replacements, m03-q4's second answer, three factual slips, the relabels, the self-check and rubric wording), and the Course Architect must teach five gaps the quizzes already test and fill out Learn cards that are all under the 80-word minimum.",
- "strengths": [
-  "Every answer key is right and every code answer behaves as claimed (checked by the Assessment Architect in pandas 3.0.6 and SQLite, and agreed 55 of 55 by the blind clue test).",
-  "The scenarios are Indian and concrete (kirana, clinic chains, UPI, Tier-3 cities, ₹ lakh) and invent their businesses, as the house style asks.",
-  "The project rubric is specific to the field (framing, data quality, analysis, dashboard, recommendation), and the hours add up (14 h of modules plus about 20 h of project and the final = 35).",
-  "M9's DPDP Act card states the law correctly (consent or certain legitimate uses, kept safe) and gives no dates it can't support."
- ],
- "findings": [
-  {
-   "target": "programme",
-   "severity": "must_fix",
-   "problem": "The clue test is confirmed: with only the four options showing, a Haiku prober picked the right answer in 50 of 55 questions (91%; chance is 25%), and was \"certain\" in 39 of them. I checked every question by hand. It isn't the longest-option clue: that is fixed (check.mjs: the right answer is longest in 10 of 55). It is the quality of the wrong options. Four patterns give the answer away:\n(a) Wrong options describe careless, lazy or unprofessional behaviour that nobody training as an analyst would choose: \"Paste the whole file into a free AI chatbot\" and \"Email the file to a friend\" (m09-q3); \"Nothing: mentioning limits would make the reader doubt the whole analysis\" (m10-q3); \"Trust it: code that runs … has been checked by Python\" (m09-q2); \"Create the column and fill it with sample values\" (m09-q4); \"Rerun your SQL until it matches Copilot\" (m08-q4); \"Merge each pair by averaging their values\" (m03-q1); \"Round it down to 10% to be safe\" (f14); \"None: a 9% lead … is enough\" (m06-q3); \"Declare B the winner\" (f10).\n(b) The key is the only option that checks, verifies, logs, hedges or states a limit, and it often has two steps (\"…, then check nothing is left\", \"…, then reconcile\", \"…, reproduce it, then use it\", \"…, and note it in the cleaning log\", \"…, so re-check it\", \"…, and whether skippers differ\"): m03-q1, m03-q3, m08-q4, m09-q2, m09-q4, m10-q3, f05, f10, f14, m01-q1, m01-q4, m06-q2, m10-q4. A student learns \"pick the careful one\" by module 2.\n(c) The key repeats the stem's or the card's key words while the wrong options are about something else: m08-q3 (only the key mentions \"target\"), m06-q1 (\"alike except for the change\"), m10-q1 and m10-q2 (the key is the only recommendation or action; the other three describe work or bare facts), f01 (the only specific option).\n(d) Code and concept options that don't fit the question at all (playbook rule 2): SUM(order_id) (m04-q1, m05-q3), ORDER BY/GROUP BY with \"> 1000000\" (m04-q2), df.filter(\"success\", 5000) (m07-q4), df.pivot(\"city\",\"value\") (m07-q1), \"currency format\" and \"rounds to two decimals\" for $F$1 (m02-q4), pie and donut for a time series (m08-q1).\nLeads I dropped: in m02-q2, m07-q2, m07-q3, f08, f09 and f12 each option is a self-contained statement of fact, so a model that knows SQL or pandas answers from the options alone. That is knowledge, not a clue, and those items are fine as they are. The five questions the prober got wrong (m02-q3, m03-q2, f02, f06, f07) show what to aim for: four real PivotTable value settings, or four plausible readings of one query.",
-   "fix": "Apply this PLAUSIBLE-MISTAKE RULE to all 55 questions (module findings below give exact rewrites for the worst):\n1. Each wrong option is a named beginner mistake, taken from research brief section 4 or from the \"errors to look for\" column of the blueprint's Practical evidence. State it as confidently as the key, with the reason a learner would give (\"…, since …\").\n2. Match the key's register. If the key checks, verifies, logs, hedges or states a limit, at least two wrong options also check or hedge, but with the wrong check: ask the AI again, rerun the code, compare with last year, see whether it is in the usual range, read the formula without recomputing, add a margin of error, or confirm significance and stop.\n3. No wrong option describes careless, dishonest or unprofessional conduct (hiding a limit, pasting data anywhere, emailing a friend, \"trust it\", \"nothing\", deleting everything), and none contradicts a fact given in the scenario.\n4. Give about one question in three a responsible-sounding over-cautious wrong option (hold everything, wait for a full year, report nothing until …). In some questions make the key the decisive option and a wrong option the cautious one (as blueprint f11 does). Then \"pick the most careful\" stops working.\n5. Don't let the key alone echo the stem's or card's key word (target, random, reconcile, decision). Either another option uses it too, or none does.\n6. Code: every wrong option uses the right construct with one realistic slip (wrong partition or sort direction, missing brackets, WHERE vs HAVING, COUNT vs SUM, a VLOOKUP with range_lookup left out). Never a function that obviously doesn't fit.\nSelf-test before saving each question: cover the scenario and question and read only the options. If one stands out as \"the professional answer\", rewrite. Then re-run the options clue test. The target is 25 of 55 or fewer, with no single quiz above 2 of 4.",
-   "source": "Clue test (options), ai-powered-data-analytics.probes.json",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "module:da-m01",
-   "severity": "must_fix",
-   "problem": "m01-q1 and m01-q4 each have a second defensible option, which the blind clue test confirmed. The options-only prober was also certain of m01-q1.\nm01-q1: the facts live only in \"context\" and \"scenario\" is empty. Nothing says \"slower\" is ambiguous, so \"Compare this week's orders with last week's, city by city\" is reasonable work. \"Ask the tech team for every table they have\" is a straw man.\nm01-q4: \"Ask for light-mode users' scores too, since the comparison needs both groups\" is defensible, and \"Agree, because … far too large to be a coincidence\" and \"Reject it, because a 12% rise is too small\" are extremes that are easy to dismiss.",
-   "fix": "m01-q1: scenario → \"The founder of Saffron Basket, an online grocer, says weekly orders 'feel slower' and wants a report by Friday. 'Slower' could mean fewer orders, smaller baskets or later deliveries. You have 18 months of orders (date, city, basket value, customer ID) and two days.\" Keep the key and the \"this week vs last week\" option, which is now clearly premature. Replace the dashboard option with \"Chart weekly orders, basket value and delivery times for 18 months, then let the founder pick what matters\". Replace \"Ask the tech team…\" with \"Pull last year's festive weeks as a baseline first, since festivals distort weekly order counts\". why_wrong: charting everything leaves the decision undefined; a festival baseline is useful later, but it is chosen before anyone knows which \"slower\" matters; one week against the last assumes \"slower\" means order count.\nm01-q4: replace the light-mode option with the blueprint's MN-4 option: \"Agree, but switch it on first for the lowest scorers, since they have the most to gain from it\". Replace the \"far too large\" option with \"Agree, since the gap holds in every city and every age group in the data\" (consistency across groups still doesn't show cause). Replace \"Reject it…\" with \"Reject it until a survey shows students actually prefer dark mode\". Update why_wrong to give one reason per option.",
-   "source": "Clue test (blind and options)",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "module:da-m02",
-   "severity": "should_fix",
-   "problem": "m02-q1, m02-q2 and m02-q4 were answered from the options alone, with certainty.\nm02-q1: the wrong options invent features nobody believes Excel has (\"compresses the data\", \"removes duplicate records as you type\", \"protects the range\").\nm02-q4: three of the four options aren't about cell references at all (currency, a named constant, rounding).\nm02-q2: \"=IFNA(SUMIF(…))\" is a sum, not a lookup.",
-   "fix": "m02-q1: replace the wrong options with real beliefs: \"It removes blank rows and merged cells, so the data is clean before you analyse it\"; \"It lets you sort and filter, which a plain range of cells can't do\"; \"It fixes each column's data type, so text numbers become real numbers\".\nm02-q4: options about references only. Key: keep it. Wrong options: \"Keep the column fixed on F, while the row changes to F2, F3… as you fill down\" (that is $F1); \"Keep the row fixed on 1, but let the column change as you fill across\" (presented as what $F$1 does when filled down); \"Fix F1 on this sheet only; copied to another sheet, it points to that sheet's F1\".\nm02-q2: replace the SUMIF option with =XLOOKUP(B2, Master[SKU], Master[Category], 0, \"New SKU\") (the match mode in the not-found slot). Change the VLOOKUP option to =IFERROR(VLOOKUP(B2, Master, 2), \"New SKU\") (range_lookup left out, so approximate). Source: Microsoft VLOOKUP and XLOOKUP pages.",
-   "source": "https://support.microsoft.com/en-us/office/vlookup-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 2
-  },
-  {
-   "target": "module:da-m02",
-   "severity": "must_fix",
-   "problem": "m02-q2's why_wrong says \"the third option has the first two arguments swapped\". Since the re-tidy, the swapped XLOOKUP is the second option (B). The feedback now points students to the wrong option.",
-   "fix": "Name options by their content, never by position: \"the XLOOKUP with B2 and Master[SKU] swapped looks for the whole SKU column inside one cell\". Check every why_wrong and explanation for \"first/second/third/fourth option\" before each tidy. Positions are reshuffled by balancePositions().",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 6
-  },
-  {
-   "target": "module:da-m03",
-   "severity": "must_fix",
-   "problem": "m03-q1 and m03-q3 were answered from the options alone, with certainty.\nm03-q1: the key is the only option that logs its work. The others are careless: \"Delete all 400 rows\", \"Keep every row\", \"Merge each pair by averaging their values\".\nm03-q3: the key is the only option with a three-step process and a check. The others delete rows, do nothing, or fix one variant.",
-   "fix": "m03-q1: wrong options → \"Keep the first 5,000 rows by booking time, so the total matches the payments count, and log it\"; \"Keep all 5,200 rows but add a duplicate flag, and report 5,200 bookings with a note\"; \"Ask the payments team to look for 200 missing payments, since bookings are the source of truth\". why_wrong: matching a target count throws away the wrong rows; a flagged row still counts twice in any total; the 200 extra rows are exact copies, not missing payments.\nm03-q3: wrong options → \"Apply TRIM and PROPER to the column, so every variant becomes one consistent spelling\" (case and spaces don't merge Bangalore and BLR); \"Use Power Query's fuzzy matching to merge similar spellings automatically\" (BLR isn't similar in spelling, and fuzzy matching can merge different towns); \"Use Find and Replace for each variant in turn, most common first, until one name is left\" (it works once, but it isn't repeatable next month, and it misses \"bangalore \" with its trailing space unless matched exactly).",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "module:da-m03",
-   "severity": "must_fix",
-   "problem": "m03-q4 has a second defensible answer (blueprint MJ-4, still in the file): \"Nothing changes, because rows with no delivery time are simply left out of every average\" is literally true.",
-   "fix": "Apply blueprint MJ-4 as written. New question: \"If you drop those rows, how does the average delivery time you report compare with what customers actually experienced?\" Use the four options and the why_wrong given there, and relabel the question Intermediate.",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": null
-  },
-  {
-   "target": "module:da-m04",
-   "severity": "must_fix",
-   "problem": "All four M4 questions were answered from the options alone, three of them with certainty.\nm04-q1: SUM(order_id) and COUNT(DISTINCT city) aren't attempts at \"orders per city\".\nm04-q2: \"ORDER BY SUM(order_value) > 1000000\" and \"GROUP BY SUM(...) > 1000000\" are not mistakes anyone writes.\nm04-q3: \"The table has no leads with a missing phone number\" contradicts the scenario.\nm04-q4: \"The median rating\" and \"Nothing: the NULLs cause an error\" are throwaways.",
-   "fix": "m04-q1: replace the SUM(order_id) option with SELECT city, COUNT(DISTINCT city) FROM orders GROUP BY city; (it returns 1 for every city). Keep the other two wrong options.\nm04-q2: keep WHERE SUM(...) and the key. Replace the other two with \"WHERE order_value > 1000000, then GROUP BY city\" (filters single orders) and \"HAVING MAX(order_value) > 1000000\" (the largest order, not the total).\nm04-q3: replace \"the table has no leads…\" with \"NULL tests belong in HAVING, after grouping, not in WHERE\". Keep the 'NULL' in quotes option, which is a real mistake.\nm04-q4: replace the median option with \"The average of all 1,000 orders, because AVG divides by COUNT(*)\". Replace the error option with \"Nothing reliable: AVG returns NULL when any value in the column is NULL\" (the beginner who carries NULL arithmetic, 4 + NULL = NULL, over to aggregates). Source: PostgreSQL aggregate functions.",
-   "source": "https://www.postgresql.org/docs/current/functions-aggregate.html",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 2
-  },
-  {
-   "target": "module:da-m04",
-   "severity": "must_fix",
-   "problem": "m04-q4's explanation says \"Summary functions skip NULLs\". That is false for COUNT(*), and it teaches exactly the misconception in research section 4 (blueprint MN-3, still in the file).",
-   "fix": "Explanation → \"AVG, like SUM and COUNT(stars), skips NULLs (only COUNT(*) counts every row), so 4.2 is the average among the 600 rated orders. A report should say so: '4.2 stars among the 60% of orders that were rated.'\"",
-   "source": "https://www.postgresql.org/docs/current/functions-aggregate.html",
-   "owner": "assessment",
-   "category": "accuracy",
-   "rule": null
-  },
-  {
-   "target": "module:da-m05",
-   "severity": "should_fix",
-   "problem": "m05-q1, m05-q3 and m05-q4 were answered from the options alone, two of them with certainty.\nm05-q1: \"SELECT customer_id FROM orders WHERE order_id IS NULL\" isn't a join attempt.\nm05-q3: the key repeats the Learn card's line (blueprint MN-6), and SUM(order_id) is a throwaway.\nm05-q4: \"compare by eye\" and \"SELECT DISTINCT city, AVG(value)\" aren't window functions, while the stem says \"keeps every row\" and only the key has OVER.\nm05-q2: \"Orders placed after the first query ran were included\" is a throwaway.",
-   "fix": "m05-q1: replace the orders-only option with the tables swapped: SELECT c.customer_id FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE o.order_id IS NULL;\nm05-q3: apply blueprint MN-6 (the \"Latest visit only\" rewrite, all fields, Intermediate).\nm05-q4: replace \"by eye\" with AVG(value) OVER (ORDER BY city) alongside each order (a running average), and DISTINCT with AVG(value) OVER () alongside each order (the overall average, not the city's). Keep the HAVING option. why_wrong to match.\nm05-q2: replace the \"after the first query\" option with \"Orders with no saved address were counted twice, once with a blank address\".",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 2
-  },
-  {
-   "target": "module:da-m06",
-   "severity": "must_fix",
-   "problem": "All four M6 questions were answered from the options alone, with certainty.\nm06-q1: \"break the app's terms of use\" and \"finishes sooner\" are throwaways.\nm06-q2: \"clearly better\", \"equally reliable\" and \"can't be compared at all\" are extremes beside a nuanced key.\nm06-q3: \"None: a 9% lead … is enough\" and \"Checking every hour slows the website down\" are throwaways.\nm06-q4: \"Advertising rules allow survey results only when an outside agency ran the survey\" and \"90% is too high to believe\" are throwaways.",
-   "fix": "m06-q1: wrong options → \"So both groups contain exactly the same mix of cities, ages and devices\" (randomisation balances on average, not exactly); \"So the result can be applied to every user, not only those in the test\" (random assignment confused with random sampling); \"So each group is large enough to give a statistically significant result\".\nm06-q2: wrong options → \"App A, because a 0.3-star gap is large on a 5-point scale\"; \"Both are equally trustworthy once you look at the share of 5-star reviews\"; \"Neither, because reviews are self-selected, so both averages are equally biased\".\nm06-q3: wrong options → \"Confirm the 9% lead is significant at 95% first; if it is, stopping on day 2 is fine\" (the classic peeking mistake); \"Two days misses the weekday-weekend cycle; run to day 7 and the lead will hold\"; \"Hourly checks split users into many small samples, which lowers the test's power\".\nm06-q4: wrong options → \"Add the margin of error, '90% ± 3%', so the claim is statistically accurate\"; \"The sample is too small unless it covers at least 10% of all members\"; \"'Very satisfied' on a 3-point scale inflates answers; use a 10-point scale\". why_wrong for each.",
-   "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4885969",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "module:da-m07",
-   "severity": "should_fix",
-   "problem": "m07-q1 and m07-q4 contain code no learner would write: df.pivot(\"city\", \"value\").sum(), which raises a TypeError in current pandas, and df.filter(\"success\", 5000). The options-only prober was certain of m07-q4.",
-   "fix": "m07-q1: replace the pivot option with df.groupby(\"city\")[\"value\"].count() (a count, not a sum).\nm07-q4: replace df.filter(...) with df[df[\"status\"] == \"success\" & df[\"amount\"] > 5000]. This is the missing-brackets mistake the pandas guide warns about: & binds before ==. why_wrong → \"without brackets, & is applied before the comparisons, so pandas raises an error instead of filtering\".",
-   "source": "https://pandas.pydata.org/docs/user_guide/indexing.html",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 2
-  },
-  {
-   "target": "module:da-m07",
-   "severity": "should_fix",
-   "problem": "m07-q2's learning_outcome says \"Tell pandas the date format; never let it guess\", but the key, dayfirst=True, is itself a preference. The pandas docs warn that \"dayfirst=True is not strict\". The key is still the best of the four.",
-   "fix": "learning_outcome → \"Tell pandas the dates are day-first (dayfirst=True), or give the exact format (format=\"%d/%m/%Y\"), which is strict.\" Add to the explanation: \"format=\"%d/%m/%Y\" is stricter still: it fails loudly on a date in another format.\"",
-   "source": "https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html",
-   "owner": "assessment",
-   "category": "accuracy",
-   "rule": 8
-  },
-  {
-   "target": "module:da-m08",
-   "severity": "must_fix",
-   "problem": "All four M8 questions were answered from the options alone, three of them with certainty.\nm08-q1: pie, donut and scatter for monthly revenue. The donut repeats the pie (blueprint MN-4).\nm08-q2: \"The data is wrong\" and \"different units\" are throwaways.\nm08-q3: only the key mentions the target from the stem.\nm08-q4: \"Publish Copilot's figure\" and \"Rerun your SQL until it matches\" are careless.",
-   "fix": "m08-q1: wrong options → \"A bar chart of the 18 months, sorted from highest to lowest\"; \"A pie chart of each month's share of the 18-month total\"; \"A histogram of the 18 monthly revenue figures\".\nm08-q2: replace \"The data is wrong\" with \"The chart uses a log scale, which stretches small differences near the top\". Replace \"different units\" with \"The new bar shows year-to-date sales, while the old one shows a single quarter\". Keep the 3D option.\nm08-q3: replace the late-orders table with \"Each city's average delivery time, sorted from slowest to fastest\". Replace the national-average option with \"The national on-time % against the 30-minute target, with a 12-week trend\".\nm08-q4: wrong options → \"Trust the SQL figure, as it was written and checked by hand, and delete the Copilot measure\"; \"Build the rate a third way, in a PivotTable, and publish whichever two figures agree\"; \"Ask Copilot to rewrite the measure until it returns 41%, so the dashboard matches the analysis\".",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "module:da-m08",
-   "severity": "must_fix",
-   "problem": "m08-q2's scenario says the new bar \"looks five times taller\". With an axis starting near ₹99 lakh, ₹102 lakh against ₹100 lakh is 3 against 1, so three times (blueprint MN-1, checked, still in the file).",
-   "fix": "Scenario → \"…but the new bar looks three times taller.\"",
-   "source": "",
-   "owner": "assessment",
-   "category": "accuracy",
-   "rule": null
-  },
-  {
-   "target": "module:da-m09",
-   "severity": "must_fix",
-   "problem": "m09-q2, m09-q3 and m09-q4 are the clearest examples of pattern (a). Their wrong options describe behaviour no student would defend: \"Paste the whole file into a free AI chatbot\", \"Email the file to a friend\", \"Trust it: code that runs … has been checked by Python\", \"Create the column and fill it with sample values\", \"ask IT to add lifetime_value\". The prober was certain of all three.",
-   "fix": "m09-q2: wrong options → \"Run the code again on a fresh copy of the file, and accept ₹1,240 if it repeats\"; \"Ask a second AI assistant to review the code line by line and confirm the logic\"; \"Check ₹1,240 sits inside your usual ₹1,100–1,400 range before using it\" (a range check catches wild errors, not a wrong definition).\nm09-q3: wrong options → \"Replace names with initials, keep the phones and diagnoses, and paste it into a free chatbot\" (blueprint MN-4); \"Use a paid AI plan with chat history switched off, then paste the full list\"; \"Share a random 500-row sample instead of all 20,000, so most patients aren't exposed\". why_wrong: initials don't hide anyone when phones stay; a paid plan's settings don't make the use lawful or approved by your organisation; 500 patients' health data is still personal data. Keep the key.\nm09-q4: wrong options → \"Swap in the nearest real column, such as total_spent, and run the query\"; \"Fix that one reference, and trust the result if the row counts look sensible\"; \"Ask it again, telling it to use only columns that exist, and run what it returns\" (still no schema, so it is still guessing).",
-   "source": "https://support.microsoft.com/office/7a13758f-d61e-4a56-8440-f2c9a07802ec",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "module:da-m10",
-   "severity": "must_fix",
-   "problem": "m10-q3 and m10-q4 were answered from the options alone with certainty, and m10-q1 and m10-q2 with less.\nm10-q1: three options describe work done, and only one recommends anything.\nm10-q2: three bare facts beside the one option with an action, which the question itself defines.\nm10-q3: \"Nothing: mentioning limits would make the reader doubt…\" and \"the results are certain\" are dishonest.\nm10-q4: \"engagement is up\" doesn't answer a money question.",
-   "fix": "m10-q1: wrong options that are also openings a manager might get → \"Key finding: Tier-3 cities account for 61% of all COD returns, the highest of any tier\" (a share, not a rate, and no action); \"Recommendation: review cash on delivery, as returns are a growing concern in several regions\" (no number, no scope); \"Recommendation: pause cash on delivery everywhere, since COD orders are returned more often than UPI\" (goes beyond the evidence).\nm10-q2: wrong options → \"Average order value is ₹640, up 8% on last year, so our pricing strategy is working\" (a conclusion, but no action and an unsupported cause); \"Cart abandonment rose to 40% this quarter, so we should improve the overall checkout experience\" (the action is too vague to test); \"70% of sales come from Maharashtra and Karnataka, so these are our most important states\" (so what, but no now what).\nm10-q3: wrong options → \"That the results hold for the year, since three festive weeks had more orders than most full months\" (a big sample isn't a typical one); \"Scale each week down by the usual Diwali uplift, and report the result as a normal month\" (an assumed adjustment presented as data); \"Hold the memo until a full year of data is in, since one season can't support a recommendation\" (over-cautious).\nm10-q4: replace \"engagement is up\" with \"Yes: members' monthly spend rose 30% after joining, against their own spend before joining\" (before and after, with no comparison group). Replace \"too early\" with \"Not yet: it needs a full year, including the festive season, before it can be judged\".",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "final",
-   "severity": "must_fix",
-   "problem": "Blueprint MJ-1 is still open. f02 repeats m01-q2, f04 repeats m03-q1, f15 repeats m10-q1, f11 is pure recall (df.shape), and f03 tests SUMIFS, which no module teaches. No final question combines modules, and 14 of 15 have no scenario. check.mjs's three should-fix findings (missing why_wrong, missing learning_outcome, a final no harder than the quizzes) all follow from this.",
-   "fix": "Apply blueprint MJ-1: replace f02, f03, f04, f11 and f15 with the five questions written out there, keeping the ids. Relabel f06, f07 and f13 Beginner and f12 Intermediate. Add the why_wrong and learning_outcome lines in blueprint MJ-2 to the other ten (for f07, with MN-4's new option). Then the final is 4 Beginner / 7 Intermediate / 3 Advanced / 1 Expert.",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": null
-  },
-  {
-   "target": "final",
-   "severity": "must_fix",
-   "problem": "Among the final questions MJ-1 keeps, f01, f05, f10, f13 and f14 were answered from the options alone with certainty.\nf01: the key is the only specific option; \"all our marketing numbers\" and \"Do customers like our ads\" are straw men.\nf05: one option has a copy error (\"average satisfaction score\" in an income question, blueprint MJ-6). It and \"without mentioning the blanks\" are careless.\nf10: \"Declare B the winner\", \"run it in a single city\" and \"add a third version\" are throwaways.\nf13: a 3D pie and a line chart are throwaways.\nf14: \"AI tools calculate rates more reliably than spreadsheets\" and \"Round it down to 10% to be safe\" are careless.",
-   "fix": "f01: replace \"What are all our marketing numbers…\" with \"Which channel brought the most new customers in Q2, Instagram or Google?\" (volume, not cost or a decision). Replace \"Do customers like our ads…\" with \"Did revenue rise in the Q2 months when we spent more on marketing?\" (timing isn't cause).\nf05: options → \"Fill each blank with the median income, which outliers affect less than the mean\"; \"Drop the blanks and report the average, since 70% of respondents is still a large sample\"; \"Report the average for those who answered, with the margin of error for that sample size\". Keep the key. This also fixes MJ-6.\nf10: options → \"Check the gap is statistically significant, and stop the test as soon as it is\" (a near-miss on the key: peeking); \"Name B the winner if it stays ahead for three days in a row\"; \"Compare B's conversion with last month's site average rather than with A\". Apply MN-5's explanation.\nf13: replace the line chart with \"A 100% stacked bar with all nine brands in one bar\", and the 3D pie with \"A donut chart sorted by share, each slice labelled\".\nf14: options → \"Ask it to show the formula it used, and use 12% if the formula looks right\"; \"Compare 12% with the usual churn for subscription apps, and use it if it's in range\"; \"Ask the same question in a second AI tool, and use the figure if both agree\".",
-   "source": "https://support.microsoft.com/office/7a13758f-d61e-4a56-8440-f2c9a07802ec",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": 1
-  },
-  {
-   "target": "final",
-   "severity": "should_fix",
-   "problem": "f10's explanation relies on \"a significance check\", which no module teaches (blueprint MN-5, still in the file).",
-   "fix": "Explanation → \"4.0% and 4.1% of 50,000 are about 2,000 and 2,050 conversions, a gap well within chance. Check it against normal variation (a significance test does this) and let the test run its planned length before naming a winner.\"",
-   "source": "",
-   "owner": "assessment",
-   "category": "accuracy",
-   "rule": null
-  },
-  {
-   "target": "programme",
-   "severity": "should_fix",
-   "problem": "Blueprint MJ-5 is still open: m03-q4, m04-q4, m05-q3, m07-q4 and m09-q4 are labelled Advanced but are Intermediate in difficulty. In M3 (marks 5, 5, 10, 15), a learner who gets q1 to q3 right and misses q4 scores 20/35 = 57% and fails with 3 of 4 right.",
-   "fix": "Relabel those five Intermediate (blueprint MJ-5 table), then re-run check.mjs --tidy so the weights follow the labels.",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": null
-  },
-  {
-   "target": "module:da-m01",
-   "severity": "should_fix",
-   "problem": "m01-q3's explanation gives the median as \"roughly ₹2,200–2,500\". With 47 fees between ₹2,000 and ₹2,500, the median can lie anywhere in that range (blueprint MN-2).",
-   "fix": "Explanation → \"…The median stays at what the middle student pays, between ₹2,000 and ₹2,500.\" Also apply MN-4: replace \"The total fees divided by 12\" with \"The midpoint of the lowest and highest fees\". why_wrong → \"the midpoint, ₹16,000, is set by the extremes\".",
-   "source": "",
-   "owner": "assessment",
-   "category": "accuracy",
-   "rule": null
-  },
-  {
-   "target": "programme",
-   "severity": "should_fix",
-   "problem": "why_wrong lumps the wrong options together instead of giving one reason each in m09-q1 (\"They leave out the table and its columns…\"), m10-q1 (\"They describe the work done…\") and m10-q2 (\"They are facts…\"). The blind clue test also found m09-q1's first option defensible (\"Write a SQL query that finds repeat customers … month by month\"). I checked: it names no columns, doesn't define \"repeat\" and gives no SQL dialect, so the key is better. The lead is dropped, but the feedback must say this.",
-   "fix": "Give one reason per option. m09-q1 → \"the first names no columns and leaves 'repeat customer' undefined; the 'expert analyst' prompt gives a persona but no schema, definition or period; 'using my company database' assumes the assistant can see tables it can't\". Do the same for m10-q1 and m10-q2 after their rewrites.",
-   "source": "",
-   "owner": "assessment",
-   "category": "house-style",
-   "rule": 6
-  },
-  {
-   "target": "programme",
-   "severity": "should_fix",
-   "problem": "17 module questions have no scenario (house style: scenario-based; blueprint MN-9): m02-q1, m03-q2, m03-q3, m04-q1, m04-q2, m05-q1, m05-q3, m05-q4, m06-q1, m07-q1, m07-q3, m07-q4, m08-q1, m09-q1, m10-q1, m10-q2, and m01-q1, whose facts sit in a leftover \"context\" object. A one-line case makes plausible wrong options much easier to write. Without one, a judgement question falls back on generic options.",
-   "fix": "Add a 1–2 sentence Indian case to at least m02-q1, m06-q1, m08-q1, m10-q1 and m10-q2. Move m01-q1's facts into \"scenario\" and set its \"context\" to null (house style: context only for Digital Marketing's practice cases).",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": null
-  },
-  {
-   "target": "aptitude",
-   "severity": "should_fix",
-   "problem": "Blueprint MN-7 is still open. a05 (\"I can summarise…\"), a10 (\"I enjoy…\"), a11 (\"I'm comfortable…\"), a14 (\"I know…\") and a16 (\"I like automating…\") rate ability, liking or knowledge, not behaviour. a12 and a18 are near-twins across two skills.",
-   "fix": "Use MN-7's wording: a05 \"I sort or filter a spreadsheet to find the rows I need, instead of scrolling through it.\"; a10 \"When I need one number from a long list, I write down the steps (which rows, which groups, which total) before I start.\"; a11 \"I look up the exact syntax of a formula or command instead of guessing it.\"; a12 (reversed) \"When I need figures from a large table, I ask someone else to pull them for me.\"; a14 \"When I see an average, I look at the highest and lowest values behind it.\"; a16 \"When I repeat the same steps on a file every week, I look for a way to automate them.\"",
-   "source": "",
-   "owner": "assessment",
-   "category": "aptitude",
-   "rule": null
-  },
-  {
-   "target": "project",
-   "severity": "should_fix",
-   "problem": "Blueprint MN-8 is still open. No rubric line covers outcome 4 (using AI and verifying it), and nothing asks the learner to explain their own work. That walkthrough is the programme's defence against AI-written projects.",
-   "fix": "Use the blueprint's proposed descriptions. analysis → \"Correct SQL or Python, joins checked, a key number reproduced; AI help disclosed and checked\". recommendation → \"Leads with the decision and its ₹ impact, states its limits, and the learner can explain every step\". framing, data and dashboard as in the blueprint's table.",
-   "source": "",
-   "owner": "assessment",
-   "category": "project",
-   "rule": 4
-  },
-  {
-   "target": "module:da-m01",
-   "severity": "must_fix",
-   "problem": "m01-q4 (correlation vs causation) isn't taught in M1. The cards clue test marked it untaught, and I confirm it: only M6 teaches randomisation (blueprint T1). The same question also uses a self-selection idea that M1 never names.",
-   "fix": "Add to M1 card 3, or as a new paragraph: \"Two numbers moving together doesn't mean one causes the other. Students who choose dark mode may also be the keenest. Only a fair comparison, such as a test where the setting is assigned at random (module 6), shows cause.\" Keep the card under 160 words.",
-   "source": "Clue test (cards)",
-   "owner": "course",
-   "category": "teaching",
-   "rule": null
-  },
-  {
-   "target": "module:da-m02",
-   "severity": "must_fix",
-   "problem": "m02-q4 (absolute reference $F$1) isn't taught: no M2 card mentions $ or relative references (blueprint T2; the cards clue test agrees).",
-   "fix": "Add to M2 card 1 or 2: \"When you fill a formula down, its references move (B2 becomes B3). Put $ signs in a reference that must stay put: =B2*$F$1 keeps using the GST rate in F1 on every row. Press F4 to add them.\"",
-   "source": "https://support.microsoft.com/en-us/Excel/switch-between-relative-absolute-and-mixed-references",
-   "owner": "course",
-   "category": "teaching",
-   "rule": null
-  },
-  {
-   "target": "module:da-m04",
-   "severity": "must_fix",
-   "problem": "m04-q3 (IS NULL) and m04-q4 (AVG skips NULLs) aren't taught: no M4 card mentions NULL (blueprint T3; the cards clue test agrees). Research section 4 shows COUNT(*) vs COUNT(column) to be one of the commonest beginner errors, and the quiz rewrites above use it.",
-   "fix": "Add an M4 card or paragraph: \"NULL means unknown. Test for it with IS NULL, never = NULL. COUNT(*) counts every row; COUNT(phone), SUM and AVG use only non-NULL values, so AVG(stars) is the average of the rated orders only. SUM over no rows gives NULL, not 0.\"",
-   "source": "https://www.postgresql.org/docs/current/functions-aggregate.html",
-   "owner": "course",
-   "category": "teaching",
-   "rule": null
-  },
-  {
-   "target": "module:da-m05",
-   "severity": "should_fix",
-   "problem": "f08 tests LAG, which M5 card 3 describes (\"last month's value\") without naming the function (blueprint T5). The card's \"ROW_NUMBER() … = 1 marks their first payment\" also can't be used directly in WHERE (blueprint teaching note).",
-   "fix": "M5 card 3: add \"LAG(revenue) OVER (ORDER BY month) puts last month's revenue beside this month's\", and after the ROW_NUMBER line add \"(filter on it in an outer query or a CTE: a window function can't go in WHERE)\". Optional, from research section 4: one sentence that a WHERE condition on the right-hand table after a LEFT JOIN drops the unmatched rows, so it belongs in ON.",
-   "source": "https://knowledge.broadcom.com/external/article/16455/sql-clause-on-versus-where.html",
-   "owner": "course",
-   "category": "teaching",
-   "rule": null
-  },
-  {
-   "target": "module:da-m07",
-   "severity": "must_fix",
-   "problem": "m07-q4 (& with brackets) isn't taught: M7 card 2 shows a one-condition filter only (blueprint T4; the cards clue test agrees). The same card says dayfirst=True \"turns Indian-style dates into real dates\", but pandas documents it as \"not strict\". Its merge line doesn't say what how=\"left\" keeps, which m07-q3 needs, so the cards clue test also marked that question untaught.",
-   "fix": "M7 card 2: add df[(df[\"status\"] == \"success\") & (df[\"amount\"] > 5000)] with \"each condition in its own brackets; & for and, | for or\". Change the date line to \"pd.to_datetime(df[\"order_date\"], dayfirst=True) reads day-first dates; format=\"%d/%m/%Y\" is stricter and stops on any date in another format\". Add \"how=\"left\" keeps every order, with NaN where no customer matches\" to the merge line.",
-   "source": "https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html",
-   "owner": "course",
-   "category": "teaching",
-   "rule": 8
-  },
-  {
-   "target": "module:da-m08",
-   "severity": "should_fix",
-   "problem": "m08-q2 (a bar axis that doesn't start at zero) isn't taught in M8's cards. Only task t2's prompt mentions it in passing (the cards clue test agrees).",
-   "fix": "M8 card 1: add \"Bars are read by their length, so a bar chart's axis starts at zero; a line chart may start higher, as long as the axis is labelled.\"",
-   "source": "https://www.datawrapper.de/academy/why-our-column-and-bar-charts-start-at-zero",
-   "owner": "course",
-   "category": "teaching",
-   "rule": null
-  },
-  {
-   "target": "module:da-m08",
-   "severity": "should_fix",
-   "problem": "M8 card 3 says \"Copilot can draft measures and pages\" without saying that Copilot in Power BI needs a paid Fabric (F2 or higher) or Premium capacity, which students won't have. No free route is given, and m08-q4 assumes Copilot.",
-   "fix": "Add: \"Copilot in Power BI needs a paid capacity your employer provides. On your own, build the measure in free Power BI Desktop, and use a free AI assistant to draft or explain the DAX: the checking step is the same.\" I confirmed the licence detail only from secondary sources (research section 2), so name no SKU or price on the card.",
-   "source": "https://databear.com/enable-copilot-power-bi-fabric-2026/",
-   "owner": "course",
-   "category": "accuracy",
-   "rule": 7
-  },
-  {
-   "target": "module:da-m07",
-   "severity": "should_fix",
-   "problem": "M7 card 1 offers \"Python in Excel\" beside Colab without its limits: it is included for Business and Enterprise plans, a preview on Family, Personal and Education plans, and not supported on device-based licences.",
-   "fix": "Change to \"You can run it free in Google Colab, or inside Excel with Python in Excel if your Microsoft 365 plan includes it.\"",
-   "source": "https://support.microsoft.com/en-us/excel/python/python-in-excel-availability",
-   "owner": "course",
-   "category": "accuracy",
-   "rule": 7
-  },
-  {
-   "target": "programme",
-   "severity": "should_fix",
-   "problem": "All 30 Learn cards are 31–77 words. The house style asks for 80 to 160 words that teach with an example. This thinness is why six questions test what no card teaches (T1–T5, plus m08-q2 above), and why a student who reads the cards has none of the misconceptions the new wrong options will use explained to them.",
-   "fix": "Bring each card to 80–160 words. Use the space to name and correct the one or two beginner mistakes in research section 4 for that card's topic (for example, in M6 card 3: \"A result that isn't significant doesn't prove there is no effect; the test may be too small to see it\"). Then check every quiz question can be answered from the module's cards.",
-   "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4885969",
-   "owner": "course",
-   "category": "teaching",
-   "rule": null
-  },
-  {
-   "target": "overview",
-   "severity": "should_fix",
-   "problem": "Statistics has a module, five quiz questions, four final questions and a rubric line, but no overview outcome (blueprint G1, still open).",
-   "fix": "Add an outcome: \"Tell a real change from noise using samples, spread and simple experiments\" (keeping 4 to 6 outcomes: merge \"Present a recommendation…\" with its project clause if needed).",
-   "source": "",
-   "owner": "course",
-   "category": "coverage",
-   "rule": null
-  },
-  {
-   "target": "programme",
-   "severity": "idea",
-   "problem": "Answer integrity (blueprint \"For the team\" 1): the seeded shuffle has removed the fixed key pattern, but every student still sees the same order, so a key can be shared.",
-   "fix": "Shuffle option order per student on the page and map the answer back on the server.",
-   "source": "",
-   "owner": "assessment",
-   "category": "question-design",
-   "rule": null
-  },
-  {
-   "target": "programme",
-   "severity": "idea",
-   "problem": "Engine programmes have no project pass rule or rubric weights yet (blueprint \"For the team\" 3), so practical competence can't gate a certificate.",
-   "fix": "Paul to decide: the blueprint proposes a total of at least 15/25, no criterion below 2, Data quality and Analysis at least 3, up to 2 resubmissions, and weights of 15/20/25/20/20.",
-   "source": "",
-   "owner": "assessment",
-   "category": "project",
-   "rule": null
-  }
- ],
- "lessons": [
-  {
-   "rule": "Before saving any question, read only its four options with the stem covered. If one option is the only careful, checking, hedging or professional-sounding choice, rewrite the others as named beginner mistakes, made with equal care and the reason a learner would give, until no option stands out. Make the right answer the decisive option, and a wrong one over-cautious, in about one question in three.",
-   "why": "In the Data Analytics draft a cheap model picked the right answer from the options alone in 50 of 55 questions, even after the longest-option clue (rule 1) was fixed. Matching length is not enough; the register of the options gives the answer away."
-  },
-  {
-   "rule": "Never refer to an option by its position (\"the third option\", \"(b)\") in an explanation or why_wrong; name it by its content. Positions are reshuffled after writing.",
-   "why": "m02-q2's why_wrong pointed at \"the third option\" after the re-tidy had moved it to second place."
-  },
-  {
-   "rule": "For every quiz question, be able to point to the sentence in that module's own Learn cards that teaches what it needs; if there is none, add it to a card (each card 80 to 160 words) before keeping the question.",
-   "why": "Six Data Analytics questions tested content no card taught (T1–T5, m08-q2), and all 30 cards were under 80 words. check.mjs could flag card length automatically."
-  }
- ]
+  "verdict": "needs_work",
+  "summary": "AI-Powered Data Analytics has the right shape for Indian entry-level analyst hiring: SQL, spreadsheets, cleaning, pandas, dashboards, statistics, AI checking and storytelling, with sound questions and correct answer keys. It can't publish yet. No final question has a skill tag, and spreadsheets has only one final question to tag, so the Assessment Architect must tag all 15 and add a spreadsheets question. The final is also easier than the quizzes and gives almost no feedback, and seven questions test things no card teaches (correlation, $ references, NULLs, & filters, SUMIFS, LAG). The bigger teaching gap is the Course Architect's: every Learn card is under 80 words with few worked examples, no task gives the learner any data, and paid or Windows-only tools (Copilot, Python in Excel, Power BI Desktop) appear with no free route. The blueprint of 21 October already wrote most of the assessment fixes; they were never copied into the file.",
+  "strengths": [
+    "All 55 answer keys are right, and the code answers behave as claimed (the blueprint ran them on pandas 3.0.6 and SQLite). Keep the code-option style: complete-looking options, each with one realistic mistake.",
+    "Indian, decision-led scenarios throughout (UPI, COD returns, Diwali data, kirana, clinics, coaching), and a clear thread of checking numbers before sharing them, AI-drafted ones included.",
+    "The DPDP wording in da-m09 card 3 matches Section 4 of the Act exactly (lawful purpose, with consent or for certain legitimate uses).",
+    "A field-specific project rubric (framing, data quality, analysis, dashboard, recommendation) and a realistic portfolio project brief."
+  ],
+  "findings": [
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "Publish check: no final question has a \"skill\", so the Foundation assessment has 0 questions for data-literacy (trained by foundation module da-m01). Two questions already test it: da-f01 (framing) and da-f09 (mean versus median, taught in da-m01 card 3).",
+      "fix": "Add \"skill\": \"data-literacy\" to da-f01 and da-f09. Tag every other final question too (full map in the spreadsheets finding below).",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": 13,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "Publish check: spreadsheets (foundation, da-m02) has no tagged final question. Only one final question tests spreadsheets at all (da-f03), so tagging alone cannot reach 2. The blueprint's coverage plan also leaves spreadsheets at one question (f03), so applying the blueprint as written would still fail publishing.",
+      "fix": "Tag the replacement da-f03 (the blueprint's \"The SKUs that won't match\") \"skill\": \"spreadsheets\". Replace da-f07 (INNER JOIN recall, already covered by da-m05-q1 and da-f12) with this spreadsheets question, keeping id da-f07. title \"The pivot table that won't add up\"; scenario \"A Surat textile wholesaler pastes 6,000 order lines into Google Sheets and builds a pivot table of order_value by city. The pivot table shows a count of order_value, and switching it to SUM gives 0 for every city. The column holds entries like \\\"₹1,250\\\" and \\\"1,250 \\\".\"; question \"What should you do so the pivot table shows each city's total?\"; options \"Convert order_value to numbers (strip ₹, commas, spaces), then refresh\" (right) / \"Change the summary from SUM to AVERAGE, which works on text and numbers alike\" / \"Format the order_value column as Currency (₹), so the sheet reads it as money\" / \"Add order_value to Rows as well as Values, so each amount is visible\"; explanation \"SUM ignores text, and an entry with a ₹ sign or a trailing space is text, not a number. Once the column holds real numbers, the pivot table can add it.\"; why_wrong \"AVERAGE also skips text, so it fails in the same way; a currency format changes how a number looks but does not turn text into a number; putting the amount in Rows lists each value instead of totalling it.\"; learning_outcome \"A pivot table can only add a column stored as numbers.\"; difficulty Intermediate; topic \"Text stored as numbers\"; skill \"spreadsheets\". Full tag map: f01 data-literacy, f02 visualisation (blueprint replacement \"The red stores\"), f03 spreadsheets, f04 data-cleaning, f05 data-cleaning, f06 sql, f07 spreadsheets, f08 sql, f09 data-literacy, f10 statistics, f11 statistics (blueprint replacement, Expert), f12 python, f13 visualisation, f14 ai-analytics, f15 storytelling. Each foundation skill then has exactly 2, and every skill has at least 1.",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": 13,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "Publish check: data-cleaning (foundation, da-m03) has no tagged final question.",
+      "fix": "Tag da-f04 and da-f05 \"skill\": \"data-cleaning\". If da-f04 is replaced by the blueprint's \"The AI's cleaning step\" (drop_duplicates on student_name), keep the tag data-cleaning: the judgement tested is which rows count as duplicates.",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": 13,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "Publish check: sql (foundation, da-m04) has no tagged final question.",
+      "fix": "Tag da-f06 and da-f08 \"skill\": \"sql\". (da-f07 becomes the spreadsheets question above, so sql keeps 2.) da-f08 depends on LAG being taught in da-m05 (see the progression findings).",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": 13,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "should_fix",
+      "problem": "The final is easier than the module quizzes and doesn't combine modules. All 15 questions have no scenario. Difficulty is 5 Beginner, 7 Intermediate, 3 Advanced and 0 Expert (9.33 marks a question, against 9.63 in the quizzes). Four repeat a quiz point or are pure recall: da-f02 repeats da-m01-q2; da-f04 repeats da-m03-q1; da-f11 asks what df.shape returns; da-f15 repeats da-m10-q1. This is the Foundation certificate test, so it must place students fairly.",
+      "fix": "Apply the blueprint's MJ-1 replacements as written, keeping ids: f02 \"The red stores\", f03 \"The SKUs that won't match\", f04 \"The AI's cleaning step\", f11 \"The checkout test, city by city\" (Expert) and f15 \"The memo's first line\". Add the new f07 from the spreadsheets finding. Give f01, f05, f06, f08, f09, f10, f12, f13 and f14 a 2- to 3-sentence scenario set in an Indian business, so each is judged in context. Aim for about 4 Beginner, 6 Intermediate, 4 Advanced and 1 Expert, so the mean marks a question are above the quizzes'.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "should_fix",
+      "problem": "Adding to check.mjs's finding: 14 of the 15 final questions have no why_wrong, and none has a learning_outcome. The grader shows both to students. Ready-made text is in the blueprint (MJ-2 table), but it was never copied into the file.",
+      "fix": "Copy the blueprint's MJ-2 why_wrong and learning_outcome lines into f01, f05, f06, f08, f09, f10, f12, f13 and f14. Use the MJ-1 texts for the replaced questions and the text above for the new f07. Each why_wrong names each wrong option's mistake and doesn't start with \"They\" or \"The others\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 6,
+      "standard": "feedback"
+    },
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "da-f05 option \"Fill the blanks with 0, so that every respondent is included in the average satisfaction score\" says satisfaction score, but the question is about average income. The copy error makes the option wrong for the wrong reason.",
+      "fix": "Change the option to \"Fill the blanks with 0, so that every respondent is included in the average income\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "final",
+      "severity": "must_fix",
+      "problem": "da-f03 tests SUMIFS, and no module teaches SUMIF or SUMIFS. da-m02 teaches only tables, XLOOKUP and PivotTables, so the question is unfair.",
+      "fix": "Replace da-f03 with the blueprint's \"The SKUs that won't match\" (XLOOKUP failing on trailing spaces or text-stored SKUs), which combines da-m02 and da-m03 and needs no untaught function. Tag it spreadsheets.",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "must_fix",
+      "problem": "da-f08 asks what LAG(revenue) OVER (ORDER BY month) returns, but da-m05 card 3 only mentions \"last month's value\" and never names LAG (or LEAD). Interviewers in India ask about LAG often.",
+      "fix": "In da-m05 card 3, add a worked example: \"LAG(revenue) OVER (ORDER BY month) puts last month's revenue on this month's row, so revenue - LAG(revenue) OVER (ORDER BY month) is the month-on-month change. LEAD looks one row ahead.\" Show a 3-row result (Jan ₹4.1 lakh / NULL, Feb ₹4.6 lakh / ₹4.1 lakh, Mar ₹4.3 lakh / ₹4.6 lakh). Also add the blueprint's note that a ROW_NUMBER() = 1 filter needs an outer query or CTE.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "final",
+      "severity": "should_fix",
+      "problem": "da-f08 asks for the definition of LAG, which is recall. Once da-m05 teaches LAG, the final should test using it.",
+      "fix": "Rewrite da-f08 as a scenario. A quick-commerce dark store's monthly_orders(month, orders) table; the manager wants the month-on-month change on each row. Options: \"orders - LAG(orders) OVER (ORDER BY month)\" (right) / \"orders - LEAD(orders) OVER (ORDER BY month)\" / \"orders - LAG(orders) OVER (PARTITION BY month ORDER BY month)\" / \"orders - SUM(orders) OVER (ORDER BY month)\". why_wrong: LEAD subtracts next month; partitioning by month leaves one row per partition, so LAG is always NULL; SUM OVER subtracts the running total. Advanced.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "must_fix",
+      "problem": "da-m01-q4 (dark mode and test scores) tests correlation versus causation, and its explanation relies on a randomised test. Neither is taught in da-m01; randomisation comes only in da-m06. Aptitude item da-a15 also places correlation under data literacy.",
+      "fix": "Rename card 3 \"Read numbers critically\" and add a worked example after the ₹850 average: \"Students who attend doubt-clearing sessions score 15% higher. Does attending cause it? Maybe keen students attend and also study more. Two things moving together can share a cause. Only a fair comparison, such as a test where some students are picked at random to attend, shows cause.\" Keep it under 160 words and split sentences over 20 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "da-m01-q4: the explanation leans on \"a randomised test\", which da-m01 doesn't teach. The option \"Ask for light-mode users' scores too…\" is weak, because the comparison already includes them.",
+      "fix": "Explanation: \"Keen, heavy users may be the ones who pick dark mode, and they would score higher anyway. Only a fair test, where some new users get dark mode by chance, shows whether the setting itself changes scores.\" Replace the light-mode option with \"Agree, but switch it on first for the lowest scorers, since they have the most to gain\" (why_wrong: \"targeting low scorers still assumes the setting causes the scores\").",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "da-m01 cards are 56, 51 and 46 words, below the house style's 80 to 160. None works through an example from start to finish: card 1 shows the reworded question but not how to get there, and card 2 names types but shows no table.",
+      "fix": "Card 1: work through \"How are sales doing?\" for a Pune bakery: who decides, which decision, what measure, which period, and the final question. Card 2: show a 6-column orders header (order_id, PIN code, order_date, city, payment_method, order_value), label each type, and show the common mistake: averaging PIN codes gives a number like 411,037 that means nothing. Card 3: see the progression finding. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "da-m01 t2 (\"List five columns you would expect…\") is list work with no data, so the learner can't check their answer against anything.",
+      "fix": "Give the data in the task: \"Here are the first 4 rows of a kirana store's UPI orders export: order_id, phone, PIN, order_date (stored as text, e.g. 05/04/2026), city, amount (e.g. \\\"₹1,250\\\"), payment_app.\" Ask: label each column's type, find the two stored as the wrong type, and say what would go wrong in a total or a sort. Hint unchanged.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "must_fix",
+      "problem": "da-m02-q4 tests absolute references ($F$1), which no card teaches.",
+      "fix": "Add to card 1 (or card 2) a worked example: \"GST rate 18% is in F1. In C2 write =B2*$F$1 and fill it down. B2 becomes B3, B4…, but $F$1 stays fixed. Without the $ signs, row 3 would use F2, which is empty, and every result after row 2 would be 0.\" Name this as the common mistake.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "da-m02-q4 is recall once taught (\"What do the dollar signs do?\"), and its card example would then match the question exactly.",
+      "fix": "Once the card uses GST, change the question's case to a commission rate in H1 for a Kochi electronics shop, and ask what goes wrong when =B2*H1 is filled down (answer: every row after the first uses an empty cell, so commissions show 0). Keep the distractors similar in length.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "must_fix",
+      "problem": "da-m02-q2 why_wrong says \"the third option has the first two arguments swapped\", but the swapped XLOOKUP is the second option. Option order can be reshuffled at any time, so position words go stale anyway.",
+      "fix": "Replace with: \"VLOOKUP with TRUE does an approximate match, so it can quietly return the wrong category instead of \\\"New SKU\\\"; XLOOKUP(Master[SKU], B2, …) has the value and the lookup range swapped; SUMIF adds numbers and can't return a text category.\" Never name an option by position.",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "da-m02 cards are 46, 49 and 39 words. None works an example through to a result: card 3 says how to drag fields but never shows a finished pivot answering a question. SUMIFS, which Indian MIS roles use every day, isn't taught.",
+      "fix": "Card 2: a worked XLOOKUP on a 3-row price list, showing the result for a SKU that is missing (\"Not found\"), with VLOOKUP's approximate-match trap as the common mistake. Card 3: a worked pivot (Rows: payment method; Values: Average of Returned (1/0)) with its result, e.g. UPI 6%, COD 18%, and the mistake of using \"% of column total\". Add one line on SUMIFS as the formula route to the same totals. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "da-m02 is the spreadsheet module, but neither task opens a spreadsheet. t1 asks the learner to \"describe the PivotTable you would build\", and t2 to write a formula with no data to test it on.",
+      "fix": "Link a free practice sheet (Google Sheets, 200 orders: order_date, city, category, payment_method, order_value, returned 1/0, sku) and a price-list tab. t1: build the pivot table and report the return rate for UPI and for cash on delivery. t2: write the XLOOKUP, fill it down, and report how many rows show \"Not found\". Both work in the free Google Sheets app or browser.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 7,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "da-m02 says 90 minutes. check.mjs estimates 53 for the content as written (reading, two describe-only tasks, reflection and quiz).",
+      "fix": "After the cards and hands-on tasks above (about 4 minutes of reading and 25 to 30 minutes a task), 90 minutes is honest. If the tasks stay describe-only, cut to 60.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "Adding to check.mjs's long-sentence finding: da-m02 teaches only Excel (Ctrl+T, Excel table syntax). Many students have only Google Sheets on a phone or old Excel in a college lab. XLOOKUP is not in Excel 2016 or 2019.",
+      "fix": "In card 1 add: \"In Google Sheets: Format > Convert to table.\" In card 2 add: \"XLOOKUP works in Google Sheets and Excel 2021 or later; it isn't in Excel 2016 or 2019.\" Split the 23- to 26-word sentences.",
+      "source": "https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929",
+      "owner": "course",
+      "category": "house-style",
+      "rule": 7,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "da-m02-q3 (return rate by payment method from a Returned column) reuses t1's scenario: an orders table, payment method, returned yes/no, return rate.",
+      "fix": "Give q3 a new context with the same skill: a coaching centre's enquiries sheet with a Converted column (1/0) and Source (Instagram, walk-in, referral) in Rows. Ask which Values setting shows each source's conversion rate. Keep the options parallel.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 11,
+      "standard": null
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "must_fix",
+      "problem": "da-m03-q4 has a second defensible answer. The option \"Nothing changes, because rows with no delivery time are simply left out of every average\" is literally true: an average skips blanks whether or not you drop the rows.",
+      "fix": "Use the blueprint's MJ-4 rewrite of the question (\"…how does the average delivery time you report compare with what customers actually experienced?\"), its options and its why_wrong, in the new context from the rule-11 finding. Relabel it Intermediate (MJ-5): at present a learner with 3 of 4 right scores 20/35 and fails the module.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03-q4 (food delivery, 8% missing delivery times) reuses t2's scenario (delivery dataset, 6% missing delivery times) with only the number changed.",
+      "fix": "Move q4 to a new context: a Hyderabad clinic's waiting-time log where 9% of rows have no \"seen at\" time, mostly patients who walked out after a long wait. Ask how the average waiting time compares with what patients experienced.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 11,
+      "standard": null
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03-q3 why_wrong says \"a PivotTable treats each spelling as a different city\". Stated that broadly, it isn't reliable: whether a pivot groups entries that differ only in capital letters depends on the tool.",
+      "fix": "Write: \"a PivotTable doesn't merge different spellings such as Bengaluru, Bangalore and BLR\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03 has no worked example (check.mjs), and its cards are 40, 57 and 45 words. Card 2 lists fixes in one sentence but never shows a cleaning log. Card 3 says missing data can bias a result but shows no numbers.",
+      "fix": "Card 2: work a 6-row example from a Jaipur coaching centre's enquiry list, showing before and after, and two log lines such as \"Step 2: trimmed spaces in city, 41 rows changed\" and \"Step 3: mapped Bangalore/BLR/bangalore to Bengaluru, 212 rows\". Name the free tools: TRIM and Data > Data cleanup in Google Sheets, Power Query in Excel. Card 3: show the numbers, e.g. 100 deliveries, 6 blank and all slow: the average of the rest is 28 minutes, but with them it would be 31. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03 tasks are plans only. t1 writes a cleaning plan for a file the learner never sees, and t2 describes options. Neither produces a cleaned file or a log.",
+      "fix": "Give t1 a 30-row messy CSV (the hospital export described, with mixed date formats, department variants and \"₹500\" fees). Ask the learner to clean it in Google Sheets and submit the cleaned sheet plus a 5-line cleaning log with row counts. Keep t2 as reasoning, but give the numbers so the learner calculates both averages.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03 says 90 minutes; check.mjs estimates 53 for the content as written.",
+      "fix": "With the hands-on t1 and the longer cards, 90 is honest. Otherwise cut to 60.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "must_fix",
+      "problem": "da-m04-q3 (= NULL against IS NULL) and da-m04-q4 (AVG skips NULLs) test NULL handling, which no da-m04 card teaches. da-m03 teaches \"missing is not zero\" only as an idea.",
+      "fix": "Add to card 3, or replace card 1's plain syntax line with: \"A blank in a database is NULL, meaning unknown. Test it with IS NULL or IS NOT NULL; = NULL is never true. AVG, SUM and COUNT(column) skip NULLs; COUNT(*) counts every row.\" Add a worked 4-row example showing AVG(stars) = 4.0 over the 2 rated rows, not the 4.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "must_fix",
+      "problem": "da-m04-q4 explanation says \"Summary functions skip NULLs\", which is false for COUNT(*). Its right option is also the only one with a reason attached (\"…; AVG ignores NULLs\"), a clue the house style forbids.",
+      "fix": "Explanation: use the blueprint's MN-3 text (\"AVG, like SUM and COUNT(stars), skips NULLs; only COUNT(*) counts every row…\"). Right option: \"The average of the 600 orders that have a rating\". Give two wrong options a reason too, e.g. \"The average across all 1,000 orders, with missing ratings counted as 0\" and \"Nothing useful, because NULLs make AVG return an error\". Relabel Intermediate (MJ-5).",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "should_fix",
+      "problem": "da-m04-q2 explanation is one short sentence (check.mjs). It is also a recall item with no scenario.",
+      "fix": "Give it a case: a Lucknow sweet-shop chain's orders table, where the owner wants cities with revenue above ₹10 lakh. Explanation: \"WHERE filters rows before they are grouped, so the totals don't exist yet. HAVING filters after GROUP BY, so it can test SUM(order_value).\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "should_fix",
+      "problem": "da-m04 cards are 34, 42 and 41 words. They show queries but never the table a query returns, so a beginner can't picture the result. t1 filters April 2026, but no card warns about the date-range trap.",
+      "fix": "Card 1: show a 5-row orders table, the query, and its 2-row result. Card 2: show GROUP BY's output for the same rows. Add the common mistake: on a timestamp column, BETWEEN '2026-04-01' AND '2026-04-30' drops payments after midnight on 30 April; write paid_at >= '2026-04-01' AND paid_at < '2026-05-01'. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "should_fix",
+      "problem": "da-m04 tasks have no database to run on. The learner writes a query they can't test, so they never see an error message or a result.",
+      "fix": "Attach the payments table as a CSV and tell learners to run it free in the DuckDB shell (shell.duckdb.org runs in any browser, phone included, and the data stays on the device) or the BigQuery sandbox. t1: paste the query and its result. Hint: the half-open date range.",
+      "source": "https://www.duckdb.org/docs/current/clients/wasm/overview",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 7,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "should_fix",
+      "problem": "da-m04 says 90 minutes; check.mjs estimates 53 for the content as written.",
+      "fix": "With run-it-yourself tasks (setting up the CSV in the browser shell takes about 10 minutes the first time), 90 is honest. Otherwise cut to 60.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "should_fix",
+      "problem": "da-m05 has no worked example (check.mjs), and its cards are 50, 38 and 54 words. Card 2 states fan-out but shows no numbers. Card 1 says a LEFT JOIN \"leaves blanks\", but SQL shows NULL. The common trap of filtering an o. column in WHERE after a LEFT JOIN isn't named.",
+      "fix": "Card 1: say \"NULL\", and show a 3-customer example where one has no orders. Add the trap: WHERE o.order_date >= … after a LEFT JOIN drops the customers with no orders; put that condition in ON instead. Card 2: work it through: 3 orders worth ₹1,500, a customer with 2 addresses gives 6 rows and ₹3,000. Card 3: add LAG (see the da-f08 finding). Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "should_fix",
+      "problem": "da-m05 t1 and t2 have no tables to run on, and t2 allows \"describe (or write)\".",
+      "fix": "Use the same free DuckDB or BigQuery route as da-m04, with customers.csv and orders.csv (include customers with no orders and some with 3 or more). t1: run the query and report how many 2026 sign-ups never ordered. t2: write it, and report the repeat share of April revenue. The blueprint's expected answer (number before filtering April) gives a checkable result.",
+      "source": "https://www.duckdb.org/docs/current/clients/wasm/overview",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "should_fix",
+      "problem": "da-m05 says 90 minutes; check.mjs estimates 53.",
+      "fix": "With run-on-data tasks, 90 is honest; otherwise 60.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "should_fix",
+      "problem": "da-m05-q1 (customers with no orders, LEFT JOIN + IS NULL) reuses t1's scenario and tables. da-m05-q3 repeats card 3's ROW_NUMBER line with names changed, so it tests recall.",
+      "fix": "q1: move to a new context, e.g. a college placement cell with students(student_id, branch) and applications(student_id, company): which students haven't applied anywhere? q3: use the blueprint's MN-6 rewrite (\"Latest visit only\", ORDER BY visit_date DESC), Intermediate.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 11,
+      "standard": null
+    },
+    {
+      "target": "module:da-m06",
+      "severity": "should_fix",
+      "problem": "da-m06 cards are 47, 57 and 52 words. Card 1 uses \"standard deviation\" without explaining it. No card works a number through, e.g. a new value against a usual range.",
+      "fix": "Card 1: either drop \"standard deviation\" or explain it in one line (\"a typical distance from the average\"). Work an example from a context the tasks don't use: a Bhopal clinic sees 110 to 150 patients a day for 8 weeks; 158 on Monday is just above the range, so watch for a week before calling it a change. Card 3: say what \"a clear difference\" means: decide the sample size and run length first, and check the gap against chance. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m06",
+      "severity": "should_fix",
+      "problem": "Adding to check.mjs: card 2 has a 36-word sentence (\"…72% are satisfied…from 2,000 answers it is within a couple of points\"). \"Margin\", \"noise\" and \"standard deviation\" are used without a plain explanation.",
+      "fix": "Split card 2's long sentence into three: \"From 50 answers, 72% satisfied could really be anywhere from about 60% to 85%.\" \"From 2,000 answers, it is within about 2 points.\" \"Bigger samples give narrower ranges.\" Define \"noise\" the first time (\"ordinary ups and downs\").",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "must_fix",
+      "problem": "da-m07-q4 tests combining pandas conditions with & and brackets, which no card teaches. Card 2 shows only a one-condition filter.",
+      "fix": "Add to card 2 or 3: df[(df[\"status\"] == \"success\") & (df[\"amount\"] > 5000)], with the rule \"use & for and, | for or, and put brackets round each condition; Python's and raises an error on whole columns\".",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "progression"
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "da-m07-q4: the option df.filter(\"success\", 5000) doesn't look like real code (rule 2), and the item is labelled Advanced, though once taught it is everyday pandas.",
+      "fix": "Replace that option with df[(df[\"status\"] == \"success\") & df[\"amount\"] > 5000] (brackets missing round the second condition: & binds before >, so it errors or filters wrongly). why_wrong: \"without brackets, & is applied before >\". Relabel Intermediate (MJ-5).",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 2,
+      "standard": null
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "da-m07 card 2 is a list of six commands with no worked case or output (31 words). Card 1 is a pitch. No card shows a short notebook working from question to answer, or the common mistakes. Rule 8: card 2 presents dayfirst=True as the fix, but the pandas docs warn it \"is not strict\"; format=\"%d/%m/%Y\" is the strict choice. pandas 3.0 (January 2026) no longer supports the chained assignment that older tutorials use.",
+      "fix": "Card 2: work a 5-row UPI example from read_csv to a groupby result, showing the printed output. Use pd.to_datetime(df[\"txn_time\"], format=\"%d/%m/%Y %H:%M\"), and say dayfirst=True only \"prefers\" day-first. Card 3: add the pandas 3 note: \"Change values with df.loc[rows, \\\"col\\\"] = …; the older df[df.x > 5][\\\"y\\\"] = 0 does nothing in pandas 3.\" Each card 90 to 140 words.",
+      "source": "https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 8,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "da-m07 t1 gives no file and allows \"plain words\", so a Python module can be completed without running any Python.",
+      "fix": "Link a 5,000-row fictional UPI CSV and a starter Google Colab notebook (free). t1: run the steps and report the top 5 categories by successful value, plus one check (row count before and after filtering). t2 is fine; add \"run it on leads.csv and say how many rows drop_duplicates removed\".",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "da-m07 says 120 minutes; check.mjs estimates 53, more than double.",
+      "fix": "With the hands-on notebook tasks, set 90. A first Colab session (sign-in, upload, run) needs about 10 extra minutes.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "Card 1 offers \"Python in Excel\" beside Google Colab as if both were free. Microsoft says free and perpetual consumer licences don't support it, and it doesn't run on phones. Colab works in a phone browser but is awkward on a small screen.",
+      "fix": "Card 1: \"Run it free in Google Colab in your browser. A laptop or a college computer makes it easier than a phone. (Python in Excel also exists, but it needs a paid Microsoft 365 plan.)\"",
+      "source": "https://support.microsoft.com/en-us/excel/python/python-in-excel-availability",
+      "owner": "course",
+      "category": "house-style",
+      "rule": 7,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08 has no worked example (check.mjs). Card 3 does four jobs (Power BI connections, DAX measures, visual calculations, Copilot) in 59 words. The truncated axis, which q2 tests and t2 asks about, is never taught.",
+      "fix": "Card 1: add the common mistake with numbers: a bar axis starting at ₹99 lakh makes ₹102 lakh look three times ₹100 lakh. Card 2: describe one worked page for a fictional coaching chain (top: admissions against target per centre; middle: by-centre breakdown with red for below target; bottom: 12-week trend). Card 3: \"Build it free\": Looker Studio or Google Sheets charts (browser), or Power BI Desktop (free, Windows only), with one DAX measure as the example. Mention Copilot in one sentence as a paid feature some employers provide. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08 t1 asks the learner to \"describe one page\", and t2 to describe a chart remembered from somewhere. Nothing is built, though building a dashboard is the module outcome and the overview outcome.",
+      "fix": "t1: build a one-page dashboard from the shared practice sheet in Looker Studio (free, browser) or Power BI Desktop (Windows), with 3 to 4 key numbers against targets, one breakdown and one trend; submit a link or screenshot. t2: give a bad chart (a 3D pie of 9 brands, with its data) to redraw in Google Sheets.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 7,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08's summary (\"check what Copilot drafts\") and card 3 treat Copilot in Power BI as a normal step. Microsoft Learn says it needs a paid Fabric capacity (F2 or higher) or Premium P1; trial capacities, free SKUs and a Pro licence alone aren't enough. No free dashboard tool is taught, though the project allows Looker Studio.",
+      "fix": "Summary: \"Choose the right chart, design dashboards around decisions, and check any number a tool drafts.\" Card 3 as in the explanation finding. Change the visualisation skill description to \"…in Looker Studio, Google Sheets or Power BI\".",
+      "source": "https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-introduction",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 7,
+      "standard": "relevance"
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08 says 90 minutes; check.mjs estimates 53.",
+      "fix": "With a built dashboard (t1, about 35 to 40 minutes) and a redraw (t2), 90 is honest; otherwise 60.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "Power BI Desktop is Windows only and needs at least a 1440x900 screen (Microsoft Learn), so phone and Mac learners can't follow card 3.",
+      "fix": "Lead with the browser route (Looker Studio or Sheets charts, which work on any device), and name Power BI Desktop as \"free on a Windows computer, and what most Indian employers use\".",
+      "source": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-get-the-desktop",
+      "owner": "course",
+      "category": "house-style",
+      "rule": 7,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08-q2: an axis starting at ₹99 lakh makes the ₹102 lakh bar 3 times taller than ₹100 lakh, not \"five times\" (5 times needs ₹99.5 lakh). The scenario and the right option don't quite agree.",
+      "fix": "Scenario: \"…but the new bar looks three times taller.\" Keep the right option \"starts near ₹99 lakh\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08-q1: \"A pie chart\" and \"A donut chart\" are the same mistake, so the question has only two real distractors. It is also a recall item with no scenario.",
+      "fix": "Add a case (a Nagpur pharmacy chain's owner wants to see whether revenue has been rising over 18 months), and replace the donut option with \"A bar chart sorted by revenue\" (why_wrong: \"sorting by size breaks the time order\").",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09 has no worked example (check.mjs). Card 2 lists the ways AI goes wrong but never shows one being caught.",
+      "fix": "Card 2: work one case from a context the tasks don't use. A prompt asks for \"monthly active customers\" for a Kochi pharmacy; the AI's SQL counts orders, not distinct customers. A hand count of 10 rows shows 7 customers where the query says 10, and adding COUNT(DISTINCT customer_id) fixes it. Each card 90 to 140 words.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09 t2 only describes how to check an AI summary; nothing is checked. t1 lists checks but never runs them.",
+      "fix": "t2: give a 20-row sales sheet and an AI summary with one planted error (Q2 dated April to July). The learner finds the error with a pivot table or SUMIFS and rewrites the sentence. t1: say \"use any free AI assistant, with column names and made-up rows only\", then run the 3 checks on the practice data.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "Adding to check.mjs's long sentences (up to 36 words in cards 2 and 3): card 1 lists Copilot in Excel and Power BI beside free assistants without saying they are paid.",
+      "fix": "Card 1: \"Free assistants such as ChatGPT, Claude and Gemini can all do this. Copilot in Excel and Power BI does too, on paid plans some employers provide.\" Split every sentence over 20 words in cards 2 and 3.",
+      "source": "https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-introduction",
+      "owner": "course",
+      "category": "house-style",
+      "rule": 7,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "idea",
+      "problem": "da-m09 card 3 states the DPDP Act correctly (lawful purpose, with consent or for certain legitimate uses). It doesn't say the DPDP Rules, 2025 phase in, which learners will hear about at work.",
+      "fix": "Add one sentence: \"The DPDP Rules, 2025 bring in the Act's duties in stages; most apply to organisations from May 2027, but careful handling starts now.\" Don't give a day: sources differ on 13 or 14 May 2027.",
+      "source": "https://www.scconline.com/blog/post/2025/11/14/meity-notified-digital-personal-data-protection-rules-2025/",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 5,
+      "standard": "relevance"
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09-q3: \"Email the file to a friend who is good with AI…\" is a joke option nobody who read the card would pick.",
+      "fix": "Replace it with \"Replace names with initials, keep the phones and diagnoses, and paste it into a free chatbot\" (why_wrong: \"initials don't hide anyone while phone numbers and diagnoses stay\").",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09-q1 why_wrong (\"They leave out the table…, or both\") doesn't say which option makes which mistake (rule 6).",
+      "fix": "Name each: \"The first gives no columns and doesn't define a repeat customer; the expert-persona prompt gives neither the table nor the measure; \\\"my company database\\\" gives the assistant no schema to work from.\" Use descriptions, not positions.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 6,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09-q1 (prompt for monthly repeat-customer SQL from orders) reuses t1's scenario (repeat customers each month from orders).",
+      "fix": "Give q1 a new measure and context, e.g. a bus-booking app's bookings(booking_id, user_id, route, booked_at, fare): which prompt is most likely to get correct SQL for average fare per route last month?",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 11,
+      "standard": null
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09-q4 is labelled Advanced, but the judgement is straightforward once card 2 is read (blueprint MJ-5).",
+      "fix": "Relabel Intermediate.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m10",
+      "severity": "should_fix",
+      "problem": "da-m10 cards are 48, 43 and 39 words. Card 1 gives a good opening line but doesn't show a weak one turned into it. Card 3 says what to state but shows no example caveat.",
+      "fix": "Card 1: a before and after: \"This report analyses six months of data from…\" becomes \"Recommendation: …\", with a note on what moved and why. Card 3: show a one-line caveat: \"Based on 14,000 customers, January to June 2026; customers chose the trial kit themselves, so a test would confirm it.\" Each card 90 to 140 words; split the 35-word sentence.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m10",
+      "severity": "should_fix",
+      "problem": "da-m10-q1 why_wrong (\"They describe the work done…\") and da-m10-q2 why_wrong (\"They are facts…\") group the wrong options instead of naming each one's mistake (rule 6). Both are also recall items with no scenario.",
+      "fix": "q1: give a case (a Tier-2 city footwear D2C brand's ops head, who has two minutes) and write one reason per option, e.g. \"the row count says how big the work was, not what to do; …\". q2: same, e.g. \"₹640 compared with last year is a finding with no action; …\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 6,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m10",
+      "severity": "should_fix",
+      "problem": "Adding to check.mjs: card 1's example sentence is 35 words. CFO, COD and Tier-3 are used without explanation in the quiz.",
+      "fix": "Split card 1's example into two sentences. Write \"finance head (CFO)\" and \"cash on delivery (COD)\" the first time.",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "17 module quiz questions have no scenario (house style: scenario-based): da-m01-q2, m02-q1, m03-q2, m03-q3, m04-q1, m04-q2, m05-q1, m05-q3, m05-q4, m06-q1, m07-q1, m07-q3, m07-q4, m08-q1, m09-q1, m10-q1, m10-q2. Several test recall of a card line.",
+      "fix": "Give each a 1- to 2-sentence case in a new Indian context (findings above cover m04-q2, m05-q1, m05-q3, m08-q1, m09-q1, m10-q1 and m10-q2). For short code items (m04-q1, m07-q1, m07-q3), one sentence naming the business and the table is enough.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "da-m01-q3 explanation says the median is \"roughly ₹2,200–2,500\". With 47 of 50 fees between ₹2,000 and ₹2,500, the median can be anywhere in that range.",
+      "fix": "\"…The median stays at what the middle student pays, between ₹2,000 and ₹2,500.\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "aptitude",
+      "severity": "should_fix",
+      "problem": "Several statements rate liking, feeling or knowledge, not behaviour: da-a05 (\"I can summarise…quickly\"), da-a10 (\"I enjoy breaking a question…\"), da-a11 (\"I'm comfortable learning…syntax\"), da-a14 (\"I know an average can hide…\"), da-a16 (\"I like automating tasks\"). da-a10 to da-a12 aren't about SQL at all.",
+      "fix": "Use the blueprint's MN-7 rewrites: a05 \"I sort or filter a spreadsheet to find the rows I need, instead of scrolling through it.\"; a10 \"When I need one number from a long list, I write down the steps (which rows, which groups, which total) before I start.\"; a11 \"I look up the exact syntax of a formula or command instead of guessing it.\"; a12 (reversed) \"When I need figures from a large table, I ask someone else to pull them for me.\"; a14 \"When I see an average, I look at the highest and lowest values behind it.\"; a16 \"When I repeat the same steps on a file every week, I look for a way to automate them.\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "aptitude",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "project",
+      "severity": "should_fix",
+      "problem": "Overview outcome 4 (\"Use AI assistants to work faster, and verify everything they produce\") isn't shown by any project deliverable. The da-m09 tasks use given scenarios, not the learner's own analysis. The brief also says nothing about protecting personal data in the business data a learner receives.",
+      "fix": "Add a deliverable: \"An AI log: each prompt you used, what the AI produced, how you checked it, and what you changed (or \\\"no AI used\\\").\" Add to the brief: \"If a business shares data, get its written permission, remove names, phone numbers and other personal details before you analyse it, and never paste personal data into an AI tool.\"",
+      "source": "",
+      "owner": "course",
+      "category": "project",
+      "rule": 10,
+      "standard": null
+    },
+    {
+      "target": "project",
+      "severity": "should_fix",
+      "problem": "The rubric descriptions are one-liners. None of them grades AI use and checking (outcome 4), or whether the learner can explain their own work, which is the defence against outsourced or AI-written projects. The blueprint has ready Competent-level lines and full 0 to 5 descriptors, but they were never copied in.",
+      "fix": "Replace the five descriptions with the blueprint's \"Proposed one-line descriptions\" (e.g. analysis: \"Correct SQL or Python, joins checked, a key number reproduced; AI help disclosed and checked\"; recommendation: \"…and the learner can explain every step\"). Give mentors the 0 to 5 table from the blueprint's Practical evidence section.",
+      "source": "",
+      "owner": "assessment",
+      "category": "project",
+      "rule": 4,
+      "standard": null
+    },
+    {
+      "target": "overview",
+      "severity": "should_fix",
+      "problem": "No overview outcome covers statistics, though da-m06, five quiz questions, the final and the analysis criterion all test it (blueprint gap G1).",
+      "fix": "Add an outcome: \"Tell a real change from noise using samples, spread and simple A/B tests\".",
+      "source": "",
+      "owner": "course",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "overview",
+      "severity": "should_fix",
+      "problem": "overview.hours is 35, but the file never states the project time. Modules add up to 14 hours and the final to 0.5, so the project is an implied 20.5 hours that no one can check. Module minutes will also change with the time findings above.",
+      "fix": "Say in the project brief \"about 20 hours over 3 to 4 weeks with your mentor\". After the module minutes are settled, set hours to (sum of module minutes / 60) + 20 + 0.5, rounded to a whole hour.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": 3,
+      "standard": null
+    },
+    {
+      "target": "skills",
+      "severity": "should_fix",
+      "problem": "Skill descriptions name only paid or Windows routes: visualisation is \"in Power BI or Excel\", and ai-analytics is \"Using AI assistants and Copilot\".",
+      "fix": "visualisation: \"Choosing the right chart and building dashboards around decisions, in Looker Studio, Google Sheets or Power BI.\" ai-analytics: \"Using free AI assistants (and Copilot where an employer provides it) to speed up analysis, checking their output, and protecting personal data.\"",
+      "source": "https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-introduction",
+      "owner": "course",
+      "category": "house-style",
+      "rule": 7,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "No task in the programme gives the learner data. All 20 tasks are plans, descriptions or lists, so the skills employers test (SQL, Excel, pandas, a dashboard) are never practised on a real file before the project.",
+      "fix": "Create one fictional practice dataset used across the modules: \"Masala Mart\", a D2C spice brand. orders.csv (2,000 rows, with dd/mm/yyyy dates, messy city spellings, \"₹\" amounts, a returned 1/0 column and some duplicate rows), customers.csv (with some customers who never ordered) and products.csv. Publish it as a view-only Google Sheet and as CSV files. Link it in the da-m02, m03, m04, m05, m07, m08 and m09 tasks, so each module adds a step on the same data.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 7,
+      "standard": "practice"
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "The assessment blueprint doesn't match the file. Its question map and coverage map describe the final \"after the corrections\", which was never applied. Its coverage plan leaves spreadsheets with one final question (f03), so it would fail rule 13. The older -review.md says every question has a scenario, why_wrong and learning_outcome, which isn't true of the file.",
+      "fix": "After this round's fixes, update the blueprint's final table and coverage map to the file as it then stands: add a \"skill\" column using the tag map in the spreadsheets finding, and add the new f07. Mark ai-powered-data-analytics-review.md as superseded at its top.",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Research: Indian junior analyst and MIS roles use SUMIFS/COUNTIFS daily, and some ask for Tableau. The programme teaches neither.",
+      "fix": "For Paul: consider one line on SUMIFS in da-m02 card 3 (see that finding), and naming Tableau Public as a free alternative in da-m08. No new module is needed.",
+      "source": "",
+      "owner": "course",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    }
+  ],
+  "module_scores": [
+    {
+      "module": "da-m01",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 4,
+        "progression": 3,
+        "inclusion": 4
+      },
+      "notes": {
+        "outcome": "Clear and checkable, but covers only framing; the types and distribution parts of the module aren't in it.",
+        "explanation": "Cards are 46 to 56 words with no worked example from start to finish.",
+        "practice": "t2 is list work with no data to check against.",
+        "feedback": "Explanations are good; q3's median range is imprecise.",
+        "relevance": "Indian, current and useful; could use one real-looking export.",
+        "time": "60 against an estimate of 53: close.",
+        "progression": "q4 tests correlation and randomisation, which are taught only in da-m06.",
+        "inclusion": "One card averages 23 words a sentence."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m02",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 3,
+        "feedback": 3,
+        "relevance": 4,
+        "time": 3,
+        "progression": 3,
+        "inclusion": 3
+      },
+      "notes": {
+        "outcome": "Good, but \"a business question\" is unspecific; it could name return rate or lookups.",
+        "explanation": "Cards are 39 to 49 words; no worked result; absolute references and SUMIFS untaught.",
+        "practice": "Neither task opens a spreadsheet.",
+        "feedback": "q2's why_wrong points to the wrong option by position.",
+        "relevance": "Excel-only (Ctrl+T); no Google Sheets route; XLOOKUP not in Excel 2016 or 2019.",
+        "time": "90 against an estimate of 53.",
+        "progression": "q4 tests absolute references, which aren't taught.",
+        "inclusion": "Excel-only steps, and sentences of 23 to 26 words."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m03",
+      "scores": {
+        "outcome": 4,
+        "explanation": 2,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 3,
+        "progression": 4,
+        "inclusion": 4
+      },
+      "notes": {
+        "outcome": "\"The problems that make analysis wrong\" is broad; it could name duplicates, formats, categories and blanks.",
+        "explanation": "No worked example, no sample log, no numbers for the missing-data bias; cards 40 to 57 words.",
+        "practice": "Both tasks are plans; no messy file to clean.",
+        "feedback": "q4 has a second defensible answer; q3's why_wrong overstates PivotTable behaviour.",
+        "relevance": "Power Query named, but no Google Sheets cleaning tools.",
+        "time": "90 against an estimate of 53.",
+        "progression": "Fits after da-m02; q4 is labelled too hard (Advanced), so 3 of 4 right fails.",
+        "inclusion": "Readable; tools are Excel-leaning."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m04",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 3,
+        "progression": 3,
+        "inclusion": 4
+      },
+      "notes": {
+        "outcome": "Clear, but the learner can't check it without a database to run on.",
+        "explanation": "Queries shown without their results; NULL handling and the date-range trap missing; cards 34 to 42 words.",
+        "practice": "Queries are written but can't be run.",
+        "feedback": "q4's explanation is wrong about COUNT(*); q2's is too short.",
+        "relevance": "Current SQL; no free place to run it named.",
+        "time": "90 against an estimate of 53.",
+        "progression": "q3 and q4 test NULLs, which aren't taught.",
+        "inclusion": "Readable; code on its own lines."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m05",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 3,
+        "progression": 4,
+        "inclusion": 4
+      },
+      "notes": {
+        "outcome": "Clear; could name a checkable result (e.g. a repeat-revenue share).",
+        "explanation": "No worked example; \"blanks\" instead of NULL; the LEFT JOIN WHERE trap and LAG are missing.",
+        "practice": "No tables to run on; t2 allows \"describe\".",
+        "feedback": "Good per-option reasons; q3 tests recall of the card.",
+        "relevance": "Interview-relevant; LAG (asked in interviews) missing.",
+        "time": "90 against an estimate of 53.",
+        "progression": "Builds on da-m04; the final's LAG item depends on this module teaching LAG.",
+        "inclusion": "Long code options wrap on phones, but are readable."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m06",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 4,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 4,
+        "progression": 4,
+        "inclusion": 3
+      },
+      "notes": {
+        "outcome": "Clear; \"simple experiments\" could be \"an A/B test\".",
+        "explanation": "No number worked through; \"standard deviation\" unexplained.",
+        "practice": "Real written outputs (a test design, a message to the owner); no data to calculate from.",
+        "feedback": "Good; m06-q1 has no scenario.",
+        "relevance": "Sound and current; Indian contexts.",
+        "time": "75 against an estimate of 53: a little generous.",
+        "progression": "Fits; it is what da-m01-q4 relies on.",
+        "inclusion": "A 36-word sentence; jargon (margin, noise, standard deviation) unexplained."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m07",
+      "scores": {
+        "outcome": 4,
+        "explanation": 2,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 2,
+        "progression": 3,
+        "inclusion": 3
+      },
+      "notes": {
+        "outcome": "Clear; a notebook result could be named.",
+        "explanation": "Card 2 is a command list with no worked case; & filters and pandas 3 changes untaught; dayfirst presented as strict (rule 8).",
+        "practice": "No file; tasks can be done \"in plain words\".",
+        "feedback": "Good per-option reasons; one unrealistic code option.",
+        "relevance": "pandas current; Python in Excel presented without its paid licence.",
+        "time": "120 against an estimate of 53, more than double.",
+        "progression": "q4 tests & filters, which aren't taught.",
+        "inclusion": "Paid Python in Excel unflagged; Colab is awkward on a phone, with no note."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m08",
+      "scores": {
+        "outcome": 4,
+        "explanation": 2,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 3,
+        "time": 3,
+        "progression": 4,
+        "inclusion": 3
+      },
+      "notes": {
+        "outcome": "Clear; the module never has the learner build one.",
+        "explanation": "No worked example; card 3 crams four topics; the truncated axis is untaught.",
+        "practice": "Both tasks are descriptions.",
+        "feedback": "q2's scenario says 5 times where the numbers give 3; q1 has a duplicate distractor.",
+        "relevance": "Copilot in Power BI (paid F2+ capacity) treated as normal; no free dashboard tool taught.",
+        "time": "90 against an estimate of 53.",
+        "progression": "Fits; q4 builds on da-m05.",
+        "inclusion": "Power BI Desktop is Windows only; no phone or Mac route."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m09",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 3,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 4,
+        "progression": 4,
+        "inclusion": 3
+      },
+      "notes": {
+        "outcome": "Clear; could name the check (\"…and reproduce one number independently\").",
+        "explanation": "No worked example of an AI error caught.",
+        "practice": "t2 describes a check without doing one.",
+        "feedback": "q1's why_wrong groups the options (rule 6); q3 has a joke option.",
+        "relevance": "DPDP stated correctly; the Rules' phase-in not mentioned; Copilot unflagged as paid.",
+        "time": "75 against an estimate of 54: a little generous.",
+        "progression": "Fits after SQL, pandas and dashboards.",
+        "inclusion": "Sentences up to 36 words; paid Copilot listed beside free tools."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m10",
+      "scores": {
+        "outcome": 4,
+        "explanation": 3,
+        "practice": 4,
+        "feedback": 3,
+        "relevance": 4,
+        "time": 4,
+        "progression": 4,
+        "inclusion": 3
+      },
+      "notes": {
+        "outcome": "Clear; could be checkable (\"…a memo opening a manager can act on in two lines\").",
+        "explanation": "Cards 39 to 48 words; no before and after.",
+        "practice": "Real written outputs; good hints. Not on the learner's own analysis.",
+        "feedback": "q1 and q2 group the wrong options (rule 6).",
+        "relevance": "Indian, current.",
+        "time": "60 against an estimate of 53.",
+        "progression": "A good closer; q4 uses da-m06's fair comparison.",
+        "inclusion": "A 35-word sentence; CFO, COD and Tier-3 unexplained."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": [
+    {
+      "rule": "Before writing a quiz or final question, name the Learn-card sentence (in that module or an earlier one) it depends on. If there isn't one, add the teaching to the card or change the question.",
+      "why": "In the Data Analytics programme, seven questions (da-m01-q4, m02-q4, m04-q3, m04-q4, m07-q4, f03, f08) tested correlation, $ references, NULLs, & filters, SUMIFS and LAG, which no card taught."
+    },
+    {
+      "rule": "Never refer to an option by its position (\"the third option\", \"option B\") in an explanation or why_wrong. Describe or quote it instead, because options are reshuffled to balance answer positions.",
+      "why": "da-m02-q2's why_wrong said \"the third option\" for an option that was second after the positions were balanced."
+    },
+    {
+      "rule": "In a tools programme, give every Practise task a small dataset the learner can open free on a phone (a view-only Google Sheet or a CSV linked in the task), and ask for a result they can check. Allow at most one \"describe what you would do\" task per module.",
+      "why": "All 20 Data Analytics tasks were plans or descriptions, so learners met their first real file only in the project."
+    }
+  ]
 }

@@ -20,8 +20,8 @@ export interface QuizCopy {
   draftPrefix: string
   /** The paragraph under the intro heading. */
   intro: string
-  /** The optional, unscored closing question. */
-  closing: { title: string; hint: string; placeholder: string; ariaLabel: string }
+  /** The optional, unscored closing question; left out, the last screen just sends. */
+  closing?: { title: string; hint: string; placeholder: string; ariaLabel: string }
 }
 
 interface Draft {
@@ -84,9 +84,11 @@ export function SelfAssessmentQuiz({
   copy: QuizCopy
   onSubmit: (answers: Record<string, number>, reflection: string) => Promise<void>
 }) {
-  const { user } = useAuthUser()
-  const userId = user?.id
-  const key = userId ? `${copy.draftPrefix}.${userId}` : undefined
+  const { user, loading: authLoading } = useAuthUser()
+  // Whose draft: the account's, or this device's for a visitor taking the test
+  // before signing up (a long test shouldn't be lost to a closed tab).
+  const owner = authLoading ? undefined : (user?.id ?? 'guest')
+  const key = owner ? `${copy.draftPrefix}.${owner}` : undefined
 
   const [phase, setPhase] = useState<Phase>('intro')
   const [index, setIndex] = useState(0)
@@ -106,15 +108,15 @@ export function SelfAssessmentQuiz({
   // Offer to resume once the session resolves (useAuthUser is null on first render).
   const checked = useRef(false)
   useEffect(() => {
-    if (!userId || checked.current) return
+    if (!owner || checked.current) return
     checked.current = true
-    const d = loadDraft(`${copy.draftPrefix}.${userId}`, questions)
+    const d = loadDraft(`${copy.draftPrefix}.${owner}`, questions)
     if (d) {
       setAnswers(d.answers)
       setIndex(d.index)
       setResumable(true)
     }
-  }, [userId, questions, copy.draftPrefix])
+  }, [owner, questions, copy.draftPrefix])
 
   useEffect(() => {
     if (!key || answeredCount === 0 || phase === 'intro') return
@@ -218,23 +220,27 @@ export function SelfAssessmentQuiz({
   if (phase === 'reflection') {
     return (
       <div className={panel}>
-        <Eyebrow dark>One last thing</Eyebrow>
+        <Eyebrow dark>{copy.closing ? 'One last thing' : 'All done'}</Eyebrow>
         <h2 className="mt-3 font-display text-2xl font-semibold leading-snug tracking-tight text-white sm:text-3xl">
-          {copy.closing.title}
+          {copy.closing?.title ?? 'That’s every statement.'}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-white/70">
-          {copy.closing.hint}
+          {copy.closing?.hint ?? 'Go back to change an answer, or see your results.'}
         </p>
-        <textarea
-          value={reflection}
-          onChange={(e) => setReflection(e.target.value)}
-          rows={4}
-          maxLength={500}
-          placeholder={copy.closing.placeholder}
-          aria-label={copy.closing.ariaLabel}
-          className="mt-5 w-full resize-y rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/40 transition-colors focus:border-brand-300 focus:bg-white/[0.09] focus:outline-none"
-        />
-        <p className="mt-1.5 text-right font-mono text-[11px] text-white/40">{reflection.length} / 500</p>
+        {copy.closing && (
+          <>
+            <textarea
+              value={reflection}
+              onChange={(e) => setReflection(e.target.value)}
+              rows={4}
+              maxLength={500}
+              placeholder={copy.closing.placeholder}
+              aria-label={copy.closing.ariaLabel}
+              className="mt-5 w-full resize-y rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/40 transition-colors focus:border-brand-300 focus:bg-white/[0.09] focus:outline-none"
+            />
+            <p className="mt-1.5 text-right font-mono text-[11px] text-white/40">{reflection.length} / 500</p>
+          </>
+        )}
 
         {error && (
           <p role="alert" className="mt-3 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">

@@ -25,7 +25,7 @@ export interface MyMentorProfile {
   accepting: boolean
   /** Profile complete: students are only offered mentors who are. */
   ready: boolean
-  /** Required fields still empty: 'bio' | 'expertise' | 'linkedin' | 'phone'. */
+  /** Required fields still empty: 'headline' | 'bio' | 'expertise' | 'linkedin' | 'phone'. */
   missing: string[]
 }
 

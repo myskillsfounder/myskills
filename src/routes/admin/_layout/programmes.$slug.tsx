@@ -17,6 +17,7 @@ import {
   type ProgrammeForEditing,
   type ProgrammeKind,
 } from '@/lib/programmeEngine'
+import { TIERS } from '@/lib/certificates'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { AddButton, Area, ItemTools, NumberField, Select, StringList, StructureLock, Text, moved, replaced, useStructureLock } from '@/components/admin/programme/fields'
 import { AgentsPanel } from '@/components/admin/programme/AgentsPanel'
@@ -40,7 +41,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'skills', label: 'Skills' },
   { id: 'aptitude', label: 'Aptitude test' },
   { id: 'modules', label: 'Modules' },
-  { id: 'final', label: 'Final assessment' },
+  { id: 'final', label: 'Foundation assessment' },
   { id: 'project', label: 'Project' },
   { id: 'publish', label: 'Check & publish' },
   { id: 'agents', label: 'Agents' },
@@ -211,12 +212,12 @@ function FinalTab({ c, set }: { c: ProgrammeContent; set: (c: ProgrammeContent) 
   return (
     <div className="space-y-4">
       <p className="text-sm text-ink-600">
-        One test across every skill, taken at the end, like the Foundation assessment. Optional: leave it empty for no final
-        assessment, or add at least 5 questions.
+        One multiple-choice test on the foundations of every skill. It opens once the modules marked Foundation are done, is
+        taken once, and earns the programme’s Foundation certificate: Gold from {TIERS.gold.min}%, Silver from{' '}
+        {TIERS.silver.min}%, Bronze below. Keep the questions foundational. Leave it empty for none, or add at least 5 questions.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <NumberField label="Time limit, minutes" value={f.minutes} onChange={(v) => set({ ...c, final: { ...f, minutes: v } })} />
-        <NumberField label="Pass mark, %" value={f.pass_percent} onChange={(v) => set({ ...c, final: { ...f, pass_percent: v } })} />
       </div>
       <QuestionList questions={f.questions} onChange={(q) => set({ ...c, final: { ...f, questions: q } })} />
     </div>
@@ -436,6 +437,7 @@ function ProgrammeEditorPage() {
             You can reword anything, and change questions, options, answers and explanations. Modules, tasks, questions,
             statements and skills can’t be added, removed or reordered yet, because students’ progress and the Global
             Readiness Score count them.
+            {p.slug === 'global-leadership' && ' The Foundation assessment is the exception: nothing counts its questions, so add them freely.'}
           </p>
         </div>
       )}
@@ -465,7 +467,13 @@ function ProgrammeEditorPage() {
         {tab === 'skills' && <SkillsTab c={content} set={edit} />}
         {tab === 'aptitude' && <AptitudeTab c={content} set={edit} />}
         {tab === 'modules' && <ModulesTab c={content} set={edit} />}
-        {tab === 'final' && <FinalTab c={content} set={edit} />}
+        {tab === 'final' && (
+          // Global Leadership's Foundation questions are outside its lock:
+          // nothing counts them (docs/supabase-foundation-certificates.sql).
+          <StructureLock.Provider value={builtIn && p.slug !== 'global-leadership'}>
+            <FinalTab c={content} set={edit} />
+          </StructureLock.Provider>
+        )}
         {tab === 'project' && <ProjectTab c={content} set={edit} />}
         {tab === 'agents' && (
           <AgentsPanel programmeId={p.id} builtIn={builtIn} hasModules={content.modules.length > 0} dirty={dirty} onLoad={edit} />

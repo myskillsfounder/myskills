@@ -82,6 +82,22 @@ export async function fetchOpenRoles(): Promise<OpenRole[]> {
   return (data ?? []) as OpenRole[]
 }
 
+/** An open role as a visitor sees it (docs/supabase-public-internship-roles.sql). */
+export interface PublicRole extends Omit<RoleDetails, 'description'> {
+  id: string
+  posted_on: string
+  organisation: string
+  /** The first lines of the description. */
+  summary: string
+}
+
+/** The roles on the public Internships page; empty before the SQL is in. */
+export async function fetchPublicRoles(): Promise<PublicRole[]> {
+  const { data, error } = await supabase.rpc('public_internship_roles')
+  if (error) return []
+  return (data ?? []) as PublicRole[]
+}
+
 export interface MyApplication {
   id: string
   role_id: string

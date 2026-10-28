@@ -53,7 +53,7 @@ function CataloguePage() {
       <PageHeader
         eyebrow="Programmes"
         title="Choose what to learn"
-        description="Every programme starts with a short aptitude test, then modules that start where you are weakest, a final assessment, and a project with a mentor."
+        description="Every programme starts with a short aptitude test, then modules that start where you are weakest, a Foundation assessment that earns a Foundation certificate, and a project with a mentor."
       />
 
       {error && (

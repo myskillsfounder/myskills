@@ -2,7 +2,8 @@
  * On a phone, MySkills is three things: the Community marketplace, the
  * LaunchPad and Practice, each laid out for a phone.
  *
- * The Community is where a phone signs in to. The LaunchPad and Practice are
+ * The LaunchPad is where a phone signs in to: the programme they picked on
+ * the front door, where they stand in it and what's next. The LaunchPad and Practice are
  * trimmed to what is done on a phone (where you stand, and the next thing to
  * practise); in the bottom bar they come first, then the Community. The
  * profile is on a phone too, the last tab of the bottom bar: it is where a student's
@@ -47,9 +48,13 @@ const PHONE_APP = [
   '/foundation-assessment',
   '/certificate',
   '/profile',
+  // A course-engine programme (Entrepreneurship): its test, modules and final.
+  '/programmes',
 ]
 
 export const inPhoneApp = (pathname: string) => PHONE_APP.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
-/** Where a signed-in student lands: the Community on a phone, the LaunchPad on a computer. */
-export const homePath = (): '/community' | '/dashboard' => (isPhone() ? '/community' : '/dashboard')
+/** Where a signed-in student lands: the LaunchPad, on a phone too, since its
+ *  programme is what a student came for (Paul, 25 Oct 2026). The Community
+ *  is one tap away in the bottom bar. */
+export const homePath = (): '/dashboard' => '/dashboard'

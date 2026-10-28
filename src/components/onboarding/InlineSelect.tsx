@@ -32,6 +32,10 @@ export function InlineSelect({
   const [active, setActive] = useState(0)
   // How far to shift the list sideways so it stays fully on screen.
   const [offset, setOffset] = useState(0)
+  // Whether it opens above the chip, and how tall it may be, so it is never
+  // cut off by the bottom (or top) of the screen.
+  const [up, setUp] = useState(false)
+  const [maxHeight, setMaxHeight] = useState<number>()
   const root = useRef<HTMLSpanElement>(null)
   const button = useRef<HTMLButtonElement>(null)
   const list = useRef<HTMLUListElement>(null)
@@ -55,11 +59,26 @@ export function InlineSelect({
     // the browser scroll the page's clipped container to reveal it, and the
     // measurement below would then be taken from a shifted layout.
     list.current?.focus({ preventScroll: true })
-    const chip = root.current?.getBoundingClientRect()
     const width = list.current?.offsetWidth
-    if (!chip || !width) return
+    const height = Math.min(list.current?.scrollHeight ?? 0, 352)
+    let chip = root.current?.getBoundingClientRect()
+    if (!chip || !width || !height) return
+    // Short of room below: scroll the page up first, as far as it goes and
+    // without hiding the chip, so the whole list can open beneath it.
+    const short = height - (window.innerHeight - chip.bottom - 16)
+    if (short > 0) {
+      window.scrollBy({ top: Math.min(short, Math.max(0, chip.top - 80)) })
+      chip = root.current!.getBoundingClientRect()
+    }
     const left = Math.max(8, Math.min(chip.left, window.innerWidth - width - 8))
     setOffset(left - chip.left)
+    // Below if it fits; otherwise whichever side has more room, at that room's height.
+    const below = window.innerHeight - chip.bottom - 16
+    const above = chip.top - 16
+    const flip = height > below && above > below
+    setUp(flip)
+    // Never taller than the usual 22rem either (the inline style replaces the class's cap).
+    setMaxHeight(Math.max(160, Math.min(height, 352, flip ? above : below)))
   }, [open])
 
   // Keep the highlighted option visible by scrolling the list itself. Not
@@ -155,8 +174,8 @@ export function InlineSelect({
           aria-label={label}
           aria-activedescendant={`${uid}-${active}`}
           onKeyDown={onListKey}
-          style={{ left: offset }}
-          className="absolute top-full z-30 mt-2 max-h-[min(22rem,60vh)] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-white/15 bg-ink-900/95 p-1.5 font-sans text-base shadow-2xl backdrop-blur-xl [scrollbar-color:rgba(255,255,255,0.25)_transparent] [scrollbar-width:thin] focus:outline-none"
+          style={{ left: offset, maxHeight }}
+          className={`absolute z-30 ${up ? 'bottom-full mb-2' : 'top-full mt-2'} max-h-[min(22rem,60vh)] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-white/15 bg-ink-900/95 p-1.5 font-sans text-base shadow-2xl backdrop-blur-xl [scrollbar-color:rgba(255,255,255,0.25)_transparent] [scrollbar-width:thin] focus:outline-none`}
         >
           {options.map((o, i) => {
             const on = o.id === value

@@ -1,513 +1,592 @@
-import type { ComponentType } from 'react'
-import { phoneHome } from '@/lib/guards'
+import { homeEntry } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  BadgeCheck,
-  Bot,
+  BarChart3,
+  BookOpen,
   Briefcase,
-  ClipboardCheck,
-  Clock,
   GraduationCap,
-  HeartHandshake,
-  Lock,
+  Heart,
+  Plane,
+  Plus,
   Sparkles,
   Target,
+  Trophy,
+  Users,
+  type LucideIcon,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
-import { setAfterOnboarding } from '@/lib/afterOnboarding'
-import { skillTracks } from '@/lib/skillTracks'
-import { CAREER_READINESS, PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
+import { trackEvent } from '@/lib/analytics'
+import { COURSES } from '@/content/courses'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
-import { Eyebrow } from '@/components/landing/Eyebrow'
-import { AiCoachPreview } from '@/components/landing/AiCoachPreview'
-import { GridBackdrop } from '@/components/landing/GridBackdrop'
-
-type IconType = ComponentType<{ size?: number; className?: string }>
 
 export const Route = createFileRoute('/')({
-  beforeLoad: phoneHome,
+  beforeLoad: homeEntry,
   component: HomePage,
 })
 
 /*
- * The homepage is MySkills as a whole: personal and professional skills,
- * built together with AI, so nothing is impossible for a student who's
- * ready to work for it. It shares the Global Leadership page's dark theme.
- * Each programme has its own page — /digital-marketing (live) and
- * /career-readiness (both live) — and this page routes to both, then
- * makes room for the three things beyond the skill tracks: mentors,
- * internships, and wellness support.
- * Nothing here names a price, a date or a guaranteed outcome — "nothing is
- * impossible" is a rallying line, not a claim about any specific result.
+ * The home page of the standard website, built from Paul's platform picture
+ * (27 Oct 2026): "Your future won't wait", a student at the centre of a ring
+ * of light with the platform's five parts on a curved glass bar; then the
+ * five parts as photo cards, the partners, the courses, the Global Readiness
+ * Score and a last call to take the test. The photos are cut from his
+ * picture (public/home/card-*, face-*; the ring holds Paul's own photo; sharper originals can
+ * replace them). Learning goes to the courses; Mentorship, Internships and
+ * Study Abroad show a visitor a glimpse first (components/landing/Glimpse.tsx);
+ * Wellness signs them in and lands on it (lib/afterLogin.ts). Partners go to the partner sign-up.
  */
 
-const STEPS: { icon: IconType; title: string; body: string; tag: string }[] = [
-  {
-    icon: ClipboardCheck,
-    title: 'Find out where you stand',
-    body: 'A free aptitude assessment shows where marketing comes naturally to you, so you know exactly where to start.',
-    tag: 'Free',
-  },
-  {
-    icon: Bot,
-    title: 'Practise with AI',
-    body: 'Real scenarios and AI coaching, on demand — so you improve fast, with instant feedback instead of waiting for it.',
-    tag: 'You + AI',
-  },
-  {
-    icon: GraduationCap,
-    title: 'Get reviewed by a mentor',
-    body: 'A real person reads your results and signs your practice off — or tells you what to work on.',
-    tag: 'Human',
-  },
-  {
-    icon: Briefcase,
-    title: 'Complete an internship',
-    body: 'Roles posted by partner companies — the last step, and work experience you can show.',
-    tag: 'Open',
-  },
-]
+type To = '/courses' | '/login' | '/community' | '/community/mentors' | '/community/internships' | '/wellness' | '/study-abroad' | '/mentors' | '/internships' | '/community-portal/signup'
+type Target = { to: To; search?: Record<string, unknown> }
 
-/**
- * The three things students said they actually needed, beyond the skill
- * tracks themselves — each a real card with its own status and CTA, not a
- * decorative footnote. Counsellors and career guidance used to be two
- * separate tiles; they're one Wellness card now, since both are the same
- * request form on /wellness.
- */
-const CONCEPTS: {
-  icon: IconType
+/** Liquid glass: see-through, frosted, a light top edge and a purple glow. */
+const glass =
+  'rounded-2xl border border-[#6d7bff]/20 bg-gradient-to-br from-[#1b2470]/45 via-[#0b1438]/40 to-[#060b24]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_44px_-18px_rgba(76,86,240,0.7)] backdrop-blur-xl'
+
+/** The page: deep navy-blue, as in Paul's picture. */
+const PAGE = '#040a1e'
+
+const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.32em] text-[#b9a6ff]'
+const h2 = 'mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl'
+const gradientText = 'bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff] bg-clip-text text-transparent'
+/** Paul's handwritten notes beside the student. */
+const hand = "font-['Caveat',cursive] text-white/80"
+
+const primaryCta =
+  'press inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#7b6cf6] to-[#4f46e5] px-6 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.9)] transition-opacity hover:opacity-90'
+const secondaryCta =
+  'press inline-flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/[0.03] px-6 text-[15px] font-semibold text-white backdrop-blur transition-colors hover:bg-white/10'
+
+const PARTNER_SIGNUP: Target = { to: '/community-portal/signup' }
+const signIn = (next: string): Target => ({ to: '/login', search: { next } })
+
+interface Pillar {
+  id: string
+  /** On the curved bar. */
+  short: string
+  /** On its photo card. */
   title: string
   body: string
-  tag: string
-  live: boolean
-  to: string
   cta: string
-}[] = [
+  icon: LucideIcon
+  photo: string
+  visitor: Target
+  student: Target
+}
+
+const PILLARS: Pillar[] = [
   {
-    icon: GraduationCap,
-    title: 'Expert career mentors',
-    body: 'Working marketers and career professionals meet you one to one, grade the project you build, and tell you what a score alone can’t.',
-    tag: 'Live',
-    live: true,
-    to: '/community/mentors',
-    cta: 'Meet the mentors',
+    id: 'learning',
+    short: 'Learning Programmes',
+    title: 'Learning Programmes',
+    body: 'Industry-relevant courses, certifications and micro-learning.',
+    cta: 'Explore Courses',
+    icon: BookOpen,
+    photo: 'card-learning',
+    visitor: { to: '/courses' },
+    student: { to: '/courses' },
   },
   {
+    id: 'mentorship',
+    short: 'Mentorship',
+    title: 'Mentorship',
+    body: '1:1 and group sessions with industry experts.',
+    cta: 'Meet Mentors',
+    icon: Users,
+    photo: 'card-mentorship',
+    visitor: { to: '/mentors' },
+    student: { to: '/community/mentors' },
+  },
+  {
+    id: 'study-abroad',
+    short: 'Study Abroad',
+    title: 'Study Abroad Services',
+    body: 'University guidance, applications and test prep.',
+    cta: 'Explore Universities',
+    icon: Plane,
+    photo: 'card-study-abroad',
+    visitor: { to: '/study-abroad' },
+    student: { to: '/study-abroad' },
+  },
+  {
+    id: 'career',
+    // MySkills offers internships, not jobs (Paul, 27 Oct 2026).
+    short: 'Internships',
+    title: 'Internships',
+    body: 'Your first internship with a partner company: hands-on, real experience.',
+    cta: 'Find Internships',
     icon: Briefcase,
-    title: 'Land your first internship',
-    body: 'Most students never get real, hands-on experience before their first job. Partner companies post internship roles on MySkills, and you apply with your Global Readiness Score — proof that turns practice into a resume.',
-    tag: 'Open now',
-    live: true,
-    to: '/community',
-    cta: 'See open roles',
+    photo: 'card-career',
+    visitor: { to: '/internships' },
+    student: { to: '/community/internships' },
+  },
+  {
+    id: 'wellness',
+    short: 'Wellness & Mental Health',
+    title: 'Wellness & Mental Health',
+    body: 'Counselling, workshops and wellness resources.',
+    cta: 'Take Care',
+    icon: Heart,
+    photo: 'card-wellness',
+    visitor: signIn('/community?category=wellness'),
+    student: { to: '/wellness' },
   },
 ]
 
-/** The shared finish line, under both programme cards: whichever you pick,
- *  it ends the same way. */
-function CompletionPath() {
+const PARTNERS: { icon: LucideIcon; title: string; body: string; photo: string }[] = [
+  { icon: GraduationCap, title: 'Institutions', body: 'Colleges, training institutes, skill centres', photo: 'institutions' },
+  { icon: Users, title: 'Mentors', body: 'Industry experts, professionals, coaches', photo: 'paul-mentorship' },
+  { icon: Plane, title: 'Study Abroad Partners', body: 'Universities, consultants, overseas education providers', photo: 'card-study-abroad' },
+  { icon: Briefcase, title: 'Internship Partners', body: 'Companies and organisations offering internships', photo: 'card-career' },
+]
+
+/** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
+const AI_ERA: { icon: LucideIcon; title: string; body: string }[] = [
+  { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.' },
+  { icon: Users, title: 'People where it matters', body: 'Mentors, counsellors and companies who know you: real guidance, not just an app.' },
+  { icon: Target, title: 'Start with your strengths', body: 'A free aptitude test shows where you stand before you spend an hour learning.' },
+  { icon: Trophy, title: 'Proof employers trust', body: 'Your Global Readiness Score: every point graded by a mentor or checked by our team.' },
+]
+
+/** The parts of the Global Readiness Score (method v8). */
+const SCORE_PARTS: { title: string; body: string; points: number; bar: string }[] = [
+  { title: 'Personal skills', body: 'Global Leadership: the 14 skills employers hire for', points: 40, bar: 'from-amber-300 to-orange-500' },
+  { title: 'Professional skills', body: 'The professional courses you take', points: 40, bar: 'from-brand-300 to-brand-600' },
+  { title: 'Your first internship', body: 'Signed off by the company you worked with', points: 20, bar: 'from-emerald-300 to-teal-500' },
+]
+
+const BANDS = ['Getting started', 'Building', 'Strong', 'Standout']
+
+const target = (p: Pillar, signedIn: boolean) => (signedIn ? p.student : p.visitor)
+
+/** A row of faces, overlapping, in rings of the page's navy. */
+function Faces({ faces, size = 'h-9 w-9' }: { faces: string[]; size?: string }) {
   return (
-    <div className="card-glass-dark mt-6 p-4 sm:p-5">
-      <Eyebrow dark>Every programme finishes the same way</Eyebrow>
-      <ol className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm font-medium text-white">
-        {['Practice', 'Mentor review', 'Internship'].map((s, i, all) => (
-          <li key={s} className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white">
-              {i + 1}
-            </span>
-            {s}
-            {i < all.length - 1 && <ArrowRight size={14} className="text-white/30" />}
-          </li>
-        ))}
-      </ol>
+    <span className="flex -space-x-2.5">
+      {faces.map((f) => (
+        <img key={f} src={`/home/${f}.webp`} alt="" className={`${size} rounded-full object-cover ring-2 ring-[#040a1e]`} />
+      ))}
+    </span>
+  )
+}
+
+/** A glass note floating beside the student. */
+function Note({ icon: Icon, title, className = '', children }: { icon: LucideIcon; title: string; className?: string; children?: React.ReactNode }) {
+  return (
+    <div className={`${glass} absolute flex items-start gap-3 p-3.5 ${className}`}>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
+        <Icon size={20} />
+      </span>
+      <div className="min-w-0">
+        <p className="font-display text-[14px] font-semibold leading-snug text-white">{title}</p>
+        {children}
+      </div>
     </div>
   )
 }
 
-function PillarCard({
-  kind,
-  title,
-  body,
-  items,
-  live,
-  to,
-  cta,
-}: {
-  kind: string
-  title: string
-  body: string
-  items: string[]
-  live: boolean
-  to: string
-  cta: string
-}) {
-  return (
-    <div className="card-glass-dark flex flex-col p-6 sm:p-8">
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-brand-200">{kind}</p>
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
-          }`}
-        >
-          {live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
-          {live ? 'Live now' : 'Opens soon'}
-        </span>
-      </div>
-      <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p>
-      <div className="mt-5 flex flex-1 flex-wrap content-start gap-2">
-        {items.map((i) => (
-          <span key={i} className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-white/80">
-            {i}
-          </span>
-        ))}
-      </div>
-      <Link
-        to={to}
-        className="group mt-6 inline-flex items-center gap-1.5 self-start text-sm font-semibold text-brand-200 hover:text-white"
-      >
-        {cta}
-        <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-      </Link>
-    </div>
-  )
-}
+/** How far each of the five parts rises on the curved bar, its ends highest. */
+const BAR_LIFT = ['-translate-y-6', '-translate-y-1.5', 'translate-y-0.5', '-translate-y-1.5', '-translate-y-6']
 
-/**
- * The phone hero's one action: the aptitude test, which is step 1 of the
- * Digital Marketing programme and unlocks Practice. A signed-out visitor
- * goes through sign-up first; we remember where they were heading so
- * onboarding sends them straight to the test (lib/afterOnboarding.ts).
- */
-function AptitudeHeroCta({ to, signedIn }: { to: '/aptitude-assessment' | '/signup'; signedIn: boolean }) {
+/** The student at the centre: a ring of light, three notes, the curved bar of the five parts. */
+function StudentStage({ signedIn }: { signedIn: boolean }) {
   return (
-    <div className="card-glass-dark mt-7 p-5 lg:hidden">
-      <div className="flex items-center gap-3.5">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-[0_6px_14px_-6px_rgba(111,99,226,0.8)] ring-1 ring-white/25">
-          <Target size={20} />
-        </span>
-        <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-200">Step 1 · Free</p>
-          <p className="mt-0.5 font-display text-xl font-semibold leading-tight text-white">Take the aptitude test</p>
-        </div>
+    <div className="relative mx-auto h-[31rem] w-full max-w-[38rem]">
+      {/* Indigo light around the ring. */}
+      <span aria-hidden className="absolute left-1/2 top-0 h-[27rem] w-[27rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(70,80,220,0.45),rgba(40,46,150,0.2)_55%,rgba(4,10,30,0)_72%)] blur-2xl" />
+
+      {/* A real photo, framed in the ring (Paul, 27 Oct: "more realistic, not
+          a cut-out"; the learning pose in the black sweatshirt): it fills the circle, tinted into the page's blues and
+          shaded at the foot where the bar crosses it. */}
+      <div className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 overflow-hidden rounded-full">
+        <img src="/home/paul-study.webp" alt="A student learning at his desk" className="h-full w-full object-cover object-[50%_35%]" />
+        <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/25 mix-blend-color" />
+        <span aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_45%,rgba(4,10,30,0.55)_100%)]" />
+        <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#040a1e]/90 to-transparent" />
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-white/70">
-        A quick look at how you already notice ads, offers and trends. It shows where to start and unlocks
-        Practice.
+      {/* The ring's line: bright violet-blue. */}
+      <span
+        aria-hidden
+        className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full p-[2px] [mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)] bg-[conic-gradient(from_200deg,rgba(124,92,246,0.2),#8f6bff_25%,#c9b8ff_38%,#6d7bff_55%,rgba(109,123,255,0.25)_75%,rgba(124,92,246,0.2))]"
+        style={{ filter: 'drop-shadow(0 0 12px rgba(124,108,255,0.8))' }}
+      />
+      <span aria-hidden className="absolute left-1/2 top-0 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full border border-[#8f9bff]/15" />
+
+      {/* Paul's handwriting. */}
+      <p aria-hidden className={`${hand} absolute left-[2%] top-0 -rotate-[10deg] text-[1.15rem] leading-tight`}>
+        Learn
+        <br />
+        Build Skills
+        <br />
+        Get Guidance
+        <br />
+        Grow
       </p>
-      <ul className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-white/80">
-        {[
-          { icon: Clock, label: '5 minutes' },
-          { icon: Sparkles, label: 'No right answers' },
-          { icon: BadgeCheck, label: 'Free' },
-        ].map(({ icon: Icon, label }) => (
-          <li key={label} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1">
-            <Icon size={12} className="text-brand-200" />
-            {label}
-          </li>
-        ))}
-      </ul>
+      <svg aria-hidden className="absolute left-[17%] top-[15%] h-10 w-14 text-white/60" viewBox="0 0 64 48" fill="none">
+        <path d="M4 6 C 30 4, 48 18, 52 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M44 34 L52 41 L56 31" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <p aria-hidden className={`${hand} absolute right-0 top-[64%] rotate-[-10deg] text-right text-[1.1rem] leading-tight`}>
+        More
+        <br />
+        than just
+        <br />
+        courses
+      </p>
+
+      <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[30%] w-52">
+        <span className="mt-2.5 flex items-center gap-2">
+          <Faces faces={['paul-mentor', 'face-2', 'face-3']} size="h-8 w-8" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80">
+            <Plus size={14} />
+          </span>
+        </span>
+      </Note>
       <Link
-        to={to}
-        onClick={() => !signedIn && setAfterOnboarding('/aptitude-assessment')}
-        className="press mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+        to="/courses"
+        onClick={() => trackEvent('home_note', { note: 'path' })}
+        className="group absolute right-0 top-[5%] w-56 transition-transform hover:-translate-y-0.5"
       >
-        Start the aptitude test
-        <ArrowRight size={17} />
+        <Note icon={BarChart3} title="Personalised Learning Path" className="relative inset-auto w-full pr-10">
+          <p className="mt-1 text-xs font-medium text-[#b9a6ff]">Powered by AI</p>
+          <ArrowRight size={16} className="absolute bottom-4 right-4 text-[#b9a6ff] transition-transform group-hover:translate-x-0.5" />
+        </Note>
       </Link>
-      {!signedIn && (
-        <p className="mt-3 text-center text-sm text-white/60">
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-white underline-offset-2 hover:underline">
-            Sign in
-          </Link>
+      <Note icon={Briefcase} title="Real-world Opportunities" className="right-0 top-[33%] w-56">
+        <p className="mt-1.5 text-xs leading-relaxed text-white/60">
+          Internships · Projects
+          <br />
+          Global Exposure
         </p>
-      )}
+      </Note>
+
+      {/* The curved glass bar, the ring's lower edge: the five parts of the platform. */}
+      <nav aria-label="The platform" className="absolute inset-x-0 bottom-0 h-32">
+        <svg aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 600 144" preserveAspectRatio="none" fill="none">
+          <defs>
+            <linearGradient id="bar-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#2a2f8f" stopOpacity="0.55" />
+              <stop offset="1" stopColor="#070c28" stopOpacity="0.85" />
+            </linearGradient>
+            <linearGradient id="bar-edge" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#6d7bff" stopOpacity="0.35" />
+              <stop offset="0.5" stopColor="#a48bff" />
+              <stop offset="1" stopColor="#6d7bff" stopOpacity="0.35" />
+            </linearGradient>
+          </defs>
+          <path d="M6 18 Q 300 92 594 18 L 594 78 Q 300 150 6 78 Z" fill="url(#bar-fill)" />
+          <path d="M6 18 Q 300 92 594 18" stroke="url(#bar-edge)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" style={{ filter: 'drop-shadow(0 0 6px rgba(140,120,255,0.9))' }} />
+          <path d="M6 78 Q 300 150 594 78" stroke="#6d7bff" strokeOpacity="0.25" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <path d="M6 18 L 6 78 M594 18 L 594 78" stroke="#6d7bff" strokeOpacity="0.3" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        </svg>
+        <ul className="relative grid h-full grid-cols-5 px-2 pt-9">
+          {PILLARS.map((p, i) => {
+            const to = target(p, signedIn)
+            return (
+              <li key={p.id} className={BAR_LIFT[i]}>
+                <Link
+                  to={to.to}
+                  search={to.search as never}
+                  onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'bar' })}
+                  className="flex flex-col items-center gap-1.5 px-1 text-center text-[12px] font-medium leading-tight text-white transition-colors hover:text-[#dcc7ff]"
+                >
+                  <p.icon size={22} strokeWidth={1.5} className="text-[#d6bcff] drop-shadow-[0_0_8px_rgba(180,150,255,0.8)]" />
+                  {p.short}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+    </div>
+  )
+}
+
+/** One of the five parts as a photo card. */
+function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolean }) {
+  const to = target(p, signedIn)
+  return (
+    <Link
+      to={to.to}
+      search={to.search as never}
+      onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'card' })}
+      className={`${glass} group relative flex min-h-[15.5rem] flex-col overflow-hidden p-5 transition-colors hover:border-brand-300/50`}
+    >
+      <img
+        src={`/home/${p.photo}.webp`}
+        alt=""
+        loading="lazy"
+        className="absolute right-0 top-0 h-[80%] w-[62%] object-cover object-[50%_20%] transition-transform duration-500 group-hover:scale-105 [mask-image:linear-gradient(to_left,black_45%,transparent),linear-gradient(to_top,transparent,black_35%)] [mask-composite:intersect]"
+        style={{ WebkitMaskComposite: 'source-in' }}
+      />
+      <span className="relative">
+        <p.icon size={28} strokeWidth={1.5} className="text-[#cdb5f8]" />
+      </span>
+      <span className="relative mt-4 font-mono text-[11px] text-white/50">0{n}</span>
+      <span className="relative mt-1 block max-w-[85%] font-display text-lg font-semibold leading-snug text-white [text-shadow:0_1px_14px_rgba(4,10,30,0.95)]">{p.title}</span>
+      <span className="relative mt-1.5 block max-w-[80%] text-[13px] leading-relaxed text-white/70 [text-shadow:0_1px_10px_rgba(4,10,30,0.95)]">{p.body}</span>
+      <span className="relative mt-auto inline-flex w-fit items-center gap-2 rounded-lg border border-white/25 bg-[#040a1e]/50 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors group-hover:border-brand-200/60 group-hover:bg-white/10">
+        {p.cta} <ArrowRight size={14} />
+      </span>
+    </Link>
+  )
+}
+
+function PartnerCard({ p }: { p: (typeof PARTNERS)[number] }) {
+  return (
+    <Link
+      to={PARTNER_SIGNUP.to}
+      onClick={() => trackEvent('home_partner', { partner: p.title })}
+      className={`${glass} group relative flex min-h-[5.5rem] items-center overflow-hidden py-3 pl-4 pr-28 transition-colors hover:border-brand-300/50`}
+    >
+      <img
+        src={`/home/${p.photo}.webp`}
+        alt=""
+        loading="lazy"
+        className="absolute inset-y-0 right-0 h-full w-32 object-cover object-[50%_25%] opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)]"
+      />
+      <span className="relative flex items-center gap-3">
+        <p.icon size={24} fill="currentColor" className="shrink-0 text-white" />
+        <span className="min-w-0">
+          <span className="block font-display text-[15px] font-semibold leading-tight text-white">{p.title}</span>
+          <span className="mt-0.5 block text-[12px] leading-snug text-white/65">{p.body}</span>
+        </span>
+      </span>
+    </Link>
+  )
+}
+
+function SectionHead({ kicker, title, accent, body }: { kicker: string; title: string; accent: string; body?: string }) {
+  return (
+    <div className="max-w-2xl">
+      <p className={eyebrow}>{kicker}</p>
+      <h2 className={h2}>
+        {title} <span className={gradientText}>{accent}</span>
+      </h2>
+      {body && <p className="mt-3 text-base leading-relaxed text-white/70">{body}</p>}
     </div>
   )
 }
 
 function HomePage() {
   const { user } = useAuthUser()
-  const assessmentTo = user ? '/aptitude-assessment' : '/signup'
+  const signedIn = Boolean(user)
 
   return (
-    <div className="min-h-screen bg-ink-900">
-      <Navbar />
+    <div className="min-h-screen" style={{ background: PAGE }}>
+      <Navbar dark />
 
-      <main>
-        {/* Hero */}
-        <section className="surface-wood-dark relative overflow-hidden">
-          <GridBackdrop mask="ellipse 75% 65% at 30% 20%" />
-          <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 opacity-[0.12]">
-            <svg width="420" height="420" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.2">
-              <circle cx="100" cy="100" r="96" />
-              <circle cx="100" cy="100" r="74" />
-              <circle cx="100" cy="100" r="52" />
-              <circle cx="100" cy="100" r="30" />
-            </svg>
-          </span>
-
-          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-8 pb-12 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-12 lg:px-8">
-            <div className="rise-in">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
-                <span className="live-ping relative flex h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
-                <Sparkles size={13} />
-                Powered by AI · Reviewed by people
-              </span>
-              <h1 className="mt-5 font-display text-[2.125rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Personal &amp; Professional Development
+      <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
+        {/* 1. Your future won't wait. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14 lg:px-8">
+          <div className="grid items-center gap-8 xl:grid-cols-[1fr_38rem] xl:gap-10">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
+                <Sparkles size={14} className="text-[#b496ff]" /> Built for students in the AI era
+              </p>
+              <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1] tracking-tight text-white sm:text-6xl xl:text-[4rem]">
+                <span className="block">Your future</span>
+                <span className="block">won’t wait.</span>
+                <span className={`block pb-2 ${gradientText}`}>
+                  Neither should
+                  <br />
+                  your learning.
+                </span>
               </h1>
-              <p className="mt-3 font-display text-2xl leading-snug text-brand-200 sm:text-3xl">powered by AI.</p>
-
-              {/* On desktop the hero is the idea, not the click — "Take the
-                  aptitude assessment" is the final CTA further down. On a
-                  phone that's several screens away, so the phone hero gets
-                  the aptitude test as its first and only action. */}
-              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/70 sm:mt-5 sm:text-lg">
-                Personal skills and professional skills, built together — practising with AI so you move
-                fast, reviewed by mentors so you know it’s real, and proven with an internship you can show
-                for it. Free to start.
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
+                The AI era is changing every career. MySkills takes care of everything a student needs to keep up: AI-guided
+                learning, expert mentors, internships and real-world experience, in one place.
               </p>
-
-              <AptitudeHeroCta to={assessmentTo} signedIn={Boolean(user)} />
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'explore', place: 'hero' })} className={primaryCta}>
+                  Explore MySkills <ArrowRight size={18} />
+                </Link>
+                <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
+                  Partner with us
+                </Link>
+              </div>
+              <div className="mt-9 flex items-center gap-4">
+                <Faces faces={['face-1', 'face-4', 'face-3', 'face-2']} />
+                <p className="text-sm leading-snug text-white/70">
+                  Join a growing community
+                  <br />
+                  of ambitious learners.
+                </p>
+              </div>
             </div>
 
-            <AiCoachPreview />
+            <StudentStage signedIn={signedIn} />
           </div>
+        </section>
 
-          {/* The three trust points moved out of the left column to sit
-              here instead — one compact row, center-aligned, directly above
-              the closing statement, so the two read as a single beat at the
-              bottom of the hero rather than split across the layout. Same
-              "always one line" requirement as the statement below: a fluid,
-              viewport-scaled font size instead of fixed steps, shrinking
-              enough that three phrases plus icons still fit at 375px. */}
-          {/* Phones: the one-line row below would shrink to ~8px text, so
-              here the three points wrap at a readable size instead. */}
-          <ul className="relative flex flex-wrap justify-center gap-x-4 gap-y-2 px-4 text-xs text-white/70 sm:hidden">
-            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t) => (
-              <li key={t} className="inline-flex items-center gap-1.5">
-                <BadgeCheck size={13} className="shrink-0 text-brand-200" />
-                {t}
-              </li>
+        {/* 2. The five parts of the platform. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {PILLARS.map((p, i) => (
+              <PillarCard key={p.id} p={p} n={i + 1} signedIn={signedIn} />
             ))}
-          </ul>
-          <ul
-            className="relative mx-auto hidden max-w-6xl items-center justify-center whitespace-nowrap px-4 pt-2 text-white/70 sm:flex sm:px-6 lg:px-8"
-            style={{ fontSize: 'clamp(0.4rem, 2.15vw, 0.875rem)' }}
-          >
-            {['Expert career mentors', 'Your first internship', 'Wellness support, built in'].map((t, i, all) => (
-              <li key={t} className="flex items-center gap-1">
-                <BadgeCheck size={12} className="shrink-0 text-brand-200" />
-                {t}
-                {i < all.length - 1 && (
-                  <span aria-hidden className="mx-2 h-3 w-px bg-white/15 sm:mx-5" />
-                )}
-              </li>
-            ))}
-          </ul>
-
-          {/* A fluid, viewport-scaled size instead of fixed breakpoint
-              steps — "one line, always" is a hard requirement here, and a
-              vw-based size keeps the line's width proportional to the
-              viewport at any point in between, not just at the
-              breakpoints a step scale happens to cover. */}
-          <p
-            className="relative mx-auto max-w-6xl px-4 pt-4 pb-10 text-center font-display font-semibold whitespace-nowrap text-white sm:pt-5 sm:pb-14 sm:px-6 lg:px-8"
-            style={{ fontSize: 'clamp(0.75rem, 3.4vw, 1.5rem)' }}
-          >
-            Two kinds of skill. <span className="text-brand-200">One destination — your goals.</span>
-          </p>
-        </section>
-
-        {/* Two kinds of skill */}
-        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
-          <GridBackdrop mask="ellipse 55% 50% at 95% 0%" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="max-w-2xl">
-              <Eyebrow dark>Two programmes, one goal</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Whatever your goal, these two skill sets get you there.
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-white/70">
-                Professional skills get you shortlisted. Personal skills get you hired, and help you grow
-                once you’re in. Build both with AI, and there’s nothing standing between you and your goal.
-              </p>
-            </div>
-            <div className="mt-10 grid gap-5 lg:grid-cols-2">
-              <PillarCard
-                kind="Professional skills"
-                title="Digital Marketing Programme"
-                body="Scenario-based practice across the skills marketing teams hire for — including AI-assisted marketing and answer-engine SEO — with a free certificate."
-                items={skillTracks.map((t) => t.name)}
-                live
-                to="/digital-marketing"
-                cta="Explore Digital Marketing"
-              />
-              <PillarCard
-                kind="Personal skills"
-                title={CAREER_READINESS.name}
-                body="Fourteen modules on the life skills that decide careers, each practised in writing and reviewed by a mentor."
-                items={PERSONAL_DEVELOPMENT_MODULES.map((m) => m.title)}
-                live
-                to={CAREER_READINESS.path}
-                cta="Explore Global Leadership"
-              />
-            </div>
-            <CompletionPath />
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how-it-works" className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
-          <GridBackdrop mask="ellipse 60% 50% at 5% 100%" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="max-w-2xl">
-              <Eyebrow dark>How it works</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Four steps. One system.
+        {/* 3. Why now: what the AI era asks of a student. */}
+        <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+            <div>
+              <p className={eyebrow}>Why MySkills, why now</p>
+              <h2 className={h2}>
+                AI is changing every career. <span className={gradientText}>We help you keep up.</span>
               </h2>
-            </div>
-            <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {STEPS.map((s, i) => (
-                <li key={s.title} className="card-glass-dark flex flex-col p-6">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
-                      <s.icon size={20} />
-                    </span>
-                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">{s.tag}</span>
-                  </div>
-                  <p className="mt-4 font-mono text-[11px] font-bold uppercase tracking-wide text-brand-200">
-                    Step_{String(i + 1).padStart(2, '0')}
-                  </p>
-                  <h3 className="mt-1 text-lg font-semibold text-white">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/70">{s.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        {/* Real people, real experience — mentors and internships. Wellness
-            gets its own section next: mental health isn't a feature bullet
-            next to "internships", it deserves the room on its own. */}
-        <section className="surface-wood-dark relative overflow-hidden border-t border-white/[0.06]">
-          <GridBackdrop mask="ellipse 55% 45% at 90% 100%" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-            <div className="max-w-2xl">
-              <Eyebrow dark>You’re not doing this alone</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Real people, at every step.
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-white/70">
-                AI is tireless and instant — perfect for practice. It’s also confidently wrong sometimes,
-                which is why real mentors and real internships are part of the experience, not an
-                afterthought.
+              <p className="mt-4 text-base leading-relaxed text-white/70">
+                Students now need more than marks: skills they can show, the AI tools of their field, people to guide them and a
+                first internship. MySkills brings all of it together, from your first aptitude test to real work experience.
               </p>
             </div>
-
-            <ul className="mt-10 grid gap-5 sm:grid-cols-2">
-              {CONCEPTS.map((c) => (
-                <li key={c.title}>
-                  <Link to={c.to} className="card-glass-dark lift group flex h-full flex-col p-6 sm:p-7">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e1">
-                        <c.icon size={22} />
-                      </span>
-                      <span
-                        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                          c.live ? 'bg-emerald-400/15 text-emerald-300' : 'bg-white/10 text-white/60'
-                        }`}
-                      >
-                        {c.live ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> : <Lock size={10} />}
-                        {c.tag}
-                      </span>
-                    </div>
-                    <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-white">
-                      {c.title}
-                    </h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-white/70">{c.body}</p>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-200">
-                      {c.cta}
-                      <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </Link>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {AI_ERA.map((a) => (
+                <li key={a.title} className={`${glass} flex gap-4 p-5`}>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
+                    <a.icon size={20} />
+                  </span>
+                  <span>
+                    <span className="block font-display text-[15px] font-semibold text-white">{a.title}</span>
+                    <span className="mt-1 block text-[13px] leading-relaxed text-white/65">{a.body}</span>
+                  </span>
                 </li>
               ))}
             </ul>
           </div>
         </section>
 
-        {/* Wellness — its own main section, not a card sharing space with
-            mentors and internships. Same treatment as the final CTA panel
-            below: the gradient/glow "vibe" that's the site's signature. */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start gap-8 overflow-hidden rounded-xl p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
-            <GridBackdrop mask="ellipse 65% 70% at 15% 30%" />
-            <div className="relative max-w-lg">
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-e2">
-                <HeartHandshake size={26} />
-              </span>
-              <div className="mt-4">
-                <Eyebrow dark>Wellness support</Eyebrow>
-              </div>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Your mental health matters as much as your skills.
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-white/70">
-                Exams, deadlines, and the pressure to have it all figured out take a real toll.
-                Confidential counselling and career guidance are built into MySkills — private
-                and one message away — not an afterthought bolted onto a skills app.
+        {/* 4. Our partners and providers. */}
+        <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className={`${glass} grid gap-4 p-4 lg:grid-cols-[14rem_1fr] lg:items-center`}>
+            <div className="px-2 py-1">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white">Our partners &amp; providers</p>
+              <p className="mt-2 text-[13px] leading-relaxed text-white/60">
+                We work with institutions, mentors and service providers to deliver everything a student needs.
               </p>
-              <Link
-                to="/wellness"
-                className="press relative mt-7 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-              >
-                Get support
-                <ArrowRight size={16} />
-              </Link>
             </div>
-            <div className="card-glass-gradient-dark relative w-full p-5 sm:p-6 lg:w-auto">
-              <ul className="grid gap-3 sm:grid-cols-2 lg:max-w-xs">
-                {['Confidential, always', 'No diagnosis, just support', 'No appointment needed', 'A real person replies'].map(
-                  (t) => (
-                    <li key={t} className="flex items-center gap-2 text-sm text-white/80">
-                      <BadgeCheck size={16} className="shrink-0 text-brand-200" />
-                      {t}
-                    </li>
-                  ),
-                )}
-              </ul>
+            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+              {PARTNERS.map((p) => (
+                <PartnerCard key={p.title} p={p} />
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="relative overflow-hidden border-t border-white/[0.06] px-4 pt-16 pb-16 sm:px-6 sm:pb-20 lg:px-8">
-          <div className="surface-wood-dark glow-edge relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 overflow-hidden rounded-xl px-6 py-10 sm:flex-row sm:items-center sm:px-10">
-            <GridBackdrop mask="ellipse 70% 90% at 90% 50%" />
-            <div className="relative">
-              <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Nothing is impossible. Start with where you stand.
-              </h2>
-              <p className="mt-2 max-w-md text-sm text-white/70 sm:text-base">
-                The aptitude assessment is free and takes about five minutes. Everything else builds from it.
-              </p>
-            </div>
-            <Link
-              to={assessmentTo}
-              onClick={() => !user && setAfterOnboarding('/aptitude-assessment')}
-              className="press relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
-            >
-              <Target size={16} />
-              Take the aptitude assessment
-              <ArrowRight size={16} />
+        {/* 5. The courses. */}
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionHead kicker="Learning programmes" title="Skills for" accent="the AI era." />
+            <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#b9a6ff] hover:text-white">
+              All courses <ArrowRight size={15} />
             </Link>
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {COURSES.map((c) => (
+              <article key={c.id} className={`${glass} flex flex-col p-5`}>
+                <div className="flex items-start justify-between gap-2">
+                  <span className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-white ring-1 ring-white/20 ${c.tile}`}>
+                    <c.icon size={20} />
+                  </span>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide ${c.status === 'open' ? 'bg-emerald-400/15 text-emerald-200' : 'bg-amber-400/15 text-amber-200'}`}
+                  >
+                    {c.status === 'open' ? 'Open' : 'Opens soon'}
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-lg font-semibold leading-snug text-white">{c.title}</h3>
+                <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-white/45">
+                  {c.kind === 'personal' ? 'Personal skills' : 'Professional skills'}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">{c.tagline}</p>
+                <div className="mt-auto pt-5">
+                  {c.test ? (
+                    <a
+                      href={c.test}
+                      onClick={() => trackEvent('home_course_test', { course: c.id })}
+                      className="press inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-full bg-white text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
+                    >
+                      Take the aptitude test <ArrowRight size={15} />
+                    </a>
+                  ) : (
+                    <Link
+                      to="/courses"
+                      className="press inline-flex h-10 w-full items-center justify-center rounded-full border border-white/25 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                    >
+                      Tell me when it opens
+                    </Link>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* 6. The Global Readiness Score. */}
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className={`${glass} grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center`}>
+            <div>
+              <p className={eyebrow}>Global Readiness Score</p>
+              <h2 className={h2}>
+                One score that shows <span className={gradientText}>you’re ready.</span>
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-white/70">
+                Everything you do on MySkills adds up to one score out of 100: the number companies look at when they choose
+                interns. Every point is graded by a mentor or checked by our team, so it means something.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {BANDS.map((b, i) => (
+                  <span
+                    key={b}
+                    className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-white/75"
+                    style={{ background: `rgba(143,133,238,${0.06 + i * 0.08})` }}
+                  >
+                    {b}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <ul className="space-y-5">
+              {SCORE_PARTS.map((s) => (
+                <li key={s.title}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="font-semibold text-white">{s.title}</span>
+                    <span className="font-display text-lg font-bold text-white">
+                      {s.points}
+                      <span className="text-xs font-medium text-white/50"> points</span>
+                    </span>
+                  </div>
+                  <p className="text-sm text-white/55">{s.body}</p>
+                  <span className="mt-2 block h-2 overflow-hidden rounded-full bg-white/10">
+                    <span className={`block h-full rounded-full bg-gradient-to-r ${s.bar}`} style={{ width: `${s.points * 2.5}%` }} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* 7. Step in. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-3xl border border-brand-200/25 bg-gradient-to-br from-brand-600/40 via-brand-700/25 to-fuchsia-600/20 px-6 py-12 text-center shadow-[0_0_80px_-20px_rgba(143,133,238,0.7)] sm:px-12">
+            <span aria-hidden className="absolute -top-24 left-1/2 h-48 w-[70%] -translate-x-1/2 rounded-full bg-brand-300/30 blur-3xl" />
+            <h2 className="relative font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Your future starts with five minutes.</h2>
+            <p className="relative mx-auto mt-3 max-w-xl text-white/75">
+              Take a free aptitude test, see your strongest skills, and step into the AI era with a plan.
+            </p>
+            <div className="relative mt-8 flex flex-wrap justify-center gap-3">
+              <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'end' })} className={primaryCta}>
+                Take the free aptitude test <ArrowRight size={17} />
+              </Link>
+              {!signedIn && (
+                <Link to="/signup" onClick={() => trackEvent('home_cta', { cta: 'signup', place: 'end' })} className={secondaryCta}>
+                  Create a free account
+                </Link>
+              )}
+            </div>
           </div>
         </section>
       </main>

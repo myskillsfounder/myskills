@@ -14,6 +14,7 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TestsRouteImport } from './routes/tests'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as StartRouteImport } from './routes/start'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -22,6 +23,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MentorsRouteImport } from './routes/mentors'
 import { Route as MentoringRouteImport } from './routes/mentoring'
 import { Route as MentorPortalRouteImport } from './routes/mentor-portal'
 import { Route as MentorRouteImport } from './routes/mentor'
@@ -32,8 +34,11 @@ import { Route as GamesRouteImport } from './routes/games'
 import { Route as FoundationAssessmentRouteImport } from './routes/foundation-assessment'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as EntrepreneurshipRouteImport } from './routes/entrepreneurship'
 import { Route as DigitalMarketingRouteImport } from './routes/digital-marketing'
+import { Route as DataAnalyticsRouteImport } from './routes/data-analytics'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CertificateRouteImport } from './routes/certificate'
 import { Route as CareerReadinessWaitlistRouteImport } from './routes/career-readiness-waitlist'
@@ -53,6 +58,7 @@ import { Route as StudyAbroadSlugRouteImport } from './routes/study-abroad.$slug
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
 import { Route as MentorPortalSplatRouteImport } from './routes/mentor-portal.$'
 import { Route as CommunityMentorsRouteImport } from './routes/community/mentors'
+import { Route as CommunityInternshipsRouteImport } from './routes/community/internships'
 import { Route as CommunityInstitutionsRouteImport } from './routes/community/institutions'
 import { Route as CommunityPortalSignupRouteImport } from './routes/community-portal/signup'
 import { Route as CommunityPortalLoginRouteImport } from './routes/community-portal/login'
@@ -132,6 +138,11 @@ const SupportRoute = SupportRouteImport.update({
   path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -170,6 +181,11 @@ const PartnershipsRoute = PartnershipsRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorsRoute = MentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentoringRoute = MentoringRouteImport.update({
@@ -222,14 +238,29 @@ const FeedbackRoute = FeedbackRouteImport.update({
   path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrepreneurshipRoute = EntrepreneurshipRouteImport.update({
+  id: '/entrepreneurship',
+  path: '/entrepreneurship',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DigitalMarketingRoute = DigitalMarketingRouteImport.update({
   id: '/digital-marketing',
   path: '/digital-marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DataAnalyticsRoute = DataAnalyticsRouteImport.update({
+  id: '/data-analytics',
+  path: '/data-analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesRoute = CoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -328,6 +359,11 @@ const MentorPortalSplatRoute = MentorPortalSplatRouteImport.update({
 const CommunityMentorsRoute = CommunityMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityInternshipsRoute = CommunityInternshipsRouteImport.update({
+  id: '/internships',
+  path: '/internships',
   getParentRoute: () => CommunityRoute,
 } as any)
 const CommunityInstitutionsRoute = CommunityInstitutionsRouteImport.update({
@@ -623,8 +659,11 @@ export interface FileRoutesByFullPath {
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/data-analytics': typeof DataAnalyticsRoute
   '/digital-marketing': typeof DigitalMarketingRoute
+  '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/foundation-assessment': typeof FoundationAssessmentRoute
@@ -635,6 +674,7 @@ export interface FileRoutesByFullPath {
   '/mentor': typeof MentorRoute
   '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
+  '/mentors': typeof MentorsRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -643,6 +683,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/start': typeof StartRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
@@ -656,6 +697,7 @@ export interface FileRoutesByFullPath {
   '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
+  '/community/internships': typeof CommunityInternshipsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -721,8 +763,11 @@ export interface FileRoutesByTo {
   '/career-readiness-assessment': typeof CareerReadinessAssessmentRoute
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/data-analytics': typeof DataAnalyticsRoute
   '/digital-marketing': typeof DigitalMarketingRoute
+  '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/foundation-assessment': typeof FoundationAssessmentRoute
@@ -733,6 +778,7 @@ export interface FileRoutesByTo {
   '/mentor': typeof MentorRoute
   '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
+  '/mentors': typeof MentorsRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -741,6 +787,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/start': typeof StartRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
@@ -752,6 +799,7 @@ export interface FileRoutesByTo {
   '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
+  '/community/internships': typeof CommunityInternshipsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -819,8 +867,11 @@ export interface FileRoutesById {
   '/career-readiness-waitlist': typeof CareerReadinessWaitlistRoute
   '/certificate': typeof CertificateRoute
   '/community': typeof CommunityRouteWithChildren
+  '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/data-analytics': typeof DataAnalyticsRoute
   '/digital-marketing': typeof DigitalMarketingRoute
+  '/entrepreneurship': typeof EntrepreneurshipRoute
   '/feedback': typeof FeedbackRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/foundation-assessment': typeof FoundationAssessmentRoute
@@ -831,6 +882,7 @@ export interface FileRoutesById {
   '/mentor': typeof MentorRoute
   '/mentor-portal': typeof MentorPortalRouteWithChildren
   '/mentoring': typeof MentoringRoute
+  '/mentors': typeof MentorsRoute
   '/onboarding': typeof OnboardingRoute
   '/partnerships': typeof PartnershipsRouteWithChildren
   '/practice': typeof PracticeRoute
@@ -839,6 +891,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/start': typeof StartRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tests': typeof TestsRoute
@@ -852,6 +905,7 @@ export interface FileRoutesById {
   '/community-portal/login': typeof CommunityPortalLoginRoute
   '/community-portal/signup': typeof CommunityPortalSignupRoute
   '/community/institutions': typeof CommunityInstitutionsRoute
+  '/community/internships': typeof CommunityInternshipsRoute
   '/community/mentors': typeof CommunityMentorsRoute
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
@@ -920,8 +974,11 @@ export interface FileRouteTypes {
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/community'
+    | '/courses'
     | '/dashboard'
+    | '/data-analytics'
     | '/digital-marketing'
+    | '/entrepreneurship'
     | '/feedback'
     | '/forgot-password'
     | '/foundation-assessment'
@@ -932,6 +989,7 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/mentor-portal'
     | '/mentoring'
+    | '/mentors'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -940,6 +998,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/signup'
+    | '/start'
     | '/support'
     | '/terms'
     | '/tests'
@@ -953,6 +1012,7 @@ export interface FileRouteTypes {
     | '/community-portal/login'
     | '/community-portal/signup'
     | '/community/institutions'
+    | '/community/internships'
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
@@ -1018,8 +1078,11 @@ export interface FileRouteTypes {
     | '/career-readiness-assessment'
     | '/career-readiness-waitlist'
     | '/certificate'
+    | '/courses'
     | '/dashboard'
+    | '/data-analytics'
     | '/digital-marketing'
+    | '/entrepreneurship'
     | '/feedback'
     | '/forgot-password'
     | '/foundation-assessment'
@@ -1030,6 +1093,7 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/mentor-portal'
     | '/mentoring'
+    | '/mentors'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -1038,6 +1102,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/signup'
+    | '/start'
     | '/support'
     | '/terms'
     | '/tests'
@@ -1049,6 +1114,7 @@ export interface FileRouteTypes {
     | '/community-portal/login'
     | '/community-portal/signup'
     | '/community/institutions'
+    | '/community/internships'
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
@@ -1115,8 +1181,11 @@ export interface FileRouteTypes {
     | '/career-readiness-waitlist'
     | '/certificate'
     | '/community'
+    | '/courses'
     | '/dashboard'
+    | '/data-analytics'
     | '/digital-marketing'
+    | '/entrepreneurship'
     | '/feedback'
     | '/forgot-password'
     | '/foundation-assessment'
@@ -1127,6 +1196,7 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/mentor-portal'
     | '/mentoring'
+    | '/mentors'
     | '/onboarding'
     | '/partnerships'
     | '/practice'
@@ -1135,6 +1205,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/signup'
+    | '/start'
     | '/support'
     | '/terms'
     | '/tests'
@@ -1148,6 +1219,7 @@ export interface FileRouteTypes {
     | '/community-portal/login'
     | '/community-portal/signup'
     | '/community/institutions'
+    | '/community/internships'
     | '/community/mentors'
     | '/mentor-portal/$'
     | '/partnerships/login'
@@ -1215,8 +1287,11 @@ export interface RootRouteChildren {
   CareerReadinessWaitlistRoute: typeof CareerReadinessWaitlistRoute
   CertificateRoute: typeof CertificateRoute
   CommunityRoute: typeof CommunityRouteWithChildren
+  CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
+  DataAnalyticsRoute: typeof DataAnalyticsRoute
   DigitalMarketingRoute: typeof DigitalMarketingRoute
+  EntrepreneurshipRoute: typeof EntrepreneurshipRoute
   FeedbackRoute: typeof FeedbackRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   FoundationAssessmentRoute: typeof FoundationAssessmentRoute
@@ -1227,6 +1302,7 @@ export interface RootRouteChildren {
   MentorRoute: typeof MentorRoute
   MentorPortalRoute: typeof MentorPortalRouteWithChildren
   MentoringRoute: typeof MentoringRoute
+  MentorsRoute: typeof MentorsRoute
   OnboardingRoute: typeof OnboardingRoute
   PartnershipsRoute: typeof PartnershipsRouteWithChildren
   PracticeRoute: typeof PracticeRoute
@@ -1235,6 +1311,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
+  StartRoute: typeof StartRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   TestsRoute: typeof TestsRoute
@@ -1294,6 +1371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -1348,6 +1432,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentors': {
+      id: '/mentors'
+      path: '/mentors'
+      fullPath: '/mentors'
+      preLoaderRoute: typeof MentorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentoring': {
@@ -1420,6 +1511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrepreneurship': {
+      id: '/entrepreneurship'
+      path: '/entrepreneurship'
+      fullPath: '/entrepreneurship'
+      preLoaderRoute: typeof EntrepreneurshipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/digital-marketing': {
       id: '/digital-marketing'
       path: '/digital-marketing'
@@ -1427,11 +1525,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DigitalMarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/data-analytics': {
+      id: '/data-analytics'
+      path: '/data-analytics'
+      fullPath: '/data-analytics'
+      preLoaderRoute: typeof DataAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/courses': {
+      id: '/courses'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -1565,6 +1677,13 @@ declare module '@tanstack/react-router' {
       path: '/mentors'
       fullPath: '/community/mentors'
       preLoaderRoute: typeof CommunityMentorsRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/internships': {
+      id: '/community/internships'
+      path: '/internships'
+      fullPath: '/community/internships'
+      preLoaderRoute: typeof CommunityInternshipsRouteImport
       parentRoute: typeof CommunityRoute
     }
     '/community/institutions': {
@@ -1943,12 +2062,14 @@ declare module '@tanstack/react-router' {
 
 interface CommunityRouteChildren {
   CommunityInstitutionsRoute: typeof CommunityInstitutionsRoute
+  CommunityInternshipsRoute: typeof CommunityInternshipsRoute
   CommunityMentorsRoute: typeof CommunityMentorsRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
 }
 
 const CommunityRouteChildren: CommunityRouteChildren = {
   CommunityInstitutionsRoute: CommunityInstitutionsRoute,
+  CommunityInternshipsRoute: CommunityInternshipsRoute,
   CommunityMentorsRoute: CommunityMentorsRoute,
   CommunityIndexRoute: CommunityIndexRoute,
 }
@@ -2096,8 +2217,11 @@ const rootRouteChildren: RootRouteChildren = {
   CareerReadinessWaitlistRoute: CareerReadinessWaitlistRoute,
   CertificateRoute: CertificateRoute,
   CommunityRoute: CommunityRouteWithChildren,
+  CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
+  DataAnalyticsRoute: DataAnalyticsRoute,
   DigitalMarketingRoute: DigitalMarketingRoute,
+  EntrepreneurshipRoute: EntrepreneurshipRoute,
   FeedbackRoute: FeedbackRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   FoundationAssessmentRoute: FoundationAssessmentRoute,
@@ -2108,6 +2232,7 @@ const rootRouteChildren: RootRouteChildren = {
   MentorRoute: MentorRoute,
   MentorPortalRoute: MentorPortalRouteWithChildren,
   MentoringRoute: MentoringRoute,
+  MentorsRoute: MentorsRoute,
   OnboardingRoute: OnboardingRoute,
   PartnershipsRoute: PartnershipsRouteWithChildren,
   PracticeRoute: PracticeRoute,
@@ -2116,6 +2241,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
+  StartRoute: StartRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   TestsRoute: TestsRoute,

@@ -1,6 +1,9 @@
 import { redirect } from '@tanstack/react-router'
 import { supabase } from './supabase'
 import { homePath, inPhoneApp, isPhone } from './device'
+import { pendingAptitudeRoute } from './pendingAptitude'
+import { takeAfterLogin } from './afterLogin'
+import { isBot, siteMode } from './siteMode'
 import { ensureLiveContent } from './liveContent'
 
 /** What a route guard is handed: enough to know which page is being opened. */
@@ -60,7 +63,7 @@ export async function requireSession(): Promise<void> {
  * A new account is onboarded first: on a computer by the sentence and the
  * plan, on a phone by its own three taps. After that, a phone has the
  * Community, the LaunchPad and Practice (see lib/device.ts); any other app
- * page sends them to the Community.
+ * page sends them home, to the LaunchPad.
  */
 export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
@@ -68,35 +71,79 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   if (session.user.user_metadata?.onboarded !== true) {
     throw redirect({ to: notOnboardedPath(session) })
   }
-  if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: '/community' })
+  if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: homePath() })
+  // A test answered before signing up is scored first: signing in (email or
+  // Google) lands on the LaunchPad, which sends them back to it.
+  const waiting = ctx?.location.pathname === '/dashboard' ? pendingAptitudeRoute() : null
+  // href: an engine programme's test has its own address (/programmes/<slug>/aptitude).
+  if (waiting) throw redirect({ href: waiting })
+  // Back from Google sign-in, started on a home page card (lib/afterLogin.ts).
+  const after = ctx?.location.pathname === '/dashboard' ? takeAfterLogin() : null
+  if (after) throw redirect({ href: after })
   // The programmes' published wording from the course engine (lib/liveContent.ts).
   await ensureLiveContent()
 }
 
 /**
+ * An aptitude test: open to a visitor who hasn't signed up, so they can try
+ * the programme before making an account (the result waits for one, lib/
+ * pendingAptitude.ts). Signed in, it is like any page: onboarding first.
+ */
+export async function guestOrOnboarded(): Promise<void> {
+  const session = await currentSession()
+  if (session && session.user.user_metadata?.onboarded !== true) {
+    throw redirect({ to: notOnboardedPath(session) })
+  }
+  await ensureLiveContent()
+}
+
+/**
+ * A part of the platform with a public glimpse (components/landing/
+ * Glimpse.tsx: /mentors, /internships): signed out, the glimpse; signed in,
+ * onboarding first, then straight to the real place.
+ */
+export async function glimpseOr(href: string): Promise<void> {
+  const session = await currentSession()
+  if (!session) return
+  if (session.user.user_metadata?.onboarded !== true) throw redirect({ to: notOnboardedPath(session) })
+  throw redirect({ href })
+}
+
+/**
+ * The same for a page that is itself the real place (/study-abroad): signed
+ * out, it shows the glimpse ({ guest: true }); signed in, it is like any page.
+ */
+export async function glimpseOrOnboarded(ctx?: GuardContext): Promise<{ guest: boolean }> {
+  if (!(await currentSession())) return { guest: true }
+  await requireOnboarded(ctx)
+  return { guest: false }
+}
+
+/**
  * The phone's front door (/welcome): the welcome for someone signed out, the
  * three questions for a new account. A computer has no use for it, and an
- * account that has already answered goes to the marketplace.
+ * account that has already answered goes home.
  */
 export async function requirePhoneWelcome(): Promise<void> {
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
   if (!isPhone()) throw redirect({ to: session ? '/dashboard' : '/' })
-  if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: '/community' })
+  if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: homePath() })
 }
 
 /**
- * The home page on a phone is the app's front door, not the website's: someone
- * signed in is taken to the marketplace, the way opening an app takes you to
- * the app, and someone signed out to the phone's own welcome. On a computer
- * the home page is the home page.
+ * The site's address, '/'. On a phone it is the app's front door, not the
+ * website's: someone signed in is taken to their LaunchPad, the way opening an
+ * app takes you to the app, and someone signed out to the phone's own welcome.
+ * On a computer a visitor meets the AI guide (/start) unless they chose the
+ * standard website (lib/siteMode.ts); search engines always get the home page.
  */
-export async function phoneHome(): Promise<void> {
+export async function homeEntry(): Promise<void> {
   // A partner's confirm link can land here (the site's own address): on into the portal.
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
-  if (!isPhone()) return
-  throw redirect({ to: session ? '/community' : '/welcome' })
+  if (isPhone()) throw redirect({ to: session ? homePath() : '/welcome' })
+  if (!session && siteMode() === 'ai' && !isBot()) throw redirect({ to: '/start' })
 }
 
 /**

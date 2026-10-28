@@ -151,6 +151,8 @@ export interface CareerReadinessLead {
   phone: string
   email: string | null
   city: string | null
+  /** Which programme they asked about (docs/supabase-programme-leads.sql). */
+  programme: string
   contacted: boolean
   contacted_at: string | null
 }
@@ -158,7 +160,7 @@ export interface CareerReadinessLead {
 export async function fetchCareerReadinessLeads(): Promise<CareerReadinessLead[]> {
   const { data, error } = await supabase
     .from('career_readiness_leads')
-    .select('id, created_at, full_name, phone, email, city, contacted, contacted_at')
+    .select('id, created_at, full_name, phone, email, city, programme, contacted, contacted_at')
     .order('created_at', { ascending: false })
   if (error) raise(error)
   return (data ?? []) as CareerReadinessLead[]

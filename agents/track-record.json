@@ -29,7 +29,46 @@
       "note": "Seeded from ai-powered-data-analytics-review.md: the first draft's right answer was the longest in 45 of 55; hours said 50 against 9 of modules. Its review lessons became playbook rules 1-8. No per-finding counts were kept, so the first numbers are partial."
     },
     {
-      "date": "2026-10-22",
+      "date": "2026-10-26",
+      "programme": "ai-powered-entrepreneurship",
+      "job": "draft",
+      "rounds": 2,
+      "lessonsAdded": null,
+      "first": {
+        "stage": "draft (review 1)",
+        "questions": 43,
+        "mustPer10": 0.5,
+        "shouldPer10": 1.6,
+        "rightIsLongestPct": 11.6,
+        "verdict": "needs_work",
+        "byCategory": {
+          "accuracy": 3,
+          "coverage": 1,
+          "teaching": 1,
+          "house-style": 1,
+          "question-design": 3
+        },
+        "rulesBroken": {
+          "5": 3
+        }
+      },
+      "last": {
+        "stage": "round 2",
+        "questions": 43,
+        "mustPer10": 0,
+        "shouldPer10": 0.7,
+        "rightIsLongestPct": 11.6,
+        "verdict": "ready",
+        "byCategory": {
+          "question-design": 1,
+          "house-style": 2
+        },
+        "rulesBroken": {}
+      },
+      "note": ""
+    },
+    {
+      "date": "2026-10-27",
       "programme": "ai-powered-data-analytics",
       "job": "improve",
       "rounds": 3,
@@ -38,82 +77,42 @@
         "stage": "start (review 1)",
         "questions": 55,
         "mustPer10": 3.3,
-        "shouldPer10": 3.6,
+        "shouldPer10": 11.1,
         "rightIsLongestPct": 18.2,
         "verdict": "needs_work",
         "byCategory": {
-          "question-design": 17,
+          "coverage": 7,
+          "question-design": 18,
           "accuracy": 7,
-          "house-style": 1,
+          "teaching": 24,
+          "time": 7,
+          "house-style": 7,
           "aptitude": 1,
-          "project": 1,
-          "teaching": 7,
-          "coverage": 1
+          "project": 2
         },
         "rulesBroken": {
-          "1": 8,
-          "2": 4,
+          "2": 1,
+          "3": 1,
           "4": 1,
-          "6": 2,
-          "7": 2,
-          "8": 2
+          "6": 3,
+          "7": 10,
+          "8": 1,
+          "10": 1,
+          "11": 4,
+          "13": 4
         }
       },
       "last": {
-        "stage": "final (after revision 3)",
-        "questions": 55,
-        "mustPer10": 0,
-        "shouldPer10": 0,
-        "rightIsLongestPct": 10.9,
-        "verdict": null,
-        "byCategory": {},
-        "rulesBroken": {}
-      },
-      "note": ""
-    },
-    {
-      "date": "2026-10-23",
-      "programme": "ai-powered-data-analytics",
-      "job": "improve",
-      "rounds": 5,
-      "lessonsAdded": null,
-      "first": {
-        "stage": "start (review 1)",
-        "questions": 55,
-        "mustPer10": 3.3,
-        "shouldPer10": 3.6,
-        "rightIsLongestPct": 18.2,
-        "verdict": "needs_work",
-        "byCategory": {
-          "question-design": 17,
-          "accuracy": 7,
-          "house-style": 1,
-          "aptitude": 1,
-          "project": 1,
-          "teaching": 7,
-          "coverage": 1
-        },
-        "rulesBroken": {
-          "1": 8,
-          "2": 4,
-          "4": 1,
-          "6": 2,
-          "7": 2,
-          "8": 2
-        }
-      },
-      "last": {
-        "stage": "final (ready)",
+        "stage": "round 3",
         "questions": 55,
         "mustPer10": 0,
         "shouldPer10": 0.9,
-        "rightIsLongestPct": 10.9,
+        "rightIsLongestPct": 14.5,
         "verdict": "ready",
         "byCategory": {
           "teaching": 2,
           "accuracy": 1,
-          "question-design": 1,
-          "coverage": 1
+          "house-style": 2
         },
         "rulesBroken": {}
       },

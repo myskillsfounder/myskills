@@ -187,7 +187,6 @@ function StaffShell({ children, isAdmin }: { children: ReactNode; isAdmin?: bool
       <header className="sticky top-0 z-30 bg-ink-900 text-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           <Link to="/admin" className="flex min-w-0 items-center gap-2.5">
-            <img src="/logo-mark.png" alt="" className="h-8 w-8 shrink-0" />
             <span className="font-display text-lg font-semibold tracking-tight">MySkills Admin</span>
             <span className="hidden rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/80 sm:inline">
               Internal team

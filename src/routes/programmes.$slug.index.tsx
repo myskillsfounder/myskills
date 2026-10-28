@@ -16,6 +16,7 @@ import {
 } from '@/lib/programmeStudent'
 import { PageHeader } from '@/components/app/PageHeader'
 import { ProgrammeFrame, previewSearch, useMyProgramme } from '@/components/programme/shared'
+import { TIERS } from '@/lib/certificates'
 import { Alert, Badge, Button, buttonClass } from '@/components/ui'
 
 export const Route = createFileRoute('/programmes/$slug/')({
@@ -108,7 +109,7 @@ function ProgrammePage() {
               eyebrow={p.kind === 'personal' ? 'Personal programme' : 'Professional programme'}
               title={p.title}
               description={p.content.overview.summary}
-              badge={p.final_passed_at ? <Badge tone="success">Final passed</Badge> : undefined}
+              badge={p.final ? <Badge tone="success">Foundation certificate</Badge> : undefined}
             />
 
             {!p.enrolled ? (
@@ -225,36 +226,43 @@ function ProgrammePage() {
                 {p.content.final.questions.length > 0 && (
                 <Step
                   n={3}
-                  title="Final assessment"
+                  title="Foundation assessment"
                   icon={ClipboardCheck}
-                  state={p.final?.passed ? 'done' : allDone || preview ? 'now' : 'locked'}
+                  state={p.final ? 'done' : p.foundation_unlocked || preview ? 'now' : 'locked'}
                 >
-                  {p.final?.passed ? (
-                    <p className="text-sm text-ink-700">
-                      Passed with {p.final.percent}% on{' '}
-                      {new Date(p.final.completed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}.
-                    </p>
-                  ) : allDone || preview ? (
+                  {p.final ? (
+                    <>
+                      <p className="text-sm text-ink-700">
+                        {TIERS[p.final.kind].certLabel} with {p.final.percent}% on{' '}
+                        {new Date(p.final.completed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}.
+                      </p>
+                      <Link to="/certificate" search={{ programme: p.slug }} className={`mt-3 ${buttonClass('secondary')}`}>
+                        See your Foundation certificate <Award size={16} />
+                      </Link>
+                    </>
+                  ) : p.foundation_unlocked || preview ? (
                     <>
                       <p className="text-sm text-ink-600">
-                        {p.content.final.questions.length} questions across every skill, {p.content.final.minutes} minutes,{' '}
-                        {p.content.final.pass_percent}% to pass.
-                        {p.final ? ` Last try: ${p.final.percent}%.` : ''}
+                        {p.content.final.questions.length} questions on the foundations, {p.content.final.minutes} minutes, taken
+                        once. Every finished attempt earns a Foundation certificate: Gold from {TIERS.gold.min}%, Silver from{' '}
+                        {TIERS.silver.min}%, Bronze below.
                       </p>
                       <Link to="/programmes/$slug/final" params={{ slug }} search={search} className={`mt-3 ${buttonClass()}`}>
-                        {p.final ? 'See the final assessment' : 'Take the final assessment'} <ArrowRight size={16} />
+                        Take the Foundation assessment <ArrowRight size={16} />
                       </Link>
                     </>
                   ) : (
-                    <p className="text-sm text-ink-600">Opens once every module is done.</p>
+                    <p className="text-sm text-ink-600">
+                      Opens once every foundation module is done. It earns your Foundation certificate.
+                    </p>
                   )}
                 </Step>
                 )}
 
-                <Step n={p.content.final.questions.length > 0 ? 4 : 3} title="Mentor, project and internship" icon={UserCheck} state="locked">
+                <Step n={p.content.final.questions.length > 0 ? 4 : 3} title="Practical tasks, capstone and Programme certificate" icon={UserCheck} state="locked">
                   <p className="text-sm text-ink-600">
-                    Coming next: work with a mentor on a real project for this programme, then an internship. Finishing it earns
-                    the programme’s badge and certificate.
+                    Coming next: practical tasks, then a capstone project graded by a mentor, and an internship. Finishing them
+                    earns the Programme certificate, your second credential after the Foundation certificate.
                   </p>
                 </Step>
               </>

@@ -103,7 +103,7 @@ Return the module with id "${id}" and the outline's title, skill, level, outcome
 export function finalPrompt({ plan, finalPlan, skills }) {
   return `Write the final assessment: 15 questions across the whole programme.
 What it should cover: ${finalPlan}
-Cover every skill at least once (${skills.join(', ')}). Mix the difficulty: about 4 Beginner, 6 Intermediate, 4 Advanced and 1 Expert. Don't reuse the module quizzes' questions; ask learners to combine ideas and judge realistic situations. Ids "f1" to "f15".
+Cover every skill at least once (${skills.join(', ')}), and give each question the id of the skill it mainly tests in "skill". The Foundation assessment places students skill by skill, so every skill a foundation-level module trains needs at least 2 questions (publishing refuses otherwise). Mix the difficulty: about 4 Beginner, 6 Intermediate, 4 Advanced and 1 Expert. Don't reuse the module quizzes' questions; ask learners to combine ideas and judge realistic situations. Ids "f1" to "f15".
 
 The programme:
 ${plan}`

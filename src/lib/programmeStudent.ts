@@ -5,6 +5,7 @@
  * does include the answers, and nothing is saved in preview.
  */
 import { supabase } from './supabase'
+import type { CertificateKind } from './certificates'
 import type { ProgrammeContent, ProgrammeModule, Question } from './programmeEngine'
 
 export type SkillLevel = 'starting' | 'developing' | 'strong'
@@ -17,13 +18,16 @@ export interface QuizState {
   next_at: string
 }
 
+/** The Foundation assessment (the engine's `final`): one attempt, banded like
+ *  every Foundation certificate. */
 export interface FinalState {
   percent: number
   correct: number
   total: number
-  passed: boolean
   completed_at: string
-  next_at: string
+  kind: CertificateKind
+  /** Null only if the certificate couldn't be issued. */
+  certificate_code: string | null
 }
 
 /** The programme as one student sees it. In preview the content has the answers. */
@@ -31,6 +35,8 @@ export interface MyProgramme {
   slug: string
   title: string
   kind: 'professional' | 'personal'
+  /** 'built-in': Global Leadership or Digital Marketing, whose pages live elsewhere. */
+  source?: 'engine' | 'built-in'
   version: number
   latest_version: number
   enrolled: boolean
@@ -41,6 +47,9 @@ export interface MyProgramme {
   responses: Record<string, Record<string, string>>
   quizzes: Record<string, QuizState>
   final: FinalState | null
+  /** The foundation modules are done (every module, when none is marked foundation). */
+  foundation_unlocked: boolean
+  /** When the Foundation assessment was finished. */
   final_passed_at: string | null
   /** Staff trying a draft: nothing is saved. */
   preview?: { status: string }
@@ -62,8 +71,8 @@ export interface CatalogueEntry {
 export interface QuizResult {
   grade: { correct: number; total: number; earnedWeight: number; maxWeight: number; percent: number }
   review: Record<string, { correctIndex: number; explanation: string; whyWrong?: string; learningOutcome?: string }>
-  passed?: boolean
-  pass_percent?: number
+  /** The Foundation assessment's certificate, issued with the result. */
+  certificate?: { code: string; kind: CertificateKind; percent: number; title: string }
 }
 
 /** A quiz is passed at this %, and a module needs it. */
@@ -73,6 +82,25 @@ export const MIN_REFLECTION = 60
 
 function fail(error: { message?: string }): never {
   throw new Error(error.message?.trim() || 'Something went wrong.')
+}
+
+/** A course-engine programme the student has joined, for Practice's cards. */
+export interface MyEnrolment {
+  slug: string
+  title: string
+  kind: 'professional' | 'personal'
+  started_at: string
+  modules_total: number
+  modules_done: number
+  aptitude_done: boolean
+  final_passed: boolean
+}
+
+/** Empty, not an error, before docs/supabase-my-programmes.sql is run. */
+export async function fetchMyProgrammes(): Promise<MyEnrolment[]> {
+  const { data, error } = await supabase.rpc('my_programmes')
+  if (error) return []
+  return (data ?? []) as MyEnrolment[]
 }
 
 /** Null until the SQL is run. */
@@ -99,6 +127,7 @@ export async function fetchMyProgramme(slug: string, preview = false): Promise<M
       responses: {},
       quizzes: {},
       final: null,
+      foundation_unlocked: true,
       final_passed_at: null,
       preview: { status: p.status },
     }
@@ -106,6 +135,23 @@ export async function fetchMyProgramme(slug: string, preview = false): Promise<M
   const { data, error } = await supabase.rpc('get_my_programme', { p_slug: slug })
   if (error) fail(error)
   return data as MyProgramme
+}
+
+/** A published programme's aptitude test for a visitor who hasn't signed up:
+ *  the statements and skill names only (docs/supabase-programme-guest-aptitude.sql).
+ *  Null when the programme isn't published, or before that SQL is run. */
+export interface GuestAptitude {
+  slug: string
+  title: string
+  skills: { id: string; name: string }[]
+  items: { id: string; skill: string; statement: string; reverse: boolean }[]
+}
+
+export async function fetchGuestAptitude(slug: string): Promise<GuestAptitude | null> {
+  const { data, error } = await supabase.rpc('programme_guest_aptitude', { p_slug: slug })
+  if (error || !data) return null
+  const g = data as GuestAptitude
+  return g.items?.length ? g : null
 }
 
 export async function enrol(slug: string): Promise<void> {
@@ -130,6 +176,7 @@ export async function submitQuiz(slug: string, module: string, answers: Record<s
   return data as QuizResult
 }
 
+/** The Foundation assessment: once, and it issues the programme's Foundation certificate. */
 export async function submitFinal(slug: string, answers: Record<string, number>): Promise<QuizResult> {
   const { data, error } = await supabase.rpc('submit_programme_final', { p_slug: slug, p_answers: answers })
   if (error) fail(error)

@@ -550,13 +550,14 @@ export interface AdminCertificate extends Certificate {
 }
 
 /** Read-only — certificates are issued exclusively by grade_initial_assessment()
- *  (see docs/supabase-server-side-grading.sql) and have no client-facing
+ *  and submit_programme_final() (see docs/supabase-foundation-certificates.sql),
+ *  one per student per programme, and have no client-facing
  *  insert/update policy at all, admin included. This is a view into what's
  *  already been issued, not a way to mint or alter one. */
 export async function fetchAllCertificates(): Promise<AdminCertificate[]> {
   const { data, error } = await supabase
     .from('certificates')
-    .select('id, profile_id, code, recipient_name, kind, percent, title, issued_at')
+    .select('id, profile_id, programme, code, recipient_name, kind, percent, title, issued_at')
     .order('issued_at', { ascending: false })
   if (error) raise(error)
   return (data ?? []) as AdminCertificate[]

@@ -1,99 +1,91 @@
-# AI powered Data Analytics: research brief
+# AI-Powered Data Analytics: research brief
 
-**Assessment Agent, round 1, 22 October 2026.** Section 4, the main one, lists real beginner mistakes for the Assessment Architect to use as wrong options.
+Assessment Agent, 27 October 2026. For the improve job on `ai-powered-data-analytics.json` (Course engine address `data-analytics`). Primary sources first; where only blogs exist, that is said.
 
 ## 1. What employers in India hire for
 
-- SQL comes first in entry-level analyst postings. SQL plus Power BI or Tableau is what gets a candidate hired, and Python (pandas) is the next skill they expect [codebasics roadmap 2026](https://codebasics.io/blog/data-analyst-roadmap-2026-skills-tools-and-a-step-by-step-learning-plan); [AccioJob 2026 guide](https://acciojob.com/blogs/latest/data-analyst-data-science-jobs-in-2026-complete-guide-to-the-market-salaries-opportunities-in-india).
-- One real Indian remote posting (NTT DATA, 2026) asks for SQL, Python for cleaning and statistics, and Power BI dashboards [NTT DATA posting](https://careers-inc.nttdata.com/job/Remote-Data-Analyst-KA/1359907900).
-- **Not confirmed:** I found no primary Naukri JobSpeak, NASSCOM or foundit report. Blogs quote job counts, growth rates and salary premiums without a traceable source. The programme should not quote any market figure. Its current choice of skills (Excel, SQL, pandas, statistics, Power BI, AI, storytelling) matches all the sources above.
+- **The core stack is stable: SQL, Excel, one BI tool, then Python.** Indian career guides for 2026 agree that SQL, Excel and Power BI or Tableau get freshers shortlisted, with Python "a strong fifth" that many junior MIS and analyst roles in BFSI, FMCG and manufacturing still don't require ([Skillovilla](https://www.skillovilla.com/blogs/data-analyst-skills-required), [AcceleratorX](https://acceleratorx.org/blogs/entry-level-data-analyst-career-guide)). One guide quotes SQL in 74% of postings, advanced Excel 68%, Power BI/Tableau 52% and Python 41%, but names no data source ([Skillovilla](https://www.skillovilla.com/blogs/data-analyst-skills-required)). **Could not confirm** any percentage from a primary hiring report (Naukri JobSpeak or LinkedIn). Treat these as direction, not figures to quote.
+- **AI and data skills now travel together.** LinkedIn's *Skills on the Rise 2026* for India groups rising skills into five stacks, one of them data and analytics, and stresses working with AI tools and interpreting data ([afaqs](https://www.afaqs.com/news/mktg/linkedin-report-maps-five-skill-stacks-shaping-the-job-market-in-2026-11176287), [Storyboard18](https://www.storyboard18.com/brand-makers/linkedins-skills-on-the-rise-2026-identifies-top-skill-stacks-reshaping-indias-workforce-90556.htm)). These are press reports of the report, not the report itself.
+- **Fresher pay** is quoted at about ₹3.5 to 9 LPA depending on city and stack ([Skillfloor](https://skillfloor.com/blog/entry-level-data-analyst-jobs), [AcceleratorX](https://acceleratorx.org/blogs/entry-level-data-analyst-career-guide)). Blog figures; don't put them in the programme.
+- **What the programme covers well:** SQL gets two modules (8 quiz questions), Excel, pandas, Power BI, statistics, AI verification and storytelling are all there. **What is thin:** Google Sheets and Looker Studio (the free route most MySkills students will actually use) appear only in a summary and the project; SUMIFS/COUNTIFS (everyday MIS work) is never taught though da-f03 tests it; LAG/LEAD, which interviewers ask about, is tested (da-f08) but not taught.
 
-## 2. Tools: what changed in the last 12 months
+## 2. Tools: what is current and what changed
 
-- **pandas 3.0** came out on 21 January 2026. String columns now get a dedicated `str` type. Copy-on-Write is the default, so chained assignment (`df["a"][mask] = x`) no longer works and `df.loc[mask, "a"] = x` is the way to do it. Datetimes now default to microseconds [pandas 3.0.0 what's new](https://pandas.pydata.org/docs/whatsnew/v3.0.0.html); [pandas blog](https://pandas.pydata.org/community/blog/pandas-3.0.html). Every line of code in M7 still works under 3.0.
-- **`dayfirst=True` is not strict.** pandas' documentation warns that it only "will prefer to parse with day first". A fixed `format="%d/%m/%Y"` is the strict way to read Indian dates [pandas.to_datetime](https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html).
-- **Copilot in Power BI** needs a paid Fabric capacity (F2 or higher) or Premium (P1 or higher). Pro, PPU, trial and free licences don't qualify [DataBear 2026](https://databear.com/enable-copilot-power-bi-fabric-2026/); [Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/5844828/question-about-copilot-availability-with-fabric-an). I couldn't open the Microsoft Learn page itself, so these are secondary sources. Students won't have access, so M8 needs to give a free route.
-- **Python in Excel** is included for Business and Enterprise Microsoft 365 on Windows (Current Channel). It is a preview on Family, Personal and Education plans, and it isn't supported on device-based licences [Microsoft: Python in Excel availability](https://support.microsoft.com/en-us/excel/python/python-in-excel-availability). Google Colab remains the free route.
-- **Copilot in Excel:** Microsoft says it "can sometimes make mistakes", "can't … evaluate accuracy", and that you should verify anything it creates and work on a copy of important workbooks [Microsoft Copilot in Excel FAQ](https://support.microsoft.com/office/7a13758f-d61e-4a56-8440-f2c9a07802ec).
+| Tool | Current fact | Source | What it means for the file |
+| --- | --- | --- | --- |
+| **XLOOKUP** | In Excel for Microsoft 365, 2021 and 2024, and in Google Sheets. Microsoft's own page says it is **not available in Excel 2016 and 2019**. Default match is exact; no match and no if_not_found gives #N/A. | [Microsoft](https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929), [Google](https://support.google.com/docs/answer/12405947) | da-m02 card 2 is correct, but should say old college-lab Excel may lack it and Google Sheets has it. |
+| **Tables** | Google Sheets has had *Format > Convert to table* since 2024. Ctrl+T is Excel only. | [Google Workspace Updates, May 2024](https://workspaceupdates.googleblog.com/2024/05/tables-in-google-sheets.html) | da-m02 card 1 teaches only Ctrl+T. Add the Sheets route. |
+| **Python in Excel** | Not free: "Free consumer and perpetual consumer licenses don't support Python in Excel." GA for Business/Enterprise; preview only for Personal/Family; not on phones. | [Microsoft](https://support.microsoft.com/en-us/excel/python/python-in-excel-availability) | da-m07 card 1 presents it beside free Colab with no "paid" flag (playbook rule 7). |
+| **Copilot in Power BI** | Needs paid Fabric capacity (F2 or higher) or Premium P1+. "Trial capacities and free SKUs aren't supported." A Pro or PPU licence alone isn't enough. | [Microsoft Learn](https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-introduction) | da-m08 card 3, summary and q4 treat Copilot as a normal step. Say it is a paid, company-provided feature and give the free route. |
+| **Power BI Desktop** | Free, but **Windows only** (Windows 10 or later), and needs at least a 1440x900 screen. No Mac or phone version. | [Microsoft Learn](https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-get-the-desktop) | Many students have only a phone or a Mac. Looker Studio (free, browser) or Google Sheets charts must be a named route. |
+| **Copilot in Excel (consumer)** | Microsoft 365 Personal and Family now include a monthly allowance of AI credits (60 a month for Personal reported), at a higher subscription price; a "Classic" plan without Copilot exists. | [TechRadar](https://www.techradar.com/pro/copilot-is-now-coming-to-all-microsoft-365-users-but-youll-pay-a-little-more-for-the-privilege), [Office Watch](https://office-watch.com/2025/all-about-ai-credits-in-microsoft-365) | Still paid. **Could not confirm** India prices; don't state any. |
+| **Gemini in Google Sheets** | Reported as unavailable on free personal accounts (needs Google AI Pro or a Workspace plan). | [Jotform guide](https://www.jotform.com/ai/how-to-use-gemini-in-google-sheets/), [Dupple](https://dupple.com/learn/how-to-use-ai-in-google-sheets) | Secondary sources only. Don't promise it; free chat assistants (ChatGPT, Claude, Gemini apps) are the free route. |
+| **pandas** | **pandas 3.0.0 released 21 January 2026**: a dedicated string dtype by default, Copy-on-Write always on (chained assignment no longer works), default datetime resolution generally microseconds. | [pandas what's new 3.0.0](https://pandas.pydata.org/docs/whatsnew/v3.0.0.html), [pandas blog](https://pandas.pydata.org/community/blog/pandas-3.0.html) | Nothing in the file is wrong for 3.0 (the blueprint ran the code on 3.0.6). A card could warn that old tutorials' `df[df.x > 5]["y"] = 0` no longer changes df; use `df.loc[...]`. |
+| **pandas dates** | `dayfirst=True` prefers day-first but the docs call it "not strict"; `format="%d/%m/%Y"` is strict. | [pandas to_datetime](https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html) | Rule 8: the da-m07 card should show `format=` as the safe choice. |
+| **Power BI visual calculations** | Reported generally available in the May 2026 update. | [Collab365 repost](https://spaces.collab365.com/posts/power-bi-enables-calculations-in-charts-without-da-JlDtcG) | **Could not confirm** on Microsoft's own blog. The da-m08 card's mention is harmless either way. |
 
-## 3. Law: India first
+## 3. Law: India's DPDP Act and Rules
 
-- **DPDP Rules, 2025** were notified on 13 November 2025 and come in by phases. Consent-manager duties start after 12 months. Most data-fiduciary duties start after 18 months, about 13 May 2027 [The Week/PTI](https://www.theweek.in/wire-updates/business/2025/11/14/del148-biz-dpdp-rules-ld-govt.html); [EY India](https://www.ey.com/en_in/insights/cybersecurity/transforming-data-privacy-digital-personal-data-protection-rules-2025); [AZB & Partners](https://www.azbpartners.com/?p=87799). Sources word the phases a little differently, and I didn't check the Gazette text. M9 card 3 already describes the Act correctly (consent or certain legitimate uses, kept safe) and gives no dates. It should stay that way.
-- **Open data:** data.gov.in (MeitY/NIC) publishes free datasets under the Government Open Data Licence – India, which allows reuse with attribution [data.gov.in brochure](https://data.gov.in/sites/default/files/brochure.pdf); [Open Government Partnership](https://www.opengovpartnership.org/stories/india-government-sets-its-data-free/).
+- **The Act (Section 4):** personal data may be processed only for a lawful purpose (one not expressly forbidden by law), **with consent or for certain legitimate uses** ([dpdpa.com, Section 4 text](https://dpdpa.com/dpdpa2023/chapter-2/section4.html)). Section 7 lists the legitimate uses, such as data a person gave voluntarily for a stated purpose, employment, legal duties and medical emergencies ([Bar & Bench](https://www.barandbench.com/view-point/navigating-legitimate-use-exemption-employee-data-digital-personal-data-protection-act-2023)). da-m09 card 3's wording matches the Act.
+- **The Rules:** the DPDP Rules, 2025 (G.S.R. 846(E)) were notified on 13 November 2025. Rules on the Data Protection Board applied at once. Consent Manager rules (Rule 4) apply from **13 November 2026**, 17 days from today. Most duties on organisations (notice, security safeguards, breach reporting, Rules 3 and 5 to 16) apply **18 months after notification, around 13 May 2027** ([SCC Online](https://www.scconline.com/blog/post/2025/11/14/meity-notified-digital-personal-data-protection-rules-2025/), [EY](https://www.ey.com/en_in/technical/alerts-hub/2025/11/digital-data-protection-act-rules-notified-by-meity), [Mondaq](https://www.mondaq.com/india/data-protection/1708164/digital-personal-data-protection-rules-2025-notified)). Some summaries say 14 May 2027 (from the gazette publication date). **Could not open the MeitY page** (HTTP 403). So: write "most duties apply from May 2027", not a day, unless someone confirms the date in the Gazette.
+- **For the module:** the card is right not to give dates. It can add one sentence: "The DPDP Rules, 2025 phase in its duties; most apply to organisations from May 2027, but good practice starts now." Under playbook rule 9, the 13 November 2026 Consent Manager date falls within 90 days. The file doesn't mention it, and shouldn't need to.
 
-## 4. Common beginner mistakes, ready to use as wrong options
+## 4. Common beginner mistakes (good wrong options)
 
-Each line below names a mistake and the documented behaviour that makes it a mistake. A good wrong option is the mistake stated confidently, with the reason a learner would give for it.
+All of these are confirmed by the blueprint's runs (pandas 3.0.6, SQLite 3.50.4) or the official docs above:
+- Using `= NULL` instead of `IS NULL`; forgetting that AVG skips NULLs but COUNT(*) does not.
+- Writing `BETWEEN '2026-04-01' AND '2026-04-30'` on a timestamp column, which drops 30 April after midnight.
+- Joining one-to-many and summing (fan-out); filtering an `o.` column in WHERE after a LEFT JOIN, which turns it into an inner join.
+- VLOOKUP with an approximate match (TRUE) on unsorted data; lookups failing on trailing spaces or text-stored numbers.
+- pandas: Python `and` instead of `&`; chained assignment (silently does nothing in pandas 3); letting pandas guess dd/mm dates.
+- Truncated bar-chart axes; pies with many slices; "Sum, % of column total" read as a rate.
+- Trusting AI code because it runs; pasting personal data into public chatbots; asking the AI to check itself.
 
-**Excel**
-- **Leaves VLOOKUP's last argument out, or sets it to TRUE, expecting an exact match.** The default is approximate match, which needs sorted data and can return a wrong value without any error [Microsoft VLOOKUP](https://support.microsoft.com/en-us/office/vlookup-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1).
-- **Thinks XLOOKUP needs sorted data, or that its 4th argument sets the match type.** XLOOKUP's default is exact match, and the 4th argument is the "not found" value [Microsoft XLOOKUP](https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929).
-- **Blames the formula when a lookup fails on values that look the same.** The real cause is trailing spaces, or numbers stored as text [Microsoft VLOOKUP](https://support.microsoft.com/en-us/office/vlookup-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1). TRIM doesn't remove non-breaking spaces (CHAR(160)) and doesn't turn text into numbers. Converting codes with leading zeros changes them (00125 becomes 125) [TheBricks guide](https://thebricks.com/resources/how-to-remove-spaces-in-excel-before-numbers) (a secondary source).
-- **Fills a formula down without `$`, so the rate cell drifts (F1, F2, F3…).** References are relative by default [Microsoft: relative and absolute references](https://support.microsoft.com/en-us/Excel/switch-between-relative-absolute-and-mixed-references).
-- **Writes SUMIF with the arguments in the SUMIFS order** (SUMIF is range, criteria, [sum_range]) [Microsoft SUMIF](https://support.microsoft.com/en-us/office/sumif-function-169b8c99-c05c-4483-a712-1697a653039b).
+## 5. Free tools and data for students
 
-**SQL**
-- **Uses COUNT(column) expecting it to count NULLs, or thinks COUNT(\*) skips them.** COUNT(\*) counts every row, while COUNT(column), SUM and AVG use only non-null values [PostgreSQL aggregate functions](https://www.postgresql.org/docs/current/functions-aggregate.html).
-- **Thinks AVG divides by all rows, so NULLs count as 0.** **Expects SUM of no rows to be 0.** It returns NULL, and COALESCE is the fix [PostgreSQL](https://www.postgresql.org/docs/current/functions-aggregate.html).
-- **Writes `= NULL` instead of `IS NULL`.** The m04-q3 behaviour was confirmed in SQLite by the Assessment Architect (blueprint, 2026-10-21).
-- **Puts a condition on the right-hand table in WHERE after a LEFT JOIN.** The unmatched rows are dropped, so the query behaves like an INNER JOIN. The condition belongs in ON [Broadcom KB](https://knowledge.broadcom.com/external/article/16455/sql-clause-on-versus-where.html); [Microsoft Q&A](https://learn.microsoft.com/en-us/answers/a/1537783).
-- **Joins a one-to-many table and then sums the "one" side,** which double counts. The programme already teaches this in M5 card 2.
+- **Spreadsheets:** Google Sheets (free, works in a phone browser and app) has XLOOKUP, tables and pivot tables ([Google](https://support.google.com/docs/answer/12405947)).
+- **SQL without installing anything:** the DuckDB shell runs a full database in the browser on any device, reads CSV files, and sends no data to a server ([DuckDB docs](https://www.duckdb.org/docs/current/clients/wasm/overview)). The BigQuery sandbox needs no card or billing account: 10 GB storage and 1 TB of queries a month, and tables expire after 60 days ([Google Cloud](https://docs.cloud.google.com/bigquery/docs/sandbox)).
+- **Python:** Google Colab is free; Google doesn't publish fixed limits, and free sessions can be cut off when idle ([Colab FAQ](https://research.google.com/colaboratory/faq.html)). It is usable but awkward on a phone, so tasks should say a laptop or a college lab helps.
+- **Dashboards:** Looker Studio is free, with a free Google Sheets connector ([Coefficient](https://coefficient.io/is-looker-studio-free), secondary). Power BI Desktop is free but Windows only.
+- **Indian open data:** data.gov.in publishes ministry and state datasets as CSV and XLS ([India.gov.in services](https://services.india.gov.in/service/detail/open-government-data-platform-india-1)). It is good for project data. Check the licence terms on each dataset.
 
-**pandas**
-- **Combines conditions with `and`, or leaves out the brackets.** `df['A'] > 2 & df['B'] < 3` is evaluated as `df['A'] > (2 & df['B']) < 3`. Each condition needs its own brackets, joined with `&`, `|` or `~` [pandas indexing guide](https://pandas.pydata.org/docs/user_guide/indexing.html).
-- **Trusts `dayfirst=True` as a guarantee.** It is only a preference [pandas.to_datetime](https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html).
-- **Uses chained assignment, which silently does nothing in pandas 3.0** [pandas 3.0.0](https://pandas.pydata.org/docs/whatsnew/v3.0.0.html).
+## 6. What in the file is out of date, wrong or missing
 
-**Statistics**
-- **Reads p > 0.05 as proof of no effect.** A non-significant result "does not mean that there is no difference" [PMC review of the ASA statement](https://pmc.ncbi.nlm.nih.gov/articles/PMC4885969).
-- **Reads a p-value as the probability the hypothesis is true, or treats "significant" as "big".** It is neither [same source](https://pmc.ncbi.nlm.nih.gov/articles/PMC4885969).
-- **Trusts the overall rate when a subgroup mix explains it (Simpson's paradox).** At Berkeley in 1973, about 44% of men and 35% of women were admitted overall, yet in most departments women did as well or better [Answering Questions with Data, 1.3](https://oer.xyzhomework.com/ebooks/html/answering-questions-with-data/ch01/1-3-the-cautionary-tale-of-simpson-s-paradox.html).
-- **Thinks a margin of error fixes a biased sample, or that a sample must be a big share of the population.** I found no primary source in this search. Use these only where the scenario makes the mistake plain.
-
-**Dashboards**
-- **Starts a bar chart's axis above zero.** Readers take in the exaggerated message, and the rule is relaxed for line charts [Datawrapper](https://www.datawrapper.de/academy/why-our-column-and-bar-charts-start-at-zero); [Observable](https://observablehq.com/blog/never-okay-crop-y-axis-except-when-it-is). This makes a good near-miss: "a line chart should also start at zero" sounds right but isn't the rule.
-
-**AI-assisted analysis**
-- **Treats code that runs, or the assistant's own re-check, as verification.** Microsoft says Copilot can't evaluate its own accuracy [Copilot in Excel FAQ](https://support.microsoft.com/office/7a13758f-d61e-4a56-8440-f2c9a07802ec). Realistic wrong checks: ask a second AI, rerun the code, see whether the number is in a usual range, read the formula without recomputing.
-- **Thinks a paid plan, a history-off setting, initials in place of names, or a small sample makes personal data safe to paste.** The DPDP Act's tests are purpose, consent or a legitimate use, and safeguards, not the tool's settings (see section 3).
-
-## 5. Free tools and data
-
-- Google Colab; Power BI Desktop (free, no Copilot); Excel for the web or Google Sheets; SQLite or PostgreSQL; data.gov.in.
-
-## 6. What in the outline is out of date, wrong or missing
-
-- **M7 card 2** presents `dayfirst=True` as reading Indian dates reliably. It should add the strict `format="%d/%m/%Y"` (playbook rule 8).
-- **M8 card 3** says "Copilot can draft measures" without saying that it needs paid capacity, and gives no free route.
-- **M7 card 1** mentions Python in Excel without its licence limits.
-- **Missing from the cards:** COUNT(\*) against COUNT(column), and NULLs; the LEFT JOIN + WHERE trap; "not significant ≠ no effect"; Simpson's paradox; `&` with brackets. Several quiz questions depend on some of these (see the review).
+1. **Paid tools shown as if free:** Python in Excel (da-m07 card 1), Copilot in Power BI (da-m08 summary, card 3, q4), Copilot in Excel (da-m09 card 1). Each needs a "paid" flag and a free route (rule 7).
+2. **Windows/desktop assumptions:** Ctrl+T and Power BI Desktop. Phone and Mac users need the Google Sheets and Looker Studio routes.
+3. **DPDP:** the wording is correct. It could add the phase-in (most duties from May 2027).
+4. **Taught versus tested:** the quizzes and final test things no card teaches: correlation versus causation (da-m01-q4), absolute references (da-m02-q4), NULL handling (da-m04-q3, q4), `&` filters (da-m07-q4), LAG (da-f08) and SUMIFS (da-f03).
+5. **Factual slips:** da-m08-q2 (an axis from ₹99 lakh makes the bar 3 times taller, not 5); da-f05's option names "satisfaction score" in an income question; da-m02-q2's why_wrong names "the third option", but the swapped XLOOKUP is the second, and option order can be shuffled.
+6. **Missing:** practice on real data. No module gives the learner a dataset to work on; every task is a plan or a description.
 
 ## Sources
-- pandas 3.0.0 what's new: https://pandas.pydata.org/docs/whatsnew/v3.0.0.html
-- pandas 3.0 released (blog): https://pandas.pydata.org/community/blog/pandas-3.0.html
-- pandas.to_datetime: https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html
-- pandas indexing and selecting data: https://pandas.pydata.org/docs/user_guide/indexing.html
-- PostgreSQL aggregate functions: https://www.postgresql.org/docs/current/functions-aggregate.html
-- Broadcom KB, SQL clause ON versus WHERE: https://knowledge.broadcom.com/external/article/16455/sql-clause-on-versus-where.html
-- Microsoft Q&A, LEFT JOIN acting as INNER: https://learn.microsoft.com/en-us/answers/a/1537783
-- Microsoft VLOOKUP: https://support.microsoft.com/en-us/office/vlookup-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1
-- Microsoft XLOOKUP: https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
-- Microsoft SUMIF: https://support.microsoft.com/en-us/office/sumif-function-169b8c99-c05c-4483-a712-1697a653039b
-- Microsoft relative and absolute references: https://support.microsoft.com/en-us/Excel/switch-between-relative-absolute-and-mixed-references
-- TheBricks, spaces before numbers: https://thebricks.com/resources/how-to-remove-spaces-in-excel-before-numbers
-- Microsoft Copilot in Excel FAQ: https://support.microsoft.com/office/7a13758f-d61e-4a56-8440-f2c9a07802ec
-- Microsoft Python in Excel availability: https://support.microsoft.com/en-us/excel/python/python-in-excel-availability
-- DataBear, enable Copilot in Power BI 2026: https://databear.com/enable-copilot-power-bi-fabric-2026/
-- Microsoft Q&A, Copilot with Fabric: https://learn.microsoft.com/en-us/answers/questions/5844828/question-about-copilot-availability-with-fabric-an
-- PMC review of the ASA statement on p-values: https://pmc.ncbi.nlm.nih.gov/articles/PMC4885969
-- Answering Questions with Data, Simpson's paradox: https://oer.xyzhomework.com/ebooks/html/answering-questions-with-data/ch01/1-3-the-cautionary-tale-of-simpson-s-paradox.html
-- Datawrapper, why bar charts start at zero: https://www.datawrapper.de/academy/why-our-column-and-bar-charts-start-at-zero
-- Observable, cropping the y-axis: https://observablehq.com/blog/never-okay-crop-y-axis-except-when-it-is
-- The Week/PTI, DPDP Rules notified: https://www.theweek.in/wire-updates/business/2025/11/14/del148-biz-dpdp-rules-ld-govt.html
-- EY India, DPDP Rules 2025: https://www.ey.com/en_in/insights/cybersecurity/transforming-data-privacy-digital-personal-data-protection-rules-2025
-- AZB & Partners, DPDP framework: https://www.azbpartners.com/?p=87799
-- data.gov.in brochure: https://data.gov.in/sites/default/files/brochure.pdf
-- Open Government Partnership, India: https://www.opengovpartnership.org/stories/india-government-sets-its-data-free/
-- codebasics, data analyst roadmap 2026: https://codebasics.io/blog/data-analyst-roadmap-2026-skills-tools-and-a-step-by-step-learning-plan
-- AccioJob, data analyst jobs 2026: https://acciojob.com/blogs/latest/data-analyst-data-science-jobs-in-2026-complete-guide-to-the-market-salaries-opportunities-in-india
-- NTT DATA, Remote Data Analyst posting: https://careers-inc.nttdata.com/job/Remote-Data-Analyst-KA/1359907900
+
+- Skillovilla, Data Analyst Skills Required in 2026: https://www.skillovilla.com/blogs/data-analyst-skills-required
+- AcceleratorX, Entry-level data analyst career guide: https://acceleratorx.org/blogs/entry-level-data-analyst-career-guide
+- Skillfloor, Entry-level data analyst jobs 2026: https://skillfloor.com/blog/entry-level-data-analyst-jobs
+- afaqs, LinkedIn Skills on the Rise 2026: https://www.afaqs.com/news/mktg/linkedin-report-maps-five-skill-stacks-shaping-the-job-market-in-2026-11176287
+- Storyboard18, LinkedIn Skills on the Rise 2026 India: https://www.storyboard18.com/brand-makers/linkedins-skills-on-the-rise-2026-identifies-top-skill-stacks-reshaping-indias-workforce-90556.htm
+- Microsoft, XLOOKUP function: https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
+- Google, XLOOKUP in Sheets: https://support.google.com/docs/answer/12405947
+- Google Workspace Updates, Tables in Google Sheets: https://workspaceupdates.googleblog.com/2024/05/tables-in-google-sheets.html
+- Microsoft, Python in Excel availability: https://support.microsoft.com/en-us/excel/python/python-in-excel-availability
+- Microsoft Learn, Copilot for Power BI overview: https://learn.microsoft.com/en-us/power-bi/create-reports/copilot-introduction
+- Microsoft Learn, Download Power BI Desktop: https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-get-the-desktop
+- TechRadar, Copilot comes to Microsoft 365 consumer plans: https://www.techradar.com/pro/copilot-is-now-coming-to-all-microsoft-365-users-but-youll-pay-a-little-more-for-the-privilege
+- Office Watch, AI credits in Microsoft 365: https://office-watch.com/2025/all-about-ai-credits-in-microsoft-365
+- Jotform, Gemini in Google Sheets 2026: https://www.jotform.com/ai/how-to-use-gemini-in-google-sheets/
+- Dupple, AI in Google Sheets 2026: https://dupple.com/learn/how-to-use-ai-in-google-sheets
+- pandas, What's new in 3.0.0: https://pandas.pydata.org/docs/whatsnew/v3.0.0.html
+- pandas, 3.0 released: https://pandas.pydata.org/community/blog/pandas-3.0.html
+- pandas, to_datetime: https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html
+- Collab365, visual calculations GA (repost): https://spaces.collab365.com/posts/power-bi-enables-calculations-in-charts-without-da-JlDtcG
+- dpdpa.com, DPDP Act Section 4: https://dpdpa.com/dpdpa2023/chapter-2/section4.html
+- Bar & Bench, legitimate uses under the DPDP Act: https://www.barandbench.com/view-point/navigating-legitimate-use-exemption-employee-data-digital-personal-data-protection-act-2023
+- SCC Online, MeitY notifies DPDP Rules 2025: https://www.scconline.com/blog/post/2025/11/14/meity-notified-digital-personal-data-protection-rules-2025/
+- EY, DPDP Rules notified: https://www.ey.com/en_in/technical/alerts-hub/2025/11/digital-data-protection-act-rules-notified-by-meity
+- Mondaq, DPDP Rules 2025 notified: https://www.mondaq.com/india/data-protection/1708164/digital-personal-data-protection-rules-2025-notified
+- DuckDB, Wasm overview: https://www.duckdb.org/docs/current/clients/wasm/overview
+- Google Cloud, BigQuery sandbox: https://docs.cloud.google.com/bigquery/docs/sandbox
+- Google, Colab FAQ: https://research.google.com/colaboratory/faq.html
+- Coefficient, Is Looker Studio free: https://coefficient.io/is-looker-studio-free
+- India.gov.in, Open Government Data Platform: https://services.india.gov.in/service/detail/open-government-data-platform-india-1

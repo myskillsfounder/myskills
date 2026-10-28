@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
-import { requireOnboarded } from '@/lib/guards'
+import { guestOrOnboarded } from '@/lib/guards'
 import { errorMessage } from '@/lib/errors'
 import { rememberProgramme } from '@/lib/practiceProgramme'
-import { trackCareerAssessmentComplete } from '@/lib/analytics'
+import { trackCareerAssessmentComplete, trackEvent } from '@/lib/analytics'
 import {
   fetchAssessmentQuestions,
   submitAssessment,
@@ -13,11 +13,17 @@ import {
 } from '@/lib/careerReadinessAssessment'
 import { AssessmentResult } from '@/components/career-readiness/AssessmentResult'
 import { DarkError, DarkShell } from '@/components/self-assessment/DarkShell'
+import { SignUpToSee } from '@/components/self-assessment/SignUpToSee'
+import { CoachNote } from '@/components/self-assessment/CoachNote'
+import { strongestFor } from '@/lib/guestResult'
+import { useAuthUser } from '@/lib/useAuth'
+import { clearPendingAptitude, pendingAptitudeFor, savePendingAptitude } from '@/lib/pendingAptitude'
 import { SelfAssessmentQuiz, type QuizCopy } from '@/components/self-assessment/Quiz'
 
-// Not in PAGE_SEO on purpose — it's behind sign-in.
+// Not in PAGE_SEO on purpose: the result is behind sign-in. The test itself
+// can be taken signed out (lib/pendingAptitude.ts).
 export const Route = createFileRoute('/career-readiness-assessment')({
-  beforeLoad: requireOnboarded,
+  beforeLoad: guestOrOnboarded,
   component: CareerReadinessAssessmentPage,
 })
 
@@ -37,30 +43,57 @@ const COPY: QuizCopy = {
 
 function CareerReadinessAssessmentPage() {
   const { result, loading, setResult } = useMyAssessmentResult()
+  const [error, setError] = useState<string>()
+  const { user, loading: authLoading } = useAuthUser()
+  // Answered before signing up: the result waits for an account.
+  const [waiting, setWaiting] = useState(() => pendingAptitudeFor('/career-readiness-assessment') !== null)
+  const [scoring, setScoring] = useState(false)
+
+  // Signed in now, with answers from before: score them, once.
+  useEffect(() => {
+    if (authLoading || loading || !user) return
+    const pending = pendingAptitudeFor('/career-readiness-assessment')
+    if (!pending) return
+    clearPendingAptitude()
+    setWaiting(false)
+    if (result) return
+    setScoring(true)
+    submitAssessment(pending.answers, pending.reflection)
+      .then((r) => {
+        trackCareerAssessmentComplete()
+        setResult(r)
+      })
+      .catch((e) => setError(errorMessage(e)))
+      .finally(() => setScoring(false))
+  }, [authLoading, loading, user, result, setResult])
   // "Back to Practice" returns to this programme's tab.
   useEffect(() => rememberProgramme(2), [])
   const [questions, setQuestions] = useState<AssessmentQuestion[] | null>(null)
-  const [error, setError] = useState<string>()
 
   // Only fetch the statements once we know the learner hasn't taken it: one
   // attempt each (everyone's earlier results were cleared when this test
   // started, docs/supabase-leadership-test-reset.sql).
   useEffect(() => {
-    if (loading || result) return
+    if (loading || authLoading || result || waiting || scoring) return
     let active = true
     fetchAssessmentQuestions()
-      .then((q) => active && setQuestions(q.questions))
+      .then((q) => {
+        if (!active) return
+        // None readable (a visitor, before docs/supabase-aptitude-before-signup.sql) reads as unavailable.
+        if (q.questions.length === 0) setError('Please try again in a little while.')
+        else setQuestions(q.questions)
+      })
       .catch((e) => active && setError(errorMessage(e)))
     return () => {
       active = false
     }
-  }, [loading, result])
+  }, [loading, authLoading, result, waiting, scoring])
 
   const taken = Boolean(result)
 
   return (
     <DarkShell
-      back={{ to: '/practice', label: 'Back to Practice' }}
+      back={user ? { to: '/practice', label: 'Back to Practice' } : { to: '/', label: 'Back' }}
       eyebrow="Global Leadership"
       title={taken ? 'Your leadership aptitude' : 'Leadership Aptitude Test'}
       description={
@@ -71,19 +104,30 @@ function CareerReadinessAssessmentPage() {
     >
       {error && <DarkError title="The assessment isn’t available right now." message={error} />}
 
-      {(loading || (!result && !questions && !error)) && (
+      {(loading || scoring || (!result && !waiting && !questions && !error)) && (
         <p className="flex items-center gap-2 text-sm text-white/60">
-          <Loader2 size={15} className="animate-spin" /> Loading…
+          <Loader2 size={15} className="animate-spin" /> {scoring ? 'Working out your results…' : 'Loading…'}
         </p>
       )}
 
+      {result && <CoachNote test="gl-aptitude" />}
       {result && <AssessmentResult result={result} />}
 
-      {!result && questions && questions.length > 0 && (
+      {!result && waiting && !user && !authLoading && <SignUpToSee route="/career-readiness-assessment" />}
+
+      {!result && !waiting && !scoring && questions && questions.length > 0 && (
         <SelfAssessmentQuiz
           questions={questions}
           copy={COPY}
           onSubmit={async (answers, reflection) => {
+            // Signed out: keep the answers, and ask for an account to see the result.
+            if (!user) {
+              savePendingAptitude('/career-readiness-assessment', answers, reflection, strongestFor('/career-readiness-assessment', questions, answers))
+              trackEvent('aptitude_answered_guest', { programme: 'global-leadership' })
+              setWaiting(true)
+              window.scrollTo({ top: 0 })
+              return
+            }
             const r = await submitAssessment(answers, reflection)
             trackCareerAssessmentComplete()
             setResult(r)

@@ -41,8 +41,38 @@ export interface PageSeo {
  */
 export const PAGE_SEO: Record<string, PageSeo> = {
   '/': {
-    title: 'MySkills — Personal & Professional Development, Powered by AI',
-    description: 'Build job-ready professional and personal skills with AI practice, mentor reviews and real internships. Start with a free aptitude assessment.',
+    title: 'MySkills — The Student Development Platform, Powered by AI',
+    description: 'Everything a student needs in one place: courses with an AI coach, mentors, study abroad, career guidance, internships and wellness. Start with a free aptitude test.',
+  },
+  '/courses': {
+    title: 'Courses — Digital Marketing, Leadership, Entrepreneurship & Data Analytics | MySkills',
+    description:
+      'Every MySkills course in one place: a free aptitude test first, short modules with an AI coach, and a project graded by a real mentor. Free to start.',
+  },
+  '/mentors': {
+    title: 'Mentors — Learn from Top Industry Leaders | MySkills',
+    description:
+      'Learn from top industry leaders in entrepreneurship, AI product development, growth hacking and leadership: live sessions, 1:1 time and a project they grade.',
+  },
+  '/study-abroad': {
+    title: 'Study Abroad — Partner Universities, Applications & Test Prep | MySkills',
+    description:
+      'Study abroad without the guesswork: partner universities, help with your applications and the tests you need, all in the platform where you learn.',
+  },
+  '/internships': {
+    title: 'Internships for Students — Real Work Experience | MySkills',
+    description:
+      'Your first internship, hands-on and real: partner companies reviewed by our team, apply with your Global Readiness Score, and get your work signed off.',
+  },
+  '/data-analytics': {
+    title: 'Data Analytics Course for Students in India: SQL, Python & Dashboards | MySkills',
+    description:
+      'Turn business data into decisions with spreadsheets, SQL, Python, dashboards and AI, on free tools and a real practice dataset. 10 modules and a mentor-graded project. Free aptitude test.',
+  },
+  '/entrepreneurship': {
+    title: 'AI-Powered Entrepreneurship Course for Students in India | MySkills',
+    description:
+      'Take your business idea from a guess to its first paying customers: 7 modules with AI tools at every step, Indian examples, and a mentor-graded project. Free aptitude test.',
   },
   '/digital-marketing': {
     title: 'Learn Digital Marketing Online — Free Practice & Certification | MySkills',
@@ -94,6 +124,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
 /** Routes that belong in the sitemap, with their crawl hints. */
 export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: string }[] = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
+  { path: '/courses', changefreq: 'weekly', priority: '0.9' },
+  { path: '/entrepreneurship', changefreq: 'weekly', priority: '0.9' },
   { path: '/digital-marketing', changefreq: 'weekly', priority: '0.9' },
   { path: '/career-readiness', changefreq: 'weekly', priority: '0.9' },
   { path: '/signup', changefreq: 'monthly', priority: '0.8' },
@@ -142,7 +174,7 @@ export function applySeo(path: string, override?: Partial<PageSeo>) {
   // Unlisted paths are signed-in app pages: title them, but keep them out of
   // the index.
   const seo: PageSeo = {
-    title: base?.title ?? `${SITE_NAME} — Digital marketing skills`,
+    title: base?.title ?? `${SITE_NAME} — The Student Development Platform`,
     description: base?.description ?? PAGE_SEO['/'].description,
     noindex: base ? base.noindex : true,
     ...override,
