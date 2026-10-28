@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Globe2, GraduationCap, Plane, X } from 'lucide-react'
+import { Flame, Globe2, GraduationCap, Plane, X } from 'lucide-react'
 import { glimpseOrOnboarded } from '@/lib/guards'
 import { Glimpse } from '@/components/landing/Glimpse'
 import { STUDY_ABROAD_GLIMPSE } from '@/content/glimpses'
@@ -33,7 +33,7 @@ function Stats({ rows }: { rows: StudyProgramme[] }) {
     { label: 'Your applications', value: rows.filter((r) => r.my_status && r.my_status !== 'withdrawn').length },
   ]
   return (
-    <div className="card mb-8 grid grid-cols-2 divide-ink-900/[0.06] sm:grid-cols-5 sm:divide-x">
+    <div className="card mb-10 grid grid-cols-2 divide-ink-900/[0.06] sm:grid-cols-5 sm:divide-x">
       {items.map((s) => (
         <div key={s.label} className="px-5 py-4">
           <p className="text-xs font-medium text-ink-500">{s.label}</p>
@@ -118,7 +118,7 @@ function UniversityRow({ rows, pick, onPick }: { rows: StudyProgramme[]; pick: P
   )
 }
 
-/** Every study-abroad programme the team has opened: featured first, then by country and university, then all. */
+/** Every study-abroad programme the team has opened: trending first, then by country and university, then all. */
 function StudyAbroadPage() {
   const [rows, setRows] = useState<StudyProgramme[] | null | undefined>(undefined)
   const [error, setError] = useState<string>()
@@ -128,7 +128,10 @@ function StudyAbroadPage() {
   }, [])
 
   const all = rows ?? []
+  // Trending: the programmes the team features, or, while none is, the ones
+  // open now, so the page always opens on something to apply to (Paul, 28 Oct 2026).
   const featured = all.filter((r) => r.featured)
+  const trending = featured.length > 0 ? featured : all.filter((r) => r.status === 'open')
   const shown = all.filter((r) => (!pick.country || r.country === pick.country) && (!pick.university || r.university === pick.university))
 
   // Picking a country or university in its row narrows "All programmes" and
@@ -158,18 +161,20 @@ function StudyAbroadPage() {
 
       {rows && rows.length > 0 && (
         <>
-          <Stats rows={all} />
-
-          {featured.length > 0 && (
-            <section className="mb-10">
-              <h2 className="mb-3 font-display text-xl font-semibold text-ink-900">Featured programmes</h2>
+          {trending.length > 0 && (
+            <section className="mb-8">
+              <h2 className="mb-3 flex items-center gap-2 font-display text-xl font-semibold text-ink-900">
+                <Flame size={20} className="text-orange-500" /> Trending now
+              </h2>
               <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 xl:grid-cols-3">
-                {featured.map((p) => (
+                {trending.map((p) => (
                   <FeaturedCard key={p.slug} p={p} />
                 ))}
               </div>
             </section>
           )}
+
+          <Stats rows={all} />
 
           <CountryRow rows={all} pick={pick} onPick={choose} />
           <UniversityRow rows={all} pick={pick} onPick={choose} />
