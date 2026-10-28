@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Plane } from 'lucide-react'
+import { Globe2, GraduationCap, Plane, X } from 'lucide-react'
 import { glimpseOrOnboarded } from '@/lib/guards'
 import { Glimpse } from '@/components/landing/Glimpse'
 import { STUDY_ABROAD_GLIMPSE } from '@/content/glimpses'
@@ -44,19 +44,99 @@ function Stats({ rows }: { rows: StudyProgramme[] }) {
   )
 }
 
-/** Every study-abroad programme the team has opened: featured first, then all, by country. */
+/** What "All programmes" is narrowed to: a country, a university, or nothing. */
+type Pick = { country?: string; university?: string }
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
+
+/** A titled row of tiles that scrolls sideways on a phone and wraps on a computer. */
+function BrowseRow({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="mb-10">
+      <h2 className="mb-3 font-display text-xl font-semibold text-ink-900">{title}</h2>
+      <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3 xl:grid-cols-4">
+        {children}
+      </div>
+    </section>
+  )
+}
+
+const tileClass = (on: boolean) =>
+  `lift flex w-64 shrink-0 snap-start items-center gap-3 rounded-2xl border-2 p-4 text-left sm:w-auto ${on ? 'border-brand-500 bg-brand-50' : 'border-ink-900/[0.08] bg-white'}`
+
+/** Every country with a programme: its flag, and how many programmes and universities. */
+function CountryRow({ rows, pick, onPick }: { rows: StudyProgramme[]; pick: Pick; onPick: (p: Pick) => void }) {
+  const countries = [...new Set(rows.map((r) => r.country))].sort((a, b) => a.localeCompare(b))
+  if (countries.length === 0) return null
+  return (
+    <BrowseRow title="Countries">
+      {countries.map((c) => {
+        const here = rows.filter((r) => r.country === c)
+        const unis = new Set(here.map((r) => r.university).filter(Boolean)).size
+        const code = here.find((r) => r.country_code)?.country_code
+        return (
+          <button key={c} type="button" aria-pressed={pick.country === c && !pick.university} onClick={() => onPick({ country: c })} className={tileClass(pick.country === c && !pick.university)}>
+            {code ? <Flag code={code} className="h-8 w-12 shrink-0" /> : <Globe2 size={28} className="shrink-0 text-brand-600" />}
+            <span className="min-w-0">
+              <span className="block truncate font-display text-base font-semibold text-ink-900">{c}</span>
+              <span className="block text-xs text-ink-500">
+                {plural(here.length, 'programme', 'programmes')}
+                {unis > 0 && ` · ${plural(unis, 'university', 'universities')}`}
+              </span>
+            </span>
+          </button>
+        )
+      })}
+    </BrowseRow>
+  )
+}
+
+/** Every partner university: its name, where it is, and how many programmes. */
+function UniversityRow({ rows, pick, onPick }: { rows: StudyProgramme[]; pick: Pick; onPick: (p: Pick) => void }) {
+  const unis = [...new Set(rows.map((r) => r.university).filter((u): u is string => !!u))].sort((a, b) => a.localeCompare(b))
+  if (unis.length === 0) return null
+  return (
+    <BrowseRow title="Universities">
+      {unis.map((u) => {
+        const here = rows.filter((r) => r.university === u)
+        const first = here[0]
+        return (
+          <button key={u} type="button" aria-pressed={pick.university === u} onClick={() => onPick({ university: u })} className={tileClass(pick.university === u)}>
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
+              <GraduationCap size={22} />
+            </span>
+            <span className="min-w-0">
+              <span className="line-clamp-2 font-display text-sm font-semibold leading-snug text-ink-900">{u}</span>
+              <span className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-500">
+                <Flag code={first.country_code} className="h-3 w-[18px]" /> {first.country} · {plural(here.length, 'programme', 'programmes')}
+              </span>
+            </span>
+          </button>
+        )
+      })}
+    </BrowseRow>
+  )
+}
+
+/** Every study-abroad programme the team has opened: featured first, then by country and university, then all. */
 function StudyAbroadPage() {
   const [rows, setRows] = useState<StudyProgramme[] | null | undefined>(undefined)
   const [error, setError] = useState<string>()
-  const [country, setCountry] = useState('all')
+  const [pick, setPick] = useState<Pick>({})
   useEffect(() => {
     fetchStudyProgrammes().then(setRows, (e) => setError(errorMessage(e)))
   }, [])
 
   const all = rows ?? []
-  const countries = [...new Map(all.map((r) => [r.country, r.country_code])).entries()].sort((a, b) => a[0].localeCompare(b[0]))
   const featured = all.filter((r) => r.featured)
-  const shown = all.filter((r) => country === 'all' || r.country === country)
+  const shown = all.filter((r) => (!pick.country || r.country === pick.country) && (!pick.university || r.university === pick.university))
+
+  // Picking a country or university in its row narrows "All programmes" and
+  // takes the student there.
+  const choose = (next: Pick) => {
+    setPick(next)
+    requestAnimationFrame(() => document.getElementById('all-programmes')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
 
   return (
     <AppShell wide>
@@ -91,25 +171,22 @@ function StudyAbroadPage() {
             </section>
           )}
 
-          <section>
+          <CountryRow rows={all} pick={pick} onPick={choose} />
+          <UniversityRow rows={all} pick={pick} onPick={choose} />
+
+          <section id="all-programmes" className="scroll-mt-6">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <h2 className="font-display text-xl font-semibold text-ink-900">All programmes</h2>
-              {countries.length > 1 && (
-                <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Country">
-                  {[['all', null] as const, ...countries].map(([c, code]) => (
-                    <button
-                      key={c}
-                      type="button"
-                      role="tab"
-                      aria-selected={country === c}
-                      onClick={() => setCountry(c)}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${country === c ? 'bg-ink-900 text-white' : 'bg-white text-ink-700 ring-1 ring-ink-900/[0.08] hover:bg-ink-50'}`}
-                    >
-                      {code && <Flag code={code} className="h-3 w-[18px]" />}
-                      {c === 'all' ? 'All countries' : c}
-                    </button>
-                  ))}
-                </div>
+              <h2 className="font-display text-xl font-semibold text-ink-900">
+                {pick.university ? `Programmes at ${pick.university}` : pick.country ? `Programmes in ${pick.country}` : 'All programmes'}
+              </h2>
+              {(pick.country || pick.university) && (
+                <button
+                  type="button"
+                  onClick={() => setPick({})}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-ink-700 ring-1 ring-ink-900/[0.08] transition-colors hover:bg-ink-50"
+                >
+                  <X size={14} /> Show all
+                </button>
               )}
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
