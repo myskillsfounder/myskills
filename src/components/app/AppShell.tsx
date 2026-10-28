@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import {
@@ -177,6 +177,21 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
   )
 }
 
+/**
+ * The signed-in app is dark, like the public pages and the tests, so the
+ * site reads as one (Paul, 28 Oct 2026). The class goes on <html> rather than
+ * this div so dialogs and menus rendered outside it, and the page behind an
+ * overscroll, are dark too; theme-dark.css gives the light classes their dark
+ * values. Before paint, so a page never flashes light.
+ */
+export function useDarkTheme() {
+  useLayoutEffect(() => {
+    const html = document.documentElement
+    html.classList.add('theme-dark')
+    return () => html.classList.remove('theme-dark')
+  }, [])
+}
+
 export function AppShell({
   children,
   wide = false,
@@ -187,6 +202,7 @@ export function AppShell({
   const [open, setOpen] = useState(false)
   // A phone has the LaunchPad, Practice and the Community (lib/device.ts), all in the bottom bar: no menu.
   const phone = isPhone()
+  useDarkTheme()
 
   return (
     <div className="surface-paper min-h-screen">
