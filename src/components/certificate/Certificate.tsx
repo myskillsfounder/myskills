@@ -1,212 +1,76 @@
-import { Award } from 'lucide-react'
-import {
-  tierForCertificate,
-  type Certificate as Cert,
-  type CertificateKind,
-} from '@/lib/certificates'
+import type { Certificate as Cert } from '@/lib/certificates'
+// Inlined (data URIs): the downloaded certificate is the SVG drawn on a
+// canvas, where linked images would not load (lib/certificateExport.ts).
+import signature from './assets/signature.png?inline'
+import dpiit from './assets/dpiit.png?inline'
+import ksum from './assets/ksum.png?inline'
 
 /* ------------------------------------------------------------------ *
- * MySkills certificate — a single fixed-viewBox SVG that scales like
- * an image on any device and prints crisply. Design mirrors the gold
- * "Foundational Excellence" reference: ivory frame with gold ornaments,
- * a laurel medallion, and a right-hand stats/verify column.
- *
- * Layout constants
- *   left column   is optically centred on LX
- *   right column  is optically centred on RX
- *   footer meta   is a uniform 4-column grid centred on LX
+ * The Foundation certificate (Paul's design, 29 Oct 2026): a white
+ * card with cut corners on a deep blue frame, issued by Personal and
+ * Professional Development Labs, signed by the director, with the DPIIT
+ * and Kerala Startup Mission marks. One fixed-viewBox SVG, so it scales
+ * like an image, prints crisply and downloads as a PNG. Only the name,
+ * the course, the ID and the date change.
  * ------------------------------------------------------------------ */
 
-const SERIF = "Georgia, 'Times New Roman', serif"
-const VERIFY_URL = 'certificate.myskills.org.in/verify'
+const SANS = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+const NAME_SERIF = "'Bodoni 72', Didot, 'Bodoni MT', 'Playfair Display', Georgia, serif"
 
-const LX = 400 // left column centre
-const RX = 933 // right column centre
-const DIVX = 772 // vertical rule between columns
-const HALF = 346 // half-width of the left content block
+const NAVY = '#0b1530'
+const BLUE = '#1650c8'
+const COURSE = '#1236c8'
+const GREY = '#4b5263'
 
-/**
- * Ink/metal colours per band. The copy that goes with each band (headline,
- * band wording) lives in TIERS in lib/certificates.ts so the profile and
- * practice pages stay in sync with this component.
- */
-type Palette = {
-  ink: string
-  ink2: string
-  accent: string
-  frame: string
-  /** page background gradient + corner wash */
-  paper: string
-  paperTo: string
-  wash: string
-  sealFrom: string
-  sealMid: string
-  sealTo: string
-  sealRing: string
-  sealText: string
-  iconBg: string
+const W = 1120
+const H = 790
+const CX = W / 2
+
+/** The card: inset from the frame, with its four corners cut. */
+const X0 = 34
+const Y0 = 26
+const X1 = W - 34
+const Y1 = H - 26
+const CUT = 40
+const card = (inset: number) => {
+  const [a, b, c, d, k] = [X0 - inset, Y0 - inset, X1 + inset, Y1 + inset, CUT + inset * 0.4]
+  return `${a + k},${b} ${c - k},${b} ${c},${b + k} ${c},${d - k} ${c - k},${d} ${a + k},${d} ${a},${d - k} ${a},${b + k}`
 }
 
-const PALETTES: Record<CertificateKind, Palette> = {
-  gold: {
-    ink: '#22262e',
-    ink2: '#4a4f57',
-    accent: '#b8860b',
-    frame: '#c9a227',
-    paper: '#fdfbf5',
-    paperTo: '#f5efdf',
-    wash: '#f0e7cf',
-    sealFrom: '#fdf3c8',
-    sealMid: '#e6b52e',
-    sealTo: '#a9781a',
-    sealRing: '#8a6712',
-    sealText: '#7a5510',
-    iconBg: '#f7edd2',
-  },
-  silver: {
-    ink: '#20242b',
-    ink2: '#4b525d',
-    accent: '#5f6874',
-    frame: '#a3adba',
-    paper: '#fcfcfd',
-    paperTo: '#eef0f4',
-    wash: '#e4e8ee',
-    sealFrom: '#ffffff',
-    sealMid: '#c8ced7',
-    sealTo: '#828b98',
-    sealRing: '#5b636f',
-    sealText: '#474e59',
-    iconBg: '#eef1f5',
-  },
-  bronze: {
-    ink: '#241f1a',
-    ink2: '#544a41',
-    accent: '#96591f',
-    frame: '#bf8347',
-    paper: '#fdfaf6',
-    paperTo: '#f6ece1',
-    wash: '#f0e0cd',
-    sealFrom: '#f7ddbf',
-    sealMid: '#c9873f',
-    sealTo: '#8a5220',
-    sealRing: '#6d4218',
-    sealText: '#6d4218',
-    iconBg: '#f7ead9',
-  },
-}
-
-/* -- ornaments ------------------------------------------------------ */
-
-function Corner({ x, y, sx, sy, color }: { x: number; y: number; sx: number; sy: number; color: string }) {
-  return (
-    <g transform={`translate(${x},${y}) scale(${sx},${sy})`} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round">
-      <path d="M0 40 L0 8 Q0 0 8 0 L40 0" />
-      <path d="M9 44 L9 15 Q9 9 15 9 L44 9" strokeWidth={1.2} />
-      <circle cx="9" cy="9" r="2.4" fill={color} stroke="none" />
-    </g>
-  )
-}
-
-/** Rule with a centred diamond and dotted end caps. */
-function HDiv({ cx, y, hw, color, paper }: { cx: number; y: number; hw: number; color: string; paper: string }) {
-  return (
-    <g stroke={color} fill={color}>
-      <line x1={cx - hw} y1={y} x2={cx - 14} y2={y} strokeWidth={1.4} />
-      <line x1={cx + 14} y1={y} x2={cx + hw} y2={y} strokeWidth={1.4} />
-      <rect x={cx - 6} y={y - 6} width={12} height={12} transform={`rotate(45 ${cx} ${y})`} />
-      <rect x={cx - 3} y={y - 3} width={6} height={6} transform={`rotate(45 ${cx} ${y})`} fill={paper} />
-      <circle cx={cx - hw} cy={y} r={2.2} />
-      <circle cx={cx + hw} cy={y} r={2.2} />
-    </g>
-  )
-}
-
-/* -- footer meta icons (24×24 line icons, drawn in a rounded tile) --- */
-
-const ICON_PATHS = {
-  calendar: ['M8 2v4', 'M16 2v4', 'M3 10h18', 'M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'],
-  shield: ['M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', 'M9 12l2 2 4-4'],
-  clipboard: [
-    'M9 2h6a1 1 0 0 1 1 1v2H8V3a1 1 0 0 1 1-1z',
-    'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2',
-    'M9 12l2 2 4-4',
-  ],
-  landmark: ['M3 21h18', 'M5 21V10', 'M19 21V10', 'M9 21v-6h6v6', 'M2 10h20L12 3 2 10z'],
-} as const
-
-type IconName = keyof typeof ICON_PATHS
-
-function MetaIcon({ name, x, y, p, size = 28 }: { name: IconName; x: number; y: number; p: Palette; size?: number }) {
-  const s = (size / 24) * 0.78
-  const pad = (size - 24 * s) / 2
-  return (
-    <>
-      <rect x={x} y={y} width={size} height={size} rx={7} fill={p.iconBg} stroke={p.frame} strokeWidth={1} />
-      <g
-        transform={`translate(${x + pad},${y + pad}) scale(${s})`}
-        fill="none"
-        stroke={p.accent}
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {ICON_PATHS[name].map((d) => (
-          <path key={d} d={d} />
-        ))}
-      </g>
-    </>
-  )
-}
-
-/** One footer cell: icon tile + label + value, all on a shared baseline. */
-function MetaCell({
-  name,
+/** Spaced capitals, the design's small type. */
+function Caps({
   x,
-  label,
-  value,
-  p,
+  y,
+  size,
+  spacing,
+  children,
+  anchor = 'middle',
+  fill = NAVY,
+  weight = 500,
 }: {
-  name: IconName
   x: number
-  label: string
-  value: string
-  p: Palette
+  y: number
+  size: number
+  spacing: number
+  children: string
+  anchor?: 'start' | 'middle' | 'end'
+  fill?: string
+  weight?: number
 }) {
   return (
-    <>
-      <MetaIcon name={name} x={x} y={664} p={p} />
-      <text x={x + 36} y={676} fontSize={10} fontWeight={700} letterSpacing={1.1} fill={p.accent}>
-        {label}
-      </text>
-      <text x={x + 36} y={696} fontSize={11.5} fill={p.ink}>
-        {value}
-      </text>
-    </>
+    <text x={x} y={y} textAnchor={anchor} fontSize={size} fontWeight={weight} letterSpacing={spacing} fill={fill}>
+      {children}
+    </text>
   )
 }
 
-/** One laurel sprig; rendered twice (mirrored) to form the wreath. */
-function Laurel({ cx, cy, mirror, color }: { cx: number; cy: number; mirror: boolean; color: string }) {
-  const A0 = 106
-  const A1 = 202
-  const RR = 86
-  const stem = Array.from({ length: 40 }, (_, i) => {
-    const ang = ((A0 + (i / 39) * (A1 - A0)) * Math.PI) / 180
-    return `${(RR * Math.cos(ang)).toFixed(1)} ${(RR * Math.sin(ang)).toFixed(1)}`
-  }).join(' L ')
-  const leaves = Array.from({ length: 9 }, (_, i) => {
-    const ang = ((A0 + (i / 8) * (A1 - A0)) * Math.PI) / 180
-    const rr = RR + 6
-    const lx = rr * Math.cos(ang)
-    const ly = rr * Math.sin(ang)
-    const rot = (ang * 180) / Math.PI + 118
-    return <ellipse key={i} cx={lx} cy={ly} rx={9.5} ry={3.9} transform={`rotate(${rot} ${lx} ${ly})`} fill={color} />
-  })
+/** A short rule either side of a centred line. */
+function Wings({ y, gap, len }: { y: number; gap: number; len: number }) {
   return (
-    <g transform={`translate(${cx},${cy}) scale(${mirror ? -1 : 1},1)`}>
-      <path d={`M ${stem}`} fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
-      {leaves}
-    </g>
+    <>
+      <line x1={CX - gap - len} y1={y} x2={CX - gap} y2={y} stroke={BLUE} strokeWidth={1.2} />
+      <line x1={CX + gap} y1={y} x2={CX + gap + len} y2={y} stroke={BLUE} strokeWidth={1.2} />
+    </>
   )
 }
 
@@ -223,27 +87,29 @@ function FauxQR({ x, y, size, seed }: { x: number; y: number; size: number; seed
     h ^= h << 5
     return ((h >>> 0) % 1000) / 1000
   }
-  const N = 9
-  const cell = (size - 8) / N
+  // A QR code's look: 21 modules, with the three corner finder squares.
+  const N = 21
+  const cell = (size - 6) / N
   const cells = []
-  const isFinder = (r: number, c: number) => (r < 3 && c < 3) || (r < 3 && c > 5) || (r > 5 && c < 3)
-  const finderOn = (r: number, c: number) => {
-    const rr = r > 5 ? r - 6 : r
-    const cc = c > 5 ? c - 6 : c
-    return rr === 0 || rr === 2 || cc === 0 || cc === 2 || (rr === 1 && cc === 1)
+  const finder = (r: number, c: number) => {
+    const at = (r0: number, c0: number) => r >= r0 && r < r0 + 7 && c >= c0 && c < c0 + 7
+    const corner = at(0, 0) ? [0, 0] : at(0, N - 7) ? [0, N - 7] : at(N - 7, 0) ? [N - 7, 0] : null
+    if (!corner) return null
+    const d = Math.max(Math.abs(r - corner[0] - 3), Math.abs(c - corner[1] - 3))
+    return d === 3 || d <= 1
   }
+  const quiet = (r: number, c: number) => (r === 7 && (c < 8 || c > N - 9)) || (c === 7 && (r < 8 || r > N - 9)) || (r === N - 8 && c < 8) || (c === N - 8 && r < 8)
   for (let r = 0; r < N; r++) {
     for (let c = 0; c < N; c++) {
-      if (isFinder(r, c) ? finderOn(r, c) : rand() > 0.5) {
-        cells.push(
-          <rect key={`${r}-${c}`} x={x + 4 + c * cell} y={y + 4 + r * cell} width={cell + 0.5} height={cell + 0.5} fill="#f5f0e0" />,
-        )
+      const f = finder(r, c)
+      if (f === null ? !quiet(r, c) && rand() > 0.5 : f) {
+        cells.push(<rect key={`${r}-${c}`} x={x + 3 + c * cell} y={y + 3 + r * cell} width={cell + 0.3} height={cell + 0.3} fill="#0b1530" />)
       }
     }
   }
   return (
     <>
-      <rect x={x} y={y} width={size} height={size} rx={7} fill="#1b1b1b" />
+      <rect x={x} y={y} width={size} height={size} fill="#ffffff" />
       {cells}
     </>
   )
@@ -256,238 +122,138 @@ function FauxQR({ x, y, size, seed }: { x: number; y: number; size: number; seed
  * certificate (see lib/certificateExport.ts) instead of printing the page.
  */
 export function Certificate({ cert, svgRef }: { cert: Cert; svgRef?: React.Ref<SVGSVGElement> }) {
-  const t = tierForCertificate(cert)
-  const p = PALETTES[t.kind]
-  const subject = cert.title // e.g. "Digital Marketing"
-  const date = new Date(cert.issued_at).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-  const score = `${Number.isInteger(cert.percent) ? cert.percent : cert.percent.toFixed(1)}%`
-  const nameLong = cert.recipient_name.length > 15
-
-  const scx = RX
-  const scy = 218
-  const R = 118
-
-  const dots = Array.from({ length: 60 }, (_, i) => {
-    const a = (2 * Math.PI * i) / 60
-    return <circle key={i} cx={scx + (R - 20) * Math.cos(a)} cy={scy + (R - 20) * Math.sin(a)} r={0.9} fill={p.sealRing} />
-  })
-  const starPts = Array.from({ length: 10 }, (_, i) => {
-    const a = -Math.PI / 2 + (i * Math.PI) / 5
-    const rr = i % 2 === 0 ? 12 : 5
-    return `${scx + rr * Math.cos(a)},${scy - 72 + rr * Math.sin(a)}`
-  }).join(' ')
-
-  const by = 456 // body paragraph first baseline
-  const ry = by + 142 // recognition paragraph
-  const colW = (HALF * 2) / 4
-  const col = (i: number) => LX - HALF + i * colW
+  const course = `${cert.title} Foundation`
+  const date = new Date(cert.issued_at)
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    .toUpperCase()
+  // Long names and course titles shrink to stay inside the card.
+  const nameSize = Math.min(62, 600 / Math.max(1, cert.recipient_name.length * 0.5))
+  const courseSize = Math.min(38, 860 / Math.max(1, course.length * 0.56))
 
   return (
     <div className="mx-auto w-full max-w-4xl">
       <svg
         ref={svgRef}
-        viewBox="0 0 1120 790"
+        viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`Certificate for ${cert.recipient_name}`}
+        aria-label={`${course} certificate for ${cert.recipient_name}`}
         className="w-full"
-        style={{ filter: 'drop-shadow(0 12px 34px rgba(20,20,40,0.16))', fontFamily: SERIF }}
+        style={{ filter: 'drop-shadow(0 12px 34px rgba(10,20,60,0.25))', fontFamily: SANS }}
       >
         <defs>
-          <linearGradient id="ms-seal" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor={p.sealFrom} />
-            <stop offset="45%" stopColor={p.sealMid} />
-            <stop offset="100%" stopColor={p.sealTo} />
+          <linearGradient id="pc-frame" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#05153f" />
+            <stop offset="0.5" stopColor="#0a2f8a" />
+            <stop offset="1" stopColor="#061a52" />
           </linearGradient>
-          <radialGradient id="ms-seal-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="60%" stopColor={p.sealMid} stopOpacity={0} />
-            <stop offset="100%" stopColor={p.sealMid} stopOpacity={0.45} />
+          <radialGradient id="pc-glow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stopColor="#4f9bff" stopOpacity="0.95" />
+            <stop offset="1" stopColor="#4f9bff" stopOpacity="0" />
           </radialGradient>
-          <radialGradient id="ms-seal-hl" cx="34%" cy="28%" r="52%">
-            <stop offset="0%" stopColor="#fffdf0" stopOpacity={0.85} />
-            <stop offset="100%" stopColor="#fffdf0" stopOpacity={0} />
-          </radialGradient>
-          <linearGradient id="ms-bg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor={p.paper} />
-            <stop offset="100%" stopColor={p.paperTo} />
+          <linearGradient id="pc-card" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#f4f8fe" />
+            <stop offset="0.45" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#f3f7fd" />
           </linearGradient>
+          <linearGradient id="pc-beam-l" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#7fb0f5" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#7fb0f5" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="pc-beam-r" x1="1" y1="0" x2="0" y2="0">
+            <stop offset="0" stopColor="#7fb0f5" stopOpacity="0.25" />
+            <stop offset="1" stopColor="#7fb0f5" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id="pc-card-clip">
+            <polygon points={card(0)} />
+          </clipPath>
         </defs>
 
-        {/* background + soft corner washes */}
-        <rect width="1120" height="790" fill="url(#ms-bg)" />
-        <path d="M0 0 Q 320 90 0 300 Z" fill={p.wash} opacity={0.45} />
-        <path d="M1120 790 Q 800 700 1120 490 Z" fill={p.wash} opacity={0.45} />
+        {/* ---------- FRAME ---------- */}
+        <rect width={W} height={H} fill="url(#pc-frame)" />
+        <circle cx={W - 120} cy={-20} r={260} fill="url(#pc-glow)" opacity={0.7} />
+        <circle cx={-30} cy={H * 0.62} r={220} fill="url(#pc-glow)" opacity={0.6} />
+        <circle cx={W + 20} cy={H * 0.45} r={240} fill="url(#pc-glow)" opacity={0.55} />
+        <circle cx={CX} cy={H + 60} r={300} fill="url(#pc-glow)" opacity={0.35} />
+        <polygon points={card(9)} fill="none" stroke="#8fb6ff" strokeWidth={1} opacity={0.55} />
 
-        {/* frame */}
-        <rect x="16" y="16" width="1088" height="758" fill="none" stroke={p.frame} strokeWidth={2.5} />
-        <rect x="26" y="26" width="1068" height="738" fill="none" stroke={p.frame} strokeWidth={1} />
-        <Corner x={30} y={30} sx={1} sy={1} color={p.frame} />
-        <Corner x={1090} y={30} sx={-1} sy={1} color={p.frame} />
-        <Corner x={30} y={760} sx={1} sy={-1} color={p.frame} />
-        <Corner x={1090} y={760} sx={-1} sy={-1} color={p.frame} />
-
-        {/* column rule */}
-        <line x1={DIVX} y1={70} x2={DIVX} y2={720} stroke={p.frame} strokeWidth={1.4} />
-        <line x1={DIVX + 4} y1={120} x2={DIVX + 4} y2={670} stroke={p.frame} strokeWidth={0.7} opacity={0.6} />
-
-        {/* ---------- LEFT COLUMN ---------- */}
-        <text
-          x={LX}
-          y={152}
-          textAnchor="middle"
-          fontSize={40}
-          fontWeight={700}
-          letterSpacing={1}
-          textLength={640}
-          lengthAdjust="spacingAndGlyphs"
-          fill={p.accent}
-        >
-          {t.headline}
-        </text>
-
-        <text x={LX} y={200} textAnchor="middle" fontSize={22} letterSpacing={2} fill={p.accent}>
-          C E R T I F I C A T E
-        </text>
-        <HDiv cx={LX - 212} y={193} hw={52} color={p.frame} paper={p.paper} />
-        <HDiv cx={LX + 212} y={193} hw={52} color={p.frame} paper={p.paper} />
-
-        <text x={LX} y={248} textAnchor="middle" fontSize={15} fontWeight={700} letterSpacing={2} fill={p.ink}>
-          {`IN ${subject.toUpperCase()}`}
-        </text>
-
-        <g fill={p.frame}>
-          <rect x={LX - 7} y={271} width={14} height={14} transform={`rotate(45 ${LX} 278)`} />
-          <rect x={LX - 3} y={275} width={6} height={6} transform={`rotate(45 ${LX} 278)`} fill={p.paper} />
+        {/* ---------- CARD ---------- */}
+        <polygon points={card(0)} fill="url(#pc-card)" />
+        <g clipPath="url(#pc-card-clip)">
+          <polygon points={`${X0},${H * 0.3} ${X0 + 230},${H * 0.62} ${X0},${H * 0.95}`} fill="url(#pc-beam-l)" />
+          <polygon points={`${X1},${H * 0.28} ${X1 - 200},${H * 0.55} ${X1},${H * 0.82}`} fill="url(#pc-beam-r)" />
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <g key={i} fill="none" stroke="#c6d5ee" strokeWidth={0.7} opacity={0.55}>
+              <circle cx={X0 - 40} cy={H * 0.55} r={150 + i * 16} />
+              <circle cx={X1 + 40} cy={Y0 - 20} r={120 + i * 14} />
+            </g>
+          ))}
         </g>
 
-        <text x={LX} y={315} textAnchor="middle" fontSize={17} fontStyle="italic" letterSpacing={0.5} fill={p.ink2}>
-          This certifies that
-        </text>
-        <text
-          x={LX}
-          y={380}
-          textAnchor="middle"
-          fontSize={58}
-          letterSpacing={0.5}
-          fill={p.ink}
-          {...(nameLong ? { textLength: 620, lengthAdjust: 'spacingAndGlyphs' as const } : {})}
-        >
+        {/* ---------- CORNER WORDS ---------- */}
+        <Caps x={86} y={75} size={10} spacing={4} anchor="start" fill="#1d3f8f">SKILLS</Caps>
+        <Caps x={86} y={90} size={10} spacing={4} anchor="start" fill="#1d3f8f">PEOPLE</Caps>
+        <Caps x={86} y={105} size={10} spacing={4} anchor="start" fill="#1d3f8f">OPPORTUNITIES</Caps>
+        <line x1={86} y1={121} x2={123} y2={121} stroke={BLUE} strokeWidth={1.2} />
+        <Caps x={1036} y={75} size={10} spacing={4} anchor="end" fill="#1d3f8f">LEARN</Caps>
+        <Caps x={1036} y={90} size={10} spacing={4} anchor="end" fill="#1d3f8f">BUILD</Caps>
+        <Caps x={1036} y={105} size={10} spacing={4} anchor="end" fill="#1d3f8f">GROW</Caps>
+        <line x1={999} y1={121} x2={1036} y2={121} stroke={BLUE} strokeWidth={1.2} />
+
+        {/* ---------- ISSUER ---------- */}
+        <Caps x={CX} y={86} size={22} spacing={3.2} weight={600}>PERSONAL AND PROFESSIONAL</Caps>
+        <Caps x={CX} y={114} size={22} spacing={3.2} weight={600}>DEVELOPMENT LABS</Caps>
+        <Caps x={CX} y={138} size={11} spacing={6.5} fill={BLUE}>PRIVATE LIMITED</Caps>
+
+        {/* ---------- TITLE ---------- */}
+        <Caps x={CX} y={217} size={64} spacing={9} weight={800}>CERTIFICATE</Caps>
+        <Wings y={249} gap={152} len={80} />
+        <Caps x={CX} y={258} size={24} spacing={7} weight={600} fill={BLUE}>OF COMPLETION</Caps>
+
+        <Caps x={CX} y={300} size={12} spacing={4.2} fill="#1a1f2e">THIS CERTIFICATE IS PROUDLY PRESENTED TO</Caps>
+        <text x={CX} y={376} textAnchor="middle" fontSize={nameSize} fontFamily={NAME_SERIF} fill={NAVY}>
           {cert.recipient_name}
         </text>
-        <HDiv cx={LX} y={420} hw={180} color={p.frame} paper={p.paper} />
+        <line x1={279} y1={392} x2={W - 279} y2={392} stroke={BLUE} strokeWidth={1.2} />
 
-        {/* body */}
-        <text x={LX} y={by} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
-          {`has successfully demonstrated ${t.understanding} of`}
+        <Caps x={CX} y={420} size={11.5} spacing={4.2} fill="#1a1f2e">FOR SUCCESSFULLY COMPLETING THE</Caps>
+        <text x={CX} y={470} textAnchor="middle" fontSize={courseSize} fontWeight={700} fill={COURSE}>
+          {course}
         </text>
-        <text x={LX} y={by + 24} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
-          {`foundational ${subject} concepts by achieving a score within the`}
-        </text>
-        <text x={LX} y={by + 48} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
-          <tspan fontWeight={700} fill={p.accent}>
-            {t.bandWord}
-          </tspan>
-          {' in the MySkills Foundation'}
-        </text>
-        <text x={LX} y={by + 72} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
-          Assessment.
-        </text>
-        <HDiv cx={LX} y={by + 108} hw={180} color={p.frame} paper={p.paper} />
+        <g fontSize={13.5} letterSpacing={1} fill={GREY} textAnchor="middle">
+          <text x={CX} y={503}>The recipient has demonstrated commitment to learning and professional</text>
+          <text x={CX} y={523}>development through the successful completion of the prescribed programme</text>
+          <text x={CX} y={543}>and its learning requirements.</text>
+        </g>
 
-        {/* recognition */}
-        <text x={LX} y={ry} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
-          This certificate recognizes demonstrated{' '}
-          <tspan fontWeight={700} fill={p.accent}>
-            foundational progress
-          </tspan>
-        </text>
-        <text x={LX} y={ry + 22} textAnchor="middle" fontSize={15.5} fill={p.ink2}>
-          and encourages continued learning, practical application, and growth.
-        </text>
+        {/* ---------- SIGNATURE ---------- */}
+        <image href={signature} x={100} y={540} width={200} height={88} preserveAspectRatio="xMidYMid meet" />
+        <line x1={94} y1={630} x2={313} y2={630} stroke={NAVY} strokeWidth={0.9} />
+        <Caps x={204} y={649} size={12.5} spacing={3} weight={700}>PAUL THOMAS</Caps>
+        <Caps x={204} y={665} size={8.5} spacing={2.8}>DIRECTOR</Caps>
+        <Caps x={204} y={684} size={8} spacing={2.6} fill={BLUE}>PERSONAL AND PROFESSIONAL</Caps>
+        <Caps x={204} y={697} size={8} spacing={2.6} fill={BLUE}>DEVELOPMENT LABS PRIVATE LIMITED</Caps>
 
-        {/* ---------- FOOTER META (uniform 4-col grid) ---------- */}
-        <line x1={LX - HALF} y1={646} x2={LX + HALF} y2={646} stroke={p.frame} strokeWidth={0.9} opacity={0.55} />
-        <MetaCell name="calendar" x={col(0)} label="ISSUE DATE" value={date} p={p} />
-        <MetaCell name="shield" x={col(1)} label="CERTIFICATE ID" value={cert.code} p={p} />
-        <MetaCell name="clipboard" x={col(2)} label="ASSESSMENT" value="Foundation" p={p} />
-        <MetaCell name="landmark" x={col(3)} label="ISSUED BY" value="MySkills" p={p} />
+        {[387, 657, 859].map((x) => (
+          <line key={x} x1={x} y1={584} x2={x} y2={696} stroke={BLUE} strokeWidth={1} opacity={0.7} />
+        ))}
 
-        {/* ---------- RIGHT COLUMN ---------- */}
-        <circle cx={scx} cy={scy} r={R + 16} fill="url(#ms-seal-glow)" />
-        <circle cx={scx} cy={scy} r={R} fill="url(#ms-seal)" stroke={p.accent} strokeWidth={2.5} />
-        <circle cx={scx} cy={scy} r={R} fill="url(#ms-seal-hl)" />
-        <circle cx={scx} cy={scy} r={R - 9} fill="none" stroke={p.sealRing} strokeWidth={1.2} />
-        <circle cx={scx} cy={scy} r={R - 14} fill="none" stroke="#ffffff" strokeWidth={1} opacity={0.5} />
-        {dots}
-        <Laurel cx={scx} cy={scy} mirror={false} color={p.sealRing} />
-        <Laurel cx={scx} cy={scy} mirror color={p.sealRing} />
-        <polygon points={starPts} fill={p.sealRing} />
-        <text x={scx} y={scy - 14} textAnchor="middle" fontSize={34} fontWeight={700} letterSpacing={1} fill={p.sealText}>
-          {t.label.toUpperCase()}
-        </text>
-        <text x={scx} y={scy + 16} textAnchor="middle" fontSize={14.5} letterSpacing={1} fill={p.ink}>
-          PERFORMANCE
-        </text>
-        <text x={scx} y={scy + 34} textAnchor="middle" fontSize={14.5} letterSpacing={1} fill={p.ink}>
-          BAND
-        </text>
-        {/* word labels ("COMPLETED") need to step down to clear the wreath */}
-        <text
-          x={scx}
-          y={scy + 68}
-          textAnchor="middle"
-          fontSize={t.bandMin.length > 5 ? 17 : 25}
-          letterSpacing={0.5}
-          fill={p.sealText}
-        >
-          {t.bandMin}
-        </text>
+        {/* ---------- RECOGNITION ---------- */}
+        <image href={dpiit} x={434} y={594} width={186} height={76} preserveAspectRatio="xMidYMid meet" />
+        <Caps x={522} y={688} size={8} spacing={2.6}>DPIIT RECOGNISED STARTUP</Caps>
+        <image href={ksum} x={688} y={572} width={140} height={99} preserveAspectRatio="xMidYMid meet" />
+        <Caps x={758} y={688} size={8} spacing={2.6}>KSUM REGISTERED</Caps>
 
-        <text x={RX} y={404} textAnchor="middle" fontSize={12.5} fontWeight={700} letterSpacing={2.2} fill={p.ink}>
-          ASSESSMENT SCORE
-        </text>
-        <text x={RX} y={454} textAnchor="middle" fontSize={46} letterSpacing={0.5} fill={p.accent}>
-          {score}
-        </text>
-        <HDiv cx={RX} y={486} hw={92} color={p.frame} paper={p.paper} />
+        {/* ---------- ID AND DATE ---------- */}
+        <FauxQR x={935} y={561} size={68} seed={cert.code} />
+        <Caps x={969} y={649} size={8} spacing={2.6}>CERTIFICATE ID</Caps>
+        <Caps x={969} y={663} size={9} spacing={2.2} weight={600}>{cert.code}</Caps>
+        <Caps x={969} y={688} size={8} spacing={2.6}>DATE OF ISSUE</Caps>
+        <Caps x={969} y={702} size={9} spacing={2.2} weight={600}>{date}</Caps>
 
-        <text x={RX} y={520} textAnchor="middle" fontSize={12.5} fontWeight={700} letterSpacing={2.2} fill={p.ink}>
-          PERFORMANCE LEVEL
-        </text>
-        <text x={RX} y={562} textAnchor="middle" fontSize={38} fontWeight={700} letterSpacing={2} fill={p.accent}>
-          {t.label.toUpperCase()}
-        </text>
-
-        {/* verify + QR */}
-        <FauxQR x={793} y={620} size={76} seed={cert.code} />
-        <text x={883} y={636} fontSize={11.5} fontWeight={700} letterSpacing={0.6} fill={p.accent}>
-          VERIFY CERTIFICATE
-        </text>
-        <text x={883} y={654} fontSize={11} fill={p.ink2}>
-          {VERIFY_URL}
-        </text>
-        <text x={883} y={676} fontSize={10.5} fill={p.ink2}>
-          Scan the QR code to verify the
-        </text>
-        <text x={883} y={691} fontSize={10.5} fill={p.ink2}>
-          authenticity of this certificate.
-        </text>
-
-        <HDiv cx={LX} y={740} hw={150} color={p.frame} paper={p.paper} />
+        {/* ---------- FOOTER ---------- */}
+        <Wings y={735} gap={210} len={66} />
+        <Caps x={CX} y={739} size={10.5} spacing={4.5} fill={BLUE}>BUILDING SKILLS FOR A BRIGHTER TOMORROW</Caps>
       </svg>
     </div>
-  )
-}
-
-/** Compact achievement badge for high scorers (gold). */
-export function DistinctionBadge() {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-gradient-to-br from-amber-50 to-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-      <Award size={13} />
-      Top Performer
-    </span>
   )
 }
