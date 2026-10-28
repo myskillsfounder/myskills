@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Check } from 'lucide-react'
+import { useDarkTheme } from '@/components/app/AppShell'
 
 interface AuthShellProps {
   title: string
@@ -21,6 +22,8 @@ const PROOF = [
  * brand panel on large screens that says what the product actually does.
  */
 export function AuthShell({ title, subtitle, children, footer }: AuthShellProps) {
+  // Dark like the pages either side of it: the public site and the app.
+  useDarkTheme()
   return (
     <div className="flex min-h-screen">
       {/* Brand panel — desktop only, never competes with the form */}

@@ -3,6 +3,7 @@ import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import { ChevronRight, Eye, LogOut, Menu, ShieldCheck, X } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { Avatar } from '@/components/ui'
+import { useDarkTheme } from '@/components/app/AppShell'
 
 /** One section of the portal the signed-in account may open. */
 export interface PortalTab {
@@ -55,6 +56,8 @@ export function MentorShell({
    *  so the person and their profile are one place, not two. */
   profile?: { to: string; dot: boolean }
 }) {
+  // Dark like the student app (components/app/AppShell).
+  useDarkTheme()
   const router = useRouter()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const [open, setOpen] = useState(false)

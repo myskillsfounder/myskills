@@ -27,6 +27,14 @@ function RootComponent() {
   const pathnameRef = useRef(pathname)
   pathnameRef.current = pathname
 
+  // index.html paints a signed-in page dark before the app loads; once the
+  // page has rendered, AppShell's own .theme-dark has taken over (or this
+  // wasn't a signed-in page after all, and the sign-in page shows instead).
+  const rendered = useRouterState({ select: (s) => s.status === 'idle' })
+  useEffect(() => {
+    if (rendered) document.documentElement.classList.remove('theme-boot')
+  }, [rendered])
+
   useEffect(() => {
     let active = true
 
