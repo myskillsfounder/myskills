@@ -62,6 +62,13 @@ function mapAuthError(error: SupabaseAuthError): AuthError {
       if (/invalid login credentials/i.test(error.message)) {
         return new AuthError('Incorrect email or password.', 'password')
       }
+      // The mail server refused the confirmation email (Supabase's SMTP
+      // settings): nothing the person typed is wrong, so say so plainly.
+      if (/error sending (confirmation|recovery|magic link|invite)? ?e?mail/i.test(error.message)) {
+        return new AuthError(
+          'We couldn’t send your confirmation email just now. This is on our side, not yours. Please try again in a few minutes.',
+        )
+      }
       if (/token has expired or is invalid/i.test(error.message)) {
         return new AuthError('That code has expired or is invalid. Request a new one.', 'code')
       }

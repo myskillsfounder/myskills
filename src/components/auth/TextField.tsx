@@ -4,6 +4,8 @@ import { Input } from '@/components/ui'
 interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'className'> {
   label: string
   error?: string
+  /** A line of help under the field. */
+  hint?: string
   /** Adds a show/hide toggle and manages the input type. */
   passwordToggle?: boolean
 }
@@ -13,6 +15,6 @@ interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id
  * control is the design-system `Input`, so every field in the product looks
  * and behaves the same.
  */
-export function TextField({ label, error, passwordToggle, ...rest }: TextFieldProps) {
-  return <Input label={label} error={error} passwordToggle={passwordToggle} required {...rest} />
+export function TextField({ label, error, hint, passwordToggle, ...rest }: TextFieldProps) {
+  return <Input label={label} error={error} hint={hint} passwordToggle={passwordToggle} required {...rest} />
 }
