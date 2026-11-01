@@ -70,7 +70,7 @@ function SignupPage() {
     try {
       // The email's link lands on onboarding, signed in (a phone is sent on to its own).
       await signUp({ name, email, password, redirectTo: confirmLandsOn('/onboarding') })
-      setNotice(`We emailed ${email} a 6-digit code. You can also use the link in that email.`)
+      setNotice(`We emailed ${email} a verification code. You can also use the link in that email.`)
       setPhase('confirm')
     } catch (err) {
       applyError(err)
@@ -82,8 +82,10 @@ function SignupPage() {
   async function handleConfirm(e: React.FormEvent) {
     e.preventDefault()
     setFormError(undefined)
-    if (!/^\d{6}$/.test(code.trim())) {
-      setErrors((p) => ({ ...p, code: 'Enter the 6-digit code from your email.' }))
+    // Supabase's code length is a dashboard setting (6 to 10 digits), so
+    // accept any of them rather than tie the form to one.
+    if (!/^\d{6,10}$/.test(code.trim())) {
+      setErrors((p) => ({ ...p, code: 'Enter the code from your email.' }))
       return
     }
     setSubmitting(true)
@@ -140,7 +142,7 @@ function SignupPage() {
     return (
       <AuthShell
         title="Verify your email"
-        subtitle={notice ?? `We emailed ${email} a 6-digit code. You can also use the link in that email.`}
+        subtitle={notice ?? `We emailed ${email} a verification code. You can also use the link in that email.`}
         footer={
           <button
             type="button"
@@ -157,7 +159,7 @@ function SignupPage() {
             inputMode="numeric"
             autoComplete="one-time-code"
             placeholder="123456"
-            maxLength={6}
+            maxLength={10}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
             error={errors.code}

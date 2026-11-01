@@ -120,7 +120,7 @@ function fail(error: { message?: string; code?: string }): never {
 }
 
 /**
- * Creates the account and emails a 6-digit code. What the person asked for is
+ * Creates the account and emails a verification code. What the person asked for is
  * kept with the account and filed as a request once the email is confirmed and
  * they sign in (it can't be filed before: there is no session yet).
  */

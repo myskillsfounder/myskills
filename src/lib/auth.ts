@@ -78,7 +78,7 @@ function mapAuthError(error: SupabaseAuthError): AuthError {
 
 /**
  * Where the confirmation email's link lands. The email carries both the
- * 6-digit code and a link (whichever the person uses); the link signs them in
+ * verification code and a link (whichever the person uses); the link signs them in
  * on that page, so it has to be the page that carries on from sign-up, not the
  * home page. The address must be allowed in Supabase (Authentication > URL
  * Configuration > Redirect URLs).
@@ -107,7 +107,7 @@ export async function signUp(params: {
   if (data.user && (data.user.identities?.length ?? 0) === 0) throw alreadyRegistered()
 }
 
-/** Confirm a new account with the emailed 6-digit code. */
+/** Confirm a new account with the emailed code (6 to 10 digits, per Supabase's setting). */
 export async function confirmSignUp(email: string, token: string): Promise<void> {
   const { error } = await supabase.auth.verifyOtp({ email, token, type: 'signup' })
   if (error) throw mapAuthError(error)
