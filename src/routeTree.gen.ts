@@ -68,10 +68,12 @@ import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as ProgrammesSlugIndexRouteImport } from './routes/programmes.$slug.index'
+import { Route as CommunityFocusRoomsIndexRouteImport } from './routes/community/focus-rooms.index'
 import { Route as CommunityPortalLayoutIndexRouteImport } from './routes/community-portal/_layout/index'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
 import { Route as ProgrammesSlugFinalRouteImport } from './routes/programmes.$slug.final'
 import { Route as ProgrammesSlugAptitudeRouteImport } from './routes/programmes.$slug.aptitude'
+import { Route as CommunityFocusRoomsRoomRouteImport } from './routes/community/focus-rooms.$room'
 import { Route as CommunityPortalLayoutStudentsRouteImport } from './routes/community-portal/_layout/students'
 import { Route as CommunityPortalLayoutProfileRouteImport } from './routes/community-portal/_layout/profile'
 import { Route as CommunityPortalLayoutResourceRouteImport } from './routes/community-portal/_layout/$resource'
@@ -411,6 +413,12 @@ const ProgrammesSlugIndexRoute = ProgrammesSlugIndexRouteImport.update({
   path: '/programmes/$slug/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityFocusRoomsIndexRoute =
+  CommunityFocusRoomsIndexRouteImport.update({
+    id: '/focus-rooms/',
+    path: '/focus-rooms/',
+    getParentRoute: () => CommunityRoute,
+  } as any)
 const CommunityPortalLayoutIndexRoute =
   CommunityPortalLayoutIndexRouteImport.update({
     id: '/',
@@ -431,6 +439,11 @@ const ProgrammesSlugAptitudeRoute = ProgrammesSlugAptitudeRouteImport.update({
   id: '/programmes/$slug/aptitude',
   path: '/programmes/$slug/aptitude',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityFocusRoomsRoomRoute = CommunityFocusRoomsRoomRouteImport.update({
+  id: '/focus-rooms/$room',
+  path: '/focus-rooms/$room',
+  getParentRoute: () => CommunityRoute,
 } as any)
 const CommunityPortalLayoutStudentsRoute =
   CommunityPortalLayoutStudentsRouteImport.update({
@@ -740,10 +753,12 @@ export interface FileRoutesByFullPath {
   '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
+  '/community/focus-rooms/$room': typeof CommunityFocusRoomsRoomRoute
   '/programmes/$slug/aptitude': typeof ProgrammesSlugAptitudeRoute
   '/programmes/$slug/final': typeof ProgrammesSlugFinalRoute
   '/admin/': typeof AdminLayoutIndexRoute
   '/community-portal/': typeof CommunityPortalLayoutIndexRoute
+  '/community/focus-rooms/': typeof CommunityFocusRoomsIndexRoute
   '/programmes/$slug/': typeof ProgrammesSlugIndexRoute
   '/admin/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
@@ -842,10 +857,12 @@ export interface FileRoutesByTo {
   '/community-portal/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/profile': typeof CommunityPortalLayoutProfileRoute
   '/community-portal/students': typeof CommunityPortalLayoutStudentsRoute
+  '/community/focus-rooms/$room': typeof CommunityFocusRoomsRoomRoute
   '/programmes/$slug/aptitude': typeof ProgrammesSlugAptitudeRoute
   '/programmes/$slug/final': typeof ProgrammesSlugFinalRoute
   '/admin': typeof AdminLayoutIndexRoute
   '/community-portal': typeof CommunityPortalLayoutIndexRoute
+  '/community/focus-rooms': typeof CommunityFocusRoomsIndexRoute
   '/programmes/$slug': typeof ProgrammesSlugIndexRoute
   '/admin/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/users/$id': typeof AdminLayoutUsersIdRoute
@@ -948,10 +965,12 @@ export interface FileRoutesById {
   '/community-portal/_layout/$resource': typeof CommunityPortalLayoutResourceRoute
   '/community-portal/_layout/profile': typeof CommunityPortalLayoutProfileRoute
   '/community-portal/_layout/students': typeof CommunityPortalLayoutStudentsRoute
+  '/community/focus-rooms/$room': typeof CommunityFocusRoomsRoomRoute
   '/programmes/$slug/aptitude': typeof ProgrammesSlugAptitudeRoute
   '/programmes/$slug/final': typeof ProgrammesSlugFinalRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
   '/community-portal/_layout/': typeof CommunityPortalLayoutIndexRoute
+  '/community/focus-rooms/': typeof CommunityFocusRoomsIndexRoute
   '/programmes/$slug/': typeof ProgrammesSlugIndexRoute
   '/admin/_layout/programmes/$slug': typeof AdminLayoutProgrammesSlugRoute
   '/admin/_layout/users/$id': typeof AdminLayoutUsersIdRoute
@@ -1055,10 +1074,12 @@ export interface FileRouteTypes {
     | '/community-portal/$resource'
     | '/community-portal/profile'
     | '/community-portal/students'
+    | '/community/focus-rooms/$room'
     | '/programmes/$slug/aptitude'
     | '/programmes/$slug/final'
     | '/admin/'
     | '/community-portal/'
+    | '/community/focus-rooms/'
     | '/programmes/$slug/'
     | '/admin/programmes/$slug'
     | '/admin/users/$id'
@@ -1157,10 +1178,12 @@ export interface FileRouteTypes {
     | '/community-portal/$resource'
     | '/community-portal/profile'
     | '/community-portal/students'
+    | '/community/focus-rooms/$room'
     | '/programmes/$slug/aptitude'
     | '/programmes/$slug/final'
     | '/admin'
     | '/community-portal'
+    | '/community/focus-rooms'
     | '/programmes/$slug'
     | '/admin/programmes/$slug'
     | '/admin/users/$id'
@@ -1262,10 +1285,12 @@ export interface FileRouteTypes {
     | '/community-portal/_layout/$resource'
     | '/community-portal/_layout/profile'
     | '/community-portal/_layout/students'
+    | '/community/focus-rooms/$room'
     | '/programmes/$slug/aptitude'
     | '/programmes/$slug/final'
     | '/admin/_layout/'
     | '/community-portal/_layout/'
+    | '/community/focus-rooms/'
     | '/programmes/$slug/'
     | '/admin/_layout/programmes/$slug'
     | '/admin/_layout/users/$id'
@@ -1749,6 +1774,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgrammesSlugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community/focus-rooms/': {
+      id: '/community/focus-rooms/'
+      path: '/focus-rooms'
+      fullPath: '/community/focus-rooms/'
+      preLoaderRoute: typeof CommunityFocusRoomsIndexRouteImport
+      parentRoute: typeof CommunityRoute
+    }
     '/community-portal/_layout/': {
       id: '/community-portal/_layout/'
       path: '/'
@@ -1776,6 +1808,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/programmes/$slug/aptitude'
       preLoaderRoute: typeof ProgrammesSlugAptitudeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/community/focus-rooms/$room': {
+      id: '/community/focus-rooms/$room'
+      path: '/focus-rooms/$room'
+      fullPath: '/community/focus-rooms/$room'
+      preLoaderRoute: typeof CommunityFocusRoomsRoomRouteImport
+      parentRoute: typeof CommunityRoute
     }
     '/community-portal/_layout/students': {
       id: '/community-portal/_layout/students'
@@ -2065,6 +2104,8 @@ interface CommunityRouteChildren {
   CommunityInternshipsRoute: typeof CommunityInternshipsRoute
   CommunityMentorsRoute: typeof CommunityMentorsRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
+  CommunityFocusRoomsRoomRoute: typeof CommunityFocusRoomsRoomRoute
+  CommunityFocusRoomsIndexRoute: typeof CommunityFocusRoomsIndexRoute
 }
 
 const CommunityRouteChildren: CommunityRouteChildren = {
@@ -2072,6 +2113,8 @@ const CommunityRouteChildren: CommunityRouteChildren = {
   CommunityInternshipsRoute: CommunityInternshipsRoute,
   CommunityMentorsRoute: CommunityMentorsRoute,
   CommunityIndexRoute: CommunityIndexRoute,
+  CommunityFocusRoomsRoomRoute: CommunityFocusRoomsRoomRoute,
+  CommunityFocusRoomsIndexRoute: CommunityFocusRoomsIndexRoute,
 }
 
 const CommunityRouteWithChildren = CommunityRoute._addFileChildren(

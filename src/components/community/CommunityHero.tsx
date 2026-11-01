@@ -5,11 +5,12 @@ import { ArrowLeft, type LucideIcon } from 'lucide-react'
  * The top of each Community page (Paul, 27 Oct 2026: "each individual page
  * keeps its own vibe"): Mentors for one-to-one sessions and expert guidance,
  * Internships for a first hands-on corporate experience, Institutions for
- * offline and peer learning, Wellness for the student's wellbeing first.
- * One layout, four looks.
+ * offline and peer learning, Wellness for the student's wellbeing first,
+ * Focus Rooms for studying alongside others online (1 Nov 2026).
+ * One layout, five looks.
  */
 
-export type HeroTone = 'mentors' | 'internships' | 'institutions' | 'wellness'
+export type HeroTone = 'mentors' | 'internships' | 'institutions' | 'wellness' | 'focus'
 
 const TONE: Record<
   HeroTone,
@@ -62,6 +63,18 @@ const TONE: Record<
     chipIcon: 'bg-rose-100 text-rose-500',
     glow: 'bg-rose-200/50',
     art: 'text-rose-200/60',
+  },
+  // Midnight with a desk lamp's amber: late-evening study, side by side.
+  focus: {
+    box: 'theme-light bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#92400e] text-white',
+    eyebrow: 'text-amber-200',
+    title: 'text-white',
+    accent: 'bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent',
+    body: 'text-white/80',
+    chip: 'border-white/15 bg-white/10 text-white backdrop-blur',
+    chipIcon: 'bg-amber-400/20 text-amber-100',
+    glow: 'bg-amber-400/25',
+    art: 'text-white/[0.08]',
   },
 }
 
@@ -122,6 +135,7 @@ export function HowItWorks({ tone, steps }: { tone: HeroTone; steps: { title: st
     internships: 'bg-teal-700 text-white',
     institutions: 'bg-sky-600 text-white',
     wellness: 'bg-rose-100 text-rose-600',
+    focus: 'bg-amber-600 text-white',
   }[tone]
   return (
     <section className="card p-5 sm:p-6">

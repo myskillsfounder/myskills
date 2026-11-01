@@ -272,7 +272,7 @@ function CommunityHub() {
           resultCount={loading ? null : group === null ? total : counts[group]}
         />
 
-        {/* The four ways in, right under the search: each opens its own page. */}
+        {/* The five ways in, right under the search: each opens its own page. */}
         {front && (
           <BrowseTiles
             meta={

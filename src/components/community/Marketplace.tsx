@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { Link } from '@tanstack/react-router'
 import {
   ArrowRight,
+  MoonStar,
   ChevronRight,
   BadgeCheck,
   Briefcase,
@@ -89,12 +90,12 @@ export const GROUPS: { id: Group; category: Category; label: string; blurb: stri
 
 /**
  * The four groups as tiles, in the order students come for them: internships
- * first, then mentors, institutions, and wellness & guidance. Right under the
+ * first, then mentors, institutions, and wellness & guidance, then Focus Rooms. Right under the
  * search, and each opens the group's own page (Paul, 27 Oct 2026).
  */
 export function BrowseTiles({ meta }: { meta: Partial<Record<Group, string>> }) {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
       {GROUPS.map((g) => (
         <Link key={g.id} to={g.to} className="card lift group flex flex-col items-start p-4 text-left sm:p-5">
           <span className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-e1 ${g.tile}`}>
@@ -108,6 +109,19 @@ export function BrowseTiles({ meta }: { meta: Partial<Record<Group, string>> }) 
           </span>
         </Link>
       ))}
+      {/* Focus Rooms (1 Nov 2026): studying alongside others in the same
+          programme. Not a group of listings, so it isn't one of GROUPS. */}
+      <Link to="/community/focus-rooms" className="card lift group col-span-2 flex flex-col items-start p-4 text-left sm:p-5 lg:col-span-1">
+        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-amber-500 text-white shadow-e1">
+          <MoonStar size={20} />
+        </span>
+        <span className="mt-3 font-display text-lg font-semibold leading-tight text-ink-900">Focus Rooms</span>
+        <span className="mt-1 flex-1 text-sm leading-snug text-ink-600">Study live with others in your programme.</span>
+        <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand-700">
+          Join a room
+          <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </Link>
     </div>
   )
 }
