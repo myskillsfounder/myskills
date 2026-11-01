@@ -371,7 +371,8 @@ function PortalSignupPage() {
               )}
               <div>
                 <TextField
-                  label="Password"
+                  label="Create a new password"
+                  hint="Make up a new password just for MySkills. Don’t use your email’s password. You’ll sign in with this email and this password."
                   passwordToggle
                   autoComplete="new-password"
                   value={password}
