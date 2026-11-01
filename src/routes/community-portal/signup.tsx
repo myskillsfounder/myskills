@@ -127,7 +127,7 @@ function PortalSignupPage() {
     setSubmitting(true)
     try {
       await portalSignUp({ name, email, password, request })
-      setNotice(`We emailed ${email} a 6-digit code. You can also use the link in that email.`)
+      setNotice(`We emailed ${email} a verification code. You can also use the link in that email.`)
       setStep(3)
     } catch (err) {
       applyError(err)
@@ -139,8 +139,10 @@ function PortalSignupPage() {
   async function handleConfirm(e: React.FormEvent) {
     e.preventDefault()
     setFormError(undefined)
-    if (!/^\d{6}$/.test(code.trim())) {
-      setErrors((p) => ({ ...p, code: 'Enter the 6-digit code from your email.' }))
+    // Supabase's code length is a dashboard setting (6 to 10 digits), so
+    // accept any of them rather than tie the form to one.
+    if (!/^\d{6,10}$/.test(code.trim())) {
+      setErrors((p) => ({ ...p, code: 'Enter the code from your email.' }))
       return
     }
     setSubmitting(true)
@@ -418,7 +420,7 @@ function PortalSignupPage() {
                 </span>
                 <div>
                   <h2 className="font-display text-xl font-semibold text-ink-900">Confirm your email</h2>
-                  <p className="text-xs text-ink-500">{notice ?? `We emailed ${email} a 6-digit code. You can also use the link in that email.`}</p>
+                  <p className="text-xs text-ink-500">{notice ?? `We emailed ${email} a verification code. You can also use the link in that email.`}</p>
                 </div>
               </div>
               <TextField
@@ -426,7 +428,7 @@ function PortalSignupPage() {
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 placeholder="123456"
-                maxLength={6}
+                maxLength={10}
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                 error={errors.code}
