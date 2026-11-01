@@ -18,6 +18,7 @@ import { InternshipRoleCard, InternshipRoleDialog, YourInternships, useInternshi
 import { useMyMatch } from '@/lib/mentorMatches'
 import { YourMentors } from '@/components/community/YourMentors'
 import { isPhone } from '@/lib/device'
+import { FocusRoomsCard } from '@/components/focus/FocusRoomsCard'
 import {
   BrowseTiles,
   CATEGORIES,
@@ -272,7 +273,7 @@ function CommunityHub() {
           resultCount={loading ? null : group === null ? total : counts[group]}
         />
 
-        {/* The five ways in, right under the search: each opens its own page. */}
+        {/* The four ways in, right under the search: each opens its own page. */}
         {front && (
           <BrowseTiles
             meta={
@@ -287,6 +288,8 @@ function CommunityHub() {
             }
           />
         )}
+        {/* Focus Rooms, full width under them (1 Nov 2026). */}
+        {front && <FocusRoomsCard />}
 
         {front && (
           <>

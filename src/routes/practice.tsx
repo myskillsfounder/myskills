@@ -49,6 +49,7 @@ import { useMyLiveSessions } from '@/lib/liveSessions'
 import { useHasStarted } from '@/lib/firstRun'
 import { clearSavedProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
 import { fetchMyProgrammes, type MyEnrolment } from '@/lib/programmeStudent'
+import { FocusRoomsCard } from '@/components/focus/FocusRoomsCard'
 import { ProgrammeCards, RecommendedProgrammes, recommendFor } from '@/components/practice/ProgrammeCards'
 import { useProfile } from '@/lib/useProfile'
 import { isPhone } from '@/lib/device'
@@ -325,6 +326,9 @@ function PracticePage() {
     </ProgrammeCompletion>
   )
   const crModules = <CareerReadinessPractice progress={crProgress} />
+  // Studying alongside others in the programme's own Focus Room (1 Nov 2026).
+  const dmRoom = <FocusRoomsCard room={{ slug: 'digital-marketing', title: 'Digital Marketing' }} />
+  const crRoom = <FocusRoomsCard room={{ slug: 'career-readiness', title: 'Global Leadership' }} />
   const crLive = (
     <LiveMentorCard
       programme="career-readiness"
@@ -365,6 +369,7 @@ function PracticePage() {
               {programme === null && (
                 <>
                   <ProgrammeCards dm={dmCard} cr={crCard} engine={engine} onOpen={setProgramme} />
+                  <FocusRoomsCard />
                   {engine !== undefined && <RecommendedProgrammes goalId={goalId} courses={recommended} />}
                 </>
               )}
@@ -382,6 +387,7 @@ function PracticePage() {
                     <div className="lg:col-span-2">{dmStats}</div>
                     <div className="lg:col-span-1">{dmNextUp}</div>
                   </div>
+                  {dmRoom}
                   {dmCompletion}
                   {dmModes}
                   {dmFoundation}
@@ -396,6 +402,7 @@ function PracticePage() {
                 <>
                   {aptitude == null && dmAptitudeCard}
                   {dmNextUp}
+                  {dmRoom}
                   {dmModes}
                   {dmFoundation}
                   {dmStats}
@@ -409,6 +416,7 @@ function PracticePage() {
                 <>
                   <AssessmentCard />
                   {crOverview}
+                  {crRoom}
                   {crCompletion}
                   {crModules}
                   {crLive}
@@ -419,6 +427,7 @@ function PracticePage() {
                 <>
                   {crAptitude.result == null && <AssessmentCard />}
                   {crModules}
+                  {crRoom}
                   {crOverview}
                   {crCompletion}
                   {crLive}
