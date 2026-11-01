@@ -30,6 +30,9 @@ import {
   type FocusTopic,
 } from '@/lib/focusRooms'
 import { Alert, Avatar, Button, Skeleton } from '@/components/ui'
+import { skillTracks } from '@/lib/skillTracks'
+import { CORE_MODULES } from '@/lib/careerReadinessContent'
+import { fetchMyProgramme, moduleDone, suggestedOrder } from '@/lib/programmeStudent'
 
 export interface Me {
   user_id: string
@@ -39,9 +42,36 @@ export interface Me {
 
 const WORKING_ON_MAX = 80
 
+const sentence = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
+
+/**
+ * Ideas for "what are you working on", from the programme itself: its next
+ * modules (course-engine programmes, in the order suggested for the student),
+ * its skill tracks (Digital Marketing) or its modules (Global Leadership).
+ */
+async function hintsFor(room: string): Promise<string[]> {
+  if (room === 'digital-marketing') return [...skillTracks.slice(0, 3).map((t) => t.name), 'Vocabulary', 'Foundation assessment']
+  if (room === 'career-readiness') return [...CORE_MODULES.slice(0, 4).map(sentence), 'My project']
+  try {
+    const p = await fetchMyProgramme(room)
+    const next = suggestedOrder(p).filter((m) => !moduleDone(p, m))
+    return [...next.slice(0, 3).map((m) => m.title), 'Module quiz', 'My project']
+  } catch {
+    return ['Module quiz', 'My project', 'Revision']
+  }
+}
+
 /** Before going in: what you are working on, and whether your camera is on. */
 export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn: string, camera: boolean) => void }) {
   const [text, setText] = useState('')
+  const [hints, setHints] = useState<string[]>([])
+  useEffect(() => {
+    let live = true
+    hintsFor(room.slug).then((h) => live && setHints(h))
+    return () => {
+      live = false
+    }
+  }, [room.slug])
   const go = (camera: boolean) => onEnter(text.trim(), camera)
   return (
     <div className="mx-auto max-w-xl">
@@ -72,11 +102,29 @@ export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn:
             placeholder="e.g. Module 3 quiz, or my project brief"
             className="mt-2 w-full rounded-xl border border-ink-900/10 bg-white px-4 py-3 text-[15px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-brand-500"
           />
+          <p className="mt-2 text-xs text-ink-500">It shows under your camera, so others studying the same thing can find you. Pick one or write your own.</p>
+          {hints.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {hints.map((h) => (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => setText(h.slice(0, WORKING_ON_MAX))}
+                  aria-pressed={text === h}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    text === h ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-ink-900/10 bg-white text-ink-700 hover:border-brand-300'
+                  }`}
+                >
+                  {h}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <Button type="submit" icon={Video} full>
+            <Button type="submit" icon={Video} className="w-full sm:w-auto sm:flex-1">
               Enter with camera on
             </Button>
-            <Button type="button" variant="secondary" icon={VideoOff} full onClick={() => go(false)}>
+            <Button type="button" variant="secondary" icon={VideoOff} className="w-full sm:w-auto sm:flex-1" onClick={() => go(false)}>
               Enter with camera off
             </Button>
           </div>
