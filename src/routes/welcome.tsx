@@ -16,12 +16,19 @@ export const Route = createFileRoute('/welcome')({
   component: WelcomePage,
 })
 
-/** What a study room looks like: cameras side by side, each with what they're on. Illustrative, no one real. */
+/*
+ * What a study room looks like: students at their desks side by side, each
+ * with what they're on (Paul, 4 Nov 2026: "images in the online tiles, indian
+ * students"). Stock photos, free under the Unsplash License, which allows this
+ * use without attribution; credits:
+ *   Vikas Makwana (unsplash.com/photos/upn798iEEYM), Fotos (TLdmnQz4Pns),
+ *   Kyle Gregory Devaras (6RTM8EsD1T8), Amit Ranjan (3S0Ucv4BDCk).
+ */
 const TILES = [
-  { on: 'Exam prep', tint: 'from-indigo-400/40 to-violet-500/30' },
-  { on: 'Homework', tint: 'from-amber-400/40 to-orange-500/30' },
-  { on: 'Revision', tint: 'from-emerald-400/40 to-teal-500/30' },
-  { on: 'My project', tint: 'from-rose-400/40 to-pink-500/30' },
+  { on: 'Reading', photo: 'photo-1617009762269-c062aaf6b3a0', focus: '60% 30%' },
+  { on: 'Exam prep', photo: 'photo-1637589308599-3478cc55510d', focus: '40% 30%' },
+  { on: 'Homework', photo: 'photo-1514369118554-e20d93546b30', focus: '50% 25%' },
+  { on: 'My project', photo: 'photo-1604177091072-b7b677a077f6', focus: '50% 30%' },
 ]
 
 function RoomPreview() {
@@ -37,13 +44,15 @@ function RoomPreview() {
       </div>
       <div className="grid grid-cols-2 gap-2">
         {TILES.map((t) => (
-          <div key={t.on} className={`relative aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br ${t.tint}`}>
-            {/* a person at a desk, as a silhouette */}
-            <svg viewBox="0 0 80 60" className="absolute inset-x-0 bottom-0 mx-auto h-[78%] w-auto text-white/35">
-              <circle cx="40" cy="22" r="10" fill="currentColor" />
-              <path d="M18 60 Q20 38 40 36 Q60 38 62 60 Z" fill="currentColor" />
-            </svg>
-            <span className="absolute inset-x-1.5 bottom-1.5 truncate rounded-md bg-black/45 px-1.5 py-0.5 text-[10px] font-medium text-white">{t.on}</span>
+          <div key={t.on} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-white/10">
+            <img
+              src={`https://images.unsplash.com/${t.photo}?auto=format&fit=crop&w=360&h=270&q=70`}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: t.focus }}
+            />
+            <span className="absolute left-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400 ring-2 ring-black/30" />
+            <span className="absolute inset-x-1.5 bottom-1.5 truncate rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-medium text-white">{t.on}</span>
           </div>
         ))}
       </div>
