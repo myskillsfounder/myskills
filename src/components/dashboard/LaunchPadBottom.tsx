@@ -1,83 +1,9 @@
 import { useState, type ComponentType } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Award, Briefcase, Building2, Compass, Flame, GraduationCap, Medal, Megaphone, Sparkles } from 'lucide-react'
+import { ArrowRight, Award, Flame, GraduationCap, Medal, Sparkles } from 'lucide-react'
 import type { MentorSuggestion } from '@/lib/mentorMatch'
 import { BADGES_TOTAL, type Badge } from '@/lib/badges'
-import { rememberProgramme } from '@/lib/practiceProgramme'
 import { MentorProfileDialog, initialsOf, toMentorListing } from '@/components/community/Marketplace'
-
-/* ------------------------------------------------------------- explore */
-
-interface Tile {
-  key: string
-  label: string
-  meta: string
-  icon: ComponentType<{ size?: number }>
-  tone: string
-  to: string
-  search?: Record<string, string>
-  programme?: 1 | 2
-}
-
-/**
- * Explore: the two programmes and the two ways into real-world work, as
- * tinted tiles, each one tap from its page.
- */
-export function ExplorePanel({ openRoles, institutions }: { openRoles: number | null; institutions: number | null }) {
-  const tiles: Tile[] = [
-    { key: 'dm', label: 'Digital Marketing', meta: '8 skill tracks', icon: Megaphone, tone: 'bg-brand-50 text-brand-700', to: '/practice', programme: 1 },
-    { key: 'gl', label: 'Global Leadership', meta: '14 modules', icon: Compass, tone: 'bg-emerald-50 text-emerald-700', to: '/practice', programme: 2 },
-    {
-      key: 'in',
-      label: 'Internships',
-      meta: openRoles == null ? 'Real work' : openRoles === 1 ? '1 open role' : `${openRoles} open roles`,
-      icon: Briefcase,
-      tone: 'bg-amber-50 text-amber-700',
-      to: '/community',
-      search: { category: 'internships' },
-    },
-    {
-      key: 'is',
-      label: 'Institutions',
-      meta: institutions == null ? 'Classroom learning' : institutions === 1 ? '1 institution' : `${institutions} institutions`,
-      icon: Building2,
-      tone: 'bg-sky-50 text-sky-700',
-      to: '/community',
-      search: { category: 'institutions' },
-    },
-  ]
-  return (
-    <section className="card h-full p-5 sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="font-display text-lg font-semibold text-ink-900">Explore</h2>
-          <p className="text-sm text-ink-500">Programmes, internships and institutions</p>
-        </div>
-        <Link to="/community" className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800">
-          See all <ArrowRight size={14} />
-        </Link>
-      </div>
-      <ul className="mt-4 grid grid-cols-2 gap-3">
-        {tiles.map((t) => (
-          <li key={t.key}>
-            <Link
-              to={t.to}
-              search={t.search as never}
-              onClick={() => t.programme && rememberProgramme(t.programme)}
-              className={`press flex h-full flex-col items-center rounded-2xl p-4 text-center transition-transform hover:-translate-y-0.5 ${t.tone}`}
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-e1">
-                <t.icon size={20} />
-              </span>
-              <span className="mt-3 text-sm font-semibold leading-tight text-ink-900">{t.label}</span>
-              <span className="mt-0.5 text-xs text-ink-500">{t.meta}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
 
 /* ------------------------------------------------------------- mentors */
 

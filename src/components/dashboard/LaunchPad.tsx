@@ -23,13 +23,12 @@ import { SkillBalanceCard } from '@/components/dashboard/SkillBalanceCard'
 import { InsightsPanel, SkillsGrowthPanel, buildInsights } from '@/components/dashboard/GrowthCards'
 import { aptitudeBalance, progressBalance } from '@/lib/skillBalance'
 import { fetchScoreTrend, type ScoreTrend } from '@/lib/scoreTrend'
-import { ExplorePanel, MentorsForYou, StatsStrip } from '@/components/dashboard/LaunchPadBottom'
+import { MentorsForYou, StatsStrip } from '@/components/dashboard/LaunchPadBottom'
+import { ApplicationsPanel } from '@/components/dashboard/ApplicationsPanel'
 import { earnedBadges } from '@/lib/badges'
 import { suggestMentors } from '@/lib/mentorMatch'
 import { BALANCE_AREAS } from '@/lib/skillBalance'
 import { fetchMentors, type Mentor } from '@/lib/mentors'
-import { fetchOpenRoles } from '@/lib/internships'
-import { fetchInstitutionPartners } from '@/lib/institutionPartners'
 import { supabase } from '@/lib/supabase'
 import { sessionUser } from '@/lib/sessionUser'
 import { KeyMeasures } from '@/components/dashboard/KeyMeasures'
@@ -218,19 +217,15 @@ export function LaunchPad() {
   )
   const bestTrack = practisedTracks.length ? [...practisedTracks].sort((a, b) => b.percent - a.percent)[0] : null
 
-  // The foot of the LaunchPad (computer only): mentors to suggest, what there
-  // is to explore, and the student's numbers. Each loads on its own; a part
+  // The foot of the LaunchPad (computer only): the student's applications,
+  // mentors to suggest, and the student's numbers. Each loads on its own; a part
   // that can't be read just shows less.
   const [mentors, setMentors] = useState<Mentor[]>([])
-  const [openRoles, setOpenRoles] = useState<number | null>(null)
-  const [institutions, setInstitutions] = useState<number | null>(null)
   const [certificates, setCertificates] = useState<number | null>(null)
   useEffect(() => {
     if (isPhone()) return
     let active = true
     fetchMentors().then((m) => active && setMentors(m), () => {})
-    fetchOpenRoles().then((r) => active && setOpenRoles(r.length), () => {})
-    fetchInstitutionPartners().then((r) => active && setInstitutions(r.length), () => {})
     void sessionUser().then(async (u) => {
       if (!u) return
       const { count, error } = await supabase
@@ -335,6 +330,12 @@ export function LaunchPad() {
     exclude: [dmMatch.match?.mentor?.id, crMatch.match?.mentor?.id].filter((x): x is string => Boolean(x)),
   })
 
+  // Mentors asked for, per programme, for "Your applications".
+  const mentorAsks = [
+    { match: dmMatch.match, programme: 1 as const, label: 'Digital Marketing' },
+    { match: crMatch.match, programme: 2 as const, label: 'Global Leadership' },
+  ]
+
   // A phone gets its own LaunchPad (components/dashboard/PhoneLaunchPad.tsx):
   // the same score and the same next steps, in one column, without the parts
   // that lead to pages a phone doesn't have.
@@ -356,6 +357,10 @@ export function LaunchPad() {
           courses={courses}
           findMentor={findMentor}
         />
+        {/* Below where they stand, and only when there is something to show. */}
+        <div className="mt-5">
+          <ApplicationsPanel mentors={mentorAsks} hideEmpty />
+        </div>
       </>
     )
   }
@@ -415,15 +420,16 @@ export function LaunchPad() {
           )
       )}
 
-      {/* Explore and mentors side by side, then the numbers: the computer's
-          foot of the page. A new student keeps the simple "Find a mentor". */}
+      {/* Their applications and mentors to suggest side by side, then the
+          numbers: the computer's foot of the page. A new student keeps the
+          simple "Find a mentor". */}
       {firstRun ? (
         findMentor
       ) : (
         <>
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
             <div className="lg:col-span-2">
-              <ExplorePanel openRoles={openRoles} institutions={institutions} />
+              <ApplicationsPanel mentors={mentorAsks} />
             </div>
             <div className="lg:col-span-3">
               <MentorsForYou suggestions={mentorSuggestions} hasMentor={withMentor > 0} />
