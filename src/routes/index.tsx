@@ -3,24 +3,18 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
   BookOpen,
-  ChevronUp,
   Briefcase,
-  GraduationCap,
   Heart,
-  MessageCircleQuestion,
-  MicOff,
   Plane,
   Sparkles,
   Target,
   Trophy,
   Users,
-  Video,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { trackEvent } from '@/lib/analytics'
 import { COURSES } from '@/content/courses'
-import { STUDY_CROWD, STUDY_TILES, studyPhoto } from '@/lib/studyPhotos'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 
@@ -137,13 +131,6 @@ const PILLARS: Pillar[] = [
   },
 ]
 
-const PARTNERS: { icon: LucideIcon; title: string; body: string; photo: string }[] = [
-  { icon: GraduationCap, title: 'Institutions', body: 'Colleges, training institutes, skill centres', photo: 'institutions' },
-  { icon: Users, title: 'Mentors', body: 'Industry experts, professionals, coaches', photo: 'paul-mentorship' },
-  { icon: Plane, title: 'Study Abroad Partners', body: 'Universities, consultants, overseas education providers', photo: 'card-study-abroad' },
-  { icon: Briefcase, title: 'Internship Partners', body: 'Companies and organisations offering internships', photo: 'card-career' },
-]
-
 /** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
 const AI_ERA: { icon: LucideIcon; title: string; body: string }[] = [
   { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.' },
@@ -162,82 +149,6 @@ const SCORE_PARTS: { title: string; body: string; points: number; bar: string }[
 const BANDS = ['Getting started', 'Building', 'Strong', 'Standout']
 
 const target = (p: Pillar, signedIn: boolean) => (signedIn ? p.student : p.visitor)
-
-/** Every student in the hero's study room: the four of the phone's front door, then twelve more. */
-const ROOM = [...STUDY_TILES, ...STUDY_CROWD]
-
-/** Doubts on the room's board, the way the app shows them. */
-const DOUBTS = ['How do I revise a whole chapter in an hour?', 'Any tips for the SQL practice test?', 'How do I start my project brief?']
-
-/**
- * The hero's picture (Paul, 4 Nov 2026: "show an online study room with a lot
- * of students studying"): the app's study room, wide, as a video call, with
- * sixteen students at their desks, what each is on, and the doubts the room
- * is upvoting. Photos: lib/studyPhotos.ts.
- */
-function StudyRoomWindow() {
-  return (
-    <div className="relative mx-auto mt-10 max-w-6xl">
-      <span aria-hidden className="absolute -top-16 left-1/2 h-72 w-[80%] -translate-x-1/2 rounded-full bg-[#6d5bff]/30 blur-3xl" />
-      <span aria-hidden className="absolute -bottom-10 right-0 h-64 w-96 rounded-full bg-amber-400/15 blur-3xl" />
-
-      <div className="relative overflow-hidden rounded-[1.75rem] bg-[#0d0b22]/95 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-        {/* the window's bar */}
-        <div className="flex items-center gap-3 border-b border-white/[0.07] px-5 py-3">
-          <span className="flex gap-1.5" aria-hidden>
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          </span>
-          <span className="text-sm font-semibold text-white">Open study room</span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-200">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Live
-          </span>
-          <span className="ml-auto hidden items-center gap-1.5 text-xs text-white/55 sm:inline-flex">
-            <MicOff size={13} /> Camera on, no sound
-          </span>
-        </div>
-
-        {/* the students */}
-        <div className="grid grid-cols-4 gap-1.5 p-2 sm:gap-2 sm:p-3 lg:grid-cols-8">
-          {ROOM.map((t, i) => (
-            <div key={t.photo} className={`relative aspect-[4/3] overflow-hidden rounded-lg bg-white/5 ${i >= 8 ? 'hidden sm:block' : ''}`}>
-              <img src={studyPhoto(t.photo, 320, 240)} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: t.focus }} />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-4">
-                <span className="block truncate text-[10px] font-medium text-white sm:text-[11px]">{t.on}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* the doubts board and the controls */}
-        <div className="flex flex-col gap-3 border-t border-white/[0.07] px-4 py-3 lg:flex-row lg:items-center">
-          <span className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-amber-200">
-            <MessageCircleQuestion size={17} /> Ask your doubts
-          </span>
-          <ul className="flex min-w-0 flex-1 gap-2 overflow-hidden">
-            {DOUBTS.map((d, i) => (
-              <li key={d} className={`flex min-w-0 items-center gap-2 rounded-full bg-white/[0.06] py-1.5 pl-3 pr-1.5 ${i > 0 ? 'hidden md:flex' : ''}`}>
-                <span className="truncate text-xs text-white/80">{d}</span>
-                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
-                  <ChevronUp size={12} /> Upvote
-                </span>
-              </li>
-            ))}
-          </ul>
-          <span className="flex shrink-0 items-center gap-2" aria-hidden>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white">
-              <Video size={15} />
-            </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/40">
-              <MicOff size={15} />
-            </span>
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 /** One of the five parts as a photo card. */
 function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolean }) {
@@ -269,30 +180,6 @@ function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolea
   )
 }
 
-function PartnerCard({ p }: { p: (typeof PARTNERS)[number] }) {
-  return (
-    <Link
-      to={PARTNER_SIGNUP.to}
-      onClick={() => trackEvent('home_partner', { partner: p.title })}
-      className={`${glass} group relative flex min-h-[5.5rem] items-center overflow-hidden py-3 pl-4 pr-28 transition-colors hover:border-brand-300/50`}
-    >
-      <img
-        src={`/home/${p.photo}.webp`}
-        alt=""
-        loading="lazy"
-        className="absolute inset-y-0 right-0 h-full w-32 object-cover object-[50%_25%] opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)]"
-      />
-      <span className="relative flex items-center gap-3">
-        <p.icon size={24} fill="currentColor" className="shrink-0 text-white" />
-        <span className="min-w-0">
-          <span className="block font-display text-[15px] font-semibold leading-tight text-white">{p.title}</span>
-          <span className="mt-0.5 block text-[12px] leading-snug text-white/65">{p.body}</span>
-        </span>
-      </span>
-    </Link>
-  )
-}
-
 function SectionHead({ kicker, title, accent, body }: { kicker: string; title: string; accent: string; body?: string }) {
   return (
     <div className="max-w-2xl">
@@ -314,8 +201,8 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
-        {/* 1. The biggest online student community, and its study room. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-8">
+        {/* 1. The biggest online student community. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 sm:pt-24 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms are live now
@@ -340,12 +227,8 @@ function HomePage() {
             </div>
           </div>
 
-          <StudyRoomWindow />
-        </section>
-
-        {/* 2. The five parts of the platform. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {/* The five parts of the platform, right under the buttons (Paul, 4 Nov 2026). */}
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {PILLARS.map((p, i) => (
               <PillarCard key={p.id} p={p} n={i + 1} signedIn={signedIn} />
             ))}
@@ -381,24 +264,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 4. Our partners and providers. */}
-        <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className={`${glass} grid gap-4 p-4 lg:grid-cols-[14rem_1fr] lg:items-center`}>
-            <div className="px-2 py-1">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white">Our partners &amp; providers</p>
-              <p className="mt-2 text-[13px] leading-relaxed text-white/60">
-                We work with institutions, mentors and service providers to deliver everything a student needs.
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
-              {PARTNERS.map((p) => (
-                <PartnerCard key={p.title} p={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 5. The courses. */}
+        {/* 4. The courses. */}
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHead kicker="Learning programmes" title="Skills for" accent="the AI era." />
@@ -447,7 +313,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 6. The Global Readiness Score. */}
+        {/* 5. The Global Readiness Score. */}
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className={`${glass} grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center`}>
             <div>
@@ -491,7 +357,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 7. Step in. */}
+        {/* 6. Step in. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl border border-brand-200/25 bg-gradient-to-br from-brand-600/40 via-brand-700/25 to-fuchsia-600/20 px-6 py-12 text-center shadow-[0_0_80px_-20px_rgba(143,133,238,0.7)] sm:px-12">
             <span aria-hidden className="absolute -top-24 left-1/2 h-48 w-[70%] -translate-x-1/2 rounded-full bg-brand-300/30 blur-3xl" />
