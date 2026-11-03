@@ -2,13 +2,14 @@ import { homeEntry } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  BarChart3,
   BookOpen,
+  ChevronUp,
   Briefcase,
   GraduationCap,
   Heart,
+  MessageCircleQuestion,
+  MicOff,
   Plane,
-  Plus,
   Sparkles,
   Target,
   Trophy,
@@ -18,6 +19,7 @@ import {
 import { useAuthUser } from '@/lib/useAuth'
 import { trackEvent } from '@/lib/analytics'
 import { COURSES } from '@/content/courses'
+import { STUDY_TILES, studyPhoto } from '@/lib/studyPhotos'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 
@@ -172,134 +174,49 @@ function Faces({ faces, size = 'h-9 w-9' }: { faces: string[]; size?: string }) 
   )
 }
 
-/** A glass note floating beside the student. */
-function Note({ icon: Icon, title, className = '', children }: { icon: LucideIcon; title: string; className?: string; children?: React.ReactNode }) {
+/**
+ * The hero's picture since 4 Nov 2026 (Paul: "change the background, change
+ * CTAs to study online"): a live study room, students at their desks with
+ * what each is on, a doubt the room is upvoting, in an amber and indigo glow.
+ * Photos: lib/studyPhotos.ts.
+ */
+function StudyRoomStage() {
   return (
-    <div className={`${glass} absolute flex items-start gap-3 p-3.5 ${className}`}>
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
-        <Icon size={20} />
-      </span>
-      <div className="min-w-0">
-        <p className="font-display text-[14px] font-semibold leading-snug text-white">{title}</p>
-        {children}
-      </div>
-    </div>
-  )
-}
+    <div className="relative mx-auto w-full max-w-[38rem] py-6">
+      <span aria-hidden className="absolute -right-10 top-0 h-80 w-80 rounded-full bg-amber-400/25 blur-3xl" />
+      <span aria-hidden className="absolute -left-6 bottom-0 h-72 w-72 rounded-full bg-[#5b4bff]/30 blur-3xl" />
 
-/** How far each of the five parts rises on the curved bar, its ends highest. */
-const BAR_LIFT = ['-translate-y-6', '-translate-y-1.5', 'translate-y-0.5', '-translate-y-1.5', '-translate-y-6']
-
-/** The student at the centre: a ring of light, three notes, the curved bar of the five parts. */
-function StudentStage({ signedIn }: { signedIn: boolean }) {
-  return (
-    <div className="relative mx-auto h-[31rem] w-full max-w-[38rem]">
-      {/* Indigo light around the ring. */}
-      <span aria-hidden className="absolute left-1/2 top-0 h-[27rem] w-[27rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(70,80,220,0.45),rgba(40,46,150,0.2)_55%,rgba(4,10,30,0)_72%)] blur-2xl" />
-
-      {/* A real photo, framed in the ring (Paul, 27 Oct: "more realistic, not
-          a cut-out"; the learning pose in the black sweatshirt): it fills the circle, tinted into the page's blues and
-          shaded at the foot where the bar crosses it. */}
-      <div className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 overflow-hidden rounded-full">
-        <img src="/home/paul-study.webp" alt="A student learning at his desk" className="h-full w-full object-cover object-[50%_35%]" />
-        <span aria-hidden className="absolute inset-0 bg-[#3b3fd1]/25 mix-blend-color" />
-        <span aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_45%,rgba(4,10,30,0.55)_100%)]" />
-        <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#040a1e]/90 to-transparent" />
-      </div>
-      {/* The ring's line: bright violet-blue. */}
-      <span
-        aria-hidden
-        className="absolute left-1/2 top-4 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full p-[2px] [mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)] bg-[conic-gradient(from_200deg,rgba(124,92,246,0.2),#8f6bff_25%,#c9b8ff_38%,#6d7bff_55%,rgba(109,123,255,0.25)_75%,rgba(124,92,246,0.2))]"
-        style={{ filter: 'drop-shadow(0 0 12px rgba(124,108,255,0.8))' }}
-      />
-      <span aria-hidden className="absolute left-1/2 top-0 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full border border-[#8f9bff]/15" />
-
-      {/* Paul's handwriting. */}
-      <p aria-hidden className={`${hand} absolute left-[2%] top-0 -rotate-[10deg] text-[1.15rem] leading-tight`}>
-        Learn
-        <br />
-        Build Skills
-        <br />
-        Get Guidance
-        <br />
-        Grow
-      </p>
-      <svg aria-hidden className="absolute left-[17%] top-[15%] h-10 w-14 text-white/60" viewBox="0 0 64 48" fill="none">
-        <path d="M4 6 C 30 4, 48 18, 52 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M44 34 L52 41 L56 31" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <p aria-hidden className={`${hand} absolute right-0 top-[64%] rotate-[-10deg] text-right text-[1.1rem] leading-tight`}>
-        More
-        <br />
-        than just
-        <br />
-        courses
-      </p>
-
-      <Note icon={BookOpen} title="Expert Mentorship" className="left-0 top-[30%] w-52">
-        <span className="mt-2.5 flex items-center gap-2">
-          <Faces faces={['paul-mentor', 'face-2', 'face-3']} size="h-8 w-8" />
-          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80">
-            <Plus size={14} />
+      <div className="relative rounded-[2rem] bg-[#14122b]/90 p-4 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10 backdrop-blur">
+        <div className="mb-3 flex items-center justify-between px-1">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-emerald-200">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> Study room · Live
           </span>
-        </span>
-      </Note>
-      <Link
-        to="/courses"
-        onClick={() => trackEvent('home_note', { note: 'path' })}
-        className="group absolute right-0 top-[5%] w-56 transition-transform hover:-translate-y-0.5"
-      >
-        <Note icon={BarChart3} title="Personalised Learning Path" className="relative inset-auto w-full pr-10">
-          <p className="mt-1 text-xs font-medium text-[#b9a6ff]">Powered by AI</p>
-          <ArrowRight size={16} className="absolute bottom-4 right-4 text-[#b9a6ff] transition-transform group-hover:translate-x-0.5" />
-        </Note>
-      </Link>
-      <Note icon={Briefcase} title="Real-world Opportunities" className="right-0 top-[33%] w-56">
-        <p className="mt-1.5 text-xs leading-relaxed text-white/60">
-          Internships · Projects
-          <br />
-          Global Exposure
-        </p>
-      </Note>
+          <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
+            <MicOff size={13} /> Camera on, no sound
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {STUDY_TILES.map((t) => (
+            <div key={t.on} className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white/10">
+              <img src={studyPhoto(t.photo, 480, 360)} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: t.focus }} />
+              <span className="absolute left-2.5 top-2.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-black/30" />
+              <span className="absolute inset-x-2.5 bottom-2.5 truncate rounded-lg bg-black/55 px-2 py-1 text-xs font-medium text-white">{t.on}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white/[0.06] px-4 py-3">
+          <MessageCircleQuestion size={18} className="shrink-0 text-amber-200" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[11px] font-semibold uppercase tracking-wide text-amber-200">Ask your doubts</span>
+            <span className="block truncate text-sm text-white/85">“How do I revise a whole chapter in an hour?”</span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-400/20 px-2.5 py-1 text-xs font-semibold text-amber-100">
+            <ChevronUp size={14} /> Upvote
+          </span>
+        </div>
+      </div>
 
-      {/* The curved glass bar, the ring's lower edge: the five parts of the platform. */}
-      <nav aria-label="The platform" className="absolute inset-x-0 bottom-0 h-32">
-        <svg aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 600 144" preserveAspectRatio="none" fill="none">
-          <defs>
-            <linearGradient id="bar-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#2a2f8f" stopOpacity="0.55" />
-              <stop offset="1" stopColor="#070c28" stopOpacity="0.85" />
-            </linearGradient>
-            <linearGradient id="bar-edge" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#6d7bff" stopOpacity="0.35" />
-              <stop offset="0.5" stopColor="#a48bff" />
-              <stop offset="1" stopColor="#6d7bff" stopOpacity="0.35" />
-            </linearGradient>
-          </defs>
-          <path d="M6 18 Q 300 92 594 18 L 594 78 Q 300 150 6 78 Z" fill="url(#bar-fill)" />
-          <path d="M6 18 Q 300 92 594 18" stroke="url(#bar-edge)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" style={{ filter: 'drop-shadow(0 0 6px rgba(140,120,255,0.9))' }} />
-          <path d="M6 78 Q 300 150 594 78" stroke="#6d7bff" strokeOpacity="0.25" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-          <path d="M6 18 L 6 78 M594 18 L 594 78" stroke="#6d7bff" strokeOpacity="0.3" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-        </svg>
-        <ul className="relative grid h-full grid-cols-5 px-2 pt-9">
-          {PILLARS.map((p, i) => {
-            const to = target(p, signedIn)
-            return (
-              <li key={p.id} className={BAR_LIFT[i]}>
-                <Link
-                  to={to.to}
-                  search={to.search as never}
-                  onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'bar' })}
-                  className="flex flex-col items-center gap-1.5 px-1 text-center text-[12px] font-medium leading-tight text-white transition-colors hover:text-[#dcc7ff]"
-                >
-                  <p.icon size={22} strokeWidth={1.5} className="text-[#d6bcff] drop-shadow-[0_0_8px_rgba(180,150,255,0.8)]" />
-                  {p.short}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
+      <p aria-hidden className={`${hand} absolute -top-2 right-6 rotate-[6deg] text-[1.25rem]`}>Study together, anywhere</p>
     </div>
   )
 }
@@ -379,31 +296,26 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
-        {/* 1. Your future won't wait. */}
+        {/* 1. Study online, together. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14 lg:px-8">
           <div className="grid items-center gap-8 xl:grid-cols-[1fr_38rem] xl:gap-10">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
-                <Sparkles size={14} className="text-[#b496ff]" /> Built for students in the AI era
+                <Users size={14} className="text-[#b496ff]" /> The biggest community of online learners
               </p>
-              <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1] tracking-tight text-white sm:text-6xl xl:text-[4rem]">
-                <span className="block">Your future</span>
-                <span className="block">won’t wait.</span>
-                <span className={`block pb-2 ${gradientText}`}>
-                  Neither should
-                  <br />
-                  your learning.
-                </span>
+              <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-6xl xl:text-[3.75rem]">
+                <span className="block">Study online,</span>
+                <span className={`block pb-2 ${gradientText}`}>together.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
-                The AI era is changing every career. MySkills takes care of everything a student needs to keep up: AI-guided
-                learning, expert mentors, internships and real-world experience, in one place.
+                Join the biggest community of online learners. Step into a live study room, turn your camera on, ask your
+                doubts and get it done alongside students like you. Free, any subject, any time.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 {/* Into the app: Study rooms, through sign-in for a visitor (the
                     guard sends them to /login, and signing in lands there). */}
-                <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'explore', place: 'hero' })} className={primaryCta}>
-                  Explore MySkills <ArrowRight size={18} />
+                <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={primaryCta}>
+                  Study online <ArrowRight size={18} />
                 </Link>
                 <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
                   Partner with us
@@ -412,14 +324,14 @@ function HomePage() {
               <div className="mt-9 flex items-center gap-4">
                 <Faces faces={['face-1', 'face-4', 'face-3', 'face-2']} />
                 <p className="text-sm leading-snug text-white/70">
-                  Join a growing community
+                  Join the biggest community
                   <br />
-                  of ambitious learners.
+                  of online learners.
                 </p>
               </div>
             </div>
 
-            <StudentStage signedIn={signedIn} />
+            <StudyRoomStage />
           </div>
         </section>
 

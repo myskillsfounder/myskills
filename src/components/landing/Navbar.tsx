@@ -123,8 +123,9 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
                 <Link to="/login" className={t.logIn}>
                   Log in
                 </Link>
+                {/* Sign up, and a new account lands in Study rooms (Paul, 4 Nov 2026). */}
                 <Link to="/signup" className={getStarted}>
-                  Get Started
+                  Study online
                 </Link>
               </>
             ))}
@@ -175,7 +176,7 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
                     onClick={() => setOpen(false)}
                     className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                   >
-                    Get Started
+                    Study online
                   </Link>
                 </>
               ))}

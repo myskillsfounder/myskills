@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, ChevronUp, MessageCircleQuestion, MicOff, Users, Video } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
+import { STUDY_TILES, studyPhoto } from '@/lib/studyPhotos'
 import { requirePhoneWelcome } from '@/lib/guards'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 
@@ -16,21 +17,6 @@ export const Route = createFileRoute('/welcome')({
   component: WelcomePage,
 })
 
-/*
- * What a study room looks like: students at their desks side by side, each
- * with what they're on (Paul, 4 Nov 2026: "images in the online tiles, indian
- * students"). Stock photos, free under the Unsplash License, which allows this
- * use without attribution; credits:
- *   Vikas Makwana (unsplash.com/photos/upn798iEEYM), Fotos (TLdmnQz4Pns),
- *   Kyle Gregory Devaras (6RTM8EsD1T8), Amit Ranjan (3S0Ucv4BDCk).
- */
-const TILES = [
-  { on: 'Reading', photo: 'photo-1617009762269-c062aaf6b3a0', focus: '60% 30%' },
-  { on: 'Exam prep', photo: 'photo-1637589308599-3478cc55510d', focus: '40% 30%' },
-  { on: 'Homework', photo: 'photo-1514369118554-e20d93546b30', focus: '50% 25%' },
-  { on: 'My project', photo: 'photo-1604177091072-b7b677a077f6', focus: '50% 30%' },
-]
-
 function RoomPreview() {
   return (
     <div aria-hidden className="relative rounded-3xl bg-[#14122b] p-3 ring-1 ring-white/10">
@@ -43,10 +29,10 @@ function RoomPreview() {
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        {TILES.map((t) => (
+        {STUDY_TILES.map((t) => (
           <div key={t.on} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-white/10">
             <img
-              src={`https://images.unsplash.com/${t.photo}?auto=format&fit=crop&w=360&h=270&q=70`}
+              src={studyPhoto(t.photo)}
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
               style={{ objectPosition: t.focus }}
