@@ -34,7 +34,7 @@ export function FocusRoomsCard({ room }: { room?: { slug: string; title: string 
       <div className="relative">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="max-w-xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200">Focus Rooms · Live now</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200">Study rooms · Live now</p>
             <h2 className="mt-2 font-display text-2xl font-bold leading-tight sm:text-3xl">
               {room ? `Study ${room.title} with others` : 'Study live with others in your programme'}
             </h2>
@@ -44,7 +44,7 @@ export function FocusRoomsCard({ room }: { room?: { slug: string; title: string 
             </p>
           </div>
           {room ? (
-            <Link to="/community/focus-rooms/$room" params={{ room: room.slug }} className={join}>
+            <Link to="/study-rooms/$room" params={{ room: room.slug }} className={join}>
               Join now <ArrowRight size={16} />
             </Link>
           ) : (
@@ -79,7 +79,7 @@ export function FocusRoomsCard({ room }: { room?: { slug: string; title: string 
                 {rooms.map((r) => (
                   <Link
                     key={r.slug}
-                    to="/community/focus-rooms/$room"
+                    to="/study-rooms/$room"
                     params={{ room: r.slug }}
                     className="group flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 text-ink-900 transition-colors hover:bg-amber-50"
                   >
@@ -113,7 +113,7 @@ export function FocusRoomsCard({ room }: { room?: { slug: string; title: string 
           ))}
         </ol>
         <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-white/55">
-          <MicOff size={12} /> Camera only. There’s no microphone in Focus Rooms.
+          <MicOff size={12} /> Camera only. There’s no microphone in study rooms.
         </p>
       </div>
     </section>

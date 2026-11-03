@@ -1,27 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { trackEvent, trackSignUp } from '@/lib/analytics'
 import { completeOnboarding, signOut } from '@/lib/auth'
 import { ensureProfile } from '@/lib/profile'
 import { requireSession } from '@/lib/guards'
 import { homePath } from '@/lib/device'
-import { useAuthUser, userDisplayName } from '@/lib/useAuth'
-import { peekAfterOnboarding, takeAfterOnboarding } from '@/lib/afterOnboarding'
-import {
-  START_PROGRAMME,
-  careerStageStep,
-  focusStep,
-  goalStep,
-  goalsFor,
-  levelStep,
-  planFor,
-} from '@/lib/onboardingContent'
+import { takeAfterOnboarding } from '@/lib/afterOnboarding'
+import { planFor, START_PROGRAMME } from '@/lib/onboardingContent'
 import { setProgrammePath } from '@/lib/foundationPath'
 import { clearGuideAnswers, peekGuideAnswers } from '@/lib/guideAnswers'
-import { GOAL_ICONS } from '@/lib/goalIcons'
-import { InlineSelect } from '@/components/onboarding/InlineSelect'
-import { AnswerPanel } from '@/components/onboarding/AnswerPanel'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 
 export const Route = createFileRoute('/onboarding')({
@@ -29,280 +17,88 @@ export const Route = createFileRoute('/onboarding')({
   component: OnboardingPage,
 })
 
-/** The same concentric rings as the landing hero, faint, top right. */
-const Rings = () => (
-  <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 opacity-[0.12]">
-    <svg width="420" height="420" viewBox="0 0 200 200" fill="none" stroke="#f6e3c8" strokeWidth="1.2">
-      <circle cx="100" cy="100" r="96" />
-      <circle cx="100" cy="100" r="74" />
-      <circle cx="100" cy="100" r="52" />
-      <circle cx="100" cy="100" r="30" />
-    </svg>
-  </span>
-)
-
 /**
- * Onboarding is one sentence — "I'm [a student] and I want to [find a new job].
- * I'd like to start with [digital marketing]." — completed with three
- * dropdowns, and then an answer: a plan built from the three choices, with the
- * button that starts it. Nothing is saved until they pick where to go.
+ * A new account's first stop, which asks nothing (Paul, 3 Nov 2026: "let
+ * student start online with a simple sign in"). It marks the account
+ * onboarded, creates the profile row, counts the sign-up, and goes on: to the
+ * test they were heading for, or home, to Study rooms. Where they are and their
+ * goal are optional now, on the profile (components/profile/AboutYouCard.tsx).
+ *
+ * The AI guide (routes/start.tsx) may already have asked those before sign-up:
+ * its answers are kept, as onboarding's used to be.
  */
 function OnboardingPage() {
   const router = useRouter()
-  const { user } = useAuthUser()
-  const firstName = userDisplayName(user).split(' ')[0]
-
-  const [stage, setStage] = useState('')
-  const [goal, setGoal] = useState('')
-  const [focus, setFocus] = useState('')
-  const [level, setLevel] = useState('')
-  const [asked, setAsked] = useState(false)
   const [error, setError] = useState<string>()
-  const [submitting, setSubmitting] = useState(false)
-  const answerRef = useRef<HTMLDivElement>(null)
+  const started = useRef(false)
 
-  const chosen = [stage, goal, focus, level].filter(Boolean).length
-  const complete = chosen === 4
-
-  // Onboarded already, by the AI guide before sign-up (routes/start.tsx): its
-  // answers fill the sentence, and onboarding finishes by itself, on to the
-  // results of the test they took there.
-  const fromGuide = useRef(false)
-  useEffect(() => {
-    if (!user || fromGuide.current) return
-    const g = peekGuideAnswers()
-    if (!g) return
-    fromGuide.current = true
-    setStage(g.stage)
-    setGoal(g.goal)
-    setFocus(g.focus)
-    setLevel(g.level ?? 'beginner')
-  }, [user])
-
-  // A visitor who came from "Take the aptitude test" (or a programme's "start")
-  // has already said where they're heading, so there's nothing to ask: the
-  // sentence finishes onboarding and lands them on that assessment.
-  const knownDestination = peekAfterOnboarding()
-
-  // Changing any choice withdraws the answer: it no longer matches the sentence.
-  function pick(set: (v: string) => void) {
-    return (id: string) => {
-      set(id)
-      setAsked(false)
-      setError(undefined)
-    }
-  }
-
-  // The goals on offer depend on where they are. Changing the stage drops a goal
-  // the new stage isn't offered, rather than keeping one that no longer fits.
-  const goalOptions = goalsFor(stage)
-  function pickStage(id: string) {
-    if (goal && !goalsFor(id).some((o) => o.id === goal)) setGoal('')
-    pick(setStage)(id)
-  }
-
-  useEffect(() => {
-    if (!fromGuide.current || !complete || submitting) return
-    clearGuideAnswers()
-    void finish(undefined, 'guide')
-    // finish reads the answers just set; it runs once, when they are complete.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [complete])
-
-  useEffect(() => {
-    if (asked) answerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }, [asked])
-
-  function ask() {
-    if (!complete) return
-    trackEvent('onboarding_ask', { stage, goal, focus, level })
-    if (knownDestination) {
-      void finish(undefined, 'remembered')
-    } else {
-      setAsked(true)
-    }
-  }
-
-  /** Saves the answers, then goes to `to` — the assessment they picked, where
-   *  they were already heading, or home: the LaunchPad, or on a phone the
-   *  marketplace (the assessments are on a phone too, so those go as picked). */
-  async function finish(to: string | undefined, how: string) {
-    setSubmitting(true)
+  async function finish() {
     setError(undefined)
     try {
-      const startLevel = level === 'experienced' ? 'experienced' : 'beginner'
-      const method = await completeOnboarding({ career_stage: stage, goals: goal ? [goal] : [], start_level: startLevel })
-      // Their starting point in Digital Marketing (beginner or experienced),
-      // kept per programme. Global Leadership has no experienced start: everyone
-      // begins with its aptitude test. Before the Foundation SQL is run this
-      // can't be saved; the Foundation page then asks again.
-      const plan = planFor(stage, goal, focus, level)
-      if (plan.start === 'marketing') await setProgrammePath(START_PROGRAMME.marketing, startLevel).catch(() => {})
-      // Create their profile row now: the assessment they're about to take saves
-      // a result that points at it. If this fails, saving the assessment retries.
-      try {
-        await ensureProfile()
-      } catch {
-        /* retried by the assessment's own save */
+      const guide = peekGuideAnswers()
+      const level = guide?.level === 'experienced' ? 'experienced' : 'beginner'
+      const method = await completeOnboarding(
+        guide ? { career_stage: guide.stage, goals: [guide.goal], start_level: level } : undefined,
+      )
+      if (guide) {
+        clearGuideAnswers()
+        // Their starting point in Digital Marketing, kept per programme; before
+        // the Foundation SQL is run this can't be saved, and that page asks again.
+        if (planFor(guide.stage, guide.goal, guide.focus, level).start === 'marketing') {
+          await setProgrammePath(START_PROGRAMME.marketing, level).catch(() => {})
+        }
       }
+      // Create their profile row now: an assessment result points at it. If
+      // this fails, whatever needs it next creates it.
+      await ensureProfile().catch(() => {})
       trackSignUp(method)
-      trackEvent('onboarding_finish', { start: how, goal })
-      const remembered = takeAfterOnboarding()
-      router.navigate({ to: to ?? remembered ?? homePath() })
+      trackEvent('onboarding_finish', { start: guide ? 'guide' : 'sign-in' })
+      router.navigate({ href: takeAfterOnboarding() ?? homePath(), replace: true })
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save your profile. Please try again.')
-      setSubmitting(false)
+      setError(e instanceof Error ? e.message : 'Could not set up your account. Please try again.')
     }
   }
+
+  useEffect(() => {
+    if (started.current) return
+    started.current = true
+    void finish()
+    // finish runs once, when the page opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function handleSignOut() {
     await signOut()
     router.navigate({ to: '/login' })
   }
 
-  const plan = complete ? planFor(stage, goal, focus, level) : null
-
   return (
-    <div className="surface-wood-dark relative min-h-screen overflow-hidden">
+    <div className="surface-wood-dark relative flex min-h-screen items-center justify-center overflow-hidden px-6">
       <GridBackdrop mask="ellipse 80% 60% at 50% 0%" />
-      <Rings />
       <GlowOrb className="-left-24 top-24 h-72 w-72" />
-      <GlowOrb className="-right-24 bottom-0 h-72 w-72" color="rgba(211,164,65,0.10)" />
-
-      <div className="relative mx-auto flex min-h-screen w-full max-w-3xl flex-col px-4 py-6 sm:px-6 sm:py-10">
-        <header className="flex items-center justify-between gap-3">
-          <span className="flex items-center gap-2.5">
-            <span className="font-display text-lg font-semibold tracking-tight text-white">MySkills</span>
-          </span>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="-mr-2 px-2 py-3 text-sm font-medium text-white/60 transition-colors hover:text-white"
-          >
-            Sign out
-          </button>
-        </header>
-
-        <main className="flex flex-1 flex-col justify-center py-6 sm:py-10">
-          {user && (
-            <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-xs font-medium text-white/85">
-              <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Welcome, {firstName}
-            </span>
-          )}
-          <h1 className="font-display text-3xl font-semibold leading-[1.15] tracking-tight text-white sm:text-4xl">
-            Let’s find your starting point
-          </h1>
-          <p className="mt-2.5 max-w-xl text-base leading-relaxed text-white/70">
-            Complete the sentence — choose from each dropdown — and I’ll show you where to begin.
-          </p>
-
-          {/* The prompt: a sentence with three dropdowns in it. */}
-          <div
-            className={`card-glass-dark relative mt-7 rounded-2xl p-5 transition-shadow duration-500 sm:p-7 ${
-              complete ? 'glow-edge' : ''
-            }`}
-          >
-            <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/50">
-              Your starting point
-            </p>
-            <div className="font-display text-[1.375rem] font-medium leading-[2.35] text-white sm:text-[1.75rem] sm:leading-[2.3]">
-              I’m{' '}
-              <InlineSelect
-                value={stage}
-                options={careerStageStep.options}
-                onChange={pickStage}
-                placeholder="where you are"
-                label="Where you are right now"
-              />{' '}
-              and I want to{' '}
-              <InlineSelect
-                value={goal}
-                options={goalOptions}
-                onChange={pick(setGoal)}
-                placeholder="your goal"
-                label="The one goal you want to work towards"
-                icon={(id) => {
-                  const Icon = GOAL_ICONS[goalStep.options.find((o) => o.id === id)?.icon ?? 'sparkles']
-                  return <Icon size={16} />
-                }}
-              />
-              . I’d like to start with{' '}
-              <InlineSelect
-                value={focus}
-                options={focusStep.options}
-                onChange={pick(setFocus)}
-                placeholder="a starting point"
-                label="Where you'd like to start"
-              />
-              , and I’m{' '}
-              <InlineSelect
-                value={level}
-                options={levelStep.options}
-                onChange={pick(setLevel)}
-                placeholder="how much you know"
-                label="How much you already know"
-              />
-              .
-            </div>
-
-            <div className="mt-5 flex items-center justify-between gap-4 border-t border-white/10 pt-4">
-              <p className="flex items-center gap-2 font-mono text-xs text-white/50" aria-live="polite">
-                <span className="flex gap-1" aria-hidden>
-                  {[0, 1, 2, 3].map((i) => (
-                    <span
-                      key={i}
-                      className={`h-1.5 w-5 rounded-full transition-colors duration-300 ${
-                        i < chosen ? 'bg-brand-300 shadow-[0_0_8px_rgba(143,133,238,0.7)]' : 'bg-white/15'
-                      }`}
-                    />
-                  ))}
-                </span>
-                {chosen} of 4 chosen
-              </p>
+      <div className="relative max-w-sm text-center text-white">
+        {error ? (
+          <>
+            <p className="font-display text-2xl font-semibold">Something went wrong</p>
+            <p className="mt-2 text-sm text-white/70">{error}</p>
+            <div className="mt-6 flex items-center justify-center gap-4">
               <button
                 type="button"
-                onClick={ask}
-                disabled={!complete || submitting || asked}
-                className="press inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-40"
+                onClick={() => void finish()}
+                className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink-900"
               >
-                {knownDestination ? (
-                  submitting ? (
-                    'Finishing…'
-                  ) : (
-                    <>
-                      Finish
-                      <ArrowRight size={17} />
-                    </>
-                  )
-                ) : (
-                  <>
-                    <Sparkles size={16} />
-                    Show me my plan
-                  </>
-                )}
+                Try again
+              </button>
+              <button type="button" onClick={() => void handleSignOut()} className="text-sm font-medium text-white/70 hover:text-white">
+                Sign out
               </button>
             </div>
-          </div>
-
-          <div ref={answerRef}>
-            {asked && plan && (
-              <AnswerPanel
-                key={`${stage}|${goal}|${focus}|${level}`}
-                plan={plan}
-                busy={submitting}
-                onPick={(to: string) => void finish(to, to)}
-                onSkip={() => void finish(homePath(), 'later')}
-              />
-            )}
-          </div>
-
-          {error && (
-            <p role="alert" className="mt-4 text-sm text-red-300">
-              {error}
-            </p>
-          )}
-        </main>
+          </>
+        ) : (
+          <p className="inline-flex items-center gap-2 text-base text-white/80">
+            <Loader2 size={18} className="animate-spin" /> Getting MySkills ready for you…
+          </p>
+        )}
       </div>
     </div>
   )

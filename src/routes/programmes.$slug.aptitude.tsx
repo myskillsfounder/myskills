@@ -102,7 +102,7 @@ function SignedInAptitude({ slug }: { slug: string }) {
   }, [scoring, slug, navigate])
   if (scoring) {
     return (
-      <DarkShell back={{ to: '/dashboard', label: 'LaunchPad' }} eyebrow="Your results" title="Working out your results…" description="Starting your programme with the answers you gave.">
+      <DarkShell back={{ to: '/profile', label: 'My progress' }} eyebrow="Your results" title="Working out your results…" description="Starting your programme with the answers you gave.">
         <p className="flex items-center gap-2 text-sm text-white/60">
           <Loader2 size={15} className="animate-spin" /> One moment…
         </p>

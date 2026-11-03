@@ -50,10 +50,12 @@ import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as AptitudeAssessmentRouteImport } from './routes/aptitude-assessment'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudyRoomsIndexRouteImport } from './routes/study-rooms.index'
 import { Route as StudyAbroadIndexRouteImport } from './routes/study-abroad.index'
 import { Route as ProgrammesIndexRouteImport } from './routes/programmes.index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as StudyRoomsRoomRouteImport } from './routes/study-rooms.$room'
 import { Route as StudyAbroadSlugRouteImport } from './routes/study-abroad.$slug'
 import { Route as PartnershipsLoginRouteImport } from './routes/partnerships/login'
 import { Route as MentorPortalSplatRouteImport } from './routes/mentor-portal.$'
@@ -323,6 +325,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudyRoomsIndexRoute = StudyRoomsIndexRouteImport.update({
+  id: '/study-rooms/',
+  path: '/study-rooms/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudyAbroadIndexRoute = StudyAbroadIndexRouteImport.update({
   id: '/study-abroad/',
   path: '/study-abroad/',
@@ -341,6 +348,11 @@ const CommunityIndexRoute = CommunityIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudyRoomsRoomRoute = StudyRoomsRoomRouteImport.update({
+  id: '/study-rooms/$room',
+  path: '/study-rooms/$room',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudyAbroadSlugRoute = StudyAbroadSlugRouteImport.update({
@@ -715,10 +727,12 @@ export interface FileRoutesByFullPath {
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/study-abroad/$slug': typeof StudyAbroadSlugRoute
+  '/study-rooms/$room': typeof StudyRoomsRoomRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/programmes/': typeof ProgrammesIndexRoute
   '/study-abroad/': typeof StudyAbroadIndexRoute
+  '/study-rooms/': typeof StudyRoomsIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/agent-work': typeof AdminLayoutAgentWorkRoute
@@ -819,10 +833,12 @@ export interface FileRoutesByTo {
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/study-abroad/$slug': typeof StudyAbroadSlugRoute
+  '/study-rooms/$room': typeof StudyRoomsRoomRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
   '/programmes': typeof ProgrammesIndexRoute
   '/study-abroad': typeof StudyAbroadIndexRoute
+  '/study-rooms': typeof StudyRoomsIndexRoute
   '/admin/activity': typeof AdminLayoutActivityRoute
   '/admin/ads': typeof AdminLayoutAdsRoute
   '/admin/agent-work': typeof AdminLayoutAgentWorkRoute
@@ -927,10 +943,12 @@ export interface FileRoutesById {
   '/mentor-portal/$': typeof MentorPortalSplatRoute
   '/partnerships/login': typeof PartnershipsLoginRoute
   '/study-abroad/$slug': typeof StudyAbroadSlugRoute
+  '/study-rooms/$room': typeof StudyRoomsRoomRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/programmes/': typeof ProgrammesIndexRoute
   '/study-abroad/': typeof StudyAbroadIndexRoute
+  '/study-rooms/': typeof StudyRoomsIndexRoute
   '/admin/_layout/activity': typeof AdminLayoutActivityRoute
   '/admin/_layout/ads': typeof AdminLayoutAdsRoute
   '/admin/_layout/agent-work': typeof AdminLayoutAgentWorkRoute
@@ -1036,10 +1054,12 @@ export interface FileRouteTypes {
     | '/mentor-portal/$'
     | '/partnerships/login'
     | '/study-abroad/$slug'
+    | '/study-rooms/$room'
     | '/blog/'
     | '/community/'
     | '/programmes/'
     | '/study-abroad/'
+    | '/study-rooms/'
     | '/admin/activity'
     | '/admin/ads'
     | '/admin/agent-work'
@@ -1140,10 +1160,12 @@ export interface FileRouteTypes {
     | '/mentor-portal/$'
     | '/partnerships/login'
     | '/study-abroad/$slug'
+    | '/study-rooms/$room'
     | '/blog'
     | '/community'
     | '/programmes'
     | '/study-abroad'
+    | '/study-rooms'
     | '/admin/activity'
     | '/admin/ads'
     | '/admin/agent-work'
@@ -1247,10 +1269,12 @@ export interface FileRouteTypes {
     | '/mentor-portal/$'
     | '/partnerships/login'
     | '/study-abroad/$slug'
+    | '/study-rooms/$room'
     | '/blog/'
     | '/community/'
     | '/programmes/'
     | '/study-abroad/'
+    | '/study-rooms/'
     | '/admin/_layout/activity'
     | '/admin/_layout/ads'
     | '/admin/_layout/agent-work'
@@ -1350,9 +1374,11 @@ export interface RootRouteChildren {
   CommunityPortalLoginRoute: typeof CommunityPortalLoginRoute
   CommunityPortalSignupRoute: typeof CommunityPortalSignupRoute
   StudyAbroadSlugRoute: typeof StudyAbroadSlugRoute
+  StudyRoomsRoomRoute: typeof StudyRoomsRoomRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ProgrammesIndexRoute: typeof ProgrammesIndexRoute
   StudyAbroadIndexRoute: typeof StudyAbroadIndexRoute
+  StudyRoomsIndexRoute: typeof StudyRoomsIndexRoute
   ProgrammesSlugAptitudeRoute: typeof ProgrammesSlugAptitudeRoute
   ProgrammesSlugFinalRoute: typeof ProgrammesSlugFinalRoute
   ProgrammesSlugIndexRoute: typeof ProgrammesSlugIndexRoute
@@ -1648,6 +1674,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/study-rooms/': {
+      id: '/study-rooms/'
+      path: '/study-rooms'
+      fullPath: '/study-rooms/'
+      preLoaderRoute: typeof StudyRoomsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/study-abroad/': {
       id: '/study-abroad/'
       path: '/study-abroad'
@@ -1674,6 +1707,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/study-rooms/$room': {
+      id: '/study-rooms/$room'
+      path: '/study-rooms/$room'
+      fullPath: '/study-rooms/$room'
+      preLoaderRoute: typeof StudyRoomsRoomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/study-abroad/$slug': {
@@ -2298,9 +2338,11 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityPortalLoginRoute: CommunityPortalLoginRoute,
   CommunityPortalSignupRoute: CommunityPortalSignupRoute,
   StudyAbroadSlugRoute: StudyAbroadSlugRoute,
+  StudyRoomsRoomRoute: StudyRoomsRoomRoute,
   BlogIndexRoute: BlogIndexRoute,
   ProgrammesIndexRoute: ProgrammesIndexRoute,
   StudyAbroadIndexRoute: StudyAbroadIndexRoute,
+  StudyRoomsIndexRoute: StudyRoomsIndexRoute,
   ProgrammesSlugAptitudeRoute: ProgrammesSlugAptitudeRoute,
   ProgrammesSlugFinalRoute: ProgrammesSlugFinalRoute,
   ProgrammesSlugIndexRoute: ProgrammesSlugIndexRoute,

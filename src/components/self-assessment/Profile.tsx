@@ -228,14 +228,14 @@ export function SkillProfile({
         <div className="min-w-0">
           <p className="font-display text-lg font-semibold leading-snug text-white">Your starting point is saved</p>
           <p className="mt-1 text-sm leading-relaxed text-white/65">
-            Head to your LaunchPad to see your score, your objective and what to do next.
+            Your progress in your profile shows your score, your objective and what to do next.
           </p>
         </div>
         <Link
-          to="/dashboard"
+          to="/profile"
           className="press inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
         >
-          Go to your LaunchPad
+          See my progress
           <ArrowRight size={15} />
         </Link>
       </section>

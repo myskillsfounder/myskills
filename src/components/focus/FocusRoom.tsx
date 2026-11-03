@@ -19,6 +19,7 @@ import {
 import { errorMessage } from '@/lib/errors'
 import {
   MAX_CAMERAS,
+  OPEN_ROOM,
   addTopic,
   fetchTopics,
   removeTopic,
@@ -50,6 +51,7 @@ const sentence = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).
  * its skill tracks (Digital Marketing) or its modules (Global Leadership).
  */
 async function hintsFor(room: string): Promise<string[]> {
+  if (room === OPEN_ROOM) return ['Revision', 'Homework', 'Exam prep', 'Reading', 'My project']
   if (room === 'digital-marketing') return [...skillTracks.slice(0, 3).map((t) => t.name), 'Vocabulary', 'Foundation assessment']
   if (room === 'career-readiness') return [...CORE_MODULES.slice(0, 4).map(sentence), 'My project']
   try {
@@ -75,14 +77,14 @@ export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn:
   const go = (camera: boolean) => onEnter(text.trim(), camera)
   return (
     <div className="mx-auto max-w-xl">
-      <Link to="/community/focus-rooms" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
-        <ArrowLeft size={16} /> Focus Rooms
+      <Link to="/study-rooms" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
+        <ArrowLeft size={16} /> Study rooms
       </Link>
       <div className="card p-6 sm:p-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-600">Focus Room</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-600">Study room</p>
         <h1 className="mt-2 font-display text-2xl font-semibold text-ink-900 sm:text-3xl">{room.title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-ink-600">
-          Study alongside others in this programme. Your camera shows you at your desk, and there’s never any sound.
+          {room.slug === OPEN_ROOM ? 'Study alongside other students, whatever you’re working on.' : 'Study alongside others in this programme.'} Your camera shows you at your desk, and there’s never any sound.
         </p>
         <form
           className="mt-6"
@@ -188,8 +190,8 @@ export function FocusRoomLive({
     <div>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <Link to="/community/focus-rooms" className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
-            <ArrowLeft size={16} /> Focus Rooms
+          <Link to="/study-rooms" className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
+            <ArrowLeft size={16} /> Study rooms
           </Link>
           <h1 className="mt-1 truncate font-display text-2xl font-semibold text-ink-900">{room.title}</h1>
           <p className="mt-0.5 inline-flex items-center gap-1.5 text-sm text-ink-500">

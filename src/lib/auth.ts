@@ -209,12 +209,13 @@ export interface OnboardingProfile {
   start_level?: 'beginner' | 'experienced'
 }
 
-/** Persist the onboarding profile and mark the user onboarded (stored in
- * Supabase user metadata for now — move to a `profiles` table later).
- * Resolves to the auth provider ('email', 'google') for signup analytics. */
-export async function completeOnboarding(profile: OnboardingProfile): Promise<string> {
+/** Mark the user onboarded, with the onboarding profile when there is one
+ * (stored in Supabase user metadata). Since 3 Nov 2026 nothing is asked at
+ * sign-up, so usually there isn't: career stage and goal are optional, on the
+ * profile. Resolves to the auth provider ('email', 'google') for signup analytics. */
+export async function completeOnboarding(profile?: OnboardingProfile): Promise<string> {
   const { data, error } = await supabase.auth.updateUser({
-    data: { onboarded: true, profile },
+    data: profile ? { onboarded: true, profile } : { onboarded: true },
   })
   if (error) throw mapAuthError(error)
   return data.user?.app_metadata?.provider ?? 'email'

@@ -3,6 +3,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { AuthShell } from '@/components/auth/AuthShell'
 import { TextField } from '@/components/auth/TextField'
 import { updatePassword } from '@/lib/auth'
+import { homePath } from '@/lib/device'
 import { supabase } from '@/lib/supabase'
 import { Button, ButtonLink } from '@/components/ui'
 
@@ -59,7 +60,7 @@ function ResetPasswordPage() {
     try {
       await updatePassword(password)
       setDone(true)
-      window.setTimeout(() => router.navigate({ to: '/dashboard' }), 1500)
+      window.setTimeout(() => router.navigate({ to: homePath() }), 1500)
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {

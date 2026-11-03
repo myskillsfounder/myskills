@@ -3,11 +3,10 @@ import type { ComponentType, ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import {
   BookOpen,
-  ChevronRight,
-  LayoutDashboard,
   LogOut,
   Menu,
   MessageSquareHeart,
+  MoonStar,
   Plane,
   User,
   Users,
@@ -33,9 +32,12 @@ type IconType = ComponentType<{ size?: number; className?: string }>
  * it properly.
  */
 const NAV: { to: string; label: string; icon: IconType }[] = [
-  { to: '/dashboard', label: 'LaunchPad', icon: LayoutDashboard },
+  // Study rooms first: where a student lands after signing in. The LaunchPad
+  // became the profile's "My progress" (Paul, 3 Nov 2026).
+  { to: '/study-rooms', label: 'Study rooms', icon: MoonStar },
   { to: '/practice', label: 'Practice', icon: BookOpen },
   { to: '/community', label: 'Community', icon: Users },
+  { to: '/profile', label: 'Profile', icon: User },
   // Feedback moved to the sidebar footer (and stays on the LaunchPad).
   { to: '/study-abroad', label: 'Study abroad', icon: Plane },
 ]
@@ -98,7 +100,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <HelpCard onNavigate={onNavigate} />
         <AdSlider />
 
-        <ProfileNavCard onNavigate={onNavigate} active={pathname === '/profile'} />
+        <ProfileNavCard onNavigate={onNavigate} />
 
         <Link
           to="/feedback"
@@ -123,12 +125,11 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 /**
- * Profile entry in the sidebar footer. When personal details are still
- * incomplete, it doubles as a nudge — a slim progress bar and a nagging-but-
- * not-annoying reminder, right where someone is already looking for their
- * account. Disappears once the profile is complete.
+ * A nudge in the sidebar footer while personal details are still incomplete:
+ * a slim progress bar and a nagging-but-not-annoying reminder. The profile
+ * itself is in the menu above; this disappears once the details are complete.
  */
-function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; active: boolean }) {
+function ProfileNavCard({ onNavigate }: { onNavigate?: () => void }) {
   const { profile } = useProfile()
   // The "finish your profile" nag waits for the first step: a student who
   // hasn't taken an aptitude assessment has more important things to do.
@@ -137,42 +138,35 @@ function ProfileNavCard({ onNavigate, active }: { onNavigate?: () => void; activ
   const incomplete = missing.length > 0
   const percent = profile ? Math.round(((DETAIL_ITEMS.length - missing.length) / DETAIL_ITEMS.length) * 100) : null
 
+  if (!incomplete) return null
+
   return (
     <Link
       to="/profile"
+      search={{ tab: 'details' }}
       onClick={onNavigate}
-      className={`group flex flex-col gap-2 rounded-xl border px-3 py-2.5 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 ${
-        active ? 'border-ink-900/[0.12] bg-ink-100' : 'border-ink-900/[0.08] bg-white hover:bg-ink-100'
-      }`}
+      className="group flex flex-col gap-2 rounded-xl border border-ink-900/[0.08] bg-white px-3 py-2.5 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
     >
       <div className="flex items-center gap-3">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
           <User size={14} />
         </span>
-        <span className="min-w-0 flex-1 text-[13px] font-medium text-ink-900">Profile</span>
-        {incomplete ? (
-          <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
-            {percent}%
-          </span>
-        ) : (
-          <ChevronRight size={15} className="shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-0.5" />
-        )}
+        <span className="min-w-0 flex-1 text-[13px] font-medium text-ink-900">Your details</span>
+        <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+          {percent}%
+        </span>
       </div>
 
-      {incomplete && (
-        <>
-          <div className="h-1 overflow-hidden rounded-full bg-ink-200">
-            <span
-              className="block h-full rounded-full bg-amber-500 transition-[width] duration-300"
-              style={{ width: `${percent}%` }}
-            />
-          </div>
-          <p className="text-[11px] leading-snug text-ink-600">
-            Add {missing[0].label.toLowerCase()}
-            {missing.length > 1 ? ` +${missing.length - 1} more` : ''} to finish your profile.
-          </p>
-        </>
-      )}
+      <div className="h-1 overflow-hidden rounded-full bg-ink-200">
+        <span
+          className="block h-full rounded-full bg-amber-500 transition-[width] duration-300"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <p className="text-[11px] leading-snug text-ink-600">
+        Add {missing[0].label.toLowerCase()}
+        {missing.length > 1 ? ` +${missing.length - 1} more` : ''} to finish your profile.
+      </p>
     </Link>
   )
 }
@@ -200,7 +194,7 @@ export function AppShell({
   wide?: boolean
 }) {
   const [open, setOpen] = useState(false)
-  // A phone has the LaunchPad, Practice and the Community (lib/device.ts), all in the bottom bar: no menu.
+  // A phone has Study rooms, Practice, the Community and the profile (lib/device.ts), all in the bottom bar: no menu.
   const phone = isPhone()
   useDarkTheme()
 
@@ -217,7 +211,7 @@ export function AppShell({
           everything, the profile (where signing out is) included, is in the
           bottom bar, so the top bar is just the name. */}
       <div className="surface-paper sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900/[0.06] px-4 backdrop-blur lg:hidden">
-        <Link to="/dashboard" className="flex items-center gap-2">
+        <Link to="/study-rooms" className="flex items-center gap-2">
           <span className="font-display text-lg font-semibold tracking-tight text-ink-900">
             MySkills
           </span>

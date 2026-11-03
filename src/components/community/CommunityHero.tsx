@@ -6,7 +6,7 @@ import { ArrowLeft, type LucideIcon } from 'lucide-react'
  * keeps its own vibe"): Mentors for one-to-one sessions and expert guidance,
  * Internships for a first hands-on corporate experience, Institutions for
  * offline and peer learning, Wellness for the student's wellbeing first,
- * Focus Rooms for studying alongside others online (1 Nov 2026).
+ * Study rooms (once Focus Rooms) for studying alongside others online (1 Nov 2026).
  * One layout, five looks.
  */
 
@@ -95,14 +95,17 @@ export function CommunityHero({
   accent: string
   body: string
   points: { icon: LucideIcon; label: string }[]
-  back?: { to: '/community' | '/dashboard'; label: string }
+  /** Null for a page that is a tab of its own (Study rooms). */
+  back?: { to: '/community' | '/dashboard'; label: string } | null
 }) {
   const t = TONE[tone]
   return (
     <div>
-      <Link to={back.to} className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
-        <ArrowLeft size={16} /> {back.label}
-      </Link>
+      {back && (
+        <Link to={back.to} className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
+          <ArrowLeft size={16} /> {back.label}
+        </Link>
+      )}
       <section className={`relative overflow-hidden rounded-3xl p-6 shadow-e2 sm:p-9 ${t.box}`}>
         <span aria-hidden className={`absolute -right-16 -top-20 h-72 w-72 rounded-full blur-3xl ${t.glow}`} />
         <Icon aria-hidden size={220} strokeWidth={1} className={`absolute -bottom-10 right-4 hidden sm:block ${t.art}`} />

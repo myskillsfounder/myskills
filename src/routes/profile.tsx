@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { Award, Check, Copy, ExternalLink, LogOut } from 'lucide-react'
+import { Award, Check, Copy, ExternalLink, LogOut, Rocket, UserRound } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { signOut } from '@/lib/auth'
 import { isPhone } from '@/lib/device'
@@ -11,6 +11,8 @@ import { useMyBadges } from '@/lib/skillBadges'
 import { useMyProjects } from '@/lib/mentorProjects'
 import { useMyInternshipRecord } from '@/lib/internships'
 import { AppShell } from '@/components/app/AppShell'
+import { LaunchPad } from '@/components/dashboard/LaunchPad'
+import { AboutYouCard } from '@/components/profile/AboutYouCard'
 import { DistinctionBadge } from '@/components/certificate/DistinctionBadge'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { AchievementsSection } from '@/components/profile/AchievementsSection'
@@ -26,10 +28,44 @@ import { useBlueprint, useRecords } from '@/lib/personalBlueprint'
 import { refreshMyScore } from '@/lib/scoreService'
 import type { ScoredProgramme } from '@/lib/readinessScore'
 
+type ProfileTab = 'progress' | 'details'
+
+/**
+ * The student's own place: "My progress" is what was the LaunchPad (the score,
+ * programmes and next steps), "My details" is the profile a mentor or company
+ * sees. Study rooms is the app's first tab now (Paul, 3 Nov 2026).
+ */
 export const Route = createFileRoute('/profile')({
+  validateSearch: (s: Record<string, unknown>): { tab?: ProfileTab } => (s.tab === 'details' ? { tab: 'details' } : {}),
   beforeLoad: requireOnboarded,
   component: ProfilePage,
 })
+
+const TABS: { id: ProfileTab; label: string; icon: typeof Rocket }[] = [
+  { id: 'progress', label: 'My progress', icon: Rocket },
+  { id: 'details', label: 'My details', icon: UserRound },
+]
+
+function ProfileTabs({ tab }: { tab: ProfileTab }) {
+  return (
+    <div role="tablist" aria-label="Profile" className="mb-5 inline-flex rounded-full border border-ink-900/10 bg-white p-1 shadow-e1">
+      {TABS.map(({ id, label, icon: Icon }) => (
+        <Link
+          key={id}
+          to="/profile"
+          search={id === 'details' ? { tab: 'details' } : {}}
+          role="tab"
+          aria-selected={tab === id}
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+            tab === id ? 'bg-ink-900 text-white' : 'text-ink-600 hover:text-ink-900'
+          }`}
+        >
+          <Icon size={15} /> {label}
+        </Link>
+      ))}
+    </div>
+  )
+}
 
 /** One Foundation certificate, with its band and ID. */
 function CertificateRow({ cert }: { cert: Cert }) {
@@ -126,6 +162,7 @@ function CertificateCard() {
 }
 
 function ProfilePage() {
+  const tab: ProfileTab = Route.useSearch().tab ?? 'progress'
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
   const badges = useMyBadges()
@@ -161,6 +198,11 @@ function ProfilePage() {
 
   return (
     <AppShell wide>
+      <ProfileTabs tab={tab} />
+      {tab === 'progress' ? (
+        <LaunchPad />
+      ) : (
+      <>
       {loading && <p className="text-sm text-ink-600">Loading your profile…</p>}
 
       {error && (
@@ -187,6 +229,9 @@ function ProfilePage() {
 
           {/* Personal details moved out of onboarding — asked for here instead. */}
           <ProfileCompletion profile={profile} save={save} />
+
+          {/* What onboarding used to ask, now optional (Paul, 3 Nov 2026). */}
+          <AboutYouCard profile={profile} save={save} />
 
           {/* KYC: a verified profile is one employers can trust. Once it's all
               checked, the tick by the name says so — the checklist only shows
@@ -255,6 +300,8 @@ function ProfilePage() {
           </div>
           )}
         </div>
+      )}
+      </>
       )}
 
       {/* A phone has no menu: this is where it signs out. Outside the profile
