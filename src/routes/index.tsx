@@ -3,24 +3,19 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
   BookOpen,
-  ChevronUp,
   Briefcase,
   GraduationCap,
   Heart,
-  MessageCircleQuestion,
-  MicOff,
   Plane,
   Sparkles,
   Target,
   Trophy,
   Users,
-  Video,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { trackEvent } from '@/lib/analytics'
 import { COURSES } from '@/content/courses'
-import { STUDY_CROWD, STUDY_TILES, studyPhoto } from '@/lib/studyPhotos'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 
@@ -163,82 +158,6 @@ const BANDS = ['Getting started', 'Building', 'Strong', 'Standout']
 
 const target = (p: Pillar, signedIn: boolean) => (signedIn ? p.student : p.visitor)
 
-/** Every student in the hero's study room: the four of the phone's front door, then twelve more. */
-const ROOM = [...STUDY_TILES, ...STUDY_CROWD]
-
-/** Doubts on the room's board, the way the app shows them. */
-const DOUBTS = ['How do I revise a whole chapter in an hour?', 'Any tips for the SQL practice test?', 'How do I start my project brief?']
-
-/**
- * The hero's picture (Paul, 4 Nov 2026: "show an online study room with a lot
- * of students studying"): the app's study room, wide, as a video call, with
- * sixteen students at their desks, what each is on, and the doubts the room
- * is upvoting. Photos: lib/studyPhotos.ts.
- */
-function StudyRoomWindow() {
-  return (
-    <div className="relative mx-auto mt-10 max-w-6xl">
-      <span aria-hidden className="absolute -top-16 left-1/2 h-72 w-[80%] -translate-x-1/2 rounded-full bg-[#6d5bff]/30 blur-3xl" />
-      <span aria-hidden className="absolute -bottom-10 right-0 h-64 w-96 rounded-full bg-amber-400/15 blur-3xl" />
-
-      <div className="relative overflow-hidden rounded-[1.75rem] bg-[#0d0b22]/95 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-        {/* the window's bar */}
-        <div className="flex items-center gap-3 border-b border-white/[0.07] px-5 py-3">
-          <span className="flex gap-1.5" aria-hidden>
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          </span>
-          <span className="text-sm font-semibold text-white">Open study room</span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-200">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Live
-          </span>
-          <span className="ml-auto hidden items-center gap-1.5 text-xs text-white/55 sm:inline-flex">
-            <MicOff size={13} /> Camera on, no sound
-          </span>
-        </div>
-
-        {/* the students */}
-        <div className="grid grid-cols-4 gap-1.5 p-2 sm:gap-2 sm:p-3 lg:grid-cols-8">
-          {ROOM.map((t, i) => (
-            <div key={t.photo} className={`relative aspect-[4/3] overflow-hidden rounded-lg bg-white/5 ${i >= 8 ? 'hidden sm:block' : ''}`}>
-              <img src={studyPhoto(t.photo, 320, 240)} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: t.focus }} />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-4">
-                <span className="block truncate text-[10px] font-medium text-white sm:text-[11px]">{t.on}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* the doubts board and the controls */}
-        <div className="flex flex-col gap-3 border-t border-white/[0.07] px-4 py-3 lg:flex-row lg:items-center">
-          <span className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-amber-200">
-            <MessageCircleQuestion size={17} /> Ask your doubts
-          </span>
-          <ul className="flex min-w-0 flex-1 gap-2 overflow-hidden">
-            {DOUBTS.map((d, i) => (
-              <li key={d} className={`flex min-w-0 items-center gap-2 rounded-full bg-white/[0.06] py-1.5 pl-3 pr-1.5 ${i > 0 ? 'hidden md:flex' : ''}`}>
-                <span className="truncate text-xs text-white/80">{d}</span>
-                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
-                  <ChevronUp size={12} /> Upvote
-                </span>
-              </li>
-            ))}
-          </ul>
-          <span className="flex shrink-0 items-center gap-2" aria-hidden>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white">
-              <Video size={15} />
-            </span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/40">
-              <MicOff size={15} />
-            </span>
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /** One of the five parts as a photo card. */
 function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolean }) {
   const to = target(p, signedIn)
@@ -314,8 +233,8 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
-        {/* 1. The biggest online student community, and its study room. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-8">
+        {/* 1. The biggest online student community. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms are live now
@@ -340,7 +259,6 @@ function HomePage() {
             </div>
           </div>
 
-          <StudyRoomWindow />
         </section>
 
         {/* 2. The five parts of the platform. */}
