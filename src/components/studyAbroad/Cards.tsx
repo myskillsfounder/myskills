@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, Briefcase, CalendarDays, Clock, Cpu, GraduationCap, Hotel, Ship, Stethoscope, type LucideIcon } from 'lucide-react'
 import { APPLICATION_STATUS, type StudyProgramme, type StudyTheme } from '@/lib/studyAbroad'
-import { NursingScene } from './NursingScene'
+import { ProgrammePhoto, programmePhoto } from './Photos'
 
 /**
  * The study-abroad cards: a large, colourful card for featured programmes
@@ -88,11 +88,9 @@ export function Flag({ code, className = 'h-4 w-6' }: { code?: string | null; cl
   return <img src={`https://flagcdn.com/w80/${code}.png`} alt="" loading="lazy" className={`rounded-[3px] object-cover shadow-sm ring-1 ring-black/5 ${className}`} />
 }
 
-/** Nursing programmes get a nurse instead of an icon. */
-export const isNursing = (p: Pick<StudyProgramme, 'field' | 'title'>) => /nurs/i.test(`${p.field ?? ''} ${p.title}`)
 
-/** The drawn picture: a disc with the subject's icon on a soft base, and the flag on a pole. A nursing
- *  programme has its own scene instead (NursingScene.tsx). */
+/** The drawn picture: a disc with the subject's icon on a soft base, and the flag on a pole. A subject
+ *  with a real photo (Photos.tsx) shows that instead. */
 export function Illustration({ p, size = 'lg' }: { p: StudyProgramme; size?: 'lg' | 'md' }) {
   const t = themeOf(p)
   const Icon = subjectIcon(p)
@@ -135,8 +133,8 @@ export function FeaturedCard({ p }: { p: StudyProgramme }) {
       params={{ slug: p.slug }}
       className={`lift group relative flex h-full min-h-[17rem] w-[min(22rem,85vw)] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border p-5 sm:w-auto ${t.card}`}
     >
-      {/* A nursing programme shows its student abroad across the top. */}
-      {isNursing(p) && <NursingScene code={p.country_code} className="-mx-5 -mt-5 mb-4 h-44" />}
+      {/* A subject with a real photo shows it across the top. */}
+      <ProgrammePhoto p={p} className="-mx-5 -mt-5 mb-4 h-48" />
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           {p.badge && <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${t.badge}`}>{p.badge}</span>}
@@ -148,7 +146,7 @@ export function FeaturedCard({ p }: { p: StudyProgramme }) {
           <h3 className="font-display text-xl font-semibold leading-tight text-ink-900">{p.title}</h3>
           {p.university && <p className={`mt-1 text-xs font-semibold ${t.accent}`}>{p.university}</p>}
         </div>
-        {!isNursing(p) && <Illustration p={p} size="md" />}
+        {!programmePhoto(p) && <Illustration p={p} size="md" />}
       </div>
       {p.summary && <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-ink-600">{p.summary}</p>}
       {p.tags && p.tags.length > 0 && (
@@ -172,9 +170,9 @@ export function ProgrammeCard({ p }: { p: StudyProgramme }) {
   const t = themeOf(p)
   return (
     <Link to="/study-abroad/$slug" params={{ slug: p.slug }} className="lift group flex h-full flex-col overflow-hidden rounded-2xl border border-ink-900/[0.08] bg-white">
-      {isNursing(p) ? (
+      {programmePhoto(p) ? (
         <div className="relative border-b">
-          <NursingScene code={p.country_code} className="h-32" />
+          <ProgrammePhoto p={p} className="h-36" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
             {p.badge && <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] ${t.badge}`}>{p.badge}</span>}
             <StatusPill p={p} />

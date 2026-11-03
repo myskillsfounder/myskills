@@ -197,23 +197,6 @@ export const COMING_SOON: { code: string; country: string; note: string }[] = [
   { code: 'sg', country: 'Singapore', note: 'Asia’s education hub' },
 ]
 
-/** The countries this student asked to hear about; empty before the SQL is run. */
-export async function fetchMyStudyInterest(): Promise<string[]> {
-  const { data, error } = await supabase.rpc('my_study_abroad_interest')
-  if (error) return []
-  return (data ?? []) as string[]
-}
-
-/** Notify me, or not any more. Resolves to whether they're now on the list. */
-export async function toggleStudyInterest(code: string): Promise<boolean> {
-  const { data, error } = await supabase.rpc('study_abroad_toggle_interest', { p_code: code })
-  if (error) {
-    if (error.code === 'PGRST202') throw new Error('Notify me isn’t set up yet — run docs/supabase-study-abroad-interest.sql.')
-    throw new Error(error.message)
-  }
-  return data as boolean
-}
-
 /** For the team: students wanting each country, most first. Null before the SQL is run. */
 export async function fetchStudyInterestCounts(): Promise<{ country_code: string; students: number }[] | null> {
   const { data, error } = await supabase.rpc('admin_study_abroad_interest')
