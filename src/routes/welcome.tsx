@@ -107,7 +107,7 @@ function WelcomePage() {
             onClick={() => trackEvent('welcome_cta', { cta: 'study_online' })}
             className="press flex min-h-[3.5rem] w-full items-center justify-center gap-2 rounded-full bg-amber-400 text-lg font-bold text-[#1e1b4b] shadow-e2"
           >
-            Study online <ArrowRight size={20} />
+            Study Online <ArrowRight size={20} />
           </Link>
           <p className="text-center text-xs text-white/60">Free. Sign up in seconds with Google or your email.</p>
         </footer>
