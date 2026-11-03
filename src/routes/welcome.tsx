@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { BarChart3, Check, Globe2, GraduationCap, Megaphone, Rocket, Sparkles } from 'lucide-react'
+import { ArrowRight, BarChart3, Check, Globe2, GraduationCap, Megaphone, MicOff, MoonStar, Rocket, Sparkles, Users, Video } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import type { TestRoute } from '@/lib/pendingAptitude'
 import type { LeadProgramme } from '@/lib/programmes'
@@ -9,8 +9,9 @@ import { requirePhoneWelcome } from '@/lib/guards'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 
 /**
- * The phone's front door, for someone signed out: "I want to learn…", four
- * programmes. The open ones (Digital Marketing, Global Leadership) go to their
+ * The phone's front door, for someone signed out. First, studying online with
+ * others: sign up, and a new account lands in Study rooms (Paul, 4 Nov 2026).
+ * Then "What do you want to learn?", four programmes. The open ones (Digital Marketing, Global Leadership) go to their
  * aptitude test through sign-up; the coming ones (Entrepreneurship, Data
  * Analytics) take a lead. Anyone signed in is sent on by the guard: since 3 Nov
  * 2026 a new account answers no questions first (Paul).
@@ -83,16 +84,53 @@ function Intro() {
         </Link>
       </header>
 
-      {/* What MySkills is, what this page gives them, and what happens after
-          the tap, before they choose. */}
       <main className="flex flex-1 flex-col justify-center py-6">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-500/40 to-brand-400/20 px-3 py-1 text-xs font-semibold text-brand-100 ring-1 ring-brand-300/30">
+        {/* First: study online with others (Paul, 4 Nov 2026). Sign-up is the
+            way in, and a new account lands in Study rooms (lib/device.ts). */}
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#92400e] p-5 ring-1 ring-white/10">
+          <span aria-hidden className="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-amber-400/25 blur-3xl" />
+          <MoonStar aria-hidden size={120} strokeWidth={1} className="absolute -bottom-6 -right-4 text-white/[0.07]" />
+          <div className="relative">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-200">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms · Live now
+            </span>
+            <h1 className="mt-3 font-display text-[1.75rem] font-semibold leading-[1.12] tracking-tight text-white">
+              Study online with the biggest online community of learners
+            </h1>
+            <p className="mt-2 text-[15px] leading-relaxed text-white/75">
+              Join a live study room, camera on and no sound, and get your work done alongside students like you. Any
+              subject, any time.
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-white/75">
+              <li className="inline-flex items-center gap-1.5">
+                <Users size={14} className="text-amber-200" /> Students online now
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <Video size={14} className="text-amber-200" /> Camera on
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <MicOff size={14} className="text-amber-200" /> No sound
+              </li>
+            </ul>
+            <Link
+              to="/signup"
+              onClick={() => trackEvent('welcome_cta', { cta: 'study_online' })}
+              className="press mt-5 flex min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-full bg-amber-400 text-base font-bold text-[#1e1b4b] shadow-e2"
+            >
+              Start studying online <ArrowRight size={18} />
+            </Link>
+            <p className="mt-2 text-center text-xs text-white/65">Free. Sign up in seconds with Google or your email.</p>
+          </div>
+        </section>
+
+        {/* Then: a programme, starting with its aptitude test. */}
+        <span className="mt-8 inline-flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-500/40 to-brand-400/20 px-3 py-1 text-xs font-semibold text-brand-100 ring-1 ring-brand-300/30">
           <Sparkles size={13} />
           Powered by AI
         </span>
-        <h1 className="mt-3 font-display text-[1.875rem] font-semibold leading-[1.12] tracking-tight text-white">
-          Know your aptitude before you learn
-        </h1>
+        <h2 className="mt-3 font-display text-[1.5rem] font-semibold leading-[1.15] tracking-tight text-white">
+          Or know your aptitude before you learn
+        </h2>
         <p className="mt-2.5 text-[15px] leading-relaxed text-white/70">
           Take a short aptitude test first. Your AI coach reads your strengths and shows you where to start. Free, and
           no account needed yet.
