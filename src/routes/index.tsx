@@ -400,7 +400,9 @@ function HomePage() {
                 learning, expert mentors, internships and real-world experience, in one place.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'explore', place: 'hero' })} className={primaryCta}>
+                {/* Into the app: Study rooms, through sign-in for a visitor (the
+                    guard sends them to /login, and signing in lands there). */}
+                <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'explore', place: 'hero' })} className={primaryCta}>
                   Explore MySkills <ArrowRight size={18} />
                 </Link>
                 <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
