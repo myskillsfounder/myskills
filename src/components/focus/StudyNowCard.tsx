@@ -7,9 +7,30 @@ import { CAMERA, OPEN_HINTS, OPEN_ROOM, WORKING_ON_MAX } from '@/lib/focusRooms'
  * The top of Study rooms (Paul, 3 Nov 2026: "the top card should give camera
  * view"): a check-your-camera screen for the Open study room. The student sees
  * themselves, says what they're working on, and joins in one tap, past the
- * room's own lobby. The camera starts only when they ask, and the preview is
- * stopped before the room asks for it again (the browser doesn't ask twice).
+ * room's own lobby. The preview starts by itself (Paul: "always show camera
+ * preview"); the browser asks the first time. It stays on this device only,
+ * nothing is sent until they join, and it is stopped before the room asks for
+ * the camera again. Turning it off is remembered on this device.
  */
+
+const PREVIEW_OFF = 'myskills.studyPreviewOff'
+
+function previewOff(): boolean {
+  try {
+    return localStorage.getItem(PREVIEW_OFF) === '1'
+  } catch {
+    return false
+  }
+}
+
+function rememberOff(off: boolean) {
+  try {
+    if (off) localStorage.setItem(PREVIEW_OFF, '1')
+    else localStorage.removeItem(PREVIEW_OFF)
+  } catch {
+    /* only a convenience */
+  }
+}
 export function StudyNowCard({ topics }: { topics: number | null }) {
   const navigate = useNavigate()
   const video = useRef<HTMLVideoElement>(null)
@@ -18,24 +39,45 @@ export function StudyNowCard({ topics }: { topics: number | null }) {
   const [error, setError] = useState<string>()
   const [text, setText] = useState('')
 
+  // Only the latest request for the camera counts: one that arrives after the
+  // card has gone, or after a newer request, is stopped at once, so the camera
+  // light never stays on with nothing showing it.
+  const request = useRef(0)
+  useEffect(() => {
+    if (!previewOff()) void startCamera()
+    return () => {
+      request.current++
+    }
+    // Once, when the card appears.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     if (video.current) video.current.srcObject = stream
     return () => stream?.getTracks().forEach((t) => t.stop())
   }, [stream])
 
   async function startCamera() {
+    const mine = ++request.current
     setStarting(true)
     setError(undefined)
     try {
-      setStream(await navigator.mediaDevices.getUserMedia({ video: CAMERA, audio: false }))
+      const next = await navigator.mediaDevices.getUserMedia({ video: CAMERA, audio: false })
+      if (mine !== request.current) {
+        next.getTracks().forEach((t) => t.stop())
+        return
+      }
+      rememberOff(false)
+      setStream(next)
     } catch (e) {
+      if (mine !== request.current) return
       setError(
         e instanceof DOMException && e.name === 'NotAllowedError'
           ? 'Your browser blocked the camera. Allow it in the address bar, then try again.'
           : 'We couldn’t start your camera. Check no other app is using it.',
       )
     } finally {
-      setStarting(false)
+      if (mine === request.current) setStarting(false)
     }
   }
 
@@ -117,7 +159,7 @@ export function StudyNowCard({ topics }: { topics: number | null }) {
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
                   <VideoOff size={24} className="text-white/70" />
                 </span>
-                <p className="text-sm text-white/75">See yourself before you join.</p>
+                <p className="text-sm text-white/75">{starting ? 'Starting your camera…' : 'See yourself before you join.'}</p>
                 <button
                   type="button"
                   onClick={() => void startCamera()}
@@ -136,7 +178,10 @@ export function StudyNowCard({ topics }: { topics: number | null }) {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setStream(null)}
+                  onClick={() => {
+                    rememberOff(true)
+                    setStream(null)
+                  }}
                   className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold hover:bg-black/70"
                 >
                   <VideoOff size={12} /> Turn off
