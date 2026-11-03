@@ -9,7 +9,13 @@ import { AppShell } from '@/components/app/AppShell'
 import { FocusLobby, FocusRoomLive } from '@/components/focus/FocusRoom'
 import { ButtonLink, EmptyState, Skeleton } from '@/components/ui'
 
+/** Joined from the top of Study rooms (components/focus/StudyNowCard.tsx),
+ *  which has already asked what they're on and checked the camera: no lobby. */
+type JoinSearch = { on?: string; cam?: 0 | 1 }
+
 export const Route = createFileRoute('/study-rooms/$room')({
+  validateSearch: (s: Record<string, unknown>): JoinSearch =>
+    s.cam === 1 || s.cam === 0 ? { on: typeof s.on === 'string' ? s.on.slice(0, 80) : '', cam: s.cam } : {},
   beforeLoad: requireOnboarded,
   component: FocusRoomPage,
 })
@@ -21,7 +27,10 @@ function FocusRoomPage() {
   const { user } = useAuthUser()
   const { profile, loading: profileLoading } = useProfile()
   const [room, setRoom] = useState<FocusRoom | null>()
-  const [entered, setEntered] = useState<{ workingOn: string; camera: boolean }>()
+  const joined = Route.useSearch()
+  const [entered, setEntered] = useState<{ workingOn: string; camera: boolean } | undefined>(
+    joined.cam === undefined ? undefined : { workingOn: joined.on ?? '', camera: joined.cam === 1 },
+  )
 
   useEffect(() => {
     fetchMyFocusRooms().then((rooms) => setRoom(rooms.find((r) => r.slug === slug) ?? null))
