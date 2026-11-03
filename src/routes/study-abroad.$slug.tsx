@@ -15,7 +15,8 @@ import {
 } from '@/lib/studyAbroad'
 import { AppShell } from '@/components/app/AppShell'
 import { Markdown } from '@/components/admin/programme/Markdown'
-import { Flag, Illustration, themeOf } from '@/components/studyAbroad/Cards'
+import { Flag, Illustration, isNursing, themeOf } from '@/components/studyAbroad/Cards'
+import { NursingScene } from '@/components/studyAbroad/NursingScene'
 import { Alert, Badge, Button, EmptyState, Skeleton } from '@/components/ui'
 
 // Behind sign-in, so not in PAGE_SEO.
@@ -117,7 +118,8 @@ function StudyProgrammePage() {
                 )}
               </div>
               <div className="hidden sm:block">
-                <Illustration p={p} />
+                {/* A nursing programme shows its student abroad; the rest their drawn icon. */}
+                {isNursing(p) ? <NursingScene code={p.country_code} className="h-44 w-80 rounded-2xl" /> : <Illustration p={p} />}
               </div>
             </header>
             {p.status === 'draft' && (

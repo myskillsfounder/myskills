@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BadgeCheck, Check, Flame, Lock, type LucideIcon } from 'lucide-react'
-import { Flag, Nurse } from '@/components/studyAbroad/Cards'
+import { Flag } from '@/components/studyAbroad/Cards'
+import { NursingScene } from '@/components/studyAbroad/NursingScene'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { trackEvent } from '@/lib/analytics'
@@ -398,9 +399,7 @@ function Trending({ id, t, first = false }: { id: GlimpseProps['id']; t: Glimpse
             </div>
           </div>
           {t.art === 'nurse' && (
-            <div className="relative mx-auto hidden h-56 w-56 items-end justify-center overflow-hidden rounded-full bg-gradient-to-b from-[#f9a66c]/30 to-[#7c3aed]/20 ring-1 ring-white/15 lg:flex">
-              <Nurse className="h-48 w-auto" />
-            </div>
+            <NursingScene className="mx-auto hidden h-56 w-96 rounded-3xl ring-1 ring-white/15 lg:block" />
           )}
         </div>
       </div>
