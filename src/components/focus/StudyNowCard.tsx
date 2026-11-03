@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight, MicOff, ShieldCheck, Video, VideoOff } from 'lucide-react'
-import { CAMERA, OPEN_HINTS, OPEN_ROOM, WORKING_ON_MAX } from '@/lib/focusRooms'
+import { CAMERA, OPEN_HINTS, OPEN_ROOM, WORKING_ON_MAX, type FocusPresence } from '@/lib/focusRooms'
+import { OnlineNow, uniqueStudents } from './OnlineNow'
 
 /**
  * The top of Study rooms (Paul, 3 Nov 2026: "the top card should give camera
@@ -31,7 +32,7 @@ function rememberOff(off: boolean) {
     /* only a convenience */
   }
 }
-export function StudyNowCard({ topics }: { topics: number | null }) {
+export function StudyNowCard({ topics, people }: { topics: number | null; people: FocusPresence[] | undefined }) {
   const navigate = useNavigate()
   const video = useRef<HTMLVideoElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
@@ -101,6 +102,23 @@ export function StudyNowCard({ topics }: { topics: number | null }) {
             Check your camera, say what you’re working on, and join students studying right now. Any subject, any programme.
           </p>
 
+          {/* Who is in the room now, and what a few of them are on. */}
+          <div className="mt-4 space-y-2">
+            <OnlineNow people={people} tone="banner" empty="No one in the room yet. Be the first: others see you when they arrive." />
+            {uniqueStudents(people ?? []).some((p) => p.working_on) && (
+              <div className="flex flex-wrap gap-1.5">
+                {uniqueStudents(people ?? [])
+                  .filter((p) => p.working_on)
+                  .slice(0, 3)
+                  .map((p) => (
+                    <span key={p.user_id} className="max-w-[14rem] truncate rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/85">
+                      {p.name.split(' ')[0]} · {p.working_on}
+                    </span>
+                  ))}
+              </div>
+            )}
+          </div>
+
           <form
             className="mt-5"
             onSubmit={(e) => {
@@ -137,9 +155,9 @@ export function StudyNowCard({ topics }: { topics: number | null }) {
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-5 py-2.5 text-sm font-semibold text-[#1e1b4b] shadow-e1 transition-colors hover:bg-amber-300"
+                className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-7 py-3.5 text-base font-bold text-[#1e1b4b] shadow-e2 transition-colors hover:bg-amber-300"
               >
-                Join now <ArrowRight size={16} />
+                Join the room <ArrowRight size={18} />
               </button>
               <button type="button" onClick={() => join(false)} className="text-sm font-medium text-white/75 hover:text-white">
                 Join with camera off
@@ -186,11 +204,19 @@ export function StudyNowCard({ topics }: { topics: number | null }) {
                 >
                   <VideoOff size={12} /> Turn off
                 </button>
-                {text.trim() && (
-                  <span className="absolute inset-x-3 bottom-3 truncate rounded-lg bg-black/55 px-3 py-1.5 text-xs">
-                    Working on: {text.trim()}
+                {/* Join from right here: the camera is ready. */}
+                <div className="absolute inset-x-3 bottom-3 flex items-center gap-2">
+                  <span className="min-w-0 flex-1 truncate rounded-lg bg-black/55 px-3 py-2 text-xs">
+                    {text.trim() ? `Working on: ${text.trim()}` : 'Looking good'}
                   </span>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => join(true)}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber-400 px-4 py-2 text-sm font-bold text-[#1e1b4b] shadow-e1 hover:bg-amber-300"
+                  >
+                    Join <ArrowRight size={15} />
+                  </button>
+                </div>
               </>
             )}
           </div>

@@ -110,6 +110,77 @@ interface Peer {
   pending: RTCIceCandidateInit[]
 }
 
+/*
+ * supabase-js hands back the existing channel when one with the same topic is
+ * still open, and closing one takes a round trip. Study rooms watches each
+ * room (useRoomsOnline) and then, a moment later, the student joins one
+ * (useFocusRoom) on the same topic: so a channel is only opened once any
+ * earlier one on that topic has fully closed.
+ */
+const closing = new Map<string, Promise<unknown>>()
+
+function closeChannel(ch: RealtimeChannel) {
+  const done = supabase.removeChannel(ch).catch(() => undefined)
+  closing.set(ch.topic, done)
+  void done.finally(() => {
+    if (closing.get(ch.topic) === done) closing.delete(ch.topic)
+  })
+}
+
+async function openChannel(topic: string, config: { private: boolean; presence: { key: string }; broadcast?: { self: boolean } }) {
+  await closing.get(`realtime:${topic}`)
+  const left = supabase.getChannels().find((c) => c.topic === `realtime:${topic}`)
+  if (left) await supabase.removeChannel(left).catch(() => undefined)
+  // Private channels authorise with the student's own token.
+  const { data } = await supabase.auth.getSession()
+  if (data.session) await supabase.realtime.setAuth(data.session.access_token)
+  return supabase.channel(topic, { config })
+}
+
+/** Who is in the room now, oldest first, one entry per open tab. */
+function presenceList(ch: RealtimeChannel): FocusPresence[] {
+  return Object.values(ch.presenceState<FocusPresence>())
+    .map((metas) => metas[0])
+    .filter((p): p is FocusPresence & { presence_ref: string } => !!p?.session)
+    .sort((a, b) => a.joined_at.localeCompare(b.joined_at))
+}
+
+/**
+ * Who is studying in each room right now, for the Study rooms page (Paul,
+ * 3 Nov 2026: "showing other people who are online"). It listens to each
+ * room's presence without joining it: the watcher shares nothing and nobody
+ * sees it, and only students who may enter a room can watch it (the same
+ * Realtime policy as joining).
+ */
+export function useRoomsOnline(slugs: string[]): Record<string, FocusPresence[]> {
+  const [online, setOnline] = useState<Record<string, FocusPresence[]>>({})
+  const key = slugs.join(',')
+  useEffect(() => {
+    let live = true
+    const opened: RealtimeChannel[] = []
+    for (const slug of key ? key.split(',') : []) {
+      void openChannel(`focus:${slug}`, { private: true, presence: { key: `watch-${crypto.randomUUID()}` } }).then((ch) => {
+        if (!live) {
+          closeChannel(ch)
+          return
+        }
+        opened.push(ch)
+        ch.on('presence', { event: 'sync' }, () => {
+          if (live) setOnline((o) => ({ ...o, [slug]: presenceList(ch) }))
+        }).subscribe((state) => {
+          // Can't see in: say nobody, rather than "checking" for ever.
+          if (live && (state === 'CHANNEL_ERROR' || state === 'TIMED_OUT')) setOnline((o) => ({ ...o, [slug]: o[slug] ?? [] }))
+        })
+      })
+    }
+    return () => {
+      live = false
+      opened.forEach(closeChannel)
+    }
+  }, [key])
+  return online
+}
+
 export type RoomStatus = 'joining' | 'live' | 'denied' | 'error'
 
 /**
@@ -229,29 +300,26 @@ export function useFocusRoom(
   useEffect(() => {
     let live = true
     const all = peers.current
-    const ch = supabase.channel(`focus:${room}`, {
-      config: { private: true, presence: { key: session }, broadcast: { self: false } },
-    })
-    channel.current = ch
-
-    ch.on('presence', { event: 'sync' }, () => {
-      const list = Object.values(ch.presenceState<FocusPresence>())
-        .map((metas) => metas[0])
-        .filter((p): p is FocusPresence & { presence_ref: string } => !!p?.session)
-        .sort((a, b) => a.joined_at.localeCompare(b.joined_at))
-      others.current = list.filter((p) => p.session !== session)
-      setPeople(list)
-      void sync().catch(() => undefined)
-    })
-      .on('broadcast', { event: 'signal' }, ({ payload }) => void onSignal(payload as Signal).catch(() => undefined))
-      .on('broadcast', { event: 'topics' }, () => setTopicsTick((t) => t + 1))
+    let ch: RealtimeChannel | null = null
 
     void (async () => {
-      // Private channels authorise with the student's own token.
-      const { data } = await supabase.auth.getSession()
-      if (data.session) await supabase.realtime.setAuth(data.session.access_token)
-      if (!live) return
-      ch.subscribe((state, err) => {
+      const opened = await openChannel(`focus:${room}`, { private: true, presence: { key: session }, broadcast: { self: false } })
+      if (!live) {
+        closeChannel(opened)
+        return
+      }
+      ch = opened
+      channel.current = opened
+      opened
+        .on('presence', { event: 'sync' }, () => {
+          const list = presenceList(opened)
+          others.current = list.filter((p) => p.session !== session)
+          setPeople(list)
+          void sync().catch(() => undefined)
+        })
+        .on('broadcast', { event: 'signal' }, ({ payload }) => void onSignal(payload as Signal).catch(() => undefined))
+        .on('broadcast', { event: 'topics' }, () => setTopicsTick((t) => t + 1))
+      opened.subscribe((state, err) => {
         if (!live) return
         if (state === 'SUBSCRIBED') {
           setStatus('live')
@@ -272,7 +340,7 @@ export function useFocusRoom(
       all.clear()
       track.current?.stop()
       track.current = null
-      void supabase.removeChannel(ch)
+      if (ch) closeChannel(ch)
       channel.current = null
     }
     // The room is joined once per mount; `announce` and friends read refs.
