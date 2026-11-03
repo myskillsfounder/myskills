@@ -19,7 +19,9 @@ import {
 import { errorMessage } from '@/lib/errors'
 import {
   MAX_CAMERAS,
+  OPEN_HINTS,
   OPEN_ROOM,
+  WORKING_ON_MAX,
   addTopic,
   fetchTopics,
   removeTopic,
@@ -41,7 +43,6 @@ export interface Me {
   avatar: string | null
 }
 
-const WORKING_ON_MAX = 80
 
 const sentence = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
 
@@ -51,7 +52,7 @@ const sentence = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).
  * its skill tracks (Digital Marketing) or its modules (Global Leadership).
  */
 async function hintsFor(room: string): Promise<string[]> {
-  if (room === OPEN_ROOM) return ['Revision', 'Homework', 'Exam prep', 'Reading', 'My project']
+  if (room === OPEN_ROOM) return OPEN_HINTS
   if (room === 'digital-marketing') return [...skillTracks.slice(0, 3).map((t) => t.name), 'Vocabulary', 'Foundation assessment']
   if (room === 'career-readiness') return [...CORE_MODULES.slice(0, 4).map(sentence), 'My project']
   try {

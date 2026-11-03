@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, BookOpen, MessageSquareText, MicOff, MoonStar, Users, Video } from 'lucide-react'
+import { ArrowRight, BookOpen, Users } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { fetchMyFocusRooms, OPEN_ROOM, type FocusRoom } from '@/lib/focusRooms'
 import { AppShell } from '@/components/app/AppShell'
-import { CommunityHero, HowItWorks } from '@/components/community/CommunityHero'
-import { ButtonLink, EmptyState, Skeleton } from '@/components/ui'
+import { HowItWorks } from '@/components/community/CommunityHero'
+import { StudyNowCard } from '@/components/focus/StudyNowCard'
+import { ButtonLink, EmptyState } from '@/components/ui'
 
 /**
  * Study rooms, the app's first tab and where a student lands after signing in
@@ -33,45 +34,8 @@ function StudyRoomsPage() {
   return (
     <AppShell wide>
       <div className="space-y-6">
-        <CommunityHero
-          tone="focus"
-          back={null}
-          icon={MoonStar}
-          eyebrow="Study rooms"
-          title="Study together,"
-          accent="wherever you are."
-          body="Join a live room, turn your camera on, say what you’re working on and get going alongside other students. Upvote the topics that matter. No sound, nothing recorded."
-          points={[
-            { icon: Video, label: 'Camera on' },
-            { icon: MicOff, label: 'No sound' },
-            { icon: MessageSquareText, label: 'Upvote topics' },
-          ]}
-        />
-
-        {rooms === undefined && <Skeleton className="h-40 w-full" />}
-
-        {/* Everyone's room, first and biggest: the way in on day one. */}
-        {open && (
-          <Link
-            to="/study-rooms/$room"
-            params={{ room: open.slug }}
-            className="theme-light group relative block overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#92400e] p-6 text-white shadow-e2 sm:p-8"
-          >
-            <span aria-hidden className="absolute -right-16 -top-20 h-72 w-72 rounded-full bg-amber-400/25 blur-3xl" />
-            <span className="relative flex flex-wrap items-center justify-between gap-4">
-              <span className="min-w-0 max-w-xl">
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200">Open to everyone · Live now</span>
-                <span className="mt-2 block font-display text-2xl font-bold leading-tight sm:text-3xl">{open.title}</span>
-                <span className="mt-2 block text-[15px] leading-relaxed text-white/80">
-                  Any subject, any programme. Come in, say what you’re studying and work alongside others. {topicsLine(open, '')}
-                </span>
-              </span>
-              <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-amber-400 px-5 py-2.5 text-sm font-semibold text-[#1e1b4b] shadow-e1 transition-colors group-hover:bg-amber-300">
-                Join now <ArrowRight size={16} />
-              </span>
-            </span>
-          </Link>
-        )}
+        {/* You on camera and the Open study room, one tap away. */}
+        <StudyNowCard topics={open?.topics ?? null} />
 
         {programmeRooms && (
           <section>

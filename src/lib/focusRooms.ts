@@ -18,6 +18,12 @@ import { supabase } from './supabase'
  *  tab on 3 Nov 2026, and a new student has no programme yet. */
 export const OPEN_ROOM = 'open'
 
+/** What the Open study room suggests for "What are you working on?". */
+export const OPEN_HINTS = ['Revision', 'Homework', 'Exam prep', 'Reading', 'My project']
+
+/** "What I'm working on" fits under a camera tile. */
+export const WORKING_ON_MAX = 80
+
 /** A room the student may enter: the Open study room, and one per programme they are in. */
 export interface FocusRoom {
   slug: string
@@ -86,7 +92,8 @@ export async function reportStudent(room: string, userId: string, reason: string
 export const MAX_CAMERAS = 8
 
 /** Small and steady: eight of these fit a phone's upload. */
-const CAMERA: MediaTrackConstraints = { width: { ideal: 320 }, height: { ideal: 240 }, frameRate: { ideal: 15, max: 15 } }
+/** Small and slow on purpose: every camera goes to every other student. */
+export const CAMERA: MediaTrackConstraints = { width: { ideal: 320 }, height: { ideal: 240 }, frameRate: { ideal: 15, max: 15 } }
 
 const ICE: RTCConfiguration = {
   iceServers: [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }],
