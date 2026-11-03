@@ -14,12 +14,13 @@ import {
   Target,
   Trophy,
   Users,
+  Video,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { trackEvent } from '@/lib/analytics'
 import { COURSES } from '@/content/courses'
-import { STUDY_TILES, studyPhoto } from '@/lib/studyPhotos'
+import { STUDY_CROWD, STUDY_TILES, studyPhoto } from '@/lib/studyPhotos'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 
@@ -54,7 +55,6 @@ const eyebrow = 'text-[11px] font-semibold uppercase tracking-[0.32em] text-[#b9
 const h2 = 'mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl'
 const gradientText = 'bg-gradient-to-r from-[#8f6bff] via-[#b496ff] to-[#dcc7ff] bg-clip-text text-transparent'
 /** Paul's handwritten notes beside the student. */
-const hand = "font-['Caveat',cursive] text-white/80"
 
 const primaryCta =
   'press inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#7b6cf6] to-[#4f46e5] px-6 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.9)] transition-opacity hover:opacity-90'
@@ -163,60 +163,78 @@ const BANDS = ['Getting started', 'Building', 'Strong', 'Standout']
 
 const target = (p: Pillar, signedIn: boolean) => (signedIn ? p.student : p.visitor)
 
-/** A row of faces, overlapping, in rings of the page's navy. */
-function Faces({ faces, size = 'h-9 w-9' }: { faces: string[]; size?: string }) {
-  return (
-    <span className="flex -space-x-2.5">
-      {faces.map((f) => (
-        <img key={f} src={`/home/${f}.webp`} alt="" className={`${size} rounded-full object-cover ring-2 ring-[#040a1e]`} />
-      ))}
-    </span>
-  )
-}
+/** Every student in the hero's study room: the four of the phone's front door, then twelve more. */
+const ROOM = [...STUDY_TILES, ...STUDY_CROWD]
+
+/** Doubts on the room's board, the way the app shows them. */
+const DOUBTS = ['How do I revise a whole chapter in an hour?', 'Any tips for the SQL practice test?', 'How do I start my project brief?']
 
 /**
- * The hero's picture since 4 Nov 2026 (Paul: "change the background, change
- * CTAs to study online"): a live study room, students at their desks with
- * what each is on, a doubt the room is upvoting, in an amber and indigo glow.
- * Photos: lib/studyPhotos.ts.
+ * The hero's picture (Paul, 4 Nov 2026: "show an online study room with a lot
+ * of students studying"): the app's study room, wide, as a video call, with
+ * sixteen students at their desks, what each is on, and the doubts the room
+ * is upvoting. Photos: lib/studyPhotos.ts.
  */
-function StudyRoomStage() {
+function StudyRoomWindow() {
   return (
-    <div className="relative mx-auto w-full max-w-[38rem] py-6">
-      <span aria-hidden className="absolute -right-10 top-0 h-80 w-80 rounded-full bg-amber-400/25 blur-3xl" />
-      <span aria-hidden className="absolute -left-6 bottom-0 h-72 w-72 rounded-full bg-[#5b4bff]/30 blur-3xl" />
+    <div className="relative mx-auto mt-10 max-w-6xl">
+      <span aria-hidden className="absolute -top-16 left-1/2 h-72 w-[80%] -translate-x-1/2 rounded-full bg-[#6d5bff]/30 blur-3xl" />
+      <span aria-hidden className="absolute -bottom-10 right-0 h-64 w-96 rounded-full bg-amber-400/15 blur-3xl" />
 
-      <div className="relative rounded-[2rem] bg-[#14122b]/90 p-4 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10 backdrop-blur">
-        <div className="mb-3 flex items-center justify-between px-1">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-emerald-200">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> Study room · Live
+      <div className="relative overflow-hidden rounded-[1.75rem] bg-[#0d0b22]/95 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
+        {/* the window's bar */}
+        <div className="flex items-center gap-3 border-b border-white/[0.07] px-5 py-3">
+          <span className="flex gap-1.5" aria-hidden>
+            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
+          <span className="text-sm font-semibold text-white">Open study room</span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-200">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Live
+          </span>
+          <span className="ml-auto hidden items-center gap-1.5 text-xs text-white/55 sm:inline-flex">
             <MicOff size={13} /> Camera on, no sound
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          {STUDY_TILES.map((t) => (
-            <div key={t.on} className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white/10">
-              <img src={studyPhoto(t.photo, 480, 360)} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: t.focus }} />
-              <span className="absolute left-2.5 top-2.5 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-black/30" />
-              <span className="absolute inset-x-2.5 bottom-2.5 truncate rounded-lg bg-black/55 px-2 py-1 text-xs font-medium text-white">{t.on}</span>
+
+        {/* the students */}
+        <div className="grid grid-cols-4 gap-1.5 p-2 sm:gap-2 sm:p-3 lg:grid-cols-8">
+          {ROOM.map((t, i) => (
+            <div key={t.photo} className={`relative aspect-[4/3] overflow-hidden rounded-lg bg-white/5 ${i >= 8 ? 'hidden sm:block' : ''}`}>
+              <img src={studyPhoto(t.photo, 320, 240)} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: t.focus }} />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-4">
+                <span className="block truncate text-[10px] font-medium text-white sm:text-[11px]">{t.on}</span>
+              </span>
             </div>
           ))}
         </div>
-        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white/[0.06] px-4 py-3">
-          <MessageCircleQuestion size={18} className="shrink-0 text-amber-200" />
-          <span className="min-w-0 flex-1">
-            <span className="block text-[11px] font-semibold uppercase tracking-wide text-amber-200">Ask your doubts</span>
-            <span className="block truncate text-sm text-white/85">“How do I revise a whole chapter in an hour?”</span>
+
+        {/* the doubts board and the controls */}
+        <div className="flex flex-col gap-3 border-t border-white/[0.07] px-4 py-3 lg:flex-row lg:items-center">
+          <span className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-amber-200">
+            <MessageCircleQuestion size={17} /> Ask your doubts
           </span>
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-400/20 px-2.5 py-1 text-xs font-semibold text-amber-100">
-            <ChevronUp size={14} /> Upvote
+          <ul className="flex min-w-0 flex-1 gap-2 overflow-hidden">
+            {DOUBTS.map((d, i) => (
+              <li key={d} className={`flex min-w-0 items-center gap-2 rounded-full bg-white/[0.06] py-1.5 pl-3 pr-1.5 ${i > 0 ? 'hidden md:flex' : ''}`}>
+                <span className="truncate text-xs text-white/80">{d}</span>
+                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
+                  <ChevronUp size={12} /> Upvote
+                </span>
+              </li>
+            ))}
+          </ul>
+          <span className="flex shrink-0 items-center gap-2" aria-hidden>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white">
+              <Video size={15} />
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/40">
+              <MicOff size={15} />
+            </span>
           </span>
         </div>
       </div>
-
-      <p aria-hidden className={`${hand} absolute -top-2 right-6 rotate-[6deg] text-[1.25rem]`}>Study together, anywhere</p>
     </div>
   )
 }
@@ -296,43 +314,33 @@ function HomePage() {
       <Navbar dark />
 
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
-        {/* 1. Study online, together. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14 lg:px-8">
-          <div className="grid items-center gap-8 xl:grid-cols-[1fr_38rem] xl:gap-10">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
-                <Users size={14} className="text-[#b496ff]" /> The biggest community of online learners
-              </p>
-              <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-6xl xl:text-[3.75rem]">
-                <span className="block">Study online,</span>
-                <span className={`block pb-2 ${gradientText}`}>together.</span>
-              </h1>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
-                Join the biggest community of online learners. Step into a live study room, turn your camera on, ask your
-                doubts and get it done alongside students like you. Free, any subject, any time.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                {/* Into the app: Study rooms, through sign-in for a visitor (the
-                    guard sends them to /login, and signing in lands there). */}
-                <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={primaryCta}>
-                  Study online <ArrowRight size={18} />
-                </Link>
-                <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
-                  Partner with us
-                </Link>
-              </div>
-              <div className="mt-9 flex items-center gap-4">
-                <Faces faces={['face-1', 'face-4', 'face-3', 'face-2']} />
-                <p className="text-sm leading-snug text-white/70">
-                  Join the biggest community
-                  <br />
-                  of online learners.
-                </p>
-              </div>
+        {/* 1. The biggest online student community, and its study room. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms are live now
+            </p>
+            <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              The biggest online
+              <span className={`block pb-2 ${gradientText}`}>student community.</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">
+              Study together in live rooms: camera on, no sound. Ask your doubts, upvote the ones that matter, and get it done
+              alongside students like you. Free, any subject, any time.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              {/* Into the app: Study rooms, through sign-in for a visitor (the
+                  guard sends them to /login, and signing in lands there). */}
+              <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={primaryCta}>
+                Study online <ArrowRight size={18} />
+              </Link>
+              <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
+                Partner with us
+              </Link>
             </div>
-
-            <StudyRoomStage />
           </div>
+
+          <StudyRoomWindow />
         </section>
 
         {/* 2. The five parts of the platform. */}
