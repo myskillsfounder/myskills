@@ -234,7 +234,7 @@ function HomePage() {
 
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
         {/* 1. The biggest online student community. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24 lg:px-8">
+        <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 sm:pt-24 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms are live now
@@ -259,11 +259,8 @@ function HomePage() {
             </div>
           </div>
 
-        </section>
-
-        {/* 2. The five parts of the platform. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {/* The five parts of the platform, right under the buttons (Paul, 4 Nov 2026). */}
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {PILLARS.map((p, i) => (
               <PillarCard key={p.id} p={p} n={i + 1} signedIn={signedIn} />
             ))}
