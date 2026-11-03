@@ -4,7 +4,6 @@ import {
   ArrowRight,
   BookOpen,
   Briefcase,
-  GraduationCap,
   Heart,
   Plane,
   Sparkles,
@@ -132,13 +131,6 @@ const PILLARS: Pillar[] = [
   },
 ]
 
-const PARTNERS: { icon: LucideIcon; title: string; body: string; photo: string }[] = [
-  { icon: GraduationCap, title: 'Institutions', body: 'Colleges, training institutes, skill centres', photo: 'institutions' },
-  { icon: Users, title: 'Mentors', body: 'Industry experts, professionals, coaches', photo: 'paul-mentorship' },
-  { icon: Plane, title: 'Study Abroad Partners', body: 'Universities, consultants, overseas education providers', photo: 'card-study-abroad' },
-  { icon: Briefcase, title: 'Internship Partners', body: 'Companies and organisations offering internships', photo: 'card-career' },
-]
-
 /** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
 const AI_ERA: { icon: LucideIcon; title: string; body: string }[] = [
   { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.' },
@@ -183,30 +175,6 @@ function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolea
       <span className="relative mt-1.5 block max-w-[80%] text-[13px] leading-relaxed text-white/70 [text-shadow:0_1px_10px_rgba(4,10,30,0.95)]">{p.body}</span>
       <span className="relative mt-auto inline-flex w-fit items-center gap-2 rounded-lg border border-white/25 bg-[#040a1e]/50 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors group-hover:border-brand-200/60 group-hover:bg-white/10">
         {p.cta} <ArrowRight size={14} />
-      </span>
-    </Link>
-  )
-}
-
-function PartnerCard({ p }: { p: (typeof PARTNERS)[number] }) {
-  return (
-    <Link
-      to={PARTNER_SIGNUP.to}
-      onClick={() => trackEvent('home_partner', { partner: p.title })}
-      className={`${glass} group relative flex min-h-[5.5rem] items-center overflow-hidden py-3 pl-4 pr-28 transition-colors hover:border-brand-300/50`}
-    >
-      <img
-        src={`/home/${p.photo}.webp`}
-        alt=""
-        loading="lazy"
-        className="absolute inset-y-0 right-0 h-full w-32 object-cover object-[50%_25%] opacity-90 [mask-image:linear-gradient(to_left,black_45%,transparent)]"
-      />
-      <span className="relative flex items-center gap-3">
-        <p.icon size={24} fill="currentColor" className="shrink-0 text-white" />
-        <span className="min-w-0">
-          <span className="block font-display text-[15px] font-semibold leading-tight text-white">{p.title}</span>
-          <span className="mt-0.5 block text-[12px] leading-snug text-white/65">{p.body}</span>
-        </span>
       </span>
     </Link>
   )
@@ -296,24 +264,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 4. Our partners and providers. */}
-        <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className={`${glass} grid gap-4 p-4 lg:grid-cols-[14rem_1fr] lg:items-center`}>
-            <div className="px-2 py-1">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-white">Our partners &amp; providers</p>
-              <p className="mt-2 text-[13px] leading-relaxed text-white/60">
-                We work with institutions, mentors and service providers to deliver everything a student needs.
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
-              {PARTNERS.map((p) => (
-                <PartnerCard key={p.title} p={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 5. The courses. */}
+        {/* 4. The courses. */}
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHead kicker="Learning programmes" title="Skills for" accent="the AI era." />
@@ -362,7 +313,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 6. The Global Readiness Score. */}
+        {/* 5. The Global Readiness Score. */}
         <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className={`${glass} grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center`}>
             <div>
@@ -406,7 +357,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 7. Step in. */}
+        {/* 6. Step in. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl border border-brand-200/25 bg-gradient-to-br from-brand-600/40 via-brand-700/25 to-fuchsia-600/20 px-6 py-12 text-center shadow-[0_0_80px_-20px_rgba(143,133,238,0.7)] sm:px-12">
             <span aria-hidden className="absolute -top-24 left-1/2 h-48 w-[70%] -translate-x-1/2 rounded-full bg-brand-300/30 blur-3xl" />
