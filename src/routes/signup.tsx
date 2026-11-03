@@ -112,7 +112,8 @@ function SignupPage() {
         return
       }
       await resendCode(email, confirmLandsOn('/onboarding'))
-      setNotice(`New code sent to ${email}.`)
+      setNotice(`New code sent to ${email}. Use the one in the newest email: earlier codes stop working.`)
+      setCode('')
     } catch (err) {
       applyError(err)
     }
@@ -172,7 +173,7 @@ function SignupPage() {
           </Button>
 
           <p className="text-center text-sm text-ink-600">
-            Didn’t get it?{' '}
+            Didn’t get it? Check Spam and Promotions, then{' '}
             <button
               type="button"
               onClick={handleResend}
