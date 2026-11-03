@@ -180,14 +180,20 @@ function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolea
   )
 }
 
+/** A soft purple glow behind a section, reaching over its edges so one section runs into the next. */
+function Glow({ className }: { className: string }) {
+  return <span aria-hidden className={`pointer-events-none absolute rounded-full bg-[#5b4bff]/20 blur-3xl ${className}`} />
+}
+
+/** Every section's heading, centred like the hero, so the page reads as one (Paul, 4 Nov 2026: "make it look cohesive"). */
 function SectionHead({ kicker, title, accent, body }: { kicker: string; title: string; accent: string; body?: string }) {
   return (
-    <div className="max-w-2xl">
+    <div className="mx-auto max-w-2xl text-center">
       <p className={eyebrow}>{kicker}</p>
       <h2 className={h2}>
         {title} <span className={gradientText}>{accent}</span>
       </h2>
-      {body && <p className="mt-3 text-base leading-relaxed text-white/70">{body}</p>}
+      {body && <p className="mt-4 text-base leading-relaxed text-white/70 sm:text-lg">{body}</p>}
     </div>
   )
 }
@@ -203,13 +209,13 @@ function HomePage() {
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
         {/* 1. The biggest online student community. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 sm:pt-24 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-5xl text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms are live now
             </p>
-            <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              The biggest online
-              <span className={`block pb-2 ${gradientText}`}>student community.</span>
+            <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-[4.25rem]">
+              The biggest <span className={`whitespace-nowrap ${gradientText}`}>Study Online</span>
+              <span className="block pb-2">student community.</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">
               Study together in live rooms: camera on, no sound. Ask your doubts, upvote the ones that matter, and get it done
@@ -219,16 +225,17 @@ function HomePage() {
               {/* Into the app: Study rooms, through sign-in for a visitor (the
                   guard sends them to /login, and signing in lands there). */}
               <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={primaryCta}>
-                Study online <ArrowRight size={18} />
+                Study Online <ArrowRight size={18} />
               </Link>
               <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
-                Partner with us
+                Partner With Us
               </Link>
             </div>
           </div>
 
           {/* The five parts of the platform, right under the buttons (Paul, 4 Nov 2026). */}
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <Glow className="bottom-0 left-1/2 h-64 w-2/3 -translate-x-1/2" />
+          <div className="relative mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {PILLARS.map((p, i) => (
               <PillarCard key={p.id} p={p} n={i + 1} signedIn={signedIn} />
             ))}
@@ -236,28 +243,23 @@ function HomePage() {
         </section>
 
         {/* 3. Why now: what the AI era asks of a student. */}
-        <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-            <div>
-              <p className={eyebrow}>Why MySkills, why now</p>
-              <h2 className={h2}>
-                AI is changing every career. <span className={gradientText}>We help you keep up.</span>
-              </h2>
-              <p className="mt-4 text-base leading-relaxed text-white/70">
-                Students now need more than marks: skills they can show, the AI tools of their field, people to guide them and a
-                first internship. MySkills brings all of it together, from your first aptitude test to real work experience.
-              </p>
-            </div>
-            <ul className="grid gap-3 sm:grid-cols-2">
+        <section className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <Glow className="-top-24 left-1/4 h-72 w-1/2" />
+          <div className="relative">
+            <SectionHead
+              kicker="Why MySkills, why now"
+              title="AI is changing every career."
+              accent="We help you keep up."
+              body="Students now need more than marks: skills they can show, the AI tools of their field, people to guide them and a first internship. MySkills brings all of it together, from your first aptitude test to real work experience."
+            />
+            <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {AI_ERA.map((a) => (
-                <li key={a.title} className={`${glass} flex gap-4 p-5`}>
+                <li key={a.title} className={`${glass} flex flex-col p-6`}>
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
                     <a.icon size={20} />
                   </span>
-                  <span>
-                    <span className="block font-display text-[15px] font-semibold text-white">{a.title}</span>
-                    <span className="mt-1 block text-[13px] leading-relaxed text-white/65">{a.body}</span>
-                  </span>
+                  <span className="mt-4 block font-display text-base font-semibold text-white">{a.title}</span>
+                  <span className="mt-1.5 block text-sm leading-relaxed text-white/65">{a.body}</span>
                 </li>
               ))}
             </ul>
@@ -265,14 +267,15 @@ function HomePage() {
         </section>
 
         {/* 4. The courses. */}
-        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <SectionHead kicker="Learning programmes" title="Skills for" accent="the AI era." />
-            <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#b9a6ff] hover:text-white">
-              All courses <ArrowRight size={15} />
-            </Link>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <section className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <Glow className="-right-24 top-1/3 h-80 w-96" />
+          <SectionHead
+            kicker="Learning programmes"
+            title="Skills for"
+            accent="the AI era."
+            body="Each programme starts with a free aptitude test, then practice, a mentor and a project you can show."
+          />
+          <div className="relative mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {COURSES.map((c) => (
               <article key={c.id} className={`${glass} flex flex-col p-5`}>
                 <div className="flex items-start justify-between gap-2">
@@ -297,25 +300,31 @@ function HomePage() {
                       onClick={() => trackEvent('home_course_test', { course: c.id })}
                       className="press inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-full bg-white text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
                     >
-                      Take the aptitude test <ArrowRight size={15} />
+                      Take the Aptitude Test <ArrowRight size={15} />
                     </a>
                   ) : (
                     <Link
                       to="/courses"
                       className="press inline-flex h-10 w-full items-center justify-center rounded-full border border-white/25 text-sm font-semibold text-white transition-colors hover:bg-white/10"
                     >
-                      Tell me when it opens
+                      Tell Me When It Opens
                     </Link>
                   )}
                 </div>
               </article>
             ))}
           </div>
+          <div className="mt-8 text-center">
+            <Link to="/courses" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#b9a6ff] hover:text-white">
+              All Courses <ArrowRight size={15} />
+            </Link>
+          </div>
         </section>
 
         {/* 5. The Global Readiness Score. */}
-        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className={`${glass} grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center`}>
+        <section className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <Glow className="-left-24 top-0 h-80 w-96" />
+          <div className={`${glass} relative grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center`}>
             <div>
               <p className={eyebrow}>Global Readiness Score</p>
               <h2 className={h2}>
@@ -357,29 +366,29 @@ function HomePage() {
           </div>
         </section>
 
-        {/* 6. Step in. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl border border-brand-200/25 bg-gradient-to-br from-brand-600/40 via-brand-700/25 to-fuchsia-600/20 px-6 py-12 text-center shadow-[0_0_80px_-20px_rgba(143,133,238,0.7)] sm:px-12">
+        {/* 6. Step in: the hero's promise again, to close the page. */}
+        <section className="relative mx-auto max-w-7xl px-4 pb-24 pt-4 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-3xl border border-brand-200/25 bg-gradient-to-br from-brand-600/40 via-brand-700/25 to-fuchsia-600/20 px-6 py-14 text-center shadow-[0_0_80px_-20px_rgba(143,133,238,0.7)] sm:px-12">
             <span aria-hidden className="absolute -top-24 left-1/2 h-48 w-[70%] -translate-x-1/2 rounded-full bg-brand-300/30 blur-3xl" />
-            <h2 className="relative font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Your future starts with five minutes.</h2>
+            <h2 className="relative font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Join the biggest <span className={gradientText}>Study Online</span> student community.
+            </h2>
             <p className="relative mx-auto mt-3 max-w-xl text-white/75">
-              Take a free aptitude test, see your strongest skills, and step into the AI era with a plan.
+              Step into a live study room today, or start with a free aptitude test to see your strongest skills.
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-              <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'end' })} className={primaryCta}>
-                Take the free aptitude test <ArrowRight size={17} />
+              <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'end' })} className={primaryCta}>
+                Study Online <ArrowRight size={17} />
               </Link>
-              {!signedIn && (
-                <Link to="/signup" onClick={() => trackEvent('home_cta', { cta: 'signup', place: 'end' })} className={secondaryCta}>
-                  Create a free account
-                </Link>
-              )}
+              <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'end' })} className={secondaryCta}>
+                Take the Free Aptitude Test
+              </Link>
             </div>
           </div>
         </section>
       </main>
 
-      <Footer />
+      <Footer dark />
     </div>
   )
 }
