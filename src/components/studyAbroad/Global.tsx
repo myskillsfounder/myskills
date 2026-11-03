@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Bell, BellRing, Check, Globe2 } from 'lucide-react'
-import { COMING_SOON, fetchMyStudyInterest, toggleStudyInterest, type StudyProgramme } from '@/lib/studyAbroad'
-import { errorMessage } from '@/lib/errors'
+import { Globe2 } from 'lucide-react'
+import { COMING_SOON, type StudyProgramme } from '@/lib/studyAbroad'
 import { Flag } from './Cards'
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
@@ -73,108 +71,6 @@ export function GlobalHero({ rows }: { rows: StudyProgramme[] }) {
             {c.country}
           </span>
         ))}
-      </div>
-    </section>
-  )
-}
-
-const tileClass = (on: boolean) =>
-  `lift flex w-64 shrink-0 snap-start items-center gap-3 rounded-2xl border-2 p-4 text-left sm:w-auto ${on ? 'border-brand-500 bg-brand-50' : 'border-ink-900/[0.08] bg-white'}`
-
-/**
- * Every destination: the countries with programmes open (a tap narrows "All
- * programmes"), then the ones coming soon, each with Notify me.
- */
-export function Destinations({
-  rows,
-  picked,
-  onPick,
-}: {
-  rows: StudyProgramme[]
-  picked: string | undefined
-  onPick: (country: string) => void
-}) {
-  const live = liveCountries(rows)
-  const liveCodes = new Set(live.map((l) => l.code))
-  const soon = COMING_SOON.filter((c) => !liveCodes.has(c.code))
-
-  const [mine, setMine] = useState<Set<string>>(new Set())
-  const [busy, setBusy] = useState<string>()
-  const [error, setError] = useState<string>()
-  useEffect(() => {
-    void fetchMyStudyInterest().then((codes) => setMine(new Set(codes)))
-  }, [])
-
-  async function toggle(code: string) {
-    setBusy(code)
-    setError(undefined)
-    try {
-      const on = await toggleStudyInterest(code)
-      setMine((m) => {
-        const next = new Set(m)
-        if (on) next.add(code)
-        else next.delete(code)
-        return next
-      })
-    } catch (e) {
-      setError(errorMessage(e))
-    } finally {
-      setBusy(undefined)
-    }
-  }
-
-  return (
-    <section className="mb-10">
-      <h2 className="font-display text-xl font-semibold text-ink-900">Destinations</h2>
-      <p className="mb-3 text-sm text-ink-600">Open now, and where we’re adding partner universities next. Tap Notify me to hear first.</p>
-      {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
-      <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3 xl:grid-cols-4">
-        {live.map((l) => {
-          const here = rows.filter((r) => r.country === l.country)
-          const unis = new Set(here.map((r) => r.university).filter(Boolean)).size
-          return (
-            <button key={l.country} type="button" aria-pressed={picked === l.country} onClick={() => onPick(l.country)} className={tileClass(picked === l.country)}>
-              {l.code ? <Flag code={l.code} className="h-8 w-12 shrink-0" /> : <Globe2 size={28} className="shrink-0 text-brand-600" />}
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-2">
-                  <span className="truncate font-display text-base font-semibold text-ink-900">{l.country}</span>
-                  <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-700">Open</span>
-                </span>
-                <span className="block text-xs text-ink-500">
-                  {plural(here.length, 'programme', 'programmes')}
-                  {unis > 0 && ` · ${plural(unis, 'university', 'universities')}`}
-                </span>
-              </span>
-            </button>
-          )
-        })}
-        {soon.map((c) => {
-          const on = mine.has(c.code)
-          return (
-            <div key={c.code} className="flex w-64 shrink-0 snap-start flex-col gap-3 rounded-2xl border-2 border-dashed border-ink-900/[0.1] p-4 sm:w-auto">
-              <span className="flex items-center gap-3">
-                <Flag code={c.code} className="h-8 w-12 shrink-0" />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-display text-base font-semibold text-ink-900">{c.country}</span>
-                  <span className="block text-xs leading-snug text-ink-500">{c.note}</span>
-                </span>
-              </span>
-              <button
-                type="button"
-                onClick={() => void toggle(c.code)}
-                disabled={busy === c.code}
-                aria-pressed={on}
-                aria-label={on ? `Stop notifying me about ${c.country}` : `Notify me about ${c.country}`}
-                className={`inline-flex items-center justify-center gap-1.5 self-start rounded-full px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60 ${
-                  on ? 'bg-emerald-100 text-emerald-700' : 'bg-brand-600 text-white hover:bg-brand-700'
-                }`}
-              >
-                {on ? <Check size={13} /> : busy === c.code ? <BellRing size={13} /> : <Bell size={13} />}
-                {on ? 'Notified' : 'Notify me'}
-              </button>
-            </div>
-          )
-        })}
       </div>
     </section>
   )
