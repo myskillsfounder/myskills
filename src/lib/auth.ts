@@ -33,6 +33,10 @@ function alreadyRegistered(): AuthError {
   return e
 }
 
+// Each new code cancels the one before, so a code typed from an older email fails.
+const CODE_EXPIRED =
+  'That code has expired or is invalid. If you asked for a new code, use the one in the newest email, or request another.'
+
 function mapAuthError(error: SupabaseAuthError): AuthError {
   const code = 'code' in error ? (error.code ?? '') : ''
   switch (code) {
@@ -45,7 +49,7 @@ function mapAuthError(error: SupabaseAuthError): AuthError {
       return new AuthError('Please verify your email to finish signing in.', undefined, true)
     case 'otp_expired':
     case 'otp_disabled':
-      return new AuthError('That code has expired or is invalid. Request a new one.', 'code')
+      return new AuthError(CODE_EXPIRED, 'code')
     case 'weak_password':
       return new AuthError(
         'Password must be at least 8 characters and include upper- and lower-case letters, a number, and a special character.',
@@ -70,7 +74,7 @@ function mapAuthError(error: SupabaseAuthError): AuthError {
         )
       }
       if (/token has expired or is invalid/i.test(error.message)) {
-        return new AuthError('That code has expired or is invalid. Request a new one.', 'code')
+        return new AuthError(CODE_EXPIRED, 'code')
       }
       return new AuthError(error.message || 'Something went wrong. Please try again.')
   }
