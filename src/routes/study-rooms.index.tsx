@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, BookOpen, Users } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
-import { fetchMyFocusRooms, OPEN_ROOM, type FocusRoom } from '@/lib/focusRooms'
+import { fetchMyFocusRooms, OPEN_ROOM, useRoomsOnline, type FocusRoom } from '@/lib/focusRooms'
 import { AppShell } from '@/components/app/AppShell'
 import { HowItWorks } from '@/components/community/CommunityHero'
 import { StudyNowCard } from '@/components/focus/StudyNowCard'
+import { OnlineNow } from '@/components/focus/OnlineNow'
 import { ButtonLink, EmptyState } from '@/components/ui'
 
 /**
@@ -30,12 +31,14 @@ function StudyRoomsPage() {
 
   const open = rooms?.find((r) => r.slug === OPEN_ROOM)
   const programmeRooms = rooms?.filter((r) => r.slug !== OPEN_ROOM)
+  // Who is in each room right now, without joining any of them.
+  const online = useRoomsOnline(rooms?.map((r) => r.slug) ?? [])
 
   return (
     <AppShell wide>
       <div className="space-y-6">
         {/* You on camera and the Open study room, one tap away. */}
-        <StudyNowCard topics={open?.topics ?? null} />
+        <StudyNowCard topics={open?.topics ?? null} people={open ? online[open.slug] : undefined} />
 
         {programmeRooms && (
           <section>
@@ -51,15 +54,29 @@ function StudyRoomsPage() {
             ) : (
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {programmeRooms.map((r) => (
-                  <Link key={r.slug} to="/study-rooms/$room" params={{ room: r.slug }} className="card lift group flex items-center gap-4 p-5">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-amber-500 text-white shadow-e1">
-                      <Users size={22} />
+                  // One tap in, camera on: what they're on can be added inside.
+                  <Link
+                    key={r.slug}
+                    to="/study-rooms/$room"
+                    params={{ room: r.slug }}
+                    search={{ on: '', cam: 1 }}
+                    className="card lift group flex flex-col gap-4 p-5"
+                  >
+                    <span className="flex items-center gap-4">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-amber-500 text-white shadow-e1">
+                        <Users size={22} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-display text-lg font-semibold text-ink-900">{r.title}</span>
+                        <span className="block text-sm text-ink-500">{topicsLine(r, 'No topics yet')}</span>
+                      </span>
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate font-display text-lg font-semibold text-ink-900">{r.title}</span>
-                      <span className="block text-sm text-ink-500">{topicsLine(r, 'Be the first to post a topic')}</span>
+                    <span className="flex items-center justify-between gap-3">
+                      <OnlineNow people={online[r.slug]} max={4} />
+                      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-e1 transition-colors group-hover:bg-brand-700">
+                        Join <ArrowRight size={15} />
+                      </span>
                     </span>
-                    <ArrowRight size={18} className="shrink-0 text-brand-700 transition-transform group-hover:translate-x-1" />
                   </Link>
                 ))}
               </div>
