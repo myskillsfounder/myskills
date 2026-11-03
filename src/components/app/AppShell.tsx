@@ -1,23 +1,24 @@
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import {
   BookOpen,
+  EllipsisVertical,
   LogOut,
   Menu,
   MessageSquareHeart,
   MoonStar,
   Plane,
-  User,
   Users,
   X,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { isPhone } from '@/lib/device'
 import { useProfile } from '@/lib/useProfile'
+import { useAuthUser, userDisplayName } from '@/lib/useAuth'
 import { useHasStarted } from '@/lib/firstRun'
 import { DETAIL_ITEMS, missingDetails } from '@/components/profile/DetailsSection'
-import { AdSlider } from './AdSlider'
+import { Avatar } from '@/components/ui'
 import { HelpCard } from './HelpCard'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
@@ -31,15 +32,26 @@ type IconType = ComponentType<{ size?: number; className?: string }>
  * Delete its route, or redirect it the way routes/tests.tsx does, to retire
  * it properly.
  */
-const NAV: { to: string; label: string; icon: IconType }[] = [
-  // Study rooms first: where a student lands after signing in. The LaunchPad
-  // became the profile's "My progress" (Paul, 3 Nov 2026).
-  { to: '/study-rooms', label: 'Study rooms', icon: MoonStar },
-  { to: '/practice', label: 'Practice', icon: BookOpen },
-  { to: '/community', label: 'Community', icon: Users },
-  { to: '/profile', label: 'Profile', icon: User },
-  // Feedback moved to the sidebar footer (and stays on the LaunchPad).
-  { to: '/study-abroad', label: 'Study abroad', icon: Plane },
+type NavItem = { to: string; label: string; icon: IconType; live?: boolean }
+
+// Two groups, so the list reads at a glance (Paul, 3 Nov 2026): what a student
+// does, and where they go. Study rooms first: where signing in lands. The
+// profile is the account card at the foot of the sidebar.
+const NAV: { heading: string; items: NavItem[] }[] = [
+  {
+    heading: 'Learn',
+    items: [
+      { to: '/study-rooms', label: 'Study rooms', icon: MoonStar, live: true },
+      { to: '/practice', label: 'Practice', icon: BookOpen },
+    ],
+  },
+  {
+    heading: 'Explore',
+    items: [
+      { to: '/community', label: 'Community', icon: Users },
+      { to: '/study-abroad', label: 'Study abroad', icon: Plane },
+    ],
+  },
 ]
 
 
@@ -68,106 +80,150 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mx-5 border-t border-ink-900/[0.06]" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {NAV.map(({ to, label, icon: Icon }) => {
-          // A page's own sub-pages keep it lit.
-          const active = pathname === to || pathname.startsWith(`${to}/`)
-          return (
-            <Link
-              key={to}
-              to={to}
-              onClick={onNavigate}
-              aria-current={active ? 'page' : undefined}
-              className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
-                active ? 'bg-brand-100/70 font-semibold text-brand-800' : 'font-medium text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
-              }`}
-            >
-              <Icon
-                size={18}
-                className={`shrink-0 transition-colors duration-200 ${
-                  active ? 'fill-brand-200 text-brand-600' : 'text-ink-400 group-hover:text-ink-700'
-                }`}
-              />
-              <span>{label}</span>
-            </Link>
-          )
-        })}
+      <nav className="flex-1 space-y-5 px-3 py-4">
+        {NAV.map(({ heading, items }) => (
+          <div key={heading}>
+            <p className="px-3.5 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">{heading}</p>
+            <div className="space-y-1">
+              {items.map(({ to, label, icon: Icon, live }) => {
+                // A page's own sub-pages keep it lit.
+                const active = pathname === to || pathname.startsWith(`${to}/`)
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={onNavigate}
+                    aria-current={active ? 'page' : undefined}
+                    className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                      active ? 'bg-brand-100/70 font-semibold text-brand-800' : 'font-medium text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
+                    }`}
+                  >
+                    <Icon
+                      size={18}
+                      className={`shrink-0 transition-colors duration-200 ${
+                        active ? 'fill-brand-200 text-brand-600' : 'text-ink-400 group-hover:text-ink-700'
+                      }`}
+                    />
+                    <span className="flex-1">{label}</span>
+                    {live && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
-      {/* Footer */}
+      {/* Footer: help, then the student's own account. The ads are off for
+          now (Paul, 3 Nov 2026); components/app/AdSlider.tsx is kept. */}
       <div className="mx-5 border-t border-ink-900/[0.06]" />
       <div className="space-y-2.5 px-4 pb-5 pt-4">
         <HelpCard onNavigate={onNavigate} />
-        <AdSlider />
-
-        <ProfileNavCard onNavigate={onNavigate} />
-
-        <Link
-          to="/feedback"
-          onClick={onNavigate}
-          aria-current={pathname === '/feedback' ? 'page' : undefined}
-          className="flex items-center gap-2 px-1 text-[12px] font-medium text-ink-500 transition-colors hover:text-ink-900"
-        >
-          <MessageSquareHeart size={14} /> Send feedback
-        </Link>
-
-        <button
-          type="button"
-          onClick={handleSignOut}
-          className="group flex w-full items-center gap-2.5 rounded-xl border border-ink-900/[0.08] bg-white px-3 py-2 text-[13px] font-medium text-ink-800 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
-        >
-          <LogOut size={15} className="text-ink-600 transition-transform duration-300 group-hover:-translate-x-0.5" />
-          Sign Out
-        </button>
+        <AccountCard onNavigate={onNavigate} active={pathname === '/profile'} onSignOut={handleSignOut} />
       </div>
     </div>
   )
 }
 
 /**
- * A nudge in the sidebar footer while personal details are still incomplete:
- * a slim progress bar and a nagging-but-not-annoying reminder. The profile
- * itself is in the menu above; this disappears once the details are complete.
+ * The student's account at the foot of the sidebar: their photo and name,
+ * opening the profile (their progress and details). While details a mentor or
+ * a company would look for are missing, it says how far along they are. Its
+ * menu holds Send feedback and Sign out.
  */
-function ProfileNavCard({ onNavigate }: { onNavigate?: () => void }) {
+function AccountCard({ onNavigate, active, onSignOut }: { onNavigate?: () => void; active: boolean; onSignOut: () => void }) {
   const { profile } = useProfile()
+  const { user } = useAuthUser()
   // The "finish your profile" nag waits for the first step: a student who
   // hasn't taken an aptitude assessment has more important things to do.
   const started = useHasStarted()
   const missing = profile && started === true ? missingDetails(profile) : []
-  const incomplete = missing.length > 0
-  const percent = profile ? Math.round(((DETAIL_ITEMS.length - missing.length) / DETAIL_ITEMS.length) * 100) : null
+  const percent = Math.round(((DETAIL_ITEMS.length - missing.length) / DETAIL_ITEMS.length) * 100)
+  const name = profile?.full_name?.trim() || userDisplayName(user)
 
-  if (!incomplete) return null
+  const [open, setOpen] = useState(false)
+  const box = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (!box.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   return (
-    <Link
-      to="/profile"
-      search={{ tab: 'details' }}
-      onClick={onNavigate}
-      className="group flex flex-col gap-2 rounded-xl border border-ink-900/[0.08] bg-white px-3 py-2.5 shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink-100"
-    >
-      <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink-200 text-ink-800 transition-transform duration-300 group-hover:scale-110">
-          <User size={14} />
-        </span>
-        <span className="min-w-0 flex-1 text-[13px] font-medium text-ink-900">Your details</span>
-        <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
-          {percent}%
-        </span>
+    <div ref={box} className="relative">
+      {open && (
+        <div role="menu" className="absolute inset-x-0 bottom-full mb-2 overflow-hidden rounded-xl border border-ink-900/[0.08] bg-white py-1 shadow-e2">
+          <Link
+            to="/feedback"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+              onNavigate?.()
+            }}
+            className="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-700 hover:bg-ink-100"
+          >
+            <MessageSquareHeart size={15} className="text-ink-500" /> Send feedback
+          </Link>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={onSignOut}
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-700 hover:bg-ink-100"
+          >
+            <LogOut size={15} className="text-ink-500" /> Sign out
+          </button>
+        </div>
+      )}
+      <div
+        className={`flex items-center gap-1 rounded-xl border p-1.5 shadow-e1 transition-colors ${
+          active ? 'border-ink-900/[0.12] bg-ink-100' : 'border-ink-900/[0.08] bg-white'
+        }`}
+      >
+        <Link
+          to="/profile"
+          onClick={onNavigate}
+          aria-current={active ? 'page' : undefined}
+          className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1 hover:bg-ink-100"
+        >
+          <Avatar name={name} src={profile?.avatar_url} size={32} />
+          <span className="min-w-0">
+            <span className="block truncate text-[13px] font-semibold text-ink-900">{name}</span>
+            <span className="block truncate text-[11px] text-ink-500">
+              {missing.length > 0 ? `Profile ${percent}% complete` : 'View profile'}
+            </span>
+          </span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Account menu"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 hover:text-ink-900"
+        >
+          <EllipsisVertical size={16} />
+        </button>
       </div>
-
-      <div className="h-1 overflow-hidden rounded-full bg-ink-200">
-        <span
-          className="block h-full rounded-full bg-amber-500 transition-[width] duration-300"
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-      <p className="text-[11px] leading-snug text-ink-600">
-        Add {missing[0].label.toLowerCase()}
-        {missing.length > 1 ? ` +${missing.length - 1} more` : ''} to finish your profile.
-      </p>
-    </Link>
+      {missing.length > 0 && (
+        <div className="mx-2 mt-1.5 h-1 overflow-hidden rounded-full bg-ink-200">
+          <span className="block h-full rounded-full bg-amber-500 transition-[width] duration-300" style={{ width: `${percent}%` }} />
+        </div>
+      )}
+    </div>
   )
 }
 
