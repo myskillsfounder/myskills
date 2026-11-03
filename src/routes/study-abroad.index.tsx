@@ -1,13 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Flame, Globe2, GraduationCap, Plane, X } from 'lucide-react'
+import { Flame, GraduationCap, Plane, X } from 'lucide-react'
 import { glimpseOrOnboarded } from '@/lib/guards'
 import { Glimpse } from '@/components/landing/Glimpse'
 import { STUDY_ABROAD_GLIMPSE } from '@/content/glimpses'
 import { errorMessage } from '@/lib/errors'
 import { fetchStudyProgrammes, type StudyProgramme } from '@/lib/studyAbroad'
 import { AppShell } from '@/components/app/AppShell'
-import { PageHeader } from '@/components/app/PageHeader'
+import { Destinations, GlobalHero } from '@/components/studyAbroad/Global'
 import { FeaturedCard, Flag, ProgrammeCard } from '@/components/studyAbroad/Cards'
 import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
@@ -64,39 +64,12 @@ function BrowseRow({ title, children }: { title: string; children: ReactNode }) 
 const tileClass = (on: boolean) =>
   `lift flex w-64 shrink-0 snap-start items-center gap-3 rounded-2xl border-2 p-4 text-left sm:w-auto ${on ? 'border-brand-500 bg-brand-50' : 'border-ink-900/[0.08] bg-white'}`
 
-/** Every country with a programme: its flag, and how many programmes and universities. */
-function CountryRow({ rows, pick, onPick }: { rows: StudyProgramme[]; pick: Pick; onPick: (p: Pick) => void }) {
-  const countries = [...new Set(rows.map((r) => r.country))].sort((a, b) => a.localeCompare(b))
-  if (countries.length === 0) return null
-  return (
-    <BrowseRow title="Countries">
-      {countries.map((c) => {
-        const here = rows.filter((r) => r.country === c)
-        const unis = new Set(here.map((r) => r.university).filter(Boolean)).size
-        const code = here.find((r) => r.country_code)?.country_code
-        return (
-          <button key={c} type="button" aria-pressed={pick.country === c && !pick.university} onClick={() => onPick({ country: c })} className={tileClass(pick.country === c && !pick.university)}>
-            {code ? <Flag code={code} className="h-8 w-12 shrink-0" /> : <Globe2 size={28} className="shrink-0 text-brand-600" />}
-            <span className="min-w-0">
-              <span className="block truncate font-display text-base font-semibold text-ink-900">{c}</span>
-              <span className="block text-xs text-ink-500">
-                {plural(here.length, 'programme', 'programmes')}
-                {unis > 0 && ` · ${plural(unis, 'university', 'universities')}`}
-              </span>
-            </span>
-          </button>
-        )
-      })}
-    </BrowseRow>
-  )
-}
-
 /** Every partner university: its name, where it is, and how many programmes. */
 function UniversityRow({ rows, pick, onPick }: { rows: StudyProgramme[]; pick: Pick; onPick: (p: Pick) => void }) {
   const unis = [...new Set(rows.map((r) => r.university).filter((u): u is string => !!u))].sort((a, b) => a.localeCompare(b))
   if (unis.length === 0) return null
   return (
-    <BrowseRow title="Universities">
+    <BrowseRow title="Partner universities">
       {unis.map((u) => {
         const here = rows.filter((r) => r.university === u)
         const first = here[0]
@@ -143,11 +116,7 @@ function StudyAbroadPage() {
 
   return (
     <AppShell wide>
-      <PageHeader
-        eyebrow="Study abroad"
-        title="Study in another country"
-        description="Degree programmes abroad with our partner universities: who each is for, what you need, the steps and the deadlines. Apply here, and a mentor guides you through it."
-      />
+      {rows !== undefined && <GlobalHero rows={rows ?? []} />}
 
       {error && (
         <Alert tone="danger" title="Couldn’t load the programmes">
@@ -174,9 +143,11 @@ function StudyAbroadPage() {
             </section>
           )}
 
-          <Stats rows={all} />
+          {/* The numbers once there are enough of them to say something;
+              the hero carries them until then. */}
+          {all.length >= 3 && <Stats rows={all} />}
 
-          <CountryRow rows={all} pick={pick} onPick={choose} />
+          <Destinations rows={all} picked={pick.university ? undefined : pick.country} onPick={(country) => choose({ country })} />
           <UniversityRow rows={all} pick={pick} onPick={choose} />
 
           <section id="all-programmes" className="scroll-mt-6">

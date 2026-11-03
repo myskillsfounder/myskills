@@ -178,3 +178,45 @@ export async function setStudyApplication(id: string, status: Exclude<Applicatio
 
 export const dateText = (d: string | null) =>
   d ? new Date(`${d.length === 10 ? `${d}T00:00:00` : d}`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : ''
+
+/*
+ * Destinations that aren't open yet, and who wants them
+ * (docs/supabase-study-abroad-interest.sql). The list is what students most
+ * often ask about; a country with a live programme shows as open instead.
+ */
+export const COMING_SOON: { code: string; country: string; note: string }[] = [
+  { code: 'de', country: 'Germany', note: 'Low or no tuition at public universities' },
+  { code: 'ie', country: 'Ireland', note: 'English-taught, strong in tech and health' },
+  { code: 'gb', country: 'United Kingdom', note: 'One-year master’s degrees' },
+  { code: 'ca', country: 'Canada', note: 'Work while you study' },
+  { code: 'au', country: 'Australia', note: 'Post-study work options' },
+  { code: 'nz', country: 'New Zealand', note: 'Small classes, high quality of life' },
+  { code: 'fr', country: 'France', note: 'Business and design schools' },
+  { code: 'nl', country: 'Netherlands', note: 'Hundreds of courses in English' },
+  { code: 'ae', country: 'United Arab Emirates', note: 'Close to home, global campuses' },
+  { code: 'sg', country: 'Singapore', note: 'Asia’s education hub' },
+]
+
+/** The countries this student asked to hear about; empty before the SQL is run. */
+export async function fetchMyStudyInterest(): Promise<string[]> {
+  const { data, error } = await supabase.rpc('my_study_abroad_interest')
+  if (error) return []
+  return (data ?? []) as string[]
+}
+
+/** Notify me, or not any more. Resolves to whether they're now on the list. */
+export async function toggleStudyInterest(code: string): Promise<boolean> {
+  const { data, error } = await supabase.rpc('study_abroad_toggle_interest', { p_code: code })
+  if (error) {
+    if (error.code === 'PGRST202') throw new Error('Notify me isn’t set up yet — run docs/supabase-study-abroad-interest.sql.')
+    throw new Error(error.message)
+  }
+  return data as boolean
+}
+
+/** For the team: students wanting each country, most first. Null before the SQL is run. */
+export async function fetchStudyInterestCounts(): Promise<{ country_code: string; students: number }[] | null> {
+  const { data, error } = await supabase.rpc('admin_study_abroad_interest')
+  if (error) return null
+  return (data ?? []) as { country_code: string; students: number }[]
+}

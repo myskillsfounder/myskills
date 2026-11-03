@@ -5,8 +5,10 @@ import { errorMessage } from '@/lib/errors'
 import { slugify } from '@/lib/programmeEngine'
 import {
   APPLICATION_STATUS,
+  COMING_SOON,
   dateText,
   fetchAdminStudyAbroad,
+  fetchStudyInterestCounts,
   saveStudyProgramme,
   setStudyApplication,
   type AdminStudyApplication,
@@ -17,7 +19,7 @@ import {
 } from '@/lib/studyAbroad'
 import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { Markdown } from '@/components/admin/programme/Markdown'
-import { FeaturedCard, ProgrammeCard, THEMES } from '@/components/studyAbroad/Cards'
+import { FeaturedCard, Flag, ProgrammeCard, THEMES } from '@/components/studyAbroad/Cards'
 import { Alert, Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/ui'
 
 // Admissions: study-abroad programmes by country, and the students applying
@@ -299,6 +301,40 @@ function ApplicationRow({ a, onSaved }: { a: AdminStudyApplication; onSaved: () 
   )
 }
 
+/**
+ * Which coming-soon countries students asked to hear about
+ * (docs/supabase-study-abroad-interest.sql): the partner to sign next.
+ */
+function InterestCard() {
+  const [rows, setRows] = useState<{ country_code: string; students: number }[] | null>()
+  useEffect(() => {
+    void fetchStudyInterestCounts().then(setRows)
+  }, [])
+  if (rows === undefined) return null
+  const name = (code: string) => COMING_SOON.find((c) => c.code === code)?.country ?? code.toUpperCase()
+  return (
+    <section className="card mb-5 p-5">
+      <h2 className="font-display text-base font-semibold text-ink-900">Countries students want</h2>
+      <p className="text-sm text-ink-500">From “Notify me” on the Study abroad page.</p>
+      {rows === null ? (
+        <p className="mt-3 text-sm text-ink-600">Run docs/supabase-study-abroad-interest.sql in Supabase to start counting.</p>
+      ) : rows.length === 0 ? (
+        <p className="mt-3 text-sm text-ink-600">No requests yet.</p>
+      ) : (
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {rows.map((r) => (
+            <li key={r.country_code} className="inline-flex items-center gap-2 rounded-full bg-ink-100 py-1 pl-1 pr-3 text-sm">
+              <Flag code={r.country_code} className="h-4 w-6" />
+              <span className="font-medium text-ink-900">{name(r.country_code)}</span>
+              <span className="text-ink-500">{r.students} {r.students === 1 ? 'student' : 'students'}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
 function StudyAbroadAdmin() {
   const [data, setData] = useState<{ programmes: AdminStudyProgramme[]; applications: AdminStudyApplication[] } | null>()
   const [error, setError] = useState<string>()
@@ -349,6 +385,7 @@ function StudyAbroadAdmin() {
 
       {data && (
         <>
+          <InterestCard />
           <div className="mb-4 flex gap-1.5" role="tablist">
             {(['applications', 'programmes'] as const).map((t) => (
               <button
