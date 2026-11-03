@@ -41,7 +41,7 @@ export function useInternships() {
 }
 
 /** What happens next, in the student's words, for each state of an application. */
-function nextStep(status: ApplicationStatus, organisation: string): string {
+export function nextStep(status: ApplicationStatus, organisation: string): string {
   switch (status) {
     case 'applied':
       return `${organisation} can see your score, certificates and note. You’ll hear by email.`
@@ -63,7 +63,7 @@ function nextStep(status: ApplicationStatus, organisation: string): string {
 }
 
 /** Accept / decline an offer, or pull out, for one application. */
-function ApplicationActions({
+export function ApplicationActions({
   id,
   status,
   onChanged,

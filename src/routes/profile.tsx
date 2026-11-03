@@ -13,7 +13,6 @@ import { useMyInternshipRecord } from '@/lib/internships'
 import { AppShell } from '@/components/app/AppShell'
 import { LaunchPad } from '@/components/dashboard/LaunchPad'
 import { AboutYouCard } from '@/components/profile/AboutYouCard'
-import { YourActivity } from '@/components/profile/YourActivity'
 import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { DistinctionBadge } from '@/components/certificate/DistinctionBadge'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
@@ -202,11 +201,7 @@ function ProfilePage() {
     <AppShell wide>
       <ProfileTabs tab={tab} />
       {tab === 'progress' ? (
-        <div className="space-y-6">
-          {/* Internship applications and mentor requests, waiting on someone else. */}
-          <YourActivity />
-          <LaunchPad />
-        </div>
+        <LaunchPad />
       ) : (
       <>
       {loading && <p className="text-sm text-ink-600">Loading your profile…</p>}
