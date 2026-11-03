@@ -17,6 +17,7 @@ import { trackEvent } from '@/lib/analytics'
 import { COURSES } from '@/content/courses'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { AiEraArt, TONES, type ArtKind, type ArtTone } from '@/components/landing/AiEraArt'
 
 export const Route = createFileRoute('/')({
   beforeLoad: homeEntry,
@@ -132,11 +133,11 @@ const PILLARS: Pillar[] = [
 ]
 
 /** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
-const AI_ERA: { icon: LucideIcon; title: string; body: string }[] = [
-  { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.' },
-  { icon: Users, title: 'People where it matters', body: 'Mentors, counsellors and companies who know you: real guidance, not just an app.' },
-  { icon: Target, title: 'Start with your strengths', body: 'A free aptitude test shows where you stand before you spend an hour learning.' },
-  { icon: Trophy, title: 'Proof employers trust', body: 'Your Global Readiness Score: every point graded by a mentor or checked by our team.' },
+const AI_ERA: { icon: LucideIcon; title: string; body: string; art: ArtKind; tone: ArtTone }[] = [
+  { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.', art: 'coach', tone: 'violet' },
+  { icon: Users, title: 'People where it matters', body: 'Mentors, counsellors and companies who know you: real guidance, not just an app.', art: 'people', tone: 'teal' },
+  { icon: Target, title: 'Start with your strengths', body: 'A free aptitude test shows where you stand before you spend an hour learning.', art: 'strengths', tone: 'amber' },
+  { icon: Trophy, title: 'Proof employers trust', body: 'Your Global Readiness Score: every point graded by a mentor or checked by our team.', art: 'score', tone: 'pink' },
 ]
 
 /** The parts of the Global Readiness Score (method v8). */
@@ -254,12 +255,16 @@ function HomePage() {
             />
             <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {AI_ERA.map((a) => (
-                <li key={a.title} className={`${glass} flex flex-col p-6`}>
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#6a55e6] to-[#4338ca] text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] ring-1 ring-white/20">
-                    <a.icon size={20} />
+                // Each card in its own colour, with a picture of what it is in the app.
+                <li key={a.title} className={`${glass} ${TONES[a.tone].glow} group flex flex-col p-4 transition-transform duration-300 hover:-translate-y-1`}>
+                  <AiEraArt kind={a.art} tone={a.tone} />
+                  <span className="mt-4 flex items-center gap-2.5 px-1">
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white ring-1 ring-white/20 ${TONES[a.tone].icon}`}>
+                      <a.icon size={16} />
+                    </span>
+                    <span className="font-display text-base font-semibold text-white">{a.title}</span>
                   </span>
-                  <span className="mt-4 block font-display text-base font-semibold text-white">{a.title}</span>
-                  <span className="mt-1.5 block text-sm leading-relaxed text-white/65">{a.body}</span>
+                  <span className="mt-2 block px-1 pb-1 text-sm leading-relaxed text-white/65">{a.body}</span>
                 </li>
               ))}
             </ul>
