@@ -1,5 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Dumbbell, Rocket, Star, User, Users } from 'lucide-react'
+import { Dumbbell, MoonStar, Star, User, Users } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
 import { isPhone } from '@/lib/device'
 import { useProfile } from '@/lib/useProfile'
@@ -7,7 +7,7 @@ import { useHasStarted } from '@/lib/firstRun'
 import { missingDetails } from '@/components/profile/DetailsSection'
 
 const TABS = [
-  { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
+  { to: '/study-rooms', label: 'Study rooms', icon: MoonStar },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/community', label: 'Community', icon: Users },
   { to: '/feedback', label: 'Review', icon: Star },
@@ -16,12 +16,12 @@ const TABS = [
 
 /**
  * A phone's tabs: the same first three, in the same order, as everywhere else,
- * then the student's own profile. Review is for a computer. (A phone still
- * lands on the Community after sign-in, see lib/device.ts; the order here is
- * the bar's.)
+ * then the student's own profile, where the LaunchPad now is. Review is for a
+ * computer. Study rooms comes first: it is where a student lands after signing
+ * in (lib/device.ts).
  */
 const PHONE_TABS = [
-  { to: '/dashboard', label: 'LaunchPad', icon: Rocket },
+  { to: '/study-rooms', label: 'Study rooms', icon: MoonStar },
   { to: '/practice', label: 'Practice', icon: Dumbbell },
   { to: '/community', label: 'Community', icon: Users },
   { to: '/profile', label: 'Profile', icon: User },

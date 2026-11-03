@@ -203,7 +203,7 @@ export function PhoneLaunchPad({
   return (
     <div className="space-y-5">
       <header className="rise-in">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">LaunchPad</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">My progress</p>
         <h1 className="mt-1 font-display text-[26px] font-semibold leading-tight tracking-tight text-ink-900">{greeting}</h1>
         {!firstRun && (goal || streak > 1) && (
           <div className="mt-3 flex flex-wrap gap-2">

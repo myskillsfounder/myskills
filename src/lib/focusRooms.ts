@@ -13,7 +13,12 @@ import { supabase } from './supabase'
  * broadcast carrying the handshake. Nothing is recorded or stored.
  */
 
-/** A room the student may enter: one per programme they are in. */
+/** Everyone's room: any signed-in student may enter it, whatever they study
+ *  (docs/supabase-study-rooms-open.sql). Study rooms became the app's first
+ *  tab on 3 Nov 2026, and a new student has no programme yet. */
+export const OPEN_ROOM = 'open'
+
+/** A room the student may enter: the Open study room, and one per programme they are in. */
 export interface FocusRoom {
   slug: string
   title: string

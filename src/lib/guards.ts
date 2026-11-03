@@ -29,9 +29,9 @@ export async function requireGuest(): Promise<void> {
   if (await currentSession()) throw redirect({ to: homePath() })
 }
 
-/** Where a signed-in account that hasn't onboarded yet is sent: the computer's
- *  onboarding, or the phone's own (routes/welcome.tsx). */
-const onboardingPath = (): '/onboarding' | '/welcome' => (isPhone() ? '/welcome' : '/onboarding')
+/** Where a signed-in account that hasn't onboarded yet is sent, on a phone
+ *  too: /onboarding asks nothing now, it sets the account up and goes on. */
+const onboardingPath = (): '/onboarding' => '/onboarding'
 
 type Session = NonNullable<Awaited<ReturnType<typeof currentSession>>>
 
@@ -46,24 +46,30 @@ const isPartnerAccount = (s: Session) =>
   s.user.user_metadata?.onboarded !== true && Boolean(s.user.user_metadata?.portal_request)
 
 /** Where a signed-in account that hasn't onboarded is sent: the portal for a partner, onboarding for a student. */
-const notOnboardedPath = (s: Session): '/community-portal' | '/onboarding' | '/welcome' =>
+const notOnboardedPath = (s: Session): '/community-portal' | '/onboarding' =>
   isPartnerAccount(s) ? '/community-portal' : onboardingPath()
 
-/** Signed-in required (/onboarding). A phone has its own onboarding instead. */
+/** Signed-in required (/onboarding). */
 export async function requireSession(): Promise<void> {
   const session = await currentSession()
   if (!session) throw redirect({ to: '/login' })
   if (isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
-  if (isPhone()) throw redirect({ to: '/welcome' })
+}
+
+/** Where signing in lands (lib/device.ts), and the LaunchPad's old address,
+ *  which bookmarks and Google sign-in may still open. */
+const atHome = (pathname: string) => {
+  const p = pathname.replace(/\/$/, '')
+  return p === homePath() || p === '/dashboard'
 }
 
 /**
  * Signed-in AND onboarded (/profile, app pages).
  *
- * A new account is onboarded first: on a computer by the sentence and the
- * plan, on a phone by its own three taps. After that, a phone has the
- * Community, the LaunchPad and Practice (see lib/device.ts); any other app
- * page sends them home, to the LaunchPad.
+ * A new account passes through /onboarding first, which asks nothing since
+ * 3 Nov 2026: it sets the account up and goes on. A phone has Study rooms,
+ * Practice, the Community and the profile (see lib/device.ts); any other app
+ * page sends them home, to Study rooms.
  */
 export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
@@ -73,12 +79,13 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   }
   if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: homePath() })
   // A test answered before signing up is scored first: signing in (email or
-  // Google) lands on the LaunchPad, which sends them back to it.
-  const waiting = ctx?.location.pathname === '/dashboard' ? pendingAptitudeRoute() : null
+  // Google) lands on Study rooms, which sends them back to it.
+  const home = ctx ? atHome(ctx.location.pathname) : false
+  const waiting = home ? pendingAptitudeRoute() : null
   // href: an engine programme's test has its own address (/programmes/<slug>/aptitude).
   if (waiting) throw redirect({ href: waiting })
   // Back from Google sign-in, started on a home page card (lib/afterLogin.ts).
-  const after = ctx?.location.pathname === '/dashboard' ? takeAfterLogin() : null
+  const after = home ? takeAfterLogin() : null
   if (after) throw redirect({ href: after })
   // The programmes' published wording from the course engine (lib/liveContent.ts).
   await ensureLiveContent()
@@ -120,15 +127,15 @@ export async function glimpseOrOnboarded(ctx?: GuardContext): Promise<{ guest: b
 }
 
 /**
- * The phone's front door (/welcome): the welcome for someone signed out, the
- * three questions for a new account. A computer has no use for it, and an
- * account that has already answered goes home.
+ * The phone's front door (/welcome), for someone signed out. A computer has no
+ * use for it, and anyone signed in goes on: home, or a new account through
+ * /onboarding first.
  */
 export async function requirePhoneWelcome(): Promise<void> {
   const session = await currentSession()
   if (session && isPartnerAccount(session)) throw redirect({ to: '/community-portal' })
-  if (!isPhone()) throw redirect({ to: session ? '/dashboard' : '/' })
-  if (session && session.user.user_metadata?.onboarded === true) throw redirect({ to: homePath() })
+  if (!isPhone()) throw redirect({ to: session ? homePath() : '/' })
+  if (session) throw redirect({ to: session.user.user_metadata?.onboarded === true ? homePath() : onboardingPath() })
 }
 
 /**

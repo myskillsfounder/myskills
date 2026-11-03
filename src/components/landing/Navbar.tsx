@@ -108,8 +108,8 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
           {/* Wait for the session check to avoid a Log in -> profile flash */}
           {!loading &&
             (user ? (
-              <Link to={isPhone() ? '/dashboard' : '/profile'} className={getStarted}>
-                {isPhone() ? 'Open LaunchPad' : 'Go to profile'}
+              <Link to="/study-rooms" className={getStarted}>
+                Open MySkills
               </Link>
             ) : (
               <>
@@ -159,11 +159,11 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
             {!loading &&
               (user ? (
                 <Link
-                  to={isPhone() ? '/dashboard' : '/profile'}
+                  to="/study-rooms"
                   onClick={() => setOpen(false)}
                   className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                 >
-                  {isPhone() ? 'Open LaunchPad' : 'Go to profile'}
+                  Open MySkills
                 </Link>
               ) : (
                 <>
