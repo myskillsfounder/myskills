@@ -13,12 +13,8 @@ import { fetchMentors } from '@/lib/mentors'
 import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import { SearchHeader } from '@/components/community/SearchHeader'
-import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { InternshipRoleCard, InternshipRoleDialog, YourInternships, useInternships } from '@/components/community/Internships'
-import { useMyMatch } from '@/lib/mentorMatches'
-import { YourMentors } from '@/components/community/YourMentors'
 import { isPhone } from '@/lib/device'
-import { FocusRoomsCard } from '@/components/focus/FocusRoomsCard'
 import {
   BrowseTiles,
   CATEGORIES,
@@ -211,8 +207,6 @@ function CommunityHub() {
   // Wellness and career guidance are browsed as one group.
   const group = groupOf(category)
   const q = query.trim().toLowerCase()
-  const dmMatch = useMyMatch('digital-marketing')
-  const crMatch = useMyMatch('career-readiness')
 
   // A link that asked for career guidance gets that card first.
   const support = SERVICES.filter((s) => matches(q, s.title, s.who, s.body, s.tags)).sort(
@@ -288,22 +282,9 @@ function CommunityHub() {
             }
           />
         )}
-        {/* Focus Rooms, full width under them (1 Nov 2026). */}
-        {front && <FocusRoomsCard />}
-
-        {front && (
-          <>
-            {/* A partner asking to see this student's record, and who sees it now. */}
-            <PartnerRequests />
-            <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
-            <YourMentors
-              matches={[
-                { match: dmMatch.match, programme: 1, label: 'Digital Marketing' },
-                { match: crMatch.match, programme: 2, label: 'Global Leadership' },
-              ]}
-            />
-          </>
-        )}
+        {/* Search and the categories only (Paul, 3 Nov 2026): the student's
+            internships, mentor and who sees their record are in the profile,
+            and Study rooms has its own tab. */}
 
         {nothing && (
           <div className="card p-8 text-center">

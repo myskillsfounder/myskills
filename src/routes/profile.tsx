@@ -13,6 +13,8 @@ import { useMyInternshipRecord } from '@/lib/internships'
 import { AppShell } from '@/components/app/AppShell'
 import { LaunchPad } from '@/components/dashboard/LaunchPad'
 import { AboutYouCard } from '@/components/profile/AboutYouCard'
+import { YourActivity } from '@/components/profile/YourActivity'
+import { PartnerRequests } from '@/components/community/PartnerRequests'
 import { DistinctionBadge } from '@/components/certificate/DistinctionBadge'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { AchievementsSection } from '@/components/profile/AchievementsSection'
@@ -200,7 +202,11 @@ function ProfilePage() {
     <AppShell wide>
       <ProfileTabs tab={tab} />
       {tab === 'progress' ? (
-        <LaunchPad />
+        <div className="space-y-6">
+          {/* Internship applications and mentor requests, waiting on someone else. */}
+          <YourActivity />
+          <LaunchPad />
+        </div>
       ) : (
       <>
       {loading && <p className="text-sm text-ink-600">Loading your profile…</p>}
@@ -232,6 +238,9 @@ function ProfilePage() {
 
           {/* What onboarding used to ask, now optional (Paul, 3 Nov 2026). */}
           <AboutYouCard profile={profile} save={save} />
+
+          {/* A partner asking to see this student's record, and who sees it now. */}
+          <PartnerRequests />
 
           {/* KYC: a verified profile is one employers can trust. Once it's all
               checked, the tick by the name says so — the checklist only shows
