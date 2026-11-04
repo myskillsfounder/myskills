@@ -2,10 +2,6 @@ import { homeEntry } from '@/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  BookOpen,
-  Briefcase,
-  Heart,
-  Plane,
   Sparkles,
   Target,
   Trophy,
@@ -18,6 +14,7 @@ import { COURSES } from '@/content/courses'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { AiEraArt, TONES, type ArtKind, type ArtTone } from '@/components/landing/AiEraArt'
+import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, StudentsRow } from '@/components/landing/FrontDoor'
 
 export const Route = createFileRoute('/')({
   beforeLoad: homeEntry,
@@ -25,19 +22,13 @@ export const Route = createFileRoute('/')({
 })
 
 /*
- * The home page of the standard website, built from Paul's platform picture
- * (27 Oct 2026): "Your future won't wait", a student at the centre of a ring
- * of light with the platform's five parts on a curved glass bar; then the
- * five parts as photo cards, the partners, the courses, the Global Readiness
- * Score and a last call to take the test. The photos are cut from his
- * picture (public/home/card-*, face-*; the ring holds Paul's own photo; sharper originals can
- * replace them). Learning goes to the courses; Mentorship, Internships and
- * Study Abroad show a visitor a glimpse first (components/landing/Glimpse.tsx);
- * Wellness signs them in and lands on it (lib/afterLogin.ts). Partners go to the partner sign-up.
+ * The home page of the standard website. Its top is the phone's front door
+ * at a computer's size (Paul, 4 Nov 2026: "make the PC experience similar to
+ * the one in mobile, same H1 and landing experience"): the students, the
+ * headline, the four cards (components/landing/FrontDoor.tsx) and Study
+ * Online. Below it: why now, the courses, the Global Readiness Score and a
+ * last call.
  */
-
-type To = '/courses' | '/login' | '/community' | '/community/mentors' | '/community/internships' | '/wellness' | '/study-abroad' | '/mentors' | '/internships' | '/community-portal/signup'
-type Target = { to: To; search?: Record<string, unknown> }
 
 /** Liquid glass: see-through, frosted, a light top edge and a purple glow. */
 const glass =
@@ -56,82 +47,6 @@ const primaryCta =
 const secondaryCta =
   'press inline-flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/[0.03] px-6 text-[15px] font-semibold text-white backdrop-blur transition-colors hover:bg-white/10'
 
-const PARTNER_SIGNUP: Target = { to: '/community-portal/signup' }
-const signIn = (next: string): Target => ({ to: '/login', search: { next } })
-
-interface Pillar {
-  id: string
-  /** On the curved bar. */
-  short: string
-  /** On its photo card. */
-  title: string
-  body: string
-  cta: string
-  icon: LucideIcon
-  photo: string
-  visitor: Target
-  student: Target
-}
-
-const PILLARS: Pillar[] = [
-  {
-    id: 'learning',
-    short: 'Learning Programmes',
-    title: 'Learning Programmes',
-    body: 'Industry-relevant courses, certifications and micro-learning.',
-    cta: 'Explore Courses',
-    icon: BookOpen,
-    photo: 'card-learning',
-    visitor: { to: '/courses' },
-    student: { to: '/courses' },
-  },
-  {
-    id: 'mentorship',
-    short: 'Mentorship',
-    title: 'Mentorship',
-    body: '1:1 and group sessions with industry experts.',
-    cta: 'Meet Mentors',
-    icon: Users,
-    photo: 'card-mentorship',
-    visitor: { to: '/mentors' },
-    student: { to: '/community/mentors' },
-  },
-  {
-    id: 'study-abroad',
-    short: 'Study Abroad',
-    title: 'Study Abroad Services',
-    body: 'University guidance, applications and test prep.',
-    cta: 'Explore Universities',
-    icon: Plane,
-    photo: 'card-study-abroad',
-    visitor: { to: '/study-abroad' },
-    student: { to: '/study-abroad' },
-  },
-  {
-    id: 'career',
-    // MySkills offers internships, not jobs (Paul, 27 Oct 2026).
-    short: 'Internships',
-    title: 'Internships',
-    body: 'Your first internship with a partner company: hands-on, real experience.',
-    cta: 'Find Internships',
-    icon: Briefcase,
-    photo: 'card-career',
-    visitor: { to: '/internships' },
-    student: { to: '/community/internships' },
-  },
-  {
-    id: 'wellness',
-    short: 'Wellness & Mental Health',
-    title: 'Wellness & Mental Health',
-    body: 'Counselling, workshops and wellness resources.',
-    cta: 'Take Care',
-    icon: Heart,
-    photo: 'card-wellness',
-    visitor: signIn('/community?category=wellness'),
-    student: { to: '/wellness' },
-  },
-]
-
 /** Why MySkills now: what the AI era asks of a student, and how the platform answers. */
 const AI_ERA: { icon: LucideIcon; title: string; body: string; art: ArtKind; tone: ArtTone }[] = [
   { icon: Sparkles, title: 'AI in every course', body: 'Learn the AI tools of your field as you learn the skill, with an AI coach giving feedback.', art: 'coach', tone: 'violet' },
@@ -148,38 +63,6 @@ const SCORE_PARTS: { title: string; body: string; points: number; bar: string }[
 ]
 
 const BANDS = ['Getting started', 'Building', 'Strong', 'Standout']
-
-const target = (p: Pillar, signedIn: boolean) => (signedIn ? p.student : p.visitor)
-
-/** One of the five parts as a photo card. */
-function PillarCard({ p, n, signedIn }: { p: Pillar; n: number; signedIn: boolean }) {
-  const to = target(p, signedIn)
-  return (
-    <Link
-      to={to.to}
-      search={to.search as never}
-      onClick={() => trackEvent('home_pillar', { pillar: p.id, signed_in: signedIn, place: 'card' })}
-      className={`${glass} group relative flex min-h-[15.5rem] flex-col overflow-hidden p-5 transition-colors hover:border-brand-300/50`}
-    >
-      <img
-        src={`/home/${p.photo}.webp`}
-        alt=""
-        loading="lazy"
-        className="absolute right-0 top-0 h-[80%] w-[62%] object-cover object-[50%_20%] transition-transform duration-500 group-hover:scale-105 [mask-image:linear-gradient(to_left,black_45%,transparent),linear-gradient(to_top,transparent,black_35%)] [mask-composite:intersect]"
-        style={{ WebkitMaskComposite: 'source-in' }}
-      />
-      <span className="relative">
-        <p.icon size={28} strokeWidth={1.5} className="text-[#cdb5f8]" />
-      </span>
-      <span className="relative mt-4 font-mono text-[11px] text-white/50">0{n}</span>
-      <span className="relative mt-1 block max-w-[85%] font-display text-lg font-semibold leading-snug text-white [text-shadow:0_1px_14px_rgba(4,10,30,0.95)]">{p.title}</span>
-      <span className="relative mt-1.5 block max-w-[80%] text-[13px] leading-relaxed text-white/70 [text-shadow:0_1px_10px_rgba(4,10,30,0.95)]">{p.body}</span>
-      <span className="relative mt-auto inline-flex w-fit items-center gap-2 rounded-lg border border-white/25 bg-[#040a1e]/50 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors group-hover:border-brand-200/60 group-hover:bg-white/10">
-        {p.cta} <ArrowRight size={14} />
-      </span>
-    </Link>
-  )
-}
 
 /** A soft purple glow behind a section, reaching over its edges so one section runs into the next. */
 function Glow({ className }: { className: string }) {
@@ -211,35 +94,25 @@ function HomePage() {
         {/* 1. The biggest online student community. */}
         <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 sm:pt-24 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#8f6bff]/35 bg-[#1b2470]/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-[#d8c9ff] shadow-[0_0_24px_-6px_rgba(124,92,246,0.7)] backdrop-blur">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> Study rooms are live now
-            </p>
+            <StudentsRow className="justify-center" />
             <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-[4.25rem]">
-              The biggest <span className={`whitespace-nowrap ${gradientText}`}>Study Online</span>
-              <span className="block pb-2">student community.</span>
+              <FrontDoorHeadline />
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">
-              Study together in live rooms: camera on, no sound. Ask your doubts, upvote the ones that matter, and get it done
-              alongside students like you. Free, any subject, any time.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              {/* Into the app: Study rooms, through sign-in for a visitor (the
-                  guard sends them to /login, and signing in lands there). */}
-              <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={primaryCta}>
-                Study Online <ArrowRight size={18} />
-              </Link>
-              <Link to={PARTNER_SIGNUP.to} onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })} className={secondaryCta}>
-                Partner With Us
-              </Link>
-            </div>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">{FRONT_DOOR_LINE}</p>
           </div>
 
-          {/* The five parts of the platform, right under the buttons (Paul, 4 Nov 2026). */}
+          {/* The four cards, then the one thing to do, as on a phone (routes/welcome.tsx). */}
           <Glow className="bottom-0 left-1/2 h-64 w-2/3 -translate-x-1/2" />
-          <div className="relative mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {PILLARS.map((p, i) => (
-              <PillarCard key={p.id} p={p} n={i + 1} signedIn={signedIn} />
-            ))}
+          <div className="relative mx-auto mt-12 max-w-5xl">
+            <FrontDoorCards signedIn={signedIn} place="home" />
+          </div>
+          <div className="relative mt-10 flex flex-col items-center gap-2.5">
+            {/* Into the app: Study rooms, through sign-in for a visitor (the
+                guard sends them to /login, and signing in lands there). */}
+            <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={`${primaryCta} h-14 px-10 text-lg`}>
+              Study Online <ArrowRight size={20} />
+            </Link>
+            <p className="text-sm text-white/60">Free. Sign up in seconds with Google or your email.</p>
           </div>
         </section>
 
