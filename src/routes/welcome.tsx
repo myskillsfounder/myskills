@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, ChevronUp, MessageCircleQuestion, MicOff, Video } from 'lucide-react'
+import { ArrowRight, Briefcase, ChevronRight, ChevronUp, Globe2, GraduationCap, MessageCircleQuestion, MicOff, Users, Video, type LucideIcon } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requirePhoneWelcome } from '@/lib/guards'
 
@@ -26,6 +26,42 @@ const unsplash = (photo: string, w: number, h: number) =>
 
 const HERO = 'photo-1617009762269-c062aaf6b3a0'
 const FACES = ['photo-1637589308599-3478cc55510d', 'photo-1514369118554-e20d93546b30', 'photo-1604177091072-b7b677a077f6']
+
+/** What else MySkills is, under the headline, in Paul's order (4 Nov 2026):
+ *  internships, mentors, institutions, study abroad. Each is a public page a
+ *  signed-out phone can open. */
+const CARDS: { title: string; body: string; to: string; photo: string; icon: LucideIcon }[] = [
+  { title: 'Internships', body: 'Real work with companies', to: '/internships', photo: '/home/card-career.webp', icon: Briefcase },
+  { title: 'Mentors', body: 'Guidance from people who know', to: '/mentors', photo: '/home/card-mentorship.webp', icon: Users },
+  { title: 'Institutions', body: 'Bring MySkills to your college', to: '/become-a-partner-institution', photo: '/home/institutions.webp', icon: GraduationCap },
+  { title: 'Study Abroad', body: 'Partner universities worldwide', to: '/study-abroad', photo: '/home/card-study-abroad.webp', icon: Globe2 },
+]
+
+function MoreCards() {
+  return (
+    <ul className="mt-6 grid grid-cols-2 gap-2.5">
+      {CARDS.map((c) => (
+        <li key={c.title}>
+          <Link
+            to={c.to}
+            onClick={() => trackEvent('welcome_card', { card: c.title })}
+            className="press group relative flex h-32 flex-col justify-end overflow-hidden rounded-2xl p-3 ring-1 ring-white/15"
+          >
+            <img src={c.photo} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+            <span className="absolute inset-0 bg-gradient-to-t from-[#0b0a1f] via-[#0b0a1f]/60 to-[#0b0a1f]/10" />
+            <span className="absolute left-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#7b6cf6] to-[#4f46e5] text-white ring-1 ring-white/20">
+              <c.icon size={14} />
+            </span>
+            <span className="relative flex items-center gap-0.5 text-sm font-semibold text-white">
+              {c.title} <ChevronRight size={14} className="text-white/60" />
+            </span>
+            <span className="relative mt-0.5 text-[11px] leading-snug text-white/70">{c.body}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 /** A frosted card floating over the photo. */
 function Chip({ className = '', delay = '0s', children }: { className?: string; delay?: string; children: React.ReactNode }) {
@@ -99,6 +135,7 @@ function WelcomePage() {
             biggest online community of learners
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-white/70">Join a live study room, ask your doubts, and get it done together.</p>
+          <MoreCards />
         </main>
 
         <footer className="sticky bottom-0 -mx-5 space-y-2 bg-gradient-to-t from-[#0b0a1f] via-[#0b0a1f]/95 to-transparent px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-5">
