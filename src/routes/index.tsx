@@ -14,7 +14,7 @@ import { COURSES } from '@/content/courses'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { AiEraArt, TONES, type ArtKind, type ArtTone } from '@/components/landing/AiEraArt'
-import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, StudentsRow } from '@/components/landing/FrontDoor'
+import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, FrontDoorTagline, StudentsRow } from '@/components/landing/FrontDoor'
 
 export const Route = createFileRoute('/')({
   beforeLoad: homeEntry,
@@ -92,13 +92,14 @@ function HomePage() {
 
       <main className="relative overflow-hidden bg-[#040a1e] bg-[radial-gradient(42rem_34rem_at_68%_22%,rgba(56,64,200,0.45),transparent_70%),radial-gradient(30rem_24rem_at_72%_8%,rgba(124,92,246,0.30),transparent_70%),radial-gradient(40rem_30rem_at_0%_30%,rgba(30,40,120,0.30),transparent_70%),radial-gradient(50rem_30rem_at_50%_100%,rgba(40,50,150,0.25),transparent_70%)]">
         {/* 1. The biggest online student community. */}
-        <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 sm:pt-24 lg:px-8">
+        <section className="relative mx-auto max-w-7xl px-4 pb-6 pt-12 sm:px-6 sm:pt-16 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
             <StudentsRow className="justify-center" />
             <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.04] tracking-tight text-white sm:text-6xl lg:text-[4.25rem]">
               <FrontDoorHeadline />
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">{FRONT_DOOR_LINE}</p>
+            <FrontDoorTagline className="mt-5 text-2xl sm:text-3xl" />
+            <p className="mx-auto mt-3 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">{FRONT_DOOR_LINE}</p>
           </div>
 
           <div className="relative mt-9 flex flex-col items-center gap-3">
@@ -121,7 +122,7 @@ function HomePage() {
 
           {/* What else a student gets (components/landing/FrontDoor.tsx, shared with the phone). */}
           <Glow className="bottom-0 left-1/2 h-64 w-2/3 -translate-x-1/2" />
-          <div className="relative mx-auto mt-14 max-w-6xl">
+          <div className="relative mx-auto mt-12 max-w-6xl">
             <FrontDoorCards signedIn={signedIn} place="home" />
           </div>
         </section>
@@ -132,8 +133,8 @@ function HomePage() {
           <div className="relative">
             <SectionHead
               kicker="Why MySkills, why now"
-              title="AI is changing every career."
-              accent="We help you keep up."
+              title="What students need now,"
+              accent="all in one place."
               body="Students now need more than marks: skills they can show, the AI tools of their field, people to guide them and a first internship. MySkills brings all of it together, from your first aptitude test to real work experience."
             />
             <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
