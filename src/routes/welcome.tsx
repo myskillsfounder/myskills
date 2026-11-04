@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requirePhoneWelcome } from '@/lib/guards'
-import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, StudentsRow } from '@/components/landing/FrontDoor'
+import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, FrontDoorTagline, StudentsRow } from '@/components/landing/FrontDoor'
 
 /**
  * The phone's front door, for someone signed out (Paul, 4 Nov 2026: "remove
@@ -31,13 +31,14 @@ function WelcomePage() {
           </Link>
         </header>
 
-        <main className="flex flex-1 flex-col pb-2 pt-6">
+        <main className="flex flex-1 flex-col pb-2 pt-5">
           <StudentsRow />
           <h1 className="mt-3 font-display text-[2.25rem] font-semibold leading-[1.08] tracking-tight text-white">
             <FrontDoorHeadline />
           </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-white/70">{FRONT_DOOR_LINE}</p>
-          <div className="mt-7">
+          <FrontDoorTagline className="mt-3 text-lg leading-snug" />
+          <p className="mt-2 text-[15px] leading-relaxed text-white/70">{FRONT_DOOR_LINE}</p>
+          <div className="mt-5">
             <FrontDoorCards place="welcome" />
           </div>
         </main>

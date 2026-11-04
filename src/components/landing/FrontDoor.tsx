@@ -20,6 +20,17 @@ const FACES = ['photo-1637589308599-3478cc55510d', 'photo-1514369118554-e20d9354
 
 export const FRONT_DOOR_LINE = 'Join a live study room, ask your doubts, and get it done together.'
 
+/** The tagline, right under the headline (Paul, 4 Nov 2026: "this is an
+ *  important tag line, can we add near H1?"). Each page sets the size. */
+export function FrontDoorTagline({ className = '' }: { className?: string }) {
+  return (
+    <p className={`font-display font-semibold tracking-tight text-white ${className}`}>
+      AI is changing every career.{' '}
+      <span className="bg-gradient-to-r from-[#b3a6ff] via-[#8f7bff] to-[#f0abfc] bg-clip-text text-transparent">We help you keep up.</span>
+    </p>
+  )
+}
+
 /** Three faces and "Students across India, studying together". */
 export function StudentsRow({ className = '' }: { className?: string }) {
   return (
