@@ -21,13 +21,9 @@ import { VerificationSection, isVerificationComplete } from '@/components/profil
 import { useVerification } from '@/lib/useVerification'
 import { SkillsSection } from '@/components/profile/SkillsSection'
 import { DetailsSection, ProfileCompletion, headerExtras } from '@/components/profile/DetailsSection'
-import { BlueprintSection } from '@/components/profile/BlueprintSection'
 import { RecordsSection } from '@/components/profile/RecordsSection'
-import { BadgesRow } from '@/components/profile/BadgesRow'
 import { DetailsCard } from '@/components/profile/DetailsCard'
-import { useBlueprint, useRecords } from '@/lib/personalBlueprint'
-import { refreshMyScore } from '@/lib/scoreService'
-import type { ScoredProgramme } from '@/lib/readinessScore'
+import { useRecords } from '@/lib/personalBlueprint'
 
 type ProfileTab = 'progress' | 'details'
 
@@ -171,25 +167,15 @@ function ProfilePage() {
   const started = useHasStarted()
   const projects = useMyProjects()
   const internships = useMyInternshipRecord()
-  // The blueprint and records are for the computer for now: the phone app's
-  // profile stays as it is.
+  // The records are for the computer for now: the phone app's profile stays
+  // as it is. The blueprint and skill badges live in My progress (Paul, 5 Nov 2026).
   const phone = isPhone()
-  const { blueprint, save: saveBlueprint } = useBlueprint()
   const records = useRecords()
   const [certificates, setCertificates] = useState(0)
   useEffect(() => {
     // Every programme's Foundation certificate counts.
     fetchMyCertificates().then((c) => setCertificates(c.length), () => {})
   }, [])
-  // Score method v8: each professional programme finished is a badge too.
-  const [completed, setCompleted] = useState<ScoredProgramme[]>([])
-  useEffect(() => {
-    if (phone) return
-    refreshMyScore().then(
-      (s) => setCompleted((s?.professional.programmes ?? []).filter((p) => p.completed)),
-      () => {},
-    )
-  }, [phone])
   const identityVerified = !verification.loading && verification.view.identity === 'verified'
   const router = useRouter()
   async function leave() {
@@ -254,13 +240,13 @@ function ProfilePage() {
             />
           )}
 
-          {/* On a computer: the blueprint, the records, the skill badges,
-              then the details with their verification. Achievements
+          {/* On a computer: the records, then the details with their
+              verification (the blueprint and skill badges are in My
+              progress). Achievements
               (certificates, projects, internships) are counted in the
               records instead. The phone keeps its layout, below. */}
           {!phone && (
             <>
-              {blueprint && <BlueprintSection blueprint={blueprint} save={saveBlueprint} />}
               <RecordsSection
                 records={records}
                 certificates={certificates}
@@ -268,7 +254,6 @@ function ProfilePage() {
                 internships={internships.confirmed.length}
                 badges={badges.length}
               />
-              <BadgesRow badges={badges} completed={completed} />
               <DetailsCard
                 profile={profile}
                 save={save}

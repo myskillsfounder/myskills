@@ -49,17 +49,17 @@ export function BadgesRow({ badges, completed = [] }: { badges: SkillBadge[]; co
         </Link>
       </div>
 
-      <ul className="mt-4 flex gap-3 overflow-x-auto pb-1">
+      <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-6">
         {/* A finished professional programme (project approved) comes first. */}
         {completed.map((p) => (
-          <li key={`done-${p.slug}`} className="flex w-32 shrink-0 flex-col items-center rounded-2xl border border-brand-200 bg-gradient-to-b from-brand-50 to-white px-2 pb-3 pt-4 text-center">
+          <li key={`done-${p.slug}`} className="flex min-w-0 flex-col items-center rounded-2xl border border-brand-200 bg-gradient-to-b from-brand-50 to-white px-2 pb-3 pt-4 text-center">
             <Medal programme={p.slug} />
             <p className="mt-2 line-clamp-2 text-xs font-semibold leading-snug text-ink-900">{p.title}</p>
             <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-700">Completed</p>
           </li>
         ))}
         {badges.map((b) => (
-          <li key={b.id} className="flex w-32 shrink-0 flex-col items-center rounded-2xl border border-ink-900/[0.06] bg-gradient-to-b from-white to-ink-50 px-2 pb-3 pt-4 text-center">
+          <li key={b.id} className="flex min-w-0 flex-col items-center rounded-2xl border border-ink-900/[0.06] bg-gradient-to-b from-white to-ink-50 px-2 pb-3 pt-4 text-center">
             <Medal programme={b.programme} />
             <p className="mt-2 line-clamp-2 text-xs font-semibold leading-snug text-ink-900">{skillName(b.skill)}</p>
             <p className="mt-0.5 line-clamp-1 text-[10px] text-ink-500">
@@ -70,7 +70,7 @@ export function BadgesRow({ badges, completed = [] }: { badges: SkillBadge[]; co
         ))}
         {/* Room for what's to come: a few locked medals, never fake ones. */}
         {Array.from({ length: Math.max(0, 6 - badges.length - completed.length) }, (_, i) => (
-          <li key={`locked-${i}`} className="flex w-32 shrink-0 flex-col items-center rounded-2xl border border-dashed border-ink-200 px-2 pb-3 pt-4 text-center">
+          <li key={`locked-${i}`} className="flex min-w-0 flex-col items-center rounded-2xl border border-dashed border-ink-200 px-2 pb-3 pt-4 text-center">
             <Medal locked />
             <p className="mt-2 text-xs font-medium text-ink-400">Next badge</p>
           </li>

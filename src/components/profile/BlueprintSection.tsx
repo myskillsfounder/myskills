@@ -132,8 +132,8 @@ export function BlueprintSection({ blueprint, save }: { blueprint: Blueprint; sa
     <section className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-ink-900">Personal blueprint</h2>
-          <p className="text-sm text-ink-500">The foundation that drives my decisions and actions.</p>
+          <h2 className="text-lg font-semibold text-ink-900">My blueprint</h2>
+          <p className="text-sm text-ink-500">Where I'm going, and why: the foundation for my decisions.</p>
         </div>
         <button type="button" onClick={() => setEditing(true)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800">
           {started ? 'Update blueprint' : 'Write my blueprint'} <Pencil size={14} />
@@ -160,7 +160,18 @@ export function BlueprintSection({ blueprint, save }: { blueprint: Blueprint; sa
         <Tile icon={Flag} tile="bg-pink-100 text-pink-600" title="Goals">
           {blueprint.goals.length ? (
             <>
-              <p className="text-xs font-semibold text-ink-900">{blueprint.goals_year} goals</p>
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="font-semibold text-ink-900">{blueprint.goals_year} goals</span>
+                <span className="text-ink-500">
+                  {blueprint.goals.filter((g) => g.done).length} of {blueprint.goals.length} done
+                </span>
+              </div>
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-ink-100">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-pink-400 to-fuchsia-500"
+                  style={{ width: `${(blueprint.goals.filter((g) => g.done).length / blueprint.goals.length) * 100}%` }}
+                />
+              </div>
               <ul className="mt-1.5 space-y-1.5">
                 {blueprint.goals.map((g) => (
                   <li key={g.id} className="flex items-start gap-1.5">
