@@ -4,10 +4,10 @@ import { trackEvent } from '@/lib/analytics'
 import { requirePhoneWelcome } from '@/lib/guards'
 
 /**
- * The phone's front door, for someone signed out (Paul, 4 Nov 2026: "show
- * cards at top, remove the room preview, keep students across India studying
- * together"). What MySkills offers first, then the headline and one thing to
- * do. "Study Online" signs them up, and a new account lands in Study rooms
+ * The phone's front door, for someone signed out (Paul, 4 Nov 2026: "remove
+ * the room preview, keep students across India studying together", then
+ * "bring the cards down, move H1 to the top"). The headline, what MySkills
+ * offers, and one thing to do. "Study Online" signs them up, and a new account lands in Study rooms
  * (lib/device.ts). Anyone signed in is sent on by the guard.
  *
  * Face photos: stock, free under the Unsplash License (no attribution
@@ -74,8 +74,7 @@ function WelcomePage() {
         </header>
 
         <main className="flex flex-1 flex-col pb-2 pt-6">
-          <MoreCards />
-          <div className="mt-7 flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5">
             <span className="flex -space-x-2">
               {FACES.map((f) => (
                 <img key={f} src={unsplash(f, 64, 64)} alt="" className="h-7 w-7 rounded-full object-cover ring-2 ring-[#0b0a1f]" />
@@ -88,6 +87,9 @@ function WelcomePage() {
             biggest online community of learners
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-white/70">Join a live study room, ask your doubts, and get it done together.</p>
+          <div className="mt-7">
+            <MoreCards />
+          </div>
         </main>
 
         <footer className="sticky bottom-0 -mx-5 space-y-2 bg-gradient-to-t from-[#0b0a1f] via-[#0b0a1f]/95 to-transparent px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-5">
