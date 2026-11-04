@@ -101,18 +101,28 @@ function HomePage() {
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/75 sm:text-xl">{FRONT_DOOR_LINE}</p>
           </div>
 
-          {/* The four cards, then the one thing to do, as on a phone (routes/welcome.tsx). */}
-          <Glow className="bottom-0 left-1/2 h-64 w-2/3 -translate-x-1/2" />
-          <div className="relative mx-auto mt-12 max-w-5xl">
-            <FrontDoorCards signedIn={signedIn} place="home" />
+          <div className="relative mt-9 flex flex-col items-center gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
+              {/* Into the app: Study rooms, through sign-in for a visitor (the
+                  guard sends them to /login, and signing in lands there). */}
+              <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={`${primaryCta} h-14 px-9 text-lg`}>
+                Study Online <ArrowRight size={20} />
+              </Link>
+              <Link
+                to="/community-portal/signup"
+                onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })}
+                className={`${secondaryCta} h-14 px-8 text-lg`}
+              >
+                Partner With Us
+              </Link>
+            </div>
+            <p className="text-sm text-white/60">Free for students. Sign up in seconds with Google or your email.</p>
           </div>
-          <div className="relative mt-10 flex flex-col items-center gap-2.5">
-            {/* Into the app: Study rooms, through sign-in for a visitor (the
-                guard sends them to /login, and signing in lands there). */}
-            <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={`${primaryCta} h-14 px-10 text-lg`}>
-              Study Online <ArrowRight size={20} />
-            </Link>
-            <p className="text-sm text-white/60">Free. Sign up in seconds with Google or your email.</p>
+
+          {/* What else a student gets (components/landing/FrontDoor.tsx, shared with the phone). */}
+          <Glow className="bottom-0 left-1/2 h-64 w-2/3 -translate-x-1/2" />
+          <div className="relative mx-auto mt-14 max-w-6xl">
+            <FrontDoorCards signedIn={signedIn} place="home" />
           </div>
         </section>
 
