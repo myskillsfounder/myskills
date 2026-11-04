@@ -1,20 +1,18 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Briefcase, ChevronRight, ChevronUp, Globe2, GraduationCap, MessageCircleQuestion, MicOff, Users, Video, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Briefcase, ChevronRight, Globe2, GraduationCap, Users, type LucideIcon } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requirePhoneWelcome } from '@/lib/guards'
 
 /**
- * The phone's front door, for someone signed out (Paul, 4 Nov 2026: the bare
- * headline "looks plain, give the user a vibe to study online"). A student at
- * their desk fills the top of the screen, with what a study room feels like
- * floating over it: live, camera on, no sound, doubts upvoted. Then the
- * headline and one thing to do. "Study Online" signs them up, and a new
- * account lands in Study rooms (lib/device.ts). Anyone signed in is sent on
- * by the guard.
+ * The phone's front door, for someone signed out (Paul, 4 Nov 2026: "show
+ * cards at top, remove the room preview, keep students across India studying
+ * together"). What MySkills offers first, then the headline and one thing to
+ * do. "Study Online" signs them up, and a new account lands in Study rooms
+ * (lib/device.ts). Anyone signed in is sent on by the guard.
  *
- * Photos: stock, free under the Unsplash License (no attribution needed);
- * credits: Vikas Makwana (unsplash.com/photos/upn798iEEYM), Fotos
- * (TLdmnQz4Pns), Kyle Gregory Devaras (6RTM8EsD1T8), Amit Ranjan (3S0Ucv4BDCk).
+ * Face photos: stock, free under the Unsplash License (no attribution
+ * needed); credits: Fotos (unsplash.com/photos/TLdmnQz4Pns), Kyle Gregory
+ * Devaras (6RTM8EsD1T8), Amit Ranjan (3S0Ucv4BDCk).
  */
 export const Route = createFileRoute('/welcome')({
   beforeLoad: requirePhoneWelcome,
@@ -24,7 +22,6 @@ export const Route = createFileRoute('/welcome')({
 const unsplash = (photo: string, w: number, h: number) =>
   `https://images.unsplash.com/${photo}?auto=format&fit=crop&w=${w}&h=${h}&q=70`
 
-const HERO = 'photo-1617009762269-c062aaf6b3a0'
 const FACES = ['photo-1637589308599-3478cc55510d', 'photo-1514369118554-e20d93546b30', 'photo-1604177091072-b7b677a077f6']
 
 /** What else MySkills is, under the headline, in Paul's order (4 Nov 2026):
@@ -39,7 +36,7 @@ const CARDS: { title: string; body: string; to: string; photo: string; icon: Luc
 
 function MoreCards() {
   return (
-    <ul className="mt-6 grid grid-cols-2 gap-2.5">
+    <ul className="grid grid-cols-2 gap-2.5">
       {CARDS.map((c) => (
         <li key={c.title}>
           <Link
@@ -63,56 +60,11 @@ function MoreCards() {
   )
 }
 
-/** A frosted card floating over the photo. */
-function Chip({ className = '', delay = '0s', children }: { className?: string; delay?: string; children: React.ReactNode }) {
-  return (
-    <div
-      aria-hidden
-      className={`float-y absolute rounded-2xl bg-[#100e26]/65 px-3 py-2 text-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] ring-1 ring-white/15 backdrop-blur-md ${className}`}
-      style={{ animationDelay: delay }}
-    >
-      {children}
-    </div>
-  )
-}
-
 function WelcomePage() {
   return (
     <div className="relative min-h-[100dvh] overflow-x-clip bg-[#0b0a1f]">
-      {/* The photo, fading into the page */}
-      <div className="absolute inset-x-0 top-0 h-[60dvh] min-h-[22rem]">
-        <img
-          src={unsplash(HERO, 750, 1000)}
-          alt="A student studying at a desk"
-          className="h-full w-full object-cover"
-          style={{ objectPosition: '60% 30%' }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_85%,rgba(106,85,230,0.35),transparent_60%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0b0a1f]/70 via-transparent via-55% to-[#0b0a1f]" />
-
-        <Chip className="left-4 top-[22%]">
-          <span className="flex items-center gap-2 text-xs font-semibold">
-            <span className="live-ping relative h-2 w-2 rounded-full bg-emerald-400 text-emerald-400" /> Study room · Live
-          </span>
-        </Chip>
-        <Chip className="right-4 top-[40%] max-w-[13.5rem]" delay="-1.6s">
-          <span className="flex items-start gap-2">
-            <MessageCircleQuestion size={15} className="mt-0.5 shrink-0 text-amber-200" />
-            <span className="text-xs leading-snug text-white/90">“How do I revise a whole chapter in an hour?”</span>
-          </span>
-          <span className="mt-1.5 inline-flex items-center gap-0.5 rounded-full bg-amber-400/25 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
-            <ChevronUp size={12} /> Upvote
-          </span>
-        </Chip>
-        <Chip className="bottom-[16%] left-4" delay="-3.2s">
-          <span className="flex items-center gap-2.5 text-xs font-medium text-white/90">
-            <Video size={14} className="text-[#a99bff]" /> Camera on
-            <span className="h-3 w-px bg-white/25" />
-            <MicOff size={14} className="text-[#a99bff]" /> No sound
-          </span>
-        </Chip>
-      </div>
-
+      {/* Soft purple light, like the computer home page */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[70dvh] bg-[radial-gradient(ellipse_at_50%_0%,rgba(106,85,230,0.35),transparent_65%)]" />
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-5 pt-6">
         <header className="flex items-center justify-between">
           <span className="font-display text-lg font-semibold tracking-tight text-white">MySkills</span>
@@ -121,8 +73,9 @@ function WelcomePage() {
           </Link>
         </header>
 
-        <main className="flex flex-1 flex-col justify-end pb-2 pt-[45dvh]">
-          <div className="flex items-center gap-2.5">
+        <main className="flex flex-1 flex-col pb-2 pt-6">
+          <MoreCards />
+          <div className="mt-7 flex items-center gap-2.5">
             <span className="flex -space-x-2">
               {FACES.map((f) => (
                 <img key={f} src={unsplash(f, 64, 64)} alt="" className="h-7 w-7 rounded-full object-cover ring-2 ring-[#0b0a1f]" />
@@ -135,7 +88,6 @@ function WelcomePage() {
             biggest online community of learners
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-white/70">Join a live study room, ask your doubts, and get it done together.</p>
-          <MoreCards />
         </main>
 
         <footer className="sticky bottom-0 -mx-5 space-y-2 bg-gradient-to-t from-[#0b0a1f] via-[#0b0a1f]/95 to-transparent px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-5">
