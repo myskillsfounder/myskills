@@ -40,6 +40,10 @@ import { isPhone } from '@/lib/device'
 import { useInternshipDone } from '@/lib/internships'
 import { useActivity } from '@/lib/activity'
 import { Skeleton } from '@/components/ui'
+import { useBlueprint } from '@/lib/personalBlueprint'
+import { useMyBadges } from '@/lib/skillBadges'
+import { BlueprintSection } from '@/components/profile/BlueprintSection'
+import { BadgesRow } from '@/components/profile/BadgesRow'
 
 
 const dayKey = (d: Date) =>
@@ -140,6 +144,10 @@ export function LaunchPad() {
   const { progress: crProgress, loading: crLoading } = useCareerReadinessProgress()
   const { crSessions: liveSessions, dmSessions, loading: liveLoading } = useMyLiveSessions()
   const internshipDone = useInternshipDone()
+  // Where they're heading and what mentors have vouched for: both part of My
+  // progress on a computer (Paul, 5 Nov 2026; they were in My details).
+  const { blueprint, save: saveBlueprint } = useBlueprint()
+  const skillBadges = useMyBadges()
 
   useEffect(() => {
     fetchPracticeSummary()
@@ -419,6 +427,12 @@ export function LaunchPad() {
           </div>
           )
       )}
+
+      {/* Why they're doing it (the blueprint), then what they've earned (the
+          badges): the score above says where they stand, these say where
+          they're going and what's been vouched for. */}
+      {blueprint && <BlueprintSection blueprint={blueprint} save={saveBlueprint} />}
+      <BadgesRow badges={skillBadges} completed={(readiness?.professional.programmes ?? []).filter((p) => p.completed)} />
 
       {/* Their applications and mentors to suggest side by side, then the
           numbers: the computer's foot of the page. A new student keeps the
