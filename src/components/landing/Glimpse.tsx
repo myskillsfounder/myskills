@@ -336,7 +336,7 @@ export function Glimpse(g: GlimpseProps) {
                   <Check size={15} /> Get started free
                 </Link>
                 <Link {...login} className="press inline-flex h-10 items-center rounded-xl border border-white/25 px-4 text-sm font-semibold text-white hover:bg-white/10">
-                  Log in
+                  Log In
                 </Link>
               </div>
             </div>

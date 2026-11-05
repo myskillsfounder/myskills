@@ -202,7 +202,7 @@ export const SERVICES: Service[] = [
     icon: Compass,
     title: 'Career Guidance Professionals',
     who: 'Career Guidance',
-    body: 'Which track to focus on, how to read a job description, what to do after your certificate — plan your next step with a career guide.',
+    body: 'Which track to focus on, how to read an internship listing, what to do after your certificate — plan your next step with a career guide.',
     tags: ['1:1', 'Any Stage'],
     cta: 'Get Career Guidance',
     tint: 'from-amber-400 to-orange-600',

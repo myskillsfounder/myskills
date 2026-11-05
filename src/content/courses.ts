@@ -135,7 +135,7 @@ export const ENTREPRENEURSHIP: EngineCourseContent = {
 export const DATA_ANALYTICS: EngineCourseContent = {
   summary:
     'Turn raw business data into decisions with spreadsheets, SQL, Python, dashboards and AI assistants, and learn to check what the AI produces. Every module uses free tools and one practice dataset from Masala Mart, a fictional Indian spice brand.',
-  audience: 'Students and graduates in India who want an entry-level data analyst role, or to use data well in any job. No coding experience needed.',
+  audience: 'Students and graduates in India who want a data analyst internship, or to use data well in whatever they do. No coding experience needed.',
   outcomes: [
     'Turn a vague business question into an analysis plan with a clear decision',
     'Clean, combine and summarise data in spreadsheets, SQL and Python (pandas)',

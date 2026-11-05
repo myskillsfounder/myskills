@@ -41,8 +41,8 @@ export interface PageSeo {
  */
 export const PAGE_SEO: Record<string, PageSeo> = {
   '/': {
-    title: 'MySkills — The Student Development Platform, Powered by AI',
-    description: 'Everything a student needs in one place: courses with an AI coach, mentors, study abroad, career guidance, internships and wellness. Start with a free aptitude test.',
+    title: 'MySkills — Study Online Together: Live Study Rooms for Students',
+    description: 'Join a live study room, ask your doubts and get it done together. Plus internships, mentors, study abroad and partner institutions. Free for students.',
   },
   '/courses': {
     title: 'Courses — Digital Marketing, Leadership, Entrepreneurship & Data Analytics | MySkills',

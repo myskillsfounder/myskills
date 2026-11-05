@@ -47,7 +47,7 @@ export const AI_AGENTS: AiAgent[] = [
     ],
     produces: [
       'A learner profile per student: strengths, weak topics, goals, how they study (team only)',
-      '“Your next step” on the student’s LaunchPad, with the reason',
+      '“Your next step” on the student’s My progress, with the reason',
       'Personal review sets built from their own mistakes',
       'Coach feedback on written answers',
       'A brief for the mentor before each meeting',
