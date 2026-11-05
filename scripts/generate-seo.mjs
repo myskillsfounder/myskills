@@ -92,8 +92,8 @@ const STATIC_PAGES = [
     path: '/',
     changefreq: 'weekly',
     priority: '1.0',
-    title: 'MySkills — The Student Development Platform, Powered by AI',
-    description: 'Everything a student needs in one place: courses with an AI coach, mentors, study abroad, internships and wellness. Start with a free aptitude test.',
+    title: 'MySkills — Study Online Together: Live Study Rooms for Students',
+    description: 'Join a live study room, ask your doubts and get it done together. Plus internships, mentors, study abroad and partner institutions. Free for students.',
   },
   {
     path: '/courses',

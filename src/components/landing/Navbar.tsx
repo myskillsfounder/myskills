@@ -149,9 +149,11 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
                 </Link>
               )
             })}
-            <Link to="/community-portal/signup" onClick={() => setOpen(false)} className={t.mlink}>
-              Partner with us
-            </Link>
+            {!user && (
+              <Link to="/community-portal/signup" onClick={() => setOpen(false)} className={t.mlink}>
+                Partner With Us
+              </Link>
+            )}
             <Link to="/blog" onClick={() => setOpen(false)} className={t.mlink}>
               Blog
             </Link>

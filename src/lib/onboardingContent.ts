@@ -108,7 +108,7 @@ export const goalStep = {
   title: 'What’s the one goal you want to work towards?',
   subtitle: 'Pick the one that matters most right now.',
   options: [
-    { id: 'job', label: 'Find a new job', description: 'Land a role, or your first internship.', chip: 'find a new job', you: 'find a new job', icon: 'briefcase', lean: 'personal' },
+    { id: 'job', label: 'Find an internship', description: 'Get real work experience with a company.', chip: 'find an internship', you: 'find an internship', icon: 'briefcase', lean: 'personal' },
     { id: 'business', label: 'Start your own business', description: 'Turn an idea into something real.', chip: 'start my own business', you: 'start your own business', icon: 'rocket', lean: 'marketing' },
     { id: 'skill', label: 'Learn a new skill', description: 'Build something you can show for it.', chip: 'learn a new skill', you: 'learn a new skill', icon: 'sparkles', lean: 'marketing' },
     { id: 'grow', label: 'Grow in my current career', description: 'Move up, or take on more.', chip: 'grow in my current career', you: 'grow in your current career', icon: 'trending-up', lean: 'personal' },

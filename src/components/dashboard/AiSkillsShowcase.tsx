@@ -197,7 +197,7 @@ export function AiSkillsShowcase() {
         <SkillPillar
           eyebrow="Personal skills"
           title={CAREER_READINESS.name}
-          intro="The skills that decide whether you get the job and grow in it: fourteen of them, from self-awareness and empathy to leadership and coping with stress."
+          intro="The skills that decide whether you land the internship and grow from it: fourteen of them, from self-awareness and empathy to leadership and coping with stress."
           aiNote="AI is your practice partner: rehearse, get instant feedback, then a mentor reviews your growth."
           status="Live"
           live
