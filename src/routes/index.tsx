@@ -104,20 +104,29 @@ function HomePage() {
 
           <div className="relative mt-9 flex flex-col items-center gap-3">
             <div className="flex flex-wrap justify-center gap-3">
-              {/* Into the app: Study rooms, through sign-in for a visitor (the
-                  guard sends them to /login, and signing in lands there). */}
-              <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })} className={`${primaryCta} h-14 px-9 text-lg`}>
+              {/* A visitor signs up, as on the phone (a new account lands in
+                  Study rooms); a student goes straight in. Sending a visitor
+                  through /study-rooms put a first-timer on "Welcome back". */}
+              <Link
+                to={signedIn ? '/study-rooms' : '/signup'}
+                onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'hero' })}
+                className={`${primaryCta} h-14 px-9 text-lg`}
+              >
                 Study Online <ArrowRight size={20} />
               </Link>
-              <Link
-                to="/community-portal/signup"
-                onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })}
-                className={`${secondaryCta} h-14 px-8 text-lg`}
-              >
-                Partner With Us
-              </Link>
+              {/* Partner sign-up is for a new partner account: a signed-in
+                  student would only reach the portal's "no access" page. */}
+              {!signedIn && (
+                <Link
+                  to="/community-portal/signup"
+                  onClick={() => trackEvent('home_cta', { cta: 'partner', place: 'hero' })}
+                  className={`${secondaryCta} h-14 px-8 text-lg`}
+                >
+                  Partner With Us
+                </Link>
+              )}
             </div>
-            <p className="text-sm text-white/60">Free for students. Sign up in seconds with Google or your email.</p>
+            {!signedIn && <p className="text-sm text-white/60">Free for students. Sign up in seconds with Google or your email.</p>}
           </div>
 
           {/* What else a student gets (components/landing/FrontDoor.tsx, shared with the phone). */}
@@ -266,7 +275,7 @@ function HomePage() {
               Step into a live study room today, or start with a free aptitude test to see your strongest skills.
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-              <Link to="/study-rooms" onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'end' })} className={primaryCta}>
+              <Link to={signedIn ? '/study-rooms' : '/signup'} onClick={() => trackEvent('home_cta', { cta: 'study_online', place: 'end' })} className={primaryCta}>
                 Study Online <ArrowRight size={17} />
               </Link>
               <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'end' })} className={secondaryCta}>
