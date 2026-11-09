@@ -190,7 +190,7 @@ function SignupPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Take a 5-minute aptitude assessment, then start practising — free."
+      subtitle="Join a live study room and get it done together. Free for students."
       footer={
         <>
           Already have an account?{' '}
