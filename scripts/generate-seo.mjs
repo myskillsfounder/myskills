@@ -165,7 +165,7 @@ const STATIC_PAGES = [
     priority: '0.8',
     title: 'Create your free account | MySkills',
     description:
-      'Create a free MySkills account. Take a 5-minute aptitude assessment, practise with an AI coach and work with real mentors on digital marketing and career skills.',
+      'Create a free MySkills account: join a live study room, ask your doubts and get it done together. Plus internships, mentors and study abroad.',
   },
   {
     path: '/blog',

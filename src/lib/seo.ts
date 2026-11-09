@@ -87,7 +87,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   '/login': {
     title: 'Sign in | MySkills',
-    description: 'Sign in to your MySkills account to continue your assessment and practice.',
+    description: 'Sign in to MySkills and pick up where you left off.',
     noindex: true,
   },
   '/forgot-password': {
@@ -103,7 +103,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   '/signup': {
     title: 'Create your free account | MySkills',
     description:
-      'Create a free MySkills account. Take a 5-minute aptitude assessment, practise with an AI coach and work with real mentors on digital marketing and career skills.',
+      'Create a free MySkills account: join a live study room, ask your doubts and get it done together. Plus internships, mentors and study abroad.',
   },
   // The four partner pages share their words with the page components and
   // the prerender script: src/content/partner-pages.json.
@@ -174,7 +174,7 @@ export function applySeo(path: string, override?: Partial<PageSeo>) {
   // Unlisted paths are signed-in app pages: title them, but keep them out of
   // the index.
   const seo: PageSeo = {
-    title: base?.title ?? `${SITE_NAME} — The Student Development Platform`,
+    title: base?.title ?? `${SITE_NAME} — Study Online Together`,
     description: base?.description ?? PAGE_SEO['/'].description,
     noindex: base ? base.noindex : true,
     ...override,

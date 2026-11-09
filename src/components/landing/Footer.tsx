@@ -2,6 +2,17 @@ const year = new Date().getFullYear()
 
 const columns = [
   {
+    // The front door's four ways in, for every page's footer (and crawlers).
+    title: 'For students',
+    links: [
+      { label: 'Study Online', href: '/signup' },
+      { label: 'Internships', href: '/internships' },
+      { label: 'Mentors', href: '/mentors' },
+      { label: 'Study abroad', href: '/study-abroad' },
+      { label: 'Blog', href: '/blog' },
+    ],
+  },
+  {
     title: 'Courses',
     links: [
       { label: 'All courses', href: '/courses' },
@@ -9,11 +20,10 @@ const columns = [
       { label: 'Global Leadership', href: '/career-readiness' },
       { label: 'AI-Powered Entrepreneurship', href: '/entrepreneurship' },
       { label: 'AI-Powered Data Analytics', href: '/data-analytics' },
-      { label: 'Blog', href: '/blog' },
     ],
   },
   {
-    title: 'Partner with us',
+    title: 'Partner With Us',
     links: [
       { label: 'Become a mentor', href: '/become-a-mentor' },
       { label: 'Partner your institution', href: '/become-a-partner-institution' },
@@ -38,13 +48,13 @@ export function Footer({ dark = false }: { dark?: boolean }) {
   return (
     <footer className={`border-t ${t.line}`}>
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-4">
-          <div>
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <p className={`text-lg font-semibold tracking-tight ${t.head}`}>
               MySkills
             </p>
             <p className={`mt-2 max-w-xs text-sm ${t.body}`}>
-              Personal and professional development, powered by AI and reviewed by people.
+              Join a live study room, ask your doubts, and get it done together.
             </p>
           </div>
 

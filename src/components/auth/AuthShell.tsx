@@ -12,9 +12,9 @@ interface AuthShellProps {
 }
 
 const PROOF = [
-  'Start with a 5-minute aptitude assessment',
-  'Practise digital marketing and career skills with an AI coach',
-  'Work with real mentors and build proof you can show',
+  'Join a live study room and get it done together',
+  'Ask your doubts, and practise with an AI coach',
+  'Internships, mentors and study abroad, free for students',
 ]
 
 /**
@@ -34,9 +34,9 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
 
         <div>
           <h2 className="font-display text-[2.5rem] font-semibold leading-[1.1] text-white">
-            Prove what you
+            Study online,
             <br />
-            can actually do.
+            together.
           </h2>
           <ul className="mt-8 space-y-3.5">
             {PROOF.map((p) => (
@@ -50,7 +50,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
           </ul>
         </div>
 
-        <p className="text-xs text-white/40">Personal and professional development, powered by AI</p>
+        <p className="text-xs text-white/40">AI is changing every career. We help you keep up.</p>
       </aside>
 
       {/* Form pane */}
