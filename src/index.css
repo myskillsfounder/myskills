@@ -356,3 +356,23 @@ body {
 @media (max-width: 640px) {
   input:not([type='checkbox']):not([type='radio']), select, textarea { font-size: 16px !important; }
 }
+
+/* Study rooms: a cheer floats up and fades (components/focus/FocusRoom.tsx). */
+@keyframes cheer-float {
+  0% { opacity: 0; transform: translateY(8px) scale(0.9); }
+  12% { opacity: 1; transform: translateY(0) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-14px); }
+}
+@keyframes cheer-pop {
+  0% { opacity: 0; transform: translateY(16px) scale(0.5); }
+  15% { opacity: 1; transform: translateY(0) scale(1.15); }
+  25% { transform: scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-28px); }
+}
+.cheer-float { animation: cheer-float 3.2s ease-out forwards; }
+.cheer-pop { animation: cheer-pop 3.2s ease-out forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .cheer-float, .cheer-pop { animation-duration: 0.01s; animation-delay: 0s; animation-fill-mode: none; }
+}

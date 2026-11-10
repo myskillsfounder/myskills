@@ -40,6 +40,37 @@ export interface FocusTopic {
   mine: boolean
   votes: number
   voted: boolean
+  /** Answers so far; missing before docs/supabase-study-rooms-engage.sql is run. */
+  replies?: number
+  /** Its author marked an answer as the one that solved it. */
+  solved?: boolean
+}
+
+/** An answer to a doubt. */
+export interface FocusReply {
+  id: string
+  body: string
+  created_at: string
+  author: string
+  avatar: string | null
+  mine: boolean
+  /** The doubt's author marked this as the answer that solved it. */
+  accepted: boolean
+}
+
+/** The student's own study time, from focus_my_study(). */
+export interface MyStudy {
+  today: number
+  week: number
+  streak: number
+}
+
+/** This week's top five in a room. */
+export interface RoomLeader {
+  name: string
+  avatar: string | null
+  minutes: number
+  mine: boolean
 }
 
 /** What each student in the room shares with the others. */
@@ -52,7 +83,22 @@ export interface FocusPresence {
   working_on: string
   camera: boolean
   joined_at: string
+  /** Raised hand: they'd like help. Missing from an older tab. */
+  hand?: boolean
 }
+
+/** A quick cheer, to the whole room or to one student's tile. */
+export interface Reaction {
+  id: string
+  emoji: string
+  /** Who sent it. */
+  name: string
+  /** The session it was for, or null for the room. */
+  to: string | null
+}
+
+/** The cheers a student can send. */
+export const REACTIONS = ['👏', '🔥', '💪', '☕', '🎉'] as const
 
 /** Empty, not an error, before docs/supabase-focus-rooms.sql is run. */
 export async function fetchMyFocusRooms(): Promise<FocusRoom[]> {
@@ -81,6 +127,80 @@ export async function voteTopic(id: string): Promise<boolean> {
 export async function removeTopic(id: string): Promise<void> {
   const { error } = await supabase.rpc('focus_remove_topic', { p_topic: id })
   if (error) throw error
+}
+
+export async function fetchReplies(topic: string): Promise<FocusReply[]> {
+  const { data, error } = await supabase.rpc('focus_topic_replies', { p_topic: topic })
+  if (error) throw error
+  return (data ?? []) as FocusReply[]
+}
+
+export async function addReply(topic: string, body: string): Promise<void> {
+  const { error } = await supabase.rpc('focus_add_reply', { p_topic: topic, p_body: body })
+  if (error) throw error
+}
+
+export async function removeReply(id: string): Promise<void> {
+  const { error } = await supabase.rpc('focus_remove_reply', { p_reply: id })
+  if (error) throw error
+}
+
+/** Marks (or unmarks) the answer that solved the student's own doubt. */
+export async function acceptReply(topic: string, reply: string): Promise<boolean> {
+  const { data, error } = await supabase.rpc('focus_accept_reply', { p_topic: topic, p_reply: reply })
+  if (error) throw error
+  return data as boolean
+}
+
+/** One more minute studied in the room. Quiet on failure (before the SQL is run, say). */
+export async function logMinute(room: string): Promise<void> {
+  await supabase.rpc('focus_log_minutes', { p_room: room, p_minutes: 1 })
+}
+
+/** Null before docs/supabase-study-rooms-engage.sql is run. */
+export async function fetchMyStudy(): Promise<MyStudy | null> {
+  const { data, error } = await supabase.rpc('focus_my_study')
+  if (error || !data) return null
+  return data as MyStudy
+}
+
+/** Null before docs/supabase-study-rooms-engage.sql is run. */
+export async function fetchLeaders(room: string): Promise<RoomLeader[] | null> {
+  const { data, error } = await supabase.rpc('focus_room_leaders', { p_room: room })
+  if (error) return null
+  return (data ?? []) as RoomLeader[]
+}
+
+/** "1 h 20 min", "45 min". */
+export function minutesLabel(m: number): string {
+  if (m < 60) return `${m} min`
+  const h = Math.floor(m / 60)
+  const rest = m % 60
+  return rest ? `${h} h ${rest} min` : `${h} h`
+}
+
+/*
+ * The room's focus timer: 25 minutes of focus, then a 5-minute break, on the
+ * half hour (:00 and :30), the same for everyone without anything to sync.
+ * Everyone in every room breaks together, so a break is when to say hi.
+ */
+export const FOCUS_MIN = 25
+export const CYCLE_MIN = 30
+
+export interface FocusPhase {
+  phase: 'focus' | 'break'
+  /** Seconds left in this phase. */
+  left: number
+  /** 0 to 1, how far through this phase. */
+  done: number
+}
+
+export function focusPhase(now = Date.now()): FocusPhase {
+  const cycle = CYCLE_MIN * 60
+  const into = Math.floor(now / 1000) % cycle
+  const focus = FOCUS_MIN * 60
+  if (into < focus) return { phase: 'focus', left: focus - into, done: into / focus }
+  return { phase: 'break', left: cycle - into, done: (into - focus) / (cycle - focus) }
 }
 
 export async function reportStudent(room: string, userId: string, reason: string): Promise<void> {
@@ -201,12 +321,19 @@ export function useFocusRoom(
   const [local, setLocal] = useState<MediaStream | null>(null)
   const [cameraError, setCameraError] = useState<string>()
   const [topicsTick, setTopicsTick] = useState(0)
+  const [reactions, setReactions] = useState<Reaction[]>([])
 
   const channel = useRef<RealtimeChannel | null>(null)
   const peers = useRef(new Map<string, Peer>())
   const track = useRef<MediaStreamTrack | null>(null)
   const others = useRef<FocusPresence[]>([])
-  const mine = useRef({ working_on: workingOn, camera: false })
+  const mine = useRef({ working_on: workingOn, camera: false, hand: false })
+
+  /** Shows a cheer for three seconds. */
+  const showReaction = useCallback((r: Reaction) => {
+    setReactions((all) => [...all.slice(-11), r])
+    window.setTimeout(() => setReactions((all) => all.filter((x) => x.id !== r.id)), 3200)
+  }, [])
 
   const send = useCallback((s: Signal) => {
     void channel.current?.send({ type: 'broadcast', event: 'signal', payload: s })
@@ -319,6 +446,10 @@ export function useFocusRoom(
         })
         .on('broadcast', { event: 'signal' }, ({ payload }) => void onSignal(payload as Signal).catch(() => undefined))
         .on('broadcast', { event: 'topics' }, () => setTopicsTick((t) => t + 1))
+        .on('broadcast', { event: 'react' }, ({ payload }) => {
+          const r = payload as Reaction
+          if (typeof r?.emoji === 'string' && (REACTIONS as readonly string[]).includes(r.emoji)) showReaction({ ...r, name: String(r.name ?? '').slice(0, 40) })
+        })
       opened.subscribe((state, err) => {
         if (!live) return
         if (state === 'SUBSCRIBED') {
@@ -382,10 +513,32 @@ export function useFocusRoom(
     [announce],
   )
 
+  const setHand = useCallback(
+    (up: boolean) => {
+      mine.current.hand = up
+      announce()
+    },
+    [announce],
+  )
+
+  /** A cheer, to the room or one student; shown here at once, and to everyone else. */
+  const lastReact = useRef(0)
+  const react = useCallback(
+    (emoji: string, to: string | null = null) => {
+      // One a second at most, so a cheer can't flood the room.
+      if (Date.now() - lastReact.current < 1000) return
+      lastReact.current = Date.now()
+      const r: Reaction = { id: crypto.randomUUID(), emoji, name: me.name, to }
+      showReaction(r)
+      void channel.current?.send({ type: 'broadcast', event: 'react', payload: r })
+    },
+    [me.name, showReaction],
+  )
+
   /** Tell the room the topics changed, so everyone's board refreshes. */
   const topicsChanged = useCallback(() => {
     void channel.current?.send({ type: 'broadcast', event: 'topics', payload: {} })
   }, [])
 
-  return { session, status, people, streams, local, cameraError, setCamera, setWorkingOn, topicsTick, topicsChanged }
+  return { session, status, people, streams, local, cameraError, setCamera, setWorkingOn, setHand, react, reactions, topicsTick, topicsChanged }
 }
