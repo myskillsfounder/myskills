@@ -83,8 +83,6 @@ export interface FocusPresence {
   working_on: string
   camera: boolean
   joined_at: string
-  /** Raised hand: they'd like help. Missing from an older tab. */
-  hand?: boolean
 }
 
 /** A quick cheer, to the whole room or to one student's tile. */
@@ -177,30 +175,6 @@ export function minutesLabel(m: number): string {
   const h = Math.floor(m / 60)
   const rest = m % 60
   return rest ? `${h} h ${rest} min` : `${h} h`
-}
-
-/*
- * The room's focus timer: 25 minutes of focus, then a 5-minute break, on the
- * half hour (:00 and :30), the same for everyone without anything to sync.
- * Everyone in every room breaks together, so a break is when to say hi.
- */
-export const FOCUS_MIN = 25
-export const CYCLE_MIN = 30
-
-export interface FocusPhase {
-  phase: 'focus' | 'break'
-  /** Seconds left in this phase. */
-  left: number
-  /** 0 to 1, how far through this phase. */
-  done: number
-}
-
-export function focusPhase(now = Date.now()): FocusPhase {
-  const cycle = CYCLE_MIN * 60
-  const into = Math.floor(now / 1000) % cycle
-  const focus = FOCUS_MIN * 60
-  if (into < focus) return { phase: 'focus', left: focus - into, done: into / focus }
-  return { phase: 'break', left: cycle - into, done: (into - focus) / (cycle - focus) }
 }
 
 export async function reportStudent(room: string, userId: string, reason: string): Promise<void> {
@@ -327,7 +301,7 @@ export function useFocusRoom(
   const peers = useRef(new Map<string, Peer>())
   const track = useRef<MediaStreamTrack | null>(null)
   const others = useRef<FocusPresence[]>([])
-  const mine = useRef({ working_on: workingOn, camera: false, hand: false })
+  const mine = useRef({ working_on: workingOn, camera: false })
 
   /** Shows a cheer for three seconds. */
   const showReaction = useCallback((r: Reaction) => {
@@ -513,14 +487,6 @@ export function useFocusRoom(
     [announce],
   )
 
-  const setHand = useCallback(
-    (up: boolean) => {
-      mine.current.hand = up
-      announce()
-    },
-    [announce],
-  )
-
   /** A cheer, to the room or one student; shown here at once, and to everyone else. */
   const lastReact = useRef(0)
   const react = useCallback(
@@ -540,5 +506,5 @@ export function useFocusRoom(
     void channel.current?.send({ type: 'broadcast', event: 'topics', payload: {} })
   }, [])
 
-  return { session, status, people, streams, local, cameraError, setCamera, setWorkingOn, setHand, react, reactions, topicsTick, topicsChanged }
+  return { session, status, people, streams, local, cameraError, setCamera, setWorkingOn, react, reactions, topicsTick, topicsChanged }
 }

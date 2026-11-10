@@ -5,11 +5,8 @@ import {
   Check,
   CheckCircle2,
   ChevronUp,
-  Coffee,
   EyeOff,
   Flag,
-  Flame,
-  Hand,
   Link2,
   LogOut,
   MessageCircle,
@@ -18,7 +15,6 @@ import {
   Pencil,
   Send,
   ShieldCheck,
-  Timer,
   Trash2,
   Trophy,
   Users,
@@ -36,10 +32,8 @@ import {
   addReply,
   addTopic,
   fetchLeaders,
-  fetchMyStudy,
   fetchReplies,
   fetchTopics,
-  focusPhase,
   logMinute,
   minutesLabel,
   removeReply,
@@ -51,7 +45,6 @@ import {
   type FocusReply,
   type FocusRoom as Room,
   type FocusTopic,
-  type MyStudy,
   type Reaction,
   type RoomLeader,
 } from '@/lib/focusRooms'
@@ -177,7 +170,7 @@ function SafetyNote({ className = '' }: { className?: string }) {
   )
 }
 
-/** A clock that ticks every `ms`, for the timer and the time-in-room labels. */
+/** A clock that ticks every `ms`, for the time-in-room labels. */
 function useNow(ms: number) {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
@@ -187,9 +180,13 @@ function useNow(ms: number) {
   return now
 }
 
-const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+/** Seats shown in the grid: everyone on camera, then empty ones up to this. */
+const SEATS = MAX_CAMERAS
 
-/** Inside the room: the timer, the cameras and cheers, and the doubts beside them. */
+/**
+ * Inside the room: the cameras, as many as fit, and the doubts beside them
+ * (Paul, 11 Nov 2026: "keep it simple and keep space for more tiles").
+ */
 export function FocusRoomLive({
   room,
   me,
@@ -207,11 +204,9 @@ export function FocusRoomLive({
   const [workingOn, setWorkingOn] = useState(initialWorkingOn)
   const [hidden, setHidden] = useState<Set<string>>(new Set())
   const [reporting, setReporting] = useState<FocusPresence | null>(null)
-  const [hand, setHand] = useState(false)
-  const [study, setStudy] = useState<MyStudy | null>(null)
-  const askRef = useRef<HTMLInputElement>(null)
+  const [logged, setLogged] = useState(0)
   const started = useRef(false)
-  const now = useNow(1000)
+  const now = useNow(30_000)
 
   // Turn the camera on once the room is joined, if the student chose to.
   useEffect(() => {
@@ -221,59 +216,36 @@ export function FocusRoomLive({
     }
   }, [r, r.status, startCamera])
 
-  // Count the minutes studied here (a minute at a time, so leaving loses
-  // at most one), and show the student's day and streak.
+  // Count the minutes studied here, a minute at a time, for "Top this week".
   const live = r.status === 'live'
   useEffect(() => {
     if (!live) return
-    let on = true
-    const refresh = () => fetchMyStudy().then((s) => on && setStudy(s))
-    void refresh()
-    const t = window.setInterval(() => void logMinute(room.slug).then(refresh, () => undefined), 60_000)
-    return () => {
-      on = false
-      window.clearInterval(t)
-    }
+    const t = window.setInterval(() => void logMinute(room.slug).then(() => setLogged((n) => n + 1), () => undefined), 60_000)
+    return () => window.clearInterval(t)
   }, [live, room.slug])
 
   const self = r.people.find((p) => p.session === r.session)
   const others = r.people.filter((p) => p.session !== r.session)
   const onCamera = others.slice(0, MAX_CAMERAS)
   const alsoHere = others.slice(MAX_CAMERAS)
-  const hands = others.filter((p) => p.hand)
-  const roomCheers = r.reactions.filter((x) => x.to === null)
+  const empty = Math.max(0, SEATS - 1 - onCamera.length)
   const cheersFor = (session: string) => r.reactions.filter((x) => x.to === session)
   const minsIn = (p: FocusPresence) => (p.joined_at ? Math.max(0, Math.floor((now - new Date(p.joined_at).getTime()) / 60000)) : 0)
 
-  function toggleHand() {
-    const up = !hand
-    setHand(up)
-    r.setHand(up)
-    // A raised hand is a doubt: put the cursor where it gets asked.
-    if (up) {
-      askRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      askRef.current?.focus()
-    }
-  }
-
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <Link to="/study-rooms" className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
             <ArrowLeft size={16} /> Study rooms
           </Link>
           <h1 className="mt-1 truncate font-display text-2xl font-semibold text-ink-900">{room.title}</h1>
           <p className="mt-0.5 inline-flex items-center gap-1.5 text-sm text-ink-500">
-            <span className={`h-2 w-2 rounded-full ${live ? 'animate-pulse bg-emerald-500' : 'bg-amber-400'}`} />
+            <span className={`h-2 w-2 rounded-full ${live ? 'bg-emerald-500' : 'bg-amber-400'}`} />
             {live ? `${r.people.length} studying now` : 'Joining…'}
-            {hands.length > 0 && <span className="ml-1 text-amber-600">· {hands.length} with a hand up</span>}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant={hand ? 'primary' : 'secondary'} icon={Hand} onClick={toggleHand} disabled={!live} aria-pressed={hand}>
-            {hand ? 'Lower hand' : 'Raise hand'}
-          </Button>
+        <div className="flex gap-2">
           <Button variant={r.local ? 'secondary' : 'primary'} icon={r.local ? VideoOff : Video} onClick={() => void r.setCamera(!r.local)} disabled={!live}>
             {r.local ? 'Camera off' : 'Camera on'}
           </Button>
@@ -301,13 +273,11 @@ export function FocusRoomLive({
         </div>
       )}
 
-      <FocusTimer now={now} study={study} />
-
-      <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <section aria-label="Who's here" className="min-w-0">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             <Tile
-              person={self ?? { session: r.session, ...me, working_on: workingOn, camera: !!r.local, joined_at: '', hand }}
+              person={self ?? { session: r.session, ...me, working_on: workingOn, camera: !!r.local, joined_at: '' }}
               stream={r.local}
               minutes={self ? minsIn(self) : 0}
               cheers={cheersFor(r.session)}
@@ -341,26 +311,21 @@ export function FocusRoomLive({
                 onReport={() => setReporting(p)}
               />
             ))}
+            {live && Array.from({ length: empty }, (_, i) => <EmptySeat key={i} room={room} invite={i === 0} />)}
           </div>
-
-          {others.length === 0 && live && <AloneHere room={room} />}
-
-          <CheerBar cheers={roomCheers} onCheer={(emoji) => r.react(emoji)} disabled={!live} breakTime={focusPhase(now).phase === 'break'} />
 
           {alsoHere.length > 0 && (
             <div className="mt-5">
               <p className="mb-2 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-700">
                 <Users size={15} /> Also here
               </p>
-              <ul className="grid gap-2 sm:grid-cols-2">
+              <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
                 {alsoHere.map((p) => (
                   <li key={p.session} className="card flex items-center gap-3 p-3">
                     <Avatar name={p.name} src={p.avatar} size={32} />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-ink-900">
-                        {p.name} {p.hand && <span aria-label="Hand raised">✋</span>}
-                      </span>
-                      <span className="block truncate text-xs text-ink-500">{p.working_on || 'Studying'} · {minutesLabel(minsIn(p))}</span>
+                      <span className="block truncate text-sm font-semibold text-ink-900">{p.name}</span>
+                      <span className="block truncate text-xs text-ink-500">{p.working_on || 'Studying'}</span>
                     </span>
                   </li>
                 ))}
@@ -371,8 +336,8 @@ export function FocusRoomLive({
         </section>
 
         <div className="space-y-5 lg:sticky lg:top-6 lg:self-start">
-          <DoubtsBoard room={room.slug} tick={r.topicsTick} onChange={r.topicsChanged} askRef={askRef} handUp={hand} />
-          <LeadersCard room={room.slug} tick={study?.today ?? 0} />
+          <DoubtsBoard room={room.slug} tick={r.topicsTick} onChange={r.topicsChanged} />
+          <LeadersCard room={room.slug} tick={logged} />
         </div>
       </div>
 
@@ -381,126 +346,30 @@ export function FocusRoomLive({
   )
 }
 
-/**
- * The room's shared timer (lib/focusRooms.ts focusPhase): 25 minutes of focus,
- * 5 of break, on the half hour for everyone. The tab title shows it too, so a
- * student reading in another tab still sees when the break starts.
- */
-function FocusTimer({ now, study }: { now: number; study: MyStudy | null }) {
-  const f = focusPhase(now)
-  const focusing = f.phase === 'focus'
-  useEffect(() => {
-    const before = document.title
-    return () => {
-      document.title = before
-    }
-  }, [])
-  useEffect(() => {
-    document.title = `${mmss(f.left)} ${focusing ? 'Focus' : 'Break'} · MySkills`
-  }, [f.left, focusing])
-
-  return (
-    <div
-      className={`relative overflow-hidden rounded-2xl border p-4 sm:p-5 ${
-        focusing ? 'border-brand-300/40 bg-brand-50' : 'border-emerald-300/50 bg-emerald-50'
-      }`}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${focusing ? 'bg-brand-600 text-white' : 'bg-emerald-600 text-white'}`}>
-            {focusing ? <Timer size={22} /> : <Coffee size={22} />}
-          </span>
-          <div>
-            <p className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${focusing ? 'text-brand-700' : 'text-emerald-700'}`}>
-              {focusing ? 'Focus time, together' : 'Break time'}
-            </p>
-            <p className="font-display text-3xl font-semibold tabular-nums text-ink-900" aria-live="off">
-              {mmss(f.left)}
-            </p>
-            <p className="text-xs text-ink-500">
-              {focusing ? 'Everyone here breaks together on the half hour.' : 'Stretch, drink water, cheer someone on. Focus starts again soon.'}
-            </p>
-          </div>
-        </div>
-        {study && (
-          <dl className="flex gap-2">
-            <StudyStat label="Today" value={minutesLabel(study.today)} />
-            <StudyStat label="This week" value={minutesLabel(study.week)} />
-            <StudyStat label="Streak" value={`${study.streak} day${study.streak === 1 ? '' : 's'}`} icon={study.streak > 0 ? <Flame size={13} className="text-orange-500" /> : null} />
-          </dl>
-        )}
-      </div>
-      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-ink-900/10">
-        <div
-          className={`h-full rounded-full transition-[width] duration-1000 ease-linear ${focusing ? 'bg-gradient-to-r from-brand-500 to-fuchsia-500' : 'bg-emerald-500'}`}
-          style={{ width: `${Math.round(f.done * 100)}%` }}
-        />
-      </div>
-    </div>
-  )
-}
-
-function StudyStat({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
-  return (
-    <div className="min-w-[84px] rounded-xl bg-ink-900/[0.04] px-3 py-2 text-center">
-      <dt className="text-[10px] font-semibold uppercase tracking-wider text-ink-500">{label}</dt>
-      <dd className="mt-0.5 inline-flex items-center gap-1 text-sm font-semibold text-ink-900">
-        {icon}
-        {value}
-      </dd>
-    </div>
-  )
-}
-
-/** Alone in the room: the timer still runs, and a friend can be asked in. */
-function AloneHere({ room }: { room: Room }) {
+/** A free seat in the grid: room for one more. The first one invites a friend. */
+function EmptySeat({ room, invite }: { room: Room; invite: boolean }) {
   const [copied, setCopied] = useState(false)
-  const url = `${window.location.origin}/study-rooms/${room.slug}`
   async function copy() {
     try {
-      await navigator.clipboard.writeText(url)
+      await navigator.clipboard.writeText(`${window.location.origin}/study-rooms/${room.slug}`)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 2500)
     } catch {
-      /* clipboard blocked: the link is on screen to copy by hand */
+      /* clipboard blocked: nothing to do */
     }
   }
   return (
-    <div className="mt-4 flex flex-col items-center gap-3 rounded-2xl border border-dashed border-ink-900/10 p-5 text-center sm:flex-row sm:text-left">
-      <p className="flex-1 text-sm text-ink-600">
-        You’re the first one here. The timer still runs, and others in {room.title} will appear as they join. Studying is easier with a friend:
-      </p>
-      <Button variant="secondary" size="sm" icon={copied ? Check : Link2} onClick={() => void copy()}>
-        {copied ? 'Link copied' : 'Invite a friend'}
-      </Button>
-    </div>
-  )
-}
-
-/** Cheer the whole room; cheers from everyone float up here. */
-function CheerBar({ cheers, onCheer, disabled, breakTime }: { cheers: Reaction[]; onCheer: (emoji: string) => void; disabled: boolean; breakTime: boolean }) {
-  return (
-    <div className={`relative mt-4 flex flex-wrap items-center gap-2 rounded-2xl border p-3 ${breakTime ? 'border-emerald-300/50 bg-emerald-50' : 'border-ink-900/[0.06]'}`}>
-      <p className="mr-1 text-sm font-medium text-ink-700">{breakTime ? 'Break: cheer the room!' : 'Cheer the room'}</p>
-      {REACTIONS.map((e) => (
-        <button
-          key={e}
-          type="button"
-          disabled={disabled}
-          onClick={() => onCheer(e)}
-          aria-label={`Send ${e} to the room`}
-          className="press grid h-10 w-10 place-items-center rounded-full border border-ink-900/10 text-lg transition-transform hover:-translate-y-0.5 hover:border-brand-300 disabled:opacity-50"
-        >
-          {e}
-        </button>
-      ))}
-      <div aria-live="polite" className="pointer-events-none absolute bottom-full left-3 mb-2 flex flex-col-reverse gap-1.5">
-        {cheers.slice(-4).map((c) => (
-          <span key={c.id} className="cheer-float inline-flex items-center gap-1.5 rounded-full bg-ink-900 px-3 py-1 text-xs font-medium text-white shadow-e2">
-            <span className="text-base">{c.emoji}</span> {c.name}
-          </span>
-        ))}
-      </div>
+    <div className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-ink-900/10 text-center">
+      {invite ? (
+        <>
+          <span className="text-xs text-ink-500">Room for more</span>
+          <Button variant="secondary" size="sm" icon={copied ? Check : Link2} onClick={() => void copy()}>
+            {copied ? 'Link copied' : 'Invite a friend'}
+          </Button>
+        </>
+      ) : (
+        <span className="text-xs text-ink-400">Open seat</span>
+      )}
     </div>
   )
 }
@@ -538,9 +407,7 @@ function Tile({
 
   return (
     <div
-      className={`theme-light group relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#14122b] ring-1 transition-shadow ${
-        person.hand ? 'ring-2 ring-amber-400 shadow-[0_0_0_4px_rgba(251,191,36,0.18)]' : 'ring-white/10'
-      }`}
+      className="theme-light group relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#14122b] ring-1 ring-white/10"
     >
       {showVideo ? (
         <video ref={ref} autoPlay playsInline muted className={`h-full w-full object-cover ${you ? '-scale-x-100' : ''}`} />
@@ -556,11 +423,6 @@ function Tile({
       <div className="absolute left-2 top-2 flex gap-1.5">
         {minutes > 0 && (
           <span className="rounded-full bg-black/45 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur">{minutesLabel(minutes)}</span>
-        )}
-        {person.hand && (
-          <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[11px] font-semibold text-black">
-            ✋<span className="hidden sm:inline"> Needs help</span>
-          </span>
         )}
       </div>
 
@@ -665,14 +527,10 @@ function DoubtsBoard({
   room,
   tick,
   onChange,
-  askRef,
-  handUp,
 }: {
   room: string
   tick: number
   onChange: () => void
-  askRef: React.RefObject<HTMLInputElement | null>
-  handUp: boolean
 }) {
   const [topics, setTopics] = useState<FocusTopic[]>()
   const [error, setError] = useState<string>()
@@ -738,15 +596,12 @@ function DoubtsBoard({
 
       <form onSubmit={submit} className="mt-4 flex gap-2">
         <input
-          ref={askRef}
           value={text}
           maxLength={160}
           onChange={(e) => setText(e.target.value)}
-          placeholder={handUp ? 'What do you need help with?' : 'e.g. How do I pick keywords for a new site?'}
+          placeholder="e.g. How do I pick keywords for a new site?"
           aria-label="Ask a doubt"
-          className={`min-w-0 flex-1 rounded-xl border bg-white px-3 py-2.5 text-sm text-ink-900 outline-none placeholder:text-ink-400 focus:border-brand-500 ${
-            handUp ? 'border-amber-400' : 'border-ink-900/10'
-          }`}
+          className="min-w-0 flex-1 rounded-xl border border-ink-900/10 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none placeholder:text-ink-400 focus:border-brand-500"
         />
         <Button type="submit" icon={Send} disabled={busy || text.trim().length < 3}>
           Ask
