@@ -542,6 +542,67 @@ function head({ title, description, url, image, type = 'website', jsonLd }) {
 ${jsonLd ? `    <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : ''}`
 }
 
+/* -- crawlable bodies -------------------------------------------------------
+ * Google renders JavaScript late, and Bing, link previews and most AI crawlers
+ * don't at all: to them a head-only page was an empty <div id="root"> with no
+ * text and no links, the home page included. Every public page now carries its
+ * own heading and description (the same words as its meta tags, so nothing to
+ * drift) and the site's main links, so a crawler can read it and walk on. */
+
+/** The site's main public pages, linked from every prerendered page. */
+const SITE_LINKS = [
+  ['/', 'Home'],
+  ['/signup', 'Study Online'],
+  ['/courses', 'Courses'],
+  ['/internships', 'Internships'],
+  ['/mentors', 'Mentors'],
+  ['/study-abroad', 'Study abroad'],
+  ['/become-a-partner-institution', 'For institutions'],
+  ['/community', 'Partner With Us'],
+  ['/blog', 'Blog'],
+]
+
+/** The four course pages, in the footer's order. */
+const COURSE_PATHS = ['/digital-marketing', '/career-readiness', '/entrepreneurship', '/data-analytics']
+
+function siteNavHtml() {
+  return `<nav aria-label="MySkills"><ul>${SITE_LINKS.map(([href, label]) => `<li><a href="${href}">${esc(label)}</a></li>`).join('')}</ul></nav>`
+}
+
+/** "Mentors — Learn from…| MySkills" -> "Mentors". */
+const pageHeading = (title) => title.split(/ \| | — |: /)[0]
+
+function courseListHtml() {
+  return `<ul>${COURSE_PATHS.map((path) => STATIC_PAGES.find((p) => p.path === path))
+    .filter(Boolean)
+    .map((c) => `<li><h3><a href="${c.path}">${esc(pageHeading(c.title))}</a></h3><p>${esc(c.description)}</p></li>`)
+    .join('')}</ul>`
+}
+
+/** A head-only page's body: its heading, its description, and the way on. */
+function simpleBodyHtml(page) {
+  const courses = page.path === '/courses' ? courseListHtml() : ''
+  const start = page.path === '/signup' ? '' : '<p><a href="/signup">Study Online, free for students</a></p>'
+  return `<main><h1>${esc(pageHeading(page.title))}</h1><p>${esc(page.description)}</p>${courses}${start}</main>${siteNavHtml()}`
+}
+
+/** The front door (src/components/landing/FrontDoor.tsx): keep its words in step. */
+const FRONT_DOOR_CARDS = [
+  ['/internships', 'Internships', 'Your first internship with a partner company: hands-on, real experience.'],
+  ['/mentors', 'Mentors', '1:1 and group sessions with industry experts who guide your next step.'],
+  ['/become-a-partner-institution', 'Institutions', 'Colleges and schools partner with MySkills to support their students.'],
+  ['/study-abroad', 'Study Abroad', 'Guidance on partner universities, applications and test prep.'],
+]
+
+function homeBodyHtml() {
+  return `<main><h1>Study online with the biggest online community of learners</h1>
+<p>AI is changing every career. We help you keep up.</p>
+<p>Join a live study room, ask your doubts, and get it done together.</p>
+<p><a href="/signup">Study Online</a></p>
+<h2>Plus the support every student gets</h2><ul>${FRONT_DOOR_CARDS.map(([href, title, body]) => `<li><h3><a href="${href}">${esc(title)}</a></h3><p>${esc(body)}</p></li>`).join('')}</ul>
+<h2>Courses</h2>${courseListHtml()}</main>${siteNavHtml()}`
+}
+
 /**
  * Swap the shell's head/body for page-specific content.
  *
@@ -618,13 +679,27 @@ async function main() {
         image: OG_IMAGE,
         jsonLd: {
           '@context': 'https://schema.org',
-          '@type': 'EducationalOrganization',
-          name: SITE_NAME,
-          url: SITE_URL,
-          description: home.description,
-          sameAs: [],
+          '@graph': [
+            {
+              '@type': 'EducationalOrganization',
+              '@id': `${SITE_URL}/#organization`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: `${SITE_URL}/favicon.png`,
+              description: home.description,
+            },
+            {
+              '@type': 'WebSite',
+              '@id': `${SITE_URL}/#website`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              inLanguage: 'en-IN',
+              publisher: { '@id': `${SITE_URL}/#organization` },
+            },
+          ],
         },
       }),
+      bodyHtml: homeBodyHtml(),
     }),
   )
 
@@ -712,7 +787,7 @@ async function main() {
           image: OG_IMAGE,
           jsonLd: extra?.jsonLd,
         }),
-        bodyHtml: extra?.bodyHtml,
+        bodyHtml: extra?.bodyHtml ?? simpleBodyHtml(page),
       }),
     )
   }
