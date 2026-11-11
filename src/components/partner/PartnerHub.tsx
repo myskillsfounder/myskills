@@ -26,6 +26,7 @@ import { hubPage, partnerPage, PartnerFaq, type PartnerKey } from '@/components/
 import { fetchMentors, type Mentor } from '@/lib/mentors'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import type { PortalRole } from '@/lib/portalAccess'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -38,9 +39,9 @@ const ICONS: Record<string, IconType> = {
 const PROOF_ICONS: IconType[] = [ClipboardCheck, Gauge, FileBadge, Award]
 
 const whiteButton =
-  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-white px-6 py-3 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50'
 const brandButton =
-  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700'
+  'press inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700'
 
 /** The listings are public (they are also this page's proof that the community
  *  is real), so a signed-out visitor can be shown who is already in it. A list
@@ -546,6 +547,7 @@ function ClosingCta() {
  * to the same sign-up, and so to the same verification.
  */
 export function PartnerHub() {
+  useSiteTheme('light')
   const { mentors, institutions } = usePartners()
   return (
     <div className="min-h-screen bg-ink-100">

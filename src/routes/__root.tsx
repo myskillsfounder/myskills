@@ -32,7 +32,7 @@ function RootComponent() {
   // wasn't a signed-in page after all, and the sign-in page shows instead).
   const rendered = useRouterState({ select: (s) => s.status === 'idle' })
   useEffect(() => {
-    if (rendered) document.documentElement.classList.remove('theme-boot')
+    if (rendered) document.documentElement.classList.remove('theme-boot', 'theme-boot-navy')
   }, [rendered])
 
   useEffect(() => {

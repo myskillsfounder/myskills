@@ -52,11 +52,12 @@ const THEMES = {
   dark: {
     header: 'sticky top-0 z-50 border-b border-white/10 bg-[#040a1e]/70 backdrop-blur-xl',
     my: 'text-white',
-    skills: 'from-brand-300 to-fuchsia-300',
+    // Fixed colours: on a page the dark theme turns over, brand-300 is a dark tint.
+    skills: 'from-[#b3a6ff] to-[#f0abfc]',
     tagline: 'text-white/60',
     link: 'relative py-1 text-sm font-medium text-white/65 transition-colors hover:text-white',
-    active: 'text-white after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-brand-300',
-    pill: 'inline-flex items-center gap-1.5 rounded-full border border-brand-300/30 bg-white/[0.06] px-3 py-1.5 text-sm font-semibold text-brand-100 backdrop-blur transition-colors hover:bg-white/10',
+    active: 'text-white after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-[#b3a6ff]',
+    pill: 'inline-flex items-center gap-1.5 rounded-full border border-[#b3a6ff]/30 bg-white/[0.06] px-3 py-1.5 text-sm font-semibold text-[#d8c9ff] backdrop-blur transition-colors hover:bg-white/10',
     logIn: 'press inline-flex h-10 items-center rounded-xl border border-white/25 px-4 text-sm font-semibold text-white transition-colors hover:bg-white/10',
     toggle: 'flex items-center justify-center rounded-md p-2 text-white/80 lg:hidden',
     mobile: 'border-t border-white/10 px-4 pb-4 lg:hidden',
@@ -68,7 +69,7 @@ const THEMES = {
 const getStarted =
   'press inline-flex h-10 items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-700 px-5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(108,92,231,0.8)] transition-opacity hover:opacity-90'
 
-export function Navbar({ dark = false }: { dark?: boolean } = {}) {
+export function Navbar({ dark = true }: { dark?: boolean } = {}) {
   const t = THEMES[dark ? 'dark' : 'light']
   const [open, setOpen] = useState(false)
   const { user, loading } = useAuthUser()

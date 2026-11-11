@@ -8,6 +8,8 @@ import { ProgrammeLeadForm } from '@/components/programmes/ProgrammeLeadForm'
 import { GUIDE_ON, setSiteMode } from '@/lib/siteMode'
 import { trackEvent } from '@/lib/analytics'
 import { COURSES, type Course } from '@/content/courses'
+import { gradientText, pageLabel, pageTitle } from '@/lib/brand'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /**
  * Every course in one place (Paul, 26 Oct 2026): the learning-programmes
@@ -99,7 +101,7 @@ function CourseCard({ c }: { c: Course }) {
               <a
                 href={c.test}
                 onClick={() => trackEvent('courses_test', { course: c.id })}
-                className="press inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+                className="press inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
               >
                 Take the free aptitude test <ArrowRight size={16} />
               </a>
@@ -120,7 +122,7 @@ function CourseCard({ c }: { c: Course }) {
           <button
             type="button"
             onClick={() => setNotify(true)}
-            className="press inline-flex h-11 items-center gap-2 rounded-full border border-white/25 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            className="press inline-flex h-11 items-center gap-2 rounded-xl border border-white/25 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
           >
             <Bell size={15} /> Tell me when it opens
           </button>
@@ -131,6 +133,7 @@ function CourseCard({ c }: { c: Course }) {
 }
 
 function CoursesPage() {
+  useSiteTheme('dark')
   const [filter, setFilter] = useState<Filter>('all')
   const shown = COURSES.filter((c) => filter === 'all' || c.kind === filter)
 
@@ -144,10 +147,21 @@ function CoursesPage() {
           <GlowOrb className="-left-32 top-10 h-96 w-96" />
           <GlowOrb className="-right-32 top-40 h-96 w-96" color="rgba(143,133,238,0.16)" />
 
-          {/* The courses first (Paul, 27 Oct 2026): the filters, the cards, then
-              the heading under them, smaller. */}
+          {/* Laid out like every public page (Paul, 11 Nov 2026: consistent
+              branding): a short heading, the filters, then the courses. */}
           <div className="relative mx-auto max-w-6xl px-4 pb-6 pt-10 sm:px-6 sm:pt-12 lg:px-8">
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Show courses">
+            <p className={pageLabel}>
+              <span className="live-ping relative h-1.5 w-1.5 rounded-full bg-emerald-400 text-emerald-400" />
+              {COURSES.filter((c) => c.status === 'open').length} courses open
+            </p>
+            <h1 className={pageTitle}>
+              Courses that put <span className={gradientText}>you at the centre.</span>
+            </h1>
+            <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-white/70">
+              Personal and professional skills, each built the same way: a free aptitude test first, short modules with an AI
+              coach, a real project a mentor grades, and then your first internship.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-2" role="group" aria-label="Show courses">
               {FILTERS.map((f) => (
                 <button
                   key={f.id}
@@ -170,17 +184,7 @@ function CoursesPage() {
             ))}
           </div>
 
-          <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-200">Learning programmes</p>
-            <h1 className="mt-3 max-w-3xl font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
-              Courses that put{' '}
-              <span className="bg-gradient-to-r from-brand-200 to-brand-400 bg-clip-text text-transparent">you at the centre.</span>
-            </h1>
-            <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/70">
-              Personal and professional skills, each built the same way: a free aptitude test first, short modules with an
-              AI coach, a real project a mentor grades, and then your first internship: hands-on, real experience.
-            </p>
-          </div>
+          <div className="pb-16" />
         </section>
 
         {/* How every course works: the same four steps. */}
@@ -211,7 +215,7 @@ function CoursesPage() {
                 <Link
                   to="/start"
                   onClick={() => setSiteMode('ai')}
-                  className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2"
+                  className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2"
                 >
                   <Sparkles size={15} /> Find my starting point
                 </Link>
