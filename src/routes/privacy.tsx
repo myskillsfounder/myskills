@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 export const Route = createFileRoute('/privacy')({
   component: PrivacyPage,
@@ -18,8 +19,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function PrivacyPage() {
+  useSiteTheme('light')
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-100">
       <Navbar />
 
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">

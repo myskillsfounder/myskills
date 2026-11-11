@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { requirePhoneWelcome } from '@/lib/guards'
 import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, FrontDoorTagline, StudentsRow } from '@/components/landing/FrontDoor'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /**
  * The phone's front door, for someone signed out (Paul, 4 Nov 2026: "remove
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/welcome')({
 })
 
 function WelcomePage() {
+  useSiteTheme('dark')
   return (
     <div className="relative min-h-[100dvh] overflow-x-clip bg-[#0b0a1f]">
       {/* Soft purple light, like the computer home page */}

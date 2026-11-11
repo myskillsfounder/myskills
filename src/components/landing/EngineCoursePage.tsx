@@ -5,6 +5,7 @@ import { Footer } from '@/components/landing/Footer'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
 import { trackEvent } from '@/lib/analytics'
 import type { Course, EngineCourseContent } from '@/content/courses'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /**
  * Every course's public page (Digital Marketing, Global Leadership,
@@ -31,6 +32,7 @@ export function EngineCoursePage({
   /** The closing band's two lines. */
   closing: { title: string; body: string }
 }) {
+  useSiteTheme('dark')
   const test = course.test!
   const hours = content.hours ?? Math.round(content.modules.reduce((n, m) => n + m.minutes, 0) / 60)
   const unit = content.unit ?? 'modules'
@@ -66,7 +68,7 @@ export function EngineCoursePage({
                   <a
                     href={test}
                     onClick={() => trackEvent('course_page_test', { course: course.id })}
-                    className="press inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
+                    className="press inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
                   >
                     Take the free aptitude test <ArrowRight size={17} />
                   </a>
@@ -145,7 +147,7 @@ export function EngineCoursePage({
                 <p className="font-display text-xl font-semibold text-white">{closing.title}</p>
                 <p className="mt-1 text-sm text-white/70">{closing.body}</p>
               </div>
-              <a href={test} className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2">
+              <a href={test} className="press inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2">
                 Take the aptitude test <ArrowRight size={16} />
               </a>
             </div>

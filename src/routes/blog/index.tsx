@@ -8,6 +8,7 @@ import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
 import { BlogHero } from '@/components/blog/BlogHero'
 import { BlogImage } from '@/components/blog/BlogImage'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 export const Route = createFileRoute('/blog/')({
   component: BlogIndexPage,
@@ -33,6 +34,7 @@ function CardSkeletons() {
 }
 
 function BlogIndexPage() {
+  useSiteTheme('dark')
   const [posts, setPosts] = useState<BlogPostSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>()

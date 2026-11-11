@@ -54,7 +54,7 @@ export function PartnerSignup({
               <Link
                 to="/community-portal/signup"
                 search={{ role }}
-                className="press inline-flex h-12 items-center justify-center gap-2 rounded-full bg-brand-600 px-7 text-[15px] font-semibold text-white transition-colors hover:bg-brand-700"
+                className="press inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-[15px] font-semibold text-white transition-colors hover:bg-brand-700"
               >
                 {page.cta}
                 <ArrowRight size={17} />

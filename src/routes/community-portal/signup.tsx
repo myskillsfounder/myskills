@@ -27,6 +27,7 @@ import {
 import { requireGuestForMentor } from '@/lib/guards'
 import { TextField } from '@/components/auth/TextField'
 import { Button, Input, Textarea } from '@/components/ui'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /**
  * Partner with MySkills: create a Community portal account as a mentor,
@@ -69,6 +70,7 @@ const PASSWORD_RULES: { label: string; test: (p: string) => boolean }[] = [
 type Errors = { name?: string; email?: string; password?: string; code?: string }
 
 function PortalSignupPage() {
+  useSiteTheme('light')
   const router = useRouter()
   const preset = Route.useSearch().role
   // A role chosen on the page that sent them here skips the first step.
@@ -177,10 +179,10 @@ function PortalSignupPage() {
   const Icon = role ? ROLE_ICONS[role.value] : ShieldCheck
 
   return (
-    <div className="min-h-screen bg-ink-50 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+    <div className="min-h-screen bg-ink-100 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       {/* What they get, and what happens next: the reassurance beside the form.
           On a phone it shrinks to a heading so the form is the first thing reached. */}
-      <aside className="bg-ink-900 px-6 py-6 text-white sm:px-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-between lg:px-14 lg:py-12">
+      <aside className="surface-wood-dark px-6 py-6 text-white sm:px-10 lg:flex lg:min-h-screen lg:flex-col lg:justify-between lg:px-14 lg:py-12">
         <div>
           <Link to="/community" search={{ partners: true }} className="inline-flex items-center gap-2.5">
             <span className="font-display text-lg font-semibold">MySkills Community</span>
