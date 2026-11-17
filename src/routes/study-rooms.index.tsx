@@ -4,8 +4,8 @@ import { ArrowRight, BookOpen, Users } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { fetchMyFocusRooms, useRoomsOnline, type FocusRoom } from '@/lib/focusRooms'
 import { AppShell } from '@/components/app/AppShell'
-import { HowItWorks } from '@/components/community/CommunityHero'
 import { OnlineNow } from '@/components/focus/OnlineNow'
+import { StudyTogether } from '@/components/focus/StudyTogether'
 import { EmptyState, Skeleton } from '@/components/ui'
 
 /**
@@ -83,15 +83,7 @@ function StudyRoomsPage() {
           </div>
         )}
 
-        <HowItWorks
-          tone="focus"
-          steps={[
-            { title: 'Pick a topic', body: 'Each room is for one topic, so everyone there is on the same thing.' },
-            { title: 'Say what you’re on', body: 'A module, a quiz, your project: choose camera on or off, then join.' },
-            { title: 'Study side by side', body: 'Camera on, no sound. Everyone gets on with their work.' },
-            { title: 'Upvote topics', body: 'Post a doubt; the most upvoted ones go to the top.' },
-          ]}
-        />
+        <StudyTogether />
       </div>
     </AppShell>
   )
