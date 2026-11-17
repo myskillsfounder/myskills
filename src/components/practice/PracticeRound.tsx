@@ -63,6 +63,8 @@ export function PracticeRound({
   const [index, setIndex] = useState(0)
   const [result, setResult] = useState<PracticeResult | null>(null)
   const [error, setError] = useState('')
+  // What the server said, when the short round isn't available: for whoever sets it up.
+  const [detail, setDetail] = useState('')
 
   async function start() {
     setPhase('loading')
@@ -80,7 +82,10 @@ export function PracticeRound({
     } catch (e) {
       const msg = errorMessage(e)
       // Before the SQL has been run, the server doesn't know the function.
-      if (/could not find|does not exist|schema cache|not found/i.test(msg)) setPhase('unavailable')
+      if (/could not find|does not exist|schema cache|not found/i.test(msg)) {
+        setDetail(msg)
+        setPhase('unavailable')
+      }
       else {
         setError(msg)
         setPhase('idle')
@@ -116,6 +121,11 @@ export function PracticeRound({
       <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
         <p className="font-semibold text-amber-800">The short round isn’t ready yet</p>
         <p className="mt-1 text-sm text-ink-800">You can still practise with the full Decision Lab.</p>
+        {detail && (
+          <p className="mt-2 break-words rounded-lg bg-black/20 px-3 py-2 font-mono text-[11px] leading-relaxed text-ink-600">
+            Server said: {detail}
+          </p>
+        )}
         <button
           type="button"
           onClick={onFullLab}
