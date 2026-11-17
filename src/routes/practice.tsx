@@ -51,6 +51,9 @@ import { clearSavedProgramme, savedProgramme, type Programme } from '@/lib/pract
 import { fetchMyProgrammes, type MyEnrolment } from '@/lib/programmeStudent'
 import { PracticeHighlights } from '@/components/practice/PracticeHighlights'
 import { ProgrammeCards } from '@/components/practice/ProgrammeCards'
+import { TopicChapters } from '@/components/practice/TopicChapters'
+import { TopicPage } from '@/components/practice/TopicPage'
+import { useTopicProgress } from '@/lib/topicProgress'
 import { isPhone } from '@/lib/device'
 import { useInternshipDone } from '@/lib/internships'
 
@@ -143,6 +146,10 @@ function PracticePage() {
   const [practiceError, setPracticeError] = useState<string>()
   const [selected, setSelected] = useState<string | null>(null)
   const [mode, setMode] = useState<PracticeMode | null>(null)
+  // The Digital Marketing topic page that is open, by skill-track slug.
+  const [topic, setTopic] = useState<string | null>(null)
+  const topicProgress = useTopicProgress(user?.id ?? 'guest')
+  useEffect(() => window.scrollTo(0, 0), [topic])
   const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
   // Null: the programme cards. A link that asked for a programme (a Global
   // Leadership module, a dashboard card) opens it, once (lib/practiceProgramme.ts).
@@ -270,6 +277,9 @@ function PracticePage() {
   const dmNextUp = (
     <NextUpCard practice={practice} onSelect={setSelected} suggested={suggested} suitedTo={strongest?.name} />
   )
+  const dmTopics = (
+    <TopicChapters practice={practice} learnedIds={vocabLearnedIds} getLocal={topicProgress.get} onOpen={setTopic} />
+  )
   const dmCompletion = (
     <ProgrammeCompletion stages={dmStages}>
       <MentorReviewPanel
@@ -366,20 +376,45 @@ function PracticePage() {
                   />
                 </>
               )}
-              {programme !== null && <ProgrammeHeader programme={programme} onBack={() => setProgramme(null)} />}
+              {programme !== null && !(programme === 1 && topic !== null) && (
+                <ProgrammeHeader
+                  programme={programme}
+                  onBack={() => {
+                    setProgramme(null)
+                    setTopic(null)
+                  }}
+                />
+              )}
 
               {/* Programme 1 is everything from the aptitude assessment through the
                   Foundation assessment, all 8 tracks and vocabulary. */}
               {programme === 1 && !dmOpen && <AptitudeCard result={null} gate />}
 
+              {/* One topic as a textbook page. The Decision Lab it opens returns here. */}
+              {programme === 1 && dmOpen && topic !== null && (
+                <TopicPage
+                  key={topic}
+                  slug={topic}
+                  practice={practice}
+                  learnedIds={vocabLearnedIds}
+                  local={topicProgress.get(topic)}
+                  onBack={() => setTopic(null)}
+                  onOpenTopic={setTopic}
+                  onPractise={setSelected}
+                  onLearn={markVocabLearned}
+                  onProgress={(patch) => topicProgress.update(topic, patch)}
+                />
+              )}
+
               {/* On a computer: where you stand, then what to do. */}
-              {programme === 1 && dmOpen && !phone && (
+              {programme === 1 && dmOpen && topic === null && !phone && (
                 <>
                   {dmAptitudeCard}
                   <div className="grid gap-5 lg:grid-cols-3">
                     <div className="lg:col-span-2">{dmStats}</div>
                     <div className="lg:col-span-1">{dmNextUp}</div>
                   </div>
+                  {dmTopics}
                   {dmCompletion}
                   {dmModes}
                   {dmFoundation}
@@ -390,10 +425,11 @@ function PracticePage() {
               {/* On a phone the order turns round: the thing to practise now is
                   first, under the thumb, and the standing comes after it. The
                   aptitude assessment leads only while it is still to be taken. */}
-              {programme === 1 && dmOpen && phone && (
+              {programme === 1 && dmOpen && topic === null && phone && (
                 <>
                   {aptitude == null && dmAptitudeCard}
                   {dmNextUp}
+                  {dmTopics}
                   {dmModes}
                   {dmFoundation}
                   {dmStats}
