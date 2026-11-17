@@ -9,28 +9,20 @@ import { AppShell } from '@/components/app/AppShell'
 import { FocusLobby, FocusRoomLive } from '@/components/focus/FocusRoom'
 import { ButtonLink, EmptyState, Skeleton } from '@/components/ui'
 
-/** Joined from the top of Study rooms (components/focus/StudyNowCard.tsx),
- *  which has already asked what they're on and checked the camera: no lobby. */
-type JoinSearch = { on?: string; cam?: 0 | 1 }
-
 export const Route = createFileRoute('/study-rooms/$room')({
-  validateSearch: (s: Record<string, unknown>): JoinSearch =>
-    s.cam === 1 || s.cam === 0 ? { on: typeof s.on === 'string' ? s.on.slice(0, 80) : '', cam: s.cam } : {},
   beforeLoad: requireOnboarded,
   component: FocusRoomPage,
 })
 
-/** The lobby first (what you're on, camera or not), then the room itself. */
+/** The entry screen first (what you're on, camera or not), then the room itself.
+ *  Nobody is joined, and no camera starts, until they press Enter. */
 function FocusRoomPage() {
   const { room: slug } = Route.useParams()
   const navigate = useNavigate()
   const { user } = useAuthUser()
   const { profile, loading: profileLoading } = useProfile()
   const [room, setRoom] = useState<FocusRoom | null>()
-  const joined = Route.useSearch()
-  const [entered, setEntered] = useState<{ workingOn: string; camera: boolean } | undefined>(
-    joined.cam === undefined ? undefined : { workingOn: joined.on ?? '', camera: joined.cam === 1 },
-  )
+  const [entered, setEntered] = useState<{ workingOn: string; camera: boolean }>()
 
   useEffect(() => {
     fetchMyFocusRooms().then((rooms) => setRoom(rooms.find((r) => r.slug === slug) ?? null))
@@ -42,9 +34,9 @@ function FocusRoomPage() {
       {room === null && (
         <EmptyState
           icon={Lock}
-          title="This room is for students in the programme"
-          description="Start the programme first, then come back to its study room."
-          action={<ButtonLink to="/study-rooms">Your rooms</ButtonLink>}
+          title="This room isn’t available"
+          description="It may have been removed. Pick one of the other study rooms."
+          action={<ButtonLink to="/study-rooms">All study rooms</ButtonLink>}
         />
       )}
       {room && user && !profileLoading && !entered && <FocusLobby room={room} onEnter={(workingOn, camera) => setEntered({ workingOn, camera })} />}

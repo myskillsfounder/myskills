@@ -101,7 +101,7 @@ export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn:
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-600">Study room</p>
         <h1 className="mt-2 font-display text-2xl font-semibold text-ink-900 sm:text-3xl">{room.title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-ink-600">
-          {room.slug === OPEN_ROOM ? 'Study alongside other students, whatever you’re working on.' : 'Study alongside others in this programme.'} Your camera shows you at your desk, and there’s never any sound.
+          {room.slug === OPEN_ROOM ? 'Study alongside other students, whatever you’re working on.' : `Study alongside others on ${room.title}.`} Your camera shows you at your desk, and there’s never any sound.
         </p>
         <form
           className="mt-6"
@@ -256,8 +256,8 @@ export function FocusRoomLive({
       </div>
 
       {r.status === 'denied' && (
-        <Alert tone="danger" title="This room is for students in the programme">
-          <p>Start the programme first, then come back to its room.</p>
+        <Alert tone="danger" title="This room isn’t available right now">
+          <p>Try again in a moment, or pick another study room.</p>
         </Alert>
       )}
       {r.status === 'error' && (
