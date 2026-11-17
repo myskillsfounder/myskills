@@ -7,16 +7,17 @@ import {
   HeartHandshake,
 } from 'lucide-react'
 import { useAuthUser } from '@/lib/useAuth'
+import { useProfile } from '@/lib/useProfile'
 import { AppShell } from '@/components/app/AppShell'
 import { Skeleton } from '@/components/ui'
 import { fetchMentors } from '@/lib/mentors'
 import { PartnerHub } from '@/components/partner/PartnerHub'
 import { fetchInstitutionPartners, type InstitutionPartner } from '@/lib/institutionPartners'
 import { SearchHeader } from '@/components/community/SearchHeader'
+import { HomeBody, HomeHero } from '@/components/community/HomeFront'
 import { InternshipRoleCard, InternshipRoleDialog, YourInternships, useInternships } from '@/components/community/Internships'
 import { isPhone } from '@/lib/device'
 import {
-  BrowseTiles,
   CATEGORIES,
   GROUPS,
   groupOf,
@@ -172,8 +173,6 @@ function popularSearches(mentors: MentorListing[], institutions: InstitutionPart
 /** How many of a kind the front page shows before "See all". */
 const PREVIEW = 3
 
-const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
-
 /**
  * The signed-in Community. It opens on the four things a student comes for,
  * given equal weight, with a short row of each beneath; choosing one (a tile,
@@ -183,6 +182,8 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 function CommunityHub() {
   const { mentors, institutions, loading } = useMarketplaceData()
   const internships = useInternships()
+  const { profile } = useProfile()
+  const firstName = profile?.full_name?.trim().split(/\s+/)[0] ?? ''
   // The role open in the pop-up, by id, so it shows the application's new
   // state as soon as the lists reload.
   const [openRoleId, setOpenRoleId] = useState<string | null>(null)
@@ -248,15 +249,8 @@ function CommunityHub() {
   return (
     <AppShell wide>
       <div className="space-y-8">
-        <header>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Home</p>
-          <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
-            Find the Right Person for What You Need Next
-          </h1>
-          <p className="mt-1.5 text-sm text-ink-600">
-            One search across internships, mentors, institutions, and counsellors and career guides.
-          </p>
-        </header>
+        {/* The front page opens on a welcome; searching replaces it with results. */}
+        {front && <HomeHero firstName={firstName} />}
 
         {/* Search is the way in: it leads the page and stays in reach while scrolling. */}
         <SearchHeader
@@ -267,148 +261,148 @@ function CommunityHub() {
           resultCount={loading ? null : group === null ? total : counts[group]}
         />
 
-        {/* The four ways in, right under the search: each opens its own page. */}
+        {/* The front page: doors, who is studying, a mentor to meet, and rows to browse. */}
         {front && (
-          <BrowseTiles
-            meta={
-              loading
-                ? {}
-                : {
-                    mentors: mentors.length ? plural(mentors.length, 'mentor', 'mentors') : 'Coming soon',
-                    support: 'Ask privately',
-                    internships: hasRoles ? plural(internships.roles.length, 'open role', 'open roles') : 'Opening soon',
-                    institutions: institutions.length ? plural(institutions.length, 'institution', 'institutions') : 'Coming soon',
-                  }
-            }
+          <HomeBody
+            mentors={mentors}
+            institutions={institutions}
+            roles={internships.roles}
+            loading={loading}
+            onOpenRole={setOpenRoleId}
           />
         )}
         {/* Search and the categories only (Paul, 3 Nov 2026): the student's
             internships, mentor and who sees their record are in the profile,
             and Study rooms has its own tab. */}
 
-        {nothing && (
-          <div className="card p-8 text-center">
-            <p className="font-display text-lg font-semibold text-ink-900">Nothing matches “{query.trim()}”</p>
-            <p className="mt-1 text-sm text-ink-600">Try a skill like “SEO”, a city, or a broader word.</p>
-            <button
-              type="button"
-              onClick={() => {
-                setQuery('')
-                setCategory('all')
-              }}
-              className="mt-4 text-sm font-semibold text-brand-700 hover:text-brand-800"
+        {/* Results: shown once something is typed, or a group is chosen. */}
+        {!front && (
+          <>
+          {nothing && (
+            <div className="card p-8 text-center">
+              <p className="font-display text-lg font-semibold text-ink-900">Nothing matches “{query.trim()}”</p>
+              <p className="mt-1 text-sm text-ink-600">Try a skill like “SEO”, a city, or a broader word.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery('')
+                  setCategory('all')
+                }}
+                className="mt-4 text-sm font-semibold text-brand-700 hover:text-brand-800"
+              >
+                Clear search
+              </button>
+            </div>
+          )}
+
+          {visible('internships') && (
+            <MarketSection
+              icon={Briefcase}
+              title="Internships"
+              subtitle="Real work with partner companies: the step that turns practice into experience you can show."
+              seeAll={front ? { to: '/community/internships', label: hasRoles ? `All ${internshipCount} roles` : 'See internships' } : undefined}
             >
-              Clear search
-            </button>
-          </div>
-        )}
-
-        {visible('internships') && (
-          <MarketSection
-            icon={Briefcase}
-            title="Internships"
-            subtitle="Real work with partner companies: the step that turns practice into experience you can show."
-            seeAll={front ? { to: '/community/internships', label: hasRoles ? `All ${internshipCount} roles` : 'See internships' } : undefined}
-          >
-            {/* With the section opened on its own, the student's applications lead it. */}
-            {group === 'internships' && internships.applications.length > 0 && (
-              <div className="mb-4">
-                <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
-              </div>
-            )}
-            <div className={marketGrid}>
-              {some(roleHits).map((r) => (
-                <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
-              ))}
-              {some(trackHits).map((t) => (
-                <InternshipCard key={t.title} track={t} />
-              ))}
-            </div>
-          </MarketSection>
-        )}
-
-        {visible('mentors') && (
-          <MarketSection
-            icon={GraduationCap}
-            title="Mentors"
-            subtitle="People who’ve done the work. Open a profile to ask them to mentor you."
-            seeAll={front ? { to: '/community/mentors', label: mentorHits.length > PREVIEW ? `All ${mentorHits.length} mentors` : 'See mentors' } : undefined}
-          >
-            {loading ? (
-              <ListingSkeletons />
-            ) : mentorHits.length === 0 ? (
-              <p className="card p-6 text-sm text-ink-600">No mentors are listed yet. Check back soon.</p>
-            ) : (
+              {/* With the section opened on its own, the student's applications lead it. */}
+              {group === 'internships' && internships.applications.length > 0 && (
+                <div className="mb-4">
+                  <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
+                </div>
+              )}
               <div className={marketGrid}>
-                {some(mentorHits).map((m) => (
-                  <MentorListingCard key={m.id} mentor={m} />
+                {some(roleHits).map((r) => (
+                  <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
+                ))}
+                {some(trackHits).map((t) => (
+                  <InternshipCard key={t.title} track={t} />
                 ))}
               </div>
-            )}
-            {group === 'mentors' && !q && (
-              <p className="mt-5 text-sm text-ink-600">
-                Done the work yourself?{' '}
-                <Link to="/become-a-mentor" className="font-semibold text-brand-700 hover:underline">
-                  Become a mentor
-                </Link>
-              </p>
-            )}
-          </MarketSection>
-        )}
+            </MarketSection>
+          )}
 
-        {visible('institutions') && (
-          <MarketSection
-            icon={Building2}
-            title="Institutions"
-            subtitle="Verified training institutions for classroom and offline learning."
-            seeAll={
-              front
-                ? { to: '/community/institutions', label: institutionHits.length > PREVIEW ? `All ${institutionHits.length} institutions` : 'See institutions' }
-                : undefined
-            }
-          >
-            {loading ? (
-              <ListingSkeletons />
-            ) : institutionHits.length === 0 ? (
-              <p className="card p-6 text-sm text-ink-600">No institutions are listed yet. Check back soon.</p>
-            ) : (
-              <div className={marketGrid}>
-                {some(institutionHits).map((p) => (
-                  <InstitutionListingCard key={p.id} partner={p} />
+          {visible('mentors') && (
+            <MarketSection
+              icon={GraduationCap}
+              title="Mentors"
+              subtitle="People who’ve done the work. Open a profile to ask them to mentor you."
+              seeAll={front ? { to: '/community/mentors', label: mentorHits.length > PREVIEW ? `All ${mentorHits.length} mentors` : 'See mentors' } : undefined}
+            >
+              {loading ? (
+                <ListingSkeletons />
+              ) : mentorHits.length === 0 ? (
+                <p className="card p-6 text-sm text-ink-600">No mentors are listed yet. Check back soon.</p>
+              ) : (
+                <div className={marketGrid}>
+                  {some(mentorHits).map((m) => (
+                    <MentorListingCard key={m.id} mentor={m} />
+                  ))}
+                </div>
+              )}
+              {group === 'mentors' && !q && (
+                <p className="mt-5 text-sm text-ink-600">
+                  Done the work yourself?{' '}
+                  <Link to="/become-a-mentor" className="font-semibold text-brand-700 hover:underline">
+                    Become a mentor
+                  </Link>
+                </p>
+              )}
+            </MarketSection>
+          )}
+
+          {visible('institutions') && (
+            <MarketSection
+              icon={Building2}
+              title="Institutions"
+              subtitle="Verified training institutions for classroom and offline learning."
+              seeAll={
+                front
+                  ? { to: '/community/institutions', label: institutionHits.length > PREVIEW ? `All ${institutionHits.length} institutions` : 'See institutions' }
+                  : undefined
+              }
+            >
+              {loading ? (
+                <ListingSkeletons />
+              ) : institutionHits.length === 0 ? (
+                <p className="card p-6 text-sm text-ink-600">No institutions are listed yet. Check back soon.</p>
+              ) : (
+                <div className={marketGrid}>
+                  {some(institutionHits).map((p) => (
+                    <InstitutionListingCard key={p.id} partner={p} />
+                  ))}
+                </div>
+              )}
+              {group === 'institutions' && !q && (
+                <p className="mt-5 text-sm text-ink-600">
+                  Run courses yourself?{' '}
+                  <Link to="/become-a-partner-institution" className="font-semibold text-brand-700 hover:underline">
+                    List your institution
+                  </Link>
+                </p>
+              )}
+            </MarketSection>
+          )}
+          {visible('support') && (
+            <MarketSection
+              icon={HeartHandshake}
+              title="Wellness & Guidance"
+              subtitle="For the moments practice alone can’t fix: overwhelm, self-doubt, or not knowing what’s next."
+              seeAll={front ? { to: '/wellness', label: 'Your wellbeing' } : undefined}
+            >
+              <div className="grid gap-4 lg:grid-cols-2">
+                {support.map((s) => (
+                  <ServiceCard key={s.id} service={s} />
                 ))}
               </div>
-            )}
-            {group === 'institutions' && !q && (
-              <p className="mt-5 text-sm text-ink-600">
-                Run courses yourself?{' '}
-                <Link to="/become-a-partner-institution" className="font-semibold text-brand-700 hover:underline">
-                  List your institution
-                </Link>
-              </p>
-            )}
-          </MarketSection>
-        )}
-        {visible('support') && (
-          <MarketSection
-            icon={HeartHandshake}
-            title="Wellness & Guidance"
-            subtitle="For the moments practice alone can’t fix: overwhelm, self-doubt, or not knowing what’s next."
-            seeAll={front ? { to: '/wellness', label: 'Your wellbeing' } : undefined}
-          >
-            <div className="grid gap-4 lg:grid-cols-2">
-              {support.map((s) => (
-                <ServiceCard key={s.id} service={s} />
-              ))}
-            </div>
-            {/* The detail of how it works belongs to the group's own page, not the front. */}
-            {group === 'support' && (
-              <div className="mt-4">
-                <HowSupportWorks />
-              </div>
-            )}
-          </MarketSection>
-        )}
+              {/* The detail of how it works belongs to the group's own page, not the front. */}
+              {group === 'support' && (
+                <div className="mt-4">
+                  <HowSupportWorks />
+                </div>
+              )}
+            </MarketSection>
+          )}
 
+          </>
+        )}
       </div>
       {openRole && (
         <InternshipRoleDialog role={openRole} onClose={() => setOpenRoleId(null)} onChanged={() => void internships.reload()} />
