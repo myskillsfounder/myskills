@@ -237,7 +237,7 @@ export function HomeBody({
       blurb: 'Real work with partner companies.',
       icon: Briefcase,
       grad: 'from-emerald-500 to-teal-700',
-      meta: hasRoles ? plural(roles.length, 'open role', 'open roles') : 'Opening soon',
+      meta: hasRoles ? plural(roles.length, 'open role', 'open roles') : 'Apply with your CV',
     },
     {
       to: '/community/institutions',
@@ -384,25 +384,24 @@ export function HomeBody({
         <RailHeader
           icon={Briefcase}
           title="Internships"
-          subtitle="Real work with partner companies: the step that turns practice into experience you can show."
+          subtitle="Real work with partner companies. Apply with your CV: the step that turns practice into experience you can show."
           to="/community/internships"
           seeAll={hasRoles ? `All ${roles.length} Roles` : 'See Internships'}
           tint="from-emerald-500 to-teal-700"
         />
         <Rail label="Internships">
-          {hasRoles
-            ? [...roles]
-                .sort((a, b) => b.posted_on.localeCompare(a.posted_on))
-                .map((r) => (
-                  <Slot key={r.id} wide>
-                    <InternshipRoleCard role={r} onOpen={() => onOpenRole(r.id)} />
-                  </Slot>
-                ))
-            : INTERNSHIP_TRACKS.map((t) => (
-                <Slot key={t.title} wide>
-                  <InternshipCard track={t} />
-                </Slot>
-              ))}
+          {[...roles]
+            .sort((a, b) => b.posted_on.localeCompare(a.posted_on))
+            .map((r) => (
+              <Slot key={r.id} wide>
+                <InternshipRoleCard role={r} onOpen={() => onOpenRole(r.id)} />
+              </Slot>
+            ))}
+          {INTERNSHIP_TRACKS.map((t) => (
+            <Slot key={t.slug} wide>
+              <InternshipCard track={t} />
+            </Slot>
+          ))}
         </Rail>
       </section>
 

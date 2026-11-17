@@ -57,52 +57,61 @@ function InternshipsPage() {
 
         <YourInternships applications={internships.applications} onChanged={() => void internships.reload()} />
 
-        <section>
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h2 className="font-display text-xl font-semibold text-ink-900">{hasRoles ? 'Open internships' : 'Internships opening soon'}</h2>
-              <p className="mt-0.5 text-sm text-ink-600">
-                {hasRoles ? 'Open a role to read it and apply. The company sees your Global Readiness Score.' : 'The kinds of role partner companies post. None is open right now.'}
-              </p>
-            </div>
-            {hasRoles && (
-              <label className="relative w-full sm:w-72">
-                <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search by role, skill or company"
-                  aria-label="Search internships"
-                  className="h-10 w-full rounded-xl border border-ink-900/10 bg-white pl-9 pr-3 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                />
-              </label>
-            )}
-          </div>
-          <div className="mt-4">
-            {internships.loading ? (
-              <div className={marketGrid}>
-                {[0, 1, 2].map((i) => (
-                  <Skeleton key={i} className="h-44 w-full rounded-2xl" />
-                ))}
+        {(internships.loading || hasRoles) && (
+          <section>
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="font-display text-xl font-semibold text-ink-900">Open internships</h2>
+                <p className="mt-0.5 text-sm text-ink-600">
+                  Open a role to read it and apply. The company sees your Global Readiness Score.
+                </p>
               </div>
-            ) : hasRoles ? (
-              roles.length ? (
+              {hasRoles && (
+                <label className="relative w-full sm:w-72">
+                  <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search by role, skill or company"
+                    aria-label="Search internships"
+                    className="h-10 w-full rounded-xl border border-ink-900/10 bg-white pl-9 pr-3 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                  />
+                </label>
+              )}
+            </div>
+            <div className="mt-4">
+              {internships.loading ? (
                 <div className={marketGrid}>
-                  {roles.map((r) => (
-                    <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
+                  {[0, 1, 2].map((i) => (
+                    <Skeleton key={i} className="h-44 w-full rounded-2xl" />
                   ))}
                 </div>
-              ) : (
-                <p className="card p-6 text-sm text-ink-600">No internships match “{query.trim()}”.</p>
-              )
-            ) : (
-              <div className={marketGrid}>
-                {INTERNSHIP_TRACKS.map((t) => (
-                  <InternshipCard key={t.title} track={t} />
-                ))}
-              </div>
-            )}
+              ) : hasRoles ? (
+                roles.length ? (
+                  <div className={marketGrid}>
+                    {roles.map((r) => (
+                      <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="card p-6 text-sm text-ink-600">No internships match “{query.trim()}”.</p>
+                )
+              ) : null}
+            </div>
+          </section>
+        )}
+
+        {/* The kinds of internship, open to applications with a CV (Paul, 18 Nov 2026). */}
+        <section>
+          <h2 className="font-display text-xl font-semibold text-ink-900">Apply for the Kind of Internship You Want</h2>
+          <p className="mt-0.5 text-sm text-ink-600">
+            Send your CV now. When a partner company opens this kind of internship, we share your application with them and let you know.
+          </p>
+          <div className={`mt-4 ${marketGrid}`}>
+            {INTERNSHIP_TRACKS.map((t) => (
+              <InternshipCard key={t.slug} track={t} />
+            ))}
           </div>
         </section>
 

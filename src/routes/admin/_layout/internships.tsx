@@ -18,6 +18,7 @@ import { RequireSection } from '@/components/admin/AdminSectionGate'
 import { ApplicationRow, InternshipPipeline, stuckReason } from '@/components/admin/InternshipPipeline'
 import { Alert, Badge, Button, Chip, EmptyState, PageHeader, Skeleton, Textarea } from '@/components/ui'
 import { ExportButton } from '@/components/admin/ExportButton'
+import { InternshipInterest } from '@/components/admin/InternshipInterest'
 import { csvDate } from '@/lib/csv'
 
 // The same section as the internship companies: whoever handles them handles their roles.
@@ -499,6 +500,8 @@ function InternshipsAdminPage() {
           </Alert>
         </div>
       )}
+      {/* Applications to a kind of internship, with a CV: independent of company roles. */}
+      <InternshipInterest />
       {loading ? (
         <Skeleton className="h-64 w-full" />
       ) : roles.length === 0 && signoffs.length === 0 && !error ? (
