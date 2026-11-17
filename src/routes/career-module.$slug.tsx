@@ -7,7 +7,6 @@ import { useCareerReadinessProgress } from '@/lib/careerReadinessProgramme'
 import { PERSONAL_DEVELOPMENT_MODULES } from '@/lib/programmes'
 import { rememberProgramme } from '@/lib/practiceProgramme'
 import { AppShell } from '@/components/app/AppShell'
-import { PageHeader } from '@/components/app/PageHeader'
 import { lifeSkillsForModule } from '@/lib/lifeSkills'
 import { ModuleFlow } from '@/components/career-readiness/ModuleFlow'
 
@@ -33,25 +32,13 @@ function CareerModulePage() {
         to="/practice"
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900"
       >
-        <ArrowLeft size={16} /> Back to Practice
+        <ArrowLeft size={16} /> Back to the Workbook
       </Link>
 
       {!content || !meta ? (
         <p className="text-sm text-ink-600">We couldn’t find that module.</p>
       ) : (
         <div className="mx-auto max-w-3xl">
-          <PageHeader
-            eyebrow={`Global Leadership · Module ${index + 1} of ${PERSONAL_DEVELOPMENT_MODULES.length}`}
-            title={meta.title}
-            description={
-              <>
-                {content.outcome}
-                <span className="mt-1 block text-xs text-ink-500">
-                  Life skills it builds: {lifeSkillsForModule(content.slug).join(' · ')}
-                </span>
-              </>
-            }
-          />
           {loading ? (
             <p className="text-sm text-ink-600">Loading…</p>
           ) : (
@@ -61,6 +48,13 @@ function CareerModulePage() {
               content={content}
               index={index}
               total={PERSONAL_DEVELOPMENT_MODULES.length}
+              title={meta.title}
+              subtitle={
+                <>
+                  {content.outcome}
+                  <span className="mt-1 block text-xs text-white/60">Life skills it builds: {lifeSkillsForModule(content.slug).join(' · ')}</span>
+                </>
+              }
               responses={responses}
               progress={progress}
               onSave={(item, text) => save(content.slug, item, text)}
