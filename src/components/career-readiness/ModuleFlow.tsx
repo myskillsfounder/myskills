@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Check, CheckCircle2, Lightbulb } from 'lucide-react'
-import { errorMessage } from '@/lib/errors'
+import { ArrowRight, CheckCircle2, Globe2 } from 'lucide-react'
 import {
   MAX_RESPONSE_CHARS,
   MIN_REFLECTION_CHARS,
@@ -10,18 +9,10 @@ import {
   type ModuleContent,
 } from '@/lib/careerReadinessContent'
 import { responseKey, type ProgrammeProgress, type ResponseMap } from '@/lib/careerReadinessProgramme'
-import { Alert, Button, Textarea } from '@/components/ui'
+import { LessonFrame, LessonLearn, LessonWrite, type LessonStep } from '@/components/lesson/LessonFrame'
 
 /** A module's steps, in order: Learn, each task, Reflect. */
 type Step = 'learn' | ItemKey
-
-function stepsFor(content: ModuleContent): { key: Step; label: string }[] {
-  return [
-    { key: 'learn', label: 'Learn' },
-    ...content.tasks.map((task, i) => ({ key: task.key as Step, label: `Task ${i + 1}` })),
-    { key: 'reflect', label: 'Reflect' },
-  ]
-}
 
 /** Where to open: Learn on a first visit, otherwise the first item not yet saved. */
 function firstOpenStep(content: ModuleContent, responses: ResponseMap): Step {
@@ -32,16 +23,18 @@ function firstOpenStep(content: ModuleContent, responses: ResponseMap): Step {
 }
 
 /**
- * One module: Learn (short cards), Practise (its written tasks) and Reflect
- * (one prompt). Each response is saved on its own so nothing is lost
- * leaving halfway, and any of them can be reopened and edited. The server
- * enforces the same minimum lengths; this is just so the button says why it
- * isn't ready.
+ * One Global Leadership module as an interactive lesson (Paul, 18 Nov 2026): Learn
+ * (short cards), Practise (its written tasks) and Reflect (one prompt), one step at a
+ * time. Each response is saved on its own so nothing is lost leaving halfway, and any
+ * of them can be reopened and edited. The server enforces the same minimum lengths;
+ * this is just so the button says why it isn't ready.
  */
 export function ModuleFlow({
   content,
   index,
   total,
+  title,
+  subtitle,
   responses,
   progress,
   onSave,
@@ -50,240 +43,94 @@ export function ModuleFlow({
   /** 0-based position in the programme, for "Module 2 of 5". */
   index: number
   total: number
+  title: string
+  subtitle: ReactNode
   responses: ResponseMap
   progress: ProgrammeProgress
   onSave: (item: ItemKey, text: string) => Promise<void>
 }) {
   const slug = content.slug
-  const STEP_ORDER = stepsFor(content)
   const [step, setStep] = useState<Step>(() => firstOpenStep(content, responses))
   const saved = (k: ItemKey) => Boolean(responses[responseKey(slug, k)])
   const mine = progress.modules.find((m) => m.slug === slug)
   const complete = Boolean(mine?.complete)
+  const next = progress.next
 
-  const stepIndex = STEP_ORDER.findIndex((s) => s.key === step)
-  const nextStep = STEP_ORDER[stepIndex + 1]?.key
+  const keys: { key: Step; label: string; kind: LessonStep['kind'] }[] = [
+    { key: 'learn', label: 'Learn', kind: 'learn' },
+    ...content.tasks.map((task, i) => ({ key: task.key as Step, label: `Task ${i + 1}`, kind: 'task' as const })),
+    { key: 'reflect', label: 'Reflect', kind: 'reflect' },
+  ]
+  const at = keys.findIndex((s) => s.key === step)
+  const steps: LessonStep[] = keys.map((s, i) => ({
+    key: s.key,
+    label: s.label,
+    kind: s.kind,
+    done: s.key === 'learn' ? saved('t1') || i < at : saved(s.key as ItemKey),
+  }))
+  const goNext = () => {
+    const following = keys[at + 1]?.key
+    if (following) setStep(following)
+  }
+
+  const task = content.tasks.find((t) => t.key === step)
+
+  const banner = complete ? (
+    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+      <p className="flex items-center gap-2 text-sm font-semibold text-emerald-800">
+        <CheckCircle2 size={16} /> Module complete
+      </p>
+      <p className="mt-1 text-sm text-emerald-800/90">
+        You’ve finished every task here. You can reopen any step to read or change your answers.{' '}
+        {next ? `Up next: ${next.title}.` : 'That’s every module. Ask a mentor to review your work from the Workbook.'}
+      </p>
+      <div className="mt-2">
+        {next ? (
+          <Link to="/career-module/$slug" params={{ slug: next.slug }} className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-900 hover:underline">
+            Open {next.title} <ArrowRight size={14} />
+          </Link>
+        ) : (
+          <Link to="/practice" className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-900 hover:underline">
+            Go to the Workbook <ArrowRight size={14} />
+          </Link>
+        )}
+      </div>
+    </div>
+  ) : null
 
   return (
-    <div className="space-y-5">
-      {/* Steps */}
-      <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${STEP_ORDER.length}, minmax(0, 1fr))` }} aria-label="Module steps">
-        {STEP_ORDER.map((s, i) => {
-          const done = s.key === 'learn' ? saved('t1') || i < stepIndex : saved(s.key)
-          const on = s.key === step
-          return (
-            <li key={s.key}>
-              <button
-                type="button"
-                onClick={() => setStep(s.key)}
-                aria-current={on ? 'step' : undefined}
-                className={`flex w-full flex-col items-center gap-1 rounded-xl border px-1 py-2.5 text-center transition-colors sm:flex-row sm:justify-center sm:gap-2 sm:px-3 ${
-                  on
-                    ? 'border-ink-900 bg-ink-900 text-white'
-                    : 'border-ink-900/10 bg-white text-ink-700 hover:border-ink-900/25'
-                }`}
-              >
-                <span
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                    done ? 'bg-emerald-500 text-white' : on ? 'bg-white text-ink-900' : 'bg-ink-100 text-ink-600'
-                  }`}
-                >
-                  {done ? <Check size={11} strokeWidth={3} /> : i + 1}
-                </span>
-                <span className="text-[11px] font-semibold sm:text-xs">{s.label}</span>
-              </button>
-            </li>
-          )
-        })}
-      </ol>
-
-      {complete && step === 'learn' && (
-        <Alert tone="success" title="Module complete">
-          You’ve finished every task here. You can reopen any step to read or change your answers.
-        </Alert>
-      )}
-
+    <LessonFrame
+      icon={Globe2}
+      eyebrow={`Global Leadership · Module ${index + 1} of ${total}`}
+      title={title}
+      subtitle={subtitle}
+      steps={steps}
+      active={step}
+      onSelect={(k) => setStep(k as Step)}
+      banner={banner}
+    >
       {step === 'learn' && (
-        <section className="space-y-3">
-          {content.learn.map((c, i) => (
-            <article key={c.title} className="card p-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                {i + 1} of {content.learn.length}
-              </p>
-              <h3 className="mt-1 font-display text-lg font-semibold text-ink-900">{c.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-ink-700">{c.body}</p>
-            </article>
-          ))}
-          <Button iconRight={ArrowRight} onClick={() => setStep('t1')}>
-            Start the tasks
-          </Button>
-        </section>
+        <div>
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">Read this first</p>
+          <LessonLearn cards={content.learn} />
+        </div>
       )}
 
       {step !== 'learn' && (
-        <ItemCard
+        <LessonWrite
           key={step}
-          item={step}
-          content={content}
+          kind={step === 'reflect' ? 'reflect' : 'task'}
+          title={step === 'reflect' ? 'Reflect' : (task?.title ?? '')}
+          prompt={step === 'reflect' ? content.reflection.prompt : (task?.prompt ?? '')}
+          hint={step === 'reflect' ? content.reflection.hint : task?.hint}
+          min={step === 'reflect' ? MIN_REFLECTION_CHARS : MIN_TASK_CHARS}
+          max={MAX_RESPONSE_CHARS}
           initial={responses[responseKey(slug, step)] ?? ''}
-          alreadySaved={saved(step)}
-          onSave={async (text) => {
-            await onSave(step, text)
-          }}
-          onDone={() => nextStep && setStep(nextStep)}
+          onSave={(text) => onSave(step, text)}
+          onNext={goNext}
           last={step === 'reflect'}
-          moduleComplete={complete}
-          index={index}
-          total={total}
-          progress={progress}
         />
       )}
-    </div>
-  )
-}
-
-function ItemCard({
-  item,
-  content,
-  initial,
-  alreadySaved,
-  onSave,
-  onDone,
-  last,
-  moduleComplete,
-  index,
-  total,
-  progress,
-}: {
-  item: ItemKey
-  content: ModuleContent
-  initial: string
-  alreadySaved: boolean
-  onSave: (text: string) => Promise<void>
-  onDone: () => void
-  last: boolean
-  moduleComplete: boolean
-  index: number
-  total: number
-  progress: ProgrammeProgress
-}) {
-  const task = content.tasks.find((t) => t.key === item)
-  const isReflection = item === 'reflect'
-  const min = isReflection ? MIN_REFLECTION_CHARS : MIN_TASK_CHARS
-  const heading = isReflection ? 'Reflect' : (task?.title ?? '')
-  const prompt = isReflection ? content.reflection.prompt : (task?.prompt ?? '')
-  const hint = isReflection ? content.reflection.hint : (task?.hint ?? '')
-
-  const [text, setText] = useState(initial)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string>()
-
-  // A saved response reloaded from the server (or a step revisited) shows as-is.
-  useEffect(() => setText(initial), [initial])
-
-  const length = text.trim().length
-  const ready = length >= min
-  const changed = text.trim() !== initial.trim()
-
-  async function save() {
-    setBusy(true)
-    setError(undefined)
-    try {
-      await onSave(text)
-      if (!last) onDone()
-    } catch (e) {
-      setError(errorMessage(e))
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  // The module is finished once all four items are saved, wherever they were
-  // saved from — so this follows the server-backed progress, not the click.
-  const next = progress.next
-  const showFinish = last && moduleComplete
-
-  return (
-    <section className="card p-5 sm:p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-        {isReflection ? 'Reflect' : 'Practise'} · module {index + 1} of {total}
-      </p>
-      <h3 className="mt-1 font-display text-xl font-semibold text-ink-900">{heading}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-ink-700">{prompt}</p>
-      <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-ink-500">
-        <Lightbulb size={13} className="mt-0.5 shrink-0" /> {hint}
-      </p>
-
-      <div className="mt-4">
-        <Textarea
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value)
-          }}
-          rows={isReflection ? 5 : 7}
-          maxLength={MAX_RESPONSE_CHARS}
-          required={false}
-          aria-label={heading}
-          placeholder="Write your answer here…"
-        />
-        <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span className={ready ? 'text-ink-500' : 'text-ink-600'}>
-            {ready ? `${length} characters` : `${length} / ${min} characters to save`}
-          </span>
-          {alreadySaved && !changed && (
-            <span className="inline-flex items-center gap-1 font-semibold text-emerald-700">
-              <CheckCircle2 size={13} /> Saved
-            </span>
-          )}
-        </div>
-      </div>
-
-      {error && (
-        <div className="mt-3">
-          <Alert tone="danger" title="Couldn’t save that">
-            <p>{error}</p>
-          </Alert>
-        </div>
-      )}
-
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Button disabled={busy || !ready || (alreadySaved && !changed)} onClick={() => void save()}>
-          {busy ? 'Saving…' : last ? (alreadySaved ? 'Save changes' : 'Save & finish module') : alreadySaved ? 'Save changes' : 'Save & continue'}
-        </Button>
-        {alreadySaved && !changed && !last && (
-          <Button variant="secondary" iconRight={ArrowRight} onClick={onDone}>
-            Next
-          </Button>
-        )}
-      </div>
-
-      {showFinish && (
-        <div className="mt-5 rounded-xl bg-emerald-50 p-4">
-          <p className="flex items-center gap-2 text-sm font-semibold text-emerald-800">
-            <CheckCircle2 size={16} /> Module complete
-          </p>
-          <p className="mt-1 text-sm text-emerald-800/90">
-            {next
-              ? `Up next: ${next.title}.`
-              : 'That’s every module. Ask a mentor to review your work from Practice.'}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {next ? (
-              <Link
-                to="/career-module/$slug"
-                params={{ slug: next.slug }}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-900 hover:underline"
-              >
-                Open {next.title} <ArrowRight size={14} />
-              </Link>
-            ) : (
-              <Link to="/practice" className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-900 hover:underline">
-                Go to Practice <ArrowRight size={14} />
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
-    </section>
+    </LessonFrame>
   )
 }
