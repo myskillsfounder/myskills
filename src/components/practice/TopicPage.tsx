@@ -187,7 +187,7 @@ function TopicList({
   bare?: boolean
 }) {
   return (
-    <nav aria-label="Digital Marketing topics" className={bare ? '' : 'rounded-2xl border border-ink-200 bg-white p-3 shadow-e1'}>
+    <nav aria-label="Digital Marketing modules" className={bare ? '' : 'rounded-2xl border border-ink-200 bg-white p-3 shadow-e1'}>
       <p className="px-2 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">Digital Marketing</p>
       <ul className="space-y-0.5">
         {TOPIC_CHAPTERS.map((c, i) => {
@@ -231,7 +231,7 @@ export function TopicPage({
   learnedIds,
   local,
   getLocal,
-  backLabel = 'All topics',
+  backLabel = 'All modules',
   onBack,
   onOpenTopic,
   onPractise,
@@ -319,9 +319,9 @@ export function TopicPage({
         {/* On a phone the topic list folds away at the top. */}
         <details className="group rounded-2xl border border-ink-200 bg-white shadow-e1 lg:hidden">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-ink-900">
-            <span>All topics</span>
+            <span>All modules</span>
             <span className="text-xs font-normal text-ink-500 group-open:hidden">
-              Topic {index + 1} of {TOPIC_CHAPTERS.length}
+              Module {index + 1} of {TOPIC_CHAPTERS.length}
             </span>
           </summary>
           <div className="px-2 pb-2">
@@ -345,7 +345,7 @@ export function TopicPage({
             </span>
             <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
-                Topic {index + 1} of {TOPIC_CHAPTERS.length} · About {chapter.minutes} min
+                Module {index + 1} of {TOPIC_CHAPTERS.length} · About {chapter.minutes} min
               </p>
               <h1 className="mt-1 font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">{track.name}</h1>
               <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-white/75">{chapter.hook}</p>
@@ -365,7 +365,7 @@ export function TopicPage({
               aria-valuenow={percent}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label="Topic progress"
+              aria-label="Module progress"
             >
               <div className="h-full rounded-full bg-gradient-to-r from-brand-200 to-emerald-300 transition-[width] duration-500" style={{ width: `${percent}%` }} />
             </div>
@@ -609,7 +609,7 @@ export function TopicPage({
                   ) : (
                     <span />
                   )}
-                  {/* The practice round has its own button to finish the topic. */}
+                  {/* The practice round has its own button to finish the module. */}
                   {here.key !== 'practise' && (
                     <button
                       type="button"
@@ -636,14 +636,14 @@ export function TopicPage({
                     <PartyPopper size={26} />
                   </span>
                   <h2 className="mt-4 font-display text-2xl font-semibold text-ink-900">{track.name} complete</h2>
-                  <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">You’ve been through every step of this topic. Keep the momentum: take the next one while it’s fresh.</p>
+                  <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">You’ve been through every step of this module. Keep the momentum: take the next one while it’s fresh.</p>
                   {next ? (
                     <button
                       type="button"
                       onClick={() => onOpenTopic(next.slug)}
                       className="press mt-5 inline-flex h-11 items-center gap-1.5 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
                     >
-                      Next topic: {trackName(next.slug)} <ArrowRight size={16} />
+                      Next module: {trackName(next.slug)} <ArrowRight size={16} />
                     </button>
                   ) : (
                     <button
@@ -685,7 +685,7 @@ export function TopicPage({
             <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
               <Users size={15} aria-hidden /> Study room
             </p>
-            <p className="mt-1.5 font-semibold text-ink-900">Study this topic alongside others</p>
+            <p className="mt-1.5 font-semibold text-ink-900">Study this module alongside others</p>
             <div className="mt-1.5">
               <OnlineNow people={online['digital-marketing']} max={4} empty="No one in the room yet. Be the first." />
             </div>
@@ -700,7 +700,7 @@ export function TopicPage({
         </section>
 
         {/* Other topics */}
-        <nav className="flex items-center justify-between gap-3 pt-1" aria-label="Previous and next topic">
+        <nav className="flex items-center justify-between gap-3 pt-1" aria-label="Previous and next module">
           {prev ? (
             <button
               type="button"
@@ -718,7 +718,7 @@ export function TopicPage({
               onClick={() => onOpenTopic(next.slug)}
               className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
             >
-              Next topic: {trackName(next.slug)} <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+              Next module: {trackName(next.slug)} <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </button>
           )}
         </nav>

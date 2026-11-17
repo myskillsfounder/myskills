@@ -71,7 +71,7 @@ export function PracticeRound({
       const ids = await fetchPracticeRound(slug)
       const bank = questionsForTrack(slug)
       const picked = ids.map((id) => bank.find((q) => q.id === id)).filter((q): q is ScenarioQuestion => Boolean(q))
-      if (picked.length === 0) throw new Error('No questions came back for this topic.')
+      if (picked.length === 0) throw new Error('No questions came back for this module.')
       setQuestions(picked)
       setOptionOrder(Object.fromEntries(picked.map((q) => [q.id, shuffled(q.options.map((_, i) => i))])))
       setAnswers(picked.map(() => null))
@@ -190,7 +190,7 @@ export function PracticeRound({
             onClick={onContinue}
             className="press inline-flex h-11 items-center gap-1.5 rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-emerald-700"
           >
-            Finish topic <ArrowRight size={16} />
+            Finish module <ArrowRight size={16} />
           </button>
         </div>
       </div>
@@ -345,7 +345,7 @@ export function PracticeRound({
           onClick={onContinue}
           className="press mt-3 inline-flex h-10 items-center gap-1.5 rounded-xl border border-emerald-300 px-4 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-50"
         >
-          Finish topic <ArrowRight size={15} />
+          Finish module <ArrowRight size={15} />
         </button>
       )}
     </div>
