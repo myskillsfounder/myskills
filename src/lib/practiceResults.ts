@@ -92,3 +92,29 @@ export async function submitPracticeAttempt(
   if (error) throw new Error(error.message?.trim() || 'Something went wrong.')
   return data as PracticeResult
 }
+
+/**
+ * A four-question round inside a topic page (docs/supabase-practice-quick-round.sql).
+ * The server picks the four, the same four all day for a student and track, and
+ * grades them like the full lab: the answers never reach the browser.
+ */
+export async function fetchPracticeRound(track: string): Promise<string[]> {
+  const { data, error } = await supabase.rpc('practice_round_ids', { p_track: track })
+  if (error) throw new Error(error.message?.trim() || 'Something went wrong.')
+  return (data ?? []) as string[]
+}
+
+export async function submitPracticeRound(
+  track: string,
+  ids: string[],
+  answers: Record<string, number>,
+): Promise<PracticeResult> {
+  const { data, error } = await supabase.rpc('submit_practice_round', {
+    p_track: track,
+    p_ids: ids,
+    p_answers: answers,
+    p_version: 2,
+  })
+  if (error) throw new Error(error.message?.trim() || 'Something went wrong.')
+  return data as PracticeResult
+}

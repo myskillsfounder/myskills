@@ -418,6 +418,7 @@ function PracticePage() {
                   onBack={() => setTopic(null)}
                   onOpenTopic={setTopic}
                   onPractise={setSelected}
+                  onPracticeSubmitted={async () => setPractice(await fetchPracticeSummary())}
                   onLearn={markVocabLearned}
                   onProgress={(patch) => topicProgress.update(topic, patch)}
                 />

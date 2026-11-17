@@ -26,11 +26,12 @@ import { TOPIC_CHAPTERS, topicChapter, type TopicChapter } from '@/content/dmTop
 import { vocabularyTerms } from '@/lib/vocabulary'
 import { skillTracks } from '@/lib/skillTracks'
 import { questionsForTrack } from '@/lib/decisionLabs'
-import { nextAttemptAt, retakeLabel, type PracticeSummary } from '@/lib/practiceResults'
+import { nextAttemptAt, type PracticeSummary } from '@/lib/practiceResults'
 import { topicSteps, type TopicLocal, type TopicStep } from '@/lib/topicProgress'
 import { useRoomsOnline } from '@/lib/focusRooms'
 import { OnlineNow } from '@/components/focus/OnlineNow'
 import { CheckIn } from './CheckIn'
+import { PracticeRound } from './PracticeRound'
 import { STATE_META, trackState } from './practiceStatus'
 
 /**
@@ -234,6 +235,7 @@ export function TopicPage({
   onBack,
   onOpenTopic,
   onPractise,
+  onPracticeSubmitted,
   onLearn,
   onProgress,
 }: {
@@ -246,7 +248,10 @@ export function TopicPage({
   backLabel?: string
   onBack: () => void
   onOpenTopic: (slug: string) => void
+  /** Opens the full Decision Lab for this topic. */
   onPractise: (slug: string) => void
+  /** A four-question round was saved: refresh the scores. */
+  onPracticeSubmitted: () => void | Promise<void>
   onLearn: (termId: string) => void
   onProgress: (patch: Partial<TopicLocal>) => void
 }) {
@@ -566,10 +571,7 @@ export function TopicPage({
                 {/* PRACTISE */}
                 {here.key === 'practise' && (
                   <div>
-                    <h2 className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">{track.name} Decision Lab</h2>
-                    <p className="mt-2 leading-relaxed text-ink-700">
-                      {scenarios} real business situations. Read the brief, make the call, and see why after you finish.
-                    </p>
+                    <h2 className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">Practise {track.name}</h2>
                     {result && (
                       <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
                         <span className="font-display text-3xl font-semibold text-emerald-800">{result.percent}%</span>
@@ -581,17 +583,16 @@ export function TopicPage({
                         </span>
                       </div>
                     )}
-                    <div className="mt-4 flex flex-wrap items-center gap-3">
-                      <button
-                        type="button"
-                        disabled={Boolean(opensAt)}
-                        onClick={() => onPractise(slug)}
-                        className="press inline-flex h-11 items-center gap-1.5 rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-ink-300"
-                      >
-                        {result ? 'Practise again' : 'Start practising'} <ArrowRight size={15} />
-                      </button>
-                      {opensAt && <span className="text-sm text-ink-600">Opens again {retakeLabel(opensAt)}.</span>}
-                    </div>
+                    <PracticeRound
+                      key={slug}
+                      slug={slug}
+                      trackName={track.name}
+                      fullCount={scenarios}
+                      opensAt={opensAt}
+                      onSubmitted={onPracticeSubmitted}
+                      onContinue={() => show('done')}
+                      onFullLab={() => onPractise(slug)}
+                    />
                   </div>
                 )}
 
@@ -608,18 +609,21 @@ export function TopicPage({
                   ) : (
                     <span />
                   )}
-                  <button
-                    type="button"
-                    onClick={advance}
-                    className={`press inline-flex h-11 items-center gap-1.5 rounded-xl px-5 text-sm font-semibold text-white shadow-e1 transition-colors ${LOOK[here.key].button}`}
-                  >
-                    {here.key === 'read' && !local.read
-                      ? 'Got it, continue'
-                      : steps[activeIndex + 1]
-                        ? `Continue to ${LOOK[steps[activeIndex + 1].key].label}`
-                        : 'Finish'}
-                    <ArrowRight size={16} />
-                  </button>
+                  {/* The practice round has its own button to finish the topic. */}
+                  {here.key !== 'practise' && (
+                    <button
+                      type="button"
+                      onClick={advance}
+                      className={`press inline-flex h-11 items-center gap-1.5 rounded-xl px-5 text-sm font-semibold text-white shadow-e1 transition-colors ${LOOK[here.key].button}`}
+                    >
+                      {here.key === 'read' && !local.read
+                        ? 'Got it, continue'
+                        : steps[activeIndex + 1]
+                          ? `Continue to ${LOOK[steps[activeIndex + 1].key].label}`
+                          : 'Finish'}
+                      <ArrowRight size={16} />
+                    </button>
+                  )}
                 </div>
               </div>
             </>
