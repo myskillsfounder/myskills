@@ -122,7 +122,7 @@ export function ProgrammeCards({
     <section aria-labelledby="my-programmes">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-700">Practice</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-700">Workbook</p>
           <h1 id="my-programmes" className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
             Your programmes
           </h1>

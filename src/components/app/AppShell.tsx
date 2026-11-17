@@ -42,7 +42,7 @@ const NAV: { heading: string; items: NavItem[] }[] = [
     heading: 'Learn',
     items: [
       { to: '/study-rooms', label: 'Study rooms', icon: MoonStar, live: true },
-      { to: '/practice', label: 'Practice', icon: BookOpen },
+      { to: '/practice', label: 'Workbook', icon: BookOpen },
     ],
   },
   {
