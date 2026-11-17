@@ -233,6 +233,7 @@ export function SkillProfile({
         </div>
         <Link
           to="/profile"
+          search={{ tab: 'progress' }}
           className="press inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50"
         >
           See my progress
