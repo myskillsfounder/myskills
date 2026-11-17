@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute } from '@tanstack/react-router'
-import { ArrowLeft, Brain, Target } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Brain, Target } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
 import { useInitialAssessment } from '@/lib/assessmentResults'
@@ -148,6 +148,8 @@ function PracticePage() {
   const [mode, setMode] = useState<PracticeMode | null>(null)
   // The Digital Marketing topic page that is open, by skill-track slug.
   const [topic, setTopic] = useState<string | null>(null)
+  // Digital Marketing opens on two cards; everything else in the programme is under 'More'.
+  const [more, setMore] = useState(false)
   const topicProgress = useTopicProgress(user?.id ?? 'guest')
   useEffect(() => window.scrollTo(0, 0), [topic])
   const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
@@ -390,6 +392,7 @@ function PracticePage() {
                   onBack={() => {
                     setProgramme(null)
                     setTopic(null)
+                    setMore(false)
                   }}
                 />
               )}
@@ -407,6 +410,7 @@ function PracticePage() {
                   learnedIds={vocabLearnedIds}
                   local={topicProgress.get(topic)}
                   getLocal={topicProgress.get}
+                  backLabel={more ? 'All topics' : 'Your score and what’s next'}
                   onBack={() => setTopic(null)}
                   onOpenTopic={setTopic}
                   onPractise={setSelected}
@@ -415,36 +419,56 @@ function PracticePage() {
                 />
               )}
 
-              {/* On a computer: where you stand, then what to do. */}
-              {programme === 1 && dmOpen && topic === null && !phone && (
+              {/* Digital Marketing opens on two cards: the score and what's next
+                  (Paul, 18 Nov 2026). The aptitude test stays first only while it is
+                  still to be taken. Everything else is under More. */}
+              {programme === 1 && dmOpen && topic === null && !more && (
                 <>
                   {aptitude == null && dmAptitudeCard}
                   <div className="grid gap-5 lg:grid-cols-3">
-                    <div className="lg:col-span-2">{dmStats}</div>
-                    <div className="lg:col-span-1">{dmNextUp}</div>
+                    <div className={`lg:col-span-2 ${phone ? 'order-2' : ''}`}>{dmStats}</div>
+                    <div className={`lg:col-span-1 ${phone ? 'order-1' : ''}`}>{dmNextUp}</div>
                   </div>
-                  {dmTopics}
-                  {dmCompletion}
-                  {dmModes}
-                  {dmFoundation}
-                  {dmLive}
-                  {aptitude != null && dmAptitudeCard}
+                  <button
+                    type="button"
+                    onClick={() => setMore(true)}
+                    className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-ink-200 bg-white px-5 py-4 text-left shadow-e1 transition-colors hover:border-brand-300"
+                  >
+                    <span>
+                      <span className="block font-semibold text-ink-900">More in this programme</span>
+                      <span className="block text-sm text-ink-600">All topics, practice modes, the Foundation assessment, live training and your project.</span>
+                    </span>
+                    <ArrowRight size={18} className="shrink-0 text-brand-700 transition-transform group-hover:translate-x-0.5" />
+                  </button>
                 </>
               )}
 
-              {/* On a phone the order turns round: the thing to practise now is
-                  first, under the thumb, and the standing comes after it. The
-                  aptitude assessment leads only while it is still to be taken. */}
-              {programme === 1 && dmOpen && topic === null && phone && (
+              {/* More: the rest of the programme, as it was before the two cards. */}
+              {programme === 1 && dmOpen && topic === null && more && (
                 <>
-                  {aptitude == null && dmAptitudeCard}
-                  {dmNextUp}
-                  {dmStats}
+                  <button
+                    type="button"
+                    onClick={() => setMore(false)}
+                    className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+                  >
+                    <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> Your score and what’s next
+                  </button>
                   {dmTopics}
-                  {dmModes}
-                  {dmFoundation}
-                  {dmCompletion}
-                  {dmLive}
+                  {phone ? (
+                    <>
+                      {dmModes}
+                      {dmFoundation}
+                      {dmCompletion}
+                      {dmLive}
+                    </>
+                  ) : (
+                    <>
+                      {dmCompletion}
+                      {dmModes}
+                      {dmFoundation}
+                      {dmLive}
+                    </>
+                  )}
                   {aptitude != null && dmAptitudeCard}
                 </>
               )}
