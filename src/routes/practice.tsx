@@ -492,26 +492,36 @@ function PracticePage() {
                 </>
               )}
 
-              {programme === 2 && !phone && (
-                <>
-                  <AssessmentCard />
-                  {crOverview}
-                  {crCompletion}
-                  {crModules}
-                  {crLive}
-                </>
-              )}
-
-              {programme === 2 && phone && (
-                <>
-                  {crAptitude.result == null && <AssessmentCard />}
-                  {crModules}
-                  {crOverview}
-                  {crCompletion}
-                  {crLive}
-                  {crAptitude.result != null && <AssessmentCard />}
-                </>
-              )}
+              {/* Global Leadership opens on its modules, like Digital Marketing (Paul, 18 Nov
+                  2026: every workbook the new way). The aptitude banner stays first only until
+                  the test is taken. The score card, Next up, the programme stages with the
+                  mentor project, and live sessions come back with SHOW_OVERVIEW. */}
+              {programme === 2 &&
+                (SHOW_OVERVIEW ? (
+                  phone ? (
+                    <>
+                      {crAptitude.result == null && <AssessmentCard />}
+                      {crModules}
+                      {crOverview}
+                      {crCompletion}
+                      {crLive}
+                      {crAptitude.result != null && <AssessmentCard />}
+                    </>
+                  ) : (
+                    <>
+                      <AssessmentCard />
+                      {crOverview}
+                      {crCompletion}
+                      {crModules}
+                      {crLive}
+                    </>
+                  )
+                ) : (
+                  <>
+                    {crAptitude.result == null && <AssessmentCard />}
+                    {crModules}
+                  </>
+                ))}
             </>
           )}
         </div>
