@@ -1,56 +1,127 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
-  AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  BarChart3,
   BookOpen,
+  Bot,
   Check,
-  CheckCircle2,
-  Clock,
+  Compass,
   FlaskConical,
+  Globe,
   Languages,
-  Lightbulb,
   ListChecks,
+  Megaphone,
+  MousePointerClick,
+  PartyPopper,
+  PenLine,
+  Search,
   Sparkles,
   Target,
   Users,
+  type LucideIcon,
 } from 'lucide-react'
 import { TOPIC_CHAPTERS, topicChapter, type TopicChapter } from '@/content/dmTopics'
 import { vocabularyTerms } from '@/lib/vocabulary'
 import { skillTracks } from '@/lib/skillTracks'
 import { questionsForTrack } from '@/lib/decisionLabs'
 import { nextAttemptAt, retakeLabel, type PracticeSummary } from '@/lib/practiceResults'
-import { topicSteps, type TopicLocal } from '@/lib/topicProgress'
+import { topicSteps, type TopicLocal, type TopicStep } from '@/lib/topicProgress'
 import { useRoomsOnline } from '@/lib/focusRooms'
 import { OnlineNow } from '@/components/focus/OnlineNow'
 import { CheckIn } from './CheckIn'
 import { STATE_META, trackState } from './practiceStatus'
 
 /**
- * One Digital Marketing topic as a lesson page: a header with progress and a
- * Continue button, the core explanation (definition, why it matters, a simple
- * picture, the myth), a check-in, the key terms as flip cards, a tip, a common
- * mistake, a worked example, a small task, the Decision Lab, and the study room.
- * A list of all topics sits beside it on a computer. Steps with a tick are in
- * lib/topicProgress.ts.
+ * One Digital Marketing topic as a lesson you move through one step at a time
+ * (Paul, 18 Nov 2026: a better learning experience, colour and UI). A dark
+ * header with the progress and a step track, then one step on screen: Read,
+ * Check-in, Terms, Task, Practise. Each step has its own colour, and Continue
+ * moves on. A list of all topics sits beside it on a computer. Which steps are
+ * done is in lib/topicProgress.ts.
+ *
+ * The tip, the common mistake and the worked example are kept in
+ * content/dmTopics.ts but not shown for now (Paul asked to remove them).
  */
 
-const card = 'scroll-mt-24 rounded-2xl border border-ink-200 bg-white p-5 shadow-e1 sm:p-6'
-const eyebrow = 'flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500'
+type Key = TopicStep['key']
 
-function Label({ icon: Icon, children, done }: { icon: typeof BookOpen; children: string; done?: boolean }) {
-  return (
-    <p className={eyebrow}>
-      <Icon size={15} aria-hidden />
-      {children}
-      {done && (
-        <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-emerald-700">
-          <Check size={11} strokeWidth={3} /> Done
-        </span>
-      )}
-    </p>
-  )
+/** Each step's colour and icon. Full class names, so Tailwind can see them. */
+const LOOK: Record<
+  Key,
+  { icon: LucideIcon; label: string; node: string; band: string; soft: string; text: string; button: string; ring: string }
+> = {
+  read: {
+    icon: BookOpen,
+    label: 'Read',
+    node: 'bg-brand-600',
+    band: 'from-brand-600 to-brand-700',
+    soft: 'bg-brand-50 border-brand-200',
+    text: 'text-brand-700',
+    button: 'bg-brand-600 hover:bg-brand-700',
+    ring: 'ring-brand-300',
+  },
+  check: {
+    icon: ListChecks,
+    label: 'Check-in',
+    node: 'bg-sky-600',
+    band: 'from-sky-600 to-sky-700',
+    soft: 'bg-sky-50 border-sky-200',
+    text: 'text-sky-700',
+    button: 'bg-sky-600 hover:bg-sky-700',
+    ring: 'ring-sky-300',
+  },
+  terms: {
+    icon: Languages,
+    label: 'Terms',
+    node: 'bg-amber-600',
+    band: 'from-amber-600 to-amber-700',
+    soft: 'bg-amber-50 border-amber-200',
+    text: 'text-amber-700',
+    button: 'bg-amber-600 hover:bg-amber-700',
+    ring: 'ring-amber-300',
+  },
+  task: {
+    icon: Target,
+    label: 'Task',
+    node: 'bg-rose-600',
+    band: 'from-rose-600 to-rose-700',
+    soft: 'bg-rose-50 border-rose-200',
+    text: 'text-rose-700',
+    button: 'bg-rose-600 hover:bg-rose-700',
+    ring: 'ring-rose-300',
+  },
+  practise: {
+    icon: FlaskConical,
+    label: 'Practise',
+    node: 'bg-emerald-600',
+    band: 'from-emerald-600 to-emerald-700',
+    soft: 'bg-emerald-50 border-emerald-200',
+    text: 'text-emerald-700',
+    button: 'bg-emerald-600 hover:bg-emerald-700',
+    ring: 'ring-emerald-300',
+  },
+}
+
+const TOPIC_ICON: Record<string, LucideIcon> = {
+  'marketing-fundamentals': Compass,
+  'market-research': Search,
+  'meta-ads': Megaphone,
+  'google-ads': MousePointerClick,
+  'seo-aeo': Globe,
+  analytics: BarChart3,
+  'content-marketing': PenLine,
+  'marketing-automation-ai': Bot,
+}
+
+/** What each step asks the learner to do, for the Continue button. */
+const DO: Record<Key, string> = {
+  read: 'Read the big idea',
+  check: 'Take the check-in',
+  terms: 'Learn the key terms',
+  task: 'Do the small task',
+  practise: 'Practise the Decision Lab',
 }
 
 function TermCard({ id, learned, onLearn }: { id: string; learned: boolean; onLearn: (id: string) => void }) {
@@ -59,16 +130,28 @@ function TermCard({ id, learned, onLearn }: { id: string; learned: boolean; onLe
   if (!term) return null
   return (
     <li
-      className={`flex flex-col rounded-xl border p-3.5 transition-colors ${
-        learned ? 'border-emerald-200 bg-emerald-50/60' : open ? 'border-brand-300 bg-brand-50/50' : 'border-ink-200 bg-ink-50'
+      className={`flex flex-col rounded-2xl border p-4 transition-all duration-300 ${
+        learned
+          ? 'border-emerald-200 bg-emerald-50'
+          : open
+            ? 'border-amber-300 bg-amber-50 shadow-e1'
+            : 'border-ink-200 bg-white hover:-translate-y-0.5 hover:border-amber-300'
       }`}
     >
       <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="text-left">
         <span className="flex items-start justify-between gap-2">
-          <span className="font-semibold leading-snug text-ink-900">{term.term}</span>
-          {learned && <Check size={16} strokeWidth={3} className="mt-0.5 shrink-0 text-emerald-600" aria-label="Learned" />}
+          <span className="font-display text-base font-semibold leading-snug text-ink-900">{term.term}</span>
+          {learned ? (
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white" aria-label="Learned">
+              <Check size={14} strokeWidth={3} />
+            </span>
+          ) : (
+            <span className="shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-700">
+              {open ? 'Meaning' : 'Tap'}
+            </span>
+          )}
         </span>
-        <span className="mt-1.5 block text-sm leading-relaxed text-ink-600">
+        <span className={`mt-2 block text-sm leading-relaxed ${open || learned ? 'text-ink-800' : 'text-ink-500'}`}>
           {open || learned ? term.definition : 'Tap to see the meaning'}
         </span>
       </button>
@@ -76,7 +159,7 @@ function TermCard({ id, learned, onLearn }: { id: string; learned: boolean; onLe
         <button
           type="button"
           onClick={() => onLearn(id)}
-          className="press mt-3 self-start rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+          className="press mt-3 self-start rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white shadow-e1 transition-colors hover:bg-amber-700"
         >
           I know this
         </button>
@@ -169,6 +252,9 @@ export function TopicPage({
 }) {
   const chapter = topicChapter(slug) as TopicChapter | undefined
   const track = skillTracks.find((t) => t.slug === slug)
+  const steps = topicSteps(slug, local, learnedIds, practice)
+  // The step on screen: the first one not done yet, or Read. 'done' is the wrap-up.
+  const [active, setActive] = useState<Key | 'done'>(() => steps.find((s) => !s.done)?.key ?? 'read')
   const [draft, setDraft] = useState(local.taskText)
   const [error, setError] = useState('')
   const online = useRoomsOnline(['digital-marketing'])
@@ -177,17 +263,31 @@ export function TopicPage({
   const index = TOPIC_CHAPTERS.findIndex((t) => t.slug === slug)
   const prev = TOPIC_CHAPTERS[index - 1]
   const next = TOPIC_CHAPTERS[index + 1]
-  const steps = topicSteps(slug, local, learnedIds, practice)
   const doneCount = steps.filter((s) => s.done).length
   const percent = Math.round((doneCount / steps.length) * 100)
   const upNext = steps.find((s) => !s.done)
-  const done = (key: string) => steps.find((s) => s.key === key)?.done ?? false
   const termsLearned = chapter.terms.filter((id) => learnedIds.has(id)).length
+  const TopicIcon = TOPIC_ICON[slug] ?? Compass
 
   const result = practice[slug]
   const state = trackState(Boolean(result), result?.percent ?? 0)
   const opensAt = nextAttemptAt(result)
   const scenarios = questionsForTrack(slug).length
+
+  const activeIndex = active === 'done' ? steps.length : Math.max(0, steps.findIndex((s) => s.key === active))
+  const here = active === 'done' ? null : (steps[activeIndex] ?? steps[0])
+
+  function show(key: Key | 'done') {
+    setActive(key)
+    // Bring the step to the top once it has drawn.
+    window.setTimeout(() => document.getElementById('lesson-step')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30)
+  }
+
+  function advance() {
+    if (here?.key === 'read' && !local.read) onProgress({ read: true })
+    const following = steps[activeIndex + 1]
+    show(following ? following.key : 'done')
+  }
 
   function finishTask() {
     if (draft.trim().length < 10) {
@@ -199,7 +299,6 @@ export function TopicPage({
   }
 
   const trackName = (s: string) => skillTracks.find((t) => t.slug === s)?.name ?? s
-  const go = (key: string) => document.getElementById(`step-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
     <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6">
@@ -216,287 +315,370 @@ export function TopicPage({
         <details className="group rounded-2xl border border-ink-200 bg-white shadow-e1 lg:hidden">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-ink-900">
             <span>All topics</span>
-            <span className="text-xs font-normal text-ink-500 group-open:hidden">Topic {index + 1} of {TOPIC_CHAPTERS.length}</span>
+            <span className="text-xs font-normal text-ink-500 group-open:hidden">
+              Topic {index + 1} of {TOPIC_CHAPTERS.length}
+            </span>
           </summary>
           <div className="px-2 pb-2">
             <TopicList current={slug} practice={practice} learnedIds={learnedIds} getLocal={getLocal} onOpen={onOpenTopic} bare />
           </div>
         </details>
 
-        {/* The lesson header: where you are, and one button for what's next */}
-        <header className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white p-5 shadow-e1 sm:p-6">
-          <span className="inline-flex rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-semibold text-brand-700">
-            Topic {index + 1} of {TOPIC_CHAPTERS.length}
+        {/* The lesson header: where you are, and the track of steps */}
+        <header className="surface-wood-dark relative overflow-hidden rounded-3xl p-5 shadow-e2 sm:p-7">
+          <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 opacity-[0.16]">
+            <svg width="240" height="240" viewBox="0 0 240 240" fill="none" stroke="#f6e3c8" strokeWidth="2">
+              <circle cx="150" cy="90" r="90" />
+              <circle cx="150" cy="90" r="68" />
+              <circle cx="150" cy="90" r="46" />
+              <circle cx="150" cy="90" r="22" />
+            </svg>
           </span>
-          <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">{track.name}</h1>
-          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-ink-600">{chapter.hook}</p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs text-ink-600">
-            <span className="inline-flex items-center gap-1 rounded-lg border border-ink-200 bg-white px-2.5 py-1">
-              <Clock size={12} /> About {chapter.minutes} min
+          <div className="relative flex items-start gap-4">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-e1 ring-1 ring-white/20 sm:h-16 sm:w-16">
+              <TopicIcon size={28} />
             </span>
-            <span className="inline-flex items-center gap-1 rounded-lg border border-ink-200 bg-white px-2.5 py-1">
-              <ListChecks size={12} /> {steps.length} steps
-            </span>
-          </div>
-          <div className="mt-4">
-            <p className="text-xs font-medium text-ink-600">{percent}% completed</p>
-            <div className="mt-1 h-2 overflow-hidden rounded-full bg-ink-200/70" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} aria-label="Topic progress">
-              <div className="h-full rounded-full bg-brand-600 transition-[width] duration-500" style={{ width: `${percent}%` }} />
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+                Topic {index + 1} of {TOPIC_CHAPTERS.length} · About {chapter.minutes} min
+              </p>
+              <h1 className="mt-1 font-display text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">{track.name}</h1>
+              <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-white/75">{chapter.hook}</p>
             </div>
           </div>
-          <ol className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
-            {steps.map((s, i) => (
-              <li key={s.key}>
-                <button type="button" onClick={() => go(s.key)} className="group inline-flex items-center gap-1.5 text-xs text-ink-700">
-                  <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold ${
-                      s.done ? 'bg-emerald-600 text-white' : s === upNext ? 'bg-brand-600 text-white' : 'bg-ink-200 text-ink-600'
-                    }`}
-                  >
-                    {s.done ? <Check size={11} strokeWidth={3} /> : i + 1}
-                  </span>
-                  <span className={`group-hover:underline ${s === upNext ? 'font-semibold text-ink-900' : ''}`}>{s.label}</span>
-                </button>
-              </li>
-            ))}
+
+          <div className="relative mt-5">
+            <div className="flex items-center justify-between text-xs text-white/70">
+              <span>
+                {doneCount} of {steps.length} steps done
+              </span>
+              <span className="font-semibold text-white">{percent}%</span>
+            </div>
+            <div
+              className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/15"
+              role="progressbar"
+              aria-valuenow={percent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Topic progress"
+            >
+              <div className="h-full rounded-full bg-gradient-to-r from-brand-200 to-emerald-300 transition-[width] duration-500" style={{ width: `${percent}%` }} />
+            </div>
+          </div>
+
+          {/* The step track: tap any step to go to it */}
+          <ol className="relative mt-5 grid" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
+            {steps.map((s, i) => {
+              const look = LOOK[s.key]
+              const Icon = look.icon
+              const on = active === s.key
+              return (
+                <li key={s.key} className="relative flex flex-col items-center">
+                  {i > 0 && (
+                    <span
+                      aria-hidden
+                      className={`absolute right-1/2 top-[19px] h-0.5 w-full ${steps[i - 1].done ? 'bg-emerald-400/70' : 'bg-white/15'}`}
+                    />
+                  )}
+                  <button type="button" onClick={() => show(s.key)} aria-current={on ? 'step' : undefined} className="group relative flex flex-col items-center gap-1.5">
+                    <span
+                      className={`relative flex h-10 w-10 items-center justify-center rounded-full text-white transition-all duration-300 ${
+                        s.done ? 'bg-emerald-600' : look.node
+                      } ${on ? 'scale-110 ring-4 ring-white/30' : s.done ? '' : 'opacity-60 group-hover:opacity-100'}`}
+                    >
+                      {s.done ? <Check size={18} strokeWidth={3} /> : <Icon size={17} />}
+                    </span>
+                    <span className={`text-[11px] ${on ? 'font-semibold text-white' : 'text-white/65'}`}>{look.label}</span>
+                  </button>
+                </li>
+              )
+            })}
           </ol>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            {upNext ? (
+
+          {upNext && (
+            <div className="relative mt-5">
               <button
                 type="button"
-                onClick={() => go(upNext.key)}
-                className="press inline-flex h-11 items-center gap-1.5 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+                onClick={() => show(upNext.key)}
+                className="press inline-flex h-11 items-center gap-1.5 rounded-xl bg-white px-5 text-sm font-semibold text-ink-900 shadow-e1 transition-transform hover:-translate-y-0.5"
               >
-                {doneCount === 0 ? 'Start learning' : 'Continue learning'}: {upNext.label} <ArrowRight size={16} />
+                {doneCount === 0 ? 'Start' : 'Continue'}: {DO[upNext.key]} <ArrowRight size={16} />
               </button>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700">
-                <CheckCircle2 size={16} /> Topic complete
-              </span>
-            )}
-          </div>
+            </div>
+          )}
         </header>
 
-        {/* 1 · Core explanation */}
-        <section id="step-read" className={card} aria-labelledby="idea-h">
-          <Label icon={BookOpen} done={done('read')}>
-            Core explanation
-          </Label>
-          <div className="mt-3 grid gap-5 md:grid-cols-[minmax(0,1fr)_15rem]">
-            <div>
-              <h2 id="idea-h" className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">
-                The core of {track.name}
-              </h2>
-              <div className="mt-3 space-y-3">
-                {chapter.idea.map((p, i) => (
-                  <p key={p.slice(0, 24)} className={`leading-8 text-ink-800 ${i === 0 ? 'text-[17px]' : 'text-[15px] text-ink-700'}`}>
-                    {p}
-                  </p>
-                ))}
+        {/* The step on screen */}
+        <section id="lesson-step" className="scroll-mt-24 overflow-hidden rounded-3xl border border-ink-200 bg-white shadow-e1" aria-live="polite">
+          {here ? (
+            <>
+              <div className={`flex items-center justify-between gap-3 bg-gradient-to-r px-5 py-3 text-white sm:px-7 ${LOOK[here.key].band}`}>
+                <p className="flex items-center gap-2 text-sm font-semibold">
+                  {(() => {
+                    const Icon = LOOK[here.key].icon
+                    return <Icon size={17} aria-hidden />
+                  })()}
+                  Step {activeIndex + 1} of {steps.length} · {LOOK[here.key].label}
+                </p>
+                {here.done && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold">
+                    <Check size={12} strokeWidth={3} /> Done
+                  </span>
+                )}
               </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border-l-4 border-emerald-500 bg-ink-50 p-3.5">
-                  <p className="text-sm font-semibold text-ink-900">Why it matters</p>
-                  <ul className="mt-2 space-y-1.5">
-                    {chapter.why.map((w) => (
-                      <li key={w} className="flex items-start gap-2 text-sm leading-snug text-ink-700">
-                        <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-emerald-600" aria-hidden /> {w}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-xl bg-brand-50 p-3.5">
-                  <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-700">
-                    <Sparkles size={12} /> Simplified
-                  </p>
-                  <p className="mt-2 text-sm italic leading-relaxed text-ink-800">{chapter.simple}</p>
+
+              <div className="p-5 sm:p-7">
+                {/* READ */}
+                {here.key === 'read' && (
+                  <div>
+                    <h2 className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">The core of {track.name}</h2>
+                    <div className="mt-4 space-y-4">
+                      {chapter.idea.map((p, i) => (
+                        <p key={p.slice(0, 24)} className={`leading-8 ${i === 0 ? 'text-[18px] text-ink-900' : 'text-[16px] text-ink-700'}`}>
+                          {p}
+                        </p>
+                      ))}
+                    </div>
+
+                    <div className="mt-6 grid gap-4 md:grid-cols-2">
+                      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                        <p className="text-sm font-semibold text-emerald-800">Why it matters</p>
+                        <ul className="mt-3 space-y-2.5">
+                          {chapter.why.map((w, i) => (
+                            <li key={w} className="flex items-start gap-2.5 text-sm leading-snug text-ink-800">
+                              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[11px] font-semibold text-white">{i + 1}</span>
+                              {w}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4">
+                        <p className="flex items-center gap-1.5 text-sm font-semibold text-sky-800">
+                          <Sparkles size={14} /> In everyday words
+                        </p>
+                        <p className="mt-3 text-sm italic leading-relaxed text-ink-800">{chapter.simple}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-red-700">Myth</p>
+                        <p className="mt-1.5 text-sm leading-relaxed text-ink-900">{chapter.myth.wrong}</p>
+                      </div>
+                      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-700">Fact</p>
+                        <p className="mt-1.5 text-sm leading-relaxed text-ink-900">{chapter.myth.right}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* CHECK-IN */}
+                {here.key === 'check' && chapter.checks && (
+                  <div>
+                    <h2 className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">
+                      Do you have it? {chapter.checks.length} quick questions
+                    </h2>
+                    <p className="mt-1 text-sm text-ink-600">Pick an answer and lock it. You’ll see why right away. Any you miss come back.</p>
+                    <CheckIn
+                      key={slug}
+                      questions={chapter.checks}
+                      done={local.checkDone}
+                      firstTry={local.checkFirstTry}
+                      onFinish={(n) => onProgress({ checkDone: true, checkFirstTry: n })}
+                    />
+                  </div>
+                )}
+
+                {/* TERMS */}
+                {here.key === 'terms' && (
+                  <div>
+                    <h2 className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">Six words to know first</h2>
+                    <p className="mt-1 text-sm text-ink-600">
+                      Tap a card to see the meaning, then choose “I know this”. {termsLearned} of {chapter.terms.length} learned.
+                    </p>
+                    <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-ink-200">
+                      <div className="h-full rounded-full bg-amber-600 transition-[width] duration-500" style={{ width: `${(termsLearned / chapter.terms.length) * 100}%` }} />
+                    </div>
+                    <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {chapter.terms.map((id) => (
+                        <TermCard key={id} id={id} learned={learnedIds.has(id)} onLearn={onLearn} />
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* TASK */}
+                {here.key === 'task' && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-rose-700">About 10 minutes</p>
+                    <h2 className="mt-1 font-display text-xl font-semibold text-ink-900 sm:text-2xl">{chapter.task.title}</h2>
+                    <p className="mt-2 leading-relaxed text-ink-700">{chapter.task.brief}</p>
+                    <label htmlFor="task-answer" className="sr-only">
+                      Your answer
+                    </label>
+                    <textarea
+                      id="task-answer"
+                      rows={5}
+                      value={draft}
+                      readOnly={local.taskDone}
+                      onChange={(e) => {
+                        setDraft(e.target.value)
+                        setError('')
+                      }}
+                      placeholder={chapter.task.placeholder}
+                      className="mt-4 w-full resize-y rounded-2xl border border-rose-200 bg-white p-4 text-[15px] leading-relaxed text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200 read-only:bg-ink-50"
+                    />
+                    {error && (
+                      <p role="alert" className="mt-1.5 text-sm text-red-600">
+                        {error}
+                      </p>
+                    )}
+                    {local.taskDone && (
+                      <p className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-relaxed text-ink-900">
+                        <span className="font-semibold text-emerald-800">What a good answer looks like. </span>
+                        {chapter.task.after}
+                      </p>
+                    )}
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      {local.taskDone ? (
+                        <button
+                          type="button"
+                          onClick={() => onProgress({ taskDone: false })}
+                          className="press h-10 rounded-xl border border-ink-300 px-4 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-100"
+                        >
+                          Edit my answer
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={finishTask}
+                          className="press h-10 rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-rose-700"
+                        >
+                          Mark task done
+                        </button>
+                      )}
+                      <span className="text-xs text-ink-500">Your answer is saved on this device and is only for you.</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* PRACTISE */}
+                {here.key === 'practise' && (
+                  <div>
+                    <h2 className="font-display text-xl font-semibold text-ink-900 sm:text-2xl">{track.name} Decision Lab</h2>
+                    <p className="mt-2 leading-relaxed text-ink-700">
+                      {scenarios} real business situations. Read the brief, make the call, and see why after you finish.
+                    </p>
+                    {result && (
+                      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                        <span className="font-display text-3xl font-semibold text-emerald-800">{result.percent}%</span>
+                        <span className="text-sm text-ink-800">
+                          best score · {result.attempts} attempt{result.attempts === 1 ? '' : 's'}
+                        </span>
+                        <span className={`ml-auto inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${STATE_META[state].pill}`}>
+                          {STATE_META[state].label}
+                        </span>
+                      </div>
+                    )}
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        disabled={Boolean(opensAt)}
+                        onClick={() => onPractise(slug)}
+                        className="press inline-flex h-11 items-center gap-1.5 rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-ink-300"
+                      >
+                        {result ? 'Practise again' : 'Start practising'} <ArrowRight size={15} />
+                      </button>
+                      {opensAt && <span className="text-sm text-ink-600">Opens again {retakeLabel(opensAt)}.</span>}
+                    </div>
+                  </div>
+                )}
+
+                {/* Back and Continue */}
+                <div className="mt-7 flex items-center justify-between gap-3 border-t border-ink-200 pt-4">
+                  {activeIndex > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => show(steps[activeIndex - 1].key)}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
+                    >
+                      <ArrowLeft size={15} /> {LOOK[steps[activeIndex - 1].key].label}
+                    </button>
+                  ) : (
+                    <span />
+                  )}
+                  <button
+                    type="button"
+                    onClick={advance}
+                    className={`press inline-flex h-11 items-center gap-1.5 rounded-xl px-5 text-sm font-semibold text-white shadow-e1 transition-colors ${LOOK[here.key].button}`}
+                  >
+                    {here.key === 'read' && !local.read
+                      ? 'Got it, continue'
+                      : steps[activeIndex + 1]
+                        ? `Continue to ${LOOK[steps[activeIndex + 1].key].label}`
+                        : 'Finish'}
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               </div>
+            </>
+          ) : (
+            /* Wrap-up */
+            <div className="p-6 text-center sm:p-9">
+              {doneCount === steps.length ? (
+                <>
+                  <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-e1">
+                    <PartyPopper size={26} />
+                  </span>
+                  <h2 className="mt-4 font-display text-2xl font-semibold text-ink-900">{track.name} complete</h2>
+                  <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">You’ve been through every step of this topic. Keep the momentum: take the next one while it’s fresh.</p>
+                  {next ? (
+                    <button
+                      type="button"
+                      onClick={() => onOpenTopic(next.slug)}
+                      className="press mt-5 inline-flex h-11 items-center gap-1.5 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+                    >
+                      Next topic: {trackName(next.slug)} <ArrowRight size={16} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={onBack}
+                      className="press mt-5 inline-flex h-11 items-center gap-1.5 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+                    >
+                      {backLabel} <ArrowRight size={16} />
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className="font-display text-xl font-semibold text-ink-900">Nearly there</h2>
+                  <p className="mt-1.5 text-sm text-ink-600">These steps still need doing:</p>
+                  <div className="mt-4 flex flex-wrap justify-center gap-2">
+                    {steps
+                      .filter((s) => !s.done)
+                      .map((s) => (
+                        <button
+                          key={s.key}
+                          type="button"
+                          onClick={() => show(s.key)}
+                          className={`press inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-white shadow-e1 transition-colors ${LOOK[s.key].button}`}
+                        >
+                          {LOOK[s.key].label} <ArrowRight size={15} />
+                        </button>
+                      ))}
+                  </div>
+                </>
+              )}
             </div>
-            <aside className="self-start rounded-xl border border-ink-200 p-3.5">
-              <p className="text-sm font-semibold text-ink-900">Common misconception</p>
-              <div className="mt-3 rounded-lg bg-red-50 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-red-700">Myth</p>
-                <p className="mt-1 text-sm leading-snug text-red-900">{chapter.myth.wrong}</p>
-              </div>
-              <div className="mt-2 rounded-lg bg-emerald-50 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-700">Fact</p>
-                <p className="mt-1 text-sm leading-snug text-emerald-900">{chapter.myth.right}</p>
-              </div>
-            </aside>
-          </div>
-          <button
-            type="button"
-            onClick={() => onProgress({ read: !local.read })}
-            aria-pressed={local.read}
-            className={`press mt-5 inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-sm font-semibold transition-colors ${
-              local.read ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-brand-600 text-white shadow-e1 hover:bg-brand-700'
-            }`}
-          >
-            {local.read ? (
-              <>
-                <Check size={16} strokeWidth={3} /> Read
-              </>
-            ) : (
-              'Mark as read'
-            )}
-          </button>
-        </section>
-
-        {/* 2 · Check-in */}
-        {chapter.checks && (
-          <section id="step-check" className={card} aria-labelledby="check-h">
-            <Label icon={ListChecks} done={done('check')}>
-              Check-in
-            </Label>
-            <h2 id="check-h" className="mt-1.5 font-display text-lg font-semibold text-ink-900">
-              Do you have it? {chapter.checks.length} quick questions
-            </h2>
-            <p className="mt-1 text-sm text-ink-600">Pick an answer and lock it. You’ll see why right away. Any you miss come back.</p>
-            <CheckIn
-              key={slug}
-              questions={chapter.checks}
-              done={local.checkDone}
-              firstTry={local.checkFirstTry}
-              onFinish={(n) => onProgress({ checkDone: true, checkFirstTry: n })}
-            />
-          </section>
-        )}
-
-        {/* 3 · Key terms */}
-        <section id="step-terms" className={card} aria-labelledby="terms-h">
-          <Label icon={Languages} done={done('terms')}>
-            Key terms
-          </Label>
-          <h2 id="terms-h" className="mt-1.5 font-display text-lg font-semibold text-ink-900">
-            Six words to know first
-          </h2>
-          <p className="mt-1 text-sm text-ink-600">
-            Tap a card to see the meaning. Choose “I know this” when you do. {termsLearned} of {chapter.terms.length} learned.
-          </p>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {chapter.terms.map((id) => (
-              <TermCard key={id} id={id} learned={learnedIds.has(id)} onLearn={onLearn} />
-            ))}
-          </ul>
-        </section>
-
-        {/* A tip, the mistake that goes with it, and an imagined example */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <section className="rounded-2xl border border-brand-200 bg-brand-50 p-5 shadow-e1" aria-label="Tip">
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-              <Lightbulb size={15} aria-hidden /> Tip
-            </p>
-            <p className="mt-2 leading-relaxed text-ink-900">{chapter.tip}</p>
-          </section>
-          <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-e1" aria-label="Common mistake">
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-700">
-              <AlertTriangle size={15} aria-hidden /> Common mistake
-            </p>
-            <p className="mt-2 leading-relaxed text-ink-900">{chapter.mistake}</p>
-          </section>
-        </div>
-        <section className={card} aria-label="Worked example">
-          <p className={eyebrow}>
-            <Sparkles size={15} aria-hidden /> Worked example · {chapter.example.title}
-          </p>
-          <p className="mt-2 leading-relaxed text-ink-800">{chapter.example.body}</p>
-          <p className="mt-2 text-xs text-ink-500">An imagined example, to show the idea.</p>
-        </section>
-
-        {/* 4 · The small task */}
-        <section id="step-task" className={`${card} border-brand-300`} aria-labelledby="task-h">
-          <Label icon={Target} done={done('task')}>
-            Small task · about 10 min
-          </Label>
-          <h2 id="task-h" className="mt-1.5 font-display text-lg font-semibold text-ink-900">
-            {chapter.task.title}
-          </h2>
-          <p className="mt-1 text-sm leading-relaxed text-ink-600">{chapter.task.brief}</p>
-          <label htmlFor="task-answer" className="sr-only">
-            Your answer
-          </label>
-          <textarea
-            id="task-answer"
-            rows={4}
-            value={draft}
-            readOnly={local.taskDone}
-            onChange={(e) => {
-              setDraft(e.target.value)
-              setError('')
-            }}
-            placeholder={chapter.task.placeholder}
-            className="mt-3 w-full resize-y rounded-xl border border-ink-200 bg-white p-3 text-sm leading-relaxed text-ink-900 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200 read-only:bg-ink-50"
-          />
-          {error && (
-            <p role="alert" className="mt-1.5 text-sm text-red-600">
-              {error}
-            </p>
           )}
-          {local.taskDone && (
-            <p className="mt-3 rounded-xl bg-emerald-50 p-3 text-sm leading-relaxed text-emerald-900">
-              <span className="font-semibold">What a good answer looks like. </span>
-              {chapter.task.after}
-            </p>
-          )}
-          <div className="mt-3 flex flex-wrap gap-2">
-            {local.taskDone ? (
-              <button
-                type="button"
-                onClick={() => onProgress({ taskDone: false })}
-                className="press h-10 rounded-xl border border-ink-300 px-4 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-100"
-              >
-                Edit my answer
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={finishTask}
-                className="press h-10 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
-              >
-                Mark task done
-              </button>
-            )}
-          </div>
-          <p className="mt-2 text-xs text-ink-500">Your answer is saved on this device and is only for you.</p>
-        </section>
-
-        {/* 5 · Practise */}
-        <section id="step-practise" className={card} aria-labelledby="practise-h">
-          <Label icon={FlaskConical} done={done('practise')}>
-            Practise
-          </Label>
-          <h2 id="practise-h" className="mt-1.5 font-display text-lg font-semibold text-ink-900">
-            {track.name} Decision Lab
-          </h2>
-          <p className="mt-1 text-sm text-ink-600">
-            {scenarios} real business situations. Read the brief, make the call, and see why after you finish.
-          </p>
-          {result && (
-            <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink-700">
-              <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATE_META[state].pill}`}>
-                {STATE_META[state].label}
-              </span>
-              Best score {result.percent}% · {result.attempts} attempt{result.attempts === 1 ? '' : 's'}
-            </p>
-          )}
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              disabled={Boolean(opensAt)}
-              onClick={() => onPractise(slug)}
-              className="press inline-flex h-10 items-center gap-1.5 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-ink-300"
-            >
-              {result ? 'Practise again' : 'Start practising'} <ArrowRight size={15} />
-            </button>
-            {opensAt && <span className="text-sm text-ink-600">Opens again {retakeLabel(opensAt)}.</span>}
-          </div>
         </section>
 
         {/* Study with others */}
-        <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-ink-200 bg-white p-5 shadow-e1 sm:p-6" aria-label="Study room">
+        <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-ink-200 bg-white p-5 shadow-e1" aria-label="Study room">
           <div className="min-w-0">
-            <p className={eyebrow}>
+            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
               <Users size={15} aria-hidden /> Study room
             </p>
             <p className="mt-1.5 font-semibold text-ink-900">Study this topic alongside others</p>
@@ -513,7 +695,7 @@ export function TopicPage({
           </Link>
         </section>
 
-        {/* On to the next topic */}
+        {/* Other topics */}
         <nav className="flex items-center justify-between gap-3 pt-1" aria-label="Previous and next topic">
           {prev ? (
             <button
@@ -545,3 +727,4 @@ export function TopicPage({
     </div>
   )
 }
+

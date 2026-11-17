@@ -156,7 +156,7 @@ export function CheckIn({
           </span>
           <span className="inline-flex gap-1" aria-hidden>
             {queue.map((_, i) => (
-              <span key={i} className={`h-1.5 w-6 rounded-full ${i < pos ? 'bg-brand-500' : i === pos ? 'bg-brand-300' : 'bg-ink-200'}`} />
+              <span key={i} className={`h-1.5 w-6 rounded-full ${i < pos ? 'bg-sky-600' : i === pos ? 'bg-sky-300' : 'bg-ink-200'}`} />
             ))}
           </span>
         </div>
@@ -174,7 +174,7 @@ export function CheckIn({
             const isAnswer = optIndex === current.q.answer
             const state = !locked
               ? isPicked
-                ? 'border-brand-400 bg-brand-50'
+                ? 'border-sky-400 bg-sky-50'
                 : 'border-ink-200 hover:border-ink-300 hover:bg-ink-50'
               : isAnswer
                 ? 'border-emerald-400 bg-emerald-50'
@@ -227,7 +227,7 @@ export function CheckIn({
             <button
               type="button"
               onClick={next}
-              className="press h-10 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+              className="press h-10 rounded-xl bg-sky-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-sky-700"
             >
               {pos + 1 < queue.length ? 'Next question' : missed.length > 0 ? 'Try the missed ones again' : 'Finish'}
             </button>
@@ -235,7 +235,7 @@ export function CheckIn({
             <button
               type="button"
               onClick={lock}
-              className="press inline-flex h-10 items-center gap-1.5 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-brand-700"
+              className="press inline-flex h-10 items-center gap-1.5 rounded-xl bg-sky-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-sky-700"
             >
               <Lock size={14} /> Lock answer
             </button>
@@ -245,7 +245,7 @@ export function CheckIn({
 
       <aside className="border-t border-ink-200 bg-ink-50 p-4 sm:p-5 md:border-l md:border-t-0">
         <p className="flex items-center gap-1.5 font-semibold text-ink-900">
-          <Lightbulb size={15} className="text-brand-600" /> Need a hint?
+          <Lightbulb size={15} className="text-sky-600" /> Need a hint?
         </p>
         <p className="mt-1 text-sm text-ink-600">Use a hint to get unstuck.</p>
         <button
@@ -253,7 +253,7 @@ export function CheckIn({
           disabled={locked}
           onClick={() => setHint((h) => !h)}
           aria-expanded={hint}
-          className="press mt-3 h-9 rounded-lg border border-brand-300 px-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50 disabled:opacity-50"
+          className="press mt-3 h-9 rounded-lg border border-sky-300 px-3 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-50 disabled:opacity-50"
         >
           {hint && !locked ? 'Hide hint' : 'Show hint'}
         </button>
