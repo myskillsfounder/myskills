@@ -28,8 +28,8 @@ export function CareerReadinessPractice({ progress }: { progress: ProgrammeProgr
     <section>
       <SectionHeader
         eyebrow="Global Leadership"
-        title="The fourteen modules"
-        description="One for each skill in the Leadership Aptitude Test. Learn it, practise it in writing, then reflect. The first five are the core: finish them and you can build your project, which a mentor grades."
+        title="Modules"
+        description="One for each skill in the Leadership Aptitude Test. Each is a short lesson: read it, practise it in writing, then reflect."
       />
       <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {PERSONAL_DEVELOPMENT_MODULES.map((m, i) => {
