@@ -16,7 +16,8 @@
 --
 -- Run in the Supabase SQL editor BEFORE deploying the page that uses it (until it
 -- is run, Apply tells the student it is not ready yet). Safe to run again.
--- Depends on: docs/supabase-staff-permissions.sql (has_section_access).
+-- Depends on: docs/supabase-staff-permissions.sql (has_section_access) and
+-- docs/supabase-career-readiness-score.sql (career_readiness_scores).
 -- ---------------------------------------------------------------------------
 
 -- 1. The private bucket for CVs
@@ -100,11 +101,15 @@ drop policy if exists "interest: own, delete" on public.internship_interest;
 create policy "interest: own, delete" on public.internship_interest
   for delete to authenticated using (student_id = auth.uid());
 
--- 3. The team's list
-create or replace function public.admin_internship_interest()
+-- 3. The team's list: each application with the student's MySkills profile and
+-- Global Readiness Score, so a student applies WITH their profile (Paul, 18 Nov 2026).
+-- (Dropped first because the columns it returns have changed.)
+drop function if exists public.admin_internship_interest();
+create function public.admin_internship_interest()
 returns table (
   id uuid, student_id uuid, student_name text, student_email text, student_phone text,
-  track_slug text, track_title text, note text, cv_path text, cv_name text, status text, created_at timestamptz
+  track_slug text, track_title text, note text, cv_path text, cv_name text, status text, created_at timestamptz,
+  student_profile jsonb, score int
 )
 language plpgsql
 security definer
@@ -117,7 +122,14 @@ begin
   end if;
   return query
   select i.id, i.student_id, p.full_name, u.email::text, p.phone,
-         i.track_slug, i.track_title, i.note, i.cv_path, i.cv_name, i.status, i.created_at
+         i.track_slug, i.track_title, i.note, i.cv_path, i.cv_name, i.status, i.created_at,
+         jsonb_build_object(
+           'headline', p.headline, 'location', p.location, 'career_stage', p.career_stage,
+           'country', p.country, 'state', p.state,
+           'skills', to_jsonb(p.skills), 'goals', to_jsonb(p.goals),
+           'education', to_jsonb(p.education), 'experience', to_jsonb(p.experience)
+         ),
+         (select s.score::int from public.career_readiness_scores s where s.user_id = i.student_id)
     from public.internship_interest i
     left join public.profiles p on p.id = i.student_id
     left join auth.users u on u.id = i.student_id

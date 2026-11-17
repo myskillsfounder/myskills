@@ -8,7 +8,7 @@ import { AppShell } from '@/components/app/AppShell'
 import { Skeleton } from '@/components/ui'
 import { CommunityHero, HowItWorks } from '@/components/community/CommunityHero'
 import { YourMentors } from '@/components/community/YourMentors'
-import { MentorListingCard, marketGrid, toMentorListing, type MentorListing } from '@/components/community/Marketplace'
+import { MentorListingCard, marketGrid, pinTopMentor, toMentorListing, type MentorListing } from '@/components/community/Marketplace'
 
 /**
  * Mentors, on a page of their own (Paul, 27 Oct 2026): one-to-one sessions
@@ -32,7 +32,7 @@ function MentorsPage() {
   useEffect(() => {
     let live = true
     fetchMentors().then(
-      (l) => live && setMentors(l.map(toMentorListing)),
+      (l) => live && setMentors(pinTopMentor(l.map(toMentorListing))),
       () => live && setMentors([]),
     )
     return () => {

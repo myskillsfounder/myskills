@@ -21,6 +21,41 @@ import { ExportButton } from '@/components/admin/ExportButton'
 
 const STATUSES: InterestStatus[] = ['new', 'contacted', 'shared', 'closed']
 
+/** The student's MySkills profile, as it came with the application. */
+function ProfileLine({ row }: { row: AdminInterest }) {
+  const p = row.student_profile
+  if (!p && row.score == null) return null
+  const where = [p?.location, p?.state, p?.country].find((x) => x && x.trim())
+  const line = [p?.headline, where, p?.career_stage].filter((x) => x && String(x).trim()).join(' · ')
+  const skills = (p?.skills ?? []).filter(Boolean).slice(0, 8)
+  const edu = p?.education?.find((e) => e.school || e.degree)
+  const eduLine = edu ? [[edu.degree, edu.field].filter(Boolean).join(' '), edu.school].filter(Boolean).join(', ') : ''
+  const job = p?.experience?.find((e) => e.title || e.company)
+  const jobLine = job ? [job.title, job.company].filter(Boolean).join(' at ') : ''
+  return (
+    <div className="mt-2 rounded-xl bg-ink-900/[0.03] p-3 text-sm">
+      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-700">
+        {line && <span>{line}</span>}
+        {row.score != null && (
+          <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">Readiness score {row.score}</span>
+        )}
+      </p>
+      {(eduLine || jobLine) && (
+        <p className="mt-1 text-xs text-ink-600">{[eduLine && `Studied: ${eduLine}`, jobLine && `Worked: ${jobLine}`].filter(Boolean).join(' · ')}</p>
+      )}
+      {skills.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {skills.map((k) => (
+            <span key={k} className="rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-ink-700 ring-1 ring-ink-900/[0.08]">
+              {k}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function InternshipInterest() {
   const [rows, setRows] = useState<AdminInterest[] | null>(null)
   const [error, setError] = useState('')
@@ -85,6 +120,9 @@ export function InternshipInterest() {
               { header: 'Email', value: (r) => r.student_email ?? '' },
               { header: 'Phone', value: (r) => r.student_phone ?? '' },
               { header: 'Internship', value: (r) => r.track_title },
+              { header: 'Headline', value: (r) => r.student_profile?.headline ?? '' },
+              { header: 'Skills', value: (r) => (r.student_profile?.skills ?? []).join(', ') },
+              { header: 'Readiness score', value: (r) => r.score ?? '' },
               { header: 'Status', value: (r) => INTEREST_LABEL[r.status] },
               { header: 'Note', value: (r) => r.note ?? '' },
             ]}
@@ -109,6 +147,7 @@ export function InternshipInterest() {
                 <p className="mt-0.5 break-words text-sm text-ink-600">
                   {[r.student_email, r.student_phone].filter(Boolean).join(' · ') || 'No contact details'} · applied {csvDate(r.created_at)}
                 </p>
+                <ProfileLine row={r} />
                 {r.note && <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-700">{r.note}</p>}
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2">

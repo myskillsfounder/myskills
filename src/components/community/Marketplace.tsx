@@ -472,6 +472,17 @@ export function toMentorListing(
   }
 }
 
+/**
+ * Paul Thomas, who founded MySkills, leads the Digital Marketing mentors (Paul, 18 Nov
+ * 2026). Matched by name, so he must be listed as a mentor (Admin > Mentors) to show;
+ * the mentors table's own sort_order still orders everyone else.
+ */
+export const isTopMentor = (m: { name: string }) => /(^|\s)paul(\s|$)/i.test(m.name) && /(^|\s)thomas(\s|$)/i.test(m.name)
+
+/** The same list with the top mentor first; everyone else keeps their order. */
+export const pinTopMentor = <T extends { name: string }>(list: T[]): T[] =>
+  [...list].sort((a, b) => Number(isTopMentor(b)) - Number(isTopMentor(a)))
+
 /** The "add yourself" tile that closes a row — dashed, so it reads as an
  *  invitation rather than another listing. */
 // Spelled out so Tailwind sees each class. How many columns the tile takes at
@@ -537,6 +548,12 @@ export interface InternshipTrack {
  * shares it with a partner company when that kind of internship opens.
  */
 export const INTERNSHIP_TRACKS: InternshipTrack[] = [
+  {
+    slug: 'digital-marketing',
+    title: 'Digital Marketing Intern',
+    skills: ['Meta Ads', 'Google Ads', 'SEO & AEO', 'Analytics'],
+    body: 'Work across the whole digital marketing mix with a partner company: ads, search, content and reporting.',
+  },
   {
     slug: 'performance-marketing',
     title: 'Performance Marketing Intern',

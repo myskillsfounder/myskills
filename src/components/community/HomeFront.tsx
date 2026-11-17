@@ -13,6 +13,7 @@ import {
   MoonStar,
   Plane,
   Sparkles,
+  Star,
   type LucideIcon,
 } from 'lucide-react'
 import { ROOMS_NOW, useRoomsOnline } from '@/lib/focusRooms'
@@ -22,6 +23,7 @@ import { Skeleton } from '@/components/ui'
 import {
   INTERNSHIP_TRACKS,
   InstitutionListingCard,
+  isTopMentor,
   InternshipCard,
   MentorAvatar,
   MentorListingCard,
@@ -31,6 +33,8 @@ import {
   type MentorListing,
 } from './Marketplace'
 import { InternshipRoleCard, type useInternships } from './Internships'
+import { InterestDialog } from './InterestDialog'
+import { useMyInterest } from '@/lib/internshipInterest'
 
 /**
  * The front of Home (Paul, 18 Nov 2026: a modern marketplace, great vibes, a feeling
@@ -199,6 +203,53 @@ export function HomeHero({ firstName }: { firstName: string }) {
   )
 }
 
+/**
+ * The first thing on Home after the welcome (Paul, 18 Nov 2026): apply for a Digital
+ * Marketing internship, with a CV and the student's MySkills profile.
+ */
+function InternshipFeature() {
+  const track = INTERNSHIP_TRACKS[0]
+  const mine = useMyInterest()
+  const existing = mine?.find((m) => m.track_slug === track.slug)
+  const [open, setOpen] = useState(false)
+  return (
+    <section
+      aria-label="Apply for a Digital Marketing internship"
+      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-600 to-teal-800 p-6 text-white shadow-e2 sm:p-8"
+    >
+      <Briefcase aria-hidden size={190} strokeWidth={1.1} className="pointer-events-none absolute -bottom-10 -right-6 text-white/[0.12]" />
+      <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-2xl">
+          <p className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/20">
+            <Briefcase size={13} /> Internship
+          </p>
+          <h2 className="mt-3 font-display text-2xl font-semibold leading-tight sm:text-3xl">Apply for a Digital Marketing Internship</h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-white/90">
+            Attach your CV and apply with your MySkills profile. We share both with partner companies when a Digital Marketing internship opens, and let you know.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          className="press inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 text-sm font-semibold text-teal-800 shadow-e2 transition-transform hover:-translate-y-0.5"
+        >
+          {existing ? (
+            <>
+              <BadgeCheck size={17} /> View My Application
+            </>
+          ) : (
+            <>
+              Apply with Your CV <ArrowRight size={16} />
+            </>
+          )}
+        </button>
+      </div>
+      {open && <InterestDialog track={track} existing={existing} onClose={() => setOpen(false)} />}
+    </section>
+  )
+}
+
 export function HomeBody({
   mentors,
   institutions,
@@ -218,9 +269,10 @@ export function HomeBody({
 
   const hasRoles = roles.length > 0
   const accepting = mentors.filter((m) => m.accepting !== false)
-  // A different mentor in the spotlight each day.
+  // Paul leads the Digital Marketing mentors; otherwise a different mentor each day.
   const day = Math.floor(Date.now() / 86400000)
-  const spotlight = accepting.length ? accepting[day % accepting.length] : null
+  const top = mentors.find(isTopMentor) ?? null
+  const spotlight = top ?? (accepting.length ? accepting[day % accepting.length] : null)
 
   const doors: Door[] = [
     {
@@ -275,6 +327,9 @@ export function HomeBody({
 
   return (
     <div className="space-y-10">
+      {/* First: apply for a Digital Marketing internship */}
+      <InternshipFeature />
+
       {/* Six doors */}
       <section aria-label="Browse">
         <Doors doors={doors} />
@@ -312,7 +367,7 @@ export function HomeBody({
         <section aria-label="Mentor spotlight" className="relative overflow-hidden rounded-3xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-amber-50 p-5 shadow-e1 sm:p-8">
           <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-brand-300/30 blur-3xl" />
           <p className="relative inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-            <Sparkles size={13} /> Meet a Mentor
+            {top ? <Star size={13} className="fill-current" /> : <Sparkles size={13} />} {top ? 'Top Mentor in Digital Marketing' : 'Meet a Mentor'}
           </p>
           <div className="relative mt-4 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
             <MentorAvatar mentor={spotlight} size="large" />
