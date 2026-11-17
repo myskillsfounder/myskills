@@ -50,8 +50,7 @@ import { useHasStarted } from '@/lib/firstRun'
 import { clearSavedProgramme, savedProgramme, type Programme } from '@/lib/practiceProgramme'
 import { fetchMyProgrammes, type MyEnrolment } from '@/lib/programmeStudent'
 import { PracticeHighlights } from '@/components/practice/PracticeHighlights'
-import { ProgrammeCards, RecommendedProgrammes, recommendFor } from '@/components/practice/ProgrammeCards'
-import { useProfile } from '@/lib/useProfile'
+import { ProgrammeCards } from '@/components/practice/ProgrammeCards'
 import { isPhone } from '@/lib/device'
 import { useInternshipDone } from '@/lib/internships'
 
@@ -229,16 +228,6 @@ function PracticePage() {
 
   const phone = isPhone()
 
-  // Recommended next: the courses not joined yet, in the order that suits
-  // the goal the student gave at onboarding.
-  const { profile } = useProfile()
-  const goalId = profile?.goals[0]
-  const recommended = recommendFor(goalId, {
-    dm: dmOpen,
-    cr: crUnlocked || crProgress.started,
-    engine: (engine ?? []).map((e) => e.slug),
-  })
-
   // The cards' progress, the same numbers the dashboard shows.
   const crStarted = crUnlocked || crProgress.started || crReview.state !== 'none' || liveSessions.length > 0
   const dmCard = dmOpen
@@ -375,7 +364,6 @@ function PracticePage() {
                     ]}
                     onOpenProgramme={setProgramme}
                   />
-                  {engine !== undefined && <RecommendedProgrammes goalId={goalId} courses={recommended} />}
                 </>
               )}
               {programme !== null && <ProgrammeHeader programme={programme} onBack={() => setProgramme(null)} />}
