@@ -13,10 +13,11 @@ import { supabase } from './supabase'
  * broadcast carrying the handshake. Nothing is recorded or stored.
  */
 
-/** The Open study room, retired: study rooms are only for the courses we
- *  provide (Paul, 17 Nov 2026). Hidden here so it stays gone even before
- *  docs/supabase-study-rooms-topics.sql is run again. */
-export const OPEN_ROOM = 'open'
+/** The study rooms open for now (Paul, 17 Nov 2026): Digital Marketing and
+ *  Data Analytics. my_focus_rooms() may return more; only these are shown, so
+ *  adding a room back is one line here. Global Leadership has two slugs
+ *  (career-readiness and global-leadership): list one when it returns. */
+export const ROOMS_NOW = ['digital-marketing', 'data-analytics']
 
 /** "What I'm working on" fits under a camera tile. */
 export const WORKING_ON_MAX = 80
@@ -99,7 +100,7 @@ export const REACTIONS = ['👏', '🔥', '💪', '☕', '🎉'] as const
 export async function fetchMyFocusRooms(): Promise<FocusRoom[]> {
   const { data, error } = await supabase.rpc('my_focus_rooms')
   if (error) return []
-  return ((data ?? []) as FocusRoom[]).filter((r) => r.slug !== OPEN_ROOM)
+  return ((data ?? []) as FocusRoom[]).filter((r) => ROOMS_NOW.includes(r.slug))
 }
 
 export async function fetchTopics(room: string): Promise<FocusTopic[]> {
