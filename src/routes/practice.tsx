@@ -62,6 +62,14 @@ export const Route = createFileRoute('/practice')({
   component: PracticePage,
 })
 
+/**
+ * Digital Marketing opens on its modules for now (Paul, 18 Nov 2026: "remove all of
+ * this and start with module"). Set to true to bring back the score card, What's next
+ * and the More row (with Foundation, live training, the project and practice modes).
+ * Until then those are not linked from Practice.
+ */
+const SHOW_OVERVIEW = false
+
 function MigrationError({ message }: { message: string }) {
   return (
     <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
@@ -414,7 +422,7 @@ function PracticePage() {
                   learnedIds={vocabLearnedIds}
                   local={topicProgress.get(topic)}
                   getLocal={topicProgress.get}
-                  backLabel={more ? 'All topics' : 'Your score and what’s next'}
+                  backLabel={SHOW_OVERVIEW && !more ? 'Your score and what’s next' : 'All modules'}
                   onBack={() => setTopic(null)}
                   onOpenTopic={setTopic}
                   onPractise={setSelected}
@@ -430,21 +438,27 @@ function PracticePage() {
               {programme === 1 && dmOpen && topic === null && !more && (
                 <>
                   {aptitude == null && dmAptitudeCard}
-                  <div className="grid gap-5 lg:grid-cols-3">
-                    <div className={`lg:col-span-2 ${phone ? 'order-2' : ''}`}>{dmStats}</div>
-                    <div className={`lg:col-span-1 ${phone ? 'order-1' : ''}`}>{dmNextUp}</div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setMore(true)}
-                    className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-ink-200 bg-white px-5 py-4 text-left shadow-e1 transition-colors hover:border-brand-300"
-                  >
-                    <span>
-                      <span className="block font-semibold text-ink-900">More in this programme</span>
-                      <span className="block text-sm text-ink-600">All topics, practice modes, the Foundation assessment, live training and your project.</span>
-                    </span>
-                    <ArrowRight size={18} className="shrink-0 text-brand-700 transition-transform group-hover:translate-x-0.5" />
-                  </button>
+                  {SHOW_OVERVIEW ? (
+                    <>
+                      <div className="grid gap-5 lg:grid-cols-3">
+                        <div className={`lg:col-span-2 ${phone ? 'order-2' : ''}`}>{dmStats}</div>
+                        <div className={`lg:col-span-1 ${phone ? 'order-1' : ''}`}>{dmNextUp}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setMore(true)}
+                        className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-ink-200 bg-white px-5 py-4 text-left shadow-e1 transition-colors hover:border-brand-300"
+                      >
+                        <span>
+                          <span className="block font-semibold text-ink-900">More in this programme</span>
+                          <span className="block text-sm text-ink-600">All topics, practice modes, the Foundation assessment, live training and your project.</span>
+                        </span>
+                        <ArrowRight size={18} className="shrink-0 text-brand-700 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    </>
+                  ) : (
+                    dmTopics
+                  )}
                 </>
               )}
 

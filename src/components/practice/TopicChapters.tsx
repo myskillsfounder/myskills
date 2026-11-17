@@ -25,8 +25,8 @@ export function TopicChapters({
     <section aria-labelledby="dm-topics">
       <SectionHeader
         eyebrow="Digital Marketing"
-        title={<span id="dm-topics">Topics</span>}
-        description="Each topic is a short chapter. Read the big idea, learn the key terms, do the small task, then practise."
+        title={<span id="dm-topics">Modules</span>}
+        description="Each module is a short chapter. Read the big idea, learn the key terms, do the small task, then practise."
       />
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {TOPIC_CHAPTERS.map((c, i) => {
@@ -41,7 +41,7 @@ export function TopicChapters({
                 className="group flex h-full w-full flex-col rounded-2xl border border-ink-200 bg-white p-4 text-left shadow-e1 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-e2"
               >
                 <span className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">Topic {i + 1}</span>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">Module {i + 1}</span>
                   <span className="inline-flex items-center gap-1 text-[11px] text-ink-500">
                     <Clock size={11} /> {c.minutes} min
                   </span>
