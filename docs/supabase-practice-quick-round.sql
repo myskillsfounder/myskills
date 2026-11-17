@@ -185,5 +185,9 @@ $$;
 revoke execute on function public.submit_practice_round(text, text[], jsonb, int) from public, anon;
 grant execute on function public.submit_practice_round(text, text[], jsonb, int) to authenticated;
 
+-- Make the API notice the new functions straight away. Without this, the page can
+-- say "Could not find the function ... in the schema cache" for a minute or two.
+notify pgrst, 'reload schema';
+
 -- Check: today's four for you on one track (run while signed in through the app, not here).
 --   select public.practice_round_ids('meta-ads');
