@@ -27,6 +27,7 @@ import {
   MarketSection,
   marketGrid,
   MentorListingCard,
+  pinTopMentor,
   SERVICES,
   ServiceCard,
   toMentorListing,
@@ -100,7 +101,7 @@ function useMarketplaceData() {
   useEffect(() => {
     let active = true
     const loadMentors = fetchMentors().then((list) => {
-      if (active) setMentors(list.map(toMentorListing))
+      if (active) setMentors(pinTopMentor(list.map(toMentorListing)))
     })
     const loadInstitutions = fetchInstitutionPartners().then((list) => {
       if (active) setInstitutions(list)

@@ -143,6 +143,19 @@ export async function withdrawInterest(row: MyInterest): Promise<void> {
 
 /* ------------------------------------------------------------ the team's side */
 
+/** The student's MySkills profile, as it goes with their application. */
+export interface AdminProfile {
+  headline?: string | null
+  location?: string | null
+  career_stage?: string | null
+  country?: string | null
+  state?: string | null
+  skills?: string[] | null
+  goals?: string[] | null
+  education?: { school?: string; degree?: string; field?: string }[] | null
+  experience?: { title?: string; company?: string }[] | null
+}
+
 export interface AdminInterest {
   id: string
   student_id: string
@@ -156,6 +169,8 @@ export interface AdminInterest {
   cv_name: string
   status: InterestStatus
   created_at: string
+  student_profile: AdminProfile | null
+  score: number | null
 }
 
 /** Null before the SQL has been run: the admin page leaves the section out. */
