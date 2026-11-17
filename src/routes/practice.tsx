@@ -398,6 +398,7 @@ function PracticePage() {
                   practice={practice}
                   learnedIds={vocabLearnedIds}
                   local={topicProgress.get(topic)}
+                  getLocal={topicProgress.get}
                   onBack={() => setTopic(null)}
                   onOpenTopic={setTopic}
                   onPractise={setSelected}
