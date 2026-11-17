@@ -92,15 +92,18 @@ function TopicList({
   learnedIds,
   getLocal,
   onOpen,
+  bare = false,
 }: {
   current: string
   practice: PracticeSummary
   learnedIds: Set<string>
   getLocal: (slug: string) => TopicLocal
   onOpen: (slug: string) => void
+  /** Inside another card: no border of its own. */
+  bare?: boolean
 }) {
   return (
-    <nav aria-label="Digital Marketing topics" className="rounded-2xl border border-ink-200 bg-white p-3 shadow-e1">
+    <nav aria-label="Digital Marketing topics" className={bare ? '' : 'rounded-2xl border border-ink-200 bg-white p-3 shadow-e1'}>
       <p className="px-2 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">Digital Marketing</p>
       <ul className="space-y-0.5">
         {TOPIC_CHAPTERS.map((c, i) => {
@@ -144,6 +147,7 @@ export function TopicPage({
   learnedIds,
   local,
   getLocal,
+  backLabel = 'All topics',
   onBack,
   onOpenTopic,
   onPractise,
@@ -155,6 +159,8 @@ export function TopicPage({
   learnedIds: Set<string>
   local: TopicLocal
   getLocal: (slug: string) => TopicLocal
+  /** Where Back goes, in words. */
+  backLabel?: string
   onBack: () => void
   onOpenTopic: (slug: string) => void
   onPractise: (slug: string) => void
@@ -203,8 +209,19 @@ export function TopicPage({
           onClick={onBack}
           className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 transition-colors hover:text-ink-900"
         >
-          <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> All topics
+          <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" /> {backLabel}
         </button>
+
+        {/* On a phone the topic list folds away at the top. */}
+        <details className="group rounded-2xl border border-ink-200 bg-white shadow-e1 lg:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-ink-900">
+            <span>All topics</span>
+            <span className="text-xs font-normal text-ink-500 group-open:hidden">Topic {index + 1} of {TOPIC_CHAPTERS.length}</span>
+          </summary>
+          <div className="px-2 pb-2">
+            <TopicList current={slug} practice={practice} learnedIds={learnedIds} getLocal={getLocal} onOpen={onOpenTopic} bare />
+          </div>
+        </details>
 
         {/* The lesson header: where you are, and one button for what's next */}
         <header className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white p-5 shadow-e1 sm:p-6">
