@@ -1,13 +1,13 @@
 import { ArrowRight, Check, Clock } from 'lucide-react'
 import { TOPIC_CHAPTERS } from '@/content/dmTopics'
 import { skillTracks } from '@/lib/skillTracks'
-import { TOPIC_STEPS, topicSteps, type TopicLocal } from '@/lib/topicProgress'
+import { topicSteps, type TopicLocal } from '@/lib/topicProgress'
 import type { PracticeSummary } from '@/lib/practiceResults'
 import { SectionHeader } from '@/components/app/SectionHeader'
 
 /**
  * The Digital Marketing topics as chapter cards: one card per skill track, with
- * its four steps (Read, Terms, Task, Practise). Opening a card opens that
+ * its steps (Read, Check-in where there is one, Terms, Task, Practise). Opening a card opens that
  * topic's page (TopicPage.tsx).
  */
 export function TopicChapters({
@@ -32,7 +32,7 @@ export function TopicChapters({
         {TOPIC_CHAPTERS.map((c, i) => {
           const track = skillTracks.find((t) => t.slug === c.slug)
           const steps = topicSteps(c.slug, getLocal(c.slug), learnedIds, practice)
-          const done = steps.filter(Boolean).length
+          const done = steps.filter((s) => s.done).length
           return (
             <li key={c.slug}>
               <button
@@ -50,20 +50,20 @@ export function TopicChapters({
                 <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-ink-600">{c.hook}</p>
 
                 <span className="mt-auto flex items-center justify-between gap-3 pt-4">
-                  <span className="flex items-center gap-1.5" role="img" aria-label={`${done} of ${TOPIC_STEPS.length} steps done`}>
-                    {steps.map((s, k) => (
+                  <span className="flex items-center gap-1.5" role="img" aria-label={`${done} of ${steps.length} steps done`}>
+                    {steps.map((s) => (
                       <span
-                        key={TOPIC_STEPS[k]}
-                        title={TOPIC_STEPS[k]}
-                        className={`flex h-5 w-5 items-center justify-center rounded-full text-white ${s ? 'bg-emerald-600' : 'bg-ink-200'}`}
+                        key={s.key}
+                        title={s.label}
+                        className={`flex h-5 w-5 items-center justify-center rounded-full text-white ${s.done ? 'bg-emerald-600' : 'bg-ink-200'}`}
                       >
-                        {s && <Check size={12} strokeWidth={3} />}
+                        {s.done && <Check size={12} strokeWidth={3} />}
                       </span>
                     ))}
-                    <span className="ml-1 text-xs text-ink-500">{done}/{TOPIC_STEPS.length}</span>
+                    <span className="ml-1 text-xs text-ink-500">{done}/{steps.length}</span>
                   </span>
                   <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
-                    {done === 0 ? 'Start' : done === TOPIC_STEPS.length ? 'Review' : 'Continue'}
+                    {done === 0 ? 'Start' : done === steps.length ? 'Review' : 'Continue'}
                     <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </span>

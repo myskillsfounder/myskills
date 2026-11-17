@@ -1,15 +1,17 @@
 /**
  * Progress through a Digital Marketing topic page (content/dmTopics.ts).
- * A topic has four steps: Read, Terms, Task, Practise.
+ * A topic has up to five steps, in this order:
  *
- *   Read     the student marked the big idea as read   (kept on this device)
- *   Terms    all six key terms learned                 (the shared vocabulary store)
- *   Task     the small task written and marked done    (kept on this device)
- *   Practise the track's Decision Lab attempted        (the account, via practice summary)
+ *   Read      the student marked the big idea as read      (kept on this device)
+ *   Check-in  every check-in question answered right       (kept on this device; only topics that have questions)
+ *   Terms     all six key terms learned                    (the shared vocabulary store)
+ *   Task      the small task written and marked done       (kept on this device)
+ *   Practise  the track's Decision Lab attempted           (the account, via practice summary)
  *
- * Read and Task are kept in the browser, like the streak counters, so no SQL
- * is needed yet. If they should follow a student between devices, they need a
- * table; that is a follow-up.
+ * Read, Check-in and Task are kept in the browser, like the streak counters, so
+ * no SQL is needed yet. If they should follow a student between devices, they
+ * need a table; that is a follow-up. Check-ins are for learning, not for a score
+ * or a certificate: the answers ship with the page.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { topicChapter } from '@/content/dmTopics'
@@ -20,9 +22,13 @@ export interface TopicLocal {
   read: boolean
   taskDone: boolean
   taskText: string
+  /** every check-in question answered right (after any retries) */
+  checkDone: boolean
+  /** how many were right the first time, last time the check-in finished */
+  checkFirstTry: number
 }
 
-const EMPTY: TopicLocal = { read: false, taskDone: false, taskText: '' }
+const EMPTY: TopicLocal = { read: false, taskDone: false, taskText: '', checkDone: false, checkFirstTry: 0 }
 
 const key = (userKey: string) => `myskills.topics.${userKey}`
 
@@ -61,21 +67,32 @@ export function useTopicProgress(userKey: string) {
     [userKey],
   )
 
-  const get = useCallback((slug: string): TopicLocal => all[slug] ?? EMPTY, [all])
+  const get = useCallback((slug: string): TopicLocal => ({ ...EMPTY, ...all[slug] }), [all])
   return { get, update }
 }
 
-export const TOPIC_STEPS = ['Read', 'Terms', 'Task', 'Practise'] as const
+export interface TopicStep {
+  key: 'read' | 'check' | 'terms' | 'task' | 'practise'
+  label: string
+  done: boolean
+}
 
-/** Which of a topic's four steps are done, in order. */
+/** A topic's steps in order, each with whether it is done. */
 export function topicSteps(
   slug: string,
   local: TopicLocal,
   learnedIds: Set<string>,
   practice: PracticeSummary,
-): boolean[] {
+): TopicStep[] {
   const chapter = topicChapter(slug)
   const ids = (chapter?.terms ?? []).filter((id) => vocabularyTerms.some((t) => t.id === id))
   const termsDone = ids.length > 0 && ids.every((id) => learnedIds.has(id))
-  return [local.read, termsDone, local.taskDone, Boolean(practice[slug])]
+  const steps: TopicStep[] = [{ key: 'read', label: 'Read', done: local.read }]
+  if (chapter?.checks?.length) steps.push({ key: 'check', label: 'Check-in', done: local.checkDone })
+  steps.push(
+    { key: 'terms', label: 'Terms', done: termsDone },
+    { key: 'task', label: 'Task', done: local.taskDone },
+    { key: 'practise', label: 'Practise', done: Boolean(practice[slug]) },
+  )
+  return steps
 }
