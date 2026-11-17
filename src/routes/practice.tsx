@@ -26,7 +26,6 @@ import { strongestAptitude, suggestedTrackOrder, useMyAptitudeResult } from '@/l
 import type { FoundationUnlock } from '@/lib/foundation'
 import { FoundationCard } from '@/components/assessment/FoundationCard'
 import { PracticeStats } from '@/components/practice/PracticeStats'
-import { NextUpCard } from '@/components/practice/NextUpCard'
 import { TrackList } from '@/components/practice/TrackList'
 import { ModePicker, type PracticeMode } from '@/components/practice/ModePicker'
 import { ScenarioQuiz } from '@/components/practice/ScenarioQuiz'
@@ -51,6 +50,7 @@ import { clearSavedProgramme, savedProgramme, type Programme } from '@/lib/pract
 import { fetchMyProgrammes, type MyEnrolment } from '@/lib/programmeStudent'
 import { PracticeHighlights } from '@/components/practice/PracticeHighlights'
 import { ProgrammeCards } from '@/components/practice/ProgrammeCards'
+import { WhatsNextCard } from '@/components/practice/WhatsNextCard'
 import { TopicChapters } from '@/components/practice/TopicChapters'
 import { TopicPage } from '@/components/practice/TopicPage'
 import { useTopicProgress } from '@/lib/topicProgress'
@@ -275,7 +275,15 @@ function PracticePage() {
   const suggested = aptitude ? suggestedTrackOrder(aptitude.scores) : []
   const strongest = aptitude ? strongestAptitude(aptitude.scores) : null
   const dmNextUp = (
-    <NextUpCard practice={practice} onSelect={setSelected} suggested={suggested} suitedTo={strongest?.name} />
+    <WhatsNextCard
+      practice={practice}
+      learnedIds={vocabLearnedIds}
+      getLocal={topicProgress.get}
+      suggested={suggested}
+      suitedTo={strongest?.name}
+      onOpenTopic={setTopic}
+      onSelectTrack={setSelected}
+    />
   )
   const dmTopics = (
     <TopicChapters practice={practice} learnedIds={vocabLearnedIds} getLocal={topicProgress.get} onOpen={setTopic} />
@@ -410,7 +418,7 @@ function PracticePage() {
               {/* On a computer: where you stand, then what to do. */}
               {programme === 1 && dmOpen && topic === null && !phone && (
                 <>
-                  {dmAptitudeCard}
+                  {aptitude == null && dmAptitudeCard}
                   <div className="grid gap-5 lg:grid-cols-3">
                     <div className="lg:col-span-2">{dmStats}</div>
                     <div className="lg:col-span-1">{dmNextUp}</div>
@@ -420,6 +428,7 @@ function PracticePage() {
                   {dmModes}
                   {dmFoundation}
                   {dmLive}
+                  {aptitude != null && dmAptitudeCard}
                 </>
               )}
 
@@ -430,10 +439,10 @@ function PracticePage() {
                 <>
                   {aptitude == null && dmAptitudeCard}
                   {dmNextUp}
+                  {dmStats}
                   {dmTopics}
                   {dmModes}
                   {dmFoundation}
-                  {dmStats}
                   {dmCompletion}
                   {dmLive}
                   {aptitude != null && dmAptitudeCard}
