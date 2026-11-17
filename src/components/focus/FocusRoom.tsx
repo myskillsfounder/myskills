@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   ArrowLeft,
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import {
+  CAMERA,
   MAX_CAMERAS,
   REACTIONS,
   WORKING_ON_MAX,
@@ -84,10 +85,69 @@ async function hintsFor(room: string): Promise<string[]> {
   }
 }
 
-/** Before going in: what you are working on, and whether your camera is on. */
+/**
+ * The student's own camera, shown on the entry screen so they can check it
+ * before joining. It starts by itself, stays on this device, and is stopped
+ * before the room asks for the camera again.
+ */
+function useCameraPreview() {
+  const [stream, setStream] = useState<MediaStream | null>(null)
+  const [starting, setStarting] = useState(false)
+  const [error, setError] = useState<string>()
+  const live = useRef<MediaStream | null>(null)
+  // Only the latest request counts: one that arrives late is stopped at once,
+  // so the camera light never stays on with nothing showing it.
+  const request = useRef(0)
+
+  const stop = useCallback(() => {
+    request.current++
+    live.current?.getTracks().forEach((t) => t.stop())
+    live.current = null
+    setStream(null)
+    setStarting(false)
+  }, [])
+
+  const start = useCallback(async () => {
+    const mine = ++request.current
+    setStarting(true)
+    setError(undefined)
+    try {
+      const next = await navigator.mediaDevices.getUserMedia({ video: CAMERA, audio: false })
+      if (mine !== request.current) {
+        next.getTracks().forEach((t) => t.stop())
+        return
+      }
+      live.current = next
+      setStream(next)
+    } catch (e) {
+      if (mine !== request.current) return
+      setError(
+        e instanceof DOMException && e.name === 'NotAllowedError'
+          ? 'Your browser blocked the camera. Allow it in the address bar, then try again.'
+          : 'We couldn’t start your camera. Check no other app is using it.',
+      )
+    } finally {
+      if (mine === request.current) setStarting(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void start()
+    return stop
+  }, [start, stop])
+
+  return { stream, starting, error, start, stop }
+}
+
+/** Before going in: see yourself, say what you are working on, and choose camera on or off. */
 export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn: string, camera: boolean) => void }) {
   const [text, setText] = useState('')
   const [hints, setHints] = useState<string[]>([])
+  const preview = useCameraPreview()
+  const video = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    if (video.current) video.current.srcObject = preview.stream
+  }, [preview.stream])
   useEffect(() => {
     let live = true
     hintsFor(room.slug).then((h) => live && setHints(h))
@@ -95,7 +155,10 @@ export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn:
       live = false
     }
   }, [room.slug])
-  const go = (camera: boolean) => onEnter(text.trim(), camera)
+  const go = (camera: boolean) => {
+    preview.stop()
+    onEnter(text.trim(), camera)
+  }
   return (
     <div className="mx-auto max-w-xl">
       <Link to="/study-rooms" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
@@ -107,6 +170,37 @@ export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn:
         <p className="mt-2 text-sm leading-relaxed text-ink-600">
           Study alongside others on {room.title}. Your camera shows you at your desk, and there’s never any sound.
         </p>
+        <div className="mt-5">
+          <div className="relative aspect-video overflow-hidden rounded-2xl bg-black/70 ring-1 ring-white/10">
+            {preview.stream ? (
+              <>
+                <video ref={video} autoPlay playsInline muted className="h-full w-full -scale-x-100 object-cover" />
+                <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Camera preview
+                </span>
+                <button
+                  type="button"
+                  onClick={preview.stop}
+                  className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-black/70"
+                >
+                  <VideoOff size={12} /> Turn off
+                </button>
+              </>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
+                  <VideoOff size={22} className="text-white/70" />
+                </span>
+                <p className="text-sm text-white/75">{preview.starting ? 'Starting your camera…' : 'See yourself before you join.'}</p>
+                <Button type="button" variant="secondary" icon={Video} onClick={() => void preview.start()} disabled={preview.starting}>
+                  Turn on camera
+                </Button>
+                {preview.error && <p className="max-w-xs text-xs text-amber-200">{preview.error}</p>}
+              </div>
+            )}
+          </div>
+          <p className="mt-2 text-xs text-ink-500">Only you can see this until you join the room.</p>
+        </div>
         <form
           className="mt-6"
           onSubmit={(e) => {
