@@ -3,8 +3,8 @@ import type { RealtimeChannel } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 
 /*
- * Focus Rooms (Paul, 1 Nov 2026): a live study room for each programme a
- * student is in. Camera only, never a microphone; each student says what
+ * Focus Rooms (Paul, 1 Nov 2026): a live study room for each course we
+ * provide, open to every signed-in student. Camera only, never a microphone; each student says what
  * they are working on; the room posts and upvotes the topics that matter.
  *
  * Who is here travels as Realtime presence on the private channel
@@ -13,18 +13,15 @@ import { supabase } from './supabase'
  * broadcast carrying the handshake. Nothing is recorded or stored.
  */
 
-/** Everyone's room: any signed-in student may enter it, whatever they study
- *  (docs/supabase-study-rooms-open.sql). Study rooms became the app's first
- *  tab on 3 Nov 2026, and a new student has no programme yet. */
+/** The Open study room, retired: study rooms are only for the courses we
+ *  provide (Paul, 17 Nov 2026). Hidden here so it stays gone even before
+ *  docs/supabase-study-rooms-topics.sql is run again. */
 export const OPEN_ROOM = 'open'
-
-/** What the Open study room suggests for "What are you working on?". */
-export const OPEN_HINTS = ['Revision', 'Homework', 'Exam prep', 'Reading', 'My project']
 
 /** "What I'm working on" fits under a camera tile. */
 export const WORKING_ON_MAX = 80
 
-/** A room the student may enter: the Open study room, and one per programme they are in. */
+/** A study room: one per course we provide. */
 export interface FocusRoom {
   slug: string
   title: string
@@ -102,7 +99,7 @@ export const REACTIONS = ['👏', '🔥', '💪', '☕', '🎉'] as const
 export async function fetchMyFocusRooms(): Promise<FocusRoom[]> {
   const { data, error } = await supabase.rpc('my_focus_rooms')
   if (error) return []
-  return (data ?? []) as FocusRoom[]
+  return ((data ?? []) as FocusRoom[]).filter((r) => r.slug !== OPEN_ROOM)
 }
 
 export async function fetchTopics(room: string): Promise<FocusTopic[]> {

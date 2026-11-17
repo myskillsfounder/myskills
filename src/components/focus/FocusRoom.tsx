@@ -24,8 +24,6 @@ import {
 import { errorMessage } from '@/lib/errors'
 import {
   MAX_CAMERAS,
-  OPEN_HINTS,
-  OPEN_ROOM,
   REACTIONS,
   WORKING_ON_MAX,
   acceptReply,
@@ -51,6 +49,7 @@ import {
 import { Alert, Avatar, Button, Skeleton } from '@/components/ui'
 import { skillTracks } from '@/lib/skillTracks'
 import { CORE_MODULES } from '@/lib/careerReadinessContent'
+import { DATA_ANALYTICS, ENTREPRENEURSHIP } from '@/content/courses'
 import { fetchMyProgramme, moduleDone, suggestedOrder } from '@/lib/programmeStudent'
 
 export interface Me {
@@ -60,6 +59,11 @@ export interface Me {
 }
 
 
+const ENGINE_MODULES: Record<string, string[]> = {
+  'ai-powered-entrepreneurship': ENTREPRENEURSHIP.modules.map((m) => m.title),
+  'data-analytics': DATA_ANALYTICS.modules.map((m) => m.title),
+}
+
 const sentence = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
 
 /**
@@ -68,7 +72,6 @@ const sentence = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).
  * its skill tracks (Digital Marketing) or its modules (Global Leadership).
  */
 async function hintsFor(room: string): Promise<string[]> {
-  if (room === OPEN_ROOM) return OPEN_HINTS
   if (room === 'digital-marketing') return [...skillTracks.slice(0, 3).map((t) => t.name), 'Vocabulary', 'Foundation assessment']
   if (room === 'career-readiness') return [...CORE_MODULES.slice(0, 4).map(sentence), 'My project']
   try {
@@ -76,7 +79,8 @@ async function hintsFor(room: string): Promise<string[]> {
     const next = suggestedOrder(p).filter((m) => !moduleDone(p, m))
     return [...next.slice(0, 3).map((m) => m.title), 'Module quiz', 'My project']
   } catch {
-    return ['Module quiz', 'My project', 'Revision']
+    // Not in the programme yet: the course's own first modules.
+    return [...(ENGINE_MODULES[room] ?? []).slice(0, 3), 'Module quiz', 'My project']
   }
 }
 
@@ -101,7 +105,7 @@ export function FocusLobby({ room, onEnter }: { room: Room; onEnter: (workingOn:
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-600">Study room</p>
         <h1 className="mt-2 font-display text-2xl font-semibold text-ink-900 sm:text-3xl">{room.title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-ink-600">
-          {room.slug === OPEN_ROOM ? 'Study alongside other students, whatever you’re working on.' : `Study alongside others on ${room.title}.`} Your camera shows you at your desk, and there’s never any sound.
+          Study alongside others on {room.title}. Your camera shows you at your desk, and there’s never any sound.
         </p>
         <form
           className="mt-6"

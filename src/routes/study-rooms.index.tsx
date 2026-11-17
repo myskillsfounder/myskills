@@ -20,7 +20,6 @@ export const Route = createFileRoute('/study-rooms/')({
 })
 
 const ABOUT: Record<string, string> = {
-  open: 'Any subject: revision, homework, reading or your own project.',
   'digital-marketing': 'Ads, SEO, content and analytics.',
   'career-readiness': 'Goals, communication, leadership and a growth mindset.',
   'ai-powered-entrepreneurship': 'Ideas, customers, pricing and money.',
