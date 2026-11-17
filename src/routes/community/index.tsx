@@ -249,7 +249,7 @@ function CommunityHub() {
     <AppShell wide>
       <div className="space-y-8">
         <header>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Community</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">Home</p>
           <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
             Find the Right Person for What You Need Next
           </h1>
