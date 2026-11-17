@@ -5,11 +5,11 @@ import {
   BookOpen,
   EllipsisVertical,
   LogOut,
+  House,
   Menu,
   MessageSquareHeart,
   MoonStar,
   Plane,
-  Users,
   X,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
@@ -34,24 +34,15 @@ type IconType = ComponentType<{ size?: number; className?: string }>
  */
 type NavItem = { to: string; label: string; icon: IconType; live?: boolean }
 
-// Two groups, so the list reads at a glance (Paul, 3 Nov 2026): what a student
-// does, and where they go. Study rooms first: where signing in lands. The
-// profile is the account card at the foot of the sidebar.
-const NAV: { heading: string; items: NavItem[] }[] = [
-  {
-    heading: 'Learn',
-    items: [
-      { to: '/study-rooms', label: 'Study rooms', icon: MoonStar, live: true },
-      { to: '/practice', label: 'Workbook', icon: BookOpen },
-    ],
-  },
-  {
-    heading: 'Explore',
-    items: [
-      { to: '/community', label: 'Home', icon: Users },
-      { to: '/study-abroad', label: 'Study abroad', icon: Plane },
-    ],
-  },
+// One list, in the order a student reaches for things (Paul, 18 Nov 2026): Home,
+// the Workbook, Study rooms, then Study abroad. Home is the old Community
+// marketplace at the same address (/community). Signing in still lands on Study
+// rooms (lib/device.ts). The profile is the account card at the foot.
+const NAV: NavItem[] = [
+  { to: '/community', label: 'Home', icon: House },
+  { to: '/practice', label: 'Workbook', icon: BookOpen },
+  { to: '/study-rooms', label: 'Study rooms', icon: MoonStar, live: true },
+  { to: '/study-abroad', label: 'Study abroad', icon: Plane },
 ]
 
 
@@ -68,54 +59,44 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       {/* Brand */}
       <div className="flex items-center gap-2.5 px-5 pb-4 pt-5">
         <div className="min-w-0">
-          <p className="font-display text-base font-semibold leading-tight tracking-tight text-ink-900">
-            MySkills
-          </p>
-          <p className="text-[11px] font-medium leading-snug text-ink-500">
-            Personal &amp; professional development
-          </p>
+          <p className="font-display text-lg font-semibold leading-tight tracking-tight text-ink-900">MySkills</p>
         </div>
       </div>
 
       <div className="mx-5 border-t border-ink-900/[0.06]" />
 
       {/* Nav */}
-      <nav className="flex-1 space-y-5 px-3 py-4">
-        {NAV.map(({ heading, items }) => (
-          <div key={heading}>
-            <p className="px-3.5 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">{heading}</p>
-            <div className="space-y-1">
-              {items.map(({ to, label, icon: Icon, live }) => {
-                // A page's own sub-pages keep it lit.
-                const active = pathname === to || pathname.startsWith(`${to}/`)
-                return (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={onNavigate}
-                    aria-current={active ? 'page' : undefined}
-                    className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
-                      active ? 'bg-brand-100/70 font-semibold text-brand-800' : 'font-medium text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
-                    }`}
-                  >
-                    <Icon
-                      size={18}
-                      className={`shrink-0 transition-colors duration-200 ${
-                        active ? 'fill-brand-200 text-brand-600' : 'text-ink-400 group-hover:text-ink-700'
-                      }`}
-                    />
-                    <span className="flex-1">{label}</span>
-                    {live && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live
-                      </span>
-                    )}
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+      <nav className="flex-1 px-3 py-4">
+        <div className="space-y-1">
+          {NAV.map(({ to, label, icon: Icon, live }) => {
+            // A page's own sub-pages keep it lit.
+            const active = pathname === to || pathname.startsWith(`${to}/`)
+            return (
+              <Link
+                key={to}
+                to={to}
+                onClick={onNavigate}
+                aria-current={active ? 'page' : undefined}
+                className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                  active ? 'bg-brand-100/70 font-semibold text-brand-800' : 'font-medium text-ink-600 hover:bg-ink-900/[0.05] hover:text-ink-900'
+                }`}
+              >
+                <Icon
+                  size={18}
+                  className={`shrink-0 transition-colors duration-200 ${
+                    active ? 'fill-brand-200 text-brand-600' : 'text-ink-400 group-hover:text-ink-700'
+                  }`}
+                />
+                <span className="flex-1">{label}</span>
+                {live && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live
+                  </span>
+                )}
+              </Link>
+            )
+          })}
+        </div>
       </nav>
 
       {/* Footer: help, then the student's own account. The ads are off for
