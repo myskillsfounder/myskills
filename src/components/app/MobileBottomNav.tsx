@@ -9,7 +9,7 @@ import { missingDetails } from '@/components/profile/DetailsSection'
 const TABS = [
   { to: '/study-rooms', label: 'Study rooms', icon: MoonStar },
   { to: '/practice', label: 'Workbook', icon: Dumbbell },
-  { to: '/community', label: 'Community', icon: Users },
+  { to: '/community', label: 'Home', icon: Users },
   { to: '/feedback', label: 'Review', icon: Star },
   { to: '/profile', label: 'Profile', icon: User },
 ] as const
@@ -23,7 +23,7 @@ const TABS = [
 const PHONE_TABS = [
   { to: '/study-rooms', label: 'Study rooms', icon: MoonStar },
   { to: '/practice', label: 'Workbook', icon: Dumbbell },
-  { to: '/community', label: 'Community', icon: Users },
+  { to: '/community', label: 'Home', icon: Users },
   { to: '/profile', label: 'Profile', icon: User },
 ] as const
 

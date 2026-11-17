@@ -48,7 +48,7 @@ const NAV: { heading: string; items: NavItem[] }[] = [
   {
     heading: 'Explore',
     items: [
-      { to: '/community', label: 'Community', icon: Users },
+      { to: '/community', label: 'Home', icon: Users },
       { to: '/study-abroad', label: 'Study abroad', icon: Plane },
     ],
   },
