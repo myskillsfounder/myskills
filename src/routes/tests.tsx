@@ -3,7 +3,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 // The Tests page was removed. Keep the path working by redirecting.
 export const Route = createFileRoute('/tests')({
   beforeLoad: () => {
-    throw redirect({ to: '/profile' })
+    throw redirect({ to: '/profile', search: { tab: 'progress' } })
   },
   component: () => null,
 })

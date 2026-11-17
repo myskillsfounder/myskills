@@ -164,7 +164,7 @@ export function KeyMeasures({
         ) : (
           <p className="mt-3 text-sm leading-relaxed text-ink-600">
             No objective yet.{' '}
-            <Link to="/profile" search={{ tab: 'details' }} className="font-semibold text-brand-700 hover:text-brand-800">
+            <Link to="/profile" className="font-semibold text-brand-700 hover:text-brand-800">
               Add the one goal you’re working towards
             </Link>
           </p>

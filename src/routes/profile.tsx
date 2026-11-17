@@ -33,14 +33,15 @@ type ProfileTab = 'progress' | 'details'
  * sees. Study rooms is the app's first tab now (Paul, 3 Nov 2026).
  */
 export const Route = createFileRoute('/profile')({
-  validateSearch: (s: Record<string, unknown>): { tab?: ProfileTab } => (s.tab === 'details' ? { tab: 'details' } : {}),
+  // My details opens first, My progress is the other tab (Paul, 18 Nov 2026).
+  validateSearch: (s: Record<string, unknown>): { tab?: ProfileTab } => (s.tab === 'progress' ? { tab: 'progress' } : {}),
   beforeLoad: requireOnboarded,
   component: ProfilePage,
 })
 
 const TABS: { id: ProfileTab; label: string; icon: typeof Rocket }[] = [
-  { id: 'progress', label: 'My progress', icon: Rocket },
   { id: 'details', label: 'My details', icon: UserRound },
+  { id: 'progress', label: 'My progress', icon: Rocket },
 ]
 
 function ProfileTabs({ tab }: { tab: ProfileTab }) {
@@ -50,7 +51,7 @@ function ProfileTabs({ tab }: { tab: ProfileTab }) {
         <Link
           key={id}
           to="/profile"
-          search={id === 'details' ? { tab: 'details' } : {}}
+          search={id === 'progress' ? { tab: 'progress' } : {}}
           role="tab"
           aria-selected={tab === id}
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
@@ -159,7 +160,7 @@ function CertificateCard() {
 }
 
 function ProfilePage() {
-  const tab: ProfileTab = Route.useSearch().tab ?? 'progress'
+  const tab: ProfileTab = Route.useSearch().tab ?? 'details'
   const { profile, loading, error, save, upload } = useProfile()
   const verification = useVerification(profile)
   const badges = useMyBadges()
