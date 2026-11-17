@@ -151,7 +151,11 @@ function PracticePage() {
   // Digital Marketing opens on two cards; everything else in the programme is under 'More'.
   const [more, setMore] = useState(false)
   const topicProgress = useTopicProgress(user?.id ?? 'guest')
-  useEffect(() => window.scrollTo(0, 0), [topic])
+  // Braces matter: window.scrollTo returns a Promise in current Chrome, and an effect
+  // that returns one makes React call it as a cleanup and crash the page.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [topic])
   const [vocabLevel, setVocabLevel] = useState<VocabLevel | null>(null)
   // Null: the programme cards. A link that asked for a programme (a Global
   // Leadership module, a dashboard card) opens it, once (lib/practiceProgramme.ts).
