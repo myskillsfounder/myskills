@@ -11,7 +11,6 @@ import {
   Compass,
   GraduationCap,
   HeartHandshake,
-  Lock,
   X,
   MapPin,
   Send,
@@ -21,6 +20,8 @@ import {
 import type { Mentor } from '@/lib/mentors'
 import type { InstitutionPartner } from '@/lib/institutionPartners'
 import { RequestMentoring } from '@/components/community/RequestMentoring'
+import { InterestDialog } from '@/components/community/InterestDialog'
+import { useMyInterest } from '@/lib/internshipInterest'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
 
@@ -522,33 +523,40 @@ export function JoinCard({
 /* ------------------------------------------------------------ internships */
 
 export interface InternshipTrack {
+  /** Stable, and what an application is kept under. */
+  slug: string
   title: string
   skills: string[]
   body: string
 }
 
 /**
- * Internships aren't live, so these are the roles they'll open in — built
- * from the skill tracks students already practise, never invented company
- * listings.
+ * The kinds of internship partner companies take students for, built from the skill
+ * tracks students already practise: never invented company listings. A student
+ * applies to one with a CV (Paul, 18 Nov 2026); MySkills holds the application and
+ * shares it with a partner company when that kind of internship opens.
  */
 export const INTERNSHIP_TRACKS: InternshipTrack[] = [
   {
+    slug: 'performance-marketing',
     title: 'Performance Marketing Intern',
     skills: ['Meta Ads', 'Google Ads'],
     body: 'Plan, launch and optimise real ad campaigns with a partner company’s budget.',
   },
   {
+    slug: 'seo-content',
     title: 'SEO & Content Intern',
     skills: ['SEO & AEO', 'Content Marketing'],
     body: 'Research keywords, write and optimise pages, and track what ranks.',
   },
   {
+    slug: 'marketing-analytics',
     title: 'Marketing Analytics Intern',
     skills: ['Analytics', 'Market Research'],
     body: 'Turn campaign data into reports and recommendations a team acts on.',
   },
   {
+    slug: 'marketing-automation-ai',
     title: 'Marketing Automation & AI Intern',
     skills: ['Marketing Automation & AI'],
     body: 'Build email journeys and AI-assisted workflows that run on their own.',
@@ -556,15 +564,24 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
 ]
 
 export function InternshipCard({ track }: { track: InternshipTrack }) {
+  const mine = useMyInterest()
+  const existing = mine?.find((m) => m.track_slug === track.slug)
+  const [open, setOpen] = useState(false)
   return (
-    <div aria-disabled="true" className="card relative flex flex-col overflow-hidden p-5">
+    <div className="card relative flex flex-col overflow-hidden p-5">
       <div className="relative flex items-start justify-between gap-3">
         <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-e1">
           <Briefcase size={20} />
         </span>
-        <span className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-ink-50 px-2.5 py-1 text-[11px] font-medium text-ink-600">
-          <Lock size={11} /> Example
-        </span>
+        {existing ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+            <Check size={11} strokeWidth={3} /> Applied
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-ink-50 px-2.5 py-1 text-[11px] font-medium text-ink-600">
+            Apply with your CV
+          </span>
+        )}
       </div>
       <h3 className="relative mt-4 font-display text-lg font-semibold text-ink-900">{track.title}</h3>
       <p className="relative mt-1 flex-1 text-sm leading-relaxed text-ink-600">{track.body}</p>
@@ -575,7 +592,21 @@ export function InternshipCard({ track }: { track: InternshipTrack }) {
           </span>
         ))}
       </div>
-      <p className="relative mt-4 text-xs text-ink-500">The kind of role partner companies post. None is open right now.</p>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        className={`press relative mt-4 inline-flex h-10 items-center justify-center gap-1.5 rounded-xl px-4 text-sm font-semibold transition-colors ${
+          existing ? 'border border-emerald-300 text-emerald-800 hover:bg-emerald-50' : 'bg-emerald-600 text-white shadow-e1 hover:bg-emerald-700'
+        }`}
+      >
+        {existing ? 'View My Application' : 'Apply with Your CV'}
+        <ArrowRight size={15} />
+      </button>
+      <p className="relative mt-2.5 text-xs leading-relaxed text-ink-500">
+        When a partner company opens this kind of internship, we share your application with them and let you know.
+      </p>
+      {open && <InterestDialog track={track} existing={existing} onClose={() => setOpen(false)} />}
     </div>
   )
 }

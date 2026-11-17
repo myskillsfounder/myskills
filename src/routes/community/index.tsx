@@ -221,8 +221,8 @@ function CommunityHub() {
     .filter((r) => matches(q, r.title, r.organisation, r.skills, r.description, r.location))
     .sort((a, b) => b.posted_on.localeCompare(a.posted_on))
   const hasRoles = internships.roles.length > 0
-  const trackHits = hasRoles ? [] : INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
-  const internshipCount = hasRoles ? roleHits.length : trackHits.length
+  const trackHits = INTERNSHIP_TRACKS.filter((t) => matches(q, t.title, t.body, t.skills))
+  const internshipCount = roleHits.length + trackHits.length
   const institutionHits = institutions.filter((p) => matches(q, p.legal_name, p.city, p.courses_offered))
 
   const counts: Record<Group, number> = {
@@ -313,7 +313,7 @@ function CommunityHub() {
                   <InternshipRoleCard key={r.id} role={r} onOpen={() => setOpenRoleId(r.id)} />
                 ))}
                 {some(trackHits).map((t) => (
-                  <InternshipCard key={t.title} track={t} />
+                  <InternshipCard key={t.slug} track={t} />
                 ))}
               </div>
             </MarketSection>
