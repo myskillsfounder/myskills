@@ -21,7 +21,6 @@ import { LiveMentorCard } from '@/components/practice/LiveMentorCard'
 import { useMyAssessmentResult } from '@/lib/careerReadinessAssessment'
 import { useMyMatch } from '@/lib/mentorMatches'
 import { AptitudeCard } from '@/components/aptitude/AptitudeCard'
-import { StartChoice } from '@/components/practice/StartChoice'
 import { strongestAptitude, suggestedTrackOrder, useMyAptitudeResult } from '@/lib/dmAptitude'
 import type { FoundationUnlock } from '@/lib/foundation'
 import { FoundationCard } from '@/components/assessment/FoundationCard'
@@ -50,6 +49,9 @@ import { clearSavedProgramme, savedProgramme, type Programme } from '@/lib/pract
 import { fetchMyProgrammes, type MyEnrolment } from '@/lib/programmeStudent'
 import { PracticeHighlights } from '@/components/practice/PracticeHighlights'
 import { ProgrammeCards } from '@/components/practice/ProgrammeCards'
+import { AddProgrammeDialog, ChooseProgrammes } from '@/components/practice/ChooseProgrammes'
+import { WORKBOOK_ENTRY, fetchMyWorkbook, type BuiltIn } from '@/lib/workbook'
+import { COURSES, type Course } from '@/content/courses'
 import { WhatsNextCard } from '@/components/practice/WhatsNextCard'
 import { TopicChapters } from '@/components/practice/TopicChapters'
 import { TopicPage } from '@/components/practice/TopicPage'
@@ -122,9 +124,40 @@ function PracticePage() {
   // had live sessions without taking one. It keeps Practice, with its progress,
   // rather than being sent back to the start.
   const started = useHasStarted()
-  const unlocked = dmUnlocked || crUnlocked || started === true
+  // What the student chose to study (lib/workbook.ts): a new student's Workbook
+  // starts empty and they choose (Paul, 18 Nov 2026); the aptitude test is an
+  // optional first step inside each programme.
+  const [workbook, setWorkbook] = useState<BuiltIn[] | null>(null)
+  useEffect(() => {
+    let live = true
+    void fetchMyWorkbook().then((w) => live && setWorkbook(w))
+    return () => {
+      live = false
+    }
+  }, [])
+  // The course-engine programmes the student has joined, for the cards.
+  const [engine, setEngine] = useState<MyEnrolment[]>()
+  const [engineTick, setEngineTick] = useState(0)
+  useEffect(() => {
+    let live = true
+    fetchMyProgrammes().then((e) => live && setEngine(e))
+    return () => {
+      live = false
+    }
+  }, [engineTick])
+  const [adding, setAdding] = useState(false)
+  const unlocked = dmUnlocked || crUnlocked || started === true || (workbook?.length ?? 0) > 0 || (engine?.length ?? 0) > 0
   const gateLoading =
-    assessmentLoading || aptitudeLoading || crAptitude.loading || (!dmUnlocked && !crUnlocked && started === null)
+    assessmentLoading ||
+    aptitudeLoading ||
+    crAptitude.loading ||
+    (!dmUnlocked && !crUnlocked && (started === null || workbook === null || engine === undefined))
+  /** A programme was added: show it. */
+  function added(id: Course['id']) {
+    const entry = WORKBOOK_ENTRY[id]
+    if ('builtIn' in entry) setWorkbook((w) => [...(w ?? []), entry.builtIn])
+    else setEngineTick((t) => t + 1)
+  }
 
   const { user } = useAuthUser()
   const { learnedIds: vocabLearnedIds, markLearned: markVocabLearned, countLearned: countVocabLearned } =
@@ -170,17 +203,6 @@ function PracticePage() {
   const [programme, setProgramme] = useState<Programme | null>(savedProgramme)
   useEffect(() => clearSavedProgramme(), [])
 
-  // The course-engine programmes the student has joined, for the cards.
-  const [engine, setEngine] = useState<MyEnrolment[]>()
-  useEffect(() => {
-    if (!unlocked) return
-    let live = true
-    fetchMyProgrammes().then((e) => live && setEngine(e))
-    return () => {
-      live = false
-    }
-  }, [unlocked])
-
   // Practice data loads as soon as Practice is unlocked, not only once the
   // Foundation assessment is done.
   useEffect(() => {
@@ -212,7 +234,7 @@ function PracticePage() {
   const internshipDone = useInternshipDone()
   const practisedTracks = skillTracks.filter((t) => practice[t.slug])
   // Digital Marketing shows its progress once there is any of it, aptitude or not.
-  const dmOpen = dmUnlocked || practisedTracks.length > 0 || dmSessions.length > 0
+  const dmOpen = dmUnlocked || practisedTracks.length > 0 || dmSessions.length > 0 || Boolean(workbook?.includes('digital-marketing'))
   const practiceAvg = practisedTracks.length
     ? Math.round(practisedTracks.reduce((sum, t) => sum + practice[t.slug].percent, 0) / practisedTracks.length)
     : 0
@@ -250,7 +272,8 @@ function PracticePage() {
   const phone = isPhone()
 
   // The cards' progress, the same numbers the dashboard shows.
-  const crStarted = crUnlocked || crProgress.started || crReview.state !== 'none' || liveSessions.length > 0
+  const crStarted =
+    crUnlocked || crProgress.started || crReview.state !== 'none' || liveSessions.length > 0 || Boolean(workbook?.includes('global-leadership'))
   const dmCard = dmOpen
     ? digitalMarketingProgress(
         assessment != null,
@@ -364,7 +387,7 @@ function PracticePage() {
 
       {/* Practice is locked until an aptitude assessment is taken — the
           marketing one or the personal one, the student's choice. */}
-      {!gateLoading && !error && !unlocked && <StartChoice />}
+      {!gateLoading && !error && !unlocked && <ChooseProgrammes onAdded={added} />}
 
       {/* A practice track is open -> run its Decision Lab. */}
       {unlocked && !error && selected && (
@@ -386,7 +409,21 @@ function PracticePage() {
             <>
               {programme === null && (
                 <>
-                  <ProgrammeCards dm={dmCard} cr={crCard} engine={engine} onOpen={setProgramme} />
+                  <ProgrammeCards dm={dmCard} cr={crCard} engine={engine} onOpen={setProgramme} onAdd={() => setAdding(true)} />
+                  {adding && (
+                    <AddProgrammeDialog
+                      added={[
+                        ...(dmCard ? (['digital-marketing'] as const) : []),
+                        ...(crCard ? (['global-leadership'] as const) : []),
+                        ...COURSES.filter((c) => {
+                          const e = WORKBOOK_ENTRY[c.id]
+                          return 'engine' in e && engine?.some((m) => m.slug === e.engine)
+                        }).map((c) => c.id),
+                      ]}
+                      onAdded={added}
+                      onClose={() => setAdding(false)}
+                    />
+                  )}
                   {/* An active mentor and an approved internship, when there are any.
                       Study rooms has its own tab (4 Nov 2026). */}
                   <PracticeHighlights

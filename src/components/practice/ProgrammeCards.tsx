@@ -106,6 +106,7 @@ export function ProgrammeCards({
   cr,
   engine,
   onOpen,
+  onAdd,
 }: {
   /** The built-in programmes, when the student has started them. */
   dm: CourseProgress | null
@@ -113,6 +114,8 @@ export function ProgrammeCards({
   /** Course-engine enrolments; undefined while loading. */
   engine: MyEnrolment[] | undefined
   onOpen: (p: Programme) => void
+  /** "Add a programme": choose another to study (components/practice/ChooseProgrammes.tsx). */
+  onAdd: () => void
 }) {
   const builtIn: (Card & { programme: Programme })[] = []
   if (dm) builtIn.push({ ...dm, key: 'dm', programme: 1, name: 'Digital Marketing', kind: 'Professional', icon: Megaphone, tile: 'from-brand-400 to-brand-700' })
@@ -159,16 +162,17 @@ export function ProgrammeCards({
           <li aria-hidden className="h-full min-h-[14rem] animate-pulse rounded-2xl bg-ink-900/[0.04]" />
         )}
         <li>
-          <Link
-            to="/courses"
-            className="lift group flex h-full min-h-[14rem] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-ink-900/15 p-5 text-center text-ink-600 transition-colors hover:border-brand-300 hover:text-brand-700"
+          <button
+            type="button"
+            onClick={onAdd}
+            className="lift group flex h-full min-h-[14rem] w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-ink-900/15 p-5 text-center text-ink-600 transition-colors hover:border-brand-300 hover:text-brand-700"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ink-900/[0.05] group-hover:bg-brand-50">
               <Plus size={22} />
             </span>
             <span className="font-display text-base font-semibold">Add a programme</span>
-            <span className="text-sm">Browse every course and take its free aptitude test.</span>
-          </Link>
+            <span className="text-sm">Choose another programme to study.</span>
+          </button>
         </li>
       </ul>
     </section>
