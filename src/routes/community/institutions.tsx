@@ -166,11 +166,6 @@ function PartnerCard({
                 {partner.years_in_education} {partner.years_in_education === 1 ? 'year' : 'years'} in education
               </span>
             )}
-            {partner.verified !== false && (
-              <span className="inline-flex items-center gap-1 font-medium text-emerald-700">
-                <BadgeCheck size={12} /> Verified partner
-              </span>
-            )}
           </p>
         </div>
       </div>

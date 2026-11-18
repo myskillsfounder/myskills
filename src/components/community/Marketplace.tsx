@@ -676,14 +676,8 @@ export function InstitutionListingCard({ partner }: { partner: InstitutionPartne
       )}
       <div className="flex-1" />
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
-        {/* Only an academy the team has checked says so. */}
-        {partner.verified !== false ? (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
-            <BadgeCheck size={13} /> Verified partner
-          </span>
-        ) : (
-          <span />
-        )}
+        {/* No "Verified partner" on any listing for now (Paul, 18 Nov 2026). */}
+        <span />
         {applied ? (
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-700">
             <Check size={14} strokeWidth={3} /> Applied
