@@ -4,6 +4,7 @@ import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
 import { PartnerSignup } from '@/components/partner/PartnerSignup'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 // Public on purpose: it is where a company first hears what offering
 // internships through MySkills is. It takes no application: like every partner
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/become-an-internship-partner')({
 })
 
 function BecomeAnInternshipPartnerPage() {
+  useSiteTheme('light')
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

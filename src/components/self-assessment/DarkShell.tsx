@@ -3,6 +3,7 @@ import { Link, type LinkProps } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Eyebrow } from '@/components/landing/Eyebrow'
 import { GlowOrb, GridBackdrop } from '@/components/landing/GridBackdrop'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /**
  * A focused, full-screen dark page for an assessment: the same surface, grid
@@ -23,6 +24,7 @@ export function DarkShell({
   description: ReactNode
   children: ReactNode
 }) {
+  useSiteTheme('dark')
   return (
     <div className="surface-wood-dark relative min-h-screen overflow-hidden">
       <GridBackdrop mask="ellipse 75% 60% at 50% 0%" />

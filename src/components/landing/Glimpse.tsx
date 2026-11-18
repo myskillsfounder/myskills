@@ -8,6 +8,7 @@ import { Footer } from '@/components/landing/Footer'
 import { trackEvent } from '@/lib/analytics'
 import { fetchMentors, type Mentor } from '@/lib/mentors'
 import { OpenRoles } from '@/components/landing/OpenRoles'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /*
  * A glimpse of a part of the platform that lives behind sign-in (Paul,
@@ -143,6 +144,7 @@ function MentorChip({ m }: { m: Mentor }) {
 }
 
 export function Glimpse(g: GlimpseProps) {
+  useSiteTheme('dark')
   const mentors = useListedMentors(Boolean(g.heroCards?.some((c) => c.match)))
   const login = { to: '/login' as const, search: { next: g.next } }
   return (

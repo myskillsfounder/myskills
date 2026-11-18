@@ -4,6 +4,7 @@ import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
 import { PartnerSignup } from '@/components/partner/PartnerSignup'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 // Public on purpose: it is where an institution first hears what partnering
 // with MySkills is. It takes no application: like every partner page, it sends
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/become-a-partner-institution')({
 })
 
 function BecomeAPartnerInstitutionPage() {
+  useSiteTheme('light')
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

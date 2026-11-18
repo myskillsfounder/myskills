@@ -41,7 +41,7 @@ const columns = [
 ]
 
 /** `dark`: on the home page's navy, whose own colours aren't the site's light ones (like Navbar's). */
-export function Footer({ dark = false }: { dark?: boolean }) {
+export function Footer({ dark = true }: { dark?: boolean }) {
   const t = dark
     ? { line: 'border-white/10', head: 'text-white', body: 'text-white/55', link: 'text-white/60 hover:text-white', fine: 'text-white/40' }
     : { line: 'border-ink-100', head: 'text-ink-900', body: 'text-ink-500', link: 'text-ink-500 hover:text-ink-900', fine: 'text-ink-400' }

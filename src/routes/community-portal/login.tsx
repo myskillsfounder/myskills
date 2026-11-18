@@ -4,6 +4,7 @@ import { AuthError, signIn } from '@/lib/auth'
 import { requireGuestForMentor } from '@/lib/guards'
 import { TextField } from '@/components/auth/TextField'
 import { Button } from '@/components/ui'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 /**
  * A dedicated sign-in for the mentor portal — not the student /login. A mentor
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/community-portal/login')({
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function MentorLoginPage() {
+  useSiteTheme('light')
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -54,7 +56,7 @@ function MentorLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-ink-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ink-100 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
           <span className="font-display text-2xl font-semibold tracking-tight text-ink-900">MySkills</span>

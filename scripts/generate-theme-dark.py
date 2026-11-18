@@ -122,5 +122,86 @@ out.append(f'''
 .theme-dark .field:disabled {{ background: var(--color-ink-50); }}
 .theme-dark .skeleton {{ background-image: linear-gradient(90deg, {CARD} 25%, #29251f 37%, {CARD} 63%); }}
 ''')
+# ---------------------------------------------------------------------------
+# NAVY: the public site's brand (Paul, 11 Nov 2026: "bring the whole website
+# to consistent branding"). The home page and the internship board are navy
+# and violet; every page a visitor sees now is too. lib/siteTheme.ts puts
+# .theme-navy on <html>:
+#   - with .theme-dark (a page built light: partner pages, the blog article,
+#     privacy, sign in), the same turn-over as above, onto navy;
+#   - on its own (a page built dark by hand: Learning, the course pages, the
+#     blog list), the warm near-black (ink-900, .surface-wood-dark) becomes navy.
+NCARD = '#0c1333'
+NPAGE = '#040a1e'
+NAVY_INK = {50: '#111a3f', 100: NPAGE, 200: '#1a2352', 300: '#2a336b', 400: '#5d6692', 500: '#8f97bb',
+            600: '#adb4d3', 700: '#c8cde4', 800: '#e0e3f1', 900: '#f4f5fb'}
+NAVY_PAPER = {50: NCARD, 100: NAVY_INK[50], 200: NPAGE, 300: NAVY_INK[200]}
+NAVY_WOOD = {100: NAVY_INK[200], 200: NAVY_INK[300], 300: '#3d4782', 400: NAVY_INK[400], 500: NAVY_INK[500],
+             600: NAVY_INK[600], 700: NAVY_INK[700], 800: NAVY_INK[800], 900: NAVY_INK[900]}
+
+
+def navy_chroma(o):
+    base = o.get(500, o.get(400))
+    m = {}
+    for k, pct in ((50, 14), (100, 22), (200, 34), (300, 50)):
+        if k in o:
+            m[k] = f'color-mix(in oklab, {base} {pct}%, {NCARD})'
+    for k, src in ((600, 400), (700, 300), (800, 200), (900, 100), (950, 50)):
+        if k in o and src in o:
+            m[k] = o[src]
+    return m
+
+
+GLOW = ('radial-gradient(40rem 32rem at 75% 15%, rgba(56, 64, 200, 0.42), transparent 70%), '
+        'radial-gradient(30rem 24rem at 0% 30%, rgba(124, 92, 246, 0.18), transparent 70%)')
+
+nb = '  color-scheme: dark;\n'
+nb += f'  --color-white: {NCARD};\n'
+nb += decls('ink', NAVY_INK) + decls('paper', NAVY_PAPER) + decls('wood', NAVY_WOOD)
+for n in CHROMA:
+    nb += decls(n, navy_chroma(P[n]))
+nb += '  --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.4);\n'
+nb += '  --shadow-e2: 0 4px 14px -4px rgba(0, 0, 0, 0.55);\n'
+nb += '  --shadow-e3: 0 20px 44px -20px rgba(20, 24, 90, 0.8);\n'
+
+out.append(f"""
+/* ============================================================================
+   NAVY: the public site's brand, put on <html> by lib/siteTheme.ts.
+   ==========================================================================*/
+:root.theme-navy {{ background-color: {NPAGE}; }}
+:root.theme-navy body {{ background-color: {NPAGE}; }}
+
+/* A page built light, turned over onto navy; and, on a page built dark,
+   anything marked .navy-dark (the phone's tab bar) that was built light. */
+:root.theme-dark.theme-navy, .theme-navy .navy-dark {{
+{nb}}}
+
+/* A page built dark by hand: its near-black is navy. */
+:root.theme-navy:not(.theme-dark) {{
+  --color-ink-900: {NPAGE};
+  --color-ink-800: {NCARD};
+}}
+
+/* Dark islands (heroes, feature panels) keep their own palette, on navy. */
+.theme-dark.theme-navy :is(.surface-wood-dark, .card-glass-dark, .card-glass-gradient-dark, .theme-light) {{
+  --color-ink-900: {NPAGE};
+  --color-ink-800: {NCARD};
+}}
+.theme-navy .surface-wood-dark {{
+  background-color: {NPAGE};
+  background-image: {GLOW};
+}}
+
+/* The design system's own classes, on navy. */
+.theme-dark.theme-navy .surface-paper, .theme-navy .navy-dark.surface-paper {{ background-color: {NPAGE}; background-image: none; }}
+.theme-dark.theme-navy .surface-wood {{ background-color: {NCARD}; }}
+.theme-dark.theme-navy .card {{ background-color: rgba(18, 26, 70, 0.55); border-color: rgba(109, 123, 255, 0.18); }}
+.theme-dark.theme-navy .card-glass {{ background-color: rgba(12, 19, 51, 0.7); border-color: rgba(143, 133, 238, 0.22); }}
+.theme-dark.theme-navy .field {{ background: #0a1029; }}
+.theme-dark.theme-navy .field:disabled {{ background: var(--color-ink-50); }}
+.theme-dark.theme-navy .skeleton {{ background-image: linear-gradient(90deg, {NCARD} 25%, #18214d 37%, {NCARD} 63%); }}
+.theme-dark.theme-navy :is([class~="bg-ink-900"], [class~="bg-ink-800"]){WT} {{ --color-white: {NPAGE}; }}
+""")
+
 open(R + 'src/theme-dark.css', 'w', encoding='utf-8', newline='\n').write(''.join(out))
 print('ok', sum(len(x) for x in out))

@@ -4,6 +4,7 @@ import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { PartnerDetails, PartnerFaq, PartnerHero, partnerPage } from '@/components/partner/PartnerLanding'
 import { PartnerSignup } from '@/components/partner/PartnerSignup'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 // Public on purpose: it is where a mentor first hears what mentoring on
 // MySkills is. It no longer takes an application. There is one way to become a
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/become-a-mentor')({
 })
 
 function BecomeAMentorPage() {
+  useSiteTheme('light')
   return (
     <div className="min-h-screen bg-white">
       <Navbar />

@@ -125,7 +125,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="no-print surface-paper fixed inset-x-0 bottom-0 z-40 border-t border-ink-200 shadow-[0_-6px_24px_-12px_rgba(61,40,23,0.25)] backdrop-blur-lg lg:hidden"
+      className="no-print navy-dark surface-paper fixed inset-x-0 bottom-0 z-40 border-t border-ink-200 shadow-[0_-6px_24px_-12px_rgba(61,40,23,0.25)] backdrop-blur-lg lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="mx-auto flex max-w-lg items-stretch">

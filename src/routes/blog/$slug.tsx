@@ -9,12 +9,14 @@ import { Footer } from '@/components/landing/Footer'
 import { Eyebrow } from '@/components/landing/Eyebrow'
 import { BlogHero } from '@/components/blog/BlogHero'
 import { BlogImage } from '@/components/blog/BlogImage'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 export const Route = createFileRoute('/blog/$slug')({
   component: BlogPostPage,
 })
 
 function BlogPostPage() {
+  useSiteTheme('light')
   const { slug } = useParams({ from: '/blog/$slug' })
   const [post, setPost] = useState<BlogPost | null>(null)
   const [loading, setLoading] = useState(true)
@@ -47,7 +49,7 @@ function BlogPostPage() {
   }, [post])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ink-100">
       <Navbar />
       <main>
         <BlogHero>

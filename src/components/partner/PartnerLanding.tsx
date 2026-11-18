@@ -70,12 +70,12 @@ export function PartnerHero({
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{page.intro}</p>
         {signup ? (
-          <Link to="/community-portal/signup" search={{ role: signup }} className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50">
+          <Link to="/community-portal/signup" search={{ role: signup }} className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50">
             {page.cta}
             <ArrowRight size={17} />
           </Link>
         ) : (
-          <a href="#apply" className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50">
+          <a href="#apply" className="press mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-7 text-[15px] font-semibold text-ink-900 shadow-e2 transition-colors hover:bg-brand-50">
             {page.cta}
             <ArrowRight size={17} />
           </a>

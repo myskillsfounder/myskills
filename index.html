@@ -18,13 +18,17 @@
   <link rel="apple-touch-icon" href="/favicon.png?v=3" />
   <meta name="theme-color" content="#7c3aed" />
 
-  <!-- The signed-in pages are dark (AppShell adds .theme-dark once its code
-       has loaded). Paint them dark from the first frame so they never flash
-       light; routes/__root.tsx removes this once the page has rendered. -->
-  <style>.theme-boot, .theme-boot body { background: #13110f; }</style>
+  <!-- Paint the first frame in the page's own colour, so nothing flashes
+       light: the signed-in app is dark (AppShell adds .theme-dark once its
+       code has loaded), every public page navy (lib/siteTheme.ts).
+       routes/__root.tsx removes this once the page has rendered. -->
+  <style>.theme-boot, .theme-boot body { background: #13110f; } .theme-boot-navy, .theme-boot-navy body { background: #040a1e; }</style>
   <script>
-    if (/^\/(dashboard|practice|community(\/|$)|profile|feedback|wellness|study-abroad|programmes|career-module|mentor-portal|login|signup|forgot-password|reset-password)/.test(location.pathname))
-      document.documentElement.classList.add('theme-boot')
+    document.documentElement.classList.add(
+      /^\/(dashboard|practice|community(\/|$)|profile|feedback|wellness|study-abroad\/|study-rooms|programmes|career-module|mentor-portal)/.test(location.pathname)
+        ? 'theme-boot'
+        : 'theme-boot-navy',
+    )
   </script>
 
   <!-- Defaults. scripts/generate-seo.mjs replaces title + description per page

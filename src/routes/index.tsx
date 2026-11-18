@@ -15,6 +15,7 @@ import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { AiEraArt, TONES, type ArtKind, type ArtTone } from '@/components/landing/AiEraArt'
 import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, FrontDoorTagline, StudentsRow } from '@/components/landing/FrontDoor'
+import { useSiteTheme } from '@/lib/siteTheme'
 
 export const Route = createFileRoute('/')({
   beforeLoad: homeEntry,
@@ -83,6 +84,7 @@ function SectionHead({ kicker, title, accent, body }: { kicker: string; title: s
 }
 
 function HomePage() {
+  useSiteTheme('dark')
   const { user } = useAuthUser()
   const signedIn = Boolean(user)
 
@@ -196,14 +198,14 @@ function HomePage() {
                     <a
                       href={c.test}
                       onClick={() => trackEvent('home_course_test', { course: c.id })}
-                      className="press inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-full bg-white text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
+                      className="press inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-white text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-50"
                     >
                       Take the Aptitude Test <ArrowRight size={15} />
                     </a>
                   ) : (
                     <Link
                       to="/courses"
-                      className="press inline-flex h-10 w-full items-center justify-center rounded-full border border-white/25 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                      className="press inline-flex h-10 w-full items-center justify-center rounded-xl border border-white/25 text-sm font-semibold text-white transition-colors hover:bg-white/10"
                     >
                       Tell Me When It Opens
                     </Link>
