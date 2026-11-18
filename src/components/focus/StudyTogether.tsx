@@ -12,13 +12,17 @@ import { trackEvent } from '@/lib/analytics'
  * theme leaves them as they are.
  */
 
-/** The room in the picture: an illustration, not people who are online. */
-const SEATS: { emoji: string; status: string; tone: string; cam: boolean }[] = [
-  { emoji: '🧑‍💻', status: 'SEO quiz', tone: 'from-[#7b6cf6] to-[#4f46e5]', cam: true },
-  { emoji: '👩‍🎓', status: 'Module 3', tone: 'from-[#ec4899] to-[#a855f7]', cam: true },
-  { emoji: '🎧', status: 'Project grind', tone: 'from-[#f59e0b] to-[#ef4444]', cam: false },
-  { emoji: '📚', status: 'Revision', tone: 'from-[#10b981] to-[#0ea5e9]', cam: true },
+/** The room in the picture: stock photos of students (Unsplash, free to use;
+ *  Paul, 18 Nov 2026: "show student profiles"), not real MySkills students
+ *  and not people who are online. Each tile keeps a colour edge. */
+const SEATS: { photo: string; status: string; ring: string }[] = [
+  { photo: 'photo-1637589308599-3478cc55510d', status: 'SEO quiz', ring: 'ring-[#7b6cf6]' },
+  { photo: 'photo-1675664532731-c8caede9ef6b', status: 'Module 3', ring: 'ring-[#ec4899]' },
+  { photo: 'photo-1675664535418-959dd68004fd', status: 'Project grind', ring: 'ring-[#f59e0b]' },
+  { photo: 'photo-1654262609484-76d1a8f3b016', status: 'Revision', ring: 'ring-[#10b981]' },
 ]
+
+const photoUrl = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=320&h=240&q=70`
 
 const VIBES: { emoji: string; title: string; body: string; tint: string }[] = [
   { emoji: '🎯', title: 'Pick your room', body: 'Your course, your people. Everyone in there is on the same thing as you.', tint: 'from-[#7b6cf6]/25' },
@@ -74,11 +78,13 @@ function RoomPicture() {
         </div>
         <div className="grid grid-cols-2 gap-2">
           {SEATS.map((s, i) => (
-            <div key={s.status} className={`relative aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br ${s.tone}`}>
-              <span className={`study-bob absolute inset-0 flex items-center justify-center text-4xl`} style={{ animationDelay: `${i * 0.4}s` }}>
-                {s.emoji}
-              </span>
-              {!s.cam && <span className="absolute inset-0 bg-black/30" />}
+            <div
+              key={s.status}
+              className={`study-bob relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#1b1446] ring-2 ${s.ring}`}
+              style={{ animationDelay: `${i * 0.4}s` }}
+            >
+              <img src={photoUrl(s.photo)} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+              <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
               <span className="absolute bottom-1.5 left-1.5 rounded-full bg-black/45 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur">
                 {s.status}
               </span>
