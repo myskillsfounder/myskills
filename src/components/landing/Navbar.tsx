@@ -19,7 +19,7 @@ interface NavLink {
   /** Where it goes: the same for everyone, or a visitor's way in via sign-in. */
   to: To
   search?: Record<string, unknown>
-  visitor?: { to: To; search?: Record<string, unknown> }
+  visitor?: { to: To; search?: Record<string, unknown>; label?: string }
   exact?: boolean
 }
 
@@ -27,10 +27,15 @@ const navLinks: NavLink[] = [
   { label: 'Home', to: '/', exact: true },
   { label: 'Learning', to: '/courses' },
   { label: 'Mentors', to: '/community/mentors', visitor: { to: '/mentors' } },
-  { label: 'Study Abroad', to: '/study-abroad' },
   { label: 'Internships', to: '/community/internships', visitor: { to: '/internships' } },
-  { label: 'Community', to: '/community', exact: true },
+  { label: 'Study Abroad', to: '/study-abroad' },
+  // A visitor's /community is the partner page (Paul, 18 Nov 2026: "rename
+  // community as partner with us"); a student's is their marketplace.
+  { label: 'Community', to: '/community', exact: true, visitor: { to: '/community', search: { partners: true }, label: 'Partner With Us' } },
 ]
+
+/** What a link says: a visitor may see other words. */
+const labelFor = (l: NavLink, signedIn: boolean) => (!signedIn && l.visitor?.label) || l.label
 
 /** The light navbar, and the dark one for the dark pages (home, courses), in
  *  their translucent navy glass. */
@@ -98,7 +103,7 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
                 className={t.link}
                 activeProps={{ className: t.active }}
               >
-                {link.label}
+                {labelFor(link, !!user)}
               </Link>
             )
           })}
@@ -145,15 +150,10 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
               const to = target(link)
               return (
                 <Link key={link.label} to={to.to} search={to.search as never} onClick={() => setOpen(false)} className={t.mlink}>
-                  {link.label}
+                  {labelFor(link, !!user)}
                 </Link>
               )
             })}
-            {!user && (
-              <Link to="/community-portal/signup" onClick={() => setOpen(false)} className={t.mlink}>
-                Partner With Us
-              </Link>
-            )}
             <Link to="/blog" onClick={() => setOpen(false)} className={t.mlink}>
               Blog
             </Link>
