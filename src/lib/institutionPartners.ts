@@ -20,6 +20,10 @@ export interface InstitutionPartner {
   google_rating: number | null
   website_url: string | null
   logo_url: string | null
+  /** Checked by the MySkills team (an approved partner). False for an academy
+   *  listed without applying (docs/supabase-institutions-calicut-dm.sql);
+   *  missing before that SQL, when every listing was a partner. */
+  verified?: boolean
 }
 
 export type InstitutionApplicationStatus = 'pending' | 'approved' | 'rejected'
@@ -101,16 +105,16 @@ export async function submitInstitutionPartnerApplication(
   if (error) raise(error)
 }
 
+const PARTNER_COLUMNS = 'id, legal_name, courses_offered, years_in_education, city, google_profile_url, google_rating, website_url, logo_url'
+
 export async function fetchInstitutionPartners(): Promise<InstitutionPartner[]> {
-  const { data, error } = await supabase
-    .from('institution_partners')
-    .select(
-      'id, legal_name, courses_offered, years_in_education, city, google_profile_url, google_rating, website_url, logo_url',
-    )
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: true })
+  const list = (columns: string) =>
+    supabase.from('institution_partners').select(columns).order('sort_order', { ascending: true }).order('created_at', { ascending: true })
+  let { data, error } = await list(`${PARTNER_COLUMNS}, verified`)
+  // Before docs/supabase-institutions-calicut-dm.sql there is no `verified`.
+  if (error && /verified/.test(error.message ?? '')) ({ data, error } = await list(PARTNER_COLUMNS))
   if (error) raise(error)
-  return (data ?? []) as InstitutionPartner[]
+  return (data ?? []) as unknown as InstitutionPartner[]
 }
 
 /** Admin only — returns nothing for everyone else, since RLS filters the rows. */

@@ -466,7 +466,7 @@ export function HomeBody({
           <RailHeader
             icon={Building2}
             title="Places to Learn in Person"
-            subtitle="Verified training institutions for classroom and offline learning."
+            subtitle="Training institutions and academies for classroom and offline learning."
             to="/community/institutions"
             seeAll={institutions.length > 3 ? `All ${institutions.length} Institutions` : 'See Institutions'}
             tint="from-sky-500 to-blue-700"

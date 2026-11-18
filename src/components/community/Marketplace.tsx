@@ -660,7 +660,7 @@ export function InstitutionListingCard({ partner }: { partner: InstitutionPartne
                 <Star size={11} className="fill-amber-400 text-amber-400" /> {partner.google_rating.toFixed(1)}
               </span>
             )}
-            <span>{partner.years_in_education}+ yrs</span>
+            {partner.years_in_education > 0 && <span>{partner.years_in_education}+ yrs</span>}
           </p>
         </div>
       </div>
@@ -676,9 +676,14 @@ export function InstitutionListingCard({ partner }: { partner: InstitutionPartne
       )}
       <div className="flex-1" />
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-ink-900/[0.06] pt-4">
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
-          <BadgeCheck size={13} /> Verified partner
-        </span>
+        {/* Only an academy the team has checked says so. */}
+        {partner.verified !== false ? (
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
+            <BadgeCheck size={13} /> Verified partner
+          </span>
+        ) : (
+          <span />
+        )}
         {applied ? (
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-700">
             <Check size={14} strokeWidth={3} /> Applied
