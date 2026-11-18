@@ -21,6 +21,7 @@ import type { Mentor } from '@/lib/mentors'
 import type { InstitutionPartner } from '@/lib/institutionPartners'
 import { RequestMentoring } from '@/components/community/RequestMentoring'
 import { InterestDialog } from '@/components/community/InterestDialog'
+import { ApplyDialog } from '@/components/community/InstitutionApply'
 import { useMyInterest } from '@/lib/internshipInterest'
 
 type IconType = ComponentType<{ size?: number; className?: string }>
@@ -630,10 +631,14 @@ export function InternshipCard({ track }: { track: InternshipTrack }) {
 
 /* ----------------------------------------------------------- institutions */
 
+/** An academy or partner institution in a rail: who they are, and Apply Now
+ *  (Paul, 18 Nov 2026), which sends a lead to the MySkills team. */
 export function InstitutionListingCard({ partner }: { partner: InstitutionPartner }) {
+  const [applying, setApplying] = useState(false)
+  const [applied, setApplied] = useState(false)
   const extra = partner.courses_offered.length - 2
   return (
-    <Link to="/community/institutions" className="card lift group flex flex-col p-5">
+    <div className="card flex h-full flex-col p-5">
       <div className="flex items-center gap-3.5">
         {partner.logo_url ? (
           <img src={partner.logo_url} alt="" className="h-14 w-14 shrink-0 rounded-xl border border-ink-900/[0.08] bg-white object-contain p-1" />
@@ -674,10 +679,31 @@ export function InstitutionListingCard({ partner }: { partner: InstitutionPartne
         <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
           <BadgeCheck size={13} /> Verified partner
         </span>
-        <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
-          View <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
-        </span>
+        {applied ? (
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-700">
+            <Check size={14} strokeWidth={3} /> Applied
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setApplying(true)}
+            className="press inline-flex h-9 items-center gap-1.5 rounded-xl bg-sky-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-sky-700"
+          >
+            Apply Now <ArrowRight size={14} />
+          </button>
+        )}
       </div>
-    </Link>
+      {applying && (
+        <ApplyDialog
+          partner={partner}
+          courses={partner.courses_offered}
+          onClose={() => setApplying(false)}
+          onDone={() => {
+            setApplying(false)
+            setApplied(true)
+          }}
+        />
+      )}
+    </div>
   )
 }
