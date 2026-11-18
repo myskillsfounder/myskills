@@ -376,3 +376,21 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cheer-float, .cheer-pop { animation-duration: 0.01s; animation-delay: 0s; animation-fill-mode: none; }
 }
+
+/* Study rooms' "study with me" panel (components/focus/StudyTogether.tsx):
+ * tiles bob gently, cheers float up and fade. */
+@keyframes study-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes study-rise {
+  0% { opacity: 0; transform: translateY(14px) scale(0.8); }
+  20% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-26px) scale(1.1); }
+}
+.study-bob { animation: study-bob 3.2s ease-in-out infinite; }
+.study-rise { animation: study-rise 3.4s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .study-bob, .study-rise { animation: none; }
+}
