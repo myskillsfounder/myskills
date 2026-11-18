@@ -56,8 +56,8 @@ export function ProgrammeFrame({
             <ArrowLeft size={16} /> {p.title}
           </Link>
         ) : back === 'catalogue' ? (
-          <Link to="/programmes" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
-            <ArrowLeft size={16} /> Programmes
+          <Link to="/practice" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-600 hover:text-ink-900">
+            <ArrowLeft size={16} /> Workbook
           </Link>
         ) : (
           <Link

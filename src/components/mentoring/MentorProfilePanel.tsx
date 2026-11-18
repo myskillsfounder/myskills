@@ -199,7 +199,7 @@ function LivePreview({
             </div>
             <p className="mt-2.5 text-xs leading-relaxed text-ink-500">
               {askable
-                ? 'Where a student picks who to ask, in Practice. Only your photo, name and title fit here, so make the title count.'
+                ? 'Where a student picks who to ask, in their Workbook. Only your photo, name and title fit here, so make the title count.'
                 : 'You aren’t in this list right now: it only shows mentors with a finished profile who are taking new students.'}
             </p>
           </>

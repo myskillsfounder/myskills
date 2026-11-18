@@ -6,7 +6,7 @@ import { GridBackdrop } from '@/components/landing/GridBackdrop'
 const STEPS = [
   {
     title: 'Take an aptitude assessment',
-    body: '20 statements, about five minutes, no right answers. It shows where you’re strongest and opens Practice.',
+    body: '20 statements, about five minutes, no right answers. It shows where you’re strongest and opens Digital Marketing in your Workbook.',
   },
   {
     title: 'Practise with an AI coach',

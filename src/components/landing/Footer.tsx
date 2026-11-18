@@ -28,7 +28,7 @@ const columns = [
       { label: 'Become a mentor', href: '/become-a-mentor' },
       { label: 'Partner your institution', href: '/become-a-partner-institution' },
       { label: 'Offer internships', href: '/become-an-internship-partner' },
-      { label: 'All partnerships', href: '/community' },
+      { label: 'All partnerships', href: '/community?partners=true' },
     ],
   },
   {

@@ -43,7 +43,7 @@ export function FoundationLock({ unlock }: { unlock: FoundationUnlock }) {
             style={{ width: `${Math.min(100, Math.round((unlock.percent / unlock.required) * 100))}%` }}
           />
         </div>
-        <p className="mt-2 text-xs text-white/50">{toGo}% to go — the Vocabulary Builder is in Practice.</p>
+        <p className="mt-2 text-xs text-white/50">{toGo}% to go — the Vocabulary Builder is in your Workbook.</p>
       </div>
 
       <Link

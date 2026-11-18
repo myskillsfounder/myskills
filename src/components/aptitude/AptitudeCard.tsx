@@ -38,7 +38,7 @@ export function AptitudeCard({ result, gate = false }: { result: AptitudeResult 
             {gate ? 'Start with the aptitude assessment' : 'Take the aptitude assessment'}
           </h2>
           <p className="mt-1.5 text-sm text-white/70">
-            {gate ? '20 statements, about 5 minutes. Unlocks Practice.' : '20 statements, about 5 minutes.'}
+            {gate ? '20 statements, about 5 minutes. Opens Digital Marketing in your Workbook.' : '20 statements, about 5 minutes.'}
           </p>
         </div>
         <Link to="/aptitude-assessment" className={`relative ${cta}`}>

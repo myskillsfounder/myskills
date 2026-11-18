@@ -279,7 +279,7 @@ function HomePage() {
                 Study Online <ArrowRight size={17} />
               </Link>
               <Link to="/courses" onClick={() => trackEvent('home_cta', { cta: 'test', place: 'end' })} className={secondaryCta}>
-                Take the Free Aptitude Test
+                Choose a Free Aptitude Test
               </Link>
             </div>
           </div>

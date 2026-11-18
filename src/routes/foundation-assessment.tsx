@@ -68,7 +68,7 @@ function FoundationAssessmentPage() {
 
   return (
     <DarkShell
-      back={{ to: '/practice', label: 'Back to Practice' }}
+      back={{ to: '/practice', label: 'Back to Workbook' }}
       eyebrow="Digital Marketing"
       title={taken ? 'Your foundational progress' : benchmark ? 'Your Foundation benchmark' : 'Foundation assessment'}
       description={

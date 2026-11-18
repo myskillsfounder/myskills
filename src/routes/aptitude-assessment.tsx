@@ -29,7 +29,7 @@ export const Route = createFileRoute('/aptitude-assessment')({
 const COPY: QuizCopy = {
   draftPrefix: 'myskills.dmAptitudeDraft',
   intro:
-    'You’ll see one statement at a time. Say how often it’s true for you — there are no right answers, so answer as you really are. Finishing it unlocks Practice.',
+    'You’ll see one statement at a time. Say how often it’s true for you — there are no right answers, so answer as you really are. Finishing it opens Digital Marketing in your Workbook.',
   closing: {
     title: 'Which part of marketing are you most curious about?',
     hint: 'In your own words. It’s optional and isn’t scored — it helps us point you at the right place to start.',
@@ -86,7 +86,7 @@ function AptitudeAssessmentPage() {
 
   return (
     <DarkShell
-      back={user ? { to: '/practice', label: 'Back to Practice' } : { to: '/', label: 'Back' }}
+      back={user ? { to: '/practice', label: 'Back to Workbook' } : { to: '/digital-marketing', label: 'Back' }}
       eyebrow="Digital Marketing"
       title={taken ? 'Your marketing aptitude' : 'Aptitude assessment'}
       description={

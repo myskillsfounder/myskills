@@ -107,7 +107,7 @@ export function VerificationCard({
         {mentor &&
           mentor.ready &&
           (mentor.accepting ? (
-            <Row icon={Check} tone="done" title="Taking new students" detail="Students can send you a request from Practice." />
+            <Row icon={Check} tone="done" title="Taking new students" detail="Students can send you a request from their Workbook." />
           ) : (
             <Row
               icon={PauseCircle}

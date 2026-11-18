@@ -33,7 +33,7 @@ export function SignUpToSee({ route }: { route: TestRoute }) {
         {[
           { icon: BarChart3, text: 'Your aptitude profile, skill by skill' },
           { icon: Compass, text: 'Where you should start in the programme' },
-          { icon: Sparkles, text: 'Practice, a mentor and your Global Readiness Score' },
+          { icon: Sparkles, text: 'A Workbook, a mentor and your Global Readiness Score' },
         ].map(({ icon: Icon, text }) => (
           <li key={text} className="flex items-center gap-2.5">
             <Icon size={16} className="shrink-0 text-brand-200" />

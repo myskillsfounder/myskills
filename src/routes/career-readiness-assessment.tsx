@@ -93,7 +93,7 @@ function CareerReadinessAssessmentPage() {
 
   return (
     <DarkShell
-      back={user ? { to: '/practice', label: 'Back to Practice' } : { to: '/', label: 'Back' }}
+      back={user ? { to: '/practice', label: 'Back to Workbook' } : { to: '/career-readiness', label: 'Back' }}
       eyebrow="Global Leadership"
       title={taken ? 'Your leadership aptitude' : 'Leadership Aptitude Test'}
       description={
