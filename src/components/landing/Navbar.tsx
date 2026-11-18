@@ -113,7 +113,7 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
           {/* Wait for the session check to avoid a Log in -> profile flash */}
           {!loading &&
             (user ? (
-              <Link to="/study-rooms" className={getStarted}>
+              <Link to="/community" className={getStarted}>
                 Open MySkills
               </Link>
             ) : (
@@ -128,7 +128,7 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
                 <Link to="/login" className={t.logIn}>
                   Log In
                 </Link>
-                {/* Sign up, and a new account lands in Study rooms (Paul, 4 Nov 2026). */}
+                {/* Sign up, and a new account lands on Home (Paul, 18 Nov 2026). */}
                 <Link to="/signup" className={getStarted}>
                   Study Online
                 </Link>
@@ -162,7 +162,7 @@ export function Navbar({ dark = false }: { dark?: boolean } = {}) {
             {!loading &&
               (user ? (
                 <Link
-                  to="/study-rooms"
+                  to="/community"
                   onClick={() => setOpen(false)}
                   className="w-full press inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-4 text-center text-sm font-semibold text-white"
                 >

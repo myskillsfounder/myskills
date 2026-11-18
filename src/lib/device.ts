@@ -53,6 +53,7 @@ const PHONE_APP = [
 
 export const inPhoneApp = (pathname: string) => PHONE_APP.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
-/** Where a signed-in student lands: Study rooms, on a phone too (Paul, 3 Nov
- *  2026: "students come together and study online"). */
-export const homePath = (): '/study-rooms' => '/study-rooms'
+/** Where a signed-in student lands, a new account too: Home, the app's first
+ *  tab (Paul, 18 Nov 2026: "a new user goes to study room, he should land in
+ *  home page"). It was Study rooms from 3 Nov. */
+export const homePath = (): '/community' => '/community'

@@ -8,7 +8,7 @@ import { FRONT_DOOR_LINE, FrontDoorCards, FrontDoorHeadline, FrontDoorTagline, S
  * The phone's front door, for someone signed out (Paul, 4 Nov 2026: "remove
  * the room preview, keep students across India studying together", then
  * "bring the cards down, move H1 to the top"). The headline, what MySkills
- * offers, and one thing to do. "Study Online" signs them up, and a new account lands in Study rooms
+ * offers, and one thing to do. "Study Online" signs them up, and a new account lands on Home
  * (lib/device.ts). Anyone signed in is sent on by the guard.
  *
  * The words and cards are shared with the computer home (components/landing/FrontDoor.tsx).
