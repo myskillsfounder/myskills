@@ -116,7 +116,7 @@ function Continue({ courses }: { courses: CourseProgress[] }) {
         {courses.length === 0 && (
           <li>
             <Link to="/practice" className="card press flex items-center justify-between gap-3 p-4">
-              <span className="text-sm font-semibold text-ink-900">Open Practice</span>
+              <span className="text-sm font-semibold text-ink-900">Open Workbook</span>
               <ArrowRight size={16} className="shrink-0 text-ink-400" />
             </Link>
           </li>

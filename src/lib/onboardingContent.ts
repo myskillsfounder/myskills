@@ -256,7 +256,7 @@ const STEPS: Record<StartKey, Plan['steps']> = {
   marketing: [
     {
       title: 'Take the Marketing aptitude',
-      body: '20 statements, about five minutes. It shows how marketing already shows up in your life, and opens Practice.',
+      body: '20 statements, about five minutes. It shows how marketing already shows up in your life, and opens Digital Marketing in your Workbook.',
     },
     {
       title: 'Practise eight skill tracks',

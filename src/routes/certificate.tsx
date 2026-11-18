@@ -160,7 +160,7 @@ function CertificatePage() {
                   Digital Marketing Foundation assessment
                 </Link>
                 <Link
-                  to="/programmes"
+                  to="/practice"
                   className="inline-flex items-center rounded-full border border-ink-300 bg-white px-4 py-2 text-sm font-semibold text-ink-800 hover:bg-ink-100"
                 >
                   Other programmes

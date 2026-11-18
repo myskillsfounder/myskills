@@ -33,7 +33,7 @@ export function AptitudeResult({ result }: { result: Result }) {
       levelTone={LEVEL_TONE_DARK}
       start={{
         title: top.name,
-        body: `It’s your strongest pull, so these skill tracks should feel the most natural: ${tracks.join(' and ')}. A good place to begin. Practice is now unlocked.`,
+        body: `It’s your strongest pull, so these skill tracks should feel the most natural: ${tracks.join(' and ')}. A good place to begin. Digital Marketing is now in your Workbook.`,
         cta: { to: '/practice', label: 'Start practising' },
       }}
       detail={{
