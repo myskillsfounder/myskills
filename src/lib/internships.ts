@@ -422,6 +422,36 @@ export async function fetchAdminPipeline(studentId?: string): Promise<AdminAppli
   return (data ?? []) as AdminApplication[]
 }
 
+/** What the team needs to decide on an application: docs/supabase-admin-internship-decide.sql. */
+export interface AdminApplicationDetail {
+  note: string | null
+  phone: string | null
+  /** The student's latest CV, from an application with a CV on Home. */
+  cv_path: string | null
+  cv_name: string | null
+}
+
+const NOT_READY = 'This isn’t ready yet: run docs/supabase-admin-internship-decide.sql in Supabase.'
+
+export async function fetchAdminApplication(id: string): Promise<AdminApplicationDetail> {
+  const { data, error } = await supabase.rpc('admin_internship_application', { p_application: id })
+  if (error) {
+    if (error.code === 'PGRST202') throw new Error(NOT_READY)
+    fail(error)
+  }
+  const row = (data ?? [])[0] as AdminApplicationDetail | undefined
+  return row ?? { note: null, phone: null, cv_path: null, cv_name: null }
+}
+
+/** The team shortlists, offers or turns down an applicant; the student gets the same email as from the company. */
+export async function adminDecideApplication(id: string, action: 'shortlist' | 'offer' | 'reject'): Promise<void> {
+  const { error } = await supabase.rpc('admin_decide_internship_application', { p_application: id, p_action: action })
+  if (error) {
+    if (error.code === 'PGRST202') throw new Error(NOT_READY)
+    fail(error)
+  }
+}
+
 /** How each stage reads to the team. */
 export const ADMIN_STATUS: Record<ApplicationStatus, { label: string; tone: 'neutral' | 'brand' | 'success' | 'warning' }> = {
   applied: { label: 'Applied', tone: 'brand' },

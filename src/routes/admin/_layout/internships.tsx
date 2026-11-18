@@ -178,7 +178,7 @@ function RoleDetail({ r, counts, onChanged }: { r: AdminRole; counts: RoleCounts
           ) : (
             <ul className="card mt-2 divide-y divide-ink-900/[0.06]">
               {counts.rows.map((a) => (
-                <ApplicationRow key={a.id} a={a} showRole={false} />
+                <ApplicationRow key={a.id} a={a} showRole={false} onChanged={onChanged} />
               ))}
             </ul>
           )}
@@ -534,11 +534,11 @@ function InternshipsAdminPage() {
             <section>
               <h2 className={heading}>Applications · {pipeline.length}</h2>
               <p className="mt-1 max-w-2xl text-sm text-ink-600">
-                Every student who applied, at every company, and where it stands. Something is flagged when it hasn’t
-                moved in a week, or an internship is past its end with no sign-off: a nudge to the company or student.
+                Every student who applied, at every company. The team handles each one: open it to see the note,
+                phone and CV, then shortlist, send the offer or turn it down. Flagged when it has waited a week.
               </p>
               <div className="mt-3">
-                <InternshipPipeline rows={pipeline} />
+                <InternshipPipeline rows={pipeline} onChanged={() => void load()} />
               </div>
             </section>
           )}
