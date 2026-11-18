@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Link } from '@tanstack/react-router'
 import { Briefcase, Check, FileText, Lock, Trash2, Upload, X } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import { useProfile } from '@/lib/useProfile'
@@ -14,6 +13,7 @@ import {
   type MyInterest,
 } from '@/lib/internshipInterest'
 import type { InternshipTrack } from './Marketplace'
+import { ApplicationStrength } from './ApplicationStrength'
 
 /**
  * Apply to a kind of internship with a CV: choose a PDF or Word file, add a short
@@ -31,59 +31,6 @@ export const INTEREST_LABEL: Record<InterestStatus, string> = {
 
 const size = (bytes: number) => (bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`)
 
-/**
- * The MySkills profile that goes with the application (Paul, 18 Nov 2026: apply with
- * your profile). Shown so the student knows what is being shared, and nudged to fill
- * in what a company would look for: a way to reach them, a headline and their skills.
- */
-function ProfileGoesWith() {
-  const { profile, loading } = useProfile()
-  if (loading) return <div className="mt-6 h-20 animate-pulse rounded-2xl bg-ink-900/[0.04]" aria-hidden />
-  if (!profile) return null
-  const missing = [
-    !profile.phone.trim() && 'a phone number',
-    !profile.headline.trim() && 'a headline',
-    profile.skills.length === 0 && 'your skills',
-  ].filter(Boolean) as string[]
-  const name = profile.full_name.trim() || 'You'
-  return (
-    <div className="mt-6 rounded-2xl border border-ink-200 p-4">
-      <p className="text-sm font-semibold text-ink-900">Your profile goes with your application</p>
-      <div className="mt-3 flex items-center gap-3">
-        {profile.avatar_url ? (
-          <img src={profile.avatar_url} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover" />
-        ) : (
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-semibold text-white">
-            {name.slice(0, 1).toUpperCase()}
-          </span>
-        )}
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-ink-900">{name}</p>
-          <p className="truncate text-sm text-ink-600">{[profile.headline, profile.location].filter((x) => x.trim()).join(' · ') || 'No headline yet'}</p>
-        </div>
-      </div>
-      {profile.skills.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {profile.skills.slice(0, 6).map((k) => (
-            <span key={k} className="rounded-full bg-ink-900/[0.05] px-2.5 py-1 text-[11px] font-medium text-ink-700">
-              {k}
-            </span>
-          ))}
-        </div>
-      )}
-      <p className="mt-3 text-xs leading-relaxed text-ink-500">Also shared: your progress and Global Readiness Score.</p>
-      {missing.length > 0 && (
-        <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-relaxed text-amber-900">
-          Add {missing.join(', ')} so a company can reach you and see what you can do.{' '}
-          <Link to="/profile" className="font-semibold underline underline-offset-2">
-            Complete my profile
-          </Link>
-        </p>
-      )}
-    </div>
-  )
-}
-
 export function InterestDialog({ track, existing, onClose }: { track: InternshipTrack; existing?: MyInterest; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -94,6 +41,10 @@ export function InterestDialog({ track, existing, onClose }: { track: Internship
   const [busy, setBusy] = useState(false)
   const [sent, setSent] = useState(false)
   const [confirmWithdraw, setConfirmWithdraw] = useState(false)
+  // The profile that goes with the application, and how strong it is.
+  const { profile, loading: profileLoading, save, upload } = useProfile()
+  const strength = (compact: boolean) =>
+    profile ? <ApplicationStrength profile={profile} save={save} upload={upload} suggestedSkills={track.skills} compact={compact} /> : null
 
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
@@ -192,6 +143,7 @@ export function InterestDialog({ track, existing, onClose }: { track: Internship
               >
                 Done
               </button>
+              {strength(true)}
             </div>
           ) : existing && !editing ? (
             <div className="mt-6 rounded-2xl bg-ink-900/[0.03] p-4">
@@ -205,6 +157,7 @@ export function InterestDialog({ track, existing, onClose }: { track: Internship
               <p className="mt-3 text-xs text-ink-500">
                 When a partner company opens this kind of internship, we share your application with them and let you know.
               </p>
+              {strength(true)}
               {error && (
                 <p role="alert" className="mt-3 text-sm text-red-600">
                   {error}
@@ -237,7 +190,7 @@ export function InterestDialog({ track, existing, onClose }: { track: Internship
             </div>
           ) : (
             <div>
-              <ProfileGoesWith />
+              {profileLoading ? <div className="mt-6 h-24 animate-pulse rounded-2xl bg-ink-900/[0.04]" aria-hidden /> : strength(false)}
               <p className="mt-6 text-sm font-semibold text-ink-900">Your CV</p>
               <input
                 ref={fileRef}
