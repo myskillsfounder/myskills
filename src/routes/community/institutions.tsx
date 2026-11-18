@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useMemo, useState } from 'react'
 import { errorMessage } from '@/lib/errors'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
@@ -9,7 +8,6 @@ import {
   Building2,
   CheckCircle2,
   Clock,
-  ExternalLink,
   GraduationCap,
   MapPin,
   School,
@@ -17,11 +15,9 @@ import {
   Star,
   Trophy,
   Users,
-  X,
 } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
 import { useAuthUser } from '@/lib/useAuth'
-import { useProfile } from '@/lib/useProfile'
 import {
   fetchInstitutionCourses,
   fetchInstitutionPartners,
@@ -31,10 +27,11 @@ import {
   type InstitutionPartnerCourse,
   type InstitutionPartnerRating,
 } from '@/lib/institutionPartners'
-import { STUDENT_STAGE, enquireInstitution, fetchMyEnquiries, type EnquiryInput, type MyEnquiry } from '@/lib/institutionLeads'
+import { STUDENT_STAGE, fetchMyEnquiries, type MyEnquiry } from '@/lib/institutionLeads'
 import { AppShell } from '@/components/app/AppShell'
+import { ApplyDialog } from '@/components/community/InstitutionApply'
 import { CommunityHero, HowItWorks } from '@/components/community/CommunityHero'
-import { Alert, Button, EmptyState, Input, Skeleton, Textarea } from '@/components/ui'
+import { Alert, EmptyState, Skeleton } from '@/components/ui'
 
 // The parent /community layout allows signed-out visitors through (its index
 // page is a public marketing page), so this leaf needs its own guard to stay
@@ -44,8 +41,6 @@ export const Route = createFileRoute('/community/institutions')({
   beforeLoad: requireOnboarded,
   component: InstitutionsPage,
 })
-
-const WHEN = ['Any time', 'Weekday mornings', 'Weekday afternoons', 'Weekday evenings', 'Weekends']
 
 interface RatingStats {
   average: number
@@ -95,103 +90,6 @@ function RatingStars({
   )
 }
 
-/**
- * "Get a quote" (Paul, 27 Oct 2026): the student's request for fees and batch
- * dates, which goes to the MySkills team as a lead
- * (docs/supabase-institution-leads.sql). Their name and email come from
- * their account; the phone from their profile, which they can change here.
- */
-function EnquiryForm({
-  partner,
-  courses,
-  onDone,
-}: {
-  partner: InstitutionPartner
-  courses: string[]
-  onDone: () => void
-}) {
-  const { profile } = useProfile()
-  const [form, setForm] = useState<EnquiryInput>({ course: '', phone: '', city: '', preferred: WHEN[0], message: '' })
-  const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState<string>()
-
-  useEffect(() => {
-    setForm((f) => ({ ...f, phone: f.phone || profile?.phone || '', city: f.city || partner.city || '' }))
-  }, [profile?.phone, partner.city])
-
-  const set = (key: keyof EnquiryInput) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [key]: e.target.value }))
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setSubmitError(undefined)
-    setSubmitting(true)
-    try {
-      await enquireInstitution(partner.id, form)
-      onDone()
-    } catch (err) {
-      setSubmitError(errorMessage(err))
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4">
-      <p className="text-sm text-ink-600">
-        Tell us what you want to learn. The MySkills team will send you {partner.legal_name}’s fees and batch dates
-        within two working days, and can set up a visit.
-      </p>
-      {courses.length > 0 && (
-        <label className="block text-sm font-medium text-ink-800">
-          Course you’re interested in
-          <select value={form.course} onChange={set('course')} className="field mt-1.5 block w-full">
-            <option value="">Not sure yet</option>
-            {courses.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Input label="Phone" value={form.phone} onChange={set('phone')} required={false} type="tel" autoComplete="tel" />
-        <Input label="City" value={form.city} onChange={set('city')} required={false} />
-      </div>
-      <label className="block text-sm font-medium text-ink-800">
-        When suits you for a call
-        <select value={form.preferred} onChange={set('preferred')} className="field mt-1.5 block w-full">
-          {WHEN.map((w) => (
-            <option key={w} value={w}>
-              {w}
-            </option>
-          ))}
-        </select>
-      </label>
-      <Textarea
-        label="Anything else?"
-        value={form.message}
-        onChange={set('message')}
-        required={false}
-        rows={2}
-        maxLength={2000}
-        placeholder="Your budget, batch timing, or a question for the team"
-      />
-      <p className="text-xs text-ink-500">Your name, email and phone go to the MySkills team only.</p>
-
-      {submitError && (
-        <Alert tone="danger" title="Couldn't send your request">
-          <p>{submitError}</p>
-        </Alert>
-      )}
-
-      <Button type="submit" size="sm" icon={Send} disabled={submitting}>
-        {submitting ? 'Sending…' : 'Request a quote'}
-      </Button>
-    </form>
-  )
-}
-
 /** Where a student's enquiry stands, in plain words. */
 function EnquiryStatus({ enquiry }: { enquiry: MyEnquiry }) {
   const st = STUDENT_STAGE[enquiry.stage]
@@ -213,46 +111,6 @@ function EnquiryStatus({ enquiry }: { enquiry: MyEnquiry }) {
 }
 
 /** The quote request, over the page. */
-function QuoteDialog({ partner, courses, onClose, onDone }: { partner: InstitutionPartner; courses: string[]; onClose: () => void; onDone: () => void }) {
-  const closeRef = useRef<HTMLButtonElement>(null)
-  useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null
-    closeRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    const overflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = overflow
-      previous?.focus()
-    }
-  }, [onClose])
-
-  return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label={`Get a quote from ${partner.legal_name}`}>
-      <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-ink-900/50" />
-      <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 shadow-e2 sm:max-w-lg sm:rounded-3xl">
-        <button
-          ref={closeRef}
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-900"
-        >
-          <X size={18} />
-        </button>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-700">Get a quote</p>
-        <h2 className="mt-1 pr-10 font-display text-xl font-semibold text-ink-900">{partner.legal_name}</h2>
-        <div className="mt-4">
-          <EnquiryForm partner={partner} courses={courses} onDone={onDone} />
-        </div>
-      </div>
-    </div>,
-    document.body,
-  )
-}
-
 function PartnerCard({
   partner,
   courses,
@@ -346,30 +204,22 @@ function PartnerCard({
 
       {enquiry && <EnquiryStatus enquiry={enquiry} />}
 
-      <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5 text-sm">
-        {partner.website_url && (
-          <a href={partner.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-ink-600 hover:text-sky-700">
-            <ExternalLink size={14} /> Website
-          </a>
-        )}
-        {partner.google_profile_url && (
-          <a href={partner.google_profile_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-ink-600 hover:text-sky-700">
-            <ExternalLink size={14} /> Google
-          </a>
-        )}
-        {!open && (
+      {/* One action (Paul, 18 Nov 2026: "just apply now button"): the lead goes to the
+          MySkills team, so no links out to the institution's own site. */}
+      {!open && (
+        <div className="mt-auto pt-5">
           <button
             type="button"
             onClick={() => setQuoting(true)}
-            className="press ml-auto inline-flex h-10 items-center gap-1.5 rounded-xl bg-sky-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-sky-700"
+            className="press inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-sky-600 px-4 text-sm font-semibold text-white shadow-e1 transition-colors hover:bg-sky-700"
           >
-            <Send size={14} /> {enquiry ? 'Ask again' : 'Get a quote'}
+            <Send size={14} /> {enquiry ? 'Apply Again' : 'Apply Now'}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {quoting && (
-        <QuoteDialog
+        <ApplyDialog
           partner={partner}
           courses={courseNames}
           onClose={() => setQuoting(false)}
