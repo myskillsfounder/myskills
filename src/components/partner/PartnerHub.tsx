@@ -51,7 +51,8 @@ function usePartners() {
   useEffect(() => {
     let active = true
     fetchMentors().then((l) => active && setMentors(l), () => {})
-    fetchInstitutionPartners().then((l) => active && setInstitutions(l), () => {})
+    // Partners only: an academy listed without applying isn't one (verified: false).
+    fetchInstitutionPartners().then((l) => active && setInstitutions(l.filter((p) => p.verified !== false)), () => {})
     return () => {
       active = false
     }

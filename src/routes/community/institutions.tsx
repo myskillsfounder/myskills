@@ -160,10 +160,17 @@ function PartnerCard({
                 <MapPin size={12} className="text-ink-400" /> {partner.city}
               </span>
             )}
-            <span className="inline-flex items-center gap-1">
-              <Award size={12} className="text-ink-400" />
-              {partner.years_in_education} {partner.years_in_education === 1 ? 'year' : 'years'} in education
-            </span>
+            {partner.years_in_education > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Award size={12} className="text-ink-400" />
+                {partner.years_in_education} {partner.years_in_education === 1 ? 'year' : 'years'} in education
+              </span>
+            )}
+            {partner.verified !== false && (
+              <span className="inline-flex items-center gap-1 font-medium text-emerald-700">
+                <BadgeCheck size={12} /> Verified partner
+              </span>
+            )}
           </p>
         </div>
       </div>
@@ -335,11 +342,11 @@ function InstitutionsPage() {
           eyebrow="Institutions"
           title="Learn in a room,"
           accent="together."
-          body="Some things are learnt best in person: a classroom, a trainer who sees you, and classmates to practise with. These are verified training institutions near you, for offline and peer learning."
+          body="Some things are learnt best in person: a classroom, a trainer who sees you, and classmates to practise with. These are training institutions and academies near you, for offline and peer learning."
           points={[
             { icon: School, label: 'Offline classes' },
             { icon: Users, label: 'Learn with peers' },
-            { icon: BadgeCheck, label: 'Verified partners' },
+            { icon: BadgeCheck, label: 'The MySkills team helps you enrol' },
           ]}
         />
         <HowItWorks
