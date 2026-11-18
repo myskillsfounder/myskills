@@ -79,7 +79,7 @@ export async function requireOnboarded(ctx?: GuardContext): Promise<void> {
   }
   if (isPhone() && ctx && !inPhoneApp(ctx.location.pathname)) throw redirect({ to: homePath() })
   // A test answered before signing up is scored first: signing in (email or
-  // Google) lands on Study rooms, which sends them back to it.
+  // Google) lands on Home, which sends them back to it.
   const home = ctx ? atHome(ctx.location.pathname) : false
   const waiting = home ? pendingAptitudeRoute() : null
   // href: an engine programme's test has its own address (/programmes/<slug>/aptitude).
@@ -161,11 +161,13 @@ export async function homeEntry(): Promise<void> {
  * allowed through; only a signed-in-but-not-onboarded user gets sent to
  * finish onboarding, matching what they'd hit anywhere else in the app.
  */
-export async function requireOnboardedIfSignedIn(): Promise<void> {
+export async function requireOnboardedIfSignedIn(ctx?: GuardContext): Promise<void> {
   const session = await currentSession()
-  if (session && session.user.user_metadata?.onboarded !== true) {
-    throw redirect({ to: notOnboardedPath(session) })
-  }
+  if (!session) return
+  // Signed in, it is an app page like any other: and /community is Home,
+  // where signing in lands, so a test taken before signing up or a card's
+  // "after sign-in" place is picked up here (requireOnboarded).
+  await requireOnboarded(ctx)
 }
 
 /**

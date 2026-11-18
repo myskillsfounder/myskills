@@ -92,7 +92,7 @@ function ResetPasswordPage() {
 
   if (done) {
     return (
-      <AuthShell title="Password updated" subtitle="Taking you to Study rooms…" footer={null}>
+      <AuthShell title="Password updated" subtitle="Taking you to your home page…" footer={null}>
         <div className="h-11" />
       </AuthShell>
     )
