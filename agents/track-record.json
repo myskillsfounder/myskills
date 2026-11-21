@@ -117,6 +117,127 @@
         "rulesBroken": {}
       },
       "note": ""
+    },
+    {
+      "date": "2026-11-21",
+      "programme": "ai-powered-data-analytics",
+      "job": "improve",
+      "rounds": 2,
+      "lessonsAdded": 0,
+      "first": {
+        "stage": "workbooks added (review 4)",
+        "questions": 55,
+        "mustPer10": 0,
+        "shouldPer10": 2.4,
+        "rightIsLongestPct": 14.5,
+        "verdict": "ready",
+        "byCategory": {
+          "question-design": 8,
+          "teaching": 3,
+          "accuracy": 1,
+          "house-style": 1
+        },
+        "rulesBroken": {
+          "14": 1,
+          "19": 3,
+          "22": 1
+        }
+      },
+      "last": {
+        "stage": "round 5 (review 5)",
+        "questions": 55,
+        "mustPer10": 0,
+        "shouldPer10": 0.7,
+        "rightIsLongestPct": 14.5,
+        "verdict": "ready",
+        "byCategory": {
+          "question-design": 4
+        },
+        "rulesBroken": {
+          "19": 2
+        }
+      },
+      "note": "Workbook chapters added to all 10 modules (Paul, 21 Nov). Review 4 ready with 13 should-fix (check-ins rehearsing the quiz, clue options, answer-giving hints); review 5 ready with 4 left (rule 19), fixed and checked by hand."
+    },
+    {
+      "date": "2026-11-21",
+      "programme": "ai-powered-entrepreneurship",
+      "job": "improve",
+      "rounds": 2,
+      "lessonsAdded": 0,
+      "first": {
+        "stage": "workbooks added (review 3)",
+        "questions": 43,
+        "mustPer10": 0,
+        "shouldPer10": 3,
+        "rightIsLongestPct": 11.6,
+        "verdict": "ready",
+        "byCategory": {
+          "time": 2,
+          "question-design": 7,
+          "teaching": 3,
+          "house-style": 1
+        },
+        "rulesBroken": {
+          "3": 2,
+          "19": 1
+        }
+      },
+      "last": {
+        "stage": "round 4 (review 4)",
+        "questions": 43,
+        "mustPer10": 0,
+        "shouldPer10": 0,
+        "rightIsLongestPct": 11.6,
+        "verdict": "ready",
+        "byCategory": {},
+        "rulesBroken": {}
+      },
+      "note": "Workbook chapters added to all 7 modules (Paul, 21 Nov). Review 3 ready with 13 should-fix (check-ins repeating quiz/final decisions, give-away hints, time undercounted, food-seller analogies); review 4 ready with 0, three hint ideas fixed by hand."
+    },
+    {
+      "date": "2026-11-21",
+      "programme": "agentic-ai",
+      "job": "draft",
+      "rounds": 3,
+      "lessonsAdded": 14,
+      "first": {
+        "stage": "draft (review 1)",
+        "questions": 59,
+        "mustPer10": 0.8,
+        "shouldPer10": 3.2,
+        "rightIsLongestPct": 10.2,
+        "verdict": "needs_work",
+        "byCategory": {
+          "question-design": 15,
+          "accuracy": 4,
+          "house-style": 1,
+          "teaching": 3,
+          "coverage": 1
+        },
+        "rulesBroken": {
+          "5": 2,
+          "20": 6,
+          "21": 7
+        }
+      },
+      "last": {
+        "stage": "closing (review 4, fixes applied)",
+        "questions": 59,
+        "mustPer10": 0.3,
+        "shouldPer10": 0.3,
+        "rightIsLongestPct": 15.3,
+        "verdict": "ready after review 4 fixes",
+        "byCategory": {
+          "question-design": 3,
+          "teaching": 1
+        },
+        "rulesBroken": {
+          "21": 2,
+          "22": 1
+        }
+      },
+      "note": "New programme with workbook chapters in all 11 modules. Clue test options-only 88% -> 73% -> 61% -> 58% (final 6/15). Review 4's four exact fixes applied by hand (m08-q4 ambiguous/untaught, m10-q4, blueprint). Rules 28-41 added."
     }
   ],
   "outcomes": []

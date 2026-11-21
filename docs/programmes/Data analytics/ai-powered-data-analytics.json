@@ -11,7 +11,7 @@
       "Present a recommendation a manager can act on, backed by a portfolio project"
     ],
     "level": "beginner",
-    "hours": 34
+    "hours": 36
   },
   "skills": [
     {
@@ -234,7 +234,7 @@
       "skill": "data-literacy",
       "level": "foundation",
       "outcome": "Turn a vague business question into a specific one you can answer with data.",
-      "minutes": 60,
+      "minutes": 72,
       "learn": [
         {
           "title": "Start with the decision, not the data",
@@ -254,13 +254,15 @@
           "id": "t1",
           "title": "Sharpen a vague question",
           "prompt": "A café chain’s owner in Hyderabad asks: “Why are we losing customers?” Rewrite this as two or three specific questions you could answer with data. For each one, write the four parts from the first card: who decides, the decision, the measure and the period. Then say what data you would need.",
-          "hint": "Say what “losing” looks like in the data, for example no visit in 60 days. Name which customers you mean: regulars, new ones, or one branch."
+          "hint": "Say what “losing” looks like in the data, for example no visit in 60 days. Name which customers you mean: regulars, new ones, or one branch.",
+          "after": "A strong answer first defines “losing” in data, for example a regular with no visit in 60 days. One question might be: which branch lost the most regulars last quarter, so the owner knows where to bring back a loyalty offer? Each question names who decides, the decision, the measure and the period, and lists the data needed, such as visit dates by customer and branch. A weak answer just restates “why are we losing customers?”"
         },
         {
           "id": "t2",
           "title": "Spot the wrong type",
-          "prompt": "You will analyse Masala Mart, a fictional online spice brand. Its raw orders file has nine columns: order_id, order_date, customer_id, city, sku, quantity, order_value, payment_method, returned. Three of its rows: [Row 1] MM10002 | 01/10/2025 | C0009 | Kochi | MM-BL-03 | 1 | ₹150 | UPI | 0 [Row 2] MM10004 | 01/10/2025 | C0117 | bengaluru | MM-GS-03 | 4 | ₹380 | UPI | 0 [Row 3] MM10001 | 01/10/2025 | C0035 | Hyderabad | MM-BL-02 | 4 | 520 | COD | 0. Now: label each column’s type. Which two columns would break a total or a sort, and how? Name one other problem. “returned” is 1 if returned, 0 if kept: what would its average tell you?",
-          "hint": "Would a SUM count “₹150”? Stored as text, would 01/10/2025 sort before or after 02/09/2025? Look at how each city is typed."
+          "prompt": "You will analyse Masala Mart, a fictional online spice brand. Its raw orders file has nine columns. Here are the header and three of its rows:\norder_id | order_date | customer_id | city | sku | quantity | order_value | payment_method | returned\nMM10002 | 01/10/2025 | C0009 | Kochi | MM-BL-03 | 1 | ₹150 | UPI | 0\nMM10004 | 01/10/2025 | C0117 | bengaluru | MM-GS-03 | 4 | ₹380 | UPI | 0\nMM10001 | 01/10/2025 | C0035 | Hyderabad | MM-BL-02 | 4 | 520 | COD | 0\nNow: label each column’s type. Which two columns would break a total or a sort, and how? Name one other problem. “returned” is 1 if returned, 0 if kept: what would its average tell you?",
+          "hint": "Would a SUM count “₹150”? Stored as text, would 01/10/2025 sort before or after 02/09/2025? Look at how each city is typed.",
+          "after": "order_id, customer_id and sku are labels; city and payment_method are categories; order_date is a date; quantity and order_value are numbers to add; returned is a 1/0 flag. order_value can break a total: “₹150” may be stored as text, and SUM skips text. order_date can break a sort: as text, 01/10/2025 sorts before 02/09/2025, though it is later. The other problem is “bengaluru” in lower case, which splits from “Bengaluru”. The average of returned is the return rate."
         }
       ],
       "reflection": {
@@ -353,7 +355,114 @@
           "topic": "Correlation and causation",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "Data doesn’t answer questions. People do, when they ask the right one first.",
+        "idea": [
+          "An analyst starts with the decision, not the data. Ask who will decide, what they will decide, which measure would change their mind, and over what period.",
+          "Then read every number with care. Know each column’s type, look at the spread as well as the average, and remember that two things moving together don’t prove that one causes the other."
+        ],
+        "why": [
+          "You answer the question your manager actually has",
+          "You don’t add up codes, like PIN codes, that only look like numbers",
+          "You don’t claim a cause the data can’t show"
+        ],
+        "simple": "An analyst is like a good doctor. The doctor asks what is wrong before ordering tests. Ordering every test first costs money and can still miss the point.",
+        "myth": {
+          "wrong": "The more numbers a report has, the more useful it is.",
+          "right": "A useful report answers one question that leads to a decision. Extra numbers hide the answer."
+        },
+        "example": {
+          "title": "The tuition centre’s evening batch",
+          "body": "Imagine Farhan, who runs a tuition centre in Bhopal. He asks, “Is the new evening batch working?” His analyst splits it into four parts. Who decides: Farhan. The decision: keep the evening batch next term or not. The measure: students enrolled, and fees left after the teacher’s pay. The period: the first 8 weeks. Now the analysis has a finish line: one number settles one choice."
+        },
+        "terms": [
+          {
+            "term": "Decision question",
+            "meaning": "A question tied to a choice someone will make, with an owner and a deadline."
+          },
+          {
+            "term": "Measure (metric)",
+            "meaning": "The number that would change the decision, such as orders a day."
+          },
+          {
+            "term": "Data type",
+            "meaning": "What a column holds: a number to add, a label, a category, a date or text."
+          },
+          {
+            "term": "Median",
+            "meaning": "The middle value when you sort the numbers; a few huge values don’t pull it."
+          },
+          {
+            "term": "Spread",
+            "meaning": "How far apart the values are: the lowest, the highest and the middle."
+          },
+          {
+            "term": "Correlation",
+            "meaning": "Two numbers moving together. It doesn’t show that one causes the other."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Turn a vague question into a decision",
+            "prompt": "I run a small mobile-recharge and phone-accessories shop in a college town. My question is: “How is the shop doing?” Rewrite it as two specific questions that each lead to a decision. For each, give: who decides, the decision, the measure, and the period. Keep it under 120 words.",
+            "look_for": "Does each question name a real choice, such as stocking more chargers or opening on Sundays, with a measure and a period?",
+            "check": "Cross out any question that doesn’t end in a choice. If a measure is vague, such as “performance”, ask the AI to replace it with a number you could count."
+          },
+          {
+            "title": "Ask for the type of each column",
+            "prompt": "Here is a table header and one row. Header: invoice_no, pin_code, bill_date, item_type, qty, amount. Row: INV-2207, 560034, 14/08/2026, Notebook, 3, ₹135. For each column, say its type: a number to add, a label or code, a category, a date, or text. Which columns should never be added up?",
+            "look_for": "It should call invoice_no and pin_code labels, and only qty and amount numbers to add.",
+            "check": "Ask of each column: would its total mean anything? If the AI says pin_code can be added, tell it why not. See whether it warns that “₹135” may be stored as text."
+          }
+        ],
+        "tip": "Before you open any file, write the decision in one sentence at the top of your notes. If you can’t, ask before you start.",
+        "mistake": "Averaging a column of codes, such as PIN codes or order IDs, because the cells look like numbers.",
+        "checks": [
+          {
+            "id": "da-m01-c1",
+            "scenario": "A Nashik saree shop’s sheet has some amounts typed as “₹1,250” and others as 980. =SUM(D2:D40) gives ₹18,400, but the owner’s notebook total for the same bills is ₹31,000.",
+            "question": "What is the most likely cause?",
+            "options": [
+              "Some rows are hidden by a filter, and SUM leaves them out",
+              "Some amounts are stored as text, which SUM skips",
+              "The ₹ sign makes SUM read ₹1,250 as 1.25",
+              "The notebook adds GST that the sheet leaves out"
+            ],
+            "correct_index": 1,
+            "hint": "Look at how the amounts were typed. Are they all the same kind of value?",
+            "why": "Amounts typed with the ₹ sign and a comma can be stored as text, and SUM skips text, so the total comes out short. SUM still adds rows hidden by a filter, the ₹ sign doesn’t turn amounts into decimals, and nothing in the sheet or notebook mentions GST."
+          },
+          {
+            "id": "da-m01-c2",
+            "scenario": "A juice stall owner in Mysuru wants to use her sales notebook to plan the summer.",
+            "question": "Which question is ready to analyse?",
+            "options": [
+              "How have the stall’s sales been doing over the whole of the last year?",
+              "What interesting patterns can we find hidden anywhere in the notebook?",
+              "Should she add sugarcane juice in April, going by March’s daily sales?",
+              "Which of the stall’s juices do most customers say they like best?"
+            ],
+            "correct_index": 2,
+            "hint": "Which one names a choice, a measure and a period?",
+            "why": "The sugarcane question has a decision (add it in April or not), a measure (daily sales) and a period (March). “How have sales been doing” and “interesting patterns” name no decision, and what customers say they like is opinion, not sales data."
+          },
+          {
+            "id": "da-m01-c3",
+            "scenario": "A Chennai school sees that students who join its free reading club score higher in English. The principal wants to know whether the club itself raises scores.",
+            "question": "Which comparison could show that?",
+            "options": [
+              "Compare this year’s club members with the students who didn’t join",
+              "Compare members’ English scores from before and after they joined",
+              "Pick students at random to join, then compare the two groups",
+              "Ask the club members whether they feel the club helped their English"
+            ],
+            "correct_index": 2,
+            "hint": "Who chose to join the club, and could that alone explain the gap?",
+            "why": "Keen readers choose to join, so members and non-members differ before the club does anything. A random pick makes the two groups alike, so a gap can be credited to the club. Before-and-after scores also rise with a year of school, and members’ feelings are opinion, not a comparison."
+          }
+        ]
+      }
     },
     {
       "id": "da-m02",
@@ -362,7 +471,7 @@
       "skill": "spreadsheets",
       "level": "foundation",
       "outcome": "Answer a business question, such as a return rate by payment method, with lookups, SUMIFS and pivot tables in a spreadsheet.",
-      "minutes": 90,
+      "minutes": 102,
       "learn": [
         {
           "title": "Set up the sheet: tables and fixed references",
@@ -382,13 +491,15 @@
           "id": "t1",
           "title": "Return rate by payment method",
           "prompt": "Open a blank Google Sheet, in the app or a browser. In cell A1, type =IMPORTDATA(\"https://myskills.org.in/practice-data/masala-mart/orders.csv\") to load Masala Mart’s 2,030 orders from October 2025 to September 2026. (Or download the file and use File > Import.) Build a pivot table: payment_method in Rows, returned in Values as Average. Report the return rate for UPI, Card and COD, to one decimal place. Then check the COD rate with a formula: =SUMIFS(I:I, H:H, \"COD\")/COUNTIFS(H:H, \"COD\").",
-          "hint": "Check yourself: all three rates are under 20%. If one is over 50%, you showed a share of all returns, not a rate. The pivot and the formula must agree."
+          "hint": "Check yourself: all three rates are under 20%. If one is over 50%, you showed a share of all returns, not a rate. The pivot and the formula must agree.",
+          "after": "COD 17.3%, UPI 5.3% and Card 3.9%. The SUMIFS/COUNTIFS check gives 0.173 for COD, the same as the pivot once formatted as a percentage. If your three numbers add up to 100%, or COD shows over 50%, you showed each method’s share of all returns, not its return rate."
         },
         {
           "id": "t2",
           "title": "Bring in the category",
           "prompt": "Add a second tab to the same Google Sheet and name it products. In its cell A1, type =IMPORTDATA(\"https://myskills.org.in/practice-data/masala-mart/products.csv\"). Back in the orders tab, write an XLOOKUP in J2 that brings in each order’s category from the products tab. It should show \"Not found\" when the SKU is missing. Fill it down every row. Report how many rows show Not found, and which SKUs they are. Then find revenue by category with a pivot table or SUMIFS.",
-          "hint": "The SKU is in column E of orders, and in columns A (SKU) and C (category) of products. To fill down on a phone, copy J2, select the column below it and paste. Count the misses with =COUNTIF(J:J, \"Not found\")."
+          "hint": "The SKU is in column E of orders, and in columns A (SKU) and C (category) of products. To fill down on a phone, copy J2, select the column below it and paste. Count the misses with =COUNTIF(J:J, \"Not found\").",
+          "after": "58 rows show Not found, from two SKUs missing in products: MM-GB-04 (34 rows) and MM-BL-07 (24 rows). Revenue by category: Whole spices ₹2,02,610, Masala blends ₹1,98,365, Ground spices ₹1,71,190, Gift boxes ₹1,59,590, and ₹23,757 with no category. A good answer reports the misses rather than hiding them, so someone can add the two SKUs."
         }
       ],
       "reflection": {
@@ -472,7 +583,110 @@
           "topic": "Cell references",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "A spreadsheet can answer a question in ten seconds, if you set it up to be asked.",
+        "idea": [
+          "Keep data as a clean table: one header row, one row per record, no blank rows and no merged cells. Fix a reference with $ when every row must use the same cell, such as a tax rate.",
+          "XLOOKUP brings in matching values from another tab, and shows “Not found” when a code is missing. A pivot table or SUMIFS turns thousands of rows into a short answer."
+        ],
+        "why": [
+          "Google Sheets is free on any phone, and most offices use spreadsheets daily",
+          "One formula filled down does hours of typing for you",
+          "A pivot table answers “by city” or “by month” questions in seconds"
+        ],
+        "simple": "A spreadsheet table is like a school attendance register: one line per student, one column per day. Scribble in the margins or skip lines, and nobody can total it.",
+        "myth": {
+          "wrong": "Pivot tables are an advanced tool that only analysts need.",
+          "right": "A pivot table takes a few taps: choose the Rows, choose the Values, and set them to Sum, Count or Average. It is often the fastest way to an answer."
+        },
+        "example": {
+          "title": "Sales by salesperson",
+          "body": "Imagine Kavya, who keeps the books for her family’s hardware shop in Hubballi. Her sheet has 600 sales from last month, with the salesperson in column C and the bill in column E. Her father asks who sold the most. She inserts a pivot table, puts salesperson in Rows and the bill in Values as Sum, and sorts it largest first. The answer takes under a minute, and it updates when she adds rows."
+        },
+        "terms": [
+          {
+            "term": "Table",
+            "meaning": "A range with one header row and one row per record, which grows as you add rows."
+          },
+          {
+            "term": "Absolute reference",
+            "meaning": "A cell address with $ signs, such as $F$1, that stays fixed when you fill a formula down."
+          },
+          {
+            "term": "XLOOKUP",
+            "meaning": "Finds a value in one column and returns the matching value from another."
+          },
+          {
+            "term": "Pivot table",
+            "meaning": "Groups rows and shows a Sum, Count or Average for each group."
+          },
+          {
+            "term": "SUMIFS and COUNTIFS",
+            "meaning": "Formulas that add or count only the rows that meet your conditions."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Check a formula before you fill it down",
+            "prompt": "In Google Sheets, prices are in B2:B6 (100, 250, 80, 400, 60) and the GST rate 18% is in cell E1. I wrote =B2*E1 in C2 and filled it down to C6. What will C3 to C6 show, and why? Give me the corrected formula.",
+            "look_for": "It should say C3 to C6 show 0, because E1 shifts to E2, E3 and so on, which are empty. The fix is =B2*$E$1.",
+            "check": "Type the five prices and the rate into a blank Google Sheet and try both formulas. C2 shows 18 either way. C5 shows 72 only with $E$1."
+          },
+          {
+            "title": "A rate from 1s and 0s",
+            "prompt": "I have 8 library loans in Google Sheets. Column A is the book type: Novel, Novel, Textbook, Comic, Novel, Textbook, Comic, Novel. Column B is 1 if it came back late, 0 if not: 1, 0, 0, 1, 1, 0, 0, 0. Write one formula for the late-return rate for novels, and tell me the answer.",
+            "look_for": "A SUMIFS divided by a COUNTIFS, and the answer 50%: 2 of the 4 novels came back late.",
+            "check": "Count by hand: the novels are loans 1, 2, 5 and 8, and two of them were late. Then type the data into Sheets and run the formula. If the AI says about 67%, it divided by all 3 late loans instead of the 4 novels."
+          }
+        ],
+        "tip": "Name your tabs (orders, products) before you write lookups. Prices!A:A is easier to read and check than Sheet2!A:A.",
+        "mistake": "Typing totals by hand under the data. New rows don’t join the total, and nobody can see how it was made.",
+        "checks": [
+          {
+            "id": "da-m02-c1",
+            "scenario": "Meena’s =XLOOKUP(A2, Prices!A:A, Prices!B:B, \"Not found\") shows Not found for N-202, though N-202 is on the Prices tab.",
+            "question": "What is the most likely cause?",
+            "options": [
+              "XLOOKUP needs the Prices tab sorted by code first",
+              "One of the two codes has a space after it",
+              "XLOOKUP needs FALSE at the end for an exact match",
+              "Prices!A:A must be written as Prices!$A:$A"
+            ],
+            "correct_index": 1,
+            "hint": "Can two codes look the same and still be different?",
+            "why": "“N-202 ” with a space after it is a different value from “N-202”, so XLOOKUP finds no match. Trim the spaces. XLOOKUP doesn’t need sorted data, it gives an exact match by default with no FALSE, and $ signs only matter when you fill a formula down."
+          },
+          {
+            "id": "da-m02-c2",
+            "scenario": "Ritu’s office laptop has Excel 2016. She needs each roll number’s hostel block from a tab called Hostel, with roll numbers in column A and blocks in column B.",
+            "question": "Which formula should she use?",
+            "options": [
+              "=VLOOKUP(A2, Hostel!A:B, 2, FALSE)",
+              "=VLOOKUP(A2, Hostel!A:B, 2, TRUE)",
+              "=XLOOKUP(A2, Hostel!A:A, Hostel!B:B)",
+              "=VLOOKUP(A2, Hostel!A:B, 1, FALSE)"
+            ],
+            "correct_index": 0,
+            "hint": "Which functions does Excel 2016 have, and what does VLOOKUP’s last argument decide?",
+            "why": "Excel 2016 has no XLOOKUP, so she needs VLOOKUP with FALSE for an exact match and 2 for the block column. TRUE asks for an approximate match and can return the wrong row. Column 1 would just return the roll number."
+          },
+          {
+            "id": "da-m02-c3",
+            "scenario": "A tailoring shop’s Google Sheet has the garment type in column B and the bill amount in column D.",
+            "question": "Which formula adds up the bills for blouses only?",
+            "options": [
+              "=SUMIFS(B:B, D:D, \"Blouse\")",
+              "=COUNTIFS(B:B, \"Blouse\")",
+              "=SUMIFS(D:D, B:B, \"Blouse\")",
+              "=SUMIFS(D:D, \"Blouse\", B:B)"
+            ],
+            "correct_index": 2,
+            "hint": "Which column holds the amounts, and which holds the condition?",
+            "why": "SUMIFS adds the first range (D, the bills) where the condition range (B) equals “Blouse”. Swapping B and D tries to add garment names. COUNTIFS gives the number of blouse orders, not their total, and each condition value must come after its range."
+          }
+        ]
+      }
     },
     {
       "id": "da-m03",
@@ -481,7 +695,7 @@
       "skill": "data-cleaning",
       "level": "foundation",
       "outcome": "Clean a messy sales export so its row count and totals can be trusted, with a log of every fix.",
-      "minutes": 90,
+      "minutes": 102,
       "learn": [
         {
           "title": "Profile before you clean",
@@ -501,13 +715,15 @@
           "id": "t1",
           "title": "Clean Masala Mart’s raw export",
           "prompt": "Open a blank Google Sheet and type in A1: =IMPORTDATA(\"https://myskills.org.in/practice-data/masala-mart/orders_raw.csv\"). Copy everything, then paste it into a new tab with Edit > Paste special > Values only, so you can edit it. Profile it, then clean it. Remove duplicate rows and make the city names consistent. Make sure order_value is a number and order_date is read as day/month/year. Fill blank cities from customers.csv (https://myskills.org.in/practice-data/masala-mart/customers.csv) with XLOOKUP on customer_id. Submit your cleaning log with a row count for each step, and your final row count and total order value.",
-          "hint": "Check yourself against the clean file orders.csv: you should end with 10 cities and the same row count and total. For order_value, type =ISNUMBER(G3) next to the “₹150” cell. With the India locale, Sheets may already read ₹150 as a number, so you get TRUE: nothing to fix. If you get FALSE, it is text: use =VALUE(SUBSTITUTE(SUBSTITUTE(G3,\"₹\",\"\"),\",\",\"\")) in a new column. You will meet the text version again in Module 7, Python and pandas for analysis. For dates, look at File > Settings > Locale. With India, 01/10/2025 is read as 1 October; with United States, it can be read as 10 January."
+          "hint": "Check yourself against the clean file orders.csv: you should end with 10 cities and the same row count and total. For order_value, type =ISNUMBER(G3) next to the “₹150” cell. With the India locale, Sheets may already read ₹150 as a number, so you get TRUE: nothing to fix. If you get FALSE, it is text: use =VALUE(SUBSTITUTE(SUBSTITUTE(G3,\"₹\",\"\"),\",\",\"\")) in a new column. You will meet the text version again in Module 7, Python and pandas for analysis. For dates, look at File > Settings > Locale. With India, 01/10/2025 is read as 1 October; with United States, it can be read as 10 January.",
+          "after": "A good log starts from 2,065 raw rows. Removing exact duplicates takes out 35, leaving 2,030. Trimming spaces and mapping spellings (BLR, Bangalore, Bombay, Calcutta, Cochin, New Delhi, and the lower- and upper-case versions such as bengaluru, mumbai, delhi and DELHI) leaves 10 cities. The 15 blank cities are filled from customers.csv. order_value is a number and dates are read day first. The end: 2,030 rows totalling ₹7,55,512, matching orders.csv."
         },
         {
           "id": "t2",
           "title": "Decide about blanks",
           "prompt": "A Lucknow pharmacy’s delivery sheet has 50 deliveries. 45 have a delivery time, and they average 40 minutes. 5 are blank, and the delivery staff say those 5 took about 90 minutes each because of a road closure. Work out the average three ways: leaving the blanks out, filling them with 0, and using the staff’s estimate. Say which number you would report, and write the one-line note you would put beside it.",
-          "hint": "Average = total minutes ÷ number of deliveries counted. Start with the total for the 45: 45 × 40."
+          "hint": "Average = total minutes ÷ number of deliveries counted. Start with the total for the 45: 45 × 40.",
+          "after": "Leaving the blanks out: 45 × 40 = 1,800 minutes, and 1,800 ÷ 45 = 40. Filling with 0: 1,800 ÷ 50 = 36. Using the staff’s estimate: (1,800 + 5 × 90) ÷ 50 = 45. Report 45, or 40 with a clear note, such as: “5 of 50 deliveries had no time; staff say they took about 90 minutes, due to a road closure.” Never report 36."
         }
       ],
       "reflection": {
@@ -591,7 +807,114 @@
           "topic": "Missing data",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "Messy data gives confident wrong answers. A little cleaning saves the whole report.",
+        "idea": [
+          "Profile first: count the rows, and for each column count the blanks and the different values, and look at the smallest and largest. That gives you a list of what to fix.",
+          "Then clean a copy, one step at a time, and log each step with its row count. Treat a blank as unknown, not zero, and say how many rows your choice affects."
+        ],
+        "why": [
+          "Duplicate rows and stray spellings quietly inflate or split totals",
+          "A cleaning log lets anyone repeat your work and trust it",
+          "Handling blanks honestly stops averages that flatter the business"
+        ],
+        "simple": "Cleaning data is like picking stones out of rice before cooking. Skip it, and everyone notices at dinner, and nobody trusts the cook again.",
+        "myth": {
+          "wrong": "Clean data has no blanks, so fill every empty cell.",
+          "right": "A blank is unknown. Filling it with 0 or a guess can make results worse. Leave it out, fill it from a real source, or flag it, and say how many rows."
+        },
+        "example": {
+          "title": "The book club’s sign-up sheet",
+          "body": "A Nashik book club’s sign-up sheet has 320 rows, and Deepa, a volunteer, must clean it. Profiling shows 12 rows typed twice, and a city column with “Nashik”, “nashik” and “Nasik”. She keeps the original tab and cleans a copy. Her log: removed 12 duplicates, 320 → 308 rows; mapped 2 spellings to “Nashik”, 41 rows. The secretary can see exactly what changed and why the count dropped."
+        },
+        "terms": [
+          {
+            "term": "Profiling",
+            "meaning": "Measuring the data before you change it: rows, blanks, different values, smallest and largest."
+          },
+          {
+            "term": "Duplicate row",
+            "meaning": "A row identical to another in every column."
+          },
+          {
+            "term": "Whitespace",
+            "meaning": "Hidden spaces before or after text, so “Pune ” doesn’t match “Pune”."
+          },
+          {
+            "term": "Mapping table",
+            "meaning": "A two-column list that turns each wrong spelling into the right one."
+          },
+          {
+            "term": "Cleaning log",
+            "meaning": "One line per step: what changed and how many rows."
+          },
+          {
+            "term": "Missing value",
+            "meaning": "A blank cell. It means unknown, not zero."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Ask AI for a cleaning log",
+            "prompt": "Here is a college fest’s registration table, one row per line. reg_id, college, event, fee / R1, St. Joseph’s, Quiz, 100 / R2, st josephs, Dance, 150 / R3, St. Joseph’s, Quiz, 100 / R1, St. Joseph’s, Quiz, 100 / R4, Christ, (blank), 150. List every problem you see. Then write a cleaning log: one line per step, saying what changed and how many rows.",
+            "look_for": "It should find the repeated R1 row, the two spellings of St. Joseph’s, and R4’s blank event, with a row count on each step.",
+            "check": "Count it yourself: 5 rows become 4 after the repeated R1 goes. If the AI also deletes R3 because it looks like R1, that’s wrong: R3 has its own reg_id. If it fills R4’s event with a guess, ask it to flag the blank instead."
+          },
+          {
+            "title": "Find the impossible values",
+            "prompt": "These ages were typed into a gym’s membership sheet: 23, 31, 0, 27, 45, 212, 19, 38, 3, 29. Which values look like typing errors, and why? What should I do with them, and how do I record it in a cleaning log? Don’t change any value without saying so.",
+            "look_for": "It should flag 0, 212 and very likely 3, and suggest setting them blank and logging how many rows changed.",
+            "check": "Type the ten ages into Google Sheets and use =MIN and =MAX: you should see 0 and 212. If the AI replaces them with the average age, ask it to leave them blank. A guessed age isn’t data."
+          }
+        ],
+        "tip": "Name your tabs raw and clean, and never type in raw. If a step goes wrong, copy raw again and follow your log.",
+        "mistake": "Deleting every row that has a blank, which can throw away the very cases that matter most.",
+        "checks": [
+          {
+            "id": "da-m03-c1",
+            "scenario": "A florist’s pivot table of orders shows “Mysuru” twice, with a different total beside each. On screen the two names look the same.",
+            "question": "What is the most likely cause?",
+            "options": [
+              "The pivot table counts some of the orders twice",
+              "One group of the orders is stored as dates",
+              "The sheet has too many rows for a pivot table",
+              "One of the names has a hidden space at the end"
+            ],
+            "correct_index": 3,
+            "hint": "What can make two words look the same but not match?",
+            "why": "A trailing space makes “Mysuru ” a different value from “Mysuru”, so the pivot shows two groups. Trim whitespace fixes it. A pivot doesn’t double-count rows, dates would look different, and a row limit wouldn’t split one name."
+          },
+          {
+            "id": "da-m03-c2",
+            "scenario": "Profiling a school’s height records for Class 8 shows a smallest value of 12 cm and a largest of 158 cm.",
+            "question": "What should you take from this?",
+            "options": [
+              "The 12 cm entry is a typing error to check",
+              "The 158 cm entry is a typing error to check",
+              "Both are fine, since Class 8 heights vary widely",
+              "Neither matters once you report the median"
+            ],
+            "correct_index": 0,
+            "hint": "What heights are possible in Class 8?",
+            "why": "No Class 8 student is 12 cm tall, so it is almost surely a typing error, perhaps for 120 or 125. 158 cm is a normal height at that age. Heights vary, but not that much, and the median hides the error without fixing it: the record is still wrong for anyone who uses it."
+          },
+          {
+            "id": "da-m03-c3",
+            "scenario": "A cycle-repair shop logs how long each repair took. 5 of 60 repairs have no time, because the mechanic forgot to write it, on busy and quiet days alike.",
+            "question": "What should the analyst do with the 5 blanks?",
+            "options": [
+              "Fill them with 0, so every row has a time",
+              "Fill them with the average of the other 55",
+              "Leave them out and note that 5 had no time",
+              "Drop the 5 and report the average with no note"
+            ],
+            "correct_index": 2,
+            "hint": "Are the missing repairs any different from the rest?",
+            "why": "The blanks fall on busy and quiet days alike, so leaving them out shouldn’t bias the average, as long as you say how many. 0 makes repairs look faster, and an invented average looks like real data. Dropping them without a note hides that 5 times are missing."
+          }
+        ]
+      }
     },
     {
       "id": "da-m04",
@@ -600,7 +923,7 @@
       "skill": "sql",
       "level": "foundation",
       "outcome": "Write and run SELECT queries that filter, group and summarise a table, and handle blanks (NULL) correctly.",
-      "minutes": 90,
+      "minutes": 102,
       "learn": [
         {
           "title": "One question, one query",
@@ -620,13 +943,15 @@
           "id": "t1",
           "title": "Orders by payment method in April",
           "prompt": "Open shell.duckdb.org and load Masala Mart’s orders with the CREATE TABLE line from the first card. The table has order_id, order_date, customer_id, city, sku, quantity, order_value, payment_method and returned. Write and run a query that shows, for each payment_method, the number of orders and the total order_value in April 2026, largest total first. Paste your query and its result.",
-          "hint": "Use the half-open date range from the second card. Check yourself: your three order counts should add up to 165, the number of April orders."
+          "hint": "Use the half-open date range from the second card. Check yourself: your three order counts should add up to 165, the number of April orders.",
+          "after": "A good query filters order_date >= '2026-04-01' AND order_date < '2026-05-01', groups by payment_method, and sorts by the total, largest first. The result: UPI 101 orders, ₹29,304; COD 36 orders, ₹16,699; Card 28 orders, ₹8,890. The counts add up to 165."
         },
         {
           "id": "t2",
           "title": "Run it, then explain it",
           "prompt": "Run this query on the same table: SELECT city, AVG(order_value) AS avg_value FROM orders WHERE returned = 0 GROUP BY city HAVING COUNT(*) >= 100 ORDER BY avg_value DESC; Then explain in plain words, for a manager who doesn’t know SQL, what it returns. How many cities are in the result, and why are the others missing?",
-          "hint": "Write a second query that counts each city’s kept orders (returned = 0). Which cities have fewer than 100? Why might a manager want them left out?"
+          "hint": "Write a second query that counts each city’s kept orders (returned = 0). Which cities have fewer than 100? Why might a manager want them left out?",
+          "after": "In plain words: the average value of kept orders in each city, only for cities with at least 100 kept orders, highest first. 7 cities appear, led by Kolkata (about ₹408) and Delhi (about ₹387). Lucknow (57), Jaipur (85) and Kochi (93) are missing, because HAVING removes groups with fewer than 100 kept orders. A manager may want them out because an average of few orders is less reliable."
         }
       ],
       "reflection": {
@@ -710,7 +1035,114 @@
           "topic": "Aggregates and NULLs",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "The answer is already in the database. SQL is how you ask for it in one sentence.",
+        "idea": [
+          "SQL reads like a sentence: SELECT the columns FROM a table WHERE rows match, ORDER BY a column. GROUP BY with COUNT, SUM or AVG turns thousands of rows into a short answer.",
+          "WHERE filters rows before grouping, and HAVING filters groups after it. A blank is NULL, so test it with IS NULL, and remember that AVG and COUNT(column) skip NULLs."
+        ],
+        "why": [
+          "Most company data lives in databases, not spreadsheets",
+          "One query can be rerun every week with no extra work",
+          "Knowing how NULL works stops counts and averages that mislead"
+        ],
+        "simple": "SQL is like asking a librarian: “Bring me the science books (WHERE), sorted by year (ORDER BY), and tell me how many each shelf has (GROUP BY).” She does the walking; you just ask clearly.",
+        "myth": {
+          "wrong": "SQL is programming, so you need a computer science degree to use it.",
+          "right": "Basic SQL is a handful of words in a fixed order. You can run it free in a phone’s browser at shell.duckdb.org, and write useful queries after a little practice."
+        },
+        "example": {
+          "title": "The travel agency’s top trips",
+          "body": "Imagine Sana, who helps her uncle’s travel agency in Indore. Its bookings table has booking_id, destination and price. She runs: SELECT destination, COUNT(*) AS trips FROM bookings GROUP BY destination ORDER BY trips DESC; The first row says Goa, 48 trips. In one line she has the answer her uncle was going to count by hand from a register."
+        },
+        "terms": [
+          {
+            "term": "Query",
+            "meaning": "A question written in SQL, which returns a table of results."
+          },
+          {
+            "term": "Summary function",
+            "meaning": "COUNT, SUM, AVG, MIN or MAX: turns many rows into one number."
+          },
+          {
+            "term": "GROUP BY",
+            "meaning": "Splits the rows into groups, so the summary is worked out for each one."
+          },
+          {
+            "term": "HAVING",
+            "meaning": "Filters groups after GROUP BY, such as cities with at least 100 orders."
+          },
+          {
+            "term": "NULL",
+            "meaning": "A blank in a database: unknown. Test it with IS NULL, never = NULL."
+          },
+          {
+            "term": "Half-open range",
+            "meaning": "A date filter like >= '2026-04-01' AND < '2026-05-01', which never misses the last day."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Two counts that differ",
+            "prompt": "I am learning SQL in DuckDB. Here is a table: CREATE TABLE marks AS SELECT * FROM (VALUES (1,'A',72),(2,'B',85),(3,'A',64),(4,'B',NULL),(5,'A',90)) t(roll, section, score); Write a query that shows, for each section, the number of students, the number of scores and the average score. Tell me the result, and explain why the two counts differ for one section.",
+            "look_for": "COUNT(*) and COUNT(score) side by side. Section A: 3 students, 3 scores, average about 75.3. Section B: 2 students, 1 score, average 85.",
+            "check": "Open shell.duckdb.org, paste the CREATE TABLE line, then the AI’s query, and run them. If the AI says section B averages 42.5, it treated the NULL as zero."
+          },
+          {
+            "title": "Is this date filter safe?",
+            "prompt": "My DuckDB table payments has paid_at, a timestamp with a date and a time. Is this filter safe for all of March 2026? WHERE paid_at BETWEEN '2026-03-01' AND '2026-03-31' Explain what it misses, and give me a safer version.",
+            "look_for": "It should say the filter stops at midnight at the start of 31 March, so it misses almost all of that day. The safer version is paid_at >= '2026-03-01' AND paid_at < '2026-04-01'.",
+            "check": "Test it in shell.duckdb.org: SELECT TIMESTAMP '2026-03-31 18:00' BETWEEN '2026-03-01' AND '2026-03-31'; returns false, so a 6 pm payment on 31 March would be missed."
+          }
+        ],
+        "tip": "After a GROUP BY, add up its counts. They should equal a plain SELECT COUNT(*) with the same WHERE.",
+        "mistake": "Putting a column in SELECT that is neither in the GROUP BY nor inside a summary function. DuckDB stops with an error.",
+        "checks": [
+          {
+            "id": "da-m04-c1",
+            "scenario": "A gym’s table members has member_id, plan and fee. The manager wants only the members on the Gold plan.",
+            "question": "Which WHERE line is written correctly?",
+            "options": [
+              "WHERE plan = Gold",
+              "WHERE plan = 'Gold'",
+              "WHERE plan = \"Gold\"",
+              "WHERE plan LIKE Gold"
+            ],
+            "correct_index": 1,
+            "hint": "How does SQL tell text apart from a column name?",
+            "why": "Text goes in single quotes. Without quotes, DuckDB looks for a column called Gold and stops with an error. Double quotes also mean a column name in DuckDB, and LIKE still needs the text in single quotes."
+          },
+          {
+            "id": "da-m04-c2",
+            "scenario": "Joel’s query on a library’s loans table has both a WHERE line and a HAVING line.",
+            "question": "Which of the two filters runs first?",
+            "options": [
+              "HAVING, on the groups, before any rows are read",
+              "Both at once, since they sit in the same query",
+              "Whichever of the two is written higher up",
+              "WHERE, on single rows, before the grouping"
+            ],
+            "correct_index": 3,
+            "hint": "What does each filter work on: rows or groups?",
+            "why": "A query runs FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY. WHERE filters rows first, then the groups are made, then HAVING filters them. The order is fixed, and SQL only accepts WHERE written before HAVING anyway."
+          },
+          {
+            "id": "da-m04-c3",
+            "scenario": "Arjun needs every payment in February 2026 from a DuckDB table whose paid_at column holds a date and a time.",
+            "question": "Which WHERE line is safe?",
+            "options": [
+              "WHERE paid_at BETWEEN '2026-02-01' AND '2026-02-28'",
+              "WHERE paid_at >= '2026-02-01' AND paid_at <= '2026-02-28'",
+              "WHERE paid_at > '2026-01-31' AND paid_at < '2026-02-28'",
+              "WHERE paid_at >= '2026-02-01' AND paid_at < '2026-03-01'"
+            ],
+            "correct_index": 3,
+            "hint": "What time of day does a date with no time stand for?",
+            "why": "'2026-02-28' means midnight at the start of 28 February, so BETWEEN and <= miss almost all of that day, and < '2026-02-28' misses all of it. The > '2026-01-31' line also takes in 31 January after midnight. Starting at 1 February and stopping before 1 March catches every time."
+          }
+        ]
+      }
     },
     {
       "id": "da-m05",
@@ -719,7 +1151,7 @@
       "skill": "sql",
       "level": "intermediate",
       "outcome": "Combine tables with joins without double counting, and compare rows with window functions such as ROW_NUMBER and LAG.",
-      "minutes": 90,
+      "minutes": 102,
       "learn": [
         {
           "title": "Joins connect facts to context",
@@ -739,13 +1171,15 @@
           "id": "t1",
           "title": "Find the silent customers",
           "prompt": "In shell.duckdb.org, load orders as in Module 4 (SQL foundations), and the customers table: CREATE TABLE customers AS SELECT * FROM 'https://myskills.org.in/practice-data/masala-mart/customers.csv'; It has customer_id, city, signed_up and channel. Write a query that lists customers who signed up in 2026 but have never ordered. Report how many there are, and paste your query.",
-          "hint": "LEFT JOIN customers to orders, then keep the rows where the order side IS NULL. Check: run it again without the 2026 condition. That count must be bigger."
+          "hint": "LEFT JOIN customers to orders, then keep the rows where the order side IS NULL. Check: run it again without the 2026 condition. That count must be bigger.",
+          "after": "259 customers signed up in 2026 and have never ordered. A good query LEFT JOINs customers to orders and keeps rows where the order side IS NULL, with signed_up >= '2026-01-01'. That condition is on the customers side, so it is safe in WHERE. Without it the count is 325, bigger, as the check expects."
         },
         {
           "id": "t2",
           "title": "First order or repeat?",
           "prompt": "Use ROW_NUMBER to number each customer’s orders by date, across all their orders since October 2025. Then work out what share of April 2026 revenue came from repeat orders (row number 2 or more). Paste your query and the share, to one decimal place.",
-          "hint": "Number the orders in a WITH step before you filter to April. If you filter April first, each customer’s first April order looks like a first order, and the share comes out far too small. Order by order_date, then order_id, so ties are numbered the same way every time."
+          "hint": "Number the orders in a WITH step before you filter to April. If you filter April first, each customer’s first April order looks like a first order, and the share comes out far too small. Order by order_date, then order_id, so ties are numbered the same way every time.",
+          "after": "75.1% of April 2026 revenue came from repeat orders. A good query numbers every order with ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) in a WITH step. Only then does it filter to April, and divide the revenue where the number is 2 or more by all April revenue. If you filtered to April first, the share comes out far smaller."
         }
       ],
       "reflection": {
@@ -829,7 +1263,114 @@
           "topic": "Window functions",
           "weight": 15
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "One table rarely tells the whole story. Joins put the pieces together, if you count your rows.",
+        "idea": [
+          "A join connects tables on a shared key. INNER JOIN keeps only rows that match; LEFT JOIN keeps every row on the left and fills NULL where nothing matches. That is how you find customers who never ordered.",
+          "A join can multiply rows when the key repeats on the other side, so count rows and a total before and after. Window functions such as ROW_NUMBER and LAG add context to each row without squashing the rows."
+        ],
+        "why": [
+          "Real questions need facts from more than one table",
+          "Counting rows catches revenue that “doubles” by mistake",
+          "Window functions answer “first or repeat?” and “up or down on last month?”"
+        ],
+        "simple": "A LEFT JOIN is like matching wedding replies to the guest list. You keep every invited guest, even those who never replied, so you know whom to call.",
+        "myth": {
+          "wrong": "If a join runs without an error, its result is right.",
+          "right": "A join can run perfectly and still multiply your rows, or drop the rows you wanted. Check the row count and a total after every join."
+        },
+        "example": {
+          "title": "The music school’s payments",
+          "body": "Rahul’s join gave 312 rows. There were 120 students. He had joined a Coimbatore music school’s students to their fee payments, and most students paid more than once. Before he sums anything, he asks: one row per what? Each row is now one payment. So SUM(amount) is still right, but COUNT(*) now counts payments, not students."
+        },
+        "terms": [
+          {
+            "term": "Join key",
+            "meaning": "The shared column that links two tables, such as customer_id."
+          },
+          {
+            "term": "INNER JOIN",
+            "meaning": "Keeps only the rows that match in both tables."
+          },
+          {
+            "term": "LEFT JOIN",
+            "meaning": "Keeps every row of the left table, with NULL where nothing matches."
+          },
+          {
+            "term": "Fan-out",
+            "meaning": "A join that multiplies rows because the key repeats on the other side."
+          },
+          {
+            "term": "Window function",
+            "meaning": "Adds a value from related rows to each row, and keeps every row."
+          },
+          {
+            "term": "LAG",
+            "meaning": "Brings in the value from the row before, such as last month’s revenue."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Month on month with LAG",
+            "prompt": "In DuckDB I have: CREATE TABLE monthly AS SELECT * FROM (VALUES (1, 52000), (2, 47000), (3, 58000), (4, 58000)) t(month_no, revenue); Write a query that shows each month’s revenue, last month’s revenue using LAG, and the change. Then tell me the result row by row.",
+            "look_for": "A LAG(revenue) OVER (ORDER BY month_no) column, and changes of NULL, −5,000, +11,000 and 0.",
+            "check": "Run it in shell.duckdb.org. If month 1 shows a change of 52,000, the AI filled the missing month with 0. Month 1 has no month before it, so NULL is the honest answer."
+          },
+          {
+            "title": "Catch a fan-out",
+            "prompt": "Customer C1 has two orders, ₹400 and ₹600. Customer C2 has one order, ₹300. A contacts table has two phone numbers for C1 and one for C2. If I join orders to contacts on customer ID and sum the order values, what total do I get, and what is the true total? Explain why, and how to avoid it.",
+            "look_for": "₹2,300 from the join against a true ₹1,300, because each of C1’s orders matches both phone numbers.",
+            "check": "Count the joined rows by hand: C1’s 2 orders × 2 numbers = 4 rows, plus 1 for C2, so 5 rows instead of 3. The fix is to join to a table with one row per customer, or to leave the contacts table out."
+          }
+        ],
+        "tip": "Before a join, write each table’s grain as a note: “orders: one row per order”. If the grains differ, expect fan-out.",
+        "mistake": "After a LEFT JOIN, putting a condition on the right-hand table in WHERE, which quietly drops the rows with no match.",
+        "checks": [
+          {
+            "id": "da-m05-c1",
+            "scenario": "A hostel has 50 rooms in a rooms table. A complaints table lists complaints for 12 of them.",
+            "question": "Which join lists all 50 rooms, with their complaints where there are any?",
+            "options": [
+              "complaints LEFT JOIN rooms",
+              "rooms INNER JOIN complaints",
+              "rooms LEFT JOIN complaints",
+              "complaints INNER JOIN rooms"
+            ],
+            "correct_index": 2,
+            "hint": "Which table must keep every row, and which side of a LEFT JOIN keeps them?",
+            "why": "A LEFT JOIN keeps every row of the table on its left, so rooms must be on the left. An INNER JOIN keeps only the 12 rooms with complaints, whichever way round, and complaints LEFT JOIN rooms keeps every complaint, not every room."
+          },
+          {
+            "id": "da-m05-c2",
+            "scenario": "A query shows each week’s visitors to a museum with LAG(visitors) OVER (ORDER BY week). Week 1 had 300 visitors and week 2 had 340.",
+            "question": "What does the LAG column show on week 2’s row?",
+            "options": [
+              "300",
+              "340",
+              "40",
+              "NULL"
+            ],
+            "correct_index": 0,
+            "hint": "Which row does LAG read from?",
+            "why": "LAG brings in the value from the row before, so week 2’s row shows week 1’s 300. 340 is week 2’s own value, 40 is the change you’d work out next, and NULL appears only on week 1, which has no row before it."
+          },
+          {
+            "id": "da-m05-c3",
+            "scenario": "A bakery’s order_items table has one row for each item in an order, so an order of 3 different cakes has 3 rows.",
+            "question": "What does COUNT(*) on this table count?",
+            "options": [
+              "The number of orders placed",
+              "The number of item rows",
+              "The number of customers",
+              "The number of cake orders"
+            ],
+            "correct_index": 1,
+            "hint": "Ask: one row per what?",
+            "why": "COUNT(*) counts rows, and each row here is one item in an order. An order with 3 items counts 3 times, so it overstates orders, and customers who order often count many times."
+          }
+        ]
+      }
     },
     {
       "id": "da-m06",
@@ -838,7 +1379,7 @@
       "skill": "statistics",
       "level": "intermediate",
       "outcome": "Use spread, samples and a simple A/B test to tell a real change from noise.",
-      "minutes": 75,
+      "minutes": 87,
       "learn": [
         {
           "title": "Variation is normal",
@@ -858,13 +1399,15 @@
           "id": "t1",
           "title": "Design a test",
           "prompt": "An edtech app wants to know whether a ₹99 first-month offer brings more paid sign-ups than a 7-day free trial. Write a one-page A/B test plan under five headings. Who is in it? How are they split? What do you measure? How long does it run? What result would make you pick a winner?",
-          "hint": "What could go wrong if the offer ran only in one city, or only in the first week? Decide the run length before you start."
+          "hint": "What could go wrong if the offer ran only in one city, or only in the first week? Decide the run length before you start.",
+          "after": "A strong plan splits new visitors at random between the two offers, at the same time and in every city. It names one main measure, such as paid sign-ups per visitor. It fixes the run in full weeks and the size before it starts. It states in advance what result picks a winner, and that nobody stops the test early because one offer looks ahead."
         },
         {
           "id": "t2",
           "title": "Noise or signal?",
           "prompt": "A Coimbatore shop’s daily sales for the last 10 days, in ₹ thousand, were: 44, 41, 49, 38, 52, 46, 43, 47, 40, 45. Yesterday, after a new shelf layout, sales were ₹54,000. Put the 10 numbers in Google Sheets and find the average, the lowest, the highest and the standard deviation. Then write 3 or 4 sentences for the owner: is ₹54,000 unusual, and what would you check before saying the layout worked?",
-          "hint": "Use =AVERAGE, =MIN, =MAX and =STDEV. How many standard deviations above the average is 54? Is one day enough to decide?"
+          "hint": "Use =AVERAGE, =MIN, =MAX and =STDEV. How many standard deviations above the average is 54? Is one day enough to decide?",
+          "after": "Average 44.5, lowest 38, highest 52, standard deviation about 4.2 (all in ₹ thousand). ₹54,000 is about 2.2 standard deviations above the average, so it is unusual, but it is one day. Before crediting the layout, check whether yesterday was a weekend, a salary day or a festival, and watch the next week or two. If most days stay high, the layout probably helped."
         }
       ],
       "reflection": {
@@ -948,7 +1491,114 @@
           "topic": "Bias",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "Every number wobbles. Statistics tells you when a wobble is news.",
+        "idea": [
+          "Numbers move around even when nothing has changed. Standard deviation measures the usual wobble, and a value more than about 2 standard deviations from the average is unusual.",
+          "A survey is a sample, with a margin of error that narrows as the sample grows. But a bigger sample doesn’t fix who chose to answer. Only a random A/B test, planned before it starts, shows that a change caused a difference."
+        ],
+        "why": [
+          "You stop celebrating or panicking over one good or bad day",
+          "You know how far to trust a survey result",
+          "You can show that a change worked, not just hope it did"
+        ],
+        "simple": "Think of your daily commute. Some days take 35 minutes, some 45. One 50-minute day doesn’t mean the road has changed. A month of 50-minute days does.",
+        "myth": {
+          "wrong": "A bigger survey is always a more trustworthy survey.",
+          "right": "A bigger sample narrows the margin of error, but if the wrong people answered, 5,000 replies still mislead. Who answered matters as much as how many."
+        },
+        "example": {
+          "title": "The cloud kitchen’s busy Saturday",
+          "body": "Imagine Neha, who runs a cloud kitchen in Thane. Over 4 weeks her daily orders average 120, with a standard deviation of 10. One Saturday she gets 128: less than 1 standard deviation above average, an ordinary day. The next Saturday she gets 148, nearly 3 standard deviations above. Now she checks why, and finds a cricket final was on that night. She notes the reason before hiring more staff."
+        },
+        "terms": [
+          {
+            "term": "Noise",
+            "meaning": "The ordinary ups and downs in a number when nothing has really changed."
+          },
+          {
+            "term": "Standard deviation",
+            "meaning": "How far a typical value sits from the average. =STDEV in Google Sheets."
+          },
+          {
+            "term": "Sample",
+            "meaning": "The people or rows you measured, out of all you could have."
+          },
+          {
+            "term": "Margin of error",
+            "meaning": "The range around a sample’s result where the true figure probably lies. It is usually given at 95% confidence: 95 times in 100, the true figure is inside it."
+          },
+          {
+            "term": "Non-response bias",
+            "meaning": "When the people who answer differ from those who don’t."
+          },
+          {
+            "term": "A/B test",
+            "meaning": "A random split into two groups at the same time, to see if a change makes a difference."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Is today unusual?",
+            "prompt": "A college canteen sold these numbers of samosas on 8 ordinary days: 210, 195, 230, 205, 220, 190, 215, 200. Today it sold 260. Work out the average and the sample standard deviation, and say how many standard deviations above the average 260 is. Is it unusual? What would you check before calling it a trend?",
+            "look_for": "An average of about 208, a standard deviation of about 13, and 260 about 4 standard deviations above the average.",
+            "check": "Paste the 8 numbers into Google Sheets and use =AVERAGE and =STDEV. If the AI’s numbers differ from yours, trust the sheet. Even an unusual day is one day: check for an exam, a fest or a holiday."
+          },
+          {
+            "title": "How wide is the range?",
+            "prompt": "A poll of 100 students finds 60% want the library open on Sundays. Roughly what is the margin of error at 95% confidence? What would it be with 400 students? In two sentences, explain why the bigger poll is narrower, and what it still can’t fix.",
+            "look_for": "About ±10 points for 100 students and about ±5 for 400: four times the sample halves the range. It should add that size doesn’t fix who chose to answer.",
+            "check": "Try a free online margin-of-error calculator with 100, then 400, at 95% confidence. Then ask yourself: if only keen library users filled in the poll, would 400 replies help?"
+          }
+        ],
+        "tip": "Write down the test’s measure, length and size before it starts, and don’t pick a winner until it ends.",
+        "mistake": "Comparing people who chose the new thing with people who didn’t, and calling the difference the effect.",
+        "checks": [
+          {
+            "id": "da-m06-c1",
+            "scenario": "A bakery in Ranchi sells about 300 buns a day, with a standard deviation of 20. On Tuesday it sold 315.",
+            "question": "How should the owner read Tuesday?",
+            "options": [
+              "A clear rise, since 315 beats the usual 300",
+              "A worrying sign the usual pattern is breaking",
+              "The start of a trend, if Wednesday also beats 300",
+              "An ordinary day, within one standard deviation"
+            ],
+            "correct_index": 3,
+            "hint": "How far is 315 from 300, measured in standard deviations?",
+            "why": "315 is 15 above the average, less than one standard deviation of 20, so it is ordinary noise. It isn’t a clear rise or a broken pattern, and about half of all ordinary days beat 300, so two in a row is no trend."
+          },
+          {
+            "id": "da-m06-c2",
+            "scenario": "A poll of 150 Pune commuters has a margin of error of about ±8 points.",
+            "question": "Roughly what would it be with 600 commuters, chosen the same way?",
+            "options": [
+              "About ±2 points",
+              "About ±4 points",
+              "About ±6 points",
+              "About ±8 points"
+            ],
+            "correct_index": 1,
+            "hint": "What does a bigger sample do to the range, and how fast?",
+            "why": "600 is four times 150, and four times the sample halves the range, so about ±4. ±2 would need sixteen times the sample, ±6 assumes the range shrinks only a little, and ±8 ignores the bigger sample."
+          },
+          {
+            "id": "da-m06-c3",
+            "scenario": "A café chain in Bengaluru runs an A/B test of a new menu board from Monday to Friday of one week only, with customers split at random.",
+            "question": "What is the main risk?",
+            "options": [
+              "Five days give each group too few visitors to split",
+              "Weekend customers behave differently and aren’t in it",
+              "Running on weekdays makes the random split unfair",
+              "A new menu board needs a month before anyone notices it"
+            ],
+            "correct_index": 1,
+            "hint": "Which customers could the test never see?",
+            "why": "Weekend visitors, such as families and groups, may choose differently, so a weekday result may not hold all week. Running two full weeks covers both. A busy café gets plenty of visitors in five days, the random split is fair on any day, and customers see a menu board at once."
+          }
+        ]
+      }
     },
     {
       "id": "da-m07",
@@ -957,7 +1607,7 @@
       "skill": "python",
       "level": "intermediate",
       "outcome": "Clean and summarise a real CSV file with pandas in a notebook, checking the row count and totals at each step.",
-      "minutes": 90,
+      "minutes": 102,
       "learn": [
         {
           "title": "Why Python, and where to run it free",
@@ -977,13 +1627,15 @@
           "id": "t1",
           "title": "Clean and summarise the raw export",
           "prompt": "Open a new notebook in Google Colab and load the messy export: df = pd.read_csv(\"https://myskills.org.in/practice-data/masala-mart/orders_raw.csv\"). Then: drop exact duplicate rows; turn order_date into dates with format=\"%d/%m/%Y\"; turn order_value into numbers (remove \"₹\" and commas with .str.replace, then .astype(int)); merge in category from https://myskills.org.in/practice-data/masala-mart/products.csv with how=\"left\". Finally, filter to kept orders (returned == 0) from April to June 2026, and total order_value by category, largest first. Report that table and df.shape after each step.",
-          "hint": "Check yourself: after dropping duplicates you should have as many rows as orders.csv. After the merge, 58 rows have no category (new SKUs). If the filter gives an error, look for a missing bracket."
+          "hint": "Check yourself: after dropping duplicates you should have as many rows as orders.csv. After the merge, 58 rows have no category (new SKUs). If the filter gives an error, look for a missing bracket.",
+          "after": "df.shape goes (2065, 9) on loading, (2030, 9) after drop_duplicates, (2030, 9) after the date and value changes, and (2030, 10) after the merge, with 58 rows that have no category. The April to June kept orders (458 rows) total: Masala blends ₹51,680, Whole spices ₹49,440, Ground spices ₹44,140 and Gift boxes ₹9,687."
         },
         {
           "id": "t2",
           "title": "Read the code, then run it",
           "prompt": "Read this code and explain each line in plain words. df = pd.read_csv(\"https://myskills.org.in/practice-data/masala-mart/orders_raw.csv\") / before = len(df) / df = df.drop_duplicates(subset=\"customer_id\") / print(before - len(df)). Now run it. How many rows did it remove? Then reload the file and run df.drop_duplicates() with no subset instead. Which version removes only true duplicates? What would the other do to a revenue total?",
-          "hint": "A customer who orders three times appears in three rows. Is that a duplicate?"
+          "hint": "A customer who orders three times appears in three rows. Is that a duplicate?",
+          "after": "Line by line: load the raw file, store its row count, drop every row that repeats a customer_id (keeping each customer’s first row), and print how many rows went. It removes 1,590 of the 2,065 rows, leaving one row per customer. Plain drop_duplicates() removes only the 35 rows identical in every column: the true duplicates. The subset version throws away every repeat order, so revenue would fall sharply."
         }
       ],
       "reflection": {
@@ -1067,7 +1719,114 @@
           "topic": "Filtering",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "Do the steps once in Python, and next month’s report takes a click.",
+        "idea": [
+          "pandas is Python’s table library, and a DataFrame (df) is a sheet you can program. Google Colab runs it free in a browser with a Google account, and the notebook records every step.",
+          "Read dates with an exact format=, filter with & and | and brackets round each condition, and merge tables on a key with how=\"left\". After every step, compare df.shape and a total with the step before."
+        ],
+        "why": [
+          "The same notebook reruns on next month’s file in seconds",
+          "It handles files far too big for a spreadsheet",
+          "Every step is written down, so others can check it"
+        ],
+        "simple": "A pandas notebook is like a written recipe. Working in a spreadsheet by hand is cooking from memory: fine today, but next month you can’t be sure you did the same steps.",
+        "myth": {
+          "wrong": "You need to install Python on a powerful computer before you can start.",
+          "right": "Google Colab runs pandas free in a browser with a Google account. A laptop or college computer is easiest, but there is nothing to install."
+        },
+        "example": {
+          "title": "The mobile shop’s monthly report",
+          "body": "“Can you redo last month’s numbers for this month too?” asks Imran’s cousin, who runs a mobile shop in Aurangabad. Imran tracks its sales from a CSV file. In Colab he writes four lines: read the file, convert sale_date with format=\"%d/%m/%Y\", keep rows where status is \"paid\", and group by brand to sum the amount. df.shape shows 1,240 rows before the filter and 1,198 after. Next month he changes only the file name and runs it again."
+        },
+        "terms": [
+          {
+            "term": "DataFrame",
+            "meaning": "pandas’ table, usually called df: a sheet you can program."
+          },
+          {
+            "term": "Google Colab",
+            "meaning": "A free online notebook for running Python in a browser."
+          },
+          {
+            "term": "df.shape",
+            "meaning": "The number of rows and columns, such as (2030, 9)."
+          },
+          {
+            "term": "groupby",
+            "meaning": "Splits rows into groups so you can sum, count or average each one."
+          },
+          {
+            "term": "merge",
+            "meaning": "Brings in columns from another table on a shared key, like a SQL join."
+          },
+          {
+            "term": "NaN",
+            "meaning": "pandas’ blank: a missing value."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Predict the output, then run it",
+            "prompt": "Explain each line of this pandas code in plain words, and tell me the exact output: import pandas as pd / df = pd.DataFrame({\"team\": [\"Red\", \"Blue\", \"Red\", \"Blue\", \"Red\"], \"points\": [10, 7, 4, 12, 6]}) / df.groupby(\"team\")[\"points\"].sum()",
+            "look_for": "Blue 19 and Red 20, with Blue listed first, because groupby sorts the team names.",
+            "check": "Open colab.research.google.com, put the three lines in a cell (one per line, without the slashes) and run it. If the AI’s totals or order differ from Colab’s, Colab is right."
+          },
+          {
+            "title": "Which line changes the table?",
+            "prompt": "I want to mark every negative amount as \"check\" in the status column of a pandas DataFrame. Which of these two lines works, and why? A: df[df[\"amount\"] < 0][\"status\"] = \"check\" B: df.loc[df[\"amount\"] < 0, \"status\"] = \"check\" Give me a 4-row DataFrame with amounts 200, -50, 120 and -10 to test it on.",
+            "look_for": "Line B works. Line A sets the value on a temporary copy, so df doesn’t change.",
+            "check": "Run both in Colab on the 4 rows and print df after each. Only line B should turn the two negative rows to “check”. Your Colab may also show a warning for line A."
+          }
+        ],
+        "tip": "Print df.shape after every step in a notebook. One number per step catches most silent mistakes.",
+        "mistake": "Letting pandas guess a date format, so 02/05/2026 can become 5 February without any warning.",
+        "checks": [
+          {
+            "id": "da-m07-c1",
+            "scenario": "After df = df.drop_duplicates(), a hostel mess’s df.shape goes from (2065, 9) to (2030, 9).",
+            "question": "What changed?",
+            "options": [
+              "35 rows were removed",
+              "35 columns were removed",
+              "9 duplicates were removed",
+              "Nothing, as the columns match"
+            ],
+            "correct_index": 0,
+            "hint": "Which of the two numbers moved, and what does it count?",
+            "why": "df.shape shows rows, then columns. The first number fell by 35, so 35 duplicate rows went. The 9 columns are unchanged, and the columns staying the same doesn’t mean the rows did."
+          },
+          {
+            "id": "da-m07-c2",
+            "scenario": "Before a merge, df.shape is (900, 5) and the amount column totals ₹2.1 lakh. After the merge it is (900, 7), with the same total.",
+            "question": "What does this show?",
+            "options": [
+              "Some rows were duplicated in the merge step",
+              "Some of the rows were dropped in the merge",
+              "The merge failed and changed nothing",
+              "Two columns came in; no rows multiplied"
+            ],
+            "correct_index": 3,
+            "hint": "Compare the rows, the columns and the total before and after.",
+            "why": "The row count and the total are unchanged, so nothing was duplicated or dropped. The column count rose from 5 to 7, so the merge did bring in two columns."
+          },
+          {
+            "id": "da-m07-c3",
+            "scenario": "Every month, Leela gets a new export of about 500 sales from a shop and repeats the same 12 cleaning steps by hand in a spreadsheet.",
+            "question": "What is the main gain from writing the steps in a pandas notebook?",
+            "options": [
+              "It runs much faster than a sheet on 500 rows",
+              "The steps rerun exactly on next month’s file",
+              "It works out which cleaning steps are needed",
+              "It can open file types that Sheets can’t"
+            ],
+            "correct_index": 1,
+            "hint": "What stays the same from month to month?",
+            "why": "A notebook records the steps, so they rerun the same way on each new file. 500 rows is quick in a sheet too, Leela still decides the cleaning steps, and a sales export opens in Sheets already."
+          }
+        ]
+      }
     },
     {
       "id": "da-m08",
@@ -1076,7 +1835,7 @@
       "skill": "visualisation",
       "level": "intermediate",
       "outcome": "Build a one-page dashboard that shows key numbers against targets, where the problem is, and what changed.",
-      "minutes": 90,
+      "minutes": 102,
       "learn": [
         {
           "title": "Pick the chart for the question",
@@ -1096,13 +1855,15 @@
           "id": "t1",
           "title": "Build Masala Mart’s dashboard",
           "prompt": "Build a one-page dashboard for Masala Mart’s founder from orders.csv, loaded into a Google Sheet as in Module 2 (Spreadsheets that answer questions). Use Looker Studio connected to your Sheet, or Google Sheets charts; Power BI Desktop is fine if you have Windows. Include: three key numbers for September 2026 against their targets (revenue, target ₹85,000; orders, target 200; return rate, target under 5%); a sorted bar chart of revenue by city; and a line chart of monthly revenue from October 2025. Submit a link or a screenshot, and one sentence on what the founder should act on.",
-          "hint": "Check your September revenue against a SUMIFS or pivot total before you share. Colour only the numbers that miss their target. Does the line chart show the Diwali season?"
+          "hint": "Check your September revenue against a SUMIFS or pivot total before you share. Colour only the numbers that miss their target. Does the line chart show the Diwali season?",
+          "after": "For September 2026: revenue ₹81,581 against ₹85,000 (missed), 195 orders against 200 (missed), and a return rate of 4.1% against under 5% (met). The sorted city chart starts with Mumbai, Bengaluru and Delhi. The monthly line peaks in October 2025, the Diwali season. A good action sentence names the gap: revenue and orders are just short of target while returns are fine, so the founder should focus on winning more orders."
         },
         {
           "id": "t2",
           "title": "Fix a bad chart",
           "prompt": "A colleague shows Masala Mart’s revenue by city as a 3D pie with 10 slices. Make that pie yourself in Google Sheets from a pivot of revenue by city, then redraw it as a better chart. Which city is third, and how easy was that to see in each chart? Write two sentences on why your redraw is easier to read.",
-          "hint": "Would a sorted bar chart say it more clearly? Check that its axis starts at zero."
+          "hint": "Would a sorted bar chart say it more clearly? Check that its axis starts at zero.",
+          "after": "Delhi is third, with ₹1,05,593, after Mumbai (₹1,48,263) and Bengaluru (₹1,40,170). In a 10-slice 3D pie it is hard to rank, because people compare angles badly and the tilt makes front slices look bigger. A bar chart sorted largest first, with its axis starting at zero, shows the order at once."
         }
       ],
       "reflection": {
@@ -1186,7 +1947,114 @@
           "topic": "AI-assisted BI",
           "weight": 15
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "A good dashboard tells a manager what to do next in five seconds.",
+        "idea": [
+          "Pick the chart for the question: a line for change over time, a sorted bar for comparing categories, a scatter for two numbers together. Bars start at zero, and a pie gets only two or three slices.",
+          "A dashboard page answers three questions, top to bottom: are we on track, where is the problem, and what changed? Use colour only to point at what needs action, and check every number against a total you trust."
+        ],
+        "why": [
+          "Managers decide in seconds, so the layout must do the work",
+          "The wrong chart can make a 2% gap look huge",
+          "Free tools (Looker Studio, Sheets charts, Power BI Desktop) are enough to build one"
+        ],
+        "simple": "A dashboard is like the one in a car. It shows speed and fuel up front, and lights up red only when something needs you. It doesn’t show every part of the engine.",
+        "myth": {
+          "wrong": "More charts make a better dashboard.",
+          "right": "Each page needs one purpose and the few numbers that serve it. Extra charts make people hunt for the one that matters."
+        },
+        "example": {
+          "title": "The NGO’s four centres",
+          "body": "Imagine Priya, who runs the office for an NGO’s 4 tuition centres in Kolkata. Her one-page dashboard has three parts. Top row: 280 students attending this month, against a target of 300. Middle: a sorted bar chart of attendance by centre, with the one centre below target in red. Bottom: a 12-week line of attendance. The director sees the red bar first and visits that centre on Monday."
+        },
+        "terms": [
+          {
+            "term": "Key number (KPI)",
+            "meaning": "A number tracked against a target, such as orders this month."
+          },
+          {
+            "term": "Scorecard",
+            "meaning": "One big number on a dashboard, often shown next to its target."
+          },
+          {
+            "term": "Sorted bar chart",
+            "meaning": "Bars in order from largest to smallest, for comparing categories."
+          },
+          {
+            "term": "Line chart",
+            "meaning": "Shows how a number changes over time."
+          },
+          {
+            "term": "Truncated axis",
+            "meaning": "An axis that doesn’t start at zero, which makes small gaps look big."
+          },
+          {
+            "term": "Measure (DAX)",
+            "meaning": "A Power BI formula that every chart reuses, so the number matches everywhere."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Ask AI to pick the chart",
+            "prompt": "For each question, which chart should I use, and why? One line each. 1. How have a college’s monthly library visits changed over 2 years? 2. Which of 8 departments borrowed the most books this term? 3. What share of loans were print books and what share e-books? 4. Do students who borrow more books also attend more classes?",
+            "look_for": "A line chart, a sorted bar chart, a pie or stacked bar with only two parts, and a scatter plot.",
+            "check": "Match each answer to the first card’s list. If it suggests a pie for the 8 departments, ask it why a sorted bar wouldn’t be easier to compare."
+          },
+          {
+            "title": "See how an axis can mislead",
+            "prompt": "A college fest sold these tickets: Day 1 420, Day 2 615, Day 3 380, Day 4 590. My bar chart’s axis starts at 350. How many times taller does Day 2’s bar look than Day 3’s, and how much more did Day 2 really sell? How do I fix the chart?",
+            "look_for": "Day 2’s bar looks nearly 9 times as tall as Day 3’s, though Day 2 sold only about 62% more. The fix is to start the axis at zero.",
+            "check": "Work it out: from 350, the bars are 265 and 30 units tall, and 265 ÷ 30 ≈ 8.8. From zero they are 615 and 380, and 615 ÷ 380 ≈ 1.6. Then chart the four days in Google Sheets (Insert > Chart) with the axis starting at 0."
+          }
+        ],
+        "tip": "Show your page to someone who has never seen it, and ask what they look at first. It should be the most important number.",
+        "mistake": "Giving every bar its own bright colour, so nothing stands out when one number really needs action.",
+        "checks": [
+          {
+            "id": "da-m08-c1",
+            "scenario": "A school in Kozhikode wants to compare this year’s pass rates across its 7 subjects.",
+            "question": "Which chart suits this best?",
+            "options": [
+              "A pie chart with one slice per subject",
+              "A line chart that joins up the 7 subjects",
+              "A bar chart sorted from highest to lowest",
+              "A scatter plot with a dot per subject"
+            ],
+            "correct_index": 2,
+            "hint": "Is this change over time, parts of a whole, or a comparison of categories?",
+            "why": "Comparing categories calls for a sorted bar chart. Pass rates aren’t parts of one whole, so a pie doesn’t fit, a line suggests a change over time, and a scatter needs two numbers for each subject."
+          },
+          {
+            "id": "da-m08-c2",
+            "scenario": "Kiran has only an Android phone and a Google Sheet of her tea stall’s weekly sales. She wants a simple one-page chart view today, at no cost.",
+            "question": "Which should she use?",
+            "options": [
+              "Power BI Desktop, which many employers use",
+              "Copilot in Power BI, to draft the page for her",
+              "Google Sheets charts, made on her phone",
+              "A DAX measure, so every chart uses one number"
+            ],
+            "correct_index": 2,
+            "hint": "Which of the tools on the third card runs on a phone, for free?",
+            "why": "Sheets charts work on a phone and are enough for a simple one-page view. Power BI Desktop runs only on Windows computers, Copilot is a paid feature, and DAX is written inside Power BI."
+          },
+          {
+            "id": "da-m08-c3",
+            "scenario": "The founder of a Lucknow sweets chain asks you to add stock levels, staff rotas and Instagram followers to the one-page sales dashboard.",
+            "question": "What should you do?",
+            "options": [
+              "Add them in small charts along the bottom row",
+              "Add them, but in grey so they draw less attention",
+              "Replace the trend line, the least-used chart",
+              "Give them their own pages, each with one purpose"
+            ],
+            "correct_index": 3,
+            "hint": "What is this page for?",
+            "why": "The sales page answers whether sales are on track, where and what changed. Stock, rotas and followers are different questions, so each gets its own page. Squeezed in, greyed out or swapped for the trend, they crowd the sales story or remove part of it."
+          }
+        ]
+      }
     },
     {
       "id": "da-m09",
@@ -1195,7 +2063,7 @@
       "skill": "ai-analytics",
       "level": "intermediate",
       "outcome": "Use a free AI assistant to draft analysis, then check its output against the data before anyone relies on it.",
-      "minutes": 75,
+      "minutes": 87,
       "learn": [
         {
           "title": "What AI is good at, and how to ask",
@@ -1215,13 +2083,15 @@
           "id": "t1",
           "title": "Prompt, then check",
           "prompt": "Use any free AI assistant, such as ChatGPT, Claude or Gemini. Give it only the column names of Masala Mart’s orders.csv, not the data. Ask it for a DuckDB query that shows, for each month, the share of customers who were repeat customers. Define “repeat customer” in your prompt yourself. Run the query in shell.duckdb.org on orders.csv. Then run the three checks from the second card. Submit your prompt, the query, one month’s result, and what each check found.",
-          "hint": "Decide first: is a repeat customer someone who ordered in an earlier month, or someone with 2 or more orders this month? The two give very different numbers."
+          "hint": "Decide first: is a repeat customer someone who ordered in an earlier month, or someone with 2 or more orders this month? The two give very different numbers.",
+          "after": "A strong prompt names DuckDB, lists the column names and defines a repeat customer, for example “someone who also ordered in an earlier month”. The query runs on orders.csv. The three checks: count one month’s customers by hand on a small sample, compare a total (such as 2,030 orders or ₹7,55,512) with orders.csv, and read the code to see what it counts, such as COUNT(DISTINCT customer_id). “I asked the AI again” is not a check. With “a customer who also ordered in an earlier month”, April 2026 has 121 customers, 84 of them repeat: 69.4%. October 2025 shows 0%, since it is the first month in the file. Say so, rather than report it as a real figure."
         },
         {
           "id": "t2",
           "title": "Catch the error",
           "prompt": "An AI assistant read Masala Mart’s orders.csv and wrote: “Revenue grew 60% from Q1 to Q2 2026, driven by Bengaluru.” Check both parts against the data with a pivot table or SUMIFS in Google Sheets. Q1 is January to March and Q2 is April to June. Find the mistake, work out what the AI most likely did wrong, and rewrite the sentence correctly.",
-          "hint": "Recalculate both quarters from the rows yourself. If your growth figure differs, try other date ranges to see which one gives 60%."
+          "hint": "Recalculate both quarters from the rows yourself. If your growth figure differs, try other date ranges to see which one gives 60%.",
+          "after": "Q1 2026 (January to March) is ₹1,40,355 and Q2 (April to June) is ₹1,74,780: growth of about 24.5%, not 60%. The 60% comes from reading Q2 as April to July (₹2,24,785). The Bengaluru part holds: it added the most, about ₹10,243. A correct sentence: “Revenue grew about 25% from Q1 to Q2 2026, and Bengaluru added the most.”"
         }
       ],
       "reflection": {
@@ -1305,7 +2175,114 @@
           "topic": "Verifying AI output",
           "weight": 10
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "AI drafts your query in seconds. Checking it is your job.",
+        "idea": [
+          "Free assistants such as ChatGPT, Claude and Gemini can draft SQL and pandas, explain formulas and suggest charts. Tell them the tool, the table, the columns, what the columns mean, and the output you want.",
+          "AI code can run and still answer a different question. Test it on a small sample you can count by hand, compare a total with a source you trust, and read exactly what it counts. Never paste personal data into a public AI tool."
+        ],
+        "why": [
+          "Drafting code with AI saves time on routine queries",
+          "A wrong number you share is your mistake, not the AI’s",
+          "India’s DPDP Act, 2023 sets rules for using people’s personal data"
+        ],
+        "simple": "AI is like a quick new intern. It finishes in minutes and sounds sure of itself. You still check the work before your name goes on it.",
+        "myth": {
+          "wrong": "Asking the AI “Are you sure?” is a good way to check its answer.",
+          "right": "The same AI may simply agree, or change a right answer. A real check uses something outside it: a hand count, a trusted total, or reading the code yourself."
+        },
+        "example": {
+          "title": "The homestay’s nights",
+          "body": "Imagine Tara, who analyses bookings for a homestay in Goa. She tells a free AI: “I use DuckDB. Table stays has stay_id, guest_id, check_in (a DATE) and nights. Write a query for the nights booked each month in 2026.” It returns SUM(nights) grouped by month. She checks March by hand on 10 rows, then compares the year’s total with the owner’s register. Both match, so she shares it."
+        },
+        "terms": [
+          {
+            "term": "Prompt context",
+            "meaning": "What you tell the AI: the tool, the table, the columns and the output you want."
+          },
+          {
+            "term": "Hallucination",
+            "meaning": "A confident answer the AI made up, such as a column that doesn’t exist."
+          },
+          {
+            "term": "Sample check",
+            "meaning": "Running the code on a few rows you can count by hand."
+          },
+          {
+            "term": "COUNT(DISTINCT)",
+            "meaning": "Counts different values, such as different customers, not rows."
+          },
+          {
+            "term": "Personal data",
+            "meaning": "Anything that identifies a person: a name, phone number, Aadhaar number or health details."
+          },
+          {
+            "term": "Made-up row",
+            "meaning": "A fake row that shows the AI the shape of your data without real details."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Write a prompt with full context",
+            "prompt": "I use pandas. DataFrame df has ticket_id, show_date (already dates), seat_type ('Gold' or 'Silver') and price in ₹. Write code for the total ticket revenue by seat type in March 2026, largest first. Explain each line.",
+            "look_for": "A filter with & and brackets on show_date, then groupby(\"seat_type\")[\"price\"].sum() and a sort, largest first.",
+            "check": "In Colab, make 5 rows yourself, including one on 31 March and one on 1 April. Total each seat type by hand first. If the 1 April row is counted, or the 31 March row is missed, the date filter is wrong."
+          },
+          {
+            "title": "Catch a counting mistake",
+            "prompt": "Here are 8 orders as customer_id and month: C1 Jan, C2 Jan, C1 Jan, C3 Jan, C2 Feb, C2 Feb, C4 Feb, C1 Feb. Write SQL for monthly active customers from a table orders(customer_id, month), and give me the result for each month.",
+            "look_for": "COUNT(DISTINCT customer_id), and 3 customers in each month, not 4.",
+            "check": "Count by hand: January has 4 orders from 3 people, because C1 ordered twice. If the AI says 4, it counted orders. Tell it which step is wrong, rather than asking “are you sure?”."
+          }
+        ],
+        "tip": "Keep a made-up row for each table you use often. Paste it with the column names, and the AI writes better code without seeing real data.",
+        "mistake": "Pasting a real customer list into a public AI tool to “clean it quickly”.",
+        "checks": [
+          {
+            "id": "da-m09-c1",
+            "scenario": "An AI writes a query for “patients each month” at a Nagpur dental clinic. It returns SUM(visits) for each month.",
+            "question": "Which check catches the problem fastest?",
+            "options": [
+              "Compare the year’s total with the appointment book",
+              "Run it again and see if the number changes",
+              "Read the code to see what it adds up",
+              "Ask the AI whether its query is right"
+            ],
+            "correct_index": 2,
+            "hint": "Which check can you do in seconds, with no other data?",
+            "why": "Reading the code shows at once that it adds visits, so a patient who comes 3 times counts 3 times. Comparing with the appointment book would also catch it, but only after you total the book. Running it again gives the same wrong number, and asking the same AI is not a check."
+          },
+          {
+            "id": "da-m09-c2",
+            "scenario": "A query counts the people who used a college gym in May. 5 students came 4 times each, and nobody else came.",
+            "question": "What should COUNT(DISTINCT student_id) return?",
+            "options": [
+              "20",
+              "4",
+              "5",
+              "1"
+            ],
+            "correct_index": 2,
+            "hint": "What does DISTINCT do to repeats?",
+            "why": "5 different students came, so COUNT(DISTINCT student_id) is 5. 20 is the number of visits, which COUNT(student_id) would give, and 4 is how often each came."
+          },
+          {
+            "id": "da-m09-c3",
+            "scenario": "A coaching centre in Patna collected parents’ phone numbers at admission. It now wants to send them fee reminders by SMS.",
+            "question": "Under the DPDP Act, 2023, what makes this use lawful?",
+            "options": [
+              "Nothing more: a stored number can be used for any purpose",
+              "A separate signed consent form for every reminder it sends",
+              "Registering the centre with the Data Protection Board first",
+              "Consent for it, or a legitimate use the Act lists"
+            ],
+            "correct_index": 3,
+            "hint": "What does the Act say every use of personal data needs?",
+            "why": "The Act allows personal data to be used only for a lawful purpose: the person’s consent, or one of the legitimate uses it lists. Storing a number gives no right to use it for anything. Consent covers a stated purpose, so it isn’t needed again for each reminder, and the Act has no step of registering an ordinary business with the Data Protection Board."
+          }
+        ]
+      }
     },
     {
       "id": "da-m10",
@@ -1314,7 +2291,7 @@
       "skill": "storytelling",
       "level": "advanced",
       "outcome": "Write a recommendation a manager can act on from its first two lines, with the evidence and its honest limits.",
-      "minutes": 60,
+      "minutes": 72,
       "learn": [
         {
           "title": "Lead with the answer",
@@ -1334,13 +2311,15 @@
           "id": "t1",
           "title": "Write the memo opening",
           "prompt": "In Module 2 (Spreadsheets that answer questions) you found Masala Mart’s return rate by payment method (orders.csv, October 2025 to September 2026). Cash on delivery (COD) orders are returned far more often than UPI or card orders. Assume each return costs the brand about ₹90 in shipping both ways. Write the first paragraph of a memo to the founder: your recommendation first, the numbers behind it, and one honest caveat.",
-          "hint": "Recommendation first, evidence second, one caveat. Did customers choose how to pay? What would a test show?"
+          "hint": "Recommendation first, evidence second, one caveat. Did customers choose how to pay? What would a test show?",
+          "after": "A strong opening starts with the action, for example: “Test a small fee or a prepaid discount on cash-on-delivery orders for a month.” Then the numbers: COD orders are returned 17.3% of the time, against 5.3% for UPI and 3.9% for cards, and the year’s 91 COD returns cost about ₹8,190 at ₹90 each. Then the caveat: customers chose how to pay, so a test would show whether nudging them really cuts returns."
         },
         {
           "id": "t2",
           "title": "Turn findings into actions",
           "prompt": "Three findings from a college canteen’s sales data: 60% of sales happen between 12:30 and 1:30 pm; the queue takes 14 minutes at peak; 30% of students who arrive at peak leave without buying. Write one insight and one action for each finding.",
-          "hint": "What could the canteen change by next week? Make each action small enough to test."
+          "hint": "What could the canteen change by next week? Make each action small enough to test.",
+          "after": "Each line goes beyond the number. Lunch peak: the canteen gets most sales in one hour, so pre-pack the 3 best-selling meals before 12:30 for two weeks. 14-minute queue: students with short breaks can’t wait that long, so open a second till from 12:30 to 1:30 and time the queue again. 30% leaving: those are customers already at the counter, so try a pre-order counter for a week and count how many still leave."
         }
       ],
       "reflection": {
@@ -1424,7 +2403,110 @@
           "topic": "Business impact",
           "weight": 15
         }
-      ]
+      ],
+      "workbook": {
+        "hook": "Your analysis only counts if someone acts on it. Make the first line do that.",
+        "idea": [
+          "Lead with the answer: the recommendation, then the one number behind it, then the evidence and the limits. Many managers read only the first two lines.",
+          "Turn each finding into an insight (why it matters) and an action (what to do next) that is small, specific and testable. State the period, the data, the sample size and what you couldn’t check."
+        ],
+        "why": [
+          "A clear first line gets read and acted on",
+          "A specific action can be tested and measured",
+          "Honest limits make people trust the rest"
+        ],
+        "simple": "It’s like a cricket captain at the toss. He doesn’t read out the pitch report first. He says “We’ll bowl”, and gives the reason if he’s asked.",
+        "myth": {
+          "wrong": "Admitting the limits of your analysis makes you look weak.",
+          "right": "A clear caveat earns trust. If a manager finds a limit you hid, they stop trusting everything else."
+        },
+        "example": {
+          "title": "The textile shop’s queue",
+          "body": "Vikram, an intern at a textile shop in Surat, writes a first draft that starts, “I looked at 9 months of sales across 3 counters.” He rewrites it: “Open the second billing counter on Saturdays from 5 to 8 pm. Saturday evening queues average 18 minutes, and 1 in 5 customers leaves without buying.” Then come the evidence and one caveat: the queues were timed by hand on 6 Saturdays."
+        },
+        "terms": [
+          {
+            "term": "Recommendation",
+            "meaning": "The action you advise, stated first."
+          },
+          {
+            "term": "Finding",
+            "meaning": "What the data shows."
+          },
+          {
+            "term": "Insight",
+            "meaning": "Why the finding matters for the decision."
+          },
+          {
+            "term": "Action",
+            "meaning": "A small, specific, testable step someone can start next week."
+          },
+          {
+            "term": "Caveat",
+            "meaning": "A short, honest note of what the analysis can’t show."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Put the answer first",
+            "prompt": "Rewrite this opening so the recommendation comes first, then the number behind it, in under 50 words: “This note reviews three months of data from our two college canteens, covering 9,000 bills. We compared menus, prices and timings. Canteen B sells 35% more breakfast than Canteen A, and B opens at 7:30 am while A opens at 8:30 am.”",
+            "look_for": "A first line that is an action, such as opening Canteen A at 7:30 am for a month as a trial, followed by the 35% gap.",
+            "check": "Read only the first line: could a manager act on it? Also check the AI doesn’t claim the opening time causes the gap. The two only go together; a one-month trial would test it."
+          },
+          {
+            "title": "Write a one-line caveat",
+            "prompt": "Students who used a free online practice test scored 11 marks higher in the final exam. The data covers 600 students from one college in one semester, and students chose whether to take the practice test. Write a one-line caveat, under 40 words, that names the sample, the main doubt and what would settle it.",
+            "look_for": "The 600 students and the one semester, the doubt that keener students chose the practice test, and a random trial to settle it.",
+            "check": "Tick the three jobs from the third card: how much data, the main doubt, and what would settle it. If the line says the practice test “caused” the higher marks, ask the AI to remove that claim."
+          }
+        ],
+        "tip": "Before you send, cover everything but your first two lines. If they don’t say what to do and why, rewrite them.",
+        "mistake": "Writing the action as a hope, such as “improve the customer experience”, which nobody can start on Monday.",
+        "checks": [
+          {
+            "id": "da-m10-c1",
+            "scenario": "A note on a bookstore’s data ends: “Put a second till on Saturday afternoons for four weeks, then compare sales with last month.”",
+            "question": "What kind of statement is this?",
+            "options": [
+              "A finding, since it says what the data shows",
+              "An insight, since it says why the data matters",
+              "A caveat, since it says what can’t be checked",
+              "An action, since it says what to do next"
+            ],
+            "correct_index": 3,
+            "hint": "Does it describe, explain, warn, or tell someone what to do?",
+            "why": "It tells the store what to do and how to test it, so it is an action. A finding reports the data, an insight explains why it matters, and a caveat names a limit."
+          },
+          {
+            "id": "da-m10-c2",
+            "scenario": "A hostel mess finds that 40% of the dinner it cooks on Sundays is thrown away.",
+            "question": "Which is the best action?",
+            "options": [
+              "Cook 40% less every day for a week",
+              "Cook 30% less on Sundays for 4 weeks, then compare",
+              "Survey 30 students about Sunday dinner, then decide",
+              "Ask students to be more careful about food waste"
+            ],
+            "correct_index": 1,
+            "hint": "Where was the waste found, and how would you know a change worked?",
+            "why": "Cooking 30% less on Sundays for 4 weeks is small, specific and testable: weigh the waste and see. The finding is about Sundays, not every day, a survey delays acting on a clear finding, and “being more careful” isn’t a step anyone can measure."
+          },
+          {
+            "id": "da-m10-c3",
+            "scenario": "Anjali’s recommendation to a salon rests on a survey that 25 regular customers filled in at the counter.",
+            "question": "Which caveat should go beside it?",
+            "options": [
+              "Based on 25 regulars; new customers may differ.",
+              "Based on 25 customers; a bigger survey would settle it.",
+              "Based on 25 regulars; results may change next year.",
+              "Filled in at the counter; staff may have helped."
+            ],
+            "correct_index": 0,
+            "hint": "Think about who filled in the survey, and who never saw it.",
+            "why": "It states the sample (25 regulars) and the main doubt: newer customers weren’t asked. A bigger survey at the same counter would still ask only regulars, next year is not the doubt, and the last one leaves out how much data there is."
+          }
+        ]
+      }
     }
   ],
   "final": {

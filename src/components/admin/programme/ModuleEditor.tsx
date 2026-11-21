@@ -49,6 +49,12 @@ export function ModuleEditor({
       ) : (
         <p className="text-xs text-ink-500">Every part below is optional, but a module needs Practise tasks, a quiz, or both.</p>
       )}
+      {m.workbook && (
+        <p className="rounded-xl border border-violet-200 bg-violet-50 p-3 text-xs leading-relaxed text-ink-700">
+          This module has an interactive workbook chapter ({m.workbook.terms.length} key terms, {m.workbook.try_it?.length ?? 0} “Try it” cards, {m.workbook.checks?.length ?? 0} check-ins). It’s kept
+          when you save; to change its words, download the programme, edit the file and replace the draft. Preview the module to see it.
+        </p>
+      )}
 
       {/* A built-in programme's pages only show the parts each module already has. */}
       {!(locked && m.learn.length === 0) && (

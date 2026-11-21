@@ -1,0 +1,414 @@
+{
+ "verdict": "needs_work",
+ "summary": "The revision fixed most of round 1. The IT Rules definition and M9 t2 are now right, m04-q4 no longer contradicts itself, every module has two try_its, M5 and M7 no longer repeat themselves, and the M8 example adds up. The questions improved too: options-only fell from 88% to 73% and the blind test agreed with every key. But 73% (43 of 59) is still far above the 29 target, and the Foundation final is the worst part: 12 of 15 were answered from the options, including all three questions for verification, safe use and integrity. Two new patterns cause it. The key sits where the most common parts of the other options meet. And the key is almost always the most careful option. Must-fix besides those: m01-q4’s key teaches that a pharmacist can set children’s doses for a syrup labelled for adults, which goes against India’s October 2025 advisory on cough syrups for children. Every module scores 4 or more except M1 relevance (3, from m01-q4).",
+ "strengths": [
+  "Round 1’s accuracy fixes are done well. M9 card 3, the workbook term, the myth and t2’s after text all use the notified definition (looks real and shows a person or event), with the exclusions listed. The blueprint row now has items 1 and 3 under the IT Rules.",
+  "The workbooks are now even and varied. Every module has a “see it fail” try_it and a “do it right and check” try_it: M4 checks a theme against redacted reviews, M6 runs a self-review that misses a planted date, M7 audits a cited paragraph, M8 redoes a rate with COUNTIFS, and M11 writes its tests before building. Hints point to the idea, not the option.",
+  "Many wrong options now say plainly when they would be right (“Rule numbers would be quickest if the rules were numbered”), so feedback teaches the deciding fact. m06-q4 rightly makes self-review the key when the facts are already checked.",
+  "The blind clue test agreed with the key on all 59, and the cards test answered 43 of 44 from the Learn cards. The teaching covers what the questions test."
+ ],
+ "findings": [
+  {
+   "target": "programme",
+   "severity": "must_fix",
+   "problem": "Clue test (options, run 2): 43 of 59 answered from the options alone (73%; target 29 or fewer). It was 52 of 59. The four round-1 causes are mostly gone, but two new ones replaced them. (a) Convergence: options built by changing one part of the key at a time leave the key as the only option that has the most common value of every part. m01-q2: “agent” appears twice and “staff approve” twice, and the key is the only option with both. Likewise m01-q3 (“every dish” and “against his notes”), m07-q4 (“14 June” and “the body’s notice”), m08-q4, f04 (“rule” and “replace … with ‘the resident’”), f14 (“all three” and “note”) and f15 (“AI drafts” and “checks”). (b) The key is the most careful option. In 2/2 splits the key is always in the careful pair (Confirm/Remove/Ask/Separate profile against Send/Keep/Use AI/Normal browser), and within that pair it is the more thorough or more official one: f08, f09, f10, f13, m10-q4. In 10 of the 12 final questions the prober got right, the key was the most cautious option (f03, f04, f06, f08, f09, f10, f11, f13, f14, f15). In the questions the prober missed, the key was often the quicker one: f01 (no AI), m05-q2 (use the unchecked gist), m02-q4 (just remove the line). (c) The key repeats the module’s headline habit: m02-q1 (limits), m02-q2 (office will confirm), m03-q3 (total the source), m06-q2 (AI only for ideas), m09-q3 (exact-phrase search), m11-q1 (human check). The blueprint names these itself.",
+   "fix": "(1) For options with two parts, use a 2×2 design: right part 1 with right part 2 (the key), right with wrong, wrong with right, and wrong with wrong. Each value then appears exactly twice, so convergence points nowhere. Apply it to m01-q2, m01-q3, m07-q4, m08-q4, f04, f14 and f15 (the rewrites are in the module and final findings). (2) Flip at least one question per module and four in the final, so the key is the quicker or less cautious option and a fact in the scenario makes the careful option costly (a deadline it misses, a step already done, a check it blocks). Rule 21 says a step that is only unnecessary is not wrong, so state the cost. The final rewrites below flip f13 and f15. In the quizzes, good candidates are m02-q2, m03-q3, m06-q2, m09-q3 and m11-q1. For example, m09-q3: “Raghav searched the exact line in quotes yesterday and found nothing; the shop’s owner wrote the line herself, and the AI only tidied it.” The key becomes “Use it: the line is the owner’s own, and the exact search found nothing”. “Search the exact line again” and “Ask the AI whether it copied the line” become wrong. (3) Apply the per-question rewrites in this review. Re-run the options clue test, aiming for 29 of 59 or fewer, and 7 of 15 or fewer in the final.",
+   "source": "Clue test (options, run 2), agentic-ai.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 20,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "must_fix",
+   "problem": "The Foundation final places learners skill by skill, but 12 of its 15 questions were answered from the options alone (80%). That covers every question for verification (f07, f08, f09), safe use (f10, f11, f12) and integrity (f13, f14, f15), and f03 and f15 were certain. So three of the five skill scores still reward test-wiseness. The blind test also found a second defensible option in f04, f05, f07, f08, f10 and f15. My judgement of each: f04 is defensible, because nothing says the reply needs no room number, and the key is the only option that combines “rule” and “replace”. f05 is partly defensible: “Be playful and warm, like a friend at the counter” adds a persona, and nothing says one has already failed. f07 is not defensible, but its options leak the data: from options 1 and 3 you can work out Q1 = ₹3,20,000, Q2 = ₹2,80,000 and the real total. f08 is defensible: an Indian embassy page is an official Government of India source, and “last updated 2023” doesn’t show it is wrong. f10 is partly defensible: counting with a filter only works if the reasons are codes, and the scenario doesn’t say so. f15 is defensible, but because of option 1, not option 3: Lakshmi can type 12 lines and write a two-line note herself, and no rule says she must use AI. The “draft for the buyer” option is not defensible.",
+   "fix": "f03: keep the scenario. Options: “A person checks each email’s company facts against the research sources before it is sent” (key); “The agent checks each email’s facts against its own research notes before sending” (the notes hold the mix-up); “A person checks each email’s tone and format against the brief before it is sent” (already fine); “A person checks the facts in five sent emails each morning” (after sending). f04: add “His message asks when it will be fixed and whether he gets money back.” Use a 2×2 design. Key: “Add the PG’s repair and refund rule; replace his name, room and phone with ‘the resident’”. Wrong: “Add the PG’s repair and refund rule; keep his name, so the reply greets him”; “Say ‘the office will confirm repairs and refunds’; replace his name, room and phone with ‘the resident’”; “Say ‘the office will confirm repairs and refunds’; keep his name, so the reply greets him”. f05: add “Yesterday she replied, ‘More playful and warm, please, like a friend’, and the captions came back just as formal.” Ask “Which feedback should she send now?” f07: drop the working from the options: “The total: it should be ₹9,60,000”; “The average: it should be about ₹3,13,333”; “The rise: it should be about 11.1%”; “The Q2 figure: it should be ₹2,60,000”. Keep the working in the explanation and why_wrong. f08: add “The embassy page links to India’s official e-visa website ‘for current rules’.” f10: add “Each reason is one of eight short codes, such as ‘documents missing’ or ‘policy lapsed’.” f11: replace “Nothing more: the approved tool may see staff data” with “Replace it with ‘the only woman in her team’”, which still identifies her, because the comments are sorted by team. f13 (flip the key): “Her contract allows AI first drafts if the tool doesn’t keep or train on the text. Her free tool’s ‘improve the model’ setting is on. The chapter is due tomorrow, and the publisher answers queries within a week.” Key: “Turn the training setting off, draft with AI, and say so when she delivers.” Wrong: “Ask the publisher first, and wait for the reply” (it misses the deadline, and the contract already answers); “Use the tool as it is, since the contract allows AI drafts” (the training setting is on); “Translate it without AI, since unpublished text must never go into AI” (the contract allows it). f14 (2×2): “Check all three statistics, and add a note on what AI wrote” (key); “Check all three statistics, and add no note, since the teammate, not Neha, used AI”; “Check the statistic the conclusion rests on, and add a note on what AI wrote”; “Check the statistic the conclusion rests on, and add no note, since the teammate used AI”. f15: add “She sends about 40 of these a week, and her manager wants this one out within the hour.” Use a 2×2 design: “AI drafts the summary and note; she checks every figure against the sheet” (key); “AI drafts the summary and note; she checks the invoice total against the sheet”; “She types the summary and note herself, checking every figure against the sheet” (misses the hour at 40 a week, and the case is easy to check); “She types them herself, and checks the total against the sheet”. Update every explanation and why_wrong to match (rule 12), and the blueprint’s “Decided by” column.",
+   "source": "Clue tests (options and blind, run 2), agentic-ai.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 20,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m01",
+   "severity": "must_fix",
+   "problem": "m01-q4: the key, “Decide: the pharmacist sets the doses; AI only helps with the wording”, teaches that a pharmacist can set children’s doses, by age, for a cough syrup whose label gives adult doses only. That is unsafe and out of date. India’s health ministry (DGHS) advised on 3 October 2025 that cough and cold medicines should not be prescribed or dispensed to children under two, and are generally not recommended under five. For older children they need a clinical evaluation. A pharmacy’s WhatsApp list of children’s doses is the wrong output whoever writes it. The blind test also found the “dose chart” option defensible. It isn’t, since the scenario says no chart exists, but an option that refers to something the scenario rules out is a weak distractor.",
+   "fix": "Scenario: “… The syrup’s label gives adult doses only. Neither Meenal nor the manager is trained to advise on doses.” Key: “Decide: children’s doses are a doctor’s call; the message tells parents to ask their child’s doctor.” Wrong options: “Check: compare each child’s dose with the syrup’s label before sending” (the label has no children’s doses, so there is nothing to check against); “Brief: give the AI the label’s adult dose, to scale down by age” (scaling adult doses is the dangerous guess); “Own: the manager reads and approves the message before it is sent” (he isn’t trained). Explanation: “Dose advice for children needs a doctor, so the Decide step keeps doses out of the message entirely. AI can still help word a message that sends parents to a doctor.” LO: “Decide first: health advice goes to a qualified person, not to AI.”",
+   "source": "https://www.onmanorama.com/news/india/2025/10/03/cough-syrup-advisory-children-under-2-years.html",
+   "owner": "assessment",
+   "category": "accuracy",
+   "rule": null,
+   "standard": "relevance"
+  },
+  {
+   "target": "module:aa-m01",
+   "severity": "should_fix",
+   "problem": "m01-q2 and m01-q3 converge. In q2, “agent” and “staff approve” each appear twice, and the key is the only option with both. In q3, “Every dish name and price” and “against his handwritten notes” each appear twice, and the key is the only option with both. Both were answered from the options alone. On the blind findings: in q1, the chat-assistant option is not defensible (“without starting it himself” rules it out), and in q2, “books within budget” is not defensible (“a staff member approves every booking”).",
+   "fix": "q2 (2×2): “An agent that picks its next search from what it finds; staff approve bookings” (key); “An agent that picks its next search from what it finds, and books within budget”; “A fixed workflow: the same five searches in order; staff approve bookings”; “A fixed workflow: the same five searches in order, then it books within budget”. q3 (2×2): “Every dish name and price, against his handwritten notes” (key); “Every dish name and price, against last year’s printed menu”; “Four dishes at random, against his handwritten notes”; “Four dishes at random, against last year’s printed menu”. Keep the scenarios, and keep q1 as it is.",
+   "source": "Clue test (options and blind, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 20,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m03",
+   "severity": "should_fix",
+   "problem": "m03-q4: the blind test found “The member count and dates in the welcome, against the bank’s register” defensible, and it is. Figures copied from last month’s newsletter may be a month out of date: the member count will have changed, and last month’s dates may no longer apply. Copying an approved old figure is a classic stale-fact error, so the scenario doesn’t make the new parts the clear priority.",
+   "fix": "Replace the scenario’s second sentence with: “The branch manager checked the welcome paragraph’s member count and dates against the register this morning.” Change why_wrong’s first sentence to “The welcome’s figures were checked against the register this morning, so they aren’t where the risk is.” Keep the key and the other options.",
+   "source": "Clue test (blind, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m04",
+   "severity": "should_fix",
+   "problem": "m04-q4: the key, “Only each leave’s shift and date”, can’t answer the question as written. The sheet is a leave sheet, and nothing says every row is sick leave. Without the reason column, the assistant can’t tell sick days from other leave. The blind test’s alternative (“every column except names, IDs and phones”) is not defensible, because it keeps illness reasons against the policy. On m04-q1, the blind test’s alternative (tracking numbers and area) is not defensible either: it leaves “House 12, Model Town” in the text and drops the area the themes need. No change is needed there.",
+   "fix": "m04-q4 scenario: “The sick-leave sheet has one row per sick day: each worker’s name, ID number, phone, shift, date, and a reason that often names an illness.” Keep the options and the key.",
+   "source": "Clue test (blind, run 2)",
+   "owner": "assessment",
+   "category": "accuracy",
+   "rule": null,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m05",
+   "severity": "should_fix",
+   "problem": "m05-q2: a college club in Hubballi, where Kannada is the main language, in which “nobody reads Kannada well”, is hard to believe, and “well” leaves room for a member who reads some. Both the blind and the cards tests picked or allowed “have a member who reads Kannada check it”. “The sister club’s office is closed until next month” is also odd: clubs talk on WhatsApp, not through offices. M5 card 1 does teach the key (“Low stakes, hard to check: use it with care, and label the result a draft”), so this is the question’s fault, not the card’s.",
+   "fix": "Scenario: “A college club in Guwahati got a short notice in Kannada from a sister club in Hubballi about a joint event. No one in the club reads Kannada. The sister club’s contact is on a trek with no signal until next week. The team only needs the gist to plan its reply in its own chat this week. Nothing will be published.” Make option 1 “Use AI for the gist, then have a member check it with a second AI translator” (another AI isn’t a check). Option 2 becomes “Wait for the sister club’s contact to explain it next week”. Update why_wrong to match.",
+   "source": "Clue tests (blind and cards, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m07",
+   "severity": "should_fix",
+   "problem": "m07-q4 breaks rule 20’s last sentence. The key is “14 June, citing the counselling body’s 20 May notice, and noting the earlier date”, and the wrong options lack the “noting” step, so the key is the most complete option. It also converges: “14 June” appears twice and “the body’s notice” twice. The blind test’s alternative (“both dates … readers should check themselves”) is not defensible, because it passes the decision to readers. But the key’s extra step is what makes it look better.",
+   "fix": "Give every option the same shape: “10 June, citing the department’s 2 May release, and noting the body’s later date”; “14 June, citing the counselling body’s 20 May notice, and noting the earlier date” (key); “14 June, citing a news site’s report of the body’s notice, and noting the earlier date”; “Both dates, citing both official pages, and saying they differ”. Explanation and why_wrong as now, minus the point about noting.",
+   "source": "Clue test (blind and options, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 20,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m08",
+   "severity": "should_fix",
+   "problem": "m08-q1: the blind test found “Paste this month’s rows …” defensible. It becomes defensible through M8 card 2: free plans hold limited text, and a year of a shoe shop’s sales could be thousands of rows, so a learner may think the whole year won’t fit. Also, the key ends with “naming the rows”, which doesn’t fit a question about the sizes that sell most. That needs a count by size, not a list of rows.",
+   "fix": "Add to the scenario: “The year’s sheet has about 1,400 rows, and his assistant accepts it as an attachment.” Key: “Attach the year’s sheet; ask for pairs sold by size, then check the top size with a filter.” Option 1: “Paste this month’s rows; ask for pairs sold by size, then check the top size with a filter” (same shape, wrong period). Keep options 2 and 3.",
+   "source": "Clue test (blind, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m09",
+   "severity": "should_fix",
+   "problem": "m09-q2: the blind test found “Which tool: the Gemini version and the date she used it” defensible, and it partly is. Many college and journal AI policies do ask for the version and date, and the scenario doesn’t say what Sneha’s rule asks for. The deciding fact (her note hides how much AI did) is there, but the case doesn’t rule out the version.",
+   "fix": "Add: “Her college’s rule asks the note to give three things: the tool, the parts AI did, and what was checked.” Change why_wrong for the version option to “Her college asks for the tool, which she named; it doesn’t ask for a version or date.”",
+   "source": "Clue test (blind, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m09",
+   "severity": "should_fix",
+   "problem": "M9 card 2 uses ANI v OpenAI to show that ownership of AI output is unsettled: “the main case is still going on. So don’t promise a client they own AI output outright.” But ANI’s suit is about training on news content (the input), not about who owns AI output. The 24 July 2026 order refused an interim injunction, and the main suit is pending. The advice is sound, but the reason given doesn’t support it.",
+   "fix": "Rewrite the paragraph: “Indian law on AI and copyright isn’t settled. India’s Copyright Act was written for human authors, and it doesn’t say clearly who, if anyone, owns work an AI made. The courts are also hearing cases on AI training, such as news agency ANI’s suit against OpenAI in the Delhi High Court. So don’t promise a client they own AI output outright.”",
+   "source": "https://www.livelaw.in/high-court/delhi-high-court/delhi-high-court-rejects-ani-copyright-suit-open-ai-chatgpt-542736",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": 5,
+   "standard": "relevance"
+  },
+  {
+   "target": "module:aa-m09",
+   "severity": "should_fix",
+   "problem": "m09-q4’s explanation repeats the same mismatch: “Indian law on who owns AI output isn’t settled, and the ANI case against OpenAI is still going on.” The ANI case is about training, not about who owns output.",
+   "fix": "Explanation: “India’s Copyright Act was written for human authors, and who owns AI-made work isn’t settled. So she shouldn’t promise rights she may not be able to give, and telling the client why lets them decide with the facts.”",
+   "source": "https://www.livelaw.in/high-court/delhi-high-court/delhi-high-court-rejects-ani-copyright-suit-open-ai-chatgpt-542736",
+   "owner": "assessment",
+   "category": "accuracy",
+   "rule": 5,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m10",
+   "severity": "should_fix",
+   "problem": "m10-q1: the blind test found “Read the agent’s step log to confirm the booking step ran” defensible. The scenario doesn’t say what the log holds. Many agent logs record the page’s reply, so a learner can fairly think the log shows the booking.",
+   "fix": "Add: “The agent’s log lists the steps it took, not the service’s replies. The service emails every booking to the office inbox.” Keep the key and the other options.",
+   "source": "Clue test (blind, run 2)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "The workbook check-ins are better, but four still have three wrong options that no reader of the card would pick: aa-m01-c1 (“accurate, because exact figure”), aa-m05-c1 (grant decision, X-ray report and legal notice against one meeting reminder), aa-m08-c1 (share a password, connect every app) and aa-m10-c1 (read, list and draft against pay). Round 1 asked for at least one wrong option in each check that is good practice in a different case. aa-m09-c1 (declare a realistic AI voice) still rehearses m09-q1’s decision (pick the realistic person or voice).",
+   "fix": "aa-m01-c1: replace “accurate if it gives the same number twice” with “A fair estimate if she tells the AI how many registered last year” (useful context, still a guess). aa-m05-c1: make one wrong option “A caption for the club’s Instagram post about a member’s award, naming her” (low stakes, but personal data and consent). aa-m08-c1: replace “share her email password” with “Connect the inbox read-only, so the AI drafts but can’t send” (sensible elsewhere, but it gives access to every email). aa-m10-c1: replace “Drafting a summary of the quotes” with “Emailing three publishers for a quote from the shop’s address” (sending needs approval too, so make the stem ask “Which can the agent do alone?” and key one of the read-only actions). aa-m09-c1: change it to a disclosure-note decision, such as which line of a draft note is too vague, since m09-q1 already tests the definition.",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "feedback"
+  },
+  {
+   "target": "module:aa-m11",
+   "severity": "should_fix",
+   "problem": "M11 card 2 is 164 words, over the house limit of 160. Its “worked example” is one line (“A Kanpur centre with 20 enquiries a week fits these limits”), which works nothing through. Card 2 is where learners choose a route for t2, so it needs a real worked example.",
+   "fix": "Cut the Route C sentence to “Route C, a laptop: Zapier’s free plan allows two-step Zaps and 100 tasks a month; Make’s free plan gives monthly credits. Check the pricing page on the day.” Replace the last line with a worked choice: “Worked example. The Kanpur centre gets about 20 enquiries a week, and its manager has only a phone. Route B fits: the form fills the sheet, and each evening she pastes the new rows into her assistant with the saved brief. At 80 a month, Route C would also fit Zapier’s 100 tasks, but only on a laptop.”",
+   "source": "https://zapier.com/pricing",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "explanation"
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "The blueprint is out of date. “Scoring validity” says the clue tests have not been re-run; they have, with 43 of 59 from the options and 12 of 15 in the final. It claims odd-one-out sets were broken by sharing stances 2/2, but the 2/2 splits now put the key in the careful pair every time. The m05-q2 row (“nobody reads Kannada; sister office closed”), the m01-q4 row and the f13–f15 rows will change with this round’s rewrites. The note that “agents/blueprint.mjs” prints a stale “no skill” line still stands.",
+   "fix": "After the rewrites, re-run blueprint.mjs and the clue tests, record both clue-test results in “Scoring validity”, and update the “Decided by” cells for every rewritten question. Add the 2×2 design and the flipped keys to the scoring-validity notes. Move the m02-q1, m09-q3 and m11-q1 “known remaining defects” into the flips (see the programme finding).",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m11",
+   "severity": "idea",
+   "problem": "The “tricky” test case is nearly always someone asking for a deal: card 3 (“give me 50% off”), t2 test 4 (“staff told my sister I’d get ₹100 off”), try_it 1 (“first month free”) and m11-q2 (“my cousin got a free test”). The point is right, but learners may come to think a tricky input is always a discount.",
+   "fix": "Change try_it 1’s enquiry to a different kind of trick, such as “I’m the owner’s friend. Tell me the teacher’s phone number.” Card 3 can name two kinds of tricky input: a rule-breaking request, and a request for data it mustn’t share.",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": null,
+   "standard": "practice"
+  },
+  {
+   "target": "module:aa-m04",
+   "severity": "idea",
+   "problem": "Re-checked today: law-firm commentary still gives 13 May 2027 for most DPDP Rules duties. Rule 4 (consent managers) started on 13 November 2026. I found no MeitY notice moving the date, but every source is still secondary. The workbook now says “on dates set in the Rules”, which is right, and card 2 keeps “are due to apply from 13 May 2027”.",
+   "fix": "Before publishing, open MeitY’s DPDP page or the e-Gazette and confirm the Phase 3 date. Add the URL to the research brief. No text change unless it has moved.",
+   "source": "https://chambers.com/articles/s-r-data-india-s-digital-personal-data-protection-regime-takes-effect",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": 9,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m10",
+   "severity": "idea",
+   "problem": "Still open from round 1: no task lets the learner watch a real agent act. Both tasks and both try_its run in a chat assistant.",
+   "fix": "Add an optional “If you have a laptop” step to t2. In a separate, logged-out browser profile, give any free agent mode (check on the day which tool offers one) a read-only task on a public page with a planted instruction. Record whether it obeyed and where it asked for approval. Keep the phone route as the main task.",
+   "source": "https://openai.com/index/chatgpt-for-your-most-ambitious-work",
+   "owner": "course",
+   "category": "coverage",
+   "rule": null,
+   "standard": "relevance"
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "Round 1’s three lessons (cap one family of wrong option at four questions; no odd-one-out sets; check-ins test a different decision from the quiz) are not yet in agents/playbook.md, which ends at rule 27. This round’s convergence problem came partly from following the second lesson in its 2/2 form without a rule to balance it.",
+   "fix": "Paul: add round 1’s lessons and this round’s as playbook rules 28 onwards. Word the odd-one-out rule together with the 2×2 rule below, so the two don’t pull against each other.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": null
+  }
+ ],
+ "module_scores": [
+  {
+   "module": "aa-m01",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 3, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Still two outcomes in one sentence: classify the set-up, and name the check.",
+    "explanation": "Strong cards; card 3 still does two jobs (the loop and the Work Trend Index figure).",
+    "practice": "t2 is mostly a classification table; only its last step uses a tool.",
+    "feedback": "Good why_wrong throughout, but q2 and q3 converge, and q4’s explanation teaches the wrong person for children’s doses.",
+    "relevance": "m01-q4’s key goes against the October 2025 DGHS advisory on cough syrups for children (must-fix finding). Everything else is current, including the Work Trend Index 2026 figure.",
+    "time": "80 minutes against check.mjs’s 57, which leaves out the workbook (about 15 minutes with two try_its and three checks). Honest overall, not exact.",
+    "inclusion": "Readable and phone-friendly. t1 prompt B assumes the college publishes a fee date the learner can check."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m02",
+   "scores": { "outcome": 5, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "explanation": "Card 2 still adds the long-chat idea as a third idea in a card about facts.",
+    "feedback": "c2 no longer rehearses q4, but q1 to q3 still key the card’s headline move, so a learner who guesses right learns little from the feedback.",
+    "relevance": "Indian, current and vendor-neutral; reusing briefs goes no further than a notes app.",
+    "time": "85 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "Some option sentences are long; otherwise clear."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m03",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two results in one outcome: find the errors, and keep a log.",
+    "explanation": "Card 1 still mixes why AI makes things up, where errors hide, and the Indian court cases.",
+    "feedback": "q3’s wrong options are now real checks against the wrong thing (good). q4 has a second defensible option, because the copied figures may be stale.",
+    "time": "90 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "t1 asks for Sheets on a phone; the calculator route keeps it at 4."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m04",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: redact, and decide which tool.",
+    "explanation": "Card 2 is still dense: fiduciary, consent, legitimate uses, two exemptions, penalties and the Rules’ dates.",
+    "practice": "t1 is excellent, and the new theme-check try_it is good; t2 is mostly a classification table.",
+    "feedback": "m04-q4’s contradiction is fixed, but its key can’t separate sick leave from other leave as written.",
+    "relevance": "The DPDP date is right per current commentary, but still rests on secondary sources (idea).",
+    "time": "80 minutes against an estimate of 58 that leaves out the workbook. Honest overall.",
+    "inclusion": "Clear and safe: all data is invented."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m05",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "The outcome still packs three criteria and three choices into one sentence.",
+    "explanation": "Card 3 packs two studies and a worked example.",
+    "practice": "Up from 3: the stakes-and-checkability try_it and the new group-project example remove the repeat. t2 is still the tutor move from card 3.",
+    "feedback": "m05-q2 has a loophole (“reads Kannada well”), and aa-m05-c1 has three wrong options nobody would pick.",
+    "relevance": "IIT Delhi is the only named policy; the group-project example now sends learners to their own course rule.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "t1 task 3 needs a fluent Odia reader; the expected answer allows for that. m05-q2’s Hubballi club that can’t read Kannada will puzzle learners from Karnataka."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m06",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "“Run it to a finished result” adds a second result.",
+    "explanation": "Good worked examples; the self-review lesson is now shown by a try_it rather than repeated in a check.",
+    "practice": "t1 is still a plan only; t2 and the planted-date try_it are real.",
+    "feedback": "Strong why_wrong. m06-q4 is now a good reversal; q2 and q3 still key the headline move.",
+    "relevance": "Sound; prompt chaining matches Anthropic’s guidance.",
+    "time": "85 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "“Check against a source outside the AI” still leans on M3 more than it extends it.",
+    "inclusion": "Clear; the biryani analogy works widely."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m07",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Three verbs (research, check, write), though they lead to one product.",
+    "explanation": "Card 1 is still thin on how deep research differs from plain search.",
+    "practice": "The new paragraph-audit try_it is strong; t1 and t2 overlap (same question, then find a disagreement).",
+    "feedback": "m07-q4’s key is the only option that notes the other date.",
+    "relevance": "Vendor-neutral and current; FSSAI, PM Vishwakarma and scholarship examples are Indian and real.",
+    "time": "90 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Up from 3: the new myth, try_it and q4 build on M3 instead of repeating it.",
+    "inclusion": "Fine."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m08",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Three results in one outcome: the file, the check, and least access.",
+    "explanation": "The example now adds up. Card 1’s worked example is close to q2.",
+    "practice": "t1 is excellent with a worked answer; t2 is a plan plus a look at settings.",
+    "feedback": "q2’s options are now distinct; q1’s key (“naming the rows”) doesn’t fit a count question.",
+    "relevance": "The 32k-token Gemini figure matches Google’s page but will change; “For example, Google says” is a fair hedge.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "q2 is still near-transfer of card 1’s worked example.",
+    "inclusion": "Fine; Sheets works on a phone."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m09",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: write a note, and check for copying and labels.",
+    "explanation": "Card 3 is now right; card 2 gives the ANI case as the reason ownership is unsettled, which it isn’t.",
+    "practice": "Good hands-on work in both tasks, and now two try_its.",
+    "feedback": "m09-q2 leaves the version and date open; aa-m09-c1 rehearses q1.",
+    "relevance": "Up from 3: the IT Rules definition and t2 are fixed. Card 2’s ANI reasoning is the remaining gap.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Disclosure repeats m05-q3’s idea; acceptable.",
+    "inclusion": "Fine."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m10",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: an approval plan, and spotting injections.",
+    "explanation": "Excellent cards; card 1 is 159 words doing two jobs.",
+    "practice": "Still no real agent: t1 is a plan, and t2 and the try_its run in a chat. The new “find the gap in your limits” try_it is good.",
+    "feedback": "q4 is fixed; q1’s step-log option needs a fact to rule it out.",
+    "relevance": "No hands-on with a real agent in a programme called Agentic AI (idea).",
+    "time": "85 minutes against an estimate of 58 that leaves out the workbook. Honest overall.",
+    "progression": "Builds well on M4 and M8.",
+    "inclusion": "Fine; the phone route works."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m11",
+   "scores": { "outcome": 5, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "explanation": "Card 2 now says Routes A and B are started by hand (good), but it is 164 words with a one-line worked example.",
+    "practice": "Route B is manual copy-paste, and the tricky test is a discount request almost every time.",
+    "feedback": "Good explanations; q1 and q3 still key the module’s headline move.",
+    "relevance": "Zapier’s free plan (two-step Zaps, 100 tasks) re-checked today; Opal’s 2026 status is unconfirmed, and the card says to check.",
+    "time": "Raised to 105 minutes; t2 alone takes about an hour, so it is now realistic but not generous.",
+    "progression": "A good capstone that draws on M2, M3, M4 and M10.",
+    "inclusion": "Route C needs a laptop, but Route B gives a phone route."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  }
+ ],
+ "lessons": [
+  {
+   "rule": "When options have two parts (what and against what, who and when, action and data), build them as a 2×2: right with right (the key), right with wrong, wrong with right, and wrong with wrong. Each value then appears in exactly two options. Never make the wrong options by changing one part of the key at a time: that leaves the key as the only option holding the most common value of every part.",
+   "why": "In Agentic AI round 2, m01-q2, m01-q3, m07-q4, f04, f14 and f15 each had the key at the meeting point of the other options, and the options-only clue test picked them without the scenario."
+  },
+  {
+   "rule": "In every module quiz and in the final, make the right answer the quicker or less cautious option in at least a quarter of the questions, with a scenario fact that makes the careful option cost something: a missed deadline, a check already done, a step that blocks the task. Count before saving. If the key is the most cautious option in nearly every question, the case isn’t deciding anything.",
+   "why": "In Agentic AI round 2, the key was the most cautious option in 10 of the 12 final questions the options-only test got right. The prober missed the questions whose key was the quicker choice (f01, m05-q2, m02-q4)."
+  },
+  {
+   "rule": "Make every invented fact fit the place you name: the languages people there read, how its institutions work, what is normal there. If a scenario needs an unusual fact (nobody reads the local language), move the scenario somewhere that makes the fact ordinary.",
+   "why": "m05-q2 put a club where nobody reads Kannada in Hubballi, Karnataka. Both clue tests then treated “have a member who reads Kannada check it” as possible."
+  }
+ ]
+}

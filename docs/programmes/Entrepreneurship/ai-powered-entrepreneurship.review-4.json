@@ -1,0 +1,98 @@
+{
+  "verdict": "ready",
+  "summary": "Round 4 checks the fixes for review 3's 13 should-fixes, and all 13 are done properly. The 7 check-ins that repeated a quiz or final decision are replaced (m01-c1, m01-c2, m03-c3, m04-c2, m04-c3, m05-c2, m07-c1, m07-c3). None of the new ones previews a graded answer, and each rests on a Learn-card sentence (rule 14). The giveaway hints and options are rewritten. Time is now honest: 82 minutes a module and 92 for M6, 584 minutes in all, with 18 hours and 'about 10 hours of modules' in the overview. M4's t2 'after' and try_it check, the long 'after' sentences and the repeated food analogies are all fixed. Every sum recomputes. M6's UPI card matches NPCI: no start date for the merchant fee had been notified as of 11 November 2026. check.mjs passes with 0 findings, there is no must-fix, and every module scores at least 4. Two ideas remain: four check-in hints that still point at the answer, and the blueprint's missing check-in map.",
+  "strengths": [
+    "The new check-ins test decisions the quiz and final don't ask. Examples: diagnosing a leading question (m01-c1), placing a fact on the ladder with no rung-4 trap (m01-c2), Wizard of Oz versus concierge (m02-c1), a trust doubt answered with proof (m03-c3), labelling an AI image (m04-c2), tracking by code word (m04-c3), when to ask for a referral (m05-c2), adding vesting (m07-c1) and a habit you can check (m07-c3). Each rests on a card sentence. m04-c2's labelling rule is on M4 card 3. m05-c2's timing rule is on M5 card 4 ('ask right after a good moment, such as a delivery'). m03-c3's trust doubt is on M3 card 3 ('trust (\"will it really arrive?\")').",
+    "The workbooks are now varied and engaging. The analogies come from seven different worlds: a tuition teacher, a fest team, a fruit seller, a dosa cart, a family finding a doctor, an auto driver and a cricket team. The examples take different forms: a diary week (M2), a WhatsApp chat (M3), a before-and-after sum (M6) and a vesting case after the cliff (M7). The festivals now include Eid (m02-c2) as well as Teej and Diwali, and the workbook names are new to the programme.",
+    "Every figure recomputes. M7's example: 20 ÷ 48 ≈ 42% of 50% ≈ 21%. M6's example: ₹60 cost, ₹30 contribution, ₹50 CAC, and ₹300 from a 10-bowl customer. m06-c1: ₹340 is halfway between ₹80 and ₹600. m06-c3's 'why' now names the slip behind each wrong option. The M6 t1 'after' still checks: ₹205, ₹144, ₹125, ₹216, ₹91.",
+    "The fixed 'after' answers are clear and true to their tasks. M4 t2 keeps WhatsApp groups as the channel and treats the paid split as a comparison. M7 t1 now notes Ayesha's 15 hours a week before suggesting 45:45:10. The long sentences are split into labelled lines; the few left over 20 words are 21 to 24 words."
+  ],
+  "findings": [
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Four check-in hints still point straight at the one right option, the pattern review 3 fixed elsewhere. ape-m01-c3: 'How do students in Ajmer get to college today?' Only one option is about how students travel. ape-m06-c2: 'Look at when money goes out and when it comes in.' Only one option is about timing. ape-m07-c2: 'What does Yusuf’s business need that Yusuf doesn’t enjoy doing?' This names selling, and only the classmate sells. These hints were not changed this round; they are ungraded and optional, so this is not blocking.",
+      "fix": "Write each hint as a question about the idea that applies to all four options. m01-c3: \"Does a rival have to be another app? Think of the word ‘substitute’.\" m06-c2: \"Which of these could happen even in a month that made a profit?\" m07-c2: \"Check each person against the three things to look for in a co-founder.\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Review 3's idea is still open: the assessment blueprint (ai-powered-entrepreneurship.assessment.md) doesn't list the 21 workbook check-ins. The overlaps fixed this round were found only by reading every item by hand, and a future edit could bring them back.",
+      "fix": "Add a check-in map to the blueprint. For each check-in, give its id, the decision it tests, the card sentence it rests on, and the quiz and final items it must not repeat. For example: 'm05-c2: when to ask for a referral; M5 card 4 \"ask right after a good moment\"; must not repeat m05-q4 or f10.'",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    }
+  ],
+  "module_scores": [
+    {
+      "module": "ape-m01",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "outcome": "Unchanged: the outcome covers only the script, while the module also teaches the ladder and sizing.",
+        "feedback": "c1 and c2 are fixed, but c3's hint ('How do students in Ajmer get to college today?') points at the right option."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m02",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "time": "82 minutes is honest overall. t2 still asks for an MVP build, the AI copy edits and a test plan in about 20 minutes, which is tight."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m03",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {},
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m04",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {},
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m05",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "outcome": "Unchanged: two products in one outcome (a map and three messages).",
+        "time": "82 minutes is honest overall, but t1 (20 entries with asks and offers, plus finding the E-cell) runs past 20 minutes."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m06",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "feedback": "c3's 'why' is fixed, but c2's hint ('Look at when money goes out and when it comes in') points at the right option."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m07",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 5, "progression": 5, "inclusion": 5 },
+      "notes": {
+        "feedback": "c1, c3 and t1's 'after' are fixed, but c2's hint names selling, which only the right option offers."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": []
+}

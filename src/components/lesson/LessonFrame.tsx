@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Lightbulb, ListChecks, PenLine, Target, BookOpen, type LucideIcon } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, CircleHelp, Languages, Lightbulb, ListChecks, PenLine, Sparkles, Target, BookOpen, Wand2, type LucideIcon } from 'lucide-react'
 import { errorMessage } from '@/lib/errors'
 import type { Question } from '@/lib/programmeEngine'
 import type { QuizResult } from '@/lib/programmeStudent'
@@ -13,7 +13,7 @@ import type { QuizResult } from '@/lib/programmeStudent'
  * the page that owns the programme.
  */
 
-export type StepKind = 'learn' | 'task' | 'reflect' | 'quiz'
+export type StepKind = 'learn' | 'task' | 'reflect' | 'quiz' | 'idea' | 'terms' | 'try' | 'check'
 
 export interface LessonStep {
   key: string
@@ -28,6 +28,11 @@ const LOOK: Record<StepKind, { icon: LucideIcon; node: string; band: string; but
   task: { icon: Target, node: 'bg-rose-600', band: 'from-rose-600 to-rose-700', button: 'bg-rose-600 hover:bg-rose-700', text: 'text-rose-700', soft: 'border-rose-200 bg-rose-50' },
   reflect: { icon: PenLine, node: 'bg-amber-600', band: 'from-amber-600 to-amber-700', button: 'bg-amber-600 hover:bg-amber-700', text: 'text-amber-700', soft: 'border-amber-200 bg-amber-50' },
   quiz: { icon: ListChecks, node: 'bg-sky-600', band: 'from-sky-600 to-sky-700', button: 'bg-sky-600 hover:bg-sky-700', text: 'text-sky-700', soft: 'border-sky-200 bg-sky-50' },
+  // The workbook chapter's steps (components/lesson/Workbook.tsx).
+  idea: { icon: Sparkles, node: 'bg-violet-600', band: 'from-violet-600 to-violet-700', button: 'bg-violet-600 hover:bg-violet-700', text: 'text-violet-700', soft: 'border-violet-200 bg-violet-50' },
+  terms: { icon: Languages, node: 'bg-teal-600', band: 'from-teal-600 to-teal-700', button: 'bg-teal-600 hover:bg-teal-700', text: 'text-teal-700', soft: 'border-teal-200 bg-teal-50' },
+  try: { icon: Wand2, node: 'bg-emerald-600', band: 'from-emerald-600 to-emerald-700', button: 'bg-emerald-600 hover:bg-emerald-700', text: 'text-emerald-700', soft: 'border-emerald-200 bg-emerald-50' },
+  check: { icon: CircleHelp, node: 'bg-indigo-600', band: 'from-indigo-600 to-indigo-700', button: 'bg-indigo-600 hover:bg-indigo-700', text: 'text-indigo-700', soft: 'border-indigo-200 bg-indigo-50' },
 }
 
 export const lessonLook = LOOK
@@ -234,6 +239,7 @@ export function LessonWrite({
   onSave,
   onNext,
   last = false,
+  after,
 }: {
   kind: 'task' | 'reflect'
   title: string
@@ -247,6 +253,8 @@ export function LessonWrite({
   onNext: () => void
   /** The last step: no Next after saving. */
   last?: boolean
+  /** What a good answer looks like, shown once the answer is saved. */
+  after?: string
 }) {
   const look = LOOK[kind]
   const [text, setText] = useState(initial)
@@ -265,7 +273,8 @@ export function LessonWrite({
     setError('')
     try {
       await onSave(text)
-      if (!last) onNext()
+      // With a model answer, stay so it can be read; Next is below it.
+      if (!last && !after) onNext()
     } catch (e) {
       setError(errorMessage(e))
     } finally {
@@ -298,6 +307,12 @@ export function LessonWrite({
         placeholder="Write your answer here…"
         className="mt-4 w-full resize-y rounded-2xl border border-ink-200 bg-white p-4 text-[15px] leading-relaxed text-ink-900 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
       />
+      {after && saved && (
+        <p className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-relaxed text-ink-900">
+          <span className="font-semibold text-emerald-800">What a good answer looks like. </span>
+          {after}
+        </p>
+      )}
       <div className="mt-2">
         <div className="h-1.5 overflow-hidden rounded-full bg-ink-200">
           <div className={`h-full rounded-full transition-all ${ready ? 'bg-emerald-600' : 'bg-ink-400'}`} style={{ width: `${Math.min(100, (length / min) * 100)}%` }} />
@@ -323,7 +338,7 @@ export function LessonWrite({
           onClick={() => void save()}
           className={`press h-11 rounded-xl px-5 text-sm font-semibold text-white shadow-e1 transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${look.button}`}
         >
-          {busy ? 'Saving…' : last ? (initial ? 'Save changes' : 'Save and finish') : initial ? 'Save changes' : 'Save and continue'}
+          {busy ? 'Saving…' : last ? (initial ? 'Save changes' : 'Save and finish') : initial ? 'Save changes' : after ? 'Save' : 'Save and continue'}
         </button>
         {saved && !last && (
           <button type="button" onClick={onNext} className="press inline-flex h-11 items-center gap-1.5 rounded-xl border border-ink-300 px-4 text-sm font-semibold text-ink-800 transition-colors hover:bg-ink-100">

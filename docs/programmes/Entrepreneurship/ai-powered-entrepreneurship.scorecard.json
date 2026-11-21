@@ -146,6 +146,143 @@
           "meetsBar": true
         }
       }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "workbooks added (review 3)",
+      "reviewFile": "docs/programmes/Entrepreneurship/ai-powered-entrepreneurship.review-3.json",
+      "learnersFile": null,
+      "questions": 43,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 13,
+        "ideas": 8,
+        "byOwner": {
+          "course": 6,
+          "assessment": 7
+        },
+        "byCategory": {
+          "time": 2,
+          "question-design": 7,
+          "teaching": 3,
+          "house-style": 1
+        },
+        "rulesBroken": {
+          "3": 2,
+          "19": 1
+        },
+        "lessons": 3
+      },
+      "mustPer10": 0,
+      "shouldPer10": 3,
+      "rightIsLongestPct": 11.6,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 17,
+        "modules": 8.6
+      },
+      "difficulty": {
+        "Beginner": 14,
+        "Intermediate": 22,
+        "Advanced": 6,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 7,
+          "missing": [],
+          "min": 4,
+          "mean": 4.6,
+          "byDimension": {
+            "outcome": 4.7,
+            "explanation": 5,
+            "practice": 4.9,
+            "feedback": 4.1,
+            "relevance": 5,
+            "time": 4,
+            "progression": 5,
+            "inclusion": 4
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "round 4 (review 4)",
+      "reviewFile": "docs/programmes/Entrepreneurship/ai-powered-entrepreneurship.review-4.json",
+      "learnersFile": null,
+      "questions": 43,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 0,
+        "ideas": 2,
+        "byOwner": {},
+        "byCategory": {},
+        "rulesBroken": {},
+        "lessons": 0
+      },
+      "mustPer10": 0,
+      "shouldPer10": 0,
+      "rightIsLongestPct": 11.6,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 18,
+        "modules": 9.7
+      },
+      "difficulty": {
+        "Beginner": 14,
+        "Intermediate": 22,
+        "Advanced": 6,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 7,
+          "missing": [],
+          "min": 4,
+          "mean": 4.9,
+          "byDimension": {
+            "outcome": 4.7,
+            "explanation": 5,
+            "practice": 5,
+            "feedback": 4.6,
+            "relevance": 5,
+            "time": 4.7,
+            "progression": 5,
+            "inclusion": 5
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
     }
   ]
 }
