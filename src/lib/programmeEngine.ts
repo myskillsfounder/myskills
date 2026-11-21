@@ -61,9 +61,45 @@ export interface ProgrammeModule {
   outcome: string
   minutes: number
   learn: { title: string; body: string }[]
-  tasks: { id: string; title: string; prompt: string; hint: string }[]
+  /** `after`: what a good answer looks like, shown once the task is saved (optional). */
+  tasks: { id: string; title: string; prompt: string; hint: string; after?: string }[]
   reflection: { prompt: string; hint: string }
   quiz: Question[]
+  /** The interactive workbook chapter (optional; see ModuleWorkbook). */
+  workbook?: ModuleWorkbook
+}
+
+/** A workbook check-in: ungraded practice with instant feedback. Its answer ships with the page. */
+export interface WorkbookCheck {
+  id: string
+  scenario: string
+  question: string
+  options: string[]
+  correct_index: number
+  hint: string
+  why: string
+}
+
+/**
+ * A module's interactive workbook chapter, in Digital Marketing's topic-page style
+ * (Paul, 21 Nov 2026: every programme's workbook interactive, so learners don't get
+ * bored). The module page shows it as extra steps before the Learn cards: the big
+ * idea, key terms, "Try it with AI" and a check-in. The tip, the mistake and the
+ * worked example are kept but not shown, as on the Digital Marketing pages.
+ */
+export interface ModuleWorkbook {
+  hook: string
+  idea: string[]
+  why: string[]
+  simple: string
+  myth: { wrong: string; right: string }
+  example?: { title: string; body: string }
+  terms: { term: string; meaning: string }[]
+  /** A ready prompt to copy into any AI assistant, what to notice, and how to check it. */
+  try_it?: { title: string; prompt: string; look_for: string; check: string }[]
+  tip?: string
+  mistake?: string
+  checks?: WorkbookCheck[]
 }
 
 export interface ProgrammeContent {

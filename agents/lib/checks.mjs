@@ -111,6 +111,50 @@ export function nearDuplicates(c, threshold = 0.5) {
 const finding = (target, severity, problem, fix) => ({ target, severity, problem, fix, source: 'Automatic check' })
 
 /**
+ * A module's workbook chapter (optional; ModuleWorkbook in src/lib/programmeEngine.ts).
+ * The page renders whatever is there, so these are what would break it or bore
+ * the learner: missing parts, check-ins that don't work, try-it cards with no prompt.
+ */
+function workbookFindings(m) {
+  const w = m.workbook
+  if (!w) return []
+  const out = []
+  const at = `module:${m.id}`
+  const name = `“${m.title}”’s workbook`
+  const missing = []
+  if (blank(w.hook)) missing.push('hook')
+  if (!(w.idea ?? []).some((p) => !blank(p))) missing.push('idea')
+  if ((w.why ?? []).filter((x) => !blank(x)).length < 3) missing.push('three “why” reasons')
+  if (blank(w.simple)) missing.push('the everyday picture (simple)')
+  if (blank(w.myth?.wrong) || blank(w.myth?.right)) missing.push('myth and fact')
+  if (missing.length) out.push(finding(at, 'must_fix', `${name} is missing: ${missing.join(', ')}.`, 'Write every part of the chapter.'))
+  const terms = w.terms ?? []
+  if (terms.length < 4 || terms.length > 6 || terms.some((t) => blank(t.term) || blank(t.meaning))) {
+    out.push(finding(at, 'should_fix', `${name} has ${terms.length} key terms${terms.some((t) => blank(t.term) || blank(t.meaning)) ? ', some without a meaning' : ''}.`, 'Give 4 to 6 terms, each with a one-line meaning.'))
+  }
+  if (new Set(terms.map((t) => String(t.term).toLowerCase())).size !== terms.length) out.push(finding(at, 'must_fix', `${name} lists a key term twice.`, 'Make every term different.'))
+  const tries = w.try_it ?? []
+  if (tries.some((t) => blank(t.prompt) || blank(t.look_for) || blank(t.check))) {
+    out.push(finding(at, 'must_fix', `A “Try it” card in ${name} has no prompt, “look for” or “check it”.`, 'Fill in all three: the prompt to copy, what to notice, and how to verify.'))
+  }
+  const checks = w.checks ?? []
+  if (!tries.length && !checks.length) out.push(finding(at, 'should_fix', `${name} has nothing hands-on: no “Try it” card and no check-in.`, 'Add 1 or 2 “Try it” cards and 2 or 3 check-ins.'))
+  for (const q of checks) {
+    const bad = []
+    if (blank(q.id)) bad.push('no id')
+    if (blank(q.question)) bad.push('no question')
+    if (!Array.isArray(q.options) || q.options.length !== 4 || q.options.some(blank)) bad.push('needs exactly 4 options')
+    if (!(Number.isInteger(q.correct_index) && q.correct_index >= 0 && q.correct_index < 4)) bad.push('no right answer marked')
+    if (blank(q.why)) bad.push('no explanation (why)')
+    if (blank(q.hint)) bad.push('no hint')
+    if (bad.length) out.push(finding(at, 'must_fix', `Check-in ${q.id || '?'} in ${name}: ${bad.join(', ')}.`, 'Complete the check-in; the page shows only check-ins with 4 options.'))
+  }
+  const quizIds = new Set((m.quiz ?? []).map((q) => q.id))
+  if (checks.some((q) => quizIds.has(q.id))) out.push(finding(at, 'must_fix', `A check-in in ${name} shares an id with a quiz question.`, 'Give check-ins their own ids, such as <module id>-c1.'))
+  return out
+}
+
+/**
  * The test-writing checks. `original` is the programme before this job
  * (for the built-in lock), `locked` true for a built-in programme.
  */
@@ -201,6 +245,7 @@ export function qualityFindings(c, { locked = false, original = null } = {}) {
       const words = String(l.body ?? '').split(/\s+/).filter(Boolean).length
       if (words < 30) out.push(finding(`module:${m.id}`, 'should_fix', `The Learn card “${l.title}” in “${m.title}” is only ${words} words.`, 'Explain it properly, with an example.'))
     }
+    out.push(...workbookFindings(m))
   }
 
   if (!locked) {

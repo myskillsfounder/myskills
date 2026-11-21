@@ -23,6 +23,9 @@ Write the overview, skills, modules (Learn cards, tasks, reflection) and the pro
 - Tasks are `t1` and `t2`.
 - Write the file in parts if it's long: the frame first, then each module.
 
+## The workbook
+Every module also gets a `workbook` chapter (see `houseStyle()` in `agents/lib/prompts.mjs`, and `ModuleWorkbook` in `src/lib/programmeEngine.ts`). It's yours: the teaching aid the module page shows first, in Digital Marketing's topic-page style (`src/content/dmTopics.ts` shows the tone). Its check-ins are ungraded practice, but write them to the same option rules as quiz questions. Give every task an `after`: what a good answer looks like.
+
 ## Revising
 Read the latest `<file without .json>.review-<round>.json`. Fix every must-fix and should-fix finding whose `owner` is `"course"` properly, not just its wording, and keep what works.
 - Keep every existing id.

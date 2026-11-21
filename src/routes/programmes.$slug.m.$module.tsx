@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, CheckCircle2, Layers, Rocket, type LucideIcon } from 'lucide-react'
 import { requireOnboarded } from '@/lib/guards'
@@ -16,6 +16,15 @@ import {
 import type { ProgrammeModule } from '@/lib/programmeEngine'
 import { ProgrammeFrame, previewSearch, useMyProgramme } from '@/components/programme/shared'
 import { LessonFrame, LessonLearn, LessonQuiz, LessonWrite, type LessonStep } from '@/components/lesson/LessonFrame'
+import {
+  WorkbookChecks,
+  WorkbookIdea,
+  WorkbookTerms,
+  WorkbookTry,
+  useWorkbookProgress,
+  workbookStepDone,
+  workbookSteps,
+} from '@/components/lesson/Workbook'
 import { Alert } from '@/components/ui'
 
 export const Route = createFileRoute('/programmes/$slug/m/$module')({
@@ -52,9 +61,14 @@ function ModuleView({
   const responses = p.responses[m.id] ?? {}
   const [local, setLocal] = useState<Record<string, string>>({})
   const written = (k: string) => Boolean(local[k] ?? responses[k])
+  // The workbook chapter, when the module has one: kept on this device.
+  const wb = useWorkbookProgress(slug, m.id)
+  const workbook = workbookSteps(m.workbook)
+  const isWorkbook = (k: string) => workbook.some((w) => w.key === k)
   // Only the parts this module has.
   const stepList: { key: Step; label: string; kind: LessonStep['kind'] }[] = [
-    ...(m.learn.length ? [{ key: 'learn', label: 'Learn', kind: 'learn' as const }] : []),
+    ...workbook,
+    ...(m.learn.length ? [{ key: 'learn', label: workbook.length ? 'Go deeper' : 'Learn', kind: 'learn' as const }] : []),
     ...m.tasks.map((t, i) => ({ key: t.id, label: `Task ${i + 1}`, kind: 'task' as const })),
     ...(m.tasks.length ? [{ key: 'reflect', label: 'Reflect', kind: 'reflect' as const }] : []),
     ...(m.quiz.length ? [{ key: 'quiz', label: 'Quiz', kind: 'quiz' as const }] : []),
@@ -62,8 +76,8 @@ function ModuleView({
   // Where to open: Learn on a first visit, then the first thing not yet
   // written, then the quiz once everything is written.
   const [step, setStep] = useState<Step>(() => {
-    if (Object.keys(responses).length === 0) return stepList[0]?.key ?? 'learn'
-    return stepList.find((s) => s.key !== 'learn' && s.key !== 'quiz' && !responses[s.key])?.key ?? stepList[stepList.length - 1]?.key ?? 'learn'
+    if (Object.keys(responses).length === 0) return stepList.find((s) => !(m.workbook && isWorkbook(s.key) && workbookStepDone(s.key, m.workbook, wb.local)))?.key ?? stepList[0]?.key ?? 'learn'
+    return stepList.find((s) => s.key !== 'learn' && s.key !== 'quiz' && !isWorkbook(s.key) && !responses[s.key])?.key ?? stepList[stepList.length - 1]?.key ?? 'learn'
   })
   const idx = stepList.findIndex((s) => s.key === step)
   const next = () => setStep(stepList[Math.min(idx + 1, stepList.length - 1)].key)
@@ -87,7 +101,9 @@ function ModuleView({
     label: s.label,
     kind: s.kind,
     done:
-      s.key === 'learn'
+      m.workbook && isWorkbook(s.key)
+        ? workbookStepDone(s.key, m.workbook, wb.local)
+        : s.key === 'learn'
         ? i < idx || (m.tasks[0] ? written(m.tasks[0].id) : Boolean(quiz))
         : s.key === 'quiz'
           ? (quiz?.best ?? 0) >= QUIZ_PASS
@@ -111,11 +127,32 @@ function ModuleView({
     </div>
   ) : null
 
+  // Opening the big idea counts as reading it.
+  const ideaRead = wb.local.idea
+  const markIdea = wb.update
+  useEffect(() => {
+    if (step === 'idea' && !ideaRead) markIdea({ idea: true })
+  }, [step, ideaRead, markIdea])
+
   return (
     <LessonFrame icon={icon} eyebrow={eyebrow} title={m.title} subtitle={subtitle} steps={steps} active={step} onSelect={setStep} banner={banner}>
+      {m.workbook && step === 'idea' && <WorkbookIdea w={m.workbook} />}
+      {m.workbook && step === 'terms' && (
+        <WorkbookTerms w={m.workbook} learned={wb.local.terms} onLearn={(t) => wb.update({ terms: [...wb.local.terms, t] })} />
+      )}
+      {m.workbook && step === 'try' && <WorkbookTry w={m.workbook} tried={wb.local.tried} onTried={(i) => wb.update({ tried: [...wb.local.tried, i] })} />}
+      {m.workbook && step === 'check' && (
+        <WorkbookChecks
+          w={m.workbook}
+          done={wb.local.checkDone}
+          firstTry={wb.local.checkFirstTry}
+          onFinish={(n) => wb.update({ checkDone: true, checkFirstTry: n })}
+        />
+      )}
+
       {step === 'learn' && (
         <div>
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">Read this first</p>
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">{workbook.length ? 'Go deeper' : 'Read this first'}</p>
           <LessonLearn cards={m.learn} />
         </div>
       )}
@@ -123,7 +160,7 @@ function ModuleView({
       {m.tasks.map(
         (t) =>
           step === t.id && (
-            <LessonWrite key={t.id} kind="task" title={t.title} prompt={t.prompt} hint={t.hint} min={MIN_TASK} initial={local[t.id] ?? responses[t.id] ?? ''} onSave={(x) => save(t.id, x)} onNext={next} />
+            <LessonWrite key={t.id} kind="task" title={t.title} prompt={t.prompt} hint={t.hint} after={t.after} min={MIN_TASK} initial={local[t.id] ?? responses[t.id] ?? ''} onSave={(x) => save(t.id, x)} onNext={next} />
           ),
       )}
 

@@ -61,3 +61,19 @@ test('compare says what got better and which rules are still broken', () => {
   assert.ok(lines.some((l) => l.startsWith('better: must-fix')))
   assert.ok(lines.some((l) => l.startsWith('still broken: playbook rule 1')))
 })
+
+test('workbook chapters: complete ones pass, broken ones are flagged', async () => {
+  const { qualityFindings } = await import('../lib/checks.mjs')
+  const c = programme([q('q1', ['aaaa', 'bbbb', 'cccc', 'dddd'], 0)])
+  const good = {
+    hook: 'h', idea: ['i'], why: ['a', 'b', 'c'], simple: 's', myth: { wrong: 'w', right: 'r' },
+    terms: [1, 2, 3, 4].map((n) => ({ term: `t${n}`, meaning: 'm' })),
+    try_it: [{ title: 't', prompt: 'p', look_for: 'l', check: 'c' }],
+    checks: [{ id: 'm1-c1', scenario: 's', question: 'q?', options: ['a', 'b', 'c', 'd'], correct_index: 2, hint: 'h', why: 'y' }],
+  }
+  c.modules[0].workbook = good
+  assert.ok(!qualityFindings(c).some((f) => /workbook|Check-in/.test(f.problem)))
+  c.modules[0].workbook = { ...good, simple: '', checks: [{ ...good.checks[0], options: ['a', 'b'] }] }
+  const found = qualityFindings(c).filter((f) => /workbook|Check-in/.test(f.problem))
+  assert.ok(found.some((f) => /missing/.test(f.problem)) && found.some((f) => /4 options/.test(f.problem)))
+})
