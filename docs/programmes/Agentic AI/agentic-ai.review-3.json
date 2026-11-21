@@ -1,0 +1,425 @@
+{
+ "verdict": "needs_work",
+ "summary": "Round 2 was fixed carefully: m01-q4 no longer gives children’s doses, the 2×2 sets and flips are in, M9 card 2 and m09-q4 no longer misuse the ANI case, M11 card 2 has a real worked example, and every requested deciding fact was added. Every module now scores 4 or more on every dimension, and check.mjs is clean. Two must-fix problems remain. In m01-q4 the “Check” option is a second right answer: checking the doses against the label, done properly, would also have stopped the message. And the Foundation final is still answerable from the options in 11 of 15 questions (target 7). The quiz residue (25 of 44) is mostly acceptable good-practice questions, but four quiz questions and seven final questions still give the answer away. Exact rewrites for all of them are below; with them, the options-only score should land at about 25 to 29 of 59.",
+ "strengths": [
+  "Round 2’s findings were applied as written, and correctly: m03-q4, m04-q4, m08-q1, m09-q2 and m10-q1 now state the fact that decides them, and the blind test accepts every one of those keys.",
+  "The flips work where the cost of caution is concrete and different from a deadline: m11-q4 (one test run left), m01-q2 and m01-q3 (2×2 with an ambiguous cautious value) were all missed by the options-only test, which is what a fair question looks like.",
+  "Accuracy is now sound throughout: M9 card 2 grounds the ownership point in the Copyright Act, not the ANI training case; m01-q4 follows the October 2025 DGHS advice; f07’s options no longer leak the working.",
+  "Teaching covers testing completely: the cards-only test answered 44 of 44 from the Learn cards, and the check-ins now each test a decision with plausible wrong options (aa-m01-c1, aa-m08-c1, aa-m10-c1 rewrites are good)."
+ ],
+ "findings": [
+  {
+   "target": "module:aa-m01",
+   "severity": "must_fix",
+   "problem": "m01-q4 (blind test disagreed; it chose “Check: compare each child’s dose with the syrup’s label before sending”). Ruling: the question is ambiguous, not the key wrong. The stem asks which step, “done properly, would have stopped this message”. A proper Check against the label finds that the label has no children’s doses, so the message has nothing to support it and would not be sent. So Check also stops it. Decide is the better answer (it keeps doses out of the message altogether), but a learner who picks Check is not wrong.",
+   "fix": "Replace option 0 with “Check: compare each child’s dose with a dosing chart on a parenting blog”. Replace its why_wrong sentence with “A parenting blog isn’t qualified to set children’s doses, so this check would pass doses no doctor approved.” Keep the scenario, the key, the other options and the explanation.",
+   "source": "Clue test (blind, run 3), agentic-ai.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "must_fix",
+   "problem": "Clue test (options, run 3): the final was answered from the options alone in 11 of 15 (f02, f03, f04, f06, f08, f09, f10, f11, f12, f14, f15; target 7 or fewer). It places learners skill by skill, so this matters more than the quizzes. My ruling on what’s left: f02 (AI only knows what you give it), f06 (exact sentence vs rule number, a 50/50 without the scenario), f08 (official primary source) and f14 (after the wording fix below) are fair foundation questions a learner can rightly answer from good practice. The other seven give the answer away: f03 still converges (rule 31), f04 and f15 have stems that name the deciding dimension, f09’s second “remove” option is a textbook wrong (a blog), f10’s wrong option says “send the patterns late”, f11’s key quotes the identifying phrase, and f12’s key is the only option that carries its reason. A pattern: every 2×2 whose key is cautious in both parts was answered from the options (f04, f14, f15, m08-q4). The 2×2 removes convergence, but not the pull of the careful choice.",
+   "fix": "Apply the seven final rewrites below (f03, f04 and f15 stems, f09, f10, f11, f12), and the f14 wording fix. Then re-run the options clue test: aim for 7 of 15 or fewer in the final.",
+   "source": "Clue test (options, run 3), agentic-ai.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 32,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "must_fix",
+   "problem": "f03 still converges, breaking rule 31. “A person” is in three options, “facts” in three (agent notes, key, five sent) and “before sending” in three. The key is the only option with all three majority values, and the options test picked it with certainty.",
+   "fix": "Scenario: keep the first three sentences. Replace the last with: “The emails’ tone and format were fine. From now on the agent holds each night’s 40 emails until a person checks them, and the sales head has 40 minutes each morning for it. Each buyer’s details came from its own website, linked in the agent’s research notes.” Question: “What should the morning check be?” Options (2×2, scope × source): “A person checks each email’s company facts against the buyer’s website” (key); “A person checks every line of each email against the buyer’s website and the brief”; “A person checks each email’s company facts against the agent’s research notes”; “A person checks every line of each email against the research notes and the brief”. Explanation: “The error was a company fact from step 2, so the check compares those facts with the buyer’s own website. Tone and format were already fine, so checking every line would not fit 40 emails into 40 minutes.” why_wrong: “Every line against the website and brief re-checks tone and format, which were fine, and takes longer than the 40 minutes allow.” / “The research notes hold the mix-up, so checking against them passes the error.” / “Every line against the notes is slow and still passes the mix-up.” Topic stays; difficulty Intermediate.",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 31,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "must_fix",
+   "problem": "f11’s key quotes the identifying phrase (“Replace ‘the only woman in the Pune data team’ …”), so a reader who knows that combined details identify a person can answer without the scenario. The skill (spotting which detail identifies someone) is shown by the option, not the learner.",
+   "fix": "Scenario: “An intern at a software firm in Pune sorts 80 exit-interview comments into themes by team. She has removed names and staff IDs. Comment 14 says, ‘As the only woman in the data team, I was left out of every client call.’ Comment 31 says, ‘As one of 40 testers in the QA team, I never got feedback on my work.’ The firm’s approved AI tool may see staff data once anything identifying is removed.” Options: “Reword comment 14 to ‘a member of the data team’; leave comment 31” (key); “Reword comment 31 to ‘a member of the QA team’; leave comment 14”; “Reword both comments, and remove their team names”; “Nothing more: names and staff IDs are already removed”. Explanation: “‘The only woman in the data team’ points to one person without a name, so comment 14 is reworded. One of 40 testers points to no one, and the team name stays, because themes are sorted by team.” why_wrong: “One of 40 testers can’t be told apart, so comment 31 needs no change, while comment 14 still identifies her.” / “Removing team names stops her sorting themes by team, which is the task.” / “A combination of details can identify a person without a name or ID.”",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 19,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f04 and f15: the stem names the deciding dimension. f04 asks for the brief that “fixes the problem and shares only what is needed”, which tells the reader to replace his details. f15 asks “How should she use AI for this?”, which rules out the two “she types it herself” options before the scenario is read.",
+   "fix": "f04 question: “Which revised brief should she use?” f15 question: “What should she do?” Keep both scenarios, options, explanations and why_wrong. Update the blueprint rows.",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 19,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f09: the two “remove” options differ only in a textbook wrong (a law blog is secondary), so the key is found by striking the blog. Rule 20: each wrong option should be right under a different, plausible fact.",
+   "fix": "Add to the scenario: “The Act the note relies on doesn’t deal with this point, which is why the note cited a ruling.” Options: “Remove the case, and tell the lawyer it isn’t in the court’s records” (key); “Remove the case, and cite the Act’s own section on the point instead”; keep “Keep the case, with a footnote saying the citation is not yet verified” and “Keep the case until a colleague with a paid database checks it next week”. Explanation: “A case missing from the court’s own records may be invented, and filing it can harm the client and the firm. It comes out, and the lawyer needs to know the point now has no ruling behind it.” why_wrong for the Act option: “Citing the Act would be right if it dealt with the point, but it doesn’t, so the citation wouldn’t support it.”",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 20,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f10: “Wait for the approved tool next week, and send the patterns late” says its own flaw, so it is struck without reading the case.",
+   "fix": "Add to the scenario: “The meeting can’t move: the insurer reviews the claims the next day.” Replace the option with “Ask to move the item to next week’s meeting, when the approved tool is back”. why_wrong: “Moving the item would suit a meeting that can wait, but the insurer’s review is the day after.”",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 19,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f12’s key is the only option whose reason is the deciding fact (“…which customers agreed to”), so it reads as the considered answer.",
+   "fix": "Key: “Keep the list, and keep sending the bakery’s own offers”. Keep the other options, the explanation and why_wrong.",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 19,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "should_fix",
+   "problem": "f14 (blind test disagreed; it chose “Check the statistic the conclusion rests on, and add a note on what AI wrote”). Ruling: the key is right and the prober erred, but the wording helped it. “The statistic the conclusion rests on” suggests that one statistic carries the conclusion, while the scenario says the argument rests on all three. Read that way, checking the key statistic first under a deadline looks like sensible triage.",
+   "fix": "Scenario: change “Its argument rests on three statistics that nobody has checked” to “Its conclusion rests on all three statistics, and nobody has checked them”. Options 1 and 3 become “Check one of the three statistics as a sample, and add a note on what AI wrote” and “Check one statistic as a sample, and add no note, since the teammate used AI”. why_wrong for option 1: “A sample suits a long list of similar figures; here the conclusion needs all three, and two hours is enough to open three sources.”",
+   "source": "Clue test (blind, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 20,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "Clue test (options, run 3): 36 of 59 (61%), down from 73%. Rulings on the 25 quiz questions it got right: 17 are acceptable, because knowing the module’s principle is the skill and the scenario confirms it (m02-q1, m02-q2, m02-q3, m03-q1, m03-q2, m03-q4, m04-q3, m05-q3, m05-q4, m06-q2, m07-q1, m07-q4, m09-q1, m09-q4, m10-q2, m11-q3) or the key is a flip that the scenario decides (m05-q2, m06-q4, m07-q2, m08-q1, m08-q3). Four are not acceptable: m06-q3 (the key is the only current source), m08-q4 (2×2 with the key cautious in both parts), m10-q4 (the key is the most cautious set-up) and m11-q1 (the key is the module’s headline habit, a known defect). Blind second-defensible flags: of the 23 the prober raised besides the three disagreements, one is real (m05-q2, finding below). The other 22 aren’t: m01-q2 (staff approve every booking), m03-q1 (the AI gave no source to find), m03-q3 (=SUM on the original sheet; ten minutes), m03-q4 (news report is secondary and holds no bank rates), m04-q1 (themes are by area), m04-q4 (illness reasons are health details), m05-q1 (client files on it), m05-q4 (ignores his written working), m06-q4 (facts already checked; problem is shape), m07-q4 (the body runs the round and spoke last), m09-q1 (cartoon neither looks real nor shows a person or event), m09-q3 (searched yesterday; printer needs it today), m10-q1 (log lists steps only), m10-q2 (the brief already says it), m11-q1 (input line lists the data), m11-q2 (messy kind already tested), f01 (answers never change), f05 (she already asked for that), f06 (no rule numbers), f09 (filed tomorrow), f13 (the contract answers; due tomorrow), f15 (a right total can hide two wrong lines). On m02-q4 the prober simply erred: the agency makes no delivery promise, so a 24-hour promise is false.",
+   "fix": "Apply the four quiz rewrites below (m06-q3, m08-q4, m10-q4, m11-q1) and the final rewrites. Expected result: about 25 to 29 of 59. Re-run the options test once; don’t chase the 17 acceptable quiz questions.",
+   "source": "Clue tests (options and blind, run 3), agentic-ai.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 32,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m05",
+   "severity": "should_fix",
+   "problem": "m05-q2: “Use AI for the gist, then have a member check it with a second AI translator” is defensible. It doesn’t mislabel the result, and comparing two machine translations is a reasonable confidence step for a planning gist. Rule 21: a step that is only unnecessary is not wrong.",
+   "fix": "Option 1: “Use AI for the gist, check it with a second AI translator, and call it confirmed”. why_wrong: “Two AI translators agreeing isn’t confirmation: they can make the same mistake, and no one in the club can check either, so calling it confirmed is untrue.”",
+   "source": "Clue test (blind, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m06",
+   "severity": "should_fix",
+   "problem": "m06-q3: the key (“this term’s fee sheet”) is the only current source among the options, so it is picked without the scenario. Also, “the AI confirms amount and date” is a sixth use of the ask-the-AI family when check-ins are counted (see the rule 28 finding).",
+   "fix": "Scenario: “A school office in Ajmer is breaking its fee reminders into steps. One step is: ‘AI drafts the SMS reminder for each class.’ Fees changed in October. The principal’s circular of 1 October gave the new amounts, but on 8 October the accounts office corrected two classes’ amounts in its fee sheet. The office must write what counts as done for this step.” Options: “Done: under 160 characters; amount and date match the accounts office’s fee sheet” (key); “Done: under 160 characters; amount and date match the 1 October circular”; “Done: under 160 characters; amount and date match last term’s reminder”; “Done: under 160 characters; polite; names the class, the amount and the date”. Explanation: “A done criterion must be checkable against the right source. The fee sheet was corrected after the circular, so only it has every class’s right amount.” why_wrong: “The circular came before the 8 October correction, so two classes’ amounts are wrong in it.” / “Last term’s reminder has the old fees.” / “Naming an amount and date checks that they are there, not that they are right.”",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 19,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m08",
+   "severity": "should_fix",
+   "problem": "m08-q4 is a 2×2 whose key is cautious in both parts (calendar only, disconnected), so the options test picked it. M8 already has one flip (q3), but this is the clearest place for a second: least privilege also means not making a standing approval unworkable.",
+   "fix": "Scenario: “An intern at an architecture studio in Thiruvananthapuram writes the weekly summary of site visits with AI every Monday. The visits are in the studio’s Google Calendar. The manager has approved read access to the calendar only, for the weekly summary, until the project ends in March. Reconnecting needs the manager’s admin login, and she is on site every Monday.” Key: “Only the calendar, read-only, left connected for the weekly summary”. Wrong: “Only the calendar, read-only, disconnected after each week’s summary”; “The whole Google account, read-only, left connected for the weekly summary”; “The whole Google account, read-only, disconnected after each week’s summary”. Explanation: “Least privilege means only the access the task needs, for as long as it needs it. The approval covers the calendar every week until March, so the calendar stays connected and nothing else is.” why_wrong: “Disconnecting would suit a one-off approval; this one runs to March, and reconnecting needs the manager, who is on site on Mondays.” / “The whole account shows email and files the manager hasn’t approved.” / “The whole account, even disconnected weekly, is still access nobody approved.” Mark it a flip in the blueprint.",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 32,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m10",
+   "severity": "should_fix",
+   "problem": "m10-q4: the key is the most cautious set-up (no logins at all), and the options test picked it. Two of the wrong options (normal browser) are struck at sight.",
+   "fix": "Scenario: “Priyanshu wants a browser agent to fill in 30 sponsor forms for his college fest. On his laptop, his normal browser has saved logins for his bank, his email and the college portal. Each form emails a code to the fest’s Gmail address, which must be typed in before the form submits. The forms need nothing else.” Key: “A separate browser profile, signed in only to the fest’s Gmail for the codes”. Wrong: “A separate browser profile with no saved logins, cards or files”; “A separate browser profile, signed in to his own email and the fest’s Gmail”; “His normal browser, after telling the agent to keep off bank sites”. Explanation: “A separate profile keeps his bank, email and portal out of reach. The forms can’t submit without the codes, so the profile has the one login the job needs, and nothing more.” why_wrong: “No logins at all would suit forms with no email step, but here no form can submit.” / “His own email isn’t needed for the codes, so it adds access the job doesn’t use.” / “An instruction to the agent can be overridden by text on a page it reads.”",
+   "source": "Clue test (options, run 3)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 32,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m11",
+   "severity": "should_fix",
+   "problem": "m11-q1 keys the module’s headline habit (a human check), listed in the blueprint as a known defect, and the options test picked it.",
+   "fix": "Scenario: “A pet clinic in Raipur drafts a workflow card. Trigger: a new appointment form, at any hour. Input: owner’s name, phone, pet and date (personal data). AI step: draft a confirmation from the clinic’s timings, on Zapier’s free plan (100 tasks a month). Human check: the receptionist approves each draft before it goes on WhatsApp. The clinic gets about 150 appointments a month.” Options: “If it fails: nothing says what happens when the free plan’s tasks run out” (key); “Human check: no one reads a draft before it reaches owners”; “Trigger: it doesn’t say what happens to forms sent at night”; “Input: it doesn’t say which personal data the form holds”. Explanation: “At 150 appointments a month, the 100 free tasks run out every month, and the card has no fallback, so a third of owners would get no confirmation.” why_wrong: “The receptionist approves every draft, so the human check is there.” / “‘At any hour’ covers night forms.” / “The input line already lists the personal data.” Mark it a flip.",
+   "source": "https://zapier.com/pricing",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 32,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "Rule 30 (new today) is broken in three check-in hints and one check-in. aa-m01-c3’s hint (“Which step is about testing the output before you use it?”) names the answer, Check. aa-m03-c1’s hint (“Which step uses something outside the AI?”) points to the one option that opens the article. aa-m09-c2’s hint (“Which one is about logos?”) points to the only logo option. aa-m01-c3 also asks the same decision as m01-q4 (which step of the loop).",
+   "fix": "aa-m01-c3: test Own instead. Scenario: “Nisha sends an AI-drafted email to a paper supplier. It asks for 500 reams instead of 50, and the supplier delivers 500.” Question: “Who answers for the order?” Options: “Nisha: she sent it, so the email is hers” (key); “The AI tool’s maker, since its draft had the error”; “The supplier, who should have queried so large an order”; “No one: it was a software mistake”. Hint: “Card 3: whose name goes on what you send?” aa-m03-c1 hint: “Card 3: what must a citation pass before you rely on it?” aa-m09-c2 hint: “Card 2: who is responsible for a logo once it is published?”",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": 30,
+   "standard": "feedback"
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "Rule 28 (new today) caps a wrong-option family at four questions per programme. Counting the check-ins, the ask-the-AI-or-a-second-AI family is a wrong option in nine: m05-q2, m06-q3, f03, aa-m03-c1 (“Ask the AI to confirm”), aa-m03-c3 (“ask a third AI tool”), aa-m06-c1 (“ask it to check its plan”), aa-m06-c2 (“then reviews its own draft”), aa-m07-c2 (“run the report again”) and aa-m08-c2 (“ask again”, “a second AI”). It is right only in m06-q4. The quiz rewrites above remove it from m06-q3 and f03.",
+   "fix": "In the check-ins, replace: aa-m03-c3 option 4 with “No: he should check that both tools gave the same source link”; aa-m06-c1 option 3 with “Ask last year’s organisers for their plan, and use AI only for invitations”; aa-m08-c2 option 4 with “Accept it if no heading in the document mentions leave”. Update each why to match. That leaves the family in m05-q2, aa-m03-c1, aa-m06-c2 and aa-m07-c2 as a wrong option, and in m06-q4 as the right one.",
+   "source": "",
+   "owner": "course",
+   "category": "question-design",
+   "rule": 28,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m04",
+   "severity": "should_fix",
+   "problem": "Card 2 says most DPDP Rules duties “are due to apply from 13 May 2027”. Secondary sources disagree on the day: AZB gives 13 May 2027, others give 14 May 2027. Reports also say MeitY has discussed shortening the 18-month period, though I found no notice that it has. No question turns on the day.",
+   "fix": "Card 2: “Most of their duties for businesses … are due to apply from May 2027, 18 months after the Rules were notified.” Before publishing, confirm the date on MeitY’s DPDP page or the e-Gazette and add that URL to the research brief.",
+   "source": "https://www.azbpartners.com/bank/update-indias-digital-personal-data-protection-framework-comes-into-effect/",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": 8,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m04",
+   "severity": "should_fix",
+   "problem": "m04-q3’s explanation repeats the exact day, “from 13 May 2027”, which sources give as 13 or 14 May.",
+   "fix": "Explanation: “Most of the Rules’ duties for businesses are due to apply from May 2027. But the start-up’s own policy applies today, whatever date a law starts, and it names one approved tool.”",
+   "source": "https://www.barandbench.com/view-point/meity-notifies-final-digital-personal-data-protection-rules-2025",
+   "owner": "assessment",
+   "category": "accuracy",
+   "rule": 8,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "The blueprint’s “Scoring validity” still says the clue tests have not been re-run on this version; run 3 gave options 36 of 59 (final 11 of 15), cards 44 of 44 and blind 56 of 59. Its rows for m01-q4, m05-q2, m06-q3, m08-q4, m10-q4, m11-q1, f03, f04, f09, f10, f11, f12, f14 and f15 will change with this round. The “known remaining defects” list still names m11-q1.",
+   "fix": "Record run 3 in “Scoring validity” with the rulings in this review. After the rewrites, update the “Decided by” cells and the flip marks (m08-q4, m10-q4, m11-q1 become flips), re-run blueprint.mjs, re-count families including check-ins, and record run 4.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m10",
+   "severity": "idea",
+   "problem": "Still open from rounds 1 and 2: no task lets the learner watch a real agent act; both tasks and both try_its run in a chat.",
+   "fix": "Add an optional “If you have a laptop” step to t2: in a separate, logged-out browser profile, give any free agent mode (check on the day which tool offers one) a read-only task on a public page with a planted instruction, and record whether it obeyed and where it asked for approval. Keep the phone route as the main task.",
+   "source": "",
+   "owner": "course",
+   "category": "coverage",
+   "rule": null,
+   "standard": "relevance"
+  }
+ ],
+ "module_scores": [
+  {
+   "module": "aa-m01",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Still two outcomes in one sentence: classify the set-up, and name the check.",
+    "explanation": "Card 3 still does two jobs (the loop and the Work Trend Index figure).",
+    "practice": "t2 is mostly a classification table; only its last step uses a tool.",
+    "feedback": "q2 and q3 are now fair 2×2 sets; q4 has a second defensible option (must-fix), and c3’s hint names its answer.",
+    "relevance": "Up from 3: m01-q4 now follows the October 2025 DGHS advice. Generic tool examples keep it from 5.",
+    "time": "80 minutes against check.mjs’s 57, which leaves out the workbook (about 15 minutes). Honest overall, not exact.",
+    "inclusion": "Readable and phone-friendly. t1 prompt B assumes the college publishes a fee date the learner can check."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m02",
+   "scores": { "outcome": 5, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "explanation": "Card 2 still adds the long-chat idea as a third idea in a card about facts.",
+    "feedback": "q1 to q3 still key the card’s headline move; acceptable for a foundation module, but a guess teaches little. q4’s blind miss was the prober’s error.",
+    "relevance": "Indian, current and vendor-neutral; reusing briefs goes no further than a notes app.",
+    "time": "85 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "Some option sentences are long; otherwise clear."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m03",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two results in one outcome: find the errors, and keep a log.",
+    "explanation": "Card 1 still mixes why AI makes things up, where errors hide, and the Indian court cases.",
+    "feedback": "q4 is fixed. c1’s hint points to the answer, and c1 and c3 both use the ask-the-AI family (rule 28).",
+    "time": "90 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "t1 asks for Sheets on a phone; the calculator route keeps it at 4."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m04",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: redact, and decide which tool.",
+    "explanation": "Card 2 is still dense: fiduciary, consent, legitimate uses, two exemptions, penalties and the Rules’ dates.",
+    "practice": "t1 and the theme-check try_it are excellent; t2 is mostly a classification table.",
+    "feedback": "q4 is fixed and the blind test accepts it.",
+    "relevance": "The DPDP date rests on secondary sources that differ by a day (should-fix: say “May 2027”).",
+    "time": "80 minutes against an estimate of 58 that leaves out the workbook. Honest overall.",
+    "inclusion": "Clear and safe: all data is invented."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m05",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "The outcome still packs three criteria and three choices into one sentence.",
+    "explanation": "Card 3 packs two studies and a worked example.",
+    "practice": "t2 is still the tutor move from card 3.",
+    "feedback": "q2’s place is fixed, but its second-AI option is still defensible (should-fix).",
+    "relevance": "IIT Delhi is the only named policy; the group-project example sends learners to their own course rule.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "t1 task 3 needs a fluent Odia reader; the expected answer allows for that. The Hubballi problem is fixed."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m06",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "“Run it to a finished result” adds a second result.",
+    "explanation": "Good worked examples; the self-review lesson is shown by a try_it.",
+    "practice": "t1 is still a plan only; t2 and the planted-date try_it are real.",
+    "feedback": "q4 is a good reversal; q3’s key is the only current source (should-fix), and c1 and c2 both use the ask-the-AI family.",
+    "relevance": "Sound; prompt chaining matches current vendor guidance.",
+    "time": "85 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "“Check against a source outside the AI” still leans on M3 more than it extends it.",
+    "inclusion": "Clear; the biryani analogy works widely."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m07",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Three verbs (research, check, write), though they lead to one product.",
+    "explanation": "Card 1 is still thin on how deep research differs from plain search.",
+    "practice": "The paragraph-audit try_it is strong; t1 and t2 overlap (same question, then find a disagreement).",
+    "feedback": "q4 now has one shape for every option; good. q2’s flip works.",
+    "relevance": "Vendor-neutral and current; FSSAI, PM Vishwakarma and scholarship examples are Indian and real.",
+    "time": "90 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Builds on M3 rather than repeating it, but the climb in difficulty is small.",
+    "inclusion": "Fine."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m08",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Three results in one outcome: the file, the check, and least access.",
+    "explanation": "The example adds up. Card 1’s worked example is close to q2.",
+    "practice": "t1 is excellent with a worked answer; t2 is a plan plus a look at settings.",
+    "feedback": "q1 is fixed; q4 is a cautious-cautious 2×2 (should-fix); c2 uses the second-AI family twice.",
+    "relevance": "The 32k-token Gemini figure matches Google’s page but will change; “For example, Google says” is a fair hedge.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "q2 is still near-transfer of card 1’s worked example.",
+    "inclusion": "Fine; Sheets works on a phone."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m09",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: write a note, and check for copying and labels.",
+    "explanation": "Card 2 is now right on ownership; at 159 words it does three jobs (copying, habits, law).",
+    "practice": "Good hands-on work in both tasks, and two try_its.",
+    "feedback": "q2 and q4 are fixed; c1 is now a good disclosure decision; c2’s hint points to the answer.",
+    "relevance": "Up-to-date IT Rules definition and copyright position; Indian examples throughout.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Disclosure repeats m05-q3’s idea; acceptable.",
+    "inclusion": "Fine."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m10",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: an approval plan, and spotting injections.",
+    "explanation": "Excellent cards; card 1 is 159 words doing two jobs.",
+    "practice": "Still no real agent: t1 is a plan, and t2 and the try_its run in a chat (idea).",
+    "feedback": "q1 is fixed; q4’s key is the most cautious set-up (should-fix).",
+    "relevance": "No hands-on with a real agent in a programme called Agentic AI (idea).",
+    "time": "85 minutes against an estimate of 58 that leaves out the workbook. Honest overall.",
+    "progression": "Builds well on M4 and M8; q4 rehearses card 3 closely.",
+    "inclusion": "Fine; the phone route works."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m11",
+   "scores": { "outcome": 5, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "explanation": "Card 2 is fixed (159 words, a real worked choice); card 3 still names only one kind of tricky input.",
+    "practice": "Route B is manual copy-paste; the try_it’s tricky input is now a data request, which is better.",
+    "feedback": "q4’s flip works; q1 still keys the headline habit (should-fix).",
+    "relevance": "Zapier’s free plan (two-step Zaps, 100 tasks) as on the research date; Opal’s 2026 status unconfirmed, and the card says to check.",
+    "time": "105 minutes; t2 alone takes about an hour, so realistic but not generous.",
+    "progression": "A good capstone that draws on M2, M3, M4 and M10.",
+    "inclusion": "Route C needs a laptop, but Route B gives a phone route."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  }
+ ],
+ "lessons": [
+  {
+   "rule": "A 2×2 option set removes convergence but not the pull of caution. In every 2×2, make the key’s value in at least one part the quicker, narrower or less textbook one, with a fact in the case that makes it right. Never key the careful value in both parts.",
+   "why": "In Agentic AI run 3, every 2×2 keyed careful-and-careful was answered from the options alone (m08-q4, f04, f14, f15), while m11-q4 (focused fix, rerun only the failed test) was missed."
+  },
+  {
+   "rule": "Keep the question stem neutral: never name the dimension that decides the answer (“and shares only what is needed”, “How should she use AI for this?”). Write “What should she do?” or “Which brief should she use?”, and let the scenario carry the deciding fact.",
+   "why": "f04’s stem told the reader to minimise data, and f15’s ruled out the two no-AI options before the case was read; the options test got both."
+  },
+  {
+   "rule": "When the skill is spotting which item is risky (which comment identifies someone, which figure is wrong), put two or more items in the scenario and refer to them in the options by label (comment 14, line 3). Never quote the risky detail in the key.",
+   "why": "f11’s key quoted “the only woman in the Pune data team”, so the option itself showed the learner what made it identifying."
+  }
+ ]
+}

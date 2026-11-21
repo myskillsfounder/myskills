@@ -1,6 +1,6 @@
 {
   "overview": {
-    "summary": "Take your own business idea from a guess to its first paying customers, with free AI tools at every step and Indian examples from campus ventures to D2C (direct-to-consumer) brands. Seven practical modules cover evidence, a first version of your product, selling, marketing, networking, money and your team, and you finish with a two-week project with a mentor: an idea backed by real customer conversations. That is about 7 hours of modules, then about 8 hours of project work spread over two weeks. Legal set-up, such as registering a business and GST, is not covered in this version and will come in a later one.",
+    "summary": "Take your own business idea from a guess to its first paying customers, with free AI tools at every step and Indian examples from campus ventures to D2C (direct-to-consumer) brands. Seven practical modules cover evidence, a first version of your product, selling, marketing, networking, money and your team, and you finish with a two-week project with a mentor: an idea backed by real customer conversations. That is about 10 hours of modules, then about 8 hours of project work spread over two weeks. Legal set-up, such as registering a business and GST, is not covered in this version and will come in a later one.",
     "audience": "students and recent graduates in India who want to start something of their own, from a campus venture to a small online business, and have never started one before",
     "outcomes": [
       "Test a business idea through real customer conversations and judge how strong the evidence is",
@@ -11,7 +11,7 @@
       "Use free AI tools to research, draft and practise, and check everything they produce"
     ],
     "level": "beginner",
-    "hours": 16
+    "hours": 18
   },
   "skills": [
     {
@@ -188,7 +188,7 @@
       "skill": "idea-validation",
       "level": "foundation",
       "outcome": "Write an interview script that tests your idea’s problem with a named customer group, using only questions about past behaviour.",
-      "minutes": 60,
+      "minutes": 82,
       "learn": [
         {
           "title": "Start with a problem and a customer, not a product",
@@ -216,18 +216,128 @@
           "id": "t1",
           "title": "Fix weak interview questions",
           "prompt": "Kabir in Bhopal plans a ₹99-a-month app that shares class notes with engineering students. These are his interview questions:\n1. Would you use an app that has all your notes?\n2. How much would you pay for it?\n3. Don’t you hate searching for notes before exams?\n4. Would you recommend it to your friends?\n5. What features do you want?\nRewrite each one as a question about past behaviour. Then write two lines on what answer would count as strong evidence, and on which rung of the ladder it would sit.",
-          "hint": "Start your questions with “Tell me about the last time…”, “What did you do when…” or “What have you tried…”. A strong answer names a real event, a cost in time or money, or something the person already tried."
+          "hint": "Start your questions with “Tell me about the last time…”, “What did you do when…” or “What have you tried…”. A strong answer names a real event, a cost in time or money, or something the person already tried.",
+          "after": "A strong rewrite: 1. “Tell me about the last time you needed notes before an exam. Where did you get them?” 2. “What have you spent on notes, photocopies or guides this semester?” 3. “What did you do the last time you couldn’t find notes?” 4. “Have you ever passed a study app or notes on to a friend? What happened?” 5. “What have you tried to make finding notes easier?” Strong evidence is a real event with a cost. For example, a student paid ₹200 for photocopies last term (rung 2). A student who pays a ₹99 advance is rung 4. “Yes, I’d use it” is only rung 1."
         },
         {
           "id": "t2",
           "title": "Your idea: problem, script and size",
           "prompt": "Use your own idea, or this one: a home-cooked tiffin service for PG residents in Hyderabad.\n1. Write a one-sentence problem statement: who, what problem, and how they cope today.\n2. Ask a free AI chatbot to draft 8 interview questions for that group. Rewrite or delete every question that asks for an opinion or a promise about the future.\n3. Make a bottom-up estimate: reachable customers × share who might pay × price × times a month. Write where each number came from, and mark any number you could not check.\n4. List three substitutes your customers use today.",
-          "hint": "Give the AI the rule in your prompt: “Ask only about past behaviour. Don’t mention my idea.” Then check its work anyway, because it often slips in “Would you…” questions. A number you counted yourself, like rooms in a PG, beats a big figure from AI."
+          "hint": "Give the AI the rule in your prompt: “Ask only about past behaviour. Don’t mention my idea.” Then check its work anyway, because it often slips in “Would you…” questions. A number you counted yourself, like rooms in a PG, beats a big figure from AI.",
+          "after": "A good answer has a sharp problem statement. For example: “Working PG residents in Gachibowli, Hyderabad, eat outside food most weekdays because their PG has no kitchen.” Every AI question that asked “Would you…” is rewritten about the past, or deleted. The estimate shows where each number came from: PGs counted on a walk, residents per PG from the owners. It marks the guesses to test in interviews, such as the share who would pay. The substitutes are real, such as the PG’s own meals, food-delivery apps and a local tiffin cook."
         }
       ],
       "reflection": {
         "prompt": "Which part of your idea are you most sure about? What evidence do you actually have for it, and which rung of the ladder is it on?",
         "hint": "If your answer is “my friends said it’s a good idea”, that is the bottom rung. Name two people you could ask about their past behaviour this week."
+      },
+      "workbook": {
+        "hook": "Everyone says your idea is great. That’s the problem. Learn to hear what people actually do.",
+        "idea": [
+          "Customers don’t pay for ideas or apps. They pay to make a problem go away. So start with one sentence: who has the problem, what it is, and how they cope today.",
+          "Then test it by asking about the past. What did they do last time? What did it cost? What have they tried? Past behaviour is evidence. A polite “I would buy it” is not.",
+          "AI can help you prepare questions and sort your notes. Only real people give you evidence."
+        ],
+        "why": [
+          "You find out whether the problem is real before you spend money",
+          "You stop counting polite compliments as proof",
+          "Your numbers come from things you can check, not big AI figures"
+        ],
+        "simple": "Think of a tuition teacher deciding whether to start a Class 10 maths batch. If she asks parents “Would you send your child?”, most say yes. If she counts how many of her students already pay for extra maths classes, she learns far more.",
+        "myth": {
+          "wrong": "If most people say they love my idea, it will sell.",
+          "right": "Compliments cost nothing to give. Look for what people already spend time or money on, and for commitments: a trial, an introduction, a deposit."
+        },
+        "example": {
+          "title": "Screen repairs in the hostel",
+          "body": "Imagine Ankur in Dehradun, who wants to fix cracked phone screens for hostel students. He doesn’t ask, “Would you use my service?” He asks, “Tell me about the last time your phone broke. Where did you take it? What did it cost? How long were you without it?” Five of nine students had gone to a shop in town. Each had waited three days. Two booked a slot with him for next week, and one paid a ₹200 advance by UPI. Now he knows the problem is real, and which answers sit high on the ladder."
+        },
+        "terms": [
+          {
+            "term": "Segment",
+            "meaning": "A specific group of customers who share the problem, not “everyone”."
+          },
+          {
+            "term": "Problem statement",
+            "meaning": "One sentence: who has the problem, what it is, and how they cope today."
+          },
+          {
+            "term": "Past-behaviour question",
+            "meaning": "A question about what someone actually did, not what they would do."
+          },
+          {
+            "term": "Evidence ladder",
+            "meaning": "Compliments, past spending, a commitment of time or reputation, then money: weakest to strongest."
+          },
+          {
+            "term": "Bottom-up sizing",
+            "meaning": "Estimating your market from numbers you can count or check yourself."
+          },
+          {
+            "term": "Substitute",
+            "meaning": "Whatever customers use today instead of your product."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Turn opinions into past behaviour",
+            "prompt": "I want to start a clothes-alteration service for hostel students in a small Indian city. Write 6 interview questions about what students actually did the last time their clothes needed altering. Don’t mention my idea, and don’t ask what they would do or pay in the future.",
+            "look_for": "Does every question ask about something that already happened: the last time, what it cost, what they tried?",
+            "check": "Strike out any question that starts “Would you…” or “How much would you pay…”. Ask the AI to rewrite those as “Tell me about the last time…” questions, then check them again."
+          },
+          {
+            "title": "Spot a number with no source",
+            "prompt": "How big is the market for home tuition in Lucknow, in rupees per year? Give the source for every number.",
+            "look_for": "Does it give a confident figure? Can you open each source and find that exact number in it?",
+            "check": "If you can’t open a source and see the figure, don’t use it. Write a bottom-up estimate instead: customers you can reach × share who might pay × price × times a year. Mark each guess."
+          }
+        ],
+        "tip": "End every interview with “Who else should I talk to?” An introduction is a small commitment of reputation. It also finds your next interview.",
+        "mistake": "Explaining your idea in the first minute. After that, people answer to please you, not to tell you what they did.",
+        "checks": [
+          {
+            "id": "ape-m01-c1",
+            "scenario": "Hetal plans a pickup service for ironing clothes, for working couples in Vadodara. Her first interview question is: “Don’t you hate ironing on weekday mornings?”",
+            "question": "What is wrong with this question?",
+            "options": [
+              "It invites a polite yes instead of a real story",
+              "Nothing, because it names a real weekday problem",
+              "It should mention her ₹15 price so people can judge",
+              "It is too short to get a useful answer from people"
+            ],
+            "correct_index": 0,
+            "hint": "Imagine a polite, busy person answering it. What would you then know about what they actually did?",
+            "why": "A leading question gets an easy yes that costs nothing. A better one asks about the past: “How did you get your clothes ironed last week?” Naming a real problem doesn’t fix the wording. Adding the price makes it about her idea. Length isn’t the problem."
+          },
+          {
+            "id": "ape-m01-c2",
+            "scenario": "Dev interviewed 10 students about a printing and binding service near his college in Kanpur. Three of them already pay a shop ₹200 a term to print their notes.",
+            "question": "Where does this sit on the evidence ladder?",
+            "options": [
+              "Rung 1: compliments",
+              "Rung 2: past spending",
+              "Rung 3: a commitment of time or reputation",
+              "Rung 4: a commitment of money"
+            ],
+            "correct_index": 1,
+            "hint": "Ask two things: what did these students actually do, and was it for Dev’s offer or someone else’s?",
+            "why": "Paying a shop is past spending, rung 2: the problem is real and already costs money. It isn’t rung 4, because the money went to the shop, not to Dev. It is more than a compliment. They haven’t given Dev their time or an introduction either."
+          },
+          {
+            "id": "ape-m01-c3",
+            "scenario": "Pallavi plans a shared-auto booking service for college students in Ajmer. Her one-page plan says, “No competitors.”",
+            "question": "What is the problem with that line?",
+            "options": [
+              "Nothing, because no app does exactly what hers will do",
+              "Students already travel by auto, bus or a friend’s bike",
+              "Investors prefer a market that already has big rivals in it",
+              "Only apps count as rivals, so she should search app stores"
+            ],
+            "correct_index": 1,
+            "hint": "A rival is anything customers already use to solve the same problem, app or not.",
+            "why": "There is always an alternative. Hailing an auto, catching a bus or riding with a friend are substitutes she must beat. None of them is an app."
+          }
+        ]
       },
       "quiz": [
         {
@@ -315,7 +425,7 @@
       "skill": "mvp-testing",
       "level": "foundation",
       "outcome": "Build a no-code MVP that tests your riskiest assumption, with a five-user test plan and a success goal set in advance.",
-      "minutes": 60,
+      "minutes": 82,
       "learn": [
         {
           "title": "An MVP tests your riskiest assumption",
@@ -339,18 +449,128 @@
           "id": "t1",
           "title": "Choose the riskiest assumption and the MVP",
           "prompt": "Meghna in Guwahati wants to sell handmade bamboo desk organisers to college students for ₹349 each, through Instagram.\n1. List five assumptions that must be true for her business to work.\n2. Rank them from riskiest to safest, with one line of reason for the top one.\n3. Choose one of the four MVP types to test the riskiest assumption, and describe it in three lines.\n4. Write her success goal: a number, a group and a time.",
-          "hint": "Ask yourself which assumption, if wrong, would end the business. “Students like bamboo” is easy to check. “Students will pay ₹349 for a desk organiser” is harder, and more important."
+          "hint": "Ask yourself which assumption, if wrong, would end the business. “Students like bamboo” is easy to check. “Students will pay ₹349 for a desk organiser” is harder, and more important.",
+          "after": "A strong answer lists the assumptions. Students want a tidier desk. They will pay ₹349 for an organiser. They trust an Instagram seller enough to pay before delivery. Meghna can make enough each week. Delivery costs are low enough. The riskiest is paying ₹349: if students won’t pay that, nothing else matters. A good MVP is a one-page offer or a WhatsApp Business catalogue item. It shows a photo, the price and a UPI advance. Goal: “At least 4 of the first 20 students who see it pay a ₹100 advance within 5 days.”"
         },
         {
           "id": "t2",
           "title": "Build a one-screen MVP for your idea",
           "prompt": "Build a first MVP for your own idea, or for Meghna’s. Use a free tool: a Google Form, a WhatsApp Business catalogue item, or one page in an AI builder’s free plan. It must say who it is for, the problem, the offer, the price and how to order.\nUse a free AI chatbot to draft the words. Then mark every change you made to keep it true.\nFinally, write a five-user test plan: your success goal, the three things you will watch for, and the one question you will ask at the end. Open it on your phone to check it works.",
-          "hint": "Keep it to one screen. If you catch yourself adding a login, a menu or a second page, stop. You are testing one assumption, not building the whole product."
+          "hint": "Keep it to one screen. If you catch yourself adding a login, a menu or a second page, stop. You are testing one assumption, not building the whole product.",
+          "after": "A good MVP fits on one screen. It says who it is for, the problem, the offer, the price and how to order. The changes to the AI draft are marked, such as a deleted “Loved by hundreds” or a corrected price. The test plan has three parts. Goal: a number, a group and a time. Watch: where people stop, whether they notice the price, and whether they reach the order step. Ask at the end: “What nearly stopped you from ordering?”"
         }
       ],
       "reflection": {
         "prompt": "What were you planning to build before this module? What is the smallest test that would tell you whether to build it at all?",
         "hint": "A good MVP feels a little embarrassing. If it took more than a day to make, look for something smaller."
+      },
+      "workbook": {
+        "hook": "You don’t need an app to find out whether people will pay. You need one week and a WhatsApp number.",
+        "idea": [
+          "An MVP (minimum viable product) is the smallest test that shows whether your idea works with real people. It is a test, not a cheap copy of the full product.",
+          "List what must be true for your business to work. Test the riskiest one first: the one that would end the idea if it were wrong.",
+          "Decide what success looks like before you test: a number, a group and a time. Then watch five real users without helping them."
+        ],
+        "why": [
+          "You learn in days, not months",
+          "You spend very little before anyone has paid",
+          "A goal set in advance stops you fooling yourself"
+        ],
+        "simple": "A college fest team sells 50 passes on a Google Form before it books the hall. If the passes sell at their price, the fest is real. If they don’t, the team has lost nothing but an evening.",
+        "myth": {
+          "wrong": "An MVP is a basic version of the full app.",
+          "right": "An MVP can be a Google Form, a WhatsApp catalogue or a service you do by hand. It only has to test one assumption."
+        },
+        "example": {
+          "title": "A week in Ira’s diary",
+          "body": "Ira in Shimla wants to sell hand-drawn pet portraits for ₹799. Monday: “My riskiest assumption is that pet owners will pay ₹799 for a drawing. No website yet.” Tuesday: “Made one Google Form with three sample drawings, the price and my UPI ID for a ₹200 advance.” Wednesday: “Goal, written before I show anyone: 3 of the first 10 people pay the advance within a week.” Thursday to Saturday: “Showed it to 10 pet owners.” Sunday: “Four paid. Goal met, so I keep going, and I still have no app.”"
+        },
+        "terms": [
+          {
+            "term": "MVP (minimum viable product)",
+            "meaning": "The smallest thing that tests whether your idea works with real people."
+          },
+          {
+            "term": "Assumption",
+            "meaning": "Something that must be true for your business to work."
+          },
+          {
+            "term": "Riskiest assumption",
+            "meaning": "The assumption that would end the idea if it turned out wrong."
+          },
+          {
+            "term": "Concierge MVP",
+            "meaning": "You deliver the service by hand to a few customers."
+          },
+          {
+            "term": "Wizard of Oz MVP",
+            "meaning": "It looks automatic to the customer, but you do the work behind the scenes."
+          },
+          {
+            "term": "Success goal",
+            "meaning": "A number, a group and a time, written down before the test."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Find the riskiest assumption",
+            "prompt": "I want to rent out cameras to college students for weekend events in a small Indian city. List 6 assumptions that must be true for this business to work. Then rank them from riskiest to safest, with one line of reason for each.",
+            "look_for": "Is the top one something that would end the business if wrong? For example, students paying a deposit, or returning cameras undamaged.",
+            "check": "For each one, ask: is this already known, or truly uncertain? If the AI ranks something easy to check first, such as “students like photography”, move it down and say why."
+          },
+          {
+            "title": "Draft a one-screen offer, then make it true",
+            "prompt": "Write a one-screen offer for weekend camera rental for college students. Include a headline, three short points, a price of ₹600 a day with a ₹2,000 refundable deposit, and how to book on WhatsApp. Don’t invent reviews, customer numbers or awards.",
+            "look_for": "Any claim you can’t prove, such as ratings, “trusted by” or “best in town”, even though you asked it not to add them.",
+            "check": "Use this module’s four checks. Is every claim true? Is the price right? Does it open properly on a phone? Are AI-made images labelled? Delete anything untrue."
+          }
+        ],
+        "tip": "Write your success goal in your notes app, with today’s date, before you show anyone your MVP. Then you can’t move the goal after you see the results.",
+        "mistake": "Explaining the MVP while a user tries it. Your help hides exactly the places where real customers get stuck.",
+        "checks": [
+          {
+            "id": "ape-m02-c1",
+            "scenario": "Gopal in Mangaluru offers outfit suggestions. Customers upload three photos of their clothes on a neat form and get a PDF that looks computer-made. In fact, he and a friend pick every outfit by hand.",
+            "question": "Which kind of MVP is this?",
+            "options": [
+              "Concierge, because a few customers are served by hand",
+              "Wizard of Oz, as it looks automatic but he does it",
+              "A one-page offer, because customers order through a form",
+              "A catalogue, because each outfit is shown to the customer"
+            ],
+            "correct_index": 1,
+            "hint": "What does the customer think is happening behind the form?",
+            "why": "The customer sees something that looks automatic, while Gopal does the work by hand. That is a Wizard of Oz MVP. In a concierge MVP the customer knows a person is doing it."
+          },
+          {
+            "id": "ape-m02-c2",
+            "scenario": "Juhi in Udaipur made a one-page offer for Eid gift hampers. She wrote nothing down before testing. Of 5 friends who saw it, 2 said they liked it and 1 ordered. Now she isn’t sure whether that is good.",
+            "question": "What was missing before her test?",
+            "options": [
+              "A goal: how many of which people should order, and by when",
+              "A list of the features each friend should see on the page",
+              "A plan to show the page to 50 people, not just 5 friends",
+              "A logo and brand colours so that the page looks real"
+            ],
+            "correct_index": 0,
+            "hint": "How would she know if 1 order out of 5 was a pass or a fail?",
+            "why": "Without a goal written first, any result can be called a success afterwards. More features, more people or a logo don’t say what result she was hoping for."
+          },
+          {
+            "id": "ape-m02-c3",
+            "scenario": "Arif tested a WhatsApp catalogue of second-hand cycles in Kolhapur. His goal, written first: 3 of 5 students reserve a cycle with a ₹300 advance within 3 days. Four of the five reserved one.",
+            "question": "What should he do next?",
+            "options": [
+              "Stop and rethink, because one student didn’t reserve",
+              "Change the price and test again before deciding",
+              "Build a full app now, since the idea is proven",
+              "Keep going, because he met the goal he set"
+            ],
+            "correct_index": 3,
+            "hint": "Compare the result with the goal he wrote down first.",
+            "why": "He aimed for 3 of 5 and got 4, so he met his goal and should keep going. One small test isn’t proof of the whole business, so a full app is a big jump. Changing the price now would make the result harder to read."
+          }
+        ]
       },
       "quiz": [
         {
@@ -438,7 +658,7 @@
       "skill": "first-sales",
       "level": "intermediate",
       "outcome": "Write a one-minute pitch that ends with a clear ask for a UPI payment or pre-order, with replies to common doubts and a follow-up message.",
-      "minutes": 60,
+      "minutes": 82,
       "learn": [
         {
           "title": "Start with a warm list",
@@ -462,18 +682,128 @@
           "id": "t1",
           "title": "Write the pitch and handle two doubts",
           "prompt": "Karthik in Coimbatore runs weekend spoken-English classes for Class 10 students, at ₹1,500 a month. In his interviews, four parents said their children freeze when they speak English in class.\n1. Write his one-minute pitch to a parent (about 120 words), using the five parts. End with a specific ask that includes a UPI advance.\n2. Write his replies to two doubts: “It’s too expensive” and “Let me ask my husband first.” Use the three steps: listen, ask, answer.",
-          "hint": "Use the parents’ own words for the problem. For “let me ask my husband”, offer something that helps that conversation, such as a free trial class both parents can watch."
+          "hint": "Use the parents’ own words for the problem. For “let me ask my husband”, offer something that helps that conversation, such as a free trial class both parents can watch.",
+          "after": "A strong pitch starts with the parents’ own words: “You told me your son freezes when he has to speak English in class.” Then comes the offer: weekend spoken-English classes for Class 10. Add proof, such as what an early student did, only if it is true. Give the price, ₹1,500 a month. End with a specific ask: “Shall I keep a seat for this Saturday? A ₹500 UPI advance holds it.” For “too expensive”: listen, then ask “What would you compare it with?” Then answer with a fact or a smaller step, such as one trial class. For “let me ask my husband”: agree. Then offer a free trial class both parents can watch, on a named day."
         },
         {
           "id": "t2",
           "title": "Build your sales kit",
           "prompt": "For your own idea, or for Karthik’s classes, prepare:\n1. A warm list of 15 people (initials only), with one line each on why they might buy.\n2. Three quick replies of under 50 words each: the price, how to pay by UPI, and when it will be delivered or start.\n3. One follow-up message for a person who said “maybe” yesterday.\nUse a free AI chatbot to draft the replies, then rewrite them in your own voice. If you can, save them as quick replies in the free WhatsApp Business app. If not, keep them in your phone’s notes app.",
-          "hint": "A good quick reply answers the question and suggests the next step. “₹1,500 a month, 8 classes. Want to try the first one free this Saturday?” works better than a price alone."
+          "hint": "A good quick reply answers the question and suggests the next step. “₹1,500 a month, 8 classes. Want to try the first one free this Saturday?” works better than a price alone.",
+          "after": "A good warm list uses initials and a real reason for each. For example: “S.K., parent in our building, said her daughter avoids speaking in class.” The quick replies are short and end with a next step. Price: “₹1,500 a month for 8 classes. Want to try the first one free this Saturday?” Payment: “You can pay by scanning my UPI QR code, or to my UPI ID.” Start: “Classes start this Saturday at 10 am.” The follow-up is friendly, specific and sent once. For example: “Hi, following up on yesterday. Shall I keep a seat for Riya this Saturday?”"
         }
       ],
       "reflection": {
         "prompt": "What makes you uncomfortable about asking people for money? What would make your ask feel fair to you and to them?",
         "hint": "Most first-time founders feel this. An ask feels fair when it solves a problem the person told you about, at a clear price, with an honest refund promise."
+      },
+      "workbook": {
+        "hook": "A yes isn’t a sale. A sale is when the money shows in your bank app.",
+        "idea": [
+          "Your first customers come from a warm list: people who know you, or share a place with you. Write to each person, not to a group.",
+          "A one-minute pitch has five parts: the problem in their words, your offer, proof, the price, and a clear ask. A doubt like “too expensive” is information: listen, ask, then answer.",
+          "A yes becomes real when money moves. Share your UPI QR code, UPI ID or a payment link, and follow up once or twice."
+        ],
+        "why": [
+          "Early sales prove people will pay, not just praise",
+          "A clear ask gets a clear answer",
+          "Handling doubts calmly builds trust instead of pressure"
+        ],
+        "simple": "A fruit seller at a weekly market doesn’t shout at the whole street. He calls to the aunty who bought mangoes last week. He tells her today’s mangoes came in this morning, says the price, and asks, “Shall I pack a dozen?”",
+        "myth": {
+          "wrong": "A good product sells itself, so I just need to post and wait.",
+          "right": "First sales usually come from personal messages and a clear ask. Posting and waiting tends to bring likes, not payments."
+        },
+        "example": {
+          "title": "Mehendi bookings on WhatsApp",
+          "body": "Roshni in Jodhpur does mehendi for ₹500 for both hands. Before Teej, she lists 20 people she knows. She marks the 8 who asked her about mehendi last year. Her chat with one of them: Roshni: “Komal, you said finding a mehendi artist before Teej was a rush last year. I’m taking bookings now, ₹500 for both hands. Shall I keep 4 pm on the day for you?” Komal: “Yes please! How do I book?” Roshni: “A ₹100 advance holds the slot. Here is my UPI QR code.” Five of the eight book. Roshni marks a chat “Paid” only after the money shows in her bank app."
+        },
+        "terms": [
+          {
+            "term": "Warm list",
+            "meaning": "People who already know you, or share a place with you."
+          },
+          {
+            "term": "Pitch",
+            "meaning": "A short explanation of your offer, about a minute long."
+          },
+          {
+            "term": "Ask",
+            "meaning": "The one clear next step you request, such as an advance to hold a slot."
+          },
+          {
+            "term": "Doubt",
+            "meaning": "A reason a customer hesitates, usually about price, timing or trust."
+          },
+          {
+            "term": "Pre-order",
+            "meaning": "A customer pays, or pays an advance, before you deliver."
+          },
+          {
+            "term": "Quick reply",
+            "meaning": "A saved answer to a common question in the WhatsApp Business app."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Practise with a doubtful customer",
+            "prompt": "Act as a doubtful college student. I sell hand-made bookmarks with pressed flowers for ₹99 each. Raise one doubt at a time, about price, timing or trust, and wait for my reply before the next one. Don’t agree too quickly.",
+            "look_for": "Are the doubts ones a real buyer might raise? Does it push back when your reply argues instead of asking a question?",
+            "check": "Use listen, ask, answer for each doubt. This is practice only: the AI’s doubts aren’t evidence about real customers, so try your replies on real people next."
+          },
+          {
+            "title": "Sharpen your ask",
+            "prompt": "My pitch ends with: “Let me know if you’re interested.” Rewrite that last line 3 ways. Each should ask for one specific next step, such as a UPI advance or a date to start. My product is a ₹249 weekend chess class for children.",
+            "look_for": "Does each version ask for a decision: a date, an amount, a yes or a no?",
+            "check": "Choose the one that sounds like you. Make sure the amount and date are real. Payment should be by your QR code, UPI ID or a link, not a payment request."
+          }
+        ],
+        "tip": "Save three quick replies today: the price, how to pay, and when it arrives. Most first questions are one of these.",
+        "mistake": "Marking an order “Paid” from a screenshot. Check that the money shows in your own bank or UPI app, because a screenshot can be faked.",
+        "checks": [
+          {
+            "id": "ape-m03-c1",
+            "scenario": "A customer in Thane agrees to buy Rekha’s set of crochet coasters for ₹300 and asks how to pay.",
+            "question": "What should Rekha do?",
+            "options": [
+              "Send a payment request to the customer’s UPI ID from her app",
+              "Post the coasters first and accept a screenshot as payment",
+              "Mark the order “Paid” now, since the customer has said yes",
+              "Share her UPI QR code, her UPI ID or a payment link"
+            ],
+            "correct_index": 3,
+            "hint": "Who should start the payment: Rekha, or the customer?",
+            "why": "The customer pays from her own app using Rekha’s QR code, UPI ID or a link. Since October 2025, one person can’t send another a UPI payment request. A screenshot can be faked, and a yes isn’t paid until the money arrives."
+          },
+          {
+            "id": "ape-m03-c2",
+            "scenario": "Bilal’s pitch for his doorstep bike-cleaning service in Srinagar: “Your bike gets dusty every week. I clean bikes at your doorstep. Twelve neighbours have booked me twice. Shall I come on Sunday at 10?”",
+            "question": "Which of the five parts is missing?",
+            "options": [
+              "The problem",
+              "The proof",
+              "The price",
+              "The ask"
+            ],
+            "correct_index": 2,
+            "hint": "Go through the five parts one by one: problem, offer, proof, price, ask.",
+            "why": "The pitch has the problem (dust), the offer, proof (twelve repeat bookings) and an ask (Sunday at 10). It never says what it costs. A customer can’t say yes without the price."
+          },
+          {
+            "id": "ape-m03-c3",
+            "scenario": "Rina in Nagpur sells ₹450 plant gift boxes. A buyer likes one, but writes: “Will it really reach my sister in Pune by Sunday?”",
+            "question": "What is Rina’s best reply?",
+            "options": [
+              "20% off if she orders today, so the risk feels smaller",
+              "A warm promise: “Don’t worry, I’ve never let anyone down”",
+              "Photos of boxes she sent last week, a date, and a refund if late",
+              "A promise to WhatsApp her the moment the box is posted"
+            ],
+            "correct_index": 2,
+            "hint": "Is this doubt about price, timing or trust? What kind of reply answers that kind of doubt?",
+            "why": "This is a doubt about trust, and trust needs proof: real past orders, a delivery date and a refund promise. A discount answers a price doubt. A warm promise isn’t proof. A message when the box is posted doesn’t say it will arrive by Sunday."
+          }
+        ]
       },
       "quiz": [
         {
@@ -561,7 +891,7 @@
       "skill": "lean-marketing",
       "level": "intermediate",
       "outcome": "Plan a ₹1,000 marketing test on one channel, with honest AI-assisted content and one measure that decides what you do next.",
-      "minutes": 60,
+      "minutes": 82,
       "learn": [
         {
           "title": "Positioning: one customer, one promise",
@@ -585,18 +915,128 @@
           "id": "t1",
           "title": "Position an offer and choose its channel",
           "prompt": "Imran in Hyderabad buys used engineering textbooks from final-year students and sells them to first-years at half the shop price. In his interviews, most first-years said they find books through seniors and their class WhatsApp group.\n1. Write his positioning statement using the template.\n2. Choose his one channel, with two reasons from the facts given.\n3. Name two channels he should not start with, and say why.",
-          "hint": "Base the channel on what the interviews say, not on what is popular. Think about when first-years most need books, and where they are at that moment."
+          "hint": "Base the channel on what the interviews say, not on what is popular. Think about when first-years most need books, and where they are at that moment.",
+          "after": "A strong answer: “For first-year engineering students in Hyderabad who need costly textbooks, Imran’s Books sells used copies from seniors at half the shop price. Unlike the bookshop, every book comes from a senior who took the same course.” His channel is the class WhatsApp groups and seniors, with each group admin’s permission. The interviews say first-years look there. It is free, and he can post there every week. Timing matters too: the first weeks of term, when books are needed. Two channels to skip for now are Instagram ads and YouTube. The interviews didn’t point there, and they cost money or time without reaching first-years when they need books."
         },
         {
           "id": "t2",
           "title": "Plan your ₹1,000 test and make one post",
           "prompt": "For your own idea, or for Imran’s books:\n1. Write a test plan with six lines: what you believe, the channel, how you split the ₹1,000, the one measure, how you will track where results came from, and what you will do if the result is good or bad.\n2. Ask a free AI chatbot for one post or caption for that channel. Write the draft down, then rewrite it.\n3. List each change you made and why: a false claim, false urgency, a hidden charge or an unlabelled AI image.",
-          "hint": "Your measure should be something that costs the customer effort, such as orders, sign-ups or replies, not views. A code word, a separate WhatsApp number or a separate form link shows where each result came from. No budget? Plan a ₹0 test instead: free posts in one group and samples you make yourself, measured the same way."
+          "hint": "Your measure should be something that costs the customer effort, such as orders, sign-ups or replies, not views. A code word, a separate WhatsApp number or a separate form link shows where each result came from. No budget? Plan a ₹0 test instead: free posts in one group and samples you make yourself, measured the same way.",
+          "after": "A good plan has all six lines. Belief: first-years will buy used books that seniors recommend. Channel: class WhatsApp groups, with the admins’ permission. Posting there is free. Split: to compare with the free posts, spend ₹600 on printed book lists for first-year classrooms and ₹400 on a boosted post. Or spend ₹0, with free posts only. Measure: orders, not views. Tracking: a different code word or form link for each part. Give the free posts a code word too. Decision: keep the part with the lowest cost per order. Rethink the offer if none brings orders. The list of changes to the AI caption names each fix. For example, remove “Only 2 left!” when there are 30, or show the delivery charge in the price."
         }
       ],
       "reflection": {
         "prompt": "Think of a small brand you bought from because of a post or a recommendation. What exactly made you trust it enough to pay?",
         "hint": "Often it is something specific and true: a real photo, a friend’s word, a clear price. Use the same in your own marketing."
+      },
+      "workbook": {
+        "hook": "Likes feel good. Orders pay the bills. Learn to tell them apart with ₹1,000.",
+        "idea": [
+          "Positioning is the short answer to “Who is this for, and why choose it?” One customer, one promise. Everything you post follows from it.",
+          "Pick one channel where your customers already spend time, and give it real effort. Use AI to draft your content, then make every claim true.",
+          "Test a small spend against one measure that takes effort from the customer, such as orders or sign-ups. Track where each result came from."
+        ],
+        "why": [
+          "Clear positioning makes every post easier to write",
+          "One channel done well teaches you more than five done badly",
+          "Counting orders, not likes, shows where your money works"
+        ],
+        "simple": "A dosa cart outside an IT park doesn’t try to feed the whole city. It promises office-goers a hot breakfast in five minutes, and puts its board where they get off the bus.",
+        "myth": {
+          "wrong": "More views mean more sales.",
+          "right": "A view costs the viewer nothing. Count orders, sign-ups or replies, because they show that someone took a real step."
+        },
+        "example": {
+          "title": "Plants for hostel rooms",
+          "body": "Imagine Reshma in Thiruvananthapuram, who sells small potted plants for hostel rooms at ₹150. Her positioning: “For hostel students who want some green in a small room, Reshma’s plants are low-care and fit on a study table. Unlike nursery plants, each comes with a care card.” Her interviews show students find things through the hostel WhatsApp group, so she starts there. She spends ₹500 on 10 sample plants for wing leaders. She spends another ₹500 on a boosted post. Each has its own code word. The samples bring 8 orders, about ₹63 each. The boost brings 2, at ₹250 each. She backs the samples, knowing one small test is a hint, not proof."
+        },
+        "terms": [
+          {
+            "term": "Positioning",
+            "meaning": "Who your product is for, and why they should choose it."
+          },
+          {
+            "term": "Channel",
+            "meaning": "The way customers hear about you, such as a WhatsApp group or a notice board."
+          },
+          {
+            "term": "Measure",
+            "meaning": "The one result you decide in advance will judge a test."
+          },
+          {
+            "term": "Cost per order",
+            "meaning": "What you spent on a channel divided by the orders it brought."
+          },
+          {
+            "term": "Code word",
+            "meaning": "A word in each offer that shows which channel an order came from."
+          },
+          {
+            "term": "False urgency",
+            "meaning": "A pressure line like “only 3 left” that isn’t true."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Write a positioning statement",
+            "prompt": "Fill in this template for my business: For [customer group] who [problem], [product] is a [type of product] that [main benefit]. Unlike [the alternative], it [what is different]. My business: washable cloth covers for school textbooks, sold to parents of Class 1 to 5 students in an Indian city. Give 3 versions, each for a different customer group.",
+            "look_for": "Is each customer group specific? Is the “unlike” a real alternative that parents use today, such as plastic covers or brown paper?",
+            "check": "Pick the version whose customer group you could reach this week. Then check its “unlike” by asking two parents what they use now. Cut any benefit you can’t show, such as “eco-friendly” if you haven’t checked the cloth."
+          },
+          {
+            "title": "Clean up an AI caption",
+            "prompt": "Write a short Instagram caption for my ₹80 washable cloth book covers. Then list every claim in your caption that I would need to prove, and every phrase that creates urgency.",
+            "look_for": "Does it flag its own claims, such as “best quality” or “selling fast”?",
+            "check": "Check the caption yourself. Every claim must be true and checkable, with no false urgency. The price must be the full price. Add anything it missed to the list, and label any AI-made image."
+          }
+        ],
+        "tip": "Give each channel its own code word, form link or WhatsApp number before you spend a rupee. Without it, you can’t tell which spend brought which order.",
+        "mistake": "Posting a little on five platforms at once. No channel gets enough effort to show a result, so you learn nothing.",
+        "checks": [
+          {
+            "id": "ape-m04-c1",
+            "scenario": "Sahil sells hand-made leather wallets for ₹699 in Meerut. He plans a ₹1,000 test: posters in two college canteens.",
+            "question": "Which measure should decide his next step?",
+            "options": [
+              "How many people stop to look at the posters",
+              "How many orders use the poster’s code word",
+              "How many likes a photo of the posters gets online",
+              "How many students say the posters look good"
+            ],
+            "correct_index": 1,
+            "hint": "Which of these numbers could go up even if nobody bought a wallet?",
+            "why": "An order with the poster’s code word shows both that someone paid and where they came from. Looks, likes and kind words cost people nothing."
+          },
+          {
+            "id": "ape-m04-c2",
+            "scenario": "Lalit sells a ₹40 masala chai premix in Patna. A free AI tool made a picture of a steaming cup of chai beside his pack. It looks like a real photo.",
+            "question": "How should he use the picture in his post?",
+            "options": [
+              "Post it as it is, since it shows what the premix makes",
+              "Post it with a line saying the image is AI-made",
+              "Post it as it is, since the free tool allows business use",
+              "Post it only as a Story, since Stories vanish in a day"
+            ],
+            "correct_index": 1,
+            "hint": "What might a customer believe about this picture? Would that be true?",
+            "why": "This module’s rule: if an image is AI-made, label it, so nobody takes it for a real photo. Showing what the premix makes doesn’t make the picture real. A tool’s licence is about use, not honesty. A Story is still seen by customers."
+          },
+          {
+            "id": "ape-m04-c3",
+            "scenario": "Gauri in Belagavi spent ₹300 on flyers and ₹300 on a boosted post for her hair scrunchies. She got 9 orders, but she can’t tell which channel brought which.",
+            "question": "What, set up before spending, would have told her?",
+            "options": [
+              "A count of the likes and shares on each channel",
+              "The same offer and price on both channels",
+              "A bigger budget, so the numbers come out clearer",
+              "A different code word or form link for each channel"
+            ],
+            "correct_index": 3,
+            "hint": "Picture order number 5 arriving on WhatsApp. Which option would tell her where it came from?",
+            "why": "A code word or link comes with each order, so she can count the orders from each channel. Likes don’t show who bought. The same offer on both still hides the source. A bigger budget brings more orders, still mixed together."
+          }
+        ]
       },
       "quiz": [
         {
@@ -684,7 +1124,7 @@
       "skill": "founder-networking",
       "level": "intermediate",
       "outcome": "Map your founder network and write an introduction request, a LinkedIn note and a referral or partnership offer that people are glad to answer.",
-      "minutes": 60,
+      "minutes": 82,
       "learn": [
         {
           "title": "Map your network from zero",
@@ -708,18 +1148,128 @@
           "id": "t1",
           "title": "Map your founder network",
           "prompt": "Draw your four circles on paper or in a notes app, for your own idea or for Tenzin’s tea subscription.\n1. Put at least 20 people or places across the circles (use initials for people).\n2. Next to each, write one thing you could ask and one thing you could offer.\n3. Find out whether your college has an E-cell, an Innovation Council or an incubator, and how to contact it. Ask a teacher or a senior, or search your college website.\n4. Circle the three contacts to approach first, and say why.",
-          "hint": "What you can offer is often small but useful: feedback on their product, help at an event, a share of your customer insights, or simply a good question."
+          "hint": "What you can offer is often small but useful: feedback on their product, help at an event, a share of your customer insights, or simply a good question.",
+          "after": "A good map has at least 20 entries across all four circles, not only friends. Each has a real ask and a real offer. For example: “R.S., senior who ran a canteen stall: ask how she set her prices; offer to help at her next stall.” It names your college’s E-cell, Innovation Council or incubator, and how to reach it. If there isn’t one, it says so and names the nearest one in your city. The first three contacts are people one step ahead of you who are likely to reply. Each has a reason."
         },
         {
           "id": "t2",
           "title": "Write three messages people will answer",
           "prompt": "Write three messages for your own idea:\n1. A forwardable introduction request to a connector (under 80 words), with a specific ask and the time it needs.\n2. A LinkedIn invitation note to an alumnus or founder that mentions something specific they shared publicly.\n3. A referral offer for your customers, or a partnership offer to a club or shop. Say what each side gains.\nUse a free AI chatbot for first drafts. Then remove any flattery, vague lines or facts you can’t check, and note what you changed.",
-          "hint": "Read each message as the person receiving it. Can they say yes in one reply? Do they know exactly what you want and how long it takes?"
+          "hint": "Read each message as the person receiving it. Can they say yes in one reply? Do they know exactly what you want and how long it takes?",
+          "after": "A strong introduction request is under 80 words and can be forwarded as it is. It says who you are, why this person, one specific question and the time it needs, such as 15 minutes. The LinkedIn note names one thing the person shared publicly and makes a small ask, with no flattery. The referral or partnership offer says what each side gains. For example: “₹50 off for you and ₹50 off for your friend.” Or a club gets a discount for using your product on its trips. A short note lists what you changed in the AI drafts and why."
         }
       ],
       "reflection": {
         "prompt": "Who has already helped you this year, even in a small way? How could you thank them, or give something back, before you ask for anything new?",
         "hint": "Strong networks are built on giving as well as asking. A short update on what their help led to is a good thank-you."
+      },
+      "workbook": {
+        "hook": "The person who can help you most is probably one introduction away.",
+        "idea": [
+          "You have a bigger network than you think: people you know, your campus, your city, and people online. Map them, with what you can ask and what you can offer.",
+          "The best way to meet someone new is a double opt-in introduction: the connector asks them first. Make it easy with a short message the connector can forward as it is.",
+          "On LinkedIn, send a few specific notes. Grow through referrals and partnerships where each side gains something."
+        ],
+        "why": [
+          "Introductions get replies that cold messages don’t",
+          "Mentors and partners can save you months of mistakes",
+          "Referred customers can cost less, and trust you sooner"
+        ],
+        "simple": "When a family new to a city needs a good doctor, they don’t search the whole internet. They ask a neighbour, who asks her cousin. The cousin checks that the doctor takes new patients, then passes on the number.",
+        "myth": {
+          "wrong": "Networking means collecting as many contacts as possible.",
+          "right": "A few people you help and keep in touch with are worth more than hundreds of strangers. Specific asks and small offers build the relationship."
+        },
+        "example": {
+          "title": "Notebooks and a 15-minute call",
+          "body": "Imagine Wasim in Bareilly, who sells notebooks made from recycled paper. He wants advice on selling to schools. A teacher at his college knows Nandini, who supplies stationery to schools. Wasim writes a note the teacher can forward: “I make recycled-paper notebooks in Bareilly and have sold 300 to students. I’d like 15 minutes to ask how you won your first school order.” The teacher checks with Nandini first, and she agrees. After the call, Wasim thanks the teacher and tells him what he learned."
+        },
+        "terms": [
+          {
+            "term": "Connector",
+            "meaning": "Someone who knows both people and makes the introduction."
+          },
+          {
+            "term": "Double opt-in introduction",
+            "meaning": "The connector asks the other person first, and introduces you only if they agree."
+          },
+          {
+            "term": "Forwardable message",
+            "meaning": "A short note the connector can forward without changing a word."
+          },
+          {
+            "term": "Incubator",
+            "meaning": "A programme that gives early founders mentors, space and sometimes small grants."
+          },
+          {
+            "term": "Referral",
+            "meaning": "A happy customer brings a friend, often with a reward for both."
+          },
+          {
+            "term": "Partnership",
+            "meaning": "An agreement with another group that serves the same customers, where each side gains."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Make an ask forwardable",
+            "prompt": "Rewrite this message so a teacher can forward it, word for word, to the owner of a sports academy. The message: “Hi, can you connect me to someone who knows about coaching?” About me: I run a weekend football session for children in an Indian city. I want 15 minutes of advice on how to set fees. Keep it under 80 words. Use [brackets] for any numbers I need to fill in.",
+            "look_for": "Does it say who you are, why this person, the exact ask and how much time it needs?",
+            "check": "Fill in only real numbers. Then read it as the academy owner: could you say yes in one reply? Cut any flattery and anything you can’t back up."
+          },
+          {
+            "title": "Design a referral offer",
+            "prompt": "I run a small custom T-shirt printing business in an Indian city. Suggest 3 referral offers where both the customer and their friend get something. For each, say what one new customer would cost me.",
+            "look_for": "Does each offer reward both people? Is the cost of one new customer clear?",
+            "check": "Work out each cost yourself: add the two rewards. Compare it with what one customer costs through your other channel. Keep the cheapest offer that still feels generous."
+          }
+        ],
+        "tip": "After any introduction, tell the connector what happened within a week. People who hear back are glad to introduce you again.",
+        "mistake": "Asking a stranger for something vague, like “guidance” or “a quick chat”. Say what you want to learn, and what you can offer.",
+        "checks": [
+          {
+            "id": "ape-m05-c1",
+            "scenario": "Meenal in Tirupati wants to start a home-made jam brand. She is choosing whom to contact first from her network map.",
+            "question": "Who is most likely to reply and help?",
+            "options": [
+              "A senior who ran a campus snack stall last year",
+              "The owner of a national jam brand she admires",
+              "A food blogger in Tirupati with two lakh followers",
+              "Her cousin, who works in a bank and loves her jam"
+            ],
+            "correct_index": 0,
+            "hint": "Think about how many messages each person gets, and how recent and useful their lessons would be.",
+            "why": "A senior one step ahead gets few requests, and her lessons are recent, so she is likely to reply with useful advice. A national founder and a big blogger get many messages. Her cousin will reply, but has never sold anything."
+          },
+          {
+            "id": "ape-m05-c2",
+            "scenario": "Kartik sells bottled cold coffee in Puducherry. He wants his customers to bring their friends.",
+            "question": "When should he ask a customer to refer a friend?",
+            "options": [
+              "In his first message, before they have tried it",
+              "Once a month, in a broadcast to every contact",
+              "Right after a delivery the customer was happy with",
+              "Only after they have bought ten bottles from him"
+            ],
+            "correct_index": 2,
+            "hint": "Think about the customer’s mood at each moment, and what they could tell a friend.",
+            "why": "Ask right after a good moment, such as a happy delivery: the customer has something real to share. Before trying it, they have nothing to tell. A broadcast isn’t a personal ask at a good moment. Waiting for ten bottles misses most happy customers."
+          },
+          {
+            "id": "ape-m05-c3",
+            "scenario": "Ayaan wants advice from an alumna. She wrote a public LinkedIn post about how her small online business found its first 100 customers.",
+            "question": "Which invitation note is best?",
+            "options": [
+              "Your post on your first 100 customers was great. Could we do a one-hour call on your whole journey?",
+              "Your post on your first 100 customers helped me. Could I ask one question about it?",
+              "Hi, I’m building a startup in Lucknow and saw your post. Could you guide me?",
+              "You are an inspiration to all of us students. Could you share some general tips with me?"
+            ],
+            "correct_index": 1,
+            "hint": "Read each note as the alumna. Could she tell why he chose her, and answer in one reply?",
+            "why": "It shows why he chose her and asks for something she can answer in one reply. A one-hour call on her whole journey is too big an ask from a stranger. “Guide me” and “general tips” don’t say what he wants to learn."
+          }
+        ]
       },
       "quiz": [
         {
@@ -807,7 +1357,7 @@
       "skill": "startup-finance",
       "level": "advanced",
       "outcome": "Set a price and show in a rupee table that each customer earns back more than they cost to win, with a one-month cash-flow plan.",
-      "minutes": 70,
+      "minutes": 92,
       "learn": [
         {
           "title": "Price from value, not just from cost",
@@ -819,7 +1369,7 @@
         },
         {
           "title": "Count payment fees, and date them",
-          "body": "Payment fees come out of every sale, so they belong in your unit economics. They change, so check the provider’s own page and write the date in your sheet.\n\nUPI (checked 26 October 2026): NPCI’s FAQ of 15 September 2026 sets a fee of 0.4%, capped at ₹300, on UPI payments to merchants above ₹2,000. Payments up to ₹2,000, and payments between people, stay free. Small sellers receiving up to ₹1 lakh a month by UPI QR pay nothing. Sellers can’t pass the fee on to customers. NPCI postponed the start until after Diwali. The start date is to be announced, so check npci.org.in.\nWorked example: Imran’s ₹1,200 phone stands are under ₹2,000, so UPI adds no fee.\n\nPayment gateways handle cards, wallets and payment links. Razorpay’s pricing page (October 2026) lists 2% of each payment plus 18% GST on that fee for its standard plan.\nWorked example: on a ₹1,000 order, fee ₹20 + GST ₹3.60 = ₹23.60. You receive ₹976.40."
+          "body": "Payment fees come out of every sale, so they belong in your unit economics. They change, so check the provider’s own page and write the date in your sheet.\n\nUPI (checked 21 November 2026): NPCI’s FAQ of 15 September 2026 sets a fee of 0.4%, capped at ₹300, on UPI payments to merchants above ₹2,000. Payments up to ₹2,000, and payments between people, stay free. Small sellers receiving up to ₹1 lakh a month by UPI QR pay nothing. Sellers can’t pass the fee on to customers. NPCI has said the fee will start after Diwali, on a date it will notify. No date has been set yet, so check npci.org.in.\nWorked example: Jaspreet’s ₹1,200 phone stands are under ₹2,000, so UPI adds no fee.\n\nPayment gateways handle cards, wallets and payment links. Razorpay’s pricing page (October 2026) lists 2% of each payment plus 18% GST on that fee for its standard plan.\nWorked example: on a ₹1,000 order, fee ₹20 + GST ₹3.60 = ₹23.60. You receive ₹976.40."
         },
         {
           "title": "Plan cash week by week",
@@ -835,18 +1385,128 @@
           "id": "t1",
           "title": "Check a business’s unit economics",
           "prompt": "Sneha sells scented candles through Instagram messages for ₹349 each, paid by UPI. Each candle costs her ₹120 in wax, jar and fragrance, ₹25 in packaging, and about ₹60 for delivery within the city. Last month she spent ₹2,000 on a boosted post and free samples and won 16 new customers. On average, a customer buys 1.5 candles in three months.\nIn Google Sheets (free) or on paper, work out:\n1. The contribution per candle.\n2. Her CAC.\n3. The contribution from one customer over three months.\nThen decide whether she earns back what each customer costs, and suggest two changes that would improve the numbers.",
-          "hint": "Total the costs that come with each candle first. Do UPI fees apply to a ₹349 payment? Check the dated card. Then compare one customer’s contribution with what it cost to win them."
+          "hint": "Total the costs that come with each candle first. Do UPI fees apply to a ₹349 payment? Check the dated card. Then compare one customer’s contribution with what it cost to win them.",
+          "after": "Costs per candle: ₹120 + ₹25 + ₹60 = ₹205. Contribution: ₹349 − ₹205 = ₹144. A ₹349 UPI payment is under ₹2,000, so there is no UPI fee. CAC: ₹2,000 ÷ 16 = ₹125. One customer over three months: 1.5 × ₹144 = ₹216. So yes, she earns back what each customer costs, with ₹91 to spare. But a customer who buys only once brings ₹144 against ₹125, which is thin. Good changes: more repeat orders, such as a refill offer or a set of two. Lower delivery cost, by grouping deliveries by area or using a pickup point. Or cheaper customers, through referrals."
         },
         {
           "id": "t2",
           "title": "Price your offer and plan one month’s cash",
           "prompt": "For your own idea:\n1. Write your price floor (cost per unit), your ceiling (the next best option’s price) and your price, with one line of reason.\n2. In Google Sheets (free), make a four-week cash-flow plan: starting cash, money in (sales, pre-orders, family money), money out (stock, marketing, delivery, fees, tools) and cash left each week.\n3. Mark your lowest week, and name one source of first money that suits your stage, with a reason.\nAsk a free AI chatbot which costs you might have missed, then check each suggestion against your real plan.",
-          "hint": "Be honest about when money arrives. A pre-order paid today is cash this week; a promise to pay next month is not. Write the date next to every fee you looked up."
+          "hint": "Be honest about when money arrives. A pre-order paid today is cash this week; a promise to pay next month is not. Write the date next to every fee you looked up.",
+          "after": "A good answer gives a floor from real costs per unit, and a ceiling from the next best option’s price. The price sits between them, with a reason from interviews. The Sheet has starting cash, money in and money out for each week. It shows the cash left at the end of each week. Money counts only in the week it arrives. The lowest week is marked; it is often the week stock is bought. The source of first money fits the stage. Examples: savings and pre-orders, family money written down as a gift or a loan, or a college competition open now. Every fee has the date it was checked."
         }
       ],
       "reflection": {
         "prompt": "Would you rather start with your own small savings, family money, or an investor’s money? What would each one cost you, apart from rupees?",
         "hint": "Think about control, pressure and relationships. Family money can strain a relationship; investor money means sharing ownership and decisions."
+      },
+      "workbook": {
+        "hook": "You can sell a lot and still run out of money. Learn the numbers that stop that.",
+        "idea": [
+          "Set your price between a floor and a ceiling. The floor is what each unit costs you. The ceiling is what the customer pays for the next best option. Where your price sits depends on the value of the problem you solve.",
+          "Check your unit economics. Contribution is the price minus the costs that come with each unit. Compare it with your CAC: what it costs to win a customer.",
+          "Profit and cash are different. Plan cash week by week, because you often pay for stock before customers pay you."
+        ],
+        "why": [
+          "You avoid losing money on every sale without noticing",
+          "You see whether repeat orders or price matter more",
+          "You spot your lowest cash week before it arrives"
+        ],
+        "simple": "An auto driver knows his fuel cost for a trip to the station, and what the bus fare is. He quotes a fare between the two. He also keeps enough cash to fill the tank each morning, before the day’s fares come in.",
+        "myth": {
+          "wrong": "If I’m making a profit, I can’t run out of money.",
+          "right": "Profit is on paper. Cash is what you have this week. You can be profitable and still have no cash to buy stock."
+        },
+        "example": {
+          "title": "Fruit bowls, before and after the sums",
+          "body": "Tejas in Raipur sells cut-fruit bowls to office workers for ₹90. Before: “Lots of people buy my bowls, so I must be doing well.” After he works it out: Cost per bowl: ₹40 fruit + ₹6 box + ₹14 delivery = ₹60. Contribution: ₹90 − ₹60 = ₹30 a bowl. CAC: ₹1,200 on flyers and samples ÷ 24 customers = ₹50. A customer who buys 10 bowls a month brings ₹300, far above ₹50. One who buys once brings ₹30, less than ₹50. So he works hardest at bringing customers back."
+        },
+        "terms": [
+          {
+            "term": "Price floor",
+            "meaning": "Your cost for each unit. Below it, every sale loses money."
+          },
+          {
+            "term": "Price ceiling",
+            "meaning": "What the customer would pay for the next best option."
+          },
+          {
+            "term": "Contribution margin",
+            "meaning": "Price minus the costs that come with each unit sold."
+          },
+          {
+            "term": "CAC (customer acquisition cost)",
+            "meaning": "Marketing spend divided by the new customers it brought."
+          },
+          {
+            "term": "Cash-flow plan",
+            "meaning": "Money in and money out, week by week, with the cash left each week."
+          },
+          {
+            "term": "Runway",
+            "meaning": "How many months your cash lasts at today’s rate of loss: cash ÷ monthly loss."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Build a unit-economics table",
+            "prompt": "Make a simple table I can paste into Google Sheets for a business selling hand-made notebooks at ₹180 each. Costs per notebook: paper ₹50, binding ₹20, packaging ₹10, delivery ₹30. Last month, ₹1,500 of marketing brought 20 new customers. Each customer buys 2 notebooks on average. Ignore payment fees. Show the contribution per notebook, the CAC and the contribution per customer, with the formulas.",
+            "look_for": "Does it use only the costs that come with each notebook, and divide the marketing spend by new customers?",
+            "check": "Do the sums by hand. ₹180 − ₹110 = ₹70 per notebook. ₹1,500 ÷ 20 = ₹75 CAC. 2 × ₹70 = ₹140 per customer, more than ₹75. If the AI’s numbers differ, find its mistake before you use its table."
+          },
+          {
+            "title": "Find the costs you forgot",
+            "prompt": "I’m planning a four-week cash flow for a small business selling hand-painted diyas before Diwali in India. List the costs a first-time seller often forgets, and say which ones are paid before the sales come in.",
+            "look_for": "Does it mention costs such as packaging, delivery, breakage, samples and payment fees?",
+            "check": "Keep only the costs that fit your real plan. For any fee it names, check the provider’s own page and write today’s date next to it, because fees change."
+          }
+        ],
+        "tip": "Write the date next to every fee and price you look up. When something changes, you’ll know which numbers to check again.",
+        "mistake": "Pricing very low “because students can’t pay”, without asking what they already pay for the next best option.",
+        "checks": [
+          {
+            "id": "ape-m06-c1",
+            "scenario": "Vani in Hubballi teaches one-hour guitar lessons online. Each lesson costs her about ₹80 in internet and materials. A music school nearby charges ₹600 a lesson.",
+            "question": "What is her price floor?",
+            "options": [
+              "₹600, what the music school charges",
+              "₹80, what each lesson costs her",
+              "₹340, halfway between cost and the school",
+              "₹0, because online lessons need no stock"
+            ],
+            "correct_index": 1,
+            "hint": "Below which price would she lose money on every lesson?",
+            "why": "The floor is her cost for each unit: about ₹80. The school’s ₹600 is her ceiling. Halfway is a possible price, not a floor, and online lessons still have costs."
+          },
+          {
+            "id": "ape-m06-c2",
+            "scenario": "Selvi runs a tailoring business in Vellore. She buys fabric when she takes an order, and customers pay when they collect their clothes two weeks later. Her May accounts show a profit, but on 10 June she can’t afford new fabric.",
+            "question": "What is the most likely reason?",
+            "options": [
+              "Her prices are too high, so customers stopped ordering",
+              "Her bank is holding back her UPI money for a month",
+              "She counted wrongly, since a profit means cash in hand",
+              "She pays for fabric about two weeks before she is paid"
+            ],
+            "correct_index": 3,
+            "hint": "Think about the difference between making a profit and having cash.",
+            "why": "Money goes out for fabric two weeks before customers pay. So cash can run short even when the business makes a profit. Nothing in the case points to falling orders or a bank delay, and profit isn’t the same as cash."
+          },
+          {
+            "id": "ape-m06-c3",
+            "scenario": "Om has ₹9,000 in the bank. His small business is losing ₹3,000 a month.",
+            "question": "How many months of runway does he have?",
+            "options": [
+              "3 months",
+              "6 months",
+              "2 months",
+              "1 month"
+            ],
+            "correct_index": 0,
+            "hint": "Runway is cash divided by monthly loss.",
+            "why": "₹9,000 ÷ ₹3,000 = 3 months. Six months comes from subtracting instead of dividing (₹9,000 − ₹3,000). Two months takes off this month’s loss first (₹6,000 ÷ ₹3,000). One month divides the loss by itself."
+          }
+        ]
       },
       "quiz": [
         {
@@ -934,7 +1594,7 @@
       "skill": "team-building",
       "level": "advanced",
       "outcome": "Write a team plan for your idea: who owns each area, the equity split and vesting you have or would offer a co-founder, and a first brief for a freelancer or intern.",
-      "minutes": 60,
+      "minutes": 82,
       "learn": [
         {
           "title": "Choosing a co-founder",
@@ -958,18 +1618,128 @@
           "id": "t1",
           "title": "Advise three would-be co-founders",
           "prompt": "Three friends in Nagpur are starting a delivery service for home-made pickles. Rahul will work full-time after graduating next month and builds the website. Ayesha is in her final year, gives 15 hours a week, and has made all 30 sales so far. Varun had the idea, gives about 5 hours a week, and starts a job in three months. They want to split equity 33:33:33 with nothing written down.\nWrite them a short note (under 200 words):\n1. Who should be a co-founder, and who might be better as an adviser or early helper, with reasons.\n2. A suggested split and vesting plan.\n3. Three questions they must answer together this week.",
-          "hint": "Compare commitment and contribution, not who had the idea. Ask what happens to Varun’s shares when his job starts. Vesting is the tool that answers that fairly."
+          "hint": "Compare commitment and contribution, not who had the idea. Ask what happens to Varun’s shares when his job starts. Vesting is the tool that answers that fairly.",
+          "after": "A strong note says Rahul and Ayesha look like co-founders. Rahul builds the website and will work full-time. Ayesha has made every sale so far. She gives 15 hours a week until she graduates, so they should agree her hours after that before settling the split. Varun had the idea, but gives 5 hours a week and starts a job in three months. He may fit better as an adviser or early helper, perhaps with a small share that also vests. If Ayesha will be full-time too, a fair split might be 45:45:10. Everyone vests over four years with a one-year cliff, written down and signed. Questions for this week: How many hours will each of us give after Varun’s job starts? What happens to shares if someone leaves? Who owns which area, and how do we settle a disagreement?"
         },
         {
           "id": "t2",
           "title": "Write your team plan, a hiring brief and team habits",
           "prompt": "For your own idea:\n1. Write who owns each area of your business (product, sales, money). If you have, or want, a co-founder, write the split and vesting you would propose, in two lines. Working alone? Write the split and vesting you would offer a co-founder.\n2. Write a one-page brief for a freelancer or an intern you might need in the next month: the goal, deliverables, deadline, pay and how it is paid, who reviews the work, and (for an intern) what they will learn.\n3. Write three habits for how your team works.\nWrite your points as rough notes first, then ask a free AI chatbot to turn them into a clear brief. Check that it promises nothing you can’t pay for or deliver.",
-          "hint": "For the split, use the same test as for the pickle founders: commitment and contribution, with vesting. A good brief lets a stranger start work without asking you a question. Read yours as if you were the freelancer: is anything unclear?"
+          "hint": "For the split, use the same test as for the pickle founders: commitment and contribution, with vesting. A good brief lets a stranger start work without asking you a question. Read yours as if you were the freelancer: is anything unclear?",
+          "after": "A good answer gives each area one named owner, not “both of us”. The split and vesting fit in two lines. For example: “50:50, vesting over four years with a one-year cliff, then monthly.” The brief lets a stranger start without asking anything. It gives the goal, exact deliverables, deadline and pay. It says how the pay is made, for example half now and half on delivery, by UPI. It names who reviews the work. An intern brief also gives the hours, who guides them and what they will learn. The three habits are specific actions, such as “We reply to customers within two hours.”"
         }
       ],
       "reflection": {
         "prompt": "What are you bad at, or don’t enjoy, that your business still needs? Who could do it, and what would make it fair for them?",
         "hint": "Founders often hire people like themselves. The best early partners are often strong where you are weak."
+      },
+      "workbook": {
+        "hook": "A great idea can fall apart over one question: who owns what? Settle it while you’re still friends.",
+        "idea": [
+          "Choose co-founders for complementary skills, the same commitment and shared values. Test working together on something small before you commit.",
+          "Split equity, then add vesting, so shares are earned over time. A common plan is four years with a one-year cliff. Write it down now.",
+          "Give every area one owner, who decides after listening. Brief freelancers and interns clearly: the goal, the deliverables, the deadline, the pay, and what an intern will learn."
+        ],
+        "why": [
+          "Clear owners end daily arguments",
+          "Vesting keeps the split fair if someone leaves",
+          "A clear brief gets good work the first time"
+        ],
+        "simple": "In a cricket team, the captain sets the field and the keeper calls the catches near the stumps. Big calls, like the batting order, are agreed before the match. So nobody argues mid-over about who decides.",
+        "myth": {
+          "wrong": "Best friends make the best co-founders, so we don’t need anything in writing.",
+          "right": "Friendship helps, but you still need the same commitment, a written split with vesting, and clear owners. Writing it down protects the friendship."
+        },
+        "example": {
+          "title": "A CV-review service, twenty months in",
+          "body": "Imagine Tanya and Farhan in Visakhapatnam, starting a CV-review service. They split 50:50, with four-year vesting and a one-year cliff. They write it on one page, and both sign it. Tanya owns sales and money; Farhan owns the service and its quality. Anything above ₹5,000 they decide together. Twenty months in, Farhan takes a full-time job and leaves. He has earned 20 of 48 months: about 42% of his shares, or about 21% of the business. The rest stays with the business for whoever does the work. There is no fight, because they agreed it at the start."
+        },
+        "terms": [
+          {
+            "term": "Co-founder",
+            "meaning": "A partner who builds the business with you and owns part of it."
+          },
+          {
+            "term": "Equity",
+            "meaning": "Ownership of the business, counted in shares."
+          },
+          {
+            "term": "Vesting",
+            "meaning": "Earning your shares over time, instead of all at once."
+          },
+          {
+            "term": "Cliff",
+            "meaning": "The first period, often one year, before any shares vest at all."
+          },
+          {
+            "term": "Owner (of an area)",
+            "meaning": "The one person who decides in an area, after listening to others."
+          },
+          {
+            "term": "Brief",
+            "meaning": "A written description of the work: goal, deliverables, deadline and pay."
+          }
+        ],
+        "try_it": [
+          {
+            "title": "Turn notes into a roles page",
+            "prompt": "Turn these rough notes into a one-page roles document for two founders of a college event-photography business. Founder A edits photos and looks after the equipment. Founder B finds clients and handles money. We decide together on hiring and anything above ₹8,000. If we disagree, we each write our reasons, sleep on it, and ask our mentor. Habits: reply to clients within 3 hours; record every decision in a shared Google Doc. Don’t add anything we haven’t agreed.",
+            "look_for": "Does it keep exactly what you agreed, or does it add titles, salaries or rules you never discussed?",
+            "check": "Delete anything the AI assumed. Check that each area has one owner, and that “we both do everything” hasn’t crept back in."
+          },
+          {
+            "title": "Check a vesting sum",
+            "prompt": "Two founders split their company 50:50, with four-year vesting and a one-year cliff, vesting monthly after the cliff. If one founder leaves after 24 months, what share of the whole business has she earned? Show the working.",
+            "look_for": "Does it use 24 of 48 months, and then apply that to her 50%?",
+            "check": "Work it out yourself. 24 ÷ 48 = 50% of her shares. 50% × 50% = 25% of the business. Had she left before 12 months, the answer would be 0%."
+          }
+        ],
+        "tip": "Ask the hard questions in week one. How many hours will each of you give? What happens after a job offer? How will you settle a disagreement?",
+        "mistake": "Giving an intern “help with marketing” and nothing more. Without set work, hours, a guide and agreed pay, they learn little and you get little done.",
+        "checks": [
+          {
+            "id": "ape-m07-c1",
+            "scenario": "Dhruv and Mehak in Mumbai are splitting their startup 50:50. Mehak may take a job offer in six months, but neither knows yet.",
+            "question": "What should they add to their written split?",
+            "options": [
+              "Four-year vesting with a one-year cliff, for both of them",
+              "A 60:40 split now, with more for whoever is likelier to stay",
+              "Nothing yet: they will write it all down when they register",
+              "A bigger share now for whichever of them had the idea first"
+            ],
+            "correct_index": 0,
+            "hint": "For each option, picture Mehak leaving in six months. What happens to her shares?",
+            "why": "With vesting, shares are earned over time, so someone who leaves early keeps only what they have earned. A different split now doesn’t change what happens when someone leaves. Waiting to register leaves a spoken deal. Having the idea isn’t ongoing work."
+          },
+          {
+            "id": "ape-m07-c2",
+            "scenario": "Yusuf in Jammu codes and builds apps, but dislikes talking to customers. He wants a co-founder for his campus bus-tracking app.",
+            "question": "Who would complement Yusuf best?",
+            "options": [
+              "Another strong coder who could build features twice as fast",
+              "A classmate who has sold 50 event passes on campus this term",
+              "His closest friend, who is excited but has done neither job",
+              "A senior who wants the co-founder title for 3 hours a month"
+            ],
+            "correct_index": 1,
+            "hint": "Think about what a co-founder adds to a team, beyond more of the same.",
+            "why": "Complementary skills mean one builds and the other sells. The classmate has already shown they can sell on campus. A second coder adds what Yusuf already has. Excitement isn’t a skill, and 3 hours a month isn’t the same commitment."
+          },
+          {
+            "id": "ape-m07-c3",
+            "scenario": "Ankit and his sister run a vegetable-box delivery service in Gwalior. They are writing down three team habits.",
+            "question": "Which line is a habit they can act on?",
+            "options": [
+              "We always put our customers first, whatever happens",
+              "We note down big decisions whenever we find the time",
+              "We stay honest with each other about everything",
+              "We write each decision in our shared Google Doc that day"
+            ],
+            "correct_index": 3,
+            "hint": "For each line, ask: at the end of a week, could they tell whether they kept it?",
+            "why": "It is a specific action with a deadline, so each week they can see whether they kept it. Putting customers first and staying honest are values, not actions. “Whenever we find the time” never tells them they have slipped."
+          }
+        ]
       },
       "quiz": [
         {

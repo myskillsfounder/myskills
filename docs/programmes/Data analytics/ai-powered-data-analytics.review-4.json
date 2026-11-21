@@ -1,0 +1,412 @@
+{
+  "verdict": "ready",
+  "summary": "Round 4 reviewed only what changed: a workbook chapter in every module, an after on every task, and 12 more minutes per module (34 → 36 hours, which adds up). Every number, SQL and pandas snippet in the workbooks and afters is right: I ran them in DuckDB 2.0.0 and pandas 3.1.0 on the Masala Mart files, and none contradicts its Learn cards. The try_its are the best part: each gives a real hands-on check with a named wrong answer, which builds the habit of verifying AI. The weak part is the check-ins: in six modules at least one rehearses a quiz decision, several have strawman or absolute wrong options, and about ten hints state the answer. There is no must-fix, so the programme stays ready, but the 13 should-fixes, mostly for the Assessment Architect, are worth doing before the next cohort.",
+  "strengths": [
+    "Accurate throughout: every workbook figure and snippet checks out (LAG changes NULL, −5,000, +11,000, 0; fan-out ₹2,300 vs ₹1,300; section B 85, not 42.5; samosa SD about 13.4; axis 265 ÷ 30 ≈ 8.8; the pandas chained-assignment result), and every task after matches the data (17.3/5.3/3.9%, 165 April orders, 259 silent customers, 75.1%, 58 rows with no category, ₹81,581, 24.5% not 60%).",
+    "The try_it “check” steps build the verification habit: each names the wrong answer an AI is likely to give and why (“If the AI says about 67%, it divided by all 3 late loans”), and sends the learner to a free tool to settle it, on invented data with no personal details.",
+    "The afters are real model answers: the expected numbers, what a weak answer looks like, and the usual mistake (“If your three numbers add up to 100%…”).",
+    "Fresh Indian settings in every workbook (a Bhopal tuition centre, a Hubballi hardware shop, a Thane cloud kitchen, a Goa homestay), with names from across India."
+  ],
+  "findings": [
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "Check-ins rehearse the quiz. da-m01-c1 (“Which column is it sensible to add up?”: token_no vs price) is the same decision as da-m01-q2 (which column’s average means nothing: a store code). da-m01-c3 (ice cream and swimming) is the classic correlation case that da-m01-q4 (dark mode and scores) tests again. A learner who passes c1 and c3 has seen two of the four quiz answers.",
+      "fix": "Replace da-m01-c1 with a decision card 2 teaches but no quiz question asks: amounts stored as text. Scenario: “A shop’s sheet has some amounts typed as “₹1,250” and others as 980. =SUM(D2:D40) gives ₹18,400, but the owner’s notebook total is ₹31,000.” Question: “What is the most likely cause?” Options: “Some amounts are stored as text, which SUM skips” (right) / “SUM rounds each amount down to the nearest hundred” / “The notebook counts each returned order twice” / “The sheet has more rows than SUM can add”. Hint: “What does SUM do with a cell it can’t read as a number?” Move da-m01-c3 from “what explains it” to a decision q4 doesn’t ask, such as which comparison would show cause (a random split, as card 3 says).",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m06",
+      "severity": "should_fix",
+      "problem": "Check-ins rehearse the quiz. da-m06-c3 (random split vs one city, one week or volunteers) is the same decision as da-m06-q1 (random vs opt-in). da-m06-c2 (30 vs 600 replies) repeats da-m06-q2 (40 vs 52,000 reviews), and its option “Neither, since a poll of students has no error” is a joke option nobody would pick. Its hint (“only the size differs”) also gives the answer.",
+      "fix": "Rewrite da-m06-c3 on the run length card 3 teaches and no quiz asks: “A café chain runs its A/B test Monday to Friday of one week only.” Question: “What is the main risk?” Options: “Weekend customers behave differently and aren’t in it” (right) / “Five days give each group too few visitors to split” / “Running on weekdays makes the random split unfair” / “The new design needs a month before anyone notices it”. Rewrite da-m06-c2 on the four-times-the-sample rule the workbook’s try_it teaches: “A poll of 100 has a margin of about ±10 points. Roughly what with 400, chosen the same way?” Options ±5 (right) / ±2.5 / ±10 / ±7.5. Hint: “What does a bigger sample do to the range, and how fast?”",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m08",
+      "severity": "should_fix",
+      "problem": "da-m08-c3 (red for the 3 stores below target, grey for the rest) is the same decision as da-m08-q3 (each city against target, below-target cities highlighted). Its hint, “Colour should point at what needs action”, is the card’s sentence and names the answer. da-m08-c2’s wrong options (“In a footnote under the charts”, “On a second page of its own”) are not mistakes a learner would make.",
+      "fix": "Rewrite da-m08-c3 on “one page, one purpose”, which no quiz asks: “The founder asks you to add stock levels, staff rotas and Instagram followers to the one-page sales dashboard.” Question: “What should you do?” Options: “Give them their own pages, each with one purpose” (right) / “Add them in small charts along the bottom row” / “Add them, but in grey so they draw less attention” / “Replace the trend line, the least important chart”. Hint: “What is this page for?” In da-m08-c2 make the wrong options real layouts: “Bottom, so it sums up the charts above it” / “Middle, beside the route breakdown it explains” / “Right column, next to the 12-week trend”.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "Two of three check-ins rehearse the quiz. da-m09-c1 (name the tool, table, columns and output) is da-m09-q1’s decision, and its wrong options (“please be accurate”, “a longer answer”, “ask again until it guesses right”) are strawmen. da-m09-c3 (column names and a made-up row) is da-m09-q3’s answer almost word for word. da-m09-c2’s hint (“DISTINCT counts each student once”) gives the answer.",
+      "fix": "Replace da-m09-c1 with card 2’s third check, which no quiz asks: “An AI query for ‘guests each month’ at a Goa homestay returns SUM(nights).” Question: “Which check catches the problem fastest?” Options: “Read the code: it adds nights, not guests” (right) / “Compare the year’s total with the register” / “Run it again and see if it changes” / “Ask the AI whether SUM is right here”. Replace da-m09-c3 with card 3’s lawful-purpose rule: a coaching centre wants to send fee reminders to phone numbers it collected at admission; on what basis does the DPDP Act, 2023 let it (consent, or one of the legitimate uses the Act lists)? Wrong options as real misreadings: “Any purpose, once the number is stored” / “Only with a court order” / “Only if it is a government body”. Change c2’s hint to “What does DISTINCT do to repeats?”",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m10",
+      "severity": "should_fix",
+      "problem": "da-m10-c3’s wrong options carry absolute words (“so it fully holds”, “applies to all customers”) and one is empty (“Results may vary”), so the only specific option wins from the options alone. It also rehearses da-m10-q3 (name the limit). da-m10-c2’s right answer is the only option with a number and a time limit; the others are vague by design. Its hint repeats the card’s formula.",
+      "fix": "Make every da-m10-c3 option a specific caveat with one flaw: “Based on 25 regulars at the counter; new customers may differ” (right) / “Based on 25 customers; a bigger survey would settle it” (size doesn’t fix who answered) / “Based on 25 regulars; results may change next year” (wrong doubt) / “Filled in at the counter; staff may have helped” (no sample size). Hint: “Which caveat says how much data and who was left out?” In da-m10-c2 give two wrong options numbers too: “Cook 40% less every day for a week” (wrong scope) and “Survey 30 students about Sunday dinner, then decide” (delays a clear finding).",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 19,
+      "standard": null
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03-c2’s wrong options are absolute (“really only 12 cm”, “fully accurate”, “must be the wrong one”) and the right one is the only hedged option (“likely a typing error to check”). Its hint (“Which of the two values is impossible for a 13-year-old?”) answers it. da-m03-c3 has a joke option (“Delete the sheet and ask for all-new data”) and a weak one (“the longest time in the sheet”).",
+      "fix": "da-m03-c2 options: “The 12 cm entry is a typing error to check” (right) / “The 158 cm entry is a typing error to check” / “Both are fine; Class 8 heights vary widely” / “Neither matters once you use the median”. Hint: “What heights are possible in Class 8?” da-m03-c3 wrong options: “Fill them with the average of the other 55” / “Fill them with 0, so every row has a time” / “Drop the 5 and report the average with no note”. Keep the right option.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 19,
+      "standard": null
+    },
+    {
+      "target": "module:da-m07",
+      "severity": "should_fix",
+      "problem": "da-m07-c3’s wrong options are strawmen with absolute words (“will no longer need any cleaning”, “become more accurate by themselves”, “no longer needs anyone to check it”), so the modest option wins. da-m07-c1 is recall, and its hint (“df.shape gives rows first”) is the answer.",
+      "fix": "da-m07-c3 wrong options as real beliefs: “It runs faster than a spreadsheet on 500 rows” / “It finds the cleaning steps for you” / “It can open files Sheets can’t”. Make c1 a judgement: “After drop_duplicates, df.shape goes from (2065, 9) to (2030, 9). What changed?” Options: “35 rows were removed” (right) / “35 columns were removed” / “9 duplicates were removed” / “Nothing; the columns are the same”. Hint: “Which number in df.shape counts rows?”",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 19,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "More check-in hints state the rule that picks the answer instead of pointing to the idea: da-m02-c3 (“SUMIFS takes the column to add first” rules out two options at once), da-m05-c2 (“LAG looks one row back”), da-m02-c2 (“which match is exact?”), da-m04-c2 (“Can you filter groups before the groups exist?”). da-m03-c2, da-m06-c2, da-m07-c1, da-m08-c3, da-m09-c2 and da-m10-c3 are in their module findings.",
+      "fix": "Rewrite each as a question that sends the learner to the idea: da-m02-c3 “Which column holds the amounts, and which holds the condition?”; da-m05-c2 “Which row does LAG read from?”; da-m02-c2 “What does VLOOKUP’s last argument decide?”; da-m04-c2 “What does each filter work on: rows or groups?”",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m02",
+      "severity": "should_fix",
+      "problem": "da-m02-c1 asks what empty rows break (“A filter or pivot may stop at the first empty row”), but card 1 and the workbook’s idea only say “no blank rows”, never why. It is also the only hedged option (“may”) against three that say “will”.",
+      "fix": "Add to the workbook’s idea or mistake: “Leave no empty rows: tools that find your data by themselves, such as a filter or Convert to table, stop at the first one and miss the rest.” Assessment Architect: hedge the wrong options too (“can store”, “may stop him adding”, “can count”).",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 22,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m06",
+      "severity": "should_fix",
+      "problem": "The workbook try_it “How wide is the range?” asks for the margin of error “at 95% confidence”. Neither card 2 nor the workbook terms say what 95% confidence means.",
+      "fix": "Extend the term: “Margin of error: the range around a sample’s result where the true figure probably lies. It is usually given at 95% confidence: 95 times in 100, the true figure is inside it.”",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": 14,
+      "standard": "explanation"
+    },
+    {
+      "target": "module:da-m09",
+      "severity": "should_fix",
+      "problem": "da-m09 t1’s after gives no figure, so a learner can’t check their own query. Run on orders.csv with “ordered in an earlier month”, April 2026 has 121 customers, 84 of them repeat (69.4%), and October 2025 is 0% because it is the first month in the file. Every other data task’s after gives its numbers.",
+      "fix": "Add: “With ‘a customer who also ordered in an earlier month’, April 2026 has 121 customers, 84 of them repeat: 69.4%. October 2025 shows 0%, since it is the first month in the file. Say so, rather than report it as a real figure.”",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:da-m03",
+      "severity": "should_fix",
+      "problem": "da-m03 t1’s after lists the spellings to map as “BLR, Bangalore, Bombay, Calcutta, Cochin, New Delhi and the lower-case versions”. orders_raw.csv also has “DELHI” in capitals, which a learner following the list would miss, leaving 11 cities, not 10.",
+      "fix": "Write “…New Delhi, and the lower- and upper-case versions such as bengaluru and DELHI”.",
+      "source": "",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m01",
+      "severity": "should_fix",
+      "problem": "Carried over from review 3: da-m01 t2 still runs its three rows inline inside one long paragraph (“[Row 1] MM10002 | … [Row 2] … [Row 3] …”).",
+      "fix": "Put the header and each row on its own line.",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Variety: all 10 workbook examples open the same way (“Imagine Farhan, who…”, “Imagine Kavya, who…”), and all 20 try_its follow one path (ask an AI, then check). Engaging, but by Module 5 it reads as a template.",
+      "fix": "Open some examples differently: with the problem (“Rahul’s join gave 312 rows. There were 120 students.”), a line of dialogue, or the number. In the tool modules (2, 4, 5 and 7), make one try_it “do it first in the tool, then ask the AI and compare”.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m04",
+      "severity": "idea",
+      "problem": "da-m04-c3 (COUNT(score) with NULLs) sits close to da-m04-q4 (AVG with NULLs): both test that aggregates skip NULL.",
+      "fix": "Consider a check-in on the half-open date range (the workbook’s second try_it), which no quiz asks.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:da-m05",
+      "severity": "idea",
+      "problem": "Still open from review 3: the outcome names two skills (joins without double counting, and window functions).",
+      "fix": "Lead with one: “Join tables without double counting, then compare each row with the one before using LAG and ROW_NUMBER.”",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "outcome"
+    }
+  ],
+  "module_scores": [
+    {
+      "module": "da-m01",
+      "scores": {
+        "outcome": 5,
+        "explanation": 5,
+        "practice": 4,
+        "feedback": 4,
+        "relevance": 5,
+        "time": 5,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "practice": "Both tasks are labelling and writing; the workbook try_its add short hands-on moments, but no tool is opened on data.",
+        "feedback": "Check-ins rehearse the quiz (c1 = q2, c3 = q4), so they don’t teach a new decision (see the finding).",
+        "inclusion": "t2’s rows still run inline in one long paragraph (carried over)."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m02",
+      "scores": {
+        "outcome": 5,
+        "explanation": 4,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 5,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "explanation": "Card 3 still does two jobs; c1 tests why blank rows break tools, which nothing explains (see the finding).",
+        "feedback": "c1’s only-hedged option and c3’s answer-giving hint (see the findings).",
+        "time": "102 minutes against check.mjs’s 57 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Filling a formula down 2,030 rows on a phone is fiddly, though a phone route is given."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m03",
+      "scores": {
+        "outcome": 5,
+        "explanation": 5,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 5,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "feedback": "c2 and c3 have absolute or joke wrong options, and c2’s hint answers it (see the finding).",
+        "time": "102 minutes against check.mjs’s 57 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Paste special and a mapping tab are hard on a phone."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m04",
+      "scores": {
+        "outcome": 5,
+        "explanation": 4,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 5,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "explanation": "Card 1 still does two jobs (syntax and DuckDB setup).",
+        "feedback": "c2’s hint names the rule; c3 sits close to q4.",
+        "time": "102 minutes against check.mjs’s 56 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Typing SQL on a phone is slow; no laptop suggestion."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m05",
+      "scores": {
+        "outcome": 4,
+        "explanation": 4,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 5,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "outcome": "Two outcomes in one sentence (idea).",
+        "explanation": "Card 3 still packs four window ideas; the workbook’s LAG try_it helps.",
+        "feedback": "c2’s hint (“LAG looks one row back”) is the answer.",
+        "time": "102 minutes against check.mjs’s 56 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Long SQL on a phone keyboard."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m06",
+      "scores": {
+        "outcome": 5,
+        "explanation": 4,
+        "practice": 4,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "explanation": "Card 3’s calculator is unnamed; the try_it uses “95% confidence”, which nothing explains (see the finding).",
+        "practice": "t1 is still a plan with no data; the try_its add real numbers in Sheets.",
+        "feedback": "c2 and c3 rehearse q2 and q1 (see the finding).",
+        "relevance": "q2 and q3 still have no Indian or business setting.",
+        "time": "87 minutes against check.mjs’s 56 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Dense for a second-language reader."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m07",
+      "scores": {
+        "outcome": 5,
+        "explanation": 4,
+        "practice": 5,
+        "feedback": 5,
+        "relevance": 5,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "explanation": "Card 2 still does two jobs (strict dates, then merge).",
+        "time": "102 minutes against check.mjs’s 56 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Colab is awkward on a phone; the card says so honestly."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m08",
+      "scores": {
+        "outcome": 5,
+        "explanation": 5,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 5,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "feedback": "c3 rehearses q3 and its hint is the answer; c2’s wrong options are not real mistakes (see the finding).",
+        "time": "102 minutes against check.mjs’s 56 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "Looker Studio is easiest on a laptop, though a phone route is offered."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m09",
+      "scores": {
+        "outcome": 5,
+        "explanation": 5,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 4,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "feedback": "c1 and c3 rehearse q1 and q3; t1’s after gives no figure to check against (see the findings).",
+        "relevance": "q2, q3 and q4 still have no business or Indian setting.",
+        "time": "87 minutes against check.mjs’s 56 for the module plus about 20 for the new workbook (about 800 words, two try_its, three check-ins). Honest, slightly generous.",
+        "inclusion": "t1 needs an AI assistant and the DuckDB shell open at once."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "da-m10",
+      "scores": {
+        "outcome": 5,
+        "explanation": 5,
+        "practice": 5,
+        "feedback": 4,
+        "relevance": 4,
+        "time": 5,
+        "progression": 5,
+        "inclusion": 4
+      },
+      "notes": {
+        "feedback": "c3’s absolute wrong options and c2’s only-specific answer give them away (see the finding).",
+        "relevance": "q3 (“a jewellery brand”) still has no place or business detail.",
+        "inclusion": "The cricket-toss analogy assumes some cricket knowledge; widely shared, but not by everyone."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": [
+    {
+      "rule": "Before writing a module’s check-ins, list the decision each of its quiz questions asks. Write each check-in on a different card sentence: a check-in may share the module’s topic but must not ask the same decision with new names.",
+      "why": "In Data Analytics round 4, six modules had check-ins that rehearsed a quiz question (m01-c1 = q2, m06-c3 = q1, m08-c3 = q3, m09-c1 = q1, m09-c3 = q3, m10-c3 = q3), so learners met the quiz answers before the quiz."
+    },
+    {
+      "rule": "A check-in hint is a question that points to the idea, never the rule that picks the option. Test it: if the hint alone rules out two options, rewrite it (“Which row does LAG read from?”, not “LAG looks one row back”).",
+      "why": "About ten of Data Analytics’ 30 check-in hints stated the answer (m02-c3, m03-c2, m05-c2, m06-c2, m07-c1, m08-c3, m09-c2, m10-c3 among them)."
+    },
+    {
+      "rule": "Every data task’s after states the exact figure a learner should get, from running the task as written; where the learner chooses a definition, give the figure for the definition the hint suggests.",
+      "why": "da-m09 t1’s after described a good query but gave no number to check against, though every other data task did."
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+ "verdict": "needs_work",
+ "summary": "Round 3 was applied carefully. Every review-3 finding is fixed as written, check.mjs is clean (ready_to_publish true, must_fix 0, links checked), and the final is now answerable from the options in 6 of 15 questions (target 7 or fewer). One problem remains, and it is must-fix: m08-q4’s key is right, but the question is unfair. M8 card 3 says “Disconnect when the job is done” with no exception, and M8 t2’s model answer says to disconnect “after each weekly run”, which is the option both the cards and blind tests chose. The scenario’s deciding fact (“she is on site every Monday”) is also ambiguous: “on site” can mean “at the office”, and “she” can mean the intern. The fixes are small and exact (one card sentence, one model answer, two scenario sentences, one why_wrong) and can be applied without another review round; once they are in, the programme meets the ready rule.",
+ "strengths": [
+  "Every review-3 rewrite went in as specified, and the clue tests confirm them: f03, f09, f11, m10-q4 and m11-q1 are no longer answered from the options, and the blind test now agrees with m01-q4.",
+  "The final is fair to place learners skill by skill: options-only 6 of 15 (down from 11), blind 15 of 15. The six it gets (f04, f08, f10, f12, f14, f15) all need the scenario or rest on a principle that is the skill.",
+  "Rule 28 is now met: counting check-ins, the ask-the-AI family is a wrong option in four places (m05-q2, aa-m03-c1, aa-m06-c2, aa-m07-c2) and the right answer in m06-q4. Rule 30 is met: the aa-m01-c3, aa-m03-c1 and aa-m09-c2 hints point to the idea, not the answer.",
+  "Accuracy holds: M4 card 2 and m04-q3 now say “May 2027”, which matches every source I found; no notice shortening the DPDP timeline could be found today."
+ ],
+ "findings": [
+  {
+   "target": "module:aa-m08",
+   "severity": "must_fix",
+   "problem": "m08-q4 (cards test missed it; blind test disagreed, choosing “Only the calendar, read-only, disconnected after each week’s summary”). Ruling: the key is right, but the question is ambiguous and partly untaught. (1) Untaught and contradicted: M8 card 3 teaches “Disconnect when the job is done” with no exception for a standing approval, and t2’s model answer (“after”) says a weekly summary “disconnects after each weekly run”. A learner who follows the module picks the wrong option, and rule 21 applies: the module recommends the step the question marks wrong. (2) Ambiguous fact: “Reconnecting needs the manager’s admin login, and she is on site every Monday.” “On site” also means “at the workplace”, which makes reconnecting easy and disconnecting right; the blueprint row itself reads it as “away on Mondays”. And “she” can mean the intern, who is the subject of the stem “What should she connect?”.",
+   "fix": "Scenario: “Arjun, an intern at an architecture studio in Thiruvananthapuram, writes the weekly summary of site visits with AI every Monday. The visits are in the studio’s Google Calendar. The manager has approved read access to the calendar only, for the weekly summary, until the project ends in March. Only she can reconnect it, with her admin login, and she spends every Monday at building sites with no laptop.” Question: “What should Arjun connect?” Keep the four options and the key. Explanation: “Least privilege means only the access the task needs, for as long as it needs it. The approval covers the calendar every week until March, so the calendar stays connected, nothing else is, and it is disconnected when the project ends.” why_wrong, first sentence: “Disconnecting would suit a one-off approval; this one runs to March, and only the manager can reconnect, but she is at building sites every Monday.” Keep the other two why_wrong sentences. Blueprint row: “Decided by: approval runs to March; only the manager can reconnect, and she is at building sites every Monday”.",
+   "source": "Clue tests (cards and blind, run 4), agentic-ai.probes.json",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m08",
+   "severity": "must_fix",
+   "problem": "M8 doesn’t teach what m08-q4 tests, and its t2 model answer teaches the opposite. Card 3 says only “Disconnect when the job is done”, so “for as long as it needs” (the explanation’s reason) appears nowhere in the cards; t2’s “after” says the plan “disconnects after each weekly run, or at the end of the internship”.",
+   "fix": "Card 3: replace “Disconnect when the job is done.” with “Disconnect when the job is done: after a one-off task, or when the approval for a repeating task ends.” (card goes from 135 to about 149 words). t2 “after”: replace “It disconnects after each weekly run, or at the end of the internship.” with “It stays connected only while the manager’s approval runs, and is disconnected when that approval or the internship ends.” Workbook term “Least privilege”: “Giving only the access a task needs, for only as long as it needs it.”",
+   "source": "",
+   "owner": "course",
+   "category": "teaching",
+   "rule": 22,
+   "standard": "progression"
+  },
+  {
+   "target": "module:aa-m10",
+   "severity": "should_fix",
+   "problem": "m10-q4 (blind test flagged “A separate browser profile with no saved logins, cards or files” as defensible). It is, slightly: Priyanshu could fetch each code from the fest’s Gmail on his phone and type it in himself, keeping every login out of the profile. The why_wrong (“no form can submit”) is only true if the agent must finish alone.",
+   "fix": "Add to the end of the scenario: “He wants the agent to finish all 30 while he is in lectures all day.” why_wrong for that option: “No logins at all would suit forms with no email step, or a day he could type the codes himself; here no form could submit while he is in lectures.” Keep the key and the other options.",
+   "source": "Clue test (blind, run 4)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 21,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "should_fix",
+   "problem": "The blueprint’s “Scoring validity” still says “Run 4 not yet done” and expects 25–29 of 59, and its rule 28 line says aa-m08-c2 still has “ask the same question again”. The file no longer has it (aa-m08-c2 option 4 is now “Accept it if no heading in the document mentions leave”), so the count is 4, not 5. “Known remaining defects” still lists that and the run-4 watch on f14.",
+   "fix": "Record run 4: options 34 of 59 (58%), final 6 of 15; cards 43 of 44 (m08-q4); blind 58 of 59 (m08-q4). Record this review’s rulings: m08-q4 ambiguous and untaught (fixed as above); of the 15 other blind flags, m10-q4 fixed and 14 not defensible; the 28 quiz questions answered from options accepted (see the programme idea below). Rule 28: 4, met. Remove the aa-m08-c2 defect line; keep the f14 line with “accepted in review 4”. Update the m08-q4 and m10-q4 “Decided by” cells. Re-run blueprint.mjs.",
+   "source": "",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": null,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "Ruling on options-only 58% (34 of 59; 88%, 73%, 61% in earlier runs). It is acceptable now. The final, which places learners, is at 6 of 15, within target. The 28 quiz questions it got are the module’s core principle applied to a case that confirms it (as ruled in review 3), and the nine it was certain of are fair: m02-q2 (say the office will confirm what the facts don’t cover) and m02-q3 (a fresh brief in a new chat) are M2’s two headline habits; m05-q2 and m05-q4 are M5’s stakes-and-checkability rule and the tutor prompt; m07-q1 and m07-q2 are primary source and “Not confirmed”; m11-q3 turns on three stated constraints (phone, no budget, approval); f08 is the official current source; f14 is discussed below. Pushing further would mean making foundation principles unguessable, which tests trickery, not skill. Rule 32 is met in every quiz and the final (6 flips). Re-test only after learners answer: if any of these shows over 90% first-time correct with 30+ answers, rewrite it as a flip.",
+   "fix": "No change now. After launch, run scorecard.mjs on Question health data and rewrite any question here that 30+ learners answer at over 90%.",
+   "source": "Clue test (options, run 4)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 32,
+   "standard": null
+  },
+  {
+   "target": "final",
+   "severity": "idea",
+   "problem": "f14 keys the careful value in both parts (check all three statistics; add a note), which rule 34 forbids, and the options test was certain of it. I accept it: the case genuinely needs both (the college rule requires the note; the conclusion rests on all three), the final is within target, and the blind test agrees. Flipping a part would need a fact that makes one careful step merely unnecessary, which rule 21 says is not wrong.",
+   "fix": "Keep f14. If Question health later shows it over 90% first-time correct, replace it with a case where one part’s quick value is right (for example, the teammate’s appendix already discloses the AI use, so Neha’s job is only the statistics).",
+   "source": "Clue test (options, run 4)",
+   "owner": "assessment",
+   "category": "question-design",
+   "rule": 34,
+   "standard": null
+  },
+  {
+   "target": "programme",
+   "severity": "idea",
+   "problem": "DPDP timeline: law-firm notes report MeitY proposed in January 2026 to cut the 18-month window (one reading moves duties to 13 November 2026, within rule 9’s 60-day window). I found no notification, and an August 2026 note still gives 13 May 2027, but I couldn’t read MeitY’s own page. M4 card 2 and m04-q3 say “are due to apply from May 2027”, which is the right hedge.",
+   "fix": "Before publishing, Paul or the Course Architect opens MeitY’s DPDP page or the e-Gazette, confirms no amendment to the Rules’ commencement, and adds that URL to the research brief.",
+   "source": "https://www.mondaq.com/india/data-protection/1773554/meity-plans-to-cut-short-dpdp-compliance-timeline-and-notify-cross-border-restrictions-for-sdfs",
+   "owner": "course",
+   "category": "accuracy",
+   "rule": 9,
+   "standard": null
+  },
+  {
+   "target": "module:aa-m10",
+   "severity": "idea",
+   "problem": "Still open from rounds 1 to 3: no task lets the learner watch a real agent act; both tasks and both try_its run in a chat.",
+   "fix": "Add an optional “If you have a laptop” step to t2: in a separate, logged-out browser profile, give any free agent mode (check on the day which tool offers one) a read-only task on a public page with a planted instruction, and record whether it obeyed and where it asked for approval. Keep the phone route as the main task.",
+   "source": "",
+   "owner": "course",
+   "category": "coverage",
+   "rule": null,
+   "standard": "relevance"
+  }
+ ],
+ "blind_flag_rulings": {
+  "aa-m08-q4": "Ambiguous and untaught; must-fix above.",
+  "aa-m10-q4": "Slightly defensible (he could type the codes himself); should-fix above.",
+  "aa-m01-q1": "Not defensible: the headings never change, and an agent that emails the owner skips Debashis’s check of the totals.",
+  "aa-m03-q3": "Not defensible: the =SUM check used the original sheet, and the report goes in ten minutes with five claims unchecked.",
+  "aa-m04-q1": "Not defensible: themes are needed by area.",
+  "aa-m04-q4": "Not defensible: labels leave IDs and illness reasons, which the policy requires removed.",
+  "aa-m05-q4": "Not defensible as the best: a full method hands him the fix; the exam needs him to find his own error, which the key keeps.",
+  "aa-m06-q3": "Not defensible: the fee sheet corrected two classes after the circular.",
+  "aa-m07-q4": "Not defensible: the counselling body runs the round and spoke later.",
+  "aa-m09-q3": "Not defensible: the printer needs the text today, and yesterday’s exact search was clean.",
+  "aa-m10-q2": "Not defensible: the brief already says it, and prompts don’t stop injection; the access isn’t needed.",
+  "aa-m10-q3": "Not defensible: the one staff member is in meetings all day.",
+  "aa-f03": "Not defensible: the research notes hold the mix-up.",
+  "aa-f10": "Not defensible: the rule bans other tools for any hospital data, and eight codes are counted with a filter.",
+  "aa-f11": "Not defensible: removing team names breaks sorting by team, which is the task.",
+  "aa-f13": "Not defensible: the contract already answers, and a week’s wait misses tomorrow."
+ },
+ "review_3_check": {
+  "m01-q4 Check option": "Fixed as written; blind now agrees.",
+  "final 11 of 15 from options": "Fixed: 6 of 15.",
+  "f03 convergence": "Fixed as written; options test missed it.",
+  "f11 quoted phrase": "Fixed as written; options test missed it.",
+  "f04, f15 stems": "Fixed: “Which revised brief should she use?”, “What should she do?”.",
+  "f09": "Fixed as written; options test missed it.",
+  "f10": "Fixed as written.",
+  "f12 key": "Fixed as written.",
+  "f14 wording": "Fixed as written; accepted (idea above).",
+  "programme options 61%": "Rewrites applied; result 58%, above the 42–49% I forecast, because the accepted principle questions stayed. Ruled acceptable above.",
+  "m05-q2": "Fixed as written.",
+  "m06-q3": "Fixed as written; blind flag not defensible.",
+  "m08-q4": "Applied as written, but my round-3 rewrite left the module’s card and t2 model answer contradicting the key, and used the ambiguous “on site”. Must-fix above (my error as much as the Architects’).",
+  "m10-q4": "Fixed as written; one small ambiguity (should-fix above).",
+  "m11-q1": "Fixed as written; options test missed it.",
+  "rule 30 check-ins": "Fixed: aa-m01-c3 now tests Own; aa-m03-c1 and aa-m09-c2 hints point to the idea.",
+  "rule 28 family": "Fixed: aa-m03-c3, aa-m06-c1, aa-m08-c2 replaced; count 4.",
+  "M4 card 2 date": "Fixed: “May 2027”.",
+  "m04-q3 explanation date": "Fixed.",
+  "blueprint": "Run 3 recorded, but run 4 and the rule 28 count are stale (should-fix above).",
+  "M10 real agent (idea)": "Still open; carried as an idea."
+ },
+ "module_scores": [
+  {
+   "module": "aa-m01",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 5, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Still two outcomes in one sentence: classify the set-up, and name the check.",
+    "explanation": "Card 3 still does two jobs (the loop and the Work Trend Index figure).",
+    "practice": "t2 is mostly a classification table; only its last step uses a tool.",
+    "relevance": "Generic tool examples keep it from 5.",
+    "time": "80 minutes against check.mjs’s 57, which leaves out the workbook (about 15 minutes). Honest overall, not exact.",
+    "inclusion": "t1 prompt B assumes the college publishes a fee date the learner can check."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m02",
+   "scores": { "outcome": 5, "explanation": 4, "practice": 5, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "explanation": "Card 2 still adds the long-chat idea as a third idea in a card about facts.",
+    "feedback": "q2 and q3 key the card’s headline moves, and the options test was certain of both; fair for a foundation module, but a guess teaches little.",
+    "relevance": "Indian, current and vendor-neutral; reusing briefs goes no further than a notes app.",
+    "time": "85 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "Some option sentences are long; otherwise clear."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m03",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two results in one outcome: find the errors, and keep a log.",
+    "explanation": "Card 1 still mixes why AI makes things up, where errors hide, and the Indian court cases.",
+    "time": "90 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "t1 asks for Sheets on a phone; the calculator route keeps it at 4."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m04",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: redact, and decide which tool.",
+    "explanation": "Card 2 is still dense: fiduciary, consent, legitimate uses, two exemptions, penalties and the Rules’ dates.",
+    "practice": "t1 and the theme-check try_it are excellent; t2 is mostly a classification table.",
+    "feedback": "Good explanations; q1 and q4 blind flags are not defensible, but q1’s why_wrong could name the hour deadline.",
+    "relevance": "“May 2027” is right on every source found; MeitY’s own page still to be checked before publishing (idea).",
+    "time": "80 minutes against an estimate of 58 that leaves out the workbook. Honest overall.",
+    "inclusion": "Clear and safe: all data is invented."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m05",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 5, "relevance": 4, "time": 4, "progression": 5, "inclusion": 4 },
+   "notes": {
+    "outcome": "The outcome still packs three criteria and three choices into one sentence.",
+    "explanation": "Card 3 packs two studies and a worked example.",
+    "practice": "t2 is still the tutor move from card 3.",
+    "relevance": "IIT Delhi is the only named policy; the group-project example sends learners to their own course rule.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "inclusion": "t1 task 3 needs a fluent Odia reader; the expected answer allows for that."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m06",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "“Run it to a finished result” adds a second result.",
+    "explanation": "Good worked examples; the self-review lesson is shown by a try_it.",
+    "practice": "t1 is still a plan only; t2 and the planted-date try_it are real.",
+    "feedback": "q3 is fixed and fair, but its key is the longest option and was still picked from the options.",
+    "relevance": "Sound; prompt chaining matches current vendor guidance.",
+    "time": "85 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "“Check against a source outside the AI” still leans on M3 more than it extends it.",
+    "inclusion": "Clear; the biryani analogy works widely."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m07",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Three verbs (research, check, write), though they lead to one product.",
+    "explanation": "Card 1 is still thin on how deep research differs from plain search.",
+    "practice": "The paragraph-audit try_it is strong; t1 and t2 overlap (same question, then find a disagreement).",
+    "feedback": "q1 and q2 are certain from the options (fair principle questions); q4’s blind flag is not defensible.",
+    "relevance": "Vendor-neutral and current; FSSAI, PM Vishwakarma and scholarship examples are Indian and real.",
+    "time": "90 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Builds on M3 rather than repeating it, but the climb in difficulty is small.",
+    "inclusion": "Fine."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m08",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 3, "inclusion": 4 },
+   "notes": {
+    "outcome": "Three results in one outcome: the file, the check, and least access.",
+    "explanation": "The examples add up; card 3 states “disconnect when done” without the standing-approval case.",
+    "practice": "t1 is excellent with a worked answer; t2 is a plan plus a look at settings.",
+    "feedback": "t2’s model answer (“disconnects after each weekly run”) contradicts q4’s explanation, so a learner gets opposite feedback from the task and the quiz.",
+    "relevance": "The 32k-token Gemini figure matches Google’s page but will change; “For example, Google says” is a fair hedge.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Down from 4: q4 now tests “for as long as it needs”, which no card teaches and t2 contradicts (must-fix, course and assessment). Back to 4 with the card, t2 and q4 fixes.",
+    "inclusion": "Fine; Sheets works on a phone."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m09",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 5, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: write a note, and check for copying and labels.",
+    "explanation": "Card 2 at 159 words does three jobs (copying, habits, law).",
+    "practice": "Good hands-on work in both tasks, and two try_its.",
+    "relevance": "Up-to-date IT Rules definition and copyright position; Indian examples throughout.",
+    "time": "80 minutes against an estimate of 57 that leaves out the workbook. Honest overall.",
+    "progression": "Disclosure repeats m05-q3’s idea; acceptable.",
+    "inclusion": "Fine."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m10",
+   "scores": { "outcome": 4, "explanation": 4, "practice": 4, "feedback": 4, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "outcome": "Two outcomes: an approval plan, and spotting injections.",
+    "explanation": "Excellent cards; card 1 is 159 words doing two jobs.",
+    "practice": "Still no real agent: t1 is a plan, and t2 and the try_its run in a chat (idea).",
+    "feedback": "q4’s why_wrong for the no-logins profile overstates (“no form can submit”); should-fix above.",
+    "relevance": "No hands-on with a real agent in a programme called Agentic AI (idea).",
+    "time": "85 minutes against an estimate of 58 that leaves out the workbook. Honest overall.",
+    "progression": "Builds well on M4 and M8; q4 rehearses card 3 closely.",
+    "inclusion": "Fine; the phone route works."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  },
+  {
+   "module": "aa-m11",
+   "scores": { "outcome": 5, "explanation": 4, "practice": 4, "feedback": 5, "relevance": 4, "time": 4, "progression": 4, "inclusion": 4 },
+   "notes": {
+    "explanation": "Card 3 still names only one kind of tricky input.",
+    "practice": "Route B is manual copy-paste; the try_it’s tricky input is a data request, which is better.",
+    "relevance": "Zapier’s free plan (two-step Zaps, 100 tasks) as on the research date; Opal’s 2026 status unconfirmed, and the card says to check.",
+    "time": "105 minutes; t2 alone takes about an hour, so realistic but not generous.",
+    "progression": "A good capstone that draws on M2, M3, M4 and M10.",
+    "inclusion": "Route C needs a laptop, but Route B gives a phone route."
+   },
+   "held_by_structure": [],
+   "not_in_file": []
+  }
+ ],
+ "lessons": [
+  {
+   "rule": "Before keying a flip (a right answer that bends a module habit, such as staying connected or skipping a re-check), search that module’s Learn cards, task hints, task model answers (“after”) and check-ins for the habit stated without exception. Add the condition under which it bends to the card, and rewrite any model answer that gives the opposite advice.",
+   "why": "In Agentic AI round 3, m08-q4 keyed “left connected” while M8 card 3 said “Disconnect when the job is done” and t2’s model answer said “disconnects after each weekly run”; both the cards test and the blind test chose the habit."
+  },
+  {
+   "rule": "When a scenario has two people, name the one the stem asks about, and write the deciding fact so it can’t point to the other person (a name, not “she”). Avoid words with an everyday second meaning in the deciding fact (“on site”, “off”, “out”): say plainly where the person is and what they can’t do.",
+   "why": "m08-q4’s deciding fact was “she is on site every Monday”: “she” could be the intern in the stem, and “on site” can mean “at the office”, which made the wrong option right."
+  }
+ ]
+}

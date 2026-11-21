@@ -267,6 +267,150 @@
           "meetsBar": true
         }
       }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "workbooks added (review 4)",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-4.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 13,
+        "ideas": 3,
+        "byOwner": {
+          "assessment": 8,
+          "course": 5
+        },
+        "byCategory": {
+          "question-design": 8,
+          "teaching": 3,
+          "accuracy": 1,
+          "house-style": 1
+        },
+        "rulesBroken": {
+          "14": 1,
+          "19": 3,
+          "22": 1
+        },
+        "lessons": 3
+      },
+      "mustPer10": 0,
+      "shouldPer10": 2.4,
+      "rightIsLongestPct": 14.5,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 36,
+        "modules": 15.5
+      },
+      "difficulty": {
+        "Beginner": 15,
+        "Intermediate": 31,
+        "Advanced": 8,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 10,
+          "missing": [],
+          "min": 4,
+          "mean": 4.5,
+          "byDimension": {
+            "outcome": 4.9,
+            "explanation": 4.5,
+            "practice": 4.8,
+            "feedback": 4.1,
+            "relevance": 4.7,
+            "time": 4.2,
+            "progression": 5,
+            "inclusion": 4
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "round 5 (review 5)",
+      "reviewFile": "docs/programmes/Data analytics/ai-powered-data-analytics.review-5.json",
+      "learnersFile": null,
+      "questions": 55,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "ready",
+        "must": 0,
+        "should": 4,
+        "ideas": 3,
+        "byOwner": {
+          "assessment": 4
+        },
+        "byCategory": {
+          "question-design": 4
+        },
+        "rulesBroken": {
+          "19": 2
+        },
+        "lessons": 2
+      },
+      "mustPer10": 0,
+      "shouldPer10": 0.7,
+      "rightIsLongestPct": 14.5,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 36,
+        "modules": 15.5
+      },
+      "difficulty": {
+        "Beginner": 15,
+        "Intermediate": 31,
+        "Advanced": 8,
+        "Expert": 1
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 10,
+          "missing": [],
+          "min": 4,
+          "mean": 4.6,
+          "byDimension": {
+            "outcome": 4.9,
+            "explanation": 4.5,
+            "practice": 4.8,
+            "feedback": 4.6,
+            "relevance": 4.7,
+            "time": 4.2,
+            "progression": 5,
+            "inclusion": 4.1
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
     }
   ]
 }

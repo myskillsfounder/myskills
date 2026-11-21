@@ -1,0 +1,338 @@
+{
+  "verdict": "ready",
+  "summary": "Round 3 reviews only what changed since the 'ready' review of 26 October: a workbook chapter in every module, an 'after' model answer on all 14 tasks, and higher minutes (60 to 72, M6 70 to 82; 16 to 17 hours). The workbooks are accurate and build on their modules without contradicting them. Every sum checks, and M6's UPI facts were re-checked today against NPCI: the 15 September 2026 FAQ terms stand, and the 13 October press release still leaves the start 'at a date to be notified separately'. The main weakness is the check-ins: 7 of 21 repeat a decision the module quiz or the graded final already asks (m05-c2 even shares f10's answer wording), and several hints or options give the answer away. The overview summary still says 'about 7 hours of modules', and the new minutes don't fully count the workbook. check.mjs passes, there is no must-fix and every module scores at least 4, so the programme still meets the ready rule, but the 13 should-fixes are worth doing before learners reach the workbooks.",
+  "strengths": [
+    "The try_it prompts are real hands-on moments that need no personal data. Each uses an invented business, works in any free chatbot on a phone, and has a check that makes the learner verify the AI: open each source and find the figure (M1), do the sums by hand (M6, M7), delete what the AI assumed (M7), strike out 'Would you…' questions (M1).",
+    "The workbooks are accurate. Every figure recomputes: Kavya's ₹500 ÷ 8 ≈ ₹63 and ₹250, Tejas's ₹60 cost, ₹30 contribution and ₹50 CAC, the notebook table (₹70, ₹75, ₹140), runway 3 months, and the 24-month vesting (25% of the business). M3's payment advice matches the end of P2P collect requests, and M6 t1's after rightly says a ₹349 UPI payment carries no fee.",
+    "The 'after' model answers are specific and usable: they show a strong answer and why it is strong (M1 t1 rewrites all five questions and places them on the ladder; M6 t1 works the sums to ₹91 to spare and names the thin one-purchase case).",
+    "Myth and mistake lines name the real beginner errors (an MVP is a basic app; profit means cash; marking 'Paid' from a screenshot), and the 'simple' analogies make each idea easy to picture."
+  ],
+  "findings": [
+    {
+      "target": "overview",
+      "severity": "should_fix",
+      "problem": "The overview summary still says 'That is about 7 hours of modules'. The modules now add up to 514 minutes (8.6 hours) and overview.hours is 17. A learner who reads the summary plans for less time than the programme takes.",
+      "fix": "Change the sentence to: \"That is about 8½ hours of modules, then about 8 hours of project work spread over two weeks.\" If the minutes are raised as the next finding suggests, write \"about 10 hours of modules\" instead, and set hours to 18.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": 3,
+      "standard": "time"
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "Each module gained only 12 minutes for its workbook, but the workbook takes about 24. Each workbook is 910 to 1,014 words (about 8 minutes at 120 words a minute), plus two try_its in a chatbot (about 5 minutes each), three check-ins (about 4.5 minutes) and two 'after' answers (about 2 minutes). check.mjs's estimate (58 to 60 minutes) counts none of this, so modules M1 to M5 and M7 really take about 82 minutes and M6 about 92, not 72 and 82.",
+      "fix": "Set M1 to M5 and M7 to 82 minutes and M6 to 92. The modules then add up to 584 minutes (about 9.7 hours), so set overview.hours to 18 and the summary to \"about 10 hours of modules\". Or keep the minutes and cut the workbook: drop the 'why' bullets and shorten 'idea' to one paragraph, since both repeat the Learn cards.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": 3,
+      "standard": "time"
+    },
+    {
+      "target": "module:ape-m01",
+      "severity": "should_fix",
+      "problem": "Two check-ins repeat the quiz's decision. ape-m01-c1 (Farah: which interview question gives the most useful evidence?) is the same decision as m01-q1 (Nikhil: which question gives the most useful evidence?). ape-m01-c2 (Dev: which evidence is strongest?) is the same decision as m01-q2 (Lakshmi: which note sits highest on the ladder?). The quiz then tests recall of the check-in, not transfer.",
+      "fix": "c1: make it a diagnosis. Scenario: \"Farah plans a pickup service for ironing clothes, for working couples in Vadodara. Her first question is: ‘Don’t you hate ironing on weekday mornings?’\" Question: \"What is wrong with it?\" Options: \"It invites a polite yes instead of a real story\" (right); \"Nothing, because it names a real weekday problem\"; \"It should mention her ₹15 price so people can judge\"; \"It is too short to get a useful answer\". c2: make it a classification with no rung-4 option. Scenario: \"Three of the ten students Dev interviewed in Kanpur already pay a shop ₹200 a term to print their notes.\" Question: \"Where does this sit on the evidence ladder?\" Options: rung 1 (compliments), rung 2 (past spending) (right), rung 3 (a commitment of time), rung 4 (a commitment of money). Write new hints that point to the idea (rung definitions), not the answer.",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m03",
+      "severity": "should_fix",
+      "problem": "ape-m03-c3 (Rina: a neighbour said 'might buy' two days ago, what now? Right: one friendly follow-up with a clear next step) rehearses final question f05 (Zoya's 'maybe next week': send one short message with a clear next step, then stop). The check-in previews a graded final decision with almost the same answer. Its hint ('How many follow-ups did this module suggest…?') also asks for recall.",
+      "fix": "Replace c3 with a trust doubt, which card 3 teaches and no quiz or final item asks. Scenario: \"A buyer in Thane likes Rina’s ₹450 plant gift box but writes, ‘Will it really reach my sister in Pune by Sunday?’\" Question: \"What is Rina’s best reply?\" Right: \"Photos of two boxes she delivered last week, a delivery date and a refund if it is late\". Wrong: \"A 20% discount if she orders today\"; \"‘Don’t worry, I’m very reliable’\"; \"A promise to call her sister when it is sent\". Hint: \"What would make a doubt about trust go away: a promise, or proof?\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m04",
+      "severity": "should_fix",
+      "problem": "Two check-ins repeat quiz decisions. ape-m04-c3 (Gauri: cost per order for flyers and a boost) is the same calculation as m04-q2 (Manish: ₹50 against ₹125 an order). ape-m04-c2 (Neel: false 'Loved by 10,000' claim) is the same decision as m04-q3 (Pooja's false caption). Card 3's rule on labelling AI-made images and the tip on code words are not checked anywhere.",
+      "fix": "c3: test tracking. Scenario: \"Gauri in Belagavi spent ₹300 on flyers and ₹300 on a boosted post for her scrunchies, and got 9 orders. She can’t tell which channel brought which.\" Question: \"What should she have set up before spending?\" Right: \"A different code word or form link for each channel\". Wrong: \"A count of likes on each channel\"; \"The same offer on both, so the test is fair\"; \"A bigger budget, so the numbers are clearer\". c2: test the image rule. Scenario: an AI tool made a photo of Neel’s premix in a glossy jar he doesn’t sell. Right: \"Label it as AI-made, or use a real photo\". Wrong: \"Post it, since the premix inside is real\"; \"Post it, but in a Story that disappears\"; \"Add ‘pic for reference’ under the price\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m05",
+      "severity": "should_fix",
+      "problem": "ape-m05-c2 (Ravi and the cycling club: what to write down first?) rehearses final question f10 (Divya and the canteen: what next?), and its right option ('One paragraph: who does what, who earns what, and how to end it') is almost word for word f10's right answer ('Write one paragraph on who does what, who earns what and how to end it'). The workbook hands learners a graded Foundation-final answer.",
+      "fix": "Replace c2 with card 4's timing rule for referrals, which no quiz or final item asks. Scenario: \"Ravi sells bottled cold coffee in Puducherry and wants customers to bring friends.\" Question: \"When should he ask a customer to refer a friend?\" Right: \"Right after a delivery the customer was happy with\". Wrong: \"In the first message, before they have tried it\"; \"Once a month, in a broadcast to every contact\"; \"Only after they have bought ten bottles\". Hint: \"When is a customer most likely to want to tell a friend?\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m07",
+      "severity": "should_fix",
+      "problem": "Two check-ins rehearse graded final questions. ape-m07-c1 (Isha leaves at 9 months, before the cliff: none of her shares) is f12's decision (Neel leaves at 11 months: 0%). The workbook example is even titled 'Leaving before the cliff', which is f12's title. ape-m07-c3 (which intern brief is complete?) is f13's decision (which intern plan is fairest and most useful?). c1's hint ('What happens to someone who leaves before the cliff?') also gives the answer.",
+      "fix": "c1: test the decision to add vesting. Scenario: \"Two friends in Mumbai want to split their startup 50:50. One may take a job offer in six months.\" Question: \"What should they add to their written split?\" Right: \"Four-year vesting with a one-year cliff for both\". Wrong: \"A 60:40 split now, in favour of the one who stays\"; \"Nothing yet, and write it all down when they register\"; \"A bigger share for whoever had the idea\". c3: test card 3’s habits. Question: \"Which is a team habit you can act on?\" Right: \"We reply to every customer within two hours\". Wrong: \"We always put customers first\"; \"We work hard and stay positive\"; \"We value honesty above everything\". The right option will be the only concrete one, so make one wrong option concrete but unmeasurable, such as \"We reply to customers as soon as we can\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "Some check-in hints name the one feature only the right option has, so they give the answer, not the idea. ape-m05-c1: 'Who is just one step ahead of Meenal, and close to her?' ape-m05-c3: 'Which note shows he has read her work, and asks for something small?' ape-m04-c1: 'Which of these takes real effort, or money, from the customer?' (This also applies to m01-c1, m01-c2, m03-c3 and m07-c1 if they are kept rather than replaced as the findings above suggest.)",
+      "fix": "Write each hint as a question about the idea that applies to all four options. m05-c1: \"Think about how many messages each person gets, and how recent their lessons are.\" m05-c3: \"Read each note as the alumna. Could she tell why he chose her, and answer in one reply?\" m04-c1: \"Which of these numbers could go up even if nobody bought a wallet?\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "Some check-in options give the answer away. ape-m02-c2: only the right option uses the module's phrase 'a number, a group and a time'. ape-m05-c1: three options are famous strangers (a chef, a national founder, a TV host) and one is a senior, so it is the odd one out. ape-m05-c3: three notes are vague flattery and one is specific. ape-m04-c2: 'Keep it, since the AI wrote it and Neel didn't' is not a mistake a real learner would make.",
+      "fix": "m02-c2 options: \"A goal: how many of which people should order, and by when\" (right); \"A list of the features each friend should see\"; \"A plan to show it to 50 people, not 5\"; \"A logo and colours so the page looks real\". m05-c1 options: \"A senior who ran a campus snack stall last year\" (right); \"The owner of a national jam brand she admires\"; \"A food blogger in Tirupati with two lakh followers\"; \"Her cousin, who works in a bank and loves her jam\". m05-c3: make one wrong note specific but with too big an ask (\"Your post on your first 100 customers was great. Could we do a one-hour call on your whole journey?\") and one polite but vague (\"Hi, I’m building a startup in Lucknow and saw your post. Could you guide me?\"). m04-c2: replace the weak option with \"Keep it until a customer questions it, then remove it\".",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": 19,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m04",
+      "severity": "should_fix",
+      "problem": "t2's 'after' contradicts itself. It names the channel as 'class WhatsApp groups, with the admins' permission', then splits the ₹1,000 into '₹600 on printed lists at the hostel and ₹400 on a boosted post', neither of which is that channel. A learner may conclude the plan should spend on channels other than the one it chose.",
+      "fix": "Write: \"Channel: class WhatsApp groups, with the admins’ permission. Posting there is free. Split: to compare, spend ₹600 on printed book lists for first-year classrooms and ₹400 on a boosted post, or ₹0 with free posts only. Give the free posts a code word too.\"",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:ape-m04",
+      "severity": "should_fix",
+      "problem": "Workbook try_it 1's check says 'Pick the version that matches what your interviews say', but the prompt is about a given business (washable cloth book covers) that the learner hasn't interviewed anyone about. The verification step can't be done as written.",
+      "fix": "Write: \"Pick the version whose customer group you could reach this week. Then check its ‘unlike’ by asking two parents what they use now. Cut any benefit you can’t show, such as ‘eco-friendly’ if you haven’t checked the cloth.\"",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "Many of the new 'after' answers use sentences far over 20 words, hard to follow in a second language. Examples: M2 t2 'The test plan has a goal with a number, a group and a time; three things to watch, … and one closing question, …' (47 words); M2 t1's list of assumptions (40); M3 t1's pitch sentence (about 60); M4 t1 'His channel is the class WhatsApp groups…' (about 36); M5 t1 'It names your college's E-cell…' (about 35); M7 t1 'Varun had the idea…' (36); M7 t2 'The brief lets a stranger start…' (about 38); M1 t2 'The estimate shows…' (34). Several workbook lines are also long (M2 'simple', 27; M6 idea 2, 28).",
+      "fix": "Split each into sentences of 20 words or fewer, or into labelled lines. For example, M2 t2: \"The test plan has three parts. Goal: a number, a group and a time. Watch: where people stop, whether they notice the price, and whether they reach the order step. Ask at the end: ‘What nearly stopped you from ordering?’\"",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "programme",
+      "severity": "should_fix",
+      "problem": "The seven workbooks are built the same way and repeat themselves. Six of the seven 'simple' analogies are food sellers: a chaiwala (M1), a biryani cook (M2), a fruit seller (M3), a dosa cart (M4), a sugarcane-juice seller (M6) and a sweet shop (M7). All seven examples open 'Imagine [name] in [city], who…'. The 'idea' and 'why' sections mostly restate the Learn cards. By M5 a learner can predict every section, and the reading adds little new.",
+      "fix": "Keep the fruit seller (M3) and the dosa cart (M4). Replace the others with different worlds. M6: \"An auto driver knows his fuel cost per trip and what the bus fare is, and quotes between them.\" M7: \"In a cricket team the captain sets the field and the keeper calls catches near the stumps, so nobody argues mid-over.\" M2: \"A college fest team sells 50 passes on a Google Form before booking the hall.\" M1: a tuition teacher counting how many students already pay for extra classes. Vary how the examples open: tell one as a WhatsApp chat (M3), one as a before-and-after table (M6), and one as a week of diary lines (M2). Cut 'idea' to the one point the cards don't already make.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m07",
+      "severity": "idea",
+      "problem": "t1's 'after' names Rahul and Ayesha as co-founders and suggests 45:45:10 without mentioning that Ayesha gives 15 hours a week now while Rahul will be full-time. Card 1 says co-founders need 'the same commitment'.",
+      "fix": "Add: \"Ayesha gives 15 hours a week while she finishes her degree, so they should agree her hours after graduation before settling on a near-equal split.\"",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "module:ape-m06",
+      "severity": "idea",
+      "problem": "Re-checked today under rule 9. Card 3's UPI facts match NPCI's FAQ of 15 September 2026: 0.4% on P2M payments above ₹2,000, ₹300 cap from ₹75,000, P2P free, zero MDR for small merchants receiving up to ₹1 lakh a month by UPI QR (P2PM), and no passing it on (Q34). NPCI's press release of 13 October 2026 says MDR will start 'immediately post Diwali at a date to be notified separately'. I found no notified date on npci.org.in, and press reports from 16 to 19 November say none has been announced (npci.org.in's press-release page did not render for me, so I could not see every notice). The card still says 'checked 26 October 2026'.",
+      "fix": "Change the date to \"checked 21 November 2026\" and keep \"The start date is to be announced, so check npci.org.in.\" Recheck on the day of any further publish. Once NPCI notifies the date, write \"is due to start on [date]\" until that date has passed.",
+      "source": "https://www.npci.org.in/uploads/UPI_MDR_on_Select_Merchant_Transactions_Shall_be_Implemented_Post_Diwali_4c9cdd77d5.pdf",
+      "owner": "course",
+      "category": "accuracy",
+      "rule": 9,
+      "standard": null
+    },
+    {
+      "target": "module:ape-m06",
+      "severity": "idea",
+      "problem": "ape-m06-c3's 'why' explains the 6-month option but says only that 'the shorter answers leave out months he can still pay for', so a learner who chose 2 or 1 doesn't learn what slip they made.",
+      "fix": "Write: \"₹9,000 ÷ ₹3,000 = 3 months. Six months comes from subtracting instead of dividing. Two months takes off this month’s loss first (₹6,000 ÷ ₹3,000). One month divides the loss by itself.\"",
+      "source": "",
+      "owner": "assessment",
+      "category": "question-design",
+      "rule": null,
+      "standard": "feedback"
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "The assessment blueprint (ai-powered-entrepreneurship.assessment.md) doesn't mention the 21 workbook check-ins. That is why their overlap with the quiz and the final went unnoticed.",
+      "fix": "Add a check-in map to the blueprint: id, the decision tested, the card sentence it rests on, and the quiz and final items it must not repeat.",
+      "source": "",
+      "owner": "assessment",
+      "category": "coverage",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "For the team: moduleEstimate() in agents/lib/standard.mjs counts Learn cards, tasks, reflection and quiz, but not the workbook. So check.mjs reported M1 at 60 minutes against 72 stated, and couldn't see that the workbook adds about 24.",
+      "fix": "Count workbook words at 120 a minute, about 5 minutes for each try_it, 1.5 for each check-in, and the 'after' words.",
+      "source": "",
+      "owner": "course",
+      "category": "time",
+      "rule": null,
+      "standard": "time"
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "Every festival in the workbooks is Hindu (Teej in M3, rakhis in M2, Diwali diyas in M6). Many names also come back for different people and businesses: Farah (m01-c1, f12), Ravi (m05-c2, f11), Ritu (M5 example, m06-c2), Kavya (M4 example, f03), Neel (m04-c2, f12), Rohan (M1 example, f15), Aman (M5 example, f04), Kunal (m02-c1, m06-q1), Imran (M4 t1, M6 card 3).",
+      "fix": "Swap one festival for Eid, Christmas, Onam or Pongal (for example, Eid gift hampers instead of the M2 rakhis). Give the workbook people names not used elsewhere in the programme.",
+      "source": "",
+      "owner": "course",
+      "category": "house-style",
+      "rule": null,
+      "standard": "inclusion"
+    },
+    {
+      "target": "module:ape-m07",
+      "severity": "idea",
+      "problem": "The workbook example's title, 'Leaving before the cliff', is the same as final question f12's title, and it teaches the exact case f12 tests.",
+      "fix": "Retitle it \"A CV-review service, eight months in\", and consider an example that leaves after the cliff (for example at 20 months), so the before-cliff case is taught by card 2 alone.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": null
+    },
+    {
+      "target": "programme",
+      "severity": "idea",
+      "problem": "No try_it says where to paste the prompt. A first-time learner may not know that the free ChatGPT, Gemini or Claude, named only in M1 card 4, all work on a phone browser without paying.",
+      "fix": "Start each module's first try_it with: \"Open a free AI chatbot on your phone (ChatGPT, Gemini or Claude) and paste this:\". Or show that line once above every try_it.",
+      "source": "",
+      "owner": "course",
+      "category": "teaching",
+      "rule": null,
+      "standard": "practice"
+    }
+  ],
+  "module_scores": [
+    {
+      "module": "ape-m01",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "outcome": "Unchanged: covers only the script, while the module also teaches the ladder and sizing.",
+        "feedback": "The c1 and c2 hints point straight at the one right option, and both check-ins repeat q1 and q2's decisions.",
+        "time": "72 minutes, but the content plus the workbook take about 82.",
+        "inclusion": "t2's 'after' has 34- and 42-word sentences."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m02",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 5, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "time": "72 minutes, but the content plus the workbook take about 82, and t2 was already tight.",
+        "inclusion": "t1 and t2's 'after' answers have 40- and 47-word sentences, and the 'simple' line has 27 words."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m03",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "c3's hint asks for recall ('How many follow-ups did this module suggest?'), and c3 rehearses final question f05.",
+        "time": "72 minutes, but the content plus the workbook take about 82.",
+        "inclusion": "t1's 'after' packs the whole pitch into one sentence of about 60 words."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m04",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 4, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "practice": "try_it 1's check needs interviews the learner hasn't done for the given business.",
+        "feedback": "t2's 'after' splits the budget onto channels other than the one it chose.",
+        "time": "72 minutes, but the content plus the workbook take about 82.",
+        "inclusion": "t1's 'after' has 31- and 36-word sentences."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m05",
+      "scores": { "outcome": 4, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "outcome": "Unchanged: two products in one outcome (a map and three messages).",
+        "feedback": "The c1 and c3 hints name the right option's feature, and c2 gives away final question f10's answer.",
+        "time": "72 minutes, but the content plus the workbook take about 82, and t1 was already long.",
+        "inclusion": "t1 and t2's 'after' answers have 33- to 35-word sentences, and try_it 1's prompt runs to 54 words in one sentence."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m06",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "c3's 'why' doesn't name the slip behind the 2-month and 1-month options.",
+        "time": "82 minutes, but the content plus the workbook take about 92.",
+        "inclusion": "The idea and t2 'after' have 28- to 31-word sentences."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    },
+    {
+      "module": "ape-m07",
+      "scores": { "outcome": 5, "explanation": 5, "practice": 5, "feedback": 4, "relevance": 5, "time": 4, "progression": 5, "inclusion": 4 },
+      "notes": {
+        "feedback": "c1's hint gives the answer, and c1 and c3 rehearse final questions f12 and f13. t1's 'after' skips Ayesha's part-time commitment.",
+        "time": "72 minutes, but the content plus the workbook take about 82.",
+        "inclusion": "t1 and t2's 'after' answers have 36- and 38-word sentences."
+      },
+      "held_by_structure": [],
+      "not_in_file": []
+    }
+  ],
+  "lessons": [
+    {
+      "rule": "Every workbook check-in must test a decision that neither its module quiz nor the final asks. Before writing one, list the quiz and final items on the same card, and if the decision or the right answer's wording matches one of them, choose another sentence from the cards.",
+      "why": "In the Entrepreneurship workbooks, 7 of 21 check-ins repeated a quiz or final decision. m05-c2's right answer was almost word for word f10's, so the ungraded workbook handed out a Foundation-final answer."
+    },
+    {
+      "rule": "Write a hint as a question about the idea that a learner could apply to all four options. Never name the feature only the right option has.",
+      "why": "Hints such as 'Who is just one step ahead of Meenal, and close to her?' and 'Which rung involves the student’s own money?' picked out the answer, so the check-in tested reading the hint, not the idea."
+    },
+    {
+      "rule": "When new content is added to a module (a workbook, model answers), recompute its minutes from all of it, then update every place the time appears in words, such as the overview summary, as well as overview.hours.",
+      "why": "The workbooks added about 24 minutes a module but the minutes rose by 12, and the summary still said 'about 7 hours of modules' after hours went from 16 to 17."
+    }
+  ]
+}

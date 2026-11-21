@@ -1,0 +1,310 @@
+{
+  "programme": "agentic-ai.json",
+  "rows": [
+    {
+      "date": "2026-11-21",
+      "stage": "draft (review 1)",
+      "reviewFile": "docs/programmes/Agentic AI/agentic-ai.review-1.json",
+      "learnersFile": null,
+      "questions": 59,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 5,
+        "should": 19,
+        "ideas": 4,
+        "byOwner": {
+          "assessment": 16,
+          "course": 8
+        },
+        "byCategory": {
+          "question-design": 15,
+          "accuracy": 4,
+          "house-style": 1,
+          "teaching": 3,
+          "coverage": 1
+        },
+        "rulesBroken": {
+          "5": 2,
+          "20": 6,
+          "21": 7
+        },
+        "lessons": 3
+      },
+      "mustPer10": 0.8,
+      "shouldPer10": 3.2,
+      "rightIsLongestPct": 10.2,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 24,
+        "modules": 15.5
+      },
+      "difficulty": {
+        "Beginner": 14,
+        "Intermediate": 36,
+        "Advanced": 9
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 11,
+          "missing": [],
+          "min": 3,
+          "mean": 4.1,
+          "byDimension": {
+            "outcome": 4.2,
+            "explanation": 4,
+            "practice": 4.1,
+            "feedback": 4,
+            "relevance": 4.1,
+            "time": 4,
+            "progression": 4.4,
+            "inclusion": 4
+          },
+          "belowBar": [
+            "aa-m05: practice 3",
+            "aa-m07: progression 3",
+            "aa-m09: relevance 3"
+          ],
+          "meetsBar": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "round 2 (review 2)",
+      "reviewFile": "docs/programmes/Agentic AI/agentic-ai.review-2.json",
+      "learnersFile": null,
+      "questions": 59,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 3,
+        "should": 13,
+        "ideas": 4,
+        "byOwner": {
+          "assessment": 13,
+          "course": 3
+        },
+        "byCategory": {
+          "question-design": 10,
+          "accuracy": 4,
+          "teaching": 2
+        },
+        "rulesBroken": {
+          "5": 2,
+          "20": 4,
+          "21": 5
+        },
+        "lessons": 3
+      },
+      "mustPer10": 0.5,
+      "shouldPer10": 2.2,
+      "rightIsLongestPct": 10.2,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 24,
+        "modules": 15.7
+      },
+      "difficulty": {
+        "Beginner": 14,
+        "Intermediate": 40,
+        "Advanced": 5
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 11,
+          "missing": [],
+          "min": 3,
+          "mean": 4.1,
+          "byDimension": {
+            "outcome": 4.2,
+            "explanation": 4,
+            "practice": 4.2,
+            "feedback": 4,
+            "relevance": 4,
+            "time": 4,
+            "progression": 4.5,
+            "inclusion": 4
+          },
+          "belowBar": [
+            "aa-m01: relevance 3"
+          ],
+          "meetsBar": false
+        }
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "round 3 (review 3)",
+      "reviewFile": "docs/programmes/Agentic AI/agentic-ai.review-3.json",
+      "learnersFile": null,
+      "questions": 59,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 4,
+        "should": 16,
+        "ideas": 1,
+        "byOwner": {
+          "assessment": 17,
+          "course": 3
+        },
+        "byCategory": {
+          "question-design": 17,
+          "teaching": 1,
+          "accuracy": 2
+        },
+        "rulesBroken": {
+          "8": 2,
+          "19": 5,
+          "20": 2,
+          "21": 2,
+          "28": 1,
+          "30": 1,
+          "31": 1,
+          "32": 5
+        },
+        "lessons": 3
+      },
+      "mustPer10": 0.7,
+      "shouldPer10": 2.7,
+      "rightIsLongestPct": 13.6,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 24,
+        "modules": 15.7
+      },
+      "difficulty": {
+        "Beginner": 12,
+        "Intermediate": 42,
+        "Advanced": 5
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 11,
+          "missing": [],
+          "min": 4,
+          "mean": 4.1,
+          "byDimension": {
+            "outcome": 4.2,
+            "explanation": 4,
+            "practice": 4.2,
+            "feedback": 4,
+            "relevance": 4.1,
+            "time": 4,
+            "progression": 4.5,
+            "inclusion": 4
+          },
+          "belowBar": [],
+          "meetsBar": true
+        }
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "stage": "closing (review 4, fixes applied)",
+      "reviewFile": "docs/programmes/Agentic AI/agentic-ai.review-4.json",
+      "learnersFile": null,
+      "questions": 59,
+      "publishProblems": 0,
+      "auto": {
+        "must": 0,
+        "should": 0
+      },
+      "review": {
+        "verdict": "needs_work",
+        "must": 2,
+        "should": 2,
+        "ideas": 4,
+        "byOwner": {
+          "assessment": 3,
+          "course": 1
+        },
+        "byCategory": {
+          "question-design": 3,
+          "teaching": 1
+        },
+        "rulesBroken": {
+          "21": 2,
+          "22": 1
+        },
+        "lessons": 2
+      },
+      "mustPer10": 0.3,
+      "shouldPer10": 0.3,
+      "rightIsLongestPct": 15.3,
+      "complete": {
+        "explanation": 100,
+        "whyWrong": 100,
+        "learningOutcome": 100,
+        "topic": 100
+      },
+      "hours": {
+        "advertised": 24,
+        "modules": 15.7
+      },
+      "difficulty": {
+        "Beginner": 12,
+        "Intermediate": 42,
+        "Advanced": 5
+      },
+      "learners": null,
+      "standard": {
+        "auto": 0,
+        "modules": {
+          "modules": 11,
+          "missing": [],
+          "min": 3,
+          "mean": 4.2,
+          "byDimension": {
+            "outcome": 4.2,
+            "explanation": 4,
+            "practice": 4.2,
+            "feedback": 4.5,
+            "relevance": 4.1,
+            "time": 4,
+            "progression": 4.4,
+            "inclusion": 4
+          },
+          "belowBar": [
+            "aa-m08: progression 3"
+          ],
+          "meetsBar": false
+        }
+      }
+    }
+  ]
+}
